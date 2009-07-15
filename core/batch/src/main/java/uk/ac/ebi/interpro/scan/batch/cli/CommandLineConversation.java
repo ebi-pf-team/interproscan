@@ -1,0 +1,82 @@
+package uk.ac.ebi.interpro.scan.batch.cli;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.List;
+
+/**
+ * Provides a generic interface for running operating system or shell commands on the command line and
+ * returning the result.   The result may include output from the command, error messages, and
+ * will normally return a status code to indicate success or failure (i.e. typically returning 0 to indicate
+ * success).
+ *
+ * @author  Phil Jones, EMBL-EBI
+ * @author  Antony Quinn
+ * @version $Id: CommandLineConversation.java,v 1.3 2009/06/18 10:53:08 aquinn Exp $
+ * @since   1.0
+ */
+public interface CommandLineConversation extends Serializable {
+
+    /**
+     * Runs a command on the command line synchronously.
+     * @param mergeOutputAndError if true, error messages will be included in the
+     * output and can be accessed through the <code>getOutput()</code> method.  In this case,
+     * <code>getErrorMessage()</code> will return <code>null</code>.
+     * @param commands being a set of recognised commands.  Note that compound commands (i.e. commands
+     * separated by spaces) need to be submitted as separate strings, e.g. `ls -l` is passed in as "ls", "-l"
+     * and `chmod g+w bob.txt` is passed in as "chmod", "g+w", "bob.txt"
+     * @return the return code from the command after it has completed.
+     * @throws IOException propagated from the RunTime.execute method.
+     * @throws InterruptedException If the thread is interrupted while waiting for the command to return.
+     */
+    int runCommand(boolean mergeOutputAndError, List<String> commands) throws IOException, InterruptedException;    
+
+    /**
+     * Runs a command on the command line synchronously.
+     * @param mergeOutputAndError if true, error messages will be included in the
+     * output and can be accessed through the <code>getOutput()</code> method.  In this case,
+     * <code>getErrorMessage()</code> will return <code>null</code>.
+     * @param commands being a set of recognised commands.  Note that compound commands (i.e. commands
+     * separated by spaces) need to be submitted as separate strings, e.g. `ls -l` is passed in as "ls", "-l"
+     * and `chmod g+w bob.txt` is passed in as "chmod", "g+w", "bob.txt"
+     * @return the return code from the command after it has completed.
+     * @throws IOException propagated from the RunTime.execute method.
+     * @throws InterruptedException If the thread is interrupted while waiting for the command to return.
+     */
+    int runCommand(boolean mergeOutputAndError, String... commands) throws IOException, InterruptedException;
+
+    /**
+     * Allows the environment to be set, overriding any environment variables that
+     * are included, or clearing <b>all</b> environment variables and setting only those
+     * specified
+     * @param environmentVariables being a Map of environment variable name to value.
+     * @param overrideAll if all preexisting environment variables should be cleared first.
+     */
+    void setEnvironment (Map<String, String> environmentVariables, boolean overrideAll);
+
+    /**
+     * Sets the working directory for subsequent commands.
+     *
+     * @param directoryPath being a valid path to a working directory
+     * @throws FileNotFoundException if the directory path given does not exist.
+     * @throws FileIsNotADirectoryException if the path exists, but does not resolve to a directory.
+     */
+    void setWorkingDirectory (String directoryPath) throws FileNotFoundException, FileIsNotADirectoryException;
+
+    /**
+     * @return The output from the last command run, or null if no output was produced or no command has been run.
+     */
+    String getOutput ();
+
+    /**
+     * @return The error message from the last command run, or null if no error message was generated or no command has been run.
+     */
+    String getErrorMessage ();
+
+    /**
+     * @return The exit status from the last command run, or null if no command has been run yet.
+     */
+    Integer getExitStatus ();
+}

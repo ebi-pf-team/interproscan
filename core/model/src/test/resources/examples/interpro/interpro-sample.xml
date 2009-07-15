@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE interprodb SYSTEM "interpro.dtd">
+<!-- All InterPro entries - data same as HTML pages (57MB) -->
+<interprodb>
+  <release>
+    <dbinfo dbname="PANTHER" version="6.1" entry_count="30128" file_date="04-OCT-2006 00:00:00"/>
+    <dbinfo dbname="PFAM" version="21.0" entry_count="8957" file_date="22-NOV-2006 00:00:00"/>
+    <dbinfo dbname="PIRSF" version="2.70" entry_count="2877" file_date="12-JUN-2007 00:00:00"/>
+    <dbinfo dbname="PRINTS" version="38.0" entry_count="1900" file_date="22-SEP-2005 00:00:00"/>
+    <dbinfo dbname="PRODOM" version="2005.1" entry_count="1522" file_date="23-APR-2004 00:00:00"/>
+    <dbinfo dbname="PROSITE" version="20.35" entry_count="1316" file_date="01-JUL-2008 00:00:00"/>
+    <dbinfo dbname="PROFILE" version="20.35" entry_count="801" file_date="01-JUL-2008 00:00:00"/>
+    <dbinfo dbname="SMART" version="5.1" entry_count="724" file_date="27-JUL-2007 00:00:00"/>
+    <dbinfo dbname="TIGRFAMs" version="7.0" entry_count="3423" file_date="28-SEP-2007 00:00:00"/>
+    <dbinfo dbname="GENE3D" version="3.0.0" entry_count="2147" file_date="11-SEP-2006 00:00:00"/>
+    <dbinfo dbname="SSF" version="1.69" entry_count="1538" file_date="30-NOV-2006 00:00:00"/>
+    <dbinfo dbname="SWISSPROT" version="56.1" entry_count="397539" file_date="02-SEP-2008 00:00:00"/>
+    <dbinfo dbname="TREMBL" version="39.1" entry_count="6212793" file_date="02-SEP-2008 00:00:00"/>
+    <dbinfo dbname="INTERPRO" version="18.0" entry_count="16911" file_date="26-AUG-2008 00:00:00"/>
+    <dbinfo dbname="GO" version="N/A" entry_count="23937" file_date="27-MAR-2007 00:00:00"/>
+    <dbinfo dbname="MEROPS" version="8.1" entry_count="3015" file_date="13-JUN-2008 11:04:36"/>
+  </release>
+  <interpro id="IPR000001" type="Domain" short_name="Kringle" protein_count="387">
+    <name>Kringle</name>
+    <abstract> Kringles are autonomous structural domains, found throughout the blood clotting and
+      fibrinolytic proteins. Kringle domains are believed to play a role in binding mediators (e.g.,
+      membranes, other proteins or phospholipids), and in the regulation of proteolytic activity
+        <cite idref="PUB00002414"/>, <cite idref="PUB00001541"/>, <cite idref="PUB00003257"/>.
+      Kringle domains <cite idref="PUB00003400"/>, <cite idref="PUB00000803"/>, <cite
+        idref="PUB00001620"/> are characterised by a triple loop, 3-disulphide bridge structure,
+      whose conformation is defined by a number of hydrogen bonds and small pieces of anti-parallel
+      beta-sheet. They are found in a varying number of copies in some plasma proteins including
+      prothrombin and urokinase-type plasminogen activator, which are serine proteases belonging to
+      MEROPS peptidase family S1A. </abstract>
+    <example_list/>
+    <pub_list>
+      <publication id="PUB00002414">
+        <author_list>Fujikawa K., McMullen B.A.</author_list>
+        <title>Amino acid sequence of the heavy chain of human alpha-factor XIIa (activated Hageman
+          factor).</title>
+        <db_xref db="PUBMED" dbkey="3886654"/>
+        <journal>J. Biol. Chem.</journal>
+        <location firstpage="5328" lastpage="5341" volume="260" issue="9"/>
+        <year>1985</year>
+      </publication>
+      <publication id="PUB00001541">
+        <author_list>Patthy L., Trexler M., Banyai L., Varadi A., Vali Z.</author_list>
+        <title>Kringles: modules specialized for protein binding. Homology of the gelatin-binding
+          region of fibronectin with the kringle structures of proteases.</title>
+        <db_xref db="PUBMED" dbkey="6373375"/>
+        <journal>FEBS Lett.</journal>
+        <location firstpage="131" lastpage="136" volume="171" issue="1"/>
+        <year>1984</year>
+      </publication>
+      <publication id="PUB00003257">
+        <author_list>Atkinson R.A., Williams R.J.</author_list>
+        <title>Solution structure of the kringle 4 domain from human plasminogen by 1H nuclear
+          magnetic resonance spectroscopy and distance geometry.</title>
+        <db_xref db="PUBMED" dbkey="2157850"/>
+        <journal>J. Mol. Biol.</journal>
+        <location firstpage="541" lastpage="552" volume="212" issue="3"/>
+        <year>1990</year>
+      </publication>
+      <publication id="PUB00003400">
+        <author_list>Castellino F.J., Beals J.M.</author_list>
+        <title>The genetic relationships between the kringle domains of human plasminogen,
+          prothrombin, tissue plasminogen activator, urokinase, and coagulation factor XII.</title>
+        <db_xref db="PUBMED" dbkey="3131537"/>
+        <journal>J. Mol. Evol.</journal>
+        <location firstpage="358" lastpage="369" volume="26" issue="4"/>
+        <year>1987</year>
+      </publication>
+      <publication id="PUB00000803">
+        <author_list>Patthy L.</author_list>
+        <title>Evolution of the proteases of blood coagulation and fibrinolysis by assembly from
+          modules.</title>
+        <db_xref db="PUBMED" dbkey="3891096"/>
+        <journal>Cell</journal>
+        <location firstpage="657" lastpage="663" volume="41" issue="3"/>
+        <year>1985</year>
+      </publication>
+      <publication id="PUB00001620">
+        <author_list>Takahashi K., Ikeo K., Gojobori T.</author_list>
+        <title>Evolutionary origin of numerous kringles in human and simian apolipoprotein(a).</title>
+        <db_xref db="PUBMED" dbkey="1879523"/>
+        <journal>FEBS Lett.</journal>
+        <location firstpage="146" lastpage="148" volume="287" issue="1"/>
+        <year>1991</year>
+      </publication>
+    </pub_list>
+    <parent_list>
+      <rel_ref ipr_ref="IPR013806"/>
+    </parent_list>
+    <found_in>
+      <rel_ref ipr_ref="IPR003966"/>
+      <rel_ref ipr_ref="IPR011358"/>
+      <rel_ref ipr_ref="IPR012051"/>
+      <rel_ref ipr_ref="IPR014394"/>
+      <rel_ref ipr_ref="IPR016247"/>
+      <rel_ref ipr_ref="IPR017076"/>
+    </found_in>
+    <member_list>
+      <db_xref protein_count="380" db="PFAM" dbkey="PF00051" name="Kringle"/>
+      <db_xref protein_count="333" db="PRINTS" dbkey="PR00018" name="KRINGLE"/>
+      <db_xref protein_count="376" db="PROSITE" dbkey="PS00021" name="KRINGLE_1"/>
+      <db_xref protein_count="378" db="PROFILE" dbkey="PS50070" name="KRINGLE_2"/>
+      <db_xref protein_count="380" db="SMART" dbkey="SM00130" name="KR"/>
+      <db_xref protein_count="359" db="GENE3D" dbkey="G3DSA:2.40.20.10" name="Kringle"/>
+    </member_list>
+    <external_doc_list>
+      <db_xref db="PANDIT" dbkey="PF00051"/>
+      <db_xref db="MSDsite" dbkey="PS00021"/>
+      <db_xref db="BLOCKS" dbkey="IPB000001"/>
+      <db_xref db="MEROPS" dbkey="S1"/>
+      <db_xref db="PROSITEDOC" dbkey="PDOC00020"/>
+    </external_doc_list>
+    <structure_db_links>
+      <db_xref db="PDB" dbkey="1a0h"/>
+      <db_xref db="PDB" dbkey="1b2i"/>
+      <db_xref db="CATH" dbkey="2.10.25.10.4"/>
+      <db_xref db="CATH" dbkey="2.40.20.10"/>
+      <db_xref db="SCOP" dbkey="g.14.1.1"/>
+    </structure_db_links>
+    <taxonomy_distribution>
+      <taxon_data name="Arthropoda" proteins_count="15"/>
+      <taxon_data name="Bacteria" proteins_count="1"/>
+      <taxon_data name="Caenorhabditis elegans" proteins_count="5"/>
+      <taxon_data name="Chordata" proteins_count="296"/>
+      <taxon_data name="Eukaryota" proteins_count="385"/>
+      <taxon_data name="Fruit Fly" proteins_count="3"/>
+      <taxon_data name="Green Plants" proteins_count="8"/>
+      <taxon_data name="Human" proteins_count="65"/>
+      <taxon_data name="Metazoa" proteins_count="362"/>
+      <taxon_data name="Nematoda" proteins_count="5"/>
+      <taxon_data name="Plastid Group" proteins_count="8"/>
+      <taxon_data name="Plastid Group" proteins_count="11"/>
+      <taxon_data name="Plastid Group" proteins_count="4"/>
+    </taxonomy_distribution>
+  </interpro>
+  <deleted_entries>
+    <del_ref id="IPR000002"/>
+    <del_ref id="IPR000051"/>
+  </deleted_entries>
+</interprodb>

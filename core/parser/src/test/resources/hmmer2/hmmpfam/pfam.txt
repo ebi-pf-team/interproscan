@@ -1,0 +1,1984 @@
+hmmpfam - search one or more sequences against HMM database
+HMMER 2.3.2 (Oct 2003)
+Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
+Freely distributed under the GNU General Public License (GPL)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HMM file:                 /ebi/sp/pro1/interpro/data/members/pfam/22/Pfam_fs.bin
+Sequence file:            data/5k.fasta
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query sequence: UPI000000001B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF03286.5 Pox virus Ag35 surface protein                 476.9   2.6e-140   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF03286.5   1/1       1   203 []     1   221 []   476.9 2.6e-140
+//
+
+Query sequence: UPI000000001C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+PF01028.11      Eukaryotic DNA topoisomerase I, catal   452.6   5.2e-133   1
+PF09266.1       Viral DNA topoisomerase I, N-terminal   137.4      4e-38   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+PF09266.1         1/1       4    61 ..     1    60 []   137.4    4e-38
+PF01028.11        1/1      63   305 ..     1   273 []   452.6 5.2e-133
+//
+
+Query sequence: UPI000000001D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF04701.4 Pox virus D2 protein                           292.1    2.2e-91   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF04701.4   1/1       4   135 ..     1   160 []   292.1  2.2e-91
+//
+
+Query sequence: UPI000000001E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF03293.5   Poxvirus DNA-directed RNA polymerase, 18    440.3   2.6e-129   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF03293.5     1/1       1   160 [.     1   160 []   440.3 2.6e-129
+//
+
+Query sequence: UPI000000001F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF03340.4 Poxvirus rifampicin resistance protein        1387.3          0   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF03340.4   1/1       5   548 ..     1   580 []  1387.3        0
+//
+
+Query sequence: UPI0000000020
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+PF04947.5     Poxvirus Late Transcription Factor VLTF   221.4    2.1e-63   1
+PF08792.1     A2L zinc ribbon domain                     49.2    6.3e-12   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+PF08792.1       1/1       1    32 [.     1    37 []    49.2  6.3e-12
+PF04947.5       1/1      35   201 ..     1   190 []   221.4  2.1e-63
+//
+
+Query sequence: UPI0000000021
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF05320.3      Poxvirus DNA-directed RNA polymerase 1   424.7   1.3e-124   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF05320.3        1/1       1   164 []     1   176 []   424.7 1.3e-124
+//
+
+Query sequence: UPI0000000022
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF05061.4 Poxvirus A11 Protein                           871.2     3e-291   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF05061.4   1/1       1   318 []     1   328 []   871.2   3e-291
+//
+
+Query sequence: UPI0000000023
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF05767.3 Poxvirus virion envelope protein A14           226.2    7.5e-65   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF05767.3   1/1       1    90 []     1    95 []   226.2  7.5e-65
+//
+
+Query sequence: UPI0000000024
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+PF05846.3     Chordopoxvirus A15 protein                220.0    5.6e-63   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+PF05846.3       1/1       1    90 [.     1    99 []   220.0  5.6e-63
+//
+
+Query sequence: UPI0000000025
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF05077.3 Protein of unknown function (DUF678)           179.8    2.6e-55   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF05077.3   1/1       1    76 [.     1    90 []   179.8  2.6e-55
+//
+
+Query sequence: UPI0000000026
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF05323.3 Poxvirus A21 Protein                           294.9    1.6e-85   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF05323.3   1/1       1   115 [.     1   118 []   294.9  1.6e-85
+//
+
+Query sequence: UPI0000000027
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+PF05718.3     Poxvirus intermediate transcription fac  1035.4          0   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+PF05718.3       1/1       1   381 [.     1   389 []  1035.4        0
+//
+
+Query sequence: UPI0000000028
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF04584.5 Poxvirus A28 family                            358.8   9.2e-105   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF04584.5   1/1       1   146 []     1   147 []   358.8 9.2e-105
+//
+
+Query sequence: UPI0000000029
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF06015.3      Chordopoxvirus A30L protein              171.3    8.4e-49   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF06015.3        1/1       1    77 []     1    79 []   171.3  8.4e-49
+//
+
+Query sequence: UPI000000002A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF05989.3      Chordopoxvirus A35R protein              379.9   8.3e-115   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF05989.3        1/1       1   171 [.     1   183 []   379.9 8.3e-115
+//
+
+Query sequence: UPI000000002B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+PF02223.8       Thymidylate kinase                      210.5    3.9e-60   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+PF02223.8         1/1       9   183 ..     1   200 []   210.5  3.9e-60
+//
+
+Query sequence: UPI000000002C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF07389.3 Protein of unknown function (DUF1500)          287.6    1.2e-85   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF07389.3   1/1       1    99 [.     1   100 []   287.6  1.2e-85
+//
+
+Query sequence: UPI000000002D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF03289.4 Poxvirus protein I1                             33.3      6e-09   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF03289.4   1/1       2    20 .]     1    19 [.    33.3    6e-09
+//
+
+Query sequence: UPI000000002E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+PF02346.7  Chordopoxvirus fusion protein                120.7      3e-45   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+PF02346.7    1/1      49   105 ..     1    57 []   120.7    3e-45
+//
+
+Query sequence: UPI000000002F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00219.9 Insulin-like growth factor binding protein     108.4    3.6e-30   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00219.9   1/1      40   100 ..     1    82 []   108.4  3.6e-30
+//
+
+Query sequence: UPI0000000030
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF01391.9 Collagen triple helix repeat (20 copies)       242.2    1.1e-69   7
+PF00092.19 von Willebrand factor type A domain            193.9    1.4e-60   2
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00092.19   1/2      21   162 ..    42   195 .]    69.1  1.7e-21
+PF01391.9   2/7     201   260 ..     1    60 []    49.1  2.7e-12
+PF01391.9   3/7     264   323 ..     1    60 []    48.5  3.8e-12
+PF01391.9   4/7     324   383 ..     1    60 []    38.1  2.3e-09
+PF01391.9   5/7     387   438 ..     1    52 [.    39.7  8.4e-10
+PF01391.9   7/7     455   514 ..     1    60 []    49.4  2.3e-12
+PF00092.19   2/2     539   710 ..     1   195 []   124.8  5.7e-39
+//
+
+Query sequence: UPI0000000031
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000032
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000033
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF00261.11  Tropomyosin                                  86.4    1.3e-23   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF00261.11    1/1       1    42 []    84   125 ..    86.4  1.3e-23
+//
+
+Query sequence: UPI0000000034
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000035
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00094.16 von Willebrand factor type D domain             41.8    2.9e-12   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00094.16   1/1       1    32 [.   136   167 .]    41.8  2.9e-12
+//
+
+Query sequence: UPI0000000036
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+PF00717.14    Peptidase S24-like                         89.6    7.2e-26   1
+PF01381.13    Helix-turn-helix                           65.5    3.7e-17   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+PF01381.13      1/1      10    64 ..     1    59 []    65.5  3.7e-17
+PF00717.14      1/1     127   200 ..     1    87 []    89.6  7.2e-26
+//
+
+Query sequence: UPI0000000037
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+PF05269.2 Bacteriophage CII protein                     229.9    5.7e-66   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+PF05269.2   1/1       1    91 [.     1    98 []   229.9  5.7e-66
+//
+
+Query sequence: UPI0000000038
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF01503.8 Phosphoribosyl-ATP pyrophosphohydrolase         63.0      1e-16   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF01503.8   1/1       1    46 []    47    94 ..    63.0    1e-16
+//
+
+Query sequence: UPI0000000039
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00125.15 Core histone H2A/H2B/H3/H4                      68.4    1.7e-18   1
+PF02969.8 TATA box binding protein associated factor (    18.1     0.0001   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00125.15   1/1      25    94 ..     1    75 []    68.4  1.7e-18
+PF02969.8   1/1      66    92 ..    39    66 .]    18.1   0.0001
+//
+
+Query sequence: UPI000000003D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000040
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+PF00033.10    Cytochrome b(N-terminal)/b6/petB          240.3    6.7e-75   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+PF00033.10      1/1       5   122 .]     1   131 [.   240.3  6.7e-75
+//
+
+Query sequence: UPI0000000041
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00235.10 Profilin                                        58.4    1.9e-16   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00235.10   1/1       1   105 [.    25   153 .]    58.4  1.9e-16
+//
+
+Query sequence: UPI0000000042
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF03489.8 Saposin-like type B, region 2                   31.9      1e-08   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF03489.8   1/1      54    88 .]     1    35 []    31.9    1e-08
+//
+
+Query sequence: UPI0000000043
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000044
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000045
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000046
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000047
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF01445.8 Viral small hydrophobic protein                128.0    8.4e-39   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF01445.8   1/1       1    57 []     1    57 []   128.0  8.4e-39
+//
+
+Query sequence: UPI0000000048
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00311.8 Phosphoenolpyruvate carboxylase                 92.2    3.2e-28   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00311.8   1/1      11    55 ..     1    45 [.    92.2  3.2e-28
+//
+
+Query sequence: UPI0000000049
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000004A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF02156.6      Glycosyl hydrolase family 26             705.5   3.8e-209   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF02156.6        1/1      30   348 ..     1   359 []   705.5 3.8e-209
+//
+
+Query sequence: UPI000000004B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000004C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF00704.19     Glycosyl hydrolases family 18            424.1     2e-124   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF00704.19       1/1      22   360 ..     1   391 []   424.1   2e-124
+//
+
+Query sequence: UPI000000004D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00179.17 Ubiquitin-conjugating enzyme                   272.3    9.8e-79   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00179.17   1/1       5   142 ..     1   165 []   272.3  9.8e-79
+//
+
+Query sequence: UPI000000004E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF03466.11     LysR substrate binding domain            138.8    2.9e-39   1
+PF00126.18     Bacterial regulatory helix-turn-helix     62.1    1.8e-15   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF00126.18       1/1       3    62 ..     1    68 []    62.1  1.8e-15
+PF03466.11       1/1      85   284 ..     1   213 []   138.8  2.9e-39
+//
+
+Query sequence: UPI000000004F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF08245.3    Mur ligase middle domain                   179.6    8.1e-51   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF08245.3      1/1     114   267 ..     1   200 [.   179.6  8.1e-51
+//
+
+Query sequence: UPI0000000050
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000051
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF05783.2 Dynein light intermediate chain (DLIC)         584.6   9.6e-173   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF05783.2   1/1       1   252 [.   255   525 .]   584.6 9.6e-173
+//
+
+Query sequence: UPI0000000052
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000053
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+PF00483.14      Nucleotidyl transferase                  33.1    3.7e-09   2
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+PF00483.14        1/2       5    56 ..     1    55 [.    24.7  8.2e-07
+//
+
+Query sequence: UPI0000000054
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00465.10 Iron-containing alcohol dehydrogenase          820.6   8.8e-244   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00465.10   1/1     457   854 ..     1   405 []   820.6 8.8e-244
+//
+
+Query sequence: UPI0000000055
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+PF00693.9 Thymidine kinase from herpesvirus             558.4   7.4e-165   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+PF00693.9   1/1      56   330 ..     1   297 []   558.4 7.4e-165
+//
+
+Query sequence: UPI0000000070
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF04335.4 VirB8 protein                                  233.7    4.3e-67   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF04335.4   1/1      58   225 ..     1   184 []   233.7  4.3e-67
+//
+
+Query sequence: UPI0000000071
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF03743.5 Bacterial conjugation TrbI-like protein        324.8   4.6e-101   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF03743.5   1/1     182   362 ..     1   202 []   324.8 4.6e-101
+//
+
+Query sequence: UPI0000000072
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF00072.15   Response regulator receiver domain         127.3    1.9e-38   1
+PF00486.19   Transcriptional regulatory protein, C te    63.3    6.2e-17   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF00072.15     1/1      14   126 ..     1   117 []   127.3  1.9e-38
+PF00486.19     1/1     163   239 ..     1    82 []    63.3  6.2e-17
+//
+
+Query sequence: UPI0000000073
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF07181.2 VirC2 protein                                  466.8   2.8e-137   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF07181.2   1/1       1   202 []     1   203 []   466.8 2.8e-137
+//
+
+Query sequence: UPI0000000074
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF07015.2 VirC1 protein                                  507.7   1.3e-149   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF07015.2   1/1      40   230 ..     1   191 []   507.7 1.3e-149
+//
+
+Query sequence: UPI0000000075
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF07328.2 T-DNA border endonuclease VirD1                398.6   9.5e-117   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF07328.2   1/1       1   147 []     1   147 []   398.6 9.5e-117
+//
+
+Query sequence: UPI0000000076
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000077
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF01745.7 Isopentenyl transferase                        517.3   1.7e-152   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF01745.7   1/1       1   235 [.     1   240 []   517.3 1.7e-152
+//
+
+Query sequence: UPI0000000078
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00491.12 Arginase family                                545.2   7.2e-161   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00491.12   1/1      17   316 ..     1   333 []   545.2 7.2e-161
+//
+
+Query sequence: UPI0000000079
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF01381.13 Helix-turn-helix                                67.2    1.3e-17   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF01381.13   1/1       7    61 ..     1    59 []    67.2  1.3e-17
+//
+
+Query sequence: UPI000000007A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF00501.19  AMP-binding enzyme                          269.3      8e-78   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF00501.19    1/1      64   283 ..     1   202 [.   269.3    8e-78
+//
+
+Query sequence: UPI000000007B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF00149.19  Calcineurin-like phosphoesterase            154.9    2.3e-43   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF00149.19    1/1      56   251 ..     1   124 []   154.9  2.3e-43
+//
+
+Query sequence: UPI000000007C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF02267.8      ADP-ribosyl cyclase                       42.4    7.9e-13   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF02267.8        1/1      59    81 .]     1    28 [.    42.4  7.9e-13
+//
+
+Query sequence: UPI000000007D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00001.12 7 transmembrane receptor (rhodopsin family)    109.7    1.3e-36   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00001.12   1/1      50   288 ..     1   272 []   109.7  1.3e-36
+//
+
+Query sequence: UPI000000007E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF00501.19  AMP-binding enzyme                          440.3   2.6e-129   1
+PF00550.16  Phosphopantetheine attachment site           55.2    2.1e-14   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF00501.19    1/1       1   334 [.    63   377 .]   440.3 2.6e-129
+PF00550.16    1/1     419   483 ..     1    68 []    55.2  2.1e-14
+//
+
+Query sequence: UPI000000007F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF00668.11   Condensation domain                        399.3   6.1e-117   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF00668.11     1/1      72   361 ..     1   324 []   399.3 6.1e-117
+//
+
+Query sequence: UPI0000000080
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF00250.9   Fork head domain                            251.9    1.4e-72   1
+PF08430.3   Forkhead N-terminal region                   59.9    4.1e-29   1
+PF09354.1   HNF3 C-terminal domain                       51.9    1.9e-13   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF08430.3     1/1       1    95 [.     9   161 .]    59.9  4.1e-29
+PF00250.9     1/1      96   191 ..     1   111 []   251.9  1.4e-72
+PF09354.1     1/1     282   320 ..     1    99 []    51.9  1.9e-13
+//
+
+Query sequence: UPI0000000081
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+PF00976.9       Corticotropin ACTH domain                96.2    4.2e-31   4
+PF08384.1       Pro-opiomelanocortin, N-terminal regi    96.9    6.5e-26   1
+PF08035.2       Opioids neuropeptide                     72.8    1.6e-21   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+PF08384.1         1/1      27    71 ..     1    45 []    96.9  6.5e-26
+PF00976.9         2/4     141   179 ..     1    41 []    72.9  1.9e-23
+PF08035.2         1/1     285   315 ..     1    31 []    72.8  1.6e-21
+//
+
+Query sequence: UPI0000000082
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+PF00274.10 Fructose-bisphosphate aldolase class-I       905.7   1.3e-272   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+PF00274.10   1/1      15   363 .]     1   350 []   905.7 1.3e-272
+//
+
+Query sequence: UPI0000000083
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF02234.10 Cyclin-dependent kinase inhibitor               77.1    4.8e-20   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF02234.10   1/1      18    68 ..     1    58 []    77.1  4.8e-20
+//
+
+Query sequence: UPI0000000084
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00125.15 Core histone H2A/H2B/H3/H4                      66.9    4.7e-18   1
+PF02969.8 TATA box binding protein associated factor (    15.5    0.00063   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00125.15   1/1      25    94 ..     1    75 []    66.9  4.7e-18
+PF02969.8   1/1      66    92 ..    39    66 .]    15.5  0.00063
+//
+
+Query sequence: UPI0000000085
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF03386.5 Early nodulin 93 ENOD93 protein                196.9    5.8e-57   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF03386.5   1/1      18    96 ..     1    79 []   196.9  5.8e-57
+//
+
+Query sequence: UPI0000000086
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000087
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000056
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00001.12 7 transmembrane receptor (rhodopsin family)    155.3      1e-51   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00001.12   1/1     401   648 ..     1   272 []   155.3    1e-51
+//
+
+Query sequence: UPI0000000057
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+PF00137.12 ATP synthase subunit C                       156.5    7.1e-44   2
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+PF00137.12   1/2      17    82 ..     1    70 []    61.5  3.5e-16
+PF00137.12   2/2      96   161 .]     1    70 []    95.1  1.8e-25
+//
+
+Query sequence: UPI0000000058
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF01287.11 Eukaryotic initiation factor 5A hypusine, DN    27.6    7.3e-07   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF01287.11   1/1       1    28 [.    44    72 .]    27.6  7.3e-07
+//
+
+Query sequence: UPI0000000059
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00739.10 Trans-activation protein X                     374.6   1.6e-109   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00739.10   1/1       1   142 [.     1   145 []   374.6 1.6e-109
+//
+
+Query sequence: UPI000000005A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000005B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00048.11 Small cytokines (intecrine/chemokine), inter    62.7    9.5e-18   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00048.11   1/1      22    87 ..     1    70 []    62.7  9.5e-18
+//
+
+Query sequence: UPI000000005C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+PF05588.2       Clostridium botulinum HA-17 protein     379.6   4.1e-115   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+PF05588.2         1/1       1   146 []     1   150 []   379.6 4.1e-115
+//
+
+Query sequence: UPI000000005D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF03505.5   Clostridium enterotoxin                     470.1   2.9e-138   2
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF03505.5     1/2      75   161 ..    39   130 ..    18.7  3.6e-05
+PF03505.5     2/2     227   423 ..     1   198 []   451.4 1.3e-132
+//
+
+Query sequence: UPI000000005E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF07716.6 Basic region leucine zipper                     69.9    4.5e-18   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF07716.6   1/1      61   114 ..     1    57 []    69.9  4.5e-18
+//
+
+Query sequence: UPI000000005F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00788.14 Ras association (RalGDS/AF-6) domain            51.4    6.5e-13   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00788.14   1/1       1    80 [.     9    97 .]    51.4  6.5e-13
+//
+
+Query sequence: UPI0000000060
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF00657.13  GDSL-like Lipase/Acylhydrolase              191.9    1.1e-56   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF00657.13    1/1     147   406 ..     1   370 []   191.9  1.1e-56
+//
+
+Query sequence: UPI0000000061
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF00139.10  Legume lectin domain                        324.3    2.2e-94   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF00139.10    1/1      33   264 ..     1   268 []   324.3  2.2e-94
+//
+
+Query sequence: UPI0000000062
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+PF06677.3     Sjogren's syndrome/scleroderma autoanti    72.5    7.8e-22   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+PF06677.3       1/1      33    74 ..     1    42 []    72.5  7.8e-22
+//
+
+Query sequence: UPI0000000063
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000064
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00048.11 Small cytokines (intecrine/chemokine), inter    90.3    7.7e-26   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00048.11   1/1      25    90 ..     1    70 []    90.3  7.7e-26
+//
+
+Query sequence: UPI0000000065
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000066
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+PF00900.11    Ribosomal family S4e                      157.3    1.2e-44   1
+PF08071.3     RS4NT (NUC023) domain                      83.3    7.6e-22   1
+PF00467.20    KOW motif                                  30.3    1.9e-07   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+PF08071.3       1/1       3    40 ..     1    38 []    83.3  7.6e-22
+PF00900.11      1/1      94   170 ..     1    85 []   157.3  1.2e-44
+PF00467.20      1/1     177   211 ..     1    38 []    30.3  1.9e-07
+//
+
+Query sequence: UPI0000000067
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00125.15 Core histone H2A/H2B/H3/H4                     138.1    2.5e-38   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00125.15   1/1      58   132 ..     1    75 []   138.1  2.5e-38
+//
+
+Query sequence: UPI0000000068
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF00861.13     Ribosomal L18p/L5e family                228.0    2.2e-65   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF00861.13       1/1       1   127 [.    22   145 .]   228.0  2.2e-65
+//
+
+Query sequence: UPI0000000069
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF01425.12 Amidase                                        589.5   3.3e-174   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF01425.12   1/1      42   491 ..     1   512 []   589.5 3.3e-174
+//
+
+Query sequence: UPI000000006A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF00528.13   Binding-protein-dependent transport syst    76.7    3.5e-20   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF00528.13     1/1      13   228 ..     1   268 []    76.7  3.5e-20
+//
+
+Query sequence: UPI000000006B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF00528.13   Binding-protein-dependent transport syst    68.4      6e-18   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF00528.13     1/1      17   231 ..     1   268 []    68.4    6e-18
+//
+
+Query sequence: UPI000000006C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF01745.7 Isopentenyl transferase                        568.3   7.9e-168   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF01745.7   1/1       1   232 [.     1   240 []   568.3 7.9e-168
+//
+
+Query sequence: UPI000000006D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF04956.4 TrbC/VIRB2 family                               94.0      3e-25   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF04956.4   1/1      41   117 ..     1    82 []    94.0    3e-25
+//
+
+Query sequence: UPI000000006E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000006F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF07269.2 VirB7 protein                                  136.2    9.6e-38   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF07269.2   1/1       1    52 [.     1    52 []   136.2  9.6e-38
+//
+
+Query sequence: UPI0000000001
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+PF02442.8  L1L/F9/C19 pox virus orf family              467.9   1.3e-137   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+PF02442.8    1/1       3   234 ..     1   237 []   467.9 1.3e-137
+//
+
+Query sequence: UPI0000000002
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF05966.3      Chordopoxvirus A33R protein              413.5   2.5e-137   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF05966.3        1/1       1   185 []     1   198 []   413.5 2.5e-137
+//
+
+Query sequence: UPI0000000003
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF03003.7 Poxvirus proteins of unknown function          238.7    1.3e-68   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF03003.7   1/1       1   131 [.     1   140 []   238.7  1.3e-68
+//
+
+Query sequence: UPI0000000004
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+PF00194.12     Eukaryotic-type carbonic anhydrase       182.8    7.1e-53   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+PF00194.12       1/1       6   220 ..    37   266 ..   182.8  7.1e-53
+//
+
+Query sequence: UPI0000000005
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF03341.4    Poxvirus mRNA capping enzyme, small subu   842.3   2.6e-250   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF03341.4      1/1       1   287 []     1   287 []   842.3 2.6e-250
+//
+
+Query sequence: UPI0000000006
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF06193.2    Orthopoxvirus A5L protein                  802.6   2.3e-238   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF06193.2      1/1       1   281 []     1   282 []   802.6 2.3e-238
+//
+
+Query sequence: UPI0000000007
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF06225.4 Poxvirus A4/B15 family                         198.3    1.8e-56   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF06225.4   1/1      14   145 ..     1   149 []   198.3  1.8e-56
+//
+
+Query sequence: UPI0000000008
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF00692.10 dUTPase                                        215.7    1.1e-61   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF00692.10   1/1      17   145 ..     1   137 []   215.7  1.1e-61
+//
+
+Query sequence: UPI0000000009
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+PF06601.3   Orthopoxvirus F6 protein                    201.9    1.5e-57   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+PF06601.3     1/1       1    72 [.     1    72 []   201.9  1.5e-57
+//
+
+Query sequence: UPI000000000A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+PF02442.8  L1L/F9/C19 pox virus orf family              427.1   2.5e-125   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+PF02442.8    1/1       3   212 .]     1   237 []   427.1 2.5e-125
+//
+
+Query sequence: UPI000000000B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000000C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF04805.3 E10-like protein conserved region              179.3      2e-51   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF04805.3   1/1      26    95 .]     1    70 []   179.3    2e-51
+//
+
+Query sequence: UPI000000000D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+PF06138.3     Chordopoxvirus E11 protein                300.3    1.3e-94   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+PF06138.3       1/1       1   124 [.     1   131 []   300.3  1.3e-94
+//
+
+Query sequence: UPI000000000E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF00462.15   Glutaredoxin                                61.8    3.2e-17   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF00462.15     1/1      15    80 ..     1    82 []    61.8  3.2e-17
+//
+
+Query sequence: UPI000000000F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000010
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+PF02867.6       Ribonucleotide reductase, barrel doma  1187.5          0   1
+PF00317.12      Ribonucleotide reductase, all-alpha d   132.3    1.2e-38   1
+PF03477.7       ATP cone domain                          85.1    2.3e-22   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+PF03477.7         1/1       1    91 [.     1   104 []    85.1  2.3e-22
+PF00317.12        1/1     141   213 ..     1   102 []   132.3  1.2e-38
+PF02867.6         1/1     215   741 ..     1   601 []  1187.5        0
+//
+
+Query sequence: UPI0000000011
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF04713.3 Poxvirus protein I5                            160.6    1.4e-46   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF04713.3   1/1       1    77 [.     1    78 []   160.6  1.4e-46
+//
+
+Query sequence: UPI0000000012
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+PF04595.4 Poxvirus I6-like family                        712.2   3.8e-211   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF04595.4   1/1      29   345 ..     1   355 []   712.2 3.8e-211
+//
+
+Query sequence: UPI0000000013
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF06129.3    Chordopoxvirus G3 protein                  253.6    3.6e-88   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF06129.3      1/1       2   111 .]     1   110 []   253.6  3.6e-88
+//
+
+Query sequence: UPI0000000014
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+PF05796.3    Chordopoxvirus protein G2                  520.2   1.6e-153   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+PF05796.3      1/1       1   220 []     1   249 []   520.2 1.6e-153
+//

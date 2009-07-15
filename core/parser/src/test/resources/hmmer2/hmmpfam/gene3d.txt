@@ -1,0 +1,1707 @@
+hmmpfam - search one or more sequences against HMM database
+HMMER 2.3.2 (Oct 2003)
+Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
+Freely distributed under the GNU General Public License (GPL)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HMM file:                 /ebi/sp/pro1/interpro/data/members/gene3d/3.1.0/CATH.v3.1.hmm.lib
+Sequence file:            data/5k.fasta
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query sequence: UPI000000001B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000001C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1a31A03                                                 163.8    4.3e-50   1
+1a41001                                                 139.7    8.3e-41   1
+1vcc000                                                 120.2    1.2e-33   1
+1a41002                                                 109.8    2.6e-30   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1vcc000    1/1       1    77 [.     1    77 []   120.2  1.2e-33
+1a31A03    1/1      72   215 ..     1   150 []   163.8  4.3e-50
+1a41001    1/1      81   216 ..     1   136 []   139.7  8.3e-41
+1a41002    1/1     217   314 .]     1    98 []   109.8  2.6e-30
+
+Alignments of top-scoring domains:
+1vcc000: domain 1 of 1, from 1 to 77: score 120.2, E = 1.2e-33
+                   *->lralllkdgklfldkeleilvpldnptyeilkkvkiPshltdvvvye
+                      +ral++kdgklf+d+++ ++v++dnp+ye+l++vkiP+hltdvvvye
+  UPI0000000     1    MRALFYKDGKLFTDNNFLNPVSDDNPAYEVLQHVKIPTHLTDVVVYE 47   
+
+                   qtleealnglifvGldskgrkqyfyGklhv<-*
+                   qt+eeal++lifvG+dskgr+qyfyGk+hv   
+  UPI0000000    48 QTWEEALTRLIFVGSDSKGRRQYFYGKMHV    77   
+
+1a31A03: domain 1 of 1, from 72 to 215: score 163.8, E = 4.3e-50
+                   *->ygsklkgerdlekfekarrlknvldkiradiekdlksee.mverqlA
+                      yg+++++ r+++++++++r++nv+++i+++i+k++k+++++  +qlA
+  UPI0000000    72    YGKMHVQNRNAKRDRIFVRVYNVMKRINCFINKNIKKSStDSNYQLA 118  
+
+                   valylidklalRvGnekyagdendtvGlltLrvehitlleeldgsdnvil
+                   v++++++++++R+G++ky+ +en+tvGlltL+++hi++      s+++i+
+  UPI0000000   119 VFMLMETMFFIRFGKMKYL-KENETVGLLTLKNKHIEI------SPDEIV 161  
+
+                   ldFlGkdsirylftvevdkrlyknLlllldnkkpdddlfdrlsesklnkl
+                   ++F+Gkd++ ++f+v++++rlyk+Ll+l+d+++p+++lf++lse+k++++
+  UPI0000000   162 IKFVGKDKVSHEFVVHKSNRLYKPLLKLTDDSSPEEFLFNKLSERKVYEC 211  
+
+                   lkel<-*
+                   +k++   
+  UPI0000000   212 IKQF    215  
+
+1a41001: domain 1 of 1, from 81 to 216: score 139.7, E = 8.3e-41
+                   *->daekferllelgkalpkirkrvekdlksegldlervlAvavllldll
+                      +a++ ++++++++++++i+ +++k++k+++ d +++lAv++l+++++
+  UPI0000000    81    NAKRDRIFVRVYNVMKRINCFINKNIKKSSTDSNYQLAVFMLMETMF 127  
+
+                   alRvGnekyakendtvGltTLrveHvtlegnvvlldFlGKdgvrheleve
+                   ++R G++ky+ken+tvGl+TL+++H+++++++++++F+GKd+v he+ v+
+  UPI0000000   128 FIRFGKMKYLKENETVGLLTLKNKHIEISPDEIVIKFVGKDKVSHEFVVH 177  
+
+                   vdkrlaklllrlldeklpgdeLfdyldedgllkllksll<-*
+                   +++rl+k+ll+l+d+  p+++Lf++l+e+++++ +k++    
+  UPI0000000   178 KSNRLYKPLLKLTDDSSPEEFLFNKLSERKVYECIKQFG    216  
+
+1a41002: domain 1 of 1, from 217 to 314: score 109.8, E = 2.6e-30
+                   *->ftaKdfRTwggtvlallalasnvesleslksakklivavvkevAell
+                      +++Kd+RT+g+++++l+++++nv+s+++l+s kkli++++k++Ae++
+  UPI0000000   217    IRIKDLRTYGVNYTFLYNFWTNVKSISPLPSPKKLIALTIKQTAEVV 263  
+
+                   GnTPavarkaYiaplvlelledgellellkdrsfdellellldllkdvld
+                   G+TP+++++aY+a ++le+++d+++l+++ +++fde+l++++d++k+++d
+  UPI0000000   264 GHTPSISKRAYMATTILEMVKDKNFLDVVSKTTFDEFLSIVVDHVKSSTD 313  
+
+                   e<-*
+                       
+  UPI0000000   314 G    314  
+
+//
+
+Query sequence: UPI000000001D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000001E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000001F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000020
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000021
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000022
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000023
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000024
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000025
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000026
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000027
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000028
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000029
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000002A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000002B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1nn3A00                                                 144.5    4.1e-41   1
+1gtvA00                                                 127.4    3.8e-38   1
+4tmkA00                                                 122.3    7.6e-35   1
+1zm7B00                                                  36.7    9.5e-11   1
+1p5zB00                                                  29.8    1.4e-07   1
+1z83A00                                                  23.6    1.6e-05   1
+1zakA00                                                  21.0    2.8e-05   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1nn3A00    1/1       1   204 []     1   215 []   144.5  4.1e-41
+1z83A00    1/1       1   193 [.     1   196 []    23.6  1.6e-05
+1zm7B00    1/1       1   177 [.     1   209 []    36.7  9.5e-11
+1zakA00    1/1       1   195 [.     1   222 []    21.0  2.8e-05
+4tmkA00    1/1       2   197 ..     1   213 []   122.3  7.6e-35
+1p5zB00    1/1       3   196 ..     1   241 []    29.8  1.4e-07
+1gtvA00    1/1       5   191 ..     1   214 []   127.4  3.8e-38
+
+Alignments of top-scoring domains:
+1nn3A00: domain 1 of 1, from 1 to 204: score 144.5, E = 4.1e-41
+                   *->llllllrrgllIvleGidGaGKsTqarlLaerlealglsvvltrepg
+                           + rg+lIv+eG+d +GK+Tq+  ++e ++a      ++++p+
+  UPI0000000     1    -----MSRGALIVFEGLDKSGKTTQCMNIMESIPAN--TIKYLNFPQ 40   
+
+                   rgtplgelirellldgellddlaelllfaadraehlelilpalaagkivi
+                   r+t+ g++i+++l+++++ +d++  llf a+r+e  + i++ l++g+++i
+  UPI0000000    41 RSTVTGKMIDDYLTRKKTYNDHIVNLLFCANRWEFASFIQEQLEQGITLI 90   
+
+                   lDRyidsslayqgagrgldldwllqlelglpkPdltllLdvdpevaleRl
+                   +DRy++s++ay++a+ g+++ + +++e glpkPdl+++L+   +++ + +
+  UPI0000000    91 VDRYAFSGVAYAAAK-GASMTLSKSYESGLPKPDLVIFLESGSKEINRNV 139  
+
+                   rarrieyedleflervreaylelaaeeplrivvidasqsleevaaeilei
+                   +   + yed+ f+++v++ y ++++e ++++ +i    + +   + i++i
+  UPI0000000   140 G--EEIYEDVTFQQKVLQEYKKMIEEGDIHWQIISSEFEEDVKKELIKNI 187  
+
+                   leellerrlrrllllllv<-*
+                   + e ++++++ ++ l++    
+  UPI0000000   188 VIEAIHTVTGPVGQLWM-    204  
+
+1z83A00: domain 1 of 1, from 1 to 193: score 23.6, E = 1.6e-05
+                   *->llelllkkplvivilGppGsGKsTlaklLaeklglvhistgdllrea
+                           + ++ +iv+ G   sGK+T++  ++e      i     + ++
+  UPI0000000     1    -----MSRGALIVFEGLDKSGKTTQCMNIMESIPANTIK----YLNF 38   
+
+                   vaggtelgelikeildegelvpdei.......vielllerlrealaaggg
+                    ++ t++g++i ++l + +  +d+i++    + +  + ++++e l++g  
+  UPI0000000    39 PQRSTVTGKMIDDYLTRKKTYNDHIvnllfcaNRWEFASFIQEQLEQGIT 88   
+
+                   vildgfprt...........igqaealeelgpkpdlvifLdasdevlleR
+                   +i+d++  + +++++++ + +   + +e+ +pkpdlvifL+   +++ + 
+  UPI0000000    89 LIVDRYAFSgvayaaakgasMTLSKSYESGLPKPDLVIFLESGSKEINRN 138  
+
+                   llkrgispgrlddneetikkrlevyrdltrpllelykaadalviidgdls
+                   + ++ +      +++ + +k+l++y+++++      +    + ii+++ +
+  UPI0000000   139 VGEEIY------EDVTFQQKVLQEYKKMIE------EGDIHWQIISSEFE 176  
+
+                   ieevveeilaildellk<-*
+                    +   e i++i+ e ++   
+  UPI0000000   177 EDVKKELIKNIVIEAIH    193  
+
+1zm7B00: domain 1 of 1, from 1 to 177: score 36.7, E = 9.5e-11
+                   *->lllllvlllsttlllllkkpllIaieGniGaGKTTlaklLaellgdv
+                                      + ++ lI++eG + +GKTT++  ++e ++  
+  UPI0000000     1    ----------------MSRGALIVFEGLDKSGKTTQCMNIMESIPAN 31   
+
+                   lvlrepvdywenvegnpllelfykdpsrwafalqllfllsrleqllellr
+                   ++          v g  + +++ ++   + +   llf+++r+e  + +++
+  UPI0000000    32 TIKYLNFPQRSTVTGKMIDDYLTRKKTYNDHIVNLLFCANRWEFASFIQE 81   
+
+                   ....gqvvildRsiysdylifalalfeqgtlselevdlyeelldllleel
+                   + ++g  +i+dR+ +s +++ a     + + +              +e+ 
+  UPI0000000    82 qleqGITLIVDRYAFSGVAYAAAKGASMTLSK-------------SYESG 118  
+
+                   alkpdlviyLdvspevlleRikkRgrseEkvisleyleklheaYeewlle
+                   ++kpdlvi+L+   ++      +R+ +eE ++++ + +k+ + Y+++++e
+  UPI0000000   119 LPKPDLVIFLESGSKE-----INRNVGEEIYEDVTFQQKVLQEYKKMIEE 163  
+
+                   ykllqpapvlvidade<-*
+                    ++  +  ++  + +e   
+  UPI0000000   164 GDI--HWQIISSEFEE    177  
+
+1zakA00: domain 1 of 1, from 1 to 195: score 21.0, E = 2.8e-05
+                   *->llskplrivilGppgsGKgTlaklLaekyglphlstgdllreaiage
+                       +s++ +iv+ G   sGK+T++  ++e  +   +     + +  ++ 
+  UPI0000000     1    -MSRGALIVFEGLDKSGKTTQCMNIMESIPANTI----KYLNFPQRS 42   
+
+                   telgeeikelidegelvpdelv.......igllkerleeldakgkgfiLD
+                   t +g++i +++ + +  +d++v+    +++    ++++e + +g   i+D
+  UPI0000000    43 TVTGKMIDDYLTRKKTYNDHIVnllfcanRWEFASFIQEQLEQGITLIVD 92   
+
+                   GfPrtleqaealeell.............pdpdlvifLdvsdevlleRll
+                          ++ +  ++++ ++  + ++   p+pdlvifL+   +++ + + 
+  UPI0000000    93 R--YAFSGVAYAAAKGasmtlsksyesglPKPDLVIFLESGSKEINRNVG 140  
+
+                   grridpvsgrvyhllfnppkddelgerlvgrdddneevikkrlevyreet
+                   ++                               ++  + +k l++y++ +
+  UPI0000000   141 EE-----------------------------IYEDVTFQQKVLQEYKKMI 161  
+
+                   aplleyydgvlvnidgdlsieevfeiilaildklllklaalllkl<-*
+                   +    + + +  +++ d   e + +i++++++++              
+  UPI0000000   162 EEGDIHWQIISSEFEEDVKKELIKNIVIEAIHTV-----------    195  
+
+4tmkA00: domain 1 of 1, from 2 to 197: score 122.3, E = 7.6e-35
+                   *->mrgkfIvleGldGaGKtTqaklLaerlealgisvlvltrepggtplg
+                       rg +Iv+eGld +GKtTq+  ++e  +a  i++  l ++ ++t  g
+  UPI0000000     2    SRGALIVFEGLDKSGKTTQCMNIMESIPANTIKY--LNFPQRSTVTG 46   
+
+                   elirellldgllvsdelldpltelllfaadraqhlaevikpalaagkiVi
+                   ++i+++l ++       ++++++ llf a+r++ +a  i++ l++g+++i
+  UPI0000000    47 KMIDDYLTRK-----KTYNDHIVNLLFCANRWE-FASFIQEQLEQGITLI 90   
+
+                   lDRyidsslayqgagrgldlelllelnslalgllkPdlvlyLdvdpeval
+                   +DRy++s++ay +a+ g ++ l ++++s   gl+kPdlv++L+   +++ 
+  UPI0000000    91 VDRYAFSGVAYAAAK-GASMTLSKSYES---GLPKPDLVIFLESGSKEIN 136  
+
+                   eRilkrggldreeledleflervreaylelaeeyp.rilvidasqsleev
+                   +       ++ e++ed+ f+++v + y +++ee ++++ +i  + + +  
+  UPI0000000   137 RN------VGEEIYEDVTFQQKVLQEYKKMIEEGDiHWQIISSEFEEDVK 180  
+
+                   aaeilelleellkllll<-*
+                    + i++++ e ++++++   
+  UPI0000000   181 KELIKNIVIEAIHTVTG    197  
+
+1p5zB00: domain 1 of 1, from 3 to 196: score 29.8, E = 1.4e-07
+                   *->kskfIvieGniGaGKttllklLaellgevlvleePvdkwtnvtgngl
+                      ++ +Iv+eG + +GKtt++  ++e  +                ++  
+  UPI0000000     3    RGALIVFEGLDKSGKTTQCMNIMESIP---------------ANTIK 34   
+
+                   lirelllelvednpllelfyedpkrwaftfqlyfllsrleqlldalkpll
+                   ++  +  + v ++ + +++ ++ +       l+f+++r+e    ++++l 
+  UPI0000000    35 YLNFPQRSTVTGKMIDDYLTRKKTYNDHIVNLLFCANRWEFASFIQEQL- 83   
+
+                   lestgkvvildRsiysdllifaellfaqgllselefdlylelfdallkel
+                     + g   i+dR+ +s    +a +  a+++ls           +   ++l
+  UPI0000000    84 --EQGITLIVDRYAFSGV-AYAAAKGASMTLS-----------KSYESGL 119  
+
+                   eglpkpdliiYLdaspetlleRikkRgreeEqnisleYlekLheaYeewl
+                      pkpdl+i+L+   ++       R+  eE ++++ + +k+ + Y++ +
+  UPI0000000   120 ---PKPDLVIFLESGSKE-----INRNVGEEIYEDVTFQQKVLQEYKKMI 161  
+
+                   leylllllfellqpapvlvidan.ldfvevledieelleeilefl<-*
+                    e           ++   +i  + ++ v+ +     ++e i+ +    
+  UPI0000000   162 EEG----------DIHWQIISSEfEEDVKKELIKNIVIEAIHTVT    196  
+
+1gtvA00: domain 1 of 1, from 5 to 191: score 127.4, E = 3.8e-38
+                   *->llIvieGldGaGKtTlielLaealkarglsvvltrepgrgtplgeai
+                       lIv+eGld +GKtT++  + e ++a    ++++++p r+t++g++i
+  UPI0000000     5    ALIVFEGLDKSGKTTQCMNIMESIPAN--TIKYLNFPQRSTVTGKMI 49   
+
+                   rqlllsgkggdlrldpltelllfaadraehlevilpalargdvVilDRyl
+                   +++l+ +     +++++++ llf a+r+e ++ i++ l++g ++i+DRy+
+  UPI0000000    50 DDYLTRK----KTYNDHIVNLLFCANRWEFASFIQEQLEQGITLIVDRYA 95   
+
+                   dstlayqgagllhtkrgldlelllllevialglpkPdltllLdldpeval
+                   +s++ay++a+      g  + l + +e    glpkPdl+++L    +++ 
+  UPI0000000    96 FSGVAYAAAK------GASMTLSKSYES---GLPKPDLVIFLESGSKEIN 136  
+
+                   eRlrarglalggrgldrfeedleflervreaylelaaeleperivvidas
+                   +          ++g++++e d++f+++v + y+++++e  ++++ +i  +
+  UPI0000000   137 R----------NVGEEIYE-DVTFQQKVLQEYKKMIEE-GDIHWQIISSE 174  
+
+                   qsleevlaeilelieel<-*
+                    + ++  + i+++++e    
+  UPI0000000   175 FEEDVKKELIKNIVIEA    191  
+
+//
+
+Query sequence: UPI000000002C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000002D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000002E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000002F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1h59B00                                                  55.6    9.7e-15   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1h59B00    1/1      74   127 ..     1    54 []    55.6  9.7e-15
+
+Alignments of top-scoring domains:
+1h59B00: domain 1 of 1, from 74 to 127: score 55.6, E = 9.7e-15
+                   *->CalaegepcGvytarCasGlrClpkpgeerPlqalleGrGvCleasd
+                      Ca++ege+cGvy +rCa+ lrC+p+pg+e+Pl+al+ G G+C +++ 
+  UPI0000000    74    CARQEGEACGVYIPRCAQTLRCYPNPGSELPLKALVTGAGTCEKRRV 120  
+
+                   leeleee<-*
+                       ++    
+  UPI0000000   121 GATPQQV    127  
+
+//
+
+Query sequence: UPI0000000030
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1q0pA00                                                 203.8    1.6e-58   2
+1mf7A00                                                 174.0    2.8e-53   2
+1ijbA00                                                 190.7      4e-53   2
+1pt6A00                                                 178.2    2.3e-49   2
+1mjnA00                                                 165.6    6.6e-48   2
+1atzB00                                                 168.0    9.4e-47   2
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1mf7A00    1/2       1   171 [.    28   194 .]    69.8  7.4e-21
+1atzB00    1/2       1   163 [.    32   189 .]    63.0  7.3e-17
+1q0pA00    1/2       1   162 [.    42   223 .]    84.0  1.4e-23
+1mjnA00    1/2      19   162 ..    39   179 .]    55.6  2.3e-15
+1ijbA00    1/2      19   173 ..    52   202 .]    74.0    1e-19
+1pt6A00    1/2      21   179 ..    46   213 .]    67.3  6.9e-18
+1q0pA00    2/2     523   717 ..     1   223 []   119.8  4.8e-34
+1ijbA00    2/2     525   716 ..     1   202 []   116.6  1.2e-31
+1pt6A00    2/2     526   716 ..     1   185 [.   110.8  4.4e-30
+1mf7A00    2/2     528   701 ..     1   194 []   104.2  1.5e-31
+1atzB00    2/2     528   716 ..     1   173 [.   105.0    8e-29
+1mjnA00    2/2     536   704 ..     1   179 []   110.0  1.9e-31
+
+Alignments of top-scoring domains:
+1mf7A00: domain 1 of 2, from 1 to 171: score 69.8, E = 7.4e-21
+                   *->dfllsllesldigp....vrvglvqyssdvrvefplndyknkeelle
+                      +f+++l +++  +++ +++ +g ++ys+ v+++ pl+  ++k+  l 
+  UPI0000000     1    RFIEKLENEVYQNQvsitWMFGGLHYSDVVEIYSPLT--RSKDTYLT 45   
+
+                   avknirylgggtntgaALkfalenlfsssagsrpgapkvlvllTdGestd
+                    ++ irylg gt+t +A+  +++++ s++  +r+  +k++v++TdG+ t+
+  UPI0000000    46 KLRAIRYLGRGTFTDCAISNMTQQFQSQT--ARD--VKFAVVITDGHVTG 91   
+
+                   dvld.leeaaeelrdagvtvfaigvgdavldrldleelrliaslpggehv
+                   ++++ ++  ae++rd+g+++fa++  ++v     ++ lr+ias+p++ ++
+  UPI0000000    92 SPCGgMKMQAERARDMGIKLFAVAPSEDV----YEQGLREIASPPHDLYR 137  
+
+                   flve.........dfdeledildelldkicslvg<-*
+                    +++++ +++ ++d +++e+i++ + +  ++++    
+  UPI0000000   138 SNYTitpkdalhiDENTIERIIKAMKHEAYAECY    171  
+
+1atzB00: domain 1 of 2, from 1 to 163: score 63.0, E = 7.3e-17
+                   *->slvdrl..digpdg....trvglvqyssdvrvefslndyqsksellq
+                      +++++l++++ ++++ +++ +g ++ys+ v ++ +l+   sk+  l 
+  UPI0000000     1    RFIEKLenEVYQNQvsitWMFGGLHYSDVVEIYSPLTR--SKDTYLT 45   
+
+                   aidnlkylgggtntgaALkfalenlfsesagarpgvpkvlvvltdge...
+                   +++ ++ylg gt+t++A++ +++++ s++    +  +k++vv+tdg+++ 
+  UPI0000000    46 KLRAIRYLGRGTFTDCAISNMTQQFQSQT----ARDVKFAVVITDGHvtg 91   
+
+                   .sqddvleaaeelrdkgvtvfavgvgddadleelreiasdplenhvflvs
+                    ++++++  ae++rd g+++fav+ ++d+ ++ lreias+p++ +  +++
+  UPI0000000    92 sPCGGMKMQAERARDMGIKLFAVAPSEDVYEQGLREIASPPHDLYRSNYT 141  
+
+                   .dfdeledildrlvekicdlvp<-*
+                   + + +  +i ++ +e+i++ ++   
+  UPI0000000   142 iTPKDALHIDENTIERIIKAMK    163  
+
+1q0pA00: domain 1 of 2, from 1 to 162: score 84.0, E = 1.4e-23
+                   *->klidrl......digpdnvrvglvqyssdvrvefslndyksksksel
+                      ++i++l+++++++  +  + +g ++ys+ v+++ +l+    +sk+  
+  UPI0000000     1    RFIEKLenevyqNQVSITWMFGGLHYSDVVEIYSPLT----RSKDTY 43   
+
+                   lqaidnlkykllelgggtntgaALkyalenlfsssagsrlaregvpkvvi
+                   l ++++++y    lg+gt+t++A++ ++++++s++a++        k+++
+  UPI0000000    44 LTKLRAIRY----LGRGTFTDCAISNMTQQFQSQTARDV-------KFAV 82   
+
+                   llTdGlsndggsplpllekirdlldveeaakelreagitvfvigvgddad
+                   ++TdG+ ++  sp++         +++  a+++r+ gi++f+++ ++d++
+  UPI0000000    83 VITDGHVTG--SPCG---------GMKMQAERARDMGIKLFAVAPSEDVY 121  
+
+                   leeLreiasgpggeyhvflvedfdeleeildklidklcglv<-*
+                   ++ Lreias+p++ y+  +    ++  +i ++ i+++++ +   
+  UPI0000000   122 EQGLREIASPPHDLYRSNYTITPKDALHIDENTIERIIKAM    162  
+
+1mjnA00: domain 1 of 2, from 19 to 162: score 55.6, E = 2.3e-15
+                   *->vrvglvqyssevrlefslndysskeelleaidnlkylgggtntglAL
+                      + +g ++ys+ v ++ +l+  +sk+++l +++ ++ylg gt+t +A+
+  UPI0000000    19    WMFGGLHYSDVVEIYSPLT--RSKDTYLTKLRAIRYLGRGTFTDCAI 63   
+
+                   kyalellfsesagarpgapkvlvllTdGesqdd........akelrkkgv
+                     +++++ s++  ar+   k++v++TdG+ +++    ++++a+++r++g+
+  UPI0000000    64 SNMTQQFQSQT--ARDV--KFAVVITDGHVTGSpcggmkmqAERARDMGI 109  
+
+                   tvfaigvgdavleeldleelreiasepgeehvflv.....ddfdeledll
+                   ++fa++ +++v     ++ lreias+p++ +  +++++ +d  +  e+ +
+  UPI0000000   110 KLFAVAPSEDV----YEQGLREIASPPHDLYRSNYtitpkDALHIDENTI 155  
+
+                   delldki<-*
+                   +++++ +   
+  UPI0000000   156 ERIIKAM    162  
+
+1ijbA00: domain 1 of 2, from 19 to 173: score 74.0, E = 1e-19
+                   *->vrvgvvqysdevkvefslndyksksellkairnlkylgggvtntglA
+                      + +g ++ysd v+++ +l+  +sk+  l ++r ++ylg g t+t++A
+  UPI0000000    19    WMFGGLHYSDVVEIYSPLT--RSKDTYLTKLRAIRYLGRG-TFTDCA 62   
+
+                   Lkyvlenvfskgsrpgvpkvlvlltdgesqddvleslleaalelrdkgvt
+                   +  +++++ s+++r+   k++v++tdg+ +++++++++  a+++rd g++
+  UPI0000000    63 ISNMTQQFQSQTARD--VKFAVVITDGHVTGSPCGGMKMQAERARDMGIK 110  
+
+                   lfavgvgddadleelrliasdpselhvflvs.........dfdeledilk
+                   lfav+ ++d+ ++ lr+ias+p++l+  +++++ +++ ++d +++e+i+k
+  UPI0000000   111 LFAVAPSEDVYEQGLREIASPPHDLYRSNYTitpkdalhiDENTIERIIK 160  
+
+                   elvekicdlvpep<-*
+                    + +  + ++++    
+  UPI0000000   161 AMKHEAYAECYKM    173  
+
+1pt6A00: domain 1 of 2, from 21 to 179: score 67.3, E = 6.9e-18
+                   *->vglvqysdevrvefslndysskeellqairnlrylggsgtntgeALk
+                      +g ++ysd v ++ +l+  +sk+  l ++r +rylg  gt+t++A++
+  UPI0000000    21    FGGLHYSDVVEIYSPLT--RSKDTYLTKLRAIRYLGR-GTFTDCAIS 64   
+
+                   yalenlfsksagaRpgapkvlvvltdgesqddvd..lleaaqelrdkgvt
+                    ++++++s++  aR+   k++vv+tdg+ ++++   ++  a+++rd g++
+  UPI0000000    65 NMTQQFQSQT--ARD--VKFAVVITDGHVTGSPCggMKMQAERARDMGIK 110  
+
+                   vfavgvgnavnlenllllldleelrliasdpge....ehvflvddfdel.
+                   +fav+ +++v          ++ lr+ias+p++ +  +++++  d  +++
+  UPI0000000   111 LFAVAPSEDV---------YEQGLREIASPPHDlyrsNYTITPKDALHId 151  
+
+                   esildtllekicslvpcvcppspgpegp<-*
+                   e+ ++++++ + ++++ +c+   ++e+    
+  UPI0000000   152 ENTIERIIKAMKHEAYAECYKMTCLEIA    179  
+
+1q0pA00: domain 2 of 2, from 523 to 717: score 119.8, E = 4.8e-34
+                   *->ivlllplievcksgplDlvfllDgSgsvgesnfelvkdfvkklidrl
+                       ++++++ +++++g lD++f++D+S+s+g++nf l k+fv+++++rl
+  UPI0000000   523    RETCGCCDCEKRCGALDIMFVIDSSESIGYTNFTLEKNFVVNVVSRL 569  
+
+                   di......gpdnvrvglvqyssdvrve.fslndyksksksellqaidnlk
+                    +++++ ++++++rvg+vqys++ + e++ l+d +++s s++++a+++l+
+  UPI0000000   570 GSiakdpkSETGARVGVVQYSHEGTFEaIKLDDERINSLSSFKEAVKRLE 619  
+
+                   ykllelgggtntgaALkyalenlfsssagsrlaregvpkvvillTdGlsn
+                   +    + ggt+t +AL++a++ l ++s+     re+++ +++++TdG+++
+  UPI0000000   620 W----IAGGTWTPSALQFAYNKLIKESR-----REKAQVFAVVITDGRYD 660  
+
+                   dggsplpllekirdlldveeaakelreagitvfvigvgddadl....eeL
+                   ++              d  +   +l  +++ v +ig+gd +d+ ++ e L
+  UPI0000000   661 PR--------------DDDKNLGALCGRDVLVNTIGIGDIFDQpeqsETL 696  
+
+                   reiasgpggeyhvflvedfdeleeildklidklcglv<-*
+                     ia + ++  +v +++ f++l                  
+  UPI0000000   697 VSIACNEPQ--RVQKMRLFSDLV--------------    717  
+
+1ijbA00: domain 2 of 2, from 525 to 716: score 116.6, E = 1.2e-31
+                   *->lvcllldcccslplDlvFllDgSssigesnfelvkdfvlslvdrl..
+                       + +++ + ++  lD++F++D+S+sig+ nf l k+fv+++v+rl  
+  UPI0000000   525    TCGCCDCEKRCGALDIMFVIDSSESIGYTNFTLEKNFVVNVVSRLgs 571  
+
+                   ....digpdgvrvgvvqysdevkve.fslnd..yksksellkairnlkyl
+                   +++++ ++ g+rvgvvqys+e ++e++ l+d+  +s s++++a+++l+++
+  UPI0000000   572 iakdPKSETGARVGVVQYSHEGTFEaIKLDDerINSLSSFKEAVKRLEWI 621  
+
+                   gggvtntglALkyvlenvfskgsrpgvpkvlvlltdgesqddvlesllea
+                    gg t+t +AL+++++++ ++ +r+++  ++v++tdg+ ++++ +   + 
+  UPI0000000   622 AGG-TWTPSALQFAYNKLIKESRREKAQVFAVVITDGRYDPRDDD---KN 667  
+
+                   alelrdkgvtlfavgvgddadl....eelrliasdpselhvflvsdfdel
+                     +l  ++v + ++g+gd +d+ ++ e l  ia++++ ++v  +  f++l
+  UPI0000000   668 LGALCGRDVLVNTIGIGDIFDQpeqsETLVSIACNEP-QRVQKMRLFSDL 716  
+
+                   edilkelvekicdlvpep<-*
+                                        
+  UPI0000000     - ------------------    -    
+
+1pt6A00: domain 2 of 2, from 526 to 716: score 110.8, E = 4.4e-30
+                   *->dcccscp.....lDlvfllDgSgsig..nfekvkdfvlslvdsl...
+                      + cc+c +   +lD++f++D+S+sig++nf   k+fv+++v++l  +
+  UPI0000000   526    CGCCDCEkrcgaLDIMFVIDSSESIGytNFTLEKNFVVNVVSRLgsi 572  
+
+                   ...digpdgtrvglvqysdevrve.fslnd..ysskeellqairnlrylg
+                   ++++ +++g+rvg+vqys+e + e++ l+d+ ++s +++++a+++l ++ 
+  UPI0000000   573 akdPKSETGARVGVVQYSHEGTFEaIKLDDerINSLSSFKEAVKRLEWIA 622  
+
+                   gsgtntgeALkyalenlfsksagaRpgapkvlvvltdgesq.ddvdllea
+                   g gt t +AL++a++ l ++s   R++a+ ++vv+tdg+ +  d d  + 
+  UPI0000000   623 G-GTWTPSALQFAYNKLIKES--RREKAQVFAVVITDGRYDpRDDD--KN 667  
+
+                   aqelrdkgvtvfavgvgnavnlenllllldleelrliasdpgeehvflvd
+                     +l  ++v v ++g+g+ ++  +       e l  ia++++ ++v  + 
+  UPI0000000   668 LGALCGRDVLVNTIGIGDIFDQPE-----QSETLVSIACNEP-QRVQKMR 711  
+
+                   dfdel<-*
+                    f++l   
+  UPI0000000   712 LFSDL    716  
+
+1mf7A00: domain 2 of 2, from 528 to 701: score 104.2, E = 1.5e-31
+                   *->cpdcp.....lDlvFllDgSgsiggdnfekvkdfllsllesl.....
+                      c+dc++   +lD++F++D+S+sig+ nf++ k+f+++++++l  +++
+  UPI0000000   528    CCDCEkrcgaLDIMFVIDSSESIGYTNFTLEKNFVVNVVSRLgsiak 574  
+
+                   .digp..vrvglvqyssdvrve.fplndy..knkeelleavknirylggg
+                   ++ +++ +rvg+vqys++ + e++ l+d  ++++++++eavk+++++ gg
+  UPI0000000   575 dPKSEtgARVGVVQYSHEGTFEaIKLDDEriNSLSSFKEAVKRLEWIAGG 624  
+
+                   tntgaALkfalenlfsssagsrpgapkvlvllTdGestddvldleeaaee
+                   t+t +AL+fa++ l ++s   r++a+ ++v++TdG+   d++d  + + +
+  UPI0000000   625 TWTPSALQFAYNKLIKES--RREKAQVFAVVITDGRY--DPRDDDKNLGA 670  
+
+                   lrdagvtvfaigvgdavldrldleelrliaslpggehvflvedfdeledi
+                   l  ++v v +ig+gd +++    e l  ia+                   
+  UPI0000000   671 LCGRDVLVNTIGIGDIFDQPEQSETLVSIAC------------------- 701  
+
+                   ldelldkicslvg<-*
+                                   
+  UPI0000000     - -------------    -    
+
+1atzB00: domain 2 of 2, from 528 to 716: score 105.0, E = 8e-29
+                   *->ccscp.....lDlvFllDgSgsvgesnfekvkdfvlslvdrl.....
+                      cc+c++   +lD++F++D+S+s+g  nf++ k+fv+++v+rl  +++
+  UPI0000000   528    CCDCEkrcgaLDIMFVIDSSESIGYTNFTLEKNFVVNVVSRLgsiak 574  
+
+                   .digpdgtrvglvqyssdvrve.fslnd..yqsksellqaidnlkylggg
+                   +  +++g+rvg+vqys++ + e++ l+d+ ++s s++++a+++l+++ gg
+  UPI0000000   575 dPKSETGARVGVVQYSHEGTFEaIKLDDerINSLSSFKEAVKRLEWIAGG 624  
+
+                   tntgaALkfalenlfsesagarpgvpkvlvvltdgesqd.dvleaaeelr
+                   t+t +AL+fa++ l +es   r+ +  ++vv+tdg+ ++ d  +   +l+
+  UPI0000000   625 TWTPSALQFAYNKLIKES--RREKAQVFAVVITDGRYDPrDDDKNLGALC 672  
+
+                   dkgvtvfavgvgddadl....eelreiasdplenhvflvsdfdel<-*
+                    ++v v ++g+gd +d+ ++ e l  ia +++ ++v +++ f++l   
+  UPI0000000   673 GRDVLVNTIGIGDIFDQpeqsETLVSIACNEP-QRVQKMRLFSDL    716  
+
+1mjnA00: domain 2 of 2, from 536 to 704: score 110.0, E = 1.9e-31
+                   *->gplDlvFllDgSgsigeenfekvkdfvlslvdsl........gpdgv
+                      g lD++F++D+S+sig+ nf + k+fv+++v++l  ++++ ++++g+
+  UPI0000000   536    GALDIMFVIDSSESIGYTNFTLEKNFVVNVVSRLgsiakdpkSETGA 582  
+
+                   rvglvqyssevrle.fslnd..ysskeelleaidnlkylgggtntglALk
+                   rvg+vqys+e + e+++l+d+  +s ++++ea+++l+++ ggt+t +AL+
+  UPI0000000   583 RVGVVQYSHEGTFEaIKLDDerINSLSSFKEAVKRLEWIAGGTWTPSALQ 632  
+
+                   yalellfsesagarpgapkvlvllTdGesqdd.....akelrkkgvtvfa
+                   +a++ l +es   r++a+ ++v++TdG+ +++++++++ +l  ++v v +
+  UPI0000000   633 FAYNKLIKES--RREKAQVFAVVITDGRYDPRdddknLGALCGRDVLVNT 680  
+
+                   igvgdavleeldleelreiasepgeehvflvddfdeledlldelldki<-
+                   ig+gd +++    e l  ia+  +                          
+  UPI0000000   681 IGIGDIFDQPEQSETLVSIACNEP------------------------   704  
+
+                   *
+                    
+  UPI0000000     -   -    
+
+//
+
+Query sequence: UPI0000000031
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000032
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000033
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000034
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000035
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000036
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1f39A00                                                 102.1    2.9e-28   1
+1jhfB00                                                  92.2    8.4e-27   1
+1adr000                                                  80.0    1.4e-20   1
+1b0nA00                                                  61.7    8.7e-16   1
+1y9qA01                                                  51.7    2.1e-14   1
+1r69000                                                  51.8    5.1e-14   1
+1umuB00                                                  47.0    8.6e-13   1
+1utxA00                                                  47.2    3.6e-12   1
+1lmb300                                                  42.2    1.7e-10   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1lmb300    1/1       1    80 [.     1    92 []    42.2  1.7e-10
+1adr000    1/1       1    76 [.     1    76 []    80.0  1.4e-20
+1y9qA01    1/1       4    82 ..     1    88 []    51.7  2.1e-14
+1utxA00    1/1       5    70 ..     1    66 []    47.2  3.6e-12
+1r69000    1/1       5    68 ..     1    69 []    51.8  5.1e-14
+1b0nA00    1/1       5   106 ..     1   111 []    61.7  8.7e-16
+1jhfB00    1/1      85   208 ..     1   128 []    92.2  8.4e-27
+1umuB00    1/1      95   212 ..     1   116 []    47.0  8.6e-13
+1f39A00    1/1     119   214 ..     1   101 []   102.1  2.9e-28
+
+Alignments of top-scoring domains:
+1lmb300: domain 1 of 1, from 1 to 80: score 42.2, E = 1.7e-10
+                   *->lllkktltpeeleealklgelirakrkelgltQeelAdrlGvsqsav
+                                  ++ + +ge+ira+rk+l++ Q++l++++Gvs  a+
+  UPI0000000     1    ------------MNTQLMGERIRARRKKLKIRQAALGKMVGVSNVAI 35   
+
+                   sklengkrnlslelllklakaLgvsveellpslaeeiaevasrlp<-*
+                   s++e+ ++ ++ e+ll+l kaL++s+++ll +    +  +++  +   
+  UPI0000000    36 SQWERSETEPNGENLLALSKALQCSPDYLLKGDLSQTNVAYHSRH    80   
+
+1adr000: domain 1 of 1, from 1 to 76: score 80.0, E = 1.4e-20
+                   *->lilmtlgerlkelRkalgltqeeLAellgvsrsaiskwergktePsl
+                      +++  +ger++++Rk+l++ q++L++++gvs+ ais+wer +teP++
+  UPI0000000     1    MNTQLMGERIRARRKKLKIRQAALGKMVGVSNVAISQWERSETEPNG 47   
+
+                   enllalakalgvsldyLlggdlelldllv<-*
+                   enllal+kal++s+dyLl+gdl+++++ +   
+  UPI0000000    48 ENLLALSKALQCSPDYLLKGDLSQTNVAY    76   
+
+1y9qA01: domain 1 of 1, from 4 to 82: score 51.7, E = 2.1e-14
+                   *->lllllsslllllgerlrelRkerglsqeeLAellgvsrstlskiErg
+                               +l+ger+r++Rk++++ q++L++++gvs   +s++Er 
+  UPI0000000     4    ---------QLMGERIRARRKKLKIRQAALGKMVGVSNVAISQWERS 41   
+
+                   ernpsletllklaealgvslseLlaleeeelpvvllellel<-*
+                   e+ p+ e ll+l++al++s+++Ll ++ +++ v ++  +e+   
+  UPI0000000    42 ETEPNGENLLALSKALQCSPDYLLKGDLSQTNVAYHSRHEP    82   
+
+1utxA00: domain 1 of 1, from 5 to 70: score 47.2, E = 3.6e-12
+                   *->llgnrlkelReekglsqeeLAellgvsrstiskiengkrnpslelll
+                      l+g+r+++ R+++++ q++L++++gvs   is++e+ +++p+ e ll
+  UPI0000000     5    LMGERIRARRKKLKIRQAALGKMVGVSNVAISQWERSETEPNGENLL 51   
+
+                   klakalgvsldelllleed<-*
+                   +l+kal++s+d+ll  + +   
+  UPI0000000    52 ALSKALQCSPDYLLKGDLS    70   
+
+1r69000: domain 1 of 1, from 5 to 68: score 51.8, E = 5.1e-14
+                   *->tlgerlkelRkelgltqeeLAeklgvsrstiskiengkr.psletll
+                      ++ger++++Rk+l++ q++L++++gvs  +is++e+ +++p+ e ll
+  UPI0000000     5    LMGERIRARRKKLKIRQAALGKMVGVSNVAISQWERSETePNGENLL 51   
+
+                   klakalgvsldyllggedellll<-*
+                   +l+kal++s+dyll g+         
+  UPI0000000    52 ALSKALQCSPDYLLKGD------    68   
+
+1b0nA00: domain 1 of 1, from 5 to 106: score 61.7, E = 8.7e-16
+                   *->tigerlrelRkekgltqeeLAeklgvsrstlsqiErgklrnpsletl
+                       +ger+r++Rk++++ q++L +++gvs   +sq+Er + + p+ e l
+  UPI0000000     5    LMGERIRARRKKLKIRQAALGKMVGVSNVAISQWERSE-TEPNGENL 50   
+
+                   lklaeaLgvsldeLlggeeeelpvvvreeellglllllllsllsdkllel
+                   l+l++aL++s+d+Ll g+ ++  v ++  ++++  + l++    ++++e 
+  UPI0000000    51 LALSKALQCSPDYLLKGDLSQTNVAYHSRHEPRGSYPLISWVSAGQWMEA 100  
+
+                   lllilapgassgse<-*
+                   ++ + +           
+  UPI0000000   101 VEPYHK--------    106  
+
+1jhfB00: domain 1 of 1, from 85 to 208: score 92.2, E = 8.4e-27
+                   *->liPllglvaAGfpslaaeyiedrldldellv...gpsatfllrvsGd
+                        Pl+++v+AG++++a+e +++r   +++  +++ +++ f+l v+Gd
+  UPI0000000    85    SYPLISWVSAGQWMEAVEPYHKRAIENWHDTtvdCSEDSFWLDVQGD 131  
+
+                   smieag...ildGdllvvdrslearngdivvalldg..eatvKrllregg
+                   sm+ +    i++G +++vd+ +e+rng++vva l+g++eat+K+l+++ g
+  UPI0000000   132 SMTAPAglsIPEGMIILVDPEVEPRNGKLVVAKLEGenEATFKKLVMDAG 181  
+
+                   rilLlplnpdyepiivdlelddleiiGvvvgvirklrll<-*
+                   r +L plnp+y+ i+++   ++++iiGvvv            
+  UPI0000000   182 RKFLKPLNPQYPMIEIN---GNCKIIGVVV---------    208  
+
+1umuB00: domain 1 of 1, from 95 to 212: score 47.0, E = 8.6e-13
+                   *->GfPspaaeyiedr..ldldellvkhpsatfllrvkGdsmi...dagi
+                      G+ + a+e +++r++ ++++  v  +++ f+l v+Gdsm++ ++ +i
+  UPI0000000    95    GQWMEAVEPYHKRaiENWHDTTVDCSEDSFWLDVQGDSMTapaGLSI 141  
+
+                   ldGdllvvdrsltarngdivvalldg..eftvkrlll.gdlilLlpenpd
+                    +G +++vd  +++rng++vva l+g++e+t k l+++ ++ +L p np+
+  UPI0000000   142 PEGMIILVDPEVEPRNGKLVVAKLEGenEATFKKLVMdAGRKFLKPLNPQ 191  
+
+                   yepivvdelddllilGvvvgvirllrl<-*
+                   y+ i+++  +++ i+Gvvv           
+  UPI0000000   192 YPMIEIN--GNCKIIGVVVDAKL----    212  
+
+1f39A00: domain 1 of 1, from 119 to 214: score 102.1, E = 2.9e-28
+                   *->lpgnafalrvkGdsMiapsgsepgildGdlvlvdpsleaenGdivva
+                      ++++ f+l v+GdsM+ap+  + +i++G+++lvdp++e++nG++vva
+  UPI0000000   119    CSEDSFWLDVQGDSMTAPA--GLSIPEGMIILVDPEVEPRNGKLVVA 163  
+
+                   lldg.geatvKrlvreggriyLlplNpdyppillddeveiiGvvvgvirk
+                   +l+g++eat+K+lv+++gr +L+plNp+yp+i+++++++iiGvvv++   
+  UPI0000000   164 KLEGeNEATFKKLVMDAGRKFLKPLNPQYPMIEINGNCKIIGVVVDAKLA 213  
+
+                   lrlld<-*
+                           
+  UPI0000000   214 N----    214  
+
+//
+
+Query sequence: UPI0000000037
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000038
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000039
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1kx5B00                                                 142.1    1.5e-42   1
+1f1eA00                                                 106.6    8.7e-33   1
+2hueC00                                                 113.7      1e-32   1
+1tafB00                                                  68.0    2.9e-18   1
+1b67A00                                                  64.0    4.4e-16   1
+1tafA00                                                  34.8    2.6e-08   1
+1n1jA00                                                  25.5    5.4e-06   1
+1tzyC00                                                  21.5    2.3e-05   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1kx5B00    1/1       2   103 .]     1   102 []   142.1  1.5e-42
+1f1eA00    1/1       2   101 ..    49   154 .]   106.6  8.7e-33
+1tzyC00    1/1      16    98 ..     1    95 []    21.5  2.3e-05
+2hueC00    1/1      20   103 .]     1    84 []   113.7    1e-32
+1n1jA00    1/1      22    95 ..     1    76 [.    25.5  5.4e-06
+1tafB00    1/1      24    93 ..     1    70 []    68.0  2.9e-18
+1b67A00    1/1      28    95 ..     1    68 []    64.0  4.4e-16
+1tafA00    1/1      29    96 ..     1    68 []    34.8  2.6e-08
+
+Alignments of top-scoring domains:
+1kx5B00: domain 1 of 1, from 2 to 103: score 142.1, E = 1.5e-42
+                   *->slrgkggkglgkvgakrirkllrdgilllpkaairrlarrggvkris
+                      s+rgkggkglgk+gakr+rk+lrd+i++++k+airrlarrggvkris
+  UPI0000000     2    SGRGKGGKGLGKGGAKRHRKVLRDNIQGITKPAIRRLARRGGVKRIS 48   
+
+                   kdayeelrealelfleqlardavayaehakRktvtaeDvllalkrqglll
+                   + +yee+r++l++fle+++rdav+y+ehakRktvta+Dv++alkrqg++l
+  UPI0000000    49 GLIYEETRGVLKVFLENVIRDAVTYTEHAKRKTVTAMDVVYALKRQGRTL 98   
+
+                   ygfdl<-*
+                   ygf+    
+  UPI0000000    99 YGFGG    103  
+
+1f1eA00: domain 1 of 1, from 2 to 101: score 106.6, E = 8.7e-33
+                   *->sasgdgqkglgenglggilgikrlekvlrddlrlLPlAnikRimkra
+                      s++g+g+kglg++g++      r++kvlrd+++++++++i+R+++r+
+  UPI0000000     2    SGRGKGGKGLGKGGAK------RHRKVLRDNIQGITKPAIRRLARRG 42   
+
+                   gvkriskdakellaecleefieeitreAveyaehekRKTiqaeDillAlk
+                   gvkris  ++e+++ +l++f+e+++r+Av+y+eh+kRKT++a+D+++Alk
+  UPI0000000    43 GVKRISGLIYEETRGVLKVFLENVIRDAVTYTEHAKRKTVTAMDVVYALK 92   
+
+                   rlgffdylf<-*
+                   r+g+++y+f   
+  UPI0000000    93 RQGRTLYGF    101  
+
+1tzyC00: domain 1 of 1, from 16 to 98: score 21.5, E = 2.3e-05
+                   *->yrpgtvalreirklqkstellipklpfqrlvreilldlkdglrfqsd
+                       +++ ++lr+  +        i k  ++rl+r   ++     r+++ 
+  UPI0000000    16    AKRHRKVLRDNIQG-------ITKPAIRRLARRGGVK-----RISGL 50   
+
+                   AllaLqeaaEaylvqlfedanllalHakRvTimpkDiklalrirgell<-
+                    +++ + +++++l ++++da++++ HakR+T+++ D+  al+++g+ l  
+  UPI0000000    51 IYEETRGVLKVFLENVIRDAVTYTEHAKRKTVTAMDVVYALKRQGRTL   98   
+
+                   *
+                    
+  UPI0000000     -   -    
+
+2hueC00: domain 1 of 1, from 20 to 103: score 113.7, E = 1e-32
+                   *->rkllglnisllpkaairrlarrggvkriskdayeelaevleefleei
+                      rk+l++ni++++k+airrlarrggvkris+ +yee++ vl++fle++
+  UPI0000000    20    RKVLRDNIQGITKPAIRRLARRGGVKRISGLIYEETRGVLKVFLENV 66   
+
+                   ardavayaehakRktvtaeDvllalkrqglllygfgl<-*
+                   +rdav+y+ehakRktvta+Dv++alkrqg++lygfg    
+  UPI0000000    67 IRDAVTYTEHAKRKTVTAMDVVYALKRQGRTLYGFGG    103  
+
+1n1jA00: domain 1 of 1, from 22 to 95: score 25.5, E = 5.4e-06
+                   *->llriddllLPlarvkrimkealpdnvriskdAllllqeaaeefilll
+                      +lr++   + +  ++r++++   ++ ris   ++    ++++f++ +
+  UPI0000000    22    VLRDNIQGITKPAIRRLARRG--GVKRISGLIYEETRGVLKVFLENV 66   
+
+                   tseAneiaeeekrktinaedvllaleelg<-*
+                    ++A++++e++krkt++a dv++al+++g   
+  UPI0000000    67 IRDAVTYTEHAKRKTVTAMDVVYALKRQG    95   
+
+1tafB00: domain 1 of 1, from 24 to 93: score 68.0, E = 2.9e-18
+                   *->lllllllplesvkriaeslGvkrlsddaaellaedveyrleeilqeA
+                        +++ +++++++r+a++ Gvkr+s+ ++e+++ +++++le+++++A
+  UPI0000000    24    RDNIQGITKPAIRRLARRGGVKRISGLIYEETRGVLKVFLENVIRDA 70   
+
+                   vkfmrhakRktltaeDidlalkl<-*
+                   v++++hakRkt+ta+D+ +alk    
+  UPI0000000    71 VTYTEHAKRKTVTAMDVVYALKR    93   
+
+1b67A00: domain 1 of 1, from 28 to 95: score 64.0, E = 4.4e-16
+                   *->lllPkapikrllkeggalriskdalealaealeefieelaeeAvlla
+                        ++k++i+rl+++gg++ris+ ++e+ + +l++f+e+++++Av+++
+  UPI0000000    28    QGITKPAIRRLARRGGVKRISGLIYEETRGVLKVFLENVIRDAVTYT 74   
+
+                   ehakRktitaeDillalrrlg<-*
+                   ehakRkt+ta+D+++al+r+g   
+  UPI0000000    75 EHAKRKTVTAMDVVYALKRQG    95   
+
+1tafA00: domain 1 of 1, from 29 to 96: score 34.8, E = 2.6e-08
+                   *->prdlalvarllksagveeyeervvlqlleflyryvldvlkdAvvlae
+                           +++rl+++ gv++++  ++++   +l  ++ +v++dAv ++e
+  UPI0000000    29    GITKPAIRRLARRGGVKRISGLIYEETRGVLKVFLENVIRDAVTYTE 75   
+
+                   hagrktvdaedvklAikarld<-*
+                   ha+rktv+a dv +A+k + +   
+  UPI0000000    76 HAKRKTVTAMDVVYALKRQGR    96   
+
+//
+
+Query sequence: UPI000000003D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000040
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1pp9C00                                                 183.8    2.5e-57   1
+1vf5A00                                                 165.6    7.3e-51   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1vf5A00    1/1       1   122 []     1   131 [.   165.6  7.3e-51
+1pp9C00    1/1       1   122 []     1   126 [.   183.8  2.5e-57
+
+Alignments of top-scoring domains:
+1vf5A00: domain 1 of 1, from 1 to 122: score 165.6, E = 7.3e-51
+                   *->ldklldllderlllkllldslldlpvpsnlsylwnlGsllllllviq
+                             +++++l+k+++++++dlp+psn+s +wn+Gsll+++l++q
+  UPI0000000     1    -------RKTHPLMKIVNNAFIDLPAPSNISSWWNFGSLLGICLILQ 40   
+
+                   ilTGlfLalhYtpdvslAfssvlhimrdvnyGwllrylhangAslffill
+                   ilTGlfLa+hYt+d+++Afssv+hi+rdvnyGw++ry+hangAs+ffi+l
+  UPI0000000    41 ILTGLFLAMHYTSDTMTAFSSVTHICRDVNYGWIIRYMHANGASMFFICL 90   
+
+                   ylHilrglyygsykkpreltWiiGvllllllmat<-*
+                   ++H++rglyygsy + +  tW+iGv+ll+++mat   
+  UPI0000000    91 FMHVGRGLYYGSYTFLE--TWNIGVILLFTVMAT    122  
+
+1pp9C00: domain 1 of 1, from 1 to 122: score 183.8, E = 2.5e-57
+                   *->ldwldkrlpllkllnsllidlpvpsnlsflwnfGsllllllviqilT
+                          +k++pl+k++n+++idlp+psn+s +wnfGsll+++l++qilT
+  UPI0000000     1    ----RKTHPLMKIVNNAFIDLPAPSNISSWWNFGSLLGICLILQILT 43   
+
+                   GlfLalhYtpdvslafssvlhimrdvnyGwllrylHangAslffillylH
+                   GlfLa+hYt+d+++afssv+hi+rdvnyGw++ry+HangAs+ffi+l++H
+  UPI0000000    44 GLFLAMHYTSDTMTAFSSVTHICRDVNYGWIIRYMHANGASMFFICLFMH 93   
+
+                   ilRglyygsYkkpreWiiGvllllllmat<-*
+                   ++RglyygsY + ++W+iGv+ll+++mat   
+  UPI0000000    94 VGRGLYYGSYTFLETWNIGVILLFTVMAT    122  
+
+//
+
+Query sequence: UPI0000000041
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1acf000                                                  85.2    7.8e-25   1
+3nul000                                                  83.8    1.4e-23   1
+1fil000                                                  78.5      9e-22   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+3nul000    1/1       1   110 []    23   130 .]    83.8  1.4e-23
+1acf000    1/1       1   110 []    20   125 .]    85.2  7.8e-25
+1fil000    1/1       1   110 []    20   139 .]    78.5    9e-22
+
+Alignments of top-scoring domains:
+3nul000: domain 1 of 1, from 1 to 110: score 83.8, E = 1.4e-23
+                   *->aiigldgsvwaasggflklspeElqtlvaaf.kdpsslaptGltlgg
+                      aiigl+g+vwaas+++ + s++E  ++ +a ++++++l++tG+++gg
+  UPI0000000     1    AIIGLQGGVWAASANC-TPSAQESVAIGTACaSNIAGLQQTGVVIGG 46   
+
+                   vkYivlradedl.viygkkgkgGvvivktkqalvialydeg.vqpgqank
+                   +kY++ r+d+d+ +++gkkg++G+ i+ktkqa++i+++++  v++gq   
+  UPI0000000    47 KKYMITRVDADEgTAMGKKGAEGISIYKTKQAVIIGYFSDAsVSAGQNSD 96   
+
+                   vvekLadyLissgy<-*
+                   +++k a+yL+++gy   
+  UPI0000000    97 ATYKCAKYLMDAGY    110  
+
+1acf000: domain 1 of 1, from 1 to 110: score 85.2, E = 7.8e-25
+                   *->aiigldgsvwassegfavspeElkaiakaf.knpsellssgltlgge
+                      aiigl+g+vwa+s++++ s++E +ai +a+++n+  l+++g+++gg+
+  UPI0000000     1    AIIGLQGGVWAASANCTPSAQESVAIGTACaSNIAGLQQTGVVIGGK 47   
+
+                   kYlvlradde..liygkkgkeGvvivktkqaiiialyde.piqpgqalka
+                   kY+++r+d ++ + +gkkg+eG+ i+ktkqa+ii++++++++ +gq + a
+  UPI0000000    48 KYMITRVDADegTAMGKKGAEGISIYKTKQAVIIGYFSDaSVSAGQNSDA 97   
+
+                   vekladyLislgy<-*
+                   ++k a+yL+++gy   
+  UPI0000000    98 TYKCAKYLMDAGY    110  
+
+1fil000: domain 1 of 1, from 1 to 110: score 78.5, E = 9e-22
+                   *->aIvgldddgsvwAaspggnllsitpaEvkllvgkdrsslflnGltlg
+                      aI+gl++  +vwAas++++  + +   +++ + +++++l+++G+++g
+  UPI0000000     1    AIIGLQG--GVWAASANCTPSAQESVAIGTACASNIAGLQQTGVVIG 45   
+
+                   gkkyivirdslladgdltmdlrtksqggagklgvvivktkqalliamgke
+                   gkky++ r +  ad++ +m       g++g++g+ i+ktkqa++i+++++
+  UPI0000000    46 GKKYMITRVD--ADEGTAM-------GKKGAEGISIYKTKQAVIIGYFSD 86   
+
+                   .gvqggqlnktveeladyLrslgy<-*
+                   ++v++gq +++++++a+yL+++gy   
+  UPI0000000    87 aSVSAGQNSDATYKCAKYLMDAGY    110  
+
+//
+
+Query sequence: UPI0000000042
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1m12A00                                                  36.9    7.3e-12   1
+1nkl000                                                  37.4    6.1e-11   1
+1n69A00                                                  34.1    1.4e-09   1
+1l9lA00                                                  42.0    4.9e-09   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1n69A00    1/1      11    88 .]     1    81 []    34.1  1.4e-09
+1m12A00    1/1      12    88 .]     1    84 []    36.9  7.3e-12
+1l9lA00    1/1      13    86 ..     1    74 []    42.0  4.9e-09
+1nkl000    1/1      13    88 .]     1    78 []    37.4  6.1e-11
+
+Alignments of top-scoring domains:
+1n69A00: domain 1 of 1, from 11 to 88: score 34.1, E = 1.4e-09
+                   *->lddllCdlCellvklledllennatleeeilelleklCdllpsllsd
+                        ++lC +C+ lv++l dl+ ++a+  + + ++le lC + ++l+ +
+  UPI0000000    11    EIPVLCPVCTSLVGKLIDLVLGGAV--DKVTDYLETLCAKADGLVET 55   
+
+                   lCkslvdqylpllidllls.ldpkevCsllglCss<-*
+                   lC ++v+  ++ li+ +l+  ++k +C l+++C     
+  UPI0000000    56 LCTKIVSYGIDKLIEKILEgGSAKLICGLIHAC--    88   
+
+1m12A00: domain 1 of 1, from 12 to 88: score 36.9, E = 7.3e-12
+                   *->ngllCdlCellvklledllednstedeilelleklCdllpgllsdlC
+                       ++lC +C+ lv++l dl+  +  +d++ ++le lC + +gl+ +lC
+  UPI0000000    12    IPVLCPVCTSLVGKLIDLVL-GGAVDKVTDYLETLCAKADGLVETLC 57   
+
+                   kslvdqygpliielllseldpeevCsllglCsssslp<-*
+                   +++v++ ++ +ie +l++ +++ +C l+++C         
+  UPI0000000    58 TKIVSYGIDKLIEKILEGGSAKLICGLIHAC------    88   
+
+1l9lA00: domain 1 of 1, from 13 to 86: score 42.0, E = 4.9e-09
+                   *->gllCdlCellvklledlldnttedeilealekvCdllpsslsdlCks
+                      ++lC +C+ lv++l dl+ +   d++ ++le +C + ++ + +lC +
+  UPI0000000    13    PVLCPVCTSLVGKLIDLVLGGAVDKVTDYLETLCAKADGLVETLCTK 59   
+
+                   lvekyldliielllsgldpeevCvllg<-*
+                   +v++ +d++ie +l+g +++ +C l++   
+  UPI0000000    60 IVSYGIDKLIEKILEGGSAKLICGLIH    86   
+
+1nkl000: domain 1 of 1, from 13 to 88: score 37.4, E = 6.1e-11
+                   *->dllCdlCkllvklledllednatedeilealekvCdllpl.ladlCk
+                      ++lC +C+ lv++l dl+ ++a+ d + ++le +C + +  + +lC 
+  UPI0000000    13    PVLCPVCTSLVGKLIDLVLGGAV-DKVTDYLETLCAKADGlVETLCT 58   
+
+                   slvdqylpllielllsgldpeevClllglCss<-*
+                   ++v+  ++ lie +l+g +++ +C l+++C     
+  UPI0000000    59 KIVSYGIDKLIEKILEGGSAKLICGLIHAC--    88   
+
+//
+
+Query sequence: UPI0000000043
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000044
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000045
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000046
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000047
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000048
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000049
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000004A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+1odzA00                                                 279.5    9.9e-84   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+1odzA00    1/1      18   360 .]     1   386 []   279.5  9.9e-84
+
+Alignments of top-scoring domains:
+1odzA00: domain 1 of 1, from 18 to 360: score 279.5, E = 9.9e-84
+                   *->llllllvvtvllvdpnataetkallaylaslpgkg...ilsGqqggv
+                         ++ ++tv++v+pna ++tk+++++la+lp+++++ ++sG++gg+
+  UPI0000000    18    AASPISAHTVYPVNPNAQQTTKDIMNWLAHLPNRSenrVMSGAFGGY 64   
+
+                   llgvgvggdldelsavkdatgkypavvgfdllrlsl......sniddlll
+                       +v+++++e +++k+atg+ pa++g+d++r +l++++++++id+ + 
+  UPI0000000    65 ---SDVTFSMTEENRLKNATGQSPAIYGCDYGRGWLetaditDTIDYCCN 111  
+
+                   eaaikvrerggivtlswhpnnpaggggnlfysqptffelanallsgiaeg
+                   +++i++++ gg++++s+h+ npa+++gn+ ++++++++++n+l+++++eg
+  UPI0000000   112 SSLISYWKSGGLPQVSLHLANPAFPSGNY-KTAISNSQYKNILDPSTVEG 160  
+
+                   eydaylralardlaafadglkklqgagvPvlfRplhEmnggwfwWg...v
+                         ++l + l+++adgl +l+++gv+vlfRplhEmng+wfwWg + +
+  UPI0000000   161 ------KRLEALLSKIADGLTQLKNQGVTVLFRPLHEMNGEWFWWGltgY 204  
+
+                   ngkdpe...aykqlwrhivdylrntagldnliwvwspnagstpsgndyla
+                   n+kd+e + +yk+l+++i+ y+++t+gldnl+wv+sp+a ++ ++    +
+  UPI0000000   205 NQKDNErisLYKELYKKIYRYMTETRGLDNLLWVYSPDANRDFKT----D 250  
+
+                   yYPGddyVDivGlDvYddgppsfdrqanfveglgpvyefaralgKpvalt
+                   +YPG  yVDi GlD+Y ++p++ ++           y+++ +l+Kp+a++
+  UPI0000000   251 FYPGSSYVDITGLDAYFTDPYAISG-----------YDEMLSLKKPFAFA 289  
+
+                   EtGvvpdsdllggdnafwiekmlealaanpdlayvvYfnvwdggnvpsnl
+                   EtG  p+++ +    +f+++ +++a++++++ +   Yf++wd++  p+ +
+  UPI0000000   290 ETG--PSGNIG----SFDYAAFINAIRQKYPQT--TYFLTWDEQLSPAAN 331  
+
+                   lrgtsnpnaaaayngllggpnilledlvevynddlvitldelpglyllll
+                    +++s+++ ++++n++  +++ +l+++ e                     
+  UPI0000000   332 QGAQSLYQNSWTLNKGEIWNGGSLTPIAE--------------------- 360  
+
+                   leal<-*
+                          
+  UPI0000000     - ----    -    
+
+//
+
+Query sequence: UPI000000004B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+
+Alignments of top-scoring domains:
+	[no hits above thresholds]
+//
