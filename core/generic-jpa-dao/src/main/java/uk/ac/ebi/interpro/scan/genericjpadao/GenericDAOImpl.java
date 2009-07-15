@@ -1,0 +1,187 @@
+/*
+ * Copyright 2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package uk.ac.ebi.interpro.scan.genericjpadao;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * A generic DAO implementation that can be used with any model class.
+ * Just need to inject the Model class name to use.
+ *
+ * Provides the basic CRUD methods.
+ * 
+ * T is the model type (e.g. Protein, Model, Signature etc.)
+ * PK is the type of the primary key (normally / always Long)
+ *
+ * User: pjones
+ * Date: 02-Jul-2009
+ * Time: 11:20:29
+ *
+ * @author Phil Jones, EMBL-EBI
+ */
+
+public class GenericDAOImpl<T, PK extends Serializable>
+        implements GenericDAO<T, PK> {
+
+    protected EntityManager entityManager;
+
+    @PersistenceContext
+    protected void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    /**
+     * The Class of the concrete object.
+     */
+    protected Class<T> modelClass;
+
+    /**
+     * The unqualified class name of T, used to build JSQL queries.
+     */
+    protected String unqualifiedModelClassName;
+
+    /**
+     * Required by Spring.
+     */
+    private GenericDAOImpl(){}
+
+    /**
+     * Sets the class of the model that the DOA instance handles.
+     * Note that this has been set up to use constructor injection
+     * because it makes it easy to sub-class GenericDAOImpl in a robust
+     * manner.
+     *
+     * Model class specific sub-classes should define a no-argument constructor
+     * that calls this constructor with the appropriate class.
+     * @param modelClass the model that the DOA instance handles.
+     */
+    public GenericDAOImpl(Class<T> modelClass) {
+        this.modelClass = modelClass;
+        this.unqualifiedModelClassName = modelClass.getSimpleName();
+    }
+
+    /**
+     * Insert a new Model instance.
+     * @param newInstance being a new instance to persist.
+     */
+    @Transactional
+    public void insert(T newInstance) {
+        if (entityManager.contains(newInstance)){
+            throw new IllegalArgumentException ("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
+        }
+        entityManager.persist(newInstance);
+    }
+
+    /**
+     * Update the instance into the database
+     *
+     * @param modifiedInstance being an attached or unattached, persisted object that has been modified.
+     */
+    @Transactional
+    public void update(T modifiedInstance) {
+        if (! entityManager.contains(modifiedInstance)){
+            modifiedInstance = entityManager.merge(modifiedInstance);
+        }
+        entityManager.persist(modifiedInstance);
+    }
+
+    /** Retrieve an object that was previously persisted to the database using
+     *  the indicated id as primary key
+     * @param id being the primary key value of the required object.
+     * @return a single instance of the object with the specified primary key,
+     * or null if it does not exist.
+     */
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public T read(PK id) {
+        String queryString = String.format("select o from %s o where o.id = :id", unqualifiedModelClassName);
+        Query query = this.entityManager.createQuery(queryString);
+        query.setParameter("id", id);
+
+        return (T) query.getSingleResult();
+    }
+
+    /**
+     * Remove an object from persistent storage in the database
+     * @param persistentObject being the (attached or unattached) object to be deleted.
+     */
+    @Transactional
+    public void delete(T persistentObject) {
+        if (! entityManager.contains(persistentObject)){
+            persistentObject = entityManager.merge(persistentObject);
+        }
+        entityManager.remove(persistentObject);
+    }
+
+    /**
+     * Returns a count of all instances of the type.  Note that select count(object) JSQL
+     * returns a Long object.
+     * @return a count of all instances of the type.
+     */
+    @Transactional(readOnly = true)
+    public Long count() {
+        String queryString = String.format("select count(o) from %s o", unqualifiedModelClassName);
+        Query query = this.entityManager.createQuery(queryString);
+        return (Long) query.getSingleResult();
+    }
+
+    /**
+     * Returns a List of all the instances of T in the database.
+     * @return a List of all the instances of T in the database.
+     */
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public List<T> retrieveAll() {
+        String queryString = String.format("select o from %s o", unqualifiedModelClassName);
+        Query query = this.entityManager.createQuery(queryString);
+        return (List<T>) query.getResultList();
+    }
+
+    /**
+     * Deletes all instances of class T in the database.
+     * @return the number of rows affected by this operation.
+     */
+    @Transactional
+    public int deleteAll() {
+//        String queryString = String.format("delete from %s", unqualifiedModelClassName);
+//        Query query = this.entityManager.createQuery(queryString);
+//        return query.executeUpdate();
+        List<T> allEntities = retrieveAll();
+        for (T entity : allEntities){
+            delete(entity);
+        }
+        return allEntities.size();
+    }
+
+    /**
+     * Returns the highest primary key value for the Model class.
+     *
+     * @return the highest primary key value for the Model class.
+     */
+    @Transactional(readOnly = true)
+    public Long getMaximumPrimaryKey() {
+        String queryString = String.format("select max(id) from %s", unqualifiedModelClassName);
+        Query query = entityManager.createQuery(queryString);
+        return (Long) query.getSingleResult();
+    }
+}

@@ -1,0 +1,66 @@
+Sn; sp|P02700|OPSD_SHEEP Rhodopsin OS=Ovis aries GN=RHO PE=1 SV=2
+Si; Fasta sequence
+1TBS
+1TBH RHODOPSIN       2.186312e-64
+1TBH GPCRRHODOPSN    4.656710e-44
+1TBH OPSIN           3.362519e-19
+1TBF
+2TBS
+2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan               
+2TBH RHODOPSIN       6  of  6  4.9e+02  82       4791       7.6e-70     2.2e-64     IIIIII          
+2TBH GPCRRHODOPSN    7  of  7  208.41   29.77    2328       2.6e-49     4.7e-44     iIiiiII         
+2TBH OPSIN           3  of  3  199.81   66.60    1448       4.4e-25     3.4e-19     III             
+2TBN NRPEPTIDEYR     4  of  5  102.07   25.52    727        7.4e-08     0.039       iIi.i           
+2TBN NANEUSMPORT     2  of  8  52.07    26.03    473        6.9e-07     0.54        .I.i....        
+2TBN GLYCHORMONER    2  of  8  43.63    21.82    554        2.5e-06     2.2         ...I.i..        
+2TBN OPSINBLUE       3  of  6  80.32    26.77    597        1e-05       7.5         .I.i.i          
+2TBN TMPROTEINSRG    2  of  7  40.61    20.31    323        1.2e-05     7.3         ..i...i         
+2TBN NPOXDRDTASE5    2  of  8  44.82    22.41    441        3.6e-05     24          ...I..i.        
+2TBN PEROPSIN        2  of  11 79.17    39.58    505        0.00011     1.3e+02     .I.I.......     
+2TBF
+3TBS
+3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high 
+3TBH RHODOPSIN       1  of  6  86.94   898     1.45e-14  GTEGPNFYVPFSNKTGVVR                                     19   3    3     6    
+3TBH RHODOPSIN       2  of  6  80.20   808     2.06e-10  SPFEAPQYYLAEPWQFS                                       17   22   22    25   
+3TBH RHODOPSIN       3  of  6  81.56   763     1.83e-13  FMVFGGFTTTLYTSLHG                                       17   85   85    88   
+3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194  
+3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274  
+3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322  
+3TBB
+3TBH GPCRRHODOPSN    1  of  7  24.13   198     7.62e-06  MLAAYMFLLIVLGFPINFLTLYVTV                               25   5    39    490  
+3TBH GPCRRHODOPSN    2  of  7  35.32   279     1.30e-07  LNYILLNLAVADLFMVFGGFTT                                  22   38   72    524  
+3TBH GPCRRHODOPSN    3  of  7  26.33   290     2.81e-07  ATLGGEIALWSLVVLAIERYVVV                                 23   81   117   576  
+3TBH GPCRRHODOPSN    4  of  7  26.98   291     6.21e-05  HAIMGVAFTWVMALACAAPPLV                                  22   117  152   612  
+3TBH GPCRRHODOPSN    5  of  7  29.98   355     4.96e-09  VIYMFVVHFSIPLIVIFFCYGQLV                                24   167  204   657  
+3TBH GPCRRHODOPSN    6  of  7  33.17   479     8.48e-09  VTRMVIIMVIAFLICWLPYAGVAFY                               25   219  250   908  
+3TBH GPCRRHODOPSN    7  of  7  32.50   436     3.64e-10  MTIPAFFAKSSSVYNPVIYIMMNKQFR                             27   263  288   951  
+3TBB
+3TBH OPSIN           1  of  3  65.79   436     3.59e-09  YVTVQHKKLRTPL                                           13   50   60    81   
+3TBH OPSIN           2  of  3  71.17   592     8.34e-08  GWSRYIPQGMQCS                                           13   165  174   194  
+3TBH OPSIN           3  of  3  62.85   420     1.48e-09  PIFMTIPAFFAKS                                           13   277  285   317  
+3TBB
+3TBN NRPEPTIDEYR     1  of  5  19.23   172     1.00e-02  QHKKLRTPLNYIL                                           13   52   64    89   
+3TBN NRPEPTIDEYR     2  of  5  35.31   200     3.84e-02  TLYTSLHGYFVFG                                           13   82   94    119  
+3TBN NRPEPTIDEYR     3  of  5  21.88   150     2.17e-02  ATLGGEIALWSLVVLA                                        16   105  117   142  
+3TBN NRPEPTIDEYR     5  of  5  25.65   205     8.88e-03  VIYIMMNKQFRNCM                                          14   306  304   443  
+3TBB
+3TBN NANEUSMPORT     2  of  8  31.39   328     1.14e-05  SMLAAYMFLLIVLGFPINFL                                    20   54   38    374  
+3TBN NANEUSMPORT     4  of  8  20.67   145     6.09e-02  VIYMFVVHFSIPLIVIFF                                      18   207  204   537  
+3TBB
+3TBN GLYCHORMONER    4  of  8  35.13   353     9.71e-05  CNLEGFFATLGGEIA                                         15   416  110   605  
+3TBN GLYCHORMONER    6  of  8  8.50    201     2.56e-02  AEKEVTRMVIIMVIAFLIC                                     19   540  246   732  
+3TBB
+3TBN OPSINBLUE       2  of  6  33.14   188     2.70e-02  KTGVVRSPFEAPQ                                           13   11   16    23   
+3TBN OPSINBLUE       4  of  6  20.51   182     9.39e-02  FVIYMFVVHFSI                                            12   198  203   210  
+3TBN OPSINBLUE       6  of  6  26.67   227     3.97e-03  LTTLCCGKNPLGDDE                                         15   312  318   325  
+3TBB
+3TBN TMPROTEINSRG    3  of  7  17.00   116     5.78e-02  VVLAIERYVVVCKPMSNFRFGENHA                               25   101  129   171  
+3TBN TMPROTEINSRG    7  of  7  23.61   207     2.10e-04  AKSSSVYNPVIYIMMNKQFRNCML                                24   259  295   340  
+3TBB
+3TBN NPOXDRDTASE5    4  of  8  31.47   268     8.87e-04  MLAAYMFLLIVLGFPINFLTLYV                                 23   276  39    276  
+3TBN NPOXDRDTASE5    7  of  8  13.36   173     4.03e-02  VTRMVIIMVIAFLICWLPYAGV                                  22   500  250   549  
+3TBB
+3TBN PEROPSIN        2  of  11 33.33   230     1.11e-02  TLYVTVQHKKLR                                            12   46   58    46   
+3TBN PEROPSIN        4  of  11 45.83   275     9.73e-03  SLHGYFVFGPTG                                            12   86   98    86   
+3TBB
+3TBF
