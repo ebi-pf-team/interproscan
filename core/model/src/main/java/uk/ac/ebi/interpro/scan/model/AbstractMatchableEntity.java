@@ -31,7 +31,7 @@ import java.util.Set;
  *
  * @author  Antony Quinn
  * @author  Phil Jones
- * @version $Id: AbstractMatchableEntity.java,v 1.3 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @XmlTransient

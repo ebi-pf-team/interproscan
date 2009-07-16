@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  *
  * @author  Phil Jones
  * @author  Antony Quinn
- * @version $Id: MD5SequenceIdentifier.java,v 1.7 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  * @see     Match
  */

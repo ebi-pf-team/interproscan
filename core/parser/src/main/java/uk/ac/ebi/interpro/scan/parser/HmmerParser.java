@@ -14,7 +14,7 @@ import java.io.IOException;
  * Parser for HMMER2 and HMMER3 output.
  *
  * @author  Antony Quinn
- * @version $Id: HmmerParser.java,v 1.6 2009/02/27 16:50:10 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class HmmerParser implements Parser {

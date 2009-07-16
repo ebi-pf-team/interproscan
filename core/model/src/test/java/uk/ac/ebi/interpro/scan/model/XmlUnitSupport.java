@@ -39,7 +39,7 @@ import java.io.StringReader;
  * Utility class for running XmlUnit tests.
  *
  * @author  Antony Quinn
- * @version $Id: XmlUnitSupport.java,v 1.2 2009/07/14 16:35:51 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  * @see     XMLUnit
  */

@@ -12,7 +12,7 @@ import java.util.Set;
  * JUnit tests for ProdomParser
  *
  * @author  Phil Jones
- * @version $Id: ProdomParserTest.java,v 1.3 2009/02/27 16:50:26 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  * @see     ProdomParser
  */

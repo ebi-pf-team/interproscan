@@ -4,7 +4,7 @@ package uk.ac.ebi.interpro.scan.batch.partition.proactive;
  * Utility class for writing messages to log file.
  *
  * @author  Antony Quinn
- * @version $Id: LogSupport.java,v 1.1 2009/06/18 15:08:37 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 class LogSupport {

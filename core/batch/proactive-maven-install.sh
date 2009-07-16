@@ -6,7 +6,7 @@
 #
 # Author:  Antony Quinn <aquinn@ebi.ac.uk>
 #
-# Version: $Id: proactive-maven-install.sh,v 1.2 2009/05/21 17:59:19 aquinn Exp $
+# Version: $Id$
 
 # Required arguments
 PA_HOME=$1

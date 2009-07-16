@@ -9,7 +9,7 @@ import org.junit.Test;
  * Tests {@link ProActiveMasterWorkerPartitionHandler}.
  *
  * @author  Antony Quinn
- * @version $Id: ProActiveMasterWorkerJobTest.java,v 1.1 2009/06/18 15:08:37 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

@@ -15,7 +15,7 @@ import java.util.HashSet;
  * to the given cutoff.
  *
  * @author  Antony Quinn
- * @version $Id: ShortMatchLocationItemProcessor.java,v 1.2 2009/06/23 12:05:15 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class ShortMatchLocationItemProcessor implements ItemProcessor<Protein, Protein> {

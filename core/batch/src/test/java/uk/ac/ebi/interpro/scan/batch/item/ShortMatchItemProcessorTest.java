@@ -15,7 +15,7 @@ import uk.ac.ebi.interpro.scan.model.Model;
  * Tests {@link ShortMatchLocationItemProcessor}.
  *
  * @author  Antony Quinn
- * @version $Id: ShortMatchItemProcessorTest.java,v 1.2 2009/06/23 12:05:15 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

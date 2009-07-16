@@ -19,7 +19,7 @@
  *
  * @author  Antony Quinn
  * @author  Phil Jones
- * @version $Id: package-info.java,v 1.4 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 

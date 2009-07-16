@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
  * {@link #setResource(Resource)}.
  *
  * @author  Antony Quinn
- * @version $Id: FastaFileItemReader.java,v 1.4 2009/06/23 12:05:15 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class FastaFileItemReader implements ResourceAwareItemReaderItemStream<Protein>, InitializingBean {

@@ -23,7 +23,7 @@ import junit.framework.TestCase;
  * Test cases for ProteinSignatureCollection
  *
  * @author  Antony Quinn
- * @version $Id: ProteinSignatureCollectionTest.java,v 1.6 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  * @see     ProteinSignatureCollection
  */

@@ -30,7 +30,7 @@ import java.io.Serializable;
  * Model, for example SuperFamily 0035188 (part of signature SSF53098)
  *
  * @author  Antony Quinn
- * @version $Id: Model.java,v 1.17 2009/07/15 09:42:36 pjones Exp $
+ * @version $Id$
  * @since   1.0
  */
 

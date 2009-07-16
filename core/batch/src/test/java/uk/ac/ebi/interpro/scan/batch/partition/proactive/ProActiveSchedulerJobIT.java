@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * ProActive Scheduler. Run 'mvn verify'. 
  *
  * @author  Antony Quinn
- * @version $Id: ProActiveSchedulerJobIT.java,v 1.1 2009/06/18 17:04:33 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

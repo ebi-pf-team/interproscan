@@ -50,5 +50,5 @@
   "FP7 capacities: Scientific Data Repositories". The working title for the project is
   IMproving Protein Annotation and Co-ordination using Technology (IMPACT).
 
-  $Id: README.txt,v 1.2 2009/06/03 19:02:29 aquinn Exp $
+  $Id$
   

@@ -10,7 +10,7 @@ import uk.ac.ebi.interpro.scan.batch.partition.remote.RemoteStepExecutor;
  * Executes step on remote node as a ProActive task.
  *
  * @author  Antony Quinn
- * @version $Id: ProActiveStepExecutorTask.java,v 1.1 2009/06/18 15:08:38 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @RemoteObject

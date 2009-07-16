@@ -27,7 +27,7 @@ import java.io.Serializable;
  *
  * @author  Antony Quinn
  * @author Phil Jones
- * @version $Id: Location.java,v 1.6 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 

@@ -10,7 +10,7 @@ import org.junit.Test;
  * by running sample i5 job.
  *
  * @author  Antony Quinn
- * @version $Id: TaskExecutorJobTest.java,v 1.1 2009/06/18 17:04:33 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

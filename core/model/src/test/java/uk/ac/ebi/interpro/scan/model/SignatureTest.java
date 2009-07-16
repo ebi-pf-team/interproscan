@@ -38,7 +38,7 @@ import java.util.Map;
  * Test cases for {@link Signature}
  *
  * @author  Antony Quinn
- * @version $Id: SignatureTest.java,v 1.12 2009/07/14 17:11:12 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)

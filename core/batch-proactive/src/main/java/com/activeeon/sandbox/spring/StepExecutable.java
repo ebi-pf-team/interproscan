@@ -19,7 +19,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * TODO: Add description
  *
  * @author  Emil Salageanu
- * @version $Id: StepExecutable.java,v 1.2 2009/06/03 19:02:28 aquinn Exp $ 
+ * @version $Id$
  * @since   2.0
  */
 public class StepExecutable extends JavaExecutable {

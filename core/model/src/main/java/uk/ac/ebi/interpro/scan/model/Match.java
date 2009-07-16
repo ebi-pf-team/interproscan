@@ -24,7 +24,7 @@ import java.util.Set;
  * Protein sequence match to model.
  *
  * @author  Antony Quinn
- * @version $Id: Match.java,v 1.9 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @Entity

@@ -26,7 +26,7 @@ import java.io.Serializable;
  * FingerPRINTS match.
  *
  * @author  Antony Quinn
- * @version $Id: FilteredFingerPrintsMatch.java,v 1.3 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @Entity

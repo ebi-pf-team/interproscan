@@ -9,7 +9,7 @@ import uk.ac.ebi.interpro.scan.model.Location;
  * Removes overlapping {@link Location)s from {@link Match}es.
  *
  * @author  Antony Quinn
- * @version $Id: OverlapItemProcessor.java,v 1.2 2009/06/23 12:05:15 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class OverlapItemProcessor implements ItemProcessor<Protein, Protein> {

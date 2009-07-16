@@ -14,7 +14,7 @@ import org.apache.commons.lang.SerializationUtils;
  * Tests {@link RemoteJobRepository}.
  *
  * @author  Antony Quinn
- * @version $Id: RemoteJobRepositoryTest.java,v 1.1 2009/06/18 15:08:38 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

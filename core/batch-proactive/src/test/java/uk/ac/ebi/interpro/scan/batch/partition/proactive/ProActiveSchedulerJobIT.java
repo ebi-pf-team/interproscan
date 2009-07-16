@@ -12,7 +12,7 @@ import org.junit.Test;
  * ProActive Scheduler.
  *
  * @author  Antony Quinn
- * @version $Id: ProActiveSchedulerJobIT.java,v 1.1 2009/06/18 15:08:37 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

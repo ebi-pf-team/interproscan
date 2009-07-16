@@ -20,7 +20,7 @@ import java.io.IOException;
  * Tests {@link FileWritingSystemCommandTasklet}.
  *
  * @author  Antony Quinn
- * @version $Id: FileWritingSystemCommandTaskletTest.java,v 1.3 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

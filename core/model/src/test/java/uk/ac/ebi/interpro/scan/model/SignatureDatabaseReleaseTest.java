@@ -29,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
  * Test cases for {@link SignatureDatabaseRelease}
  *
  * @author  Antony Quinn
- * @version $Id: SignatureDatabaseReleaseTest.java,v 1.6 2009/07/13 14:21:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)

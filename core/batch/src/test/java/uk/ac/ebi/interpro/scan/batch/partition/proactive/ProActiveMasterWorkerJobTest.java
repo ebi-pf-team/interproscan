@@ -9,7 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Tests {@link ProActiveMasterWorkerPartitionHandler} by running sample job.
  *
  * @author  Antony Quinn
- * @version $Id: ProActiveMasterWorkerJobTest.java,v 1.1 2009/06/18 17:04:33 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

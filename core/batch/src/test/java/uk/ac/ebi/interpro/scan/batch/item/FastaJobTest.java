@@ -14,7 +14,7 @@ import java.util.Date;
  * Tests FASTA job.
  *
  * @author  Antony Quinn
- * @version $Id: FastaJobTest.java,v 1.2 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration
