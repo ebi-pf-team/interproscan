@@ -46,6 +46,7 @@
 
     <properties>
         <spring.version>2.5.6</spring.version>
+        <spring.oxm.version>1.5.7</spring.oxm.version>
     </properties>
 
     <dependencies>
@@ -110,6 +111,36 @@
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JAXB Implementation (only required for testing) -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.1.9</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.oxm.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-oxm-tiger</artifactId>
+            <version>${spring.oxm.version}</version>
             <scope>test</scope>
         </dependency>
 
