@@ -17,7 +17,7 @@
 package uk.ac.ebi.interpro.scan.model;
 
 /**
- * TODO: Add class description
+ * Stores object and it's expected XML representation.
  *
  * @author  Antony Quinn
  * @version $Id$
@@ -25,8 +25,8 @@ package uk.ac.ebi.interpro.scan.model;
  */
 class ObjectXmlPair<T> {
 
-    private final T object;
-    private final String    xml;
+    private final T      object;
+    private final String xml;
 
     private ObjectXmlPair()  {
         this.object = null;
