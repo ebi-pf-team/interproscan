@@ -79,16 +79,20 @@ public class Signature implements Serializable {
 
     public Signature(String accession,
                      String name,
+                     String type,                     
                      String description,
-                     String type, 
                      String abstractText,
-                     SignatureDatabaseRelease signatureDatabaseRelease) {
+                     SignatureDatabaseRelease signatureDatabaseRelease,
+                     Set<Model> models) {
         setAccession(accession);
         setName(name);
         setDescription(description);
         setType(type);
         setAbstract(abstractText);
         setSignatureDatabaseRelease(signatureDatabaseRelease);
+        for (Model m : models)  {
+            addModel(m);
+        }
     }
 
     /**

@@ -69,11 +69,15 @@ final class XmlUnitSupport {
     public String marshal(Object o) throws IOException  {
         Writer writer = new StringWriter();
         marshaller.marshal(o, new StreamResult(writer));
-        return writer.toString();
+        String xml = writer.toString();
+        logger.debug("\n" + xml);
+        return xml;
     }        
 
     public Object unmarshal(String xml) throws IOException  {
-        return unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
+        Object o = unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
+        logger.debug(o);
+        return o;
     }
 
     public void testSupportsMarshalling(Class c) {
@@ -81,22 +85,21 @@ final class XmlUnitSupport {
         assertTrue(unmarshaller.supports(c));
     }
 
-    public String testMarshal(Object o, String expectedXml)
+    public String testMarshal(String message, Object o, String expectedXml)
             throws IOException, SAXException {
         String actualXml = marshal(o);
         Diff diff = new Diff(expectedXml, actualXml);
         // Order of attributes and elements is not important
         diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        assertTrue(diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml, true);
-        logger.debug("\n" + actualXml);
+        assertTrue(message + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml, true);
         return actualXml;
     }
     
-    public Object testUnmarshal(String xml, Object expected) throws IOException {
+    public Object testUnmarshal(String message, String xml, Object expected) throws IOException {
         Object actual = unmarshal(xml);
-        assertEquals(expected, actual);
-        logger.debug(actual);
+        assertEquals(message, expected, actual);
         return actual;
     }
+  
 
 }

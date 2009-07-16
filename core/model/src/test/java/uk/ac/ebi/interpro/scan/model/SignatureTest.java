@@ -17,7 +17,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import org.junit.runner.RunWith;
 import org.junit.Test;
@@ -29,17 +28,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.xml.sax.SAXException;
 
 import javax.annotation.Resource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.StringWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.io.StringReader;
+import java.util.Map;
 
 /**
  * Test cases for {@link Signature}
@@ -52,7 +45,9 @@ import java.io.StringReader;
 @ContextConfiguration
 public class SignatureTest {
 
-    private static final Log logger = LogFactory.getLog(SignatureTest.class);
+    // TODO: Add SuperFamily SSF53098
+    // TODO: Add Xrefs and Entry to Signature
+    // TODO: Add Model MD5?
 
     @Resource
     private Marshaller marshaller;
@@ -62,7 +57,7 @@ public class SignatureTest {
 
     // TODO: Compare constructed Pfam signature to expected XML in Spring context
     @Resource
-    private Signature pfam;    
+    private Map<String, ObjectXmlPair<Signature>> signatureXmlMap;
 
     private XmlUnitSupport support;
 
@@ -174,23 +169,27 @@ public class SignatureTest {
                 "</signature>";
 
         // Unmarshall
-        Signature signature = (Signature) support.testUnmarshal(xml, expectedSignature);
+        Signature signature = (Signature) support.testUnmarshal("Gene3D", xml, expectedSignature);
 
         // TODO: Add persistence tests
 
         // Marshall
-        support.testMarshal(signature, xml);
+        support.testMarshal("Gene3D", signature, xml);
         
     }
 
-    // TODO: Build other signature DB tests in Spring XML
-    
-    // TODO: See StringTemplate to make other XML tests easier to write
-    // TODO: [http://www.cs.usfca.edu/~parrt/course/601/lectures/stringtemplate.html]
+    @Test public void testOtherMemberDatabases() throws IOException, SAXException {
+        for (String key : signatureXmlMap.keySet()) {
+            // TODO: Make getObject() generic so can guarantee that only Signature objects are present
+            Signature signature = signatureXmlMap.get(key).getObject();
+            String    xml       = signatureXmlMap.get(key).getXml();
+            // Test
+            support.marshal(signature);
+            support.testUnmarshal(key, xml, signature);
+            support.testMarshal(key, signature, xml);
+        }
+    }
 
-    // TODO: Add SuperFamily SSF53098
-    // TODO: Add Xrefs and Entry to Signature
-    // TODO: Add Model MD5?
 
     /*  ========= NOTES =========
 

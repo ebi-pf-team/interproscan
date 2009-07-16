@@ -34,8 +34,8 @@ import java.io.Serializable;
  * @since   1.0
  */
 
-@XmlType(name="ModelType", propOrder={"accession", "name", "description"})
 @Entity
+@XmlType(name="ModelType", propOrder={"accession", "name", "description"})
 public class Model implements Serializable {
 
     /**
@@ -53,6 +53,21 @@ public class Model implements Serializable {
 
     @ManyToOne (optional = true)
     private Signature signature;
+
+    /**
+     * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
+     */
+    protected Model() {}
+
+    public Model(String accession) {
+        setAccession(accession);
+    }
+
+    public Model(String accession, String name, String description) {
+        setAccession(accession);
+        setName(name);
+        setDescription(description);
+    }
 
     /**
      * Builder pattern (see Josh Bloch "Effective Java" 2nd edition)
@@ -73,9 +88,7 @@ public class Model implements Serializable {
         }
 
         public Model build() {
-            Model model = new Model(accession);
-            model.setName(name);
-            model.setDescription(description);
+            Model model = new Model(accession, name, description);
             model.setSignature(signature);
             return model;
         }
@@ -95,15 +108,6 @@ public class Model implements Serializable {
             return this;
         }
 
-    }
-
-    /**
-     * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
-     */
-    protected Model() {}
-
-    public Model(String accession) {
-        setAccession(accession);
     }
 
     /**
