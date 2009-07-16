@@ -118,7 +118,16 @@ public class GenericDAOImpl<T, PK extends Serializable>
         Query query = this.entityManager.createQuery(queryString);
         query.setParameter("id", id);
 
-        return (T) query.getSingleResult();
+        // Originally this made use of query.getSingleResult
+        // however this method throws an Exception if there is no
+        // matching object, which seems like overkill.  Modified to return
+        // null if there is no matching object.
+
+        List<T> results = query.getResultList();
+        if (results.size() == 0){
+            return null;
+        }
+        else return results.get(0);
     }
 
     /**
@@ -184,4 +193,5 @@ public class GenericDAOImpl<T, PK extends Serializable>
         Query query = entityManager.createQuery(queryString);
         return (Long) query.getSingleResult();
     }
+
 }
