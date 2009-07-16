@@ -24,11 +24,11 @@
 	</properties>
     <modules>
 		<module>generic-jpa-dao</module>
-		<module>batch-proactive</module>
-        <module>batch</module>        
         <module>model</module>
-        <module>parser</module>
 		<module>persistence</module>
+        <module>parser</module>
+        <module>batch-proactive</module>
+        <module>batch</module>
     </modules>
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
     <dependencies>
