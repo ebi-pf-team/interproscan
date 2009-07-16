@@ -33,7 +33,7 @@ import junit.framework.TestCase;
  * Test cases for JAXB marshalling and unmarshalling of any class with an @XmlRootElement annotation.
  *
  * @author  Antony Quinn
- * @version $Id$
+ * @version $Id$ 
  * @since   1.0
  * @see     Model
  */
