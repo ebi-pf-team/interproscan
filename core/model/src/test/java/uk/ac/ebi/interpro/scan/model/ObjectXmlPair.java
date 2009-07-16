@@ -20,7 +20,7 @@ package uk.ac.ebi.interpro.scan.model;
  * Stores object and it's expected XML representation.
  *
  * @author  Antony Quinn
- * @version $Id$
+ * @version $Id$ 
  * @since   1.0
  */
 class ObjectXmlPair<T> {
