@@ -27,7 +27,7 @@ import java.util.Set;
  * FingerPRINTS match.
  *
  * @author  Antony Quinn
- * @version $Id: RawFingerPrintsMatch.java,v 1.2 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @Entity

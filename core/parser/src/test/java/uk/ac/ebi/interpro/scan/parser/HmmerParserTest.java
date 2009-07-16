@@ -16,7 +16,7 @@ import junit.framework.TestCase;
  * JUnit tests for HmmerParser
  *
  * @author  Antony Quinn
- * @version $Id: HmmerParserTest.java,v 1.3 2009/02/27 17:21:30 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  * @see     HmmerParser
  */

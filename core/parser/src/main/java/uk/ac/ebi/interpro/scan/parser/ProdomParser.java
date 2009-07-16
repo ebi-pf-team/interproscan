@@ -18,7 +18,7 @@ import uk.ac.ebi.interpro.scan.model.SequenceIdentifier;
  * Parser for the output from Prodom
  *
  * @author  Phil Jones
- * @version $Id: ProdomParser.java,v 1.3 2009/02/27 17:21:13 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class ProdomParser implements Parser{

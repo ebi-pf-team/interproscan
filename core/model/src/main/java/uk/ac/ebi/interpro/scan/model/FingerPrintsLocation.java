@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  * Location(s) of match on protein sequence
  *
  * @author  Antony Quinn
- * @version $Id: FingerPrintsLocation.java,v 1.4 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @XmlType(name="FingerPrintsLocationType", propOrder={"start", "end"})

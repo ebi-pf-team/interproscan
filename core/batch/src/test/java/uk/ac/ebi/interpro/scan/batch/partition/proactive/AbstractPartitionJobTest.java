@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
  * Tests {@link org.springframework.batch.core.partition.PartitionHandler} implementations.
  *
  * @author  Antony Quinn
- * @version $Id: AbstractPartitionJobTest.java,v 1.1 2009/06/18 17:04:33 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 abstract class AbstractPartitionJobTest extends AbstractJobTests {

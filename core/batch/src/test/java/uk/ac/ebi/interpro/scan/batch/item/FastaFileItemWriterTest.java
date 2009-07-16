@@ -26,7 +26,7 @@ import java.io.IOException;
  * Test generation of FASTA files from {@link Protein} instances.
  *
  * @author  Antony Quinn
- * @version $Id: FastaFileItemWriterTest.java,v 1.1 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

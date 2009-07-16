@@ -28,7 +28,7 @@ import java.util.*;
  * Protein sequence match to model.
  *
  * @author  Antony Quinn
- * @version $Id: AbstractMatch.java,v 1.12 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 

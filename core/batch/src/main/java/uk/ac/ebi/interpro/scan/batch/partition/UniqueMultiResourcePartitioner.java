@@ -13,7 +13,7 @@ import java.io.File;
  * Wrapper for {@link MultiResourcePartitioner} that adds {@link UUID} and file ID to execution context.
  *
  * @author  Antony Quinn
- * @version $Id: UniqueMultiResourcePartitioner.java,v 1.3 2009/06/19 09:20:33 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class UniqueMultiResourcePartitioner implements Partitioner {

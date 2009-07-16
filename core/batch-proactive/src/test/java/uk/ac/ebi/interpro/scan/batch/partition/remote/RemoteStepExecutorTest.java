@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Tests {@link RemoteStepExecutor}.
  *
  * @author  Antony Quinn
- * @version $Id: RemoteStepExecutorTest.java,v 1.1 2009/06/18 15:08:38 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

@@ -20,7 +20,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
  * Tests {@link uk.ac.ebi.interpro.scan.batch.item.FastaFileItemReader}.
  *
  * @author  Antony Quinn
- * @version $Id: FastaFileItemReaderTest.java,v 1.2 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

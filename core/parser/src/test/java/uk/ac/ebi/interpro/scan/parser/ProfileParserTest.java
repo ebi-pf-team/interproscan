@@ -13,7 +13,7 @@ import uk.ac.ebi.interpro.scan.model.SequenceIdentifier;
  * JUnit tests for ProfileParser
  *
  * @author  Manjula Thimma
- * @version $Id: ProfileParserTest.java,v 1.3 2009/02/27 17:21:30 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  * @see     ProfileParser
  */

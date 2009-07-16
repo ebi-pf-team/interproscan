@@ -24,7 +24,7 @@ import uk.ac.ebi.interpro.scan.batch.cli.CommandLineConversation;
  * Runs system commands and writes stdout to given file.
  *
  * @author  Antony Quinn
- * @version $Id: FileWritingSystemCommandTasklet.java,v 1.3 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class FileWritingSystemCommandTasklet

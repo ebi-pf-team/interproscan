@@ -14,7 +14,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
  * Tests aggregation of FASTA records from {@link Protein} instances using {@link FormatterLineAggregator}.
  *
  * @author  Antony Quinn
- * @version $Id: FastaLineAggregatorTest.java,v 1.1 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

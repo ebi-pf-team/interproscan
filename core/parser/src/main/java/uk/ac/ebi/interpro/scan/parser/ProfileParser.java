@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  * Profile parser, for example ProSite and HAMAP output files.
  *
  * @author  Manjula Thimma
- * @version $Id: ProfileParser.java,v 1.2 2009/02/27 17:21:13 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class ProfileParser implements Parser{

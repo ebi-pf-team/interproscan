@@ -42,7 +42,7 @@ import org.springframework.util.Assert;
  * TODO: Add description
  *
  * @author  Emil Salageanu
- * @version $Id: ProActiveSchedulerPartitionHandler.java,v 1.3 2009/06/18 15:08:38 aquinn Exp $
+ * @version $Id$
  * @since   2.0
  */
 public class ProActiveSchedulerPartitionHandler implements PartitionHandler, InitializingBean {

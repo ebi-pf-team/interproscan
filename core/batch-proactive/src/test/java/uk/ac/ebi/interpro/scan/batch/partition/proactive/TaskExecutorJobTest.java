@@ -9,7 +9,7 @@ import org.junit.Test;
  * Tests {@link org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler}.
  *
  * @author  Antony Quinn
- * @version $Id: TaskExecutorJobTest.java,v 1.1 2009/06/18 15:08:37 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

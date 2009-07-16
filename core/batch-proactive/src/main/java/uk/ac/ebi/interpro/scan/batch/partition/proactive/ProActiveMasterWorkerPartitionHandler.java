@@ -24,7 +24,7 @@ import uk.ac.ebi.interpro.scan.batch.partition.remote.RemoteStepExecutor;
  * Executes steps on remote nodes using ProActive Parallel Suite's Master Worker API.
  *
  * @author  Antony Quinn
- * @version $Id: ProActiveMasterWorkerPartitionHandler.java,v 1.1 2009/06/18 15:08:38 aquinn Exp $
+ * @version $Id$
  * @see     <a href="http://proactive.inria.fr/">ProActive Parallel Suite</a>
  * @since   1.0
  */

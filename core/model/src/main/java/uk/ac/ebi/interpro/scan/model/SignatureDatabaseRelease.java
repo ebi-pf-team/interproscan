@@ -38,7 +38,7 @@ import java.util.Set;
  * Signature database release.
  *
  * @author  Antony Quinn
- * @version $Id: SignatureDatabaseRelease.java,v 1.11 2009/07/14 16:35:51 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @XmlRootElement(name="signature-database-release")

@@ -15,7 +15,7 @@ import org.apache.commons.logging.LogFactory;
  * Executes step on remote node.
  *
  * @author  Antony Quinn
- * @version $Id: RemoteStepExecutor.java,v 1.2 2009/06/19 09:30:40 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class RemoteStepExecutor implements Serializable {

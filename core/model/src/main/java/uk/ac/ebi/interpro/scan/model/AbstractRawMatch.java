@@ -23,7 +23,7 @@ import java.io.Serializable;
  * Represents a raw protein match.
  *
  * @author  Antony Quinn
- * @version $Id: AbstractRawMatch.java,v 1.2 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 

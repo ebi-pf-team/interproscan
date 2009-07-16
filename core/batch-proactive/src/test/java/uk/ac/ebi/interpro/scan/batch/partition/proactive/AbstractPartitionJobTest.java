@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
  * Tests {@link org.springframework.batch.core.partition.PartitionHandler} implementations.
  *
  * @author  Antony Quinn
- * @version $Id: AbstractPartitionJobTest.java,v 1.1 2009/06/18 15:08:37 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 abstract class AbstractPartitionJobTest extends AbstractJobTests {

@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
  * to the job repository on the master node.
  *
  * @author  Antony Quinn
- * @version $Id: RemoteJobRepository.java,v 1.2 2009/06/19 13:26:15 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class RemoteJobRepository implements JobRepository {

@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author  Phil Jones, EMBL-EBI
  * @author  Antony Quinn
- * @version $Id: CommandLineConversation.java,v 1.3 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public interface CommandLineConversation extends Serializable {

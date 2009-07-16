@@ -26,7 +26,7 @@ import java.io.Serializable;
  *
  * @author  Phil Jones
  * @author  Antony Quinn
- * @version $Id: XrefSequenceIdentifier.java,v 1.8 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  * @see     Match
  */

@@ -32,7 +32,7 @@ import java.io.Serializable;
  * Signature provider.
  *
  * @author  Antony Quinn
- * @version $Id: SignatureProvider.java,v 1.8 2009/07/14 17:11:12 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @XmlType(name="SignatureProviderType")

@@ -17,7 +17,7 @@ import java.io.File;
  * Tests {@link UniqueMultiResourcePartitioner}.
  *
  * @author  Antony Quinn
- * @version $Id: UniqueMultiResourcePartitionerTest.java,v 1.2 2009/06/19 09:20:33 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

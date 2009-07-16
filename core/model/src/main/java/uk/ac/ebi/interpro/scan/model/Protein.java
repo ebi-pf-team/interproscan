@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  *
  * @author  Antony Quinn
  * @author Phil Jones
- * @version $Id: Protein.java,v 1.20 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 

@@ -16,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author  Phil Jones, EMBL-EBI
  * @author  Antony Quinn
- * @version $Id: CommandLineConversationImpl.java,v 1.3 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 public class CommandLineConversationImpl implements CommandLineConversation{

@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
  * Executes sample job to merge several files into one file.
  *
  * @author  Antony Quinn
- * @version $Id: FileMergeJobTest.java,v 1.1 2009/06/18 10:53:08 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @ContextConfiguration

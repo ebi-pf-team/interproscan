@@ -26,7 +26,7 @@ import java.io.Serializable;
  *
  * @author  Antony Quinn
  * @author  Phil Jones
- * @version $Id: SequenceIdentifier.java,v 1.9 2009/07/10 13:24:41 aquinn Exp $
+ * @version $Id$
  * @since   1.0
  */
 @Entity
