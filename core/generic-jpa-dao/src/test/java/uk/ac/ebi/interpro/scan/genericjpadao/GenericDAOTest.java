@@ -23,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -36,7 +37,19 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations={"/spring-DAOTest-config.xml"})
 public class GenericDAOTest {
 
-    private static final Long LONG_ZERO = 0l;
+    /**
+     * Using these static constants may see seem silly,
+     * however the asserEquals method is not good at autoboxing / unboxing
+     * so having these Long objects for comparison is handy...
+     */
+    private static final Long Long_0 = 0l;
+    private static final Long Long_1 = 1l;
+
+    private static final String INITIAL_VALUE = "INITIAL_VALUE";
+    private static final String MODIFIED_VALUE = "MODIFIED_VALUE";
+
+    private static final String[] ARRAY_OF_VALUES = new String[]{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+
 
     @Resource (name= "genericDAO")
     private GenericDAO<ModelObject, Long> dao;
@@ -45,18 +58,27 @@ public class GenericDAOTest {
         this.dao = dao;
     }
 
+    /**
+     * Utility method to empty the table between tests (should be called as the first
+     * activity in each test.)
+     *
+     * Methods GenericDAO   .deleteAll()
+     */
     private void emptyTable(){
         dao.deleteAll();
-        assertEquals("There should be no proteins in the Protein table following a call to dao.deleteAll", LONG_ZERO, dao.count());
+        assertEquals("There should be no proteins in the Protein table following a call to dao.deleteAll", Long_0, dao.count());
     }
 
     /**
      * This test exercises insertion and retrieval.
+     *
+     * Methods GenericDAO   .insert(T persistentObject)
+     *                      .read(PK primaryKey)
      */
     @Test
     public void storeAndRetrieveObject(){
         emptyTable();
-        ModelObject persistable= new ModelObject("Test Value");
+        ModelObject persistable= new ModelObject(INITIAL_VALUE);
         dao.insert(persistable);
         assertNotNull("The primary key for the persisted object should not be null", persistable.getId());
         Long primaryKey = persistable.getId();
@@ -66,4 +88,77 @@ public class GenericDAOTest {
         assertEquals("The value stored is not the same as the original value set.", persistable, retrievedPersistable);
     }
 
+    /**
+     * This test exercises insertion, update and retrieval.
+     *
+     * Methods GenericDAO   .insert(T persistentObject)
+     *                      .update(T persistentObject)
+     *                      .read(PK primaryKey)
+     */
+    @Test
+    public void modifyAndRetrieveObject(){
+        emptyTable();
+        ModelObject persistable = new ModelObject(INITIAL_VALUE);
+        dao.insert(persistable);
+        ModelObject retrieved = dao.read(persistable.getId());
+        assertEquals("The initially set value is not as expected.", INITIAL_VALUE, retrieved.getTestFieldOne());
+        retrieved.setTestFieldOne(MODIFIED_VALUE);
+        dao.update(retrieved);
+        ModelObject retrievedAfterMod = dao.read(persistable.getId());
+        assertEquals("The modified value is not as expected following retrieval from the database.", MODIFIED_VALUE, retrievedAfterMod.getTestFieldOne());
+        assertEquals("There should only be one record in the table after these changes.", Long_1, dao.count());
+    }
+
+    /**
+     * Exercises GenericDAO .count()
+     *                      .read(PK primaryKey)
+     *                      .retrieveAll()
+     *                      .getMaximumPrimaryKey()
+     */
+    @Test
+    public void testCountAndMaximumPrimaryKey(){
+        emptyTable();
+        Long maxPrimaryKey = Long.MIN_VALUE;
+        for (String value : ARRAY_OF_VALUES){
+            ModelObject persistable = new ModelObject(value);
+            dao.insert(persistable);
+            if (persistable.getId() > maxPrimaryKey){
+                maxPrimaryKey = persistable.getId();
+            }
+        }
+        assertEquals("The maxium primary key reported is not as expected", maxPrimaryKey, dao.getMaximumPrimaryKey());
+        assertEquals("The number of stored objects is not as expected", new Long(ARRAY_OF_VALUES.length), dao.count());
+        List<ModelObject> retrievedObjects = dao.retrieveAll();
+        assertEquals("The number of retrieved objects does not equal the number stored.", ARRAY_OF_VALUES.length, retrievedObjects.size());
+        for (ModelObject retrieved : retrievedObjects){
+            assertNotNull("The List of retrieved objects should not contain any null objects", retrieved);
+        }
+    }
+
+    /**
+     * Exercises GenericDAO .delete(T persistentObject)
+     *                      .count()
+     *                      .read(PK primaryKey)
+     */
+    @Test
+    public void testDelete(){
+        emptyTable();
+        ModelObject toDelete = null;
+        for (String value : ARRAY_OF_VALUES){
+            ModelObject persistable = new ModelObject(value);
+            dao.insert(persistable);
+            if ("three".equals(persistable.getTestFieldOne())){
+                 toDelete = persistable;
+            }
+        }
+        Long primaryKeyOfDeletable = toDelete.getId();
+
+        assertEquals("All of the objects should be present prior to deleteion.", new Long(ARRAY_OF_VALUES.length), dao.count());
+        // Now delete one of the objects.
+        dao.delete(toDelete);
+        assertEquals("One of the inserted objects has been removed, so the count should be decremented.", new Long(ARRAY_OF_VALUES.length - 1), dao.count());
+
+        ModelObject shouldBeNull = dao.read(primaryKeyOfDeletable);
+        assertNull("The primary key of the deleted object should return null.", shouldBeNull);
+    }
 }
