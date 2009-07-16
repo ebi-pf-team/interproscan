@@ -30,7 +30,7 @@ class ObjectXmlPair<T> {
 
     private ObjectXmlPair()  {
         this.object = null;
-        this.xml = null;
+        this.xml    = null;
     }
     
     public ObjectXmlPair(T object, String xml)  {
