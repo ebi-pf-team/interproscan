@@ -9,8 +9,11 @@
 
     <import resource="oxm-context.xml"/>
 
-    <util:map id="signatureXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
-        <entry key="pfam">
+    <!--TODO: Add SuperFamily SSF53098    -->
+
+    <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+
+        <entry key="Pfam">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
                 <constructor-arg>
                     <bean class="uk.ac.ebi.interpro.scan.model.Signature">
@@ -58,6 +61,103 @@
                 </constructor-arg>
             </bean>
         </entry>
+
+        <entry key="Gene3D">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg>
+                    <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                        <constructor-arg value="G3DSA:1.10.10.10"/>
+                        <constructor-arg value="&quot;winged helix&quot; repressor DNA binding domain"/>
+                        <constructor-arg value="domain"/>
+                        <constructor-arg value=""/>
+                        <constructor-arg value=""/>
+                        <!-- Marked as @XmlTransient so set to null -->
+                        <constructor-arg>
+                            <null/>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.Model">
+                                <bean class="uk.ac.ebi.interpro.scan.model.Model">
+                                    <constructor-arg value="1bm9A00"/>
+                                    <constructor-arg value="&quot;winged helix&quot; repressor DNA binding domain"/>
+                                    <constructor-arg value="Replication terminator protein. Chain: a, b. Synonym: rtp, ter. Engineered: yes. Biological_unit: dimer and a dimer of dimers"/>
+                                </bean>
+                                <bean class="uk.ac.ebi.interpro.scan.model.Model">
+                                    <constructor-arg value="1ri7A01"/>
+                                </bean>
+                                <bean class="uk.ac.ebi.interpro.scan.model.Model">
+                                    <constructor-arg value="1iw7F03"/>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <value>
+                    <![CDATA[
+                        <signature ac="G3DSA:1.10.10.10" name="&quot;winged helix&quot; repressor DNA binding domain"
+                                   type="domain" desc="" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                            <abstract/>
+                            <models>
+                                <model ac="1bm9A00" name="&quot;winged helix&quot; repressor DNA binding domain" desc="Replication terminator protein. Chain: a, b. Synonym: rtp, ter. Engineered: yes. Biological_unit: dimer and a dimer of dimers"/>                            
+                                <model ac="1ri7A01"/>
+                                <model ac="1iw7F03"/>
+                            </models>
+                        </signature>
+                    ]]>
+                    </value>
+                </constructor-arg>
+            </bean>
+        </entry>
+
     </util:map>
+
+    <!--
+    ========= NOTES =========
+
+    GENE 3D
+    ~~~~~~~
+
+    To populate database we just need CathDomainDescriptionFile to:
+    1. Create Signature using CATHCODE as accession and HOMOL as name
+    2. Create Model using DOMAIN as accession and Signature created in step 1
+    3. When persist in DAO, check if Signature already exists - if not, create - and
+       check the association between Model and Signature is persisted
+    This can be done using Spring Batch FileItemReader, using "//" as record separator
+
+    HMM model file only contains NAME (in Onion this is called method_ac), e.g. "1o7iB00"
+    (http://www.ebi.ac.uk/~aquinn/projects/jira/IBU-804/1o7iB00.hmm)
+    Nothing about Gene3D in MARCH schema (only covers Pfam, PIRSF, SMART and TIGRFAM)
+    Note: MARCH contains MD5 of model! (HMM_MODEL.HMM)
+
+    Got following sample from http://release.cathdb.info/v3.1.0/CathDomainDescriptionFile:
+
+    FORMAT    CDDF1.0
+    DOMAIN    1bm9A00
+    VERSION   3.1.0
+    VERDATE   20-Jan-2007
+    NAME      Replication terminator protein. Chain: a, b. Synonym: rtp, ter. Engine
+    NAME      ered: yes. Biological_unit: dimer and a dimer of dimers
+    SOURCE    Bacillus subtilis. Gene: rtp.  Expressed in: escherichia coli.
+    CATHCODE  1.10.10.10
+    CLASS     Mainly Alpha
+    ARCH      Orthogonal Bundle
+    TOPOL     Arc Repressor Mutant, subunit A
+    HOMOL     "winged helix" repressor DNA binding domain
+    DLENGTH   120
+    DSEQH     >pdb|1bm9A00
+    DSEQS     EEKRSSTGFLVKQRAFLKLYMITMTEQERLYGLKLLEVLRSEFKEIGFKPNHTEVYRSLHELLDDGILKQ
+    DSEQS     IKVKKEGAKLQEVVLYQFKDYEAAKLYKKQLKVELDRCKKLIEKALSDNF
+    NSEGMENTS 1
+    SEGMENT   1bm9A00:1:1
+    SRANGE    START=3  STOP=122
+    SLENGTH   120
+    SSEQH     >pdb|1bm9A00:1:1
+    SSEQS     EEKRSSTGFLVKQRAFLKLYMITMTEQERLYGLKLLEVLRSEFKEIGFKPNHTEVYRSLHELLDDGILKQ
+    SSEQS     IKVKKEGAKLQEVVLYQFKDYEAAKLYKKQLKVELDRCKKLIEKALSDNF
+    ENDSEG
+    //
+    
+    -->
 
 </beans>

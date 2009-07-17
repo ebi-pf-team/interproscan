@@ -90,9 +90,7 @@ public class Signature implements Serializable {
         setType(type);
         setAbstract(abstractText);
         setSignatureDatabaseRelease(signatureDatabaseRelease);
-        for (Model m : models)  {
-            addModel(m);
-        }
+        setModels(models);
     }
 
     /**
@@ -107,6 +105,7 @@ public class Signature implements Serializable {
         private String type;
         private String abstractText;
         private SignatureDatabaseRelease signatureDatabaseRelease;
+        Set<Model> models;
 
         public Builder(String accession) {
             this.accession = accession;
@@ -119,6 +118,9 @@ public class Signature implements Serializable {
             signature.setType(type);
             signature.setAbstract(abstractText);
             signature.setSignatureDatabaseRelease(signatureDatabaseRelease);
+            if (models != null) {
+                signature.setModels(models);
+            }
             return signature;
         }
 
@@ -146,6 +148,11 @@ public class Signature implements Serializable {
             this.signatureDatabaseRelease = signatureDatabaseRelease;
             return this;
         }
+
+        public Builder models(Set<Model> models) {
+            this.models = models;
+            return this;
+        }        
     }
 
     public Long getId() {
@@ -242,8 +249,12 @@ public class Signature implements Serializable {
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
     private void setModels(Map<String, Model> models) {
+        setModels(models.values());
+    }
+
+    private void setModels(Collection<Model> models) {
         // Ensure Signature reference is set ("this.models = models" won't do)
-        for (Model m : models.values())  {
+        for (Model m : models)  {
             addModel(m);
         }
     }
