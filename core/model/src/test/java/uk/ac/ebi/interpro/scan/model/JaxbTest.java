@@ -23,6 +23,8 @@ import javax.xml.bind.Unmarshaller;
 import java.io.Writer;
 import java.io.StringWriter;
 import java.io.StringReader;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -124,19 +126,21 @@ public class JaxbTest extends TestCase {
         Protein protein = collection.addProtein(new Protein("MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCS"));
         Model model = new Model.Builder("PF00155").name("Aminotran_1_2").build();
         RawHmmMatch rawMatch = protein.addRawMatch(new RawHmmMatch(model, 0.035, 4.3e-61));
-        rawMatch.addLocation(new HmmLocation(36, 381, 1, 325, HmmLocation.HmmBounds.parseSymbol("[]"), 4.3e-61, 89.0));
+        rawMatch.addLocation(new HmmLocation(36, 381, 89.0, 4.3e-61, 1, 325, HmmLocation.HmmBounds.parseSymbol("[]")));
 
         // ... and one with no public identifier
         protein = collection.addProtein(new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI"));
         model = new Model.Builder("PF00533").name("BRCT").build();
         rawMatch = protein.addRawMatch(new RawHmmMatch(model, 0.035, 4.3e-61 + 1.5e-40));
-        rawMatch.addLocation(new HmmLocation(1642, 1723, 1, 81, HmmLocation.HmmBounds.parseSymbol("[."), 4.3e-61, 89.0));
-        rawMatch.addLocation(new HmmLocation(1756, 1842, 1, 88, HmmLocation.HmmBounds.parseSymbol(".."), 1.5e-40, 45.8));
+        // TODO: Disallow add and remove and force location in constructor like filtered match?
+        rawMatch.addLocation(new HmmLocation(1642, 1723, 89.0, 4.3e-61, 1, 81, HmmLocation.HmmBounds.parseSymbol("[.")));
+        rawMatch.addLocation(new HmmLocation(1756, 1842, 45.8, 1.5e-40, 1, 88, HmmLocation.HmmBounds.parseSymbol("..")));
 
         // Add filtered B12-binding match
         Signature signature = new Signature.Builder("PF02310").name("B12-binding").build();
-        FilteredHmmMatch filteredMatch = protein.addFilteredMatch(new FilteredHmmMatch(signature, 0.035, 3.7e-09));
-        filteredMatch.addLocation(new HmmLocation(3, 107, 1, 104, HmmLocation.HmmBounds.parseSymbol("[."), 7.6e-08, 3.0));
+        Set<HmmLocation> locations = new HashSet<HmmLocation>();
+        locations.add(new HmmLocation(3, 107, 3.0, 7.6e-08, 1, 104, HmmLocation.HmmBounds.parseSymbol("[.")));        
+        FilteredHmmMatch filteredMatch = protein.addFilteredMatch(new FilteredHmmMatch(signature, 0.035, 3.7e-09, locations));
 
         return collection;
 

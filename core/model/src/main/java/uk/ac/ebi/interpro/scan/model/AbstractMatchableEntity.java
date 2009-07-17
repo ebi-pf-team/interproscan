@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
@@ -44,9 +48,26 @@ abstract class AbstractMatchableEntity implements MatchableEntity, Serializable 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<FilteredMatch> filteredMatches = new HashSet<FilteredMatch>();
 
+    protected AbstractMatchableEntity() { }
+    
+    protected AbstractMatchableEntity(Set<FilteredMatch> filteredMatches) {
+        setFilteredMatches(filteredMatches);
+    }
+
+    protected AbstractMatchableEntity(Set<RawMatch> rawMatches, Set<FilteredMatch> filteredMatches) {
+        setRawMatches(rawMatches);
+        setFilteredMatches(filteredMatches);        
+    }
+
     public Set<RawMatch> getRawMatches() {
         return Collections.unmodifiableSet(rawMatches);
-    }    
+    }
+
+    private void setRawMatches(Set<RawMatch> rawMatches) {
+        for (RawMatch m : rawMatches)   {
+            addRawMatch(m);
+        }
+    }
 
     public <T extends RawMatch> T addRawMatch(T match) throws IllegalArgumentException {
         if (match == null) {
@@ -67,7 +88,13 @@ abstract class AbstractMatchableEntity implements MatchableEntity, Serializable 
 
     public Set<FilteredMatch> getFilteredMatches() {
         return Collections.unmodifiableSet(filteredMatches);
-    }    
+    }
+
+    private void setFilteredMatches(Set<FilteredMatch> filteredMatches) {
+        for (FilteredMatch m : filteredMatches)   {
+            addFilteredMatch(m);
+        }
+    }
 
     public <T extends FilteredMatch> T addFilteredMatch(T match) throws IllegalArgumentException {
         if (match == null) {
@@ -84,6 +111,29 @@ abstract class AbstractMatchableEntity implements MatchableEntity, Serializable 
     public <T extends FilteredMatch> void removeFilteredMatch(T match) {
         filteredMatches.remove(match);
         match.setSequence(null);
-    }    
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof AbstractMatchableEntity))
+            return false;
+        final AbstractMatchableEntity m = (AbstractMatchableEntity) o;
+        return new EqualsBuilder()
+                .append(rawMatches, m.rawMatches)
+                .append(filteredMatches, m.filteredMatches)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 55)
+                .append(rawMatches)
+                .append(filteredMatches)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }

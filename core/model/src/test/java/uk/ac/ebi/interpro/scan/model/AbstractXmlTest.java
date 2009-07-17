@@ -41,7 +41,7 @@ import java.util.Map;
  * @since   1.0
  * @see     XMLUnit
  */
-abstract class AbstractXmlTest<T extends Serializable> {
+abstract class AbstractXmlTest<T> {
 
     private static final Log logger = LogFactory.getLog(AbstractXmlTest.class);
 

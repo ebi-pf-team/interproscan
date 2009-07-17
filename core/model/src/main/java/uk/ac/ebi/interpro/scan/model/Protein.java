@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -41,7 +45,9 @@ import java.util.regex.Pattern;
 @Entity
 @XmlRootElement(name="protein")
 @XmlType(name="ProteinType", propOrder={"md5", "sequence", "filteredMatches"})
-public class Protein extends AbstractMatchableEntity implements MatchableEntity, Serializable {
+public class Protein
+        extends AbstractMatchableEntity 
+        implements MatchableEntity, Serializable {
 
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
 
@@ -69,22 +75,27 @@ public class Protein extends AbstractMatchableEntity implements MatchableEntity,
     protected Protein() {}
 
     public Protein(String sequence) {
+        setSequenceAndMd5(sequence);
+    }
+
+    public Protein(String sequence, Set<FilteredMatch> filteredMatches) {
+        super(filteredMatches);
+        setSequenceAndMd5(sequence);
+    }        
+
+    public Protein(String sequence, Set<RawMatch> rawMatches, Set<FilteredMatch> filteredMatches) {
+        super(rawMatches, filteredMatches);
+        setSequenceAndMd5(sequence);
+    }
+
+    private void setSequenceAndMd5(String sequence)    {
         setSequence(sequence);
-        // Calculate and store MD5 of sequence
-        try {
-            // TODO - Check this - the JavaDoc suggests that this method call creates a new instance of
-            // TODO - the digest each time it is called.  Is this thread safe?  If so, make singleton or static.
-            MessageDigest m = MessageDigest.getInstance("MD5");
-            m.update(sequence.getBytes(), 0, sequence.length());
-            md5 = new BigInteger(1, m.digest()).toString(16);  // TODO: Why 16? (Magic number) -> make a constant
-            md5 = md5.toLowerCase(Locale.ENGLISH);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("MD5 implementation not available", e);
-        }
+        setMd5(calculateMd5(sequence));
     }
 
     /**
      * Returns the unique identifier (e.g. database primary key) for this Protein.
+     * 
      * @return the unique identifier (e.g. database primary key) for this Protein.
      */
     public Long getId() {
@@ -94,6 +105,10 @@ public class Protein extends AbstractMatchableEntity implements MatchableEntity,
     @XmlAttribute
     public String getMd5() {
         return md5;
+    }
+
+    private void setMd5(String md5) {
+        this.md5 = md5;
     }
 
     @XmlElement
@@ -118,8 +133,12 @@ public class Protein extends AbstractMatchableEntity implements MatchableEntity,
     }
 
     /**
+     * Returns filtered matches
+     *
      * TODO - Check why this is here - does it need to be?  Probably does to allow JPA annotations to know what Entity to map to.
-     * @return A set containing all of the FilteredMatch objects associated with this Protein.
+     * 
+     * @return Filtered matches.
+     * @see    FilteredMatch
      */
     @XmlElement(name="matches", required=true)
     @XmlJavaTypeAdapter(AbstractFilteredMatch.FilteredMatchAdapter.class)
@@ -171,8 +190,45 @@ public class Protein extends AbstractMatchableEntity implements MatchableEntity,
         crossReferences.remove(xref);
     }
 
+    private static String calculateMd5(String sequence)   {
+        try {
+            // TODO - Check this - the JavaDoc suggests that this method call creates a new instance of
+            // TODO - the digest each time it is called.  Is this thread safe?  If so, make singleton or static.
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.update(sequence.getBytes(), 0, sequence.length());
+            final int RADIX = 16; // TODO: Why is radix 16?
+            String md5 = new BigInteger(1, m.digest()).toString(RADIX);
+            return (md5.toLowerCase(Locale.ENGLISH));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("MD5 implementation not available", e);
+        }
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Protein))
+            return false;
+        final Protein p = (Protein) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(sequence, p.sequence)
+                .append(md5, p.md5)
+                .append(crossReferences, p.crossReferences)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 47)
+                .appendSuper(super.hashCode())
+                .append(sequence)
+                .append(md5)
+                .append(crossReferences)
+                .toHashCode();
+    }
+
     @Override public String toString()  {
-        return "Protein [md5=" + md5 + ", sequence=" + sequence + ", xrefs=" + crossReferences + "]";
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }
