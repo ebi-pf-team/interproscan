@@ -31,7 +31,7 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
-@XmlType(name="RawFingerPrintsMatchType", propOrder={"model", "locations"})
+@XmlType(name="RawFingerPrintsMatchType")//, propOrder={"model", "locations"})
 public class RawFingerPrintsMatch
         extends AbstractRawMatch<FingerPrintsLocation>
         implements RawMatch<FingerPrintsLocation>, Serializable {
@@ -46,8 +46,8 @@ public class RawFingerPrintsMatch
         this.evalue = evalue;        
     }
 
-    @XmlAttribute(name="evalue", required=true)
-    public double getEValue() {
+    @XmlAttribute(required=true)
+    public double getEvalue() {
         return evalue;
     }
 
@@ -56,7 +56,7 @@ public class RawFingerPrintsMatch
      * TODO - see if this can be removed - do not understand why it is required as the @Column annotation is on the field.
      * @param evalue
      */
-    private void setEValue(double evalue){
+    private void setEvalue(double evalue){
         this.evalue = evalue;
     }        
 
@@ -74,8 +74,8 @@ public class RawFingerPrintsMatch
     }
 
 
-    @Override public void setLocations(Set<FingerPrintsLocation> locations){
-        super.setLocations(locations);
-    }
+//    @Override public void setLocations(Set<FingerPrintsLocation> locations){
+//        super.setLocations(locations);
+//    }
 
 }

@@ -31,7 +31,7 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
-@XmlType(name="RawHmmMatchType", propOrder={"model", "locations"})
+@XmlType(name="RawHmmMatchType")//, propOrder={"model", "locations"})
 public class RawHmmMatch
         extends AbstractRawMatch<HmmLocation>
         implements RawMatch<HmmLocation>, Serializable {
@@ -53,8 +53,8 @@ public class RawHmmMatch
         this.evalue = evalue;
     }
 
-    @XmlAttribute(name="evalue", required=true)
-    public double getEValue() {
+    @XmlAttribute(required=true)
+    public double getEvalue() {
         return evalue;
     }
 
@@ -63,7 +63,7 @@ public class RawHmmMatch
      * TODO - see if this can be removed - do not understand why it is required as the @Column annotation is on the field.
      * @param evalue
      */
-    private void setEValue(double evalue){
+    private void setEvalue(double evalue){
         this.evalue = evalue;
     }    
 
@@ -94,8 +94,8 @@ public class RawHmmMatch
         return super.getLocations ();
     }
 
-    @Override public void setLocations(Set<HmmLocation> locations){
-        super.setLocations(locations);
-    }
+//    @Override private void setLocations(Set<HmmLocation> locations){
+//        super.setLocations(locations);
+//    }
 
 }

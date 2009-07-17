@@ -46,11 +46,13 @@ public interface Match<T extends Location> extends Serializable {
      * Made public for JPA, but should NOT be used in other circumstances.
      * @param locations DO NOT USE.
      */
-    public void setLocations(Set<T> locations);
+    //public void setLocations(Set<T> locations);
+
     public T addLocation(T location);
     public void removeLocation(T location);
 
     public MatchableEntity getSequence();
+
     public void setSequence(MatchableEntity sequence);
 
     /**

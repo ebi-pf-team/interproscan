@@ -16,39 +16,51 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 
 /**
- * Tests for Protein class.
+ * Tests cases for {@link Protein}.
  *
  * @author  Antony Quinn
  * @version $Id$
  * @since   1.0
- * @see     Protein
  */
-public class ProteinTest extends TestCase {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
+public class ProteinTest extends AbstractXmlTest<Protein> {
 
     // http://www.uniprot.org/uniparc/UPI0000000001.fasta
-    static final String MULTILINE  = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD\n" +
+    static final String MULTILINE  =
+                              "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD\n" +
                               "ADAQLDAVLSAATETYSGLTPEQKAYVPAMFTAALNIQTSVNTVVRDFENYVKQTCNSSA\n" +
                               "VVDNKLKIQNVIIDECYGAPGSPTNLEFINTGSSKGNCAIKALMQLTTKATTQIAPKQVA\n" +
                               "GTGVQFYMIVIGVIILAALFMYYAKRMLFTSTNDKIKLILANKENVHWTTYMDTFFRTSP\n" +
                               "MVIATTDMQN";
-    static final String SINGLELINE  = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD" +
+    static final String SINGLELINE  =
+                               "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD" +
                                "ADAQLDAVLSAATETYSGLTPEQKAYVPAMFTAALNIQTSVNTVVRDFENYVKQTCNSSA" +
                                "VVDNKLKIQNVIIDECYGAPGSPTNLEFINTGSSKGNCAIKALMQLTTKATTQIAPKQVA" +
                                "GTGVQFYMIVIGVIILAALFMYYAKRMLFTSTNDKIKLILANKENVHWTTYMDTFFRTSP" +
                                "MVIATTDMQN";
 
     // First line of UPI0000000001.fasta
-    public static final String GOOD       = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
+    public static final String GOOD = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
+
     // echo -n "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD" | md5sum
-    static final String GOOD_MD5   = "9d380adca504b0b1a2654975c340af78";
+    static final String GOOD_MD5 = "9d380adca504b0b1a2654975c340af78";
 
 
     // Contains "." so should fail when create protein
-    static final String BAD        = "MGAAASIQTTVNTLSERISSKLEQE.ANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
+    static final String BAD = "MGAAASIQTTVNTLSERISSKLEQE.ANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
 
     /**
      * Tests that protein can be instantiated with amino acids sequences with and without whitespace
@@ -79,15 +91,6 @@ public class ProteinTest extends TestCase {
         assertEquals(0, protein.getCrossReferences().size());
     }
 
-    /*
-    TODO: Find out why this doesn't work (correct Exception is thrown but JUnit does not behave as expected)
-    @Test(expected=IllegalArgumentException.class)
-    public void testGetSequenceBad()   {
-        Protein ps;
-        ps = new Protein(BAD);
-    }
-    */    
-
     /**
      * Tests that MD5 checksum can be calculated for the protein sequence
      */
@@ -102,6 +105,21 @@ public class ProteinTest extends TestCase {
         assertEquals("Protein should have one match", 1, protein.getRawMatches().size());
         protein.removeRawMatch(match);
         assertEquals("Protein should have no matches", 0, protein.getRawMatches().size());
-    }    
+    }
+
+    // Note: The following does not work perhaps because IllegalArgumentException is a runtime exception, and only
+    //       checked exception such as IOException can be used with @Text(expected)
+    /*
+    @Test(expected=java.lang.IllegalArgumentException.class)
+    public void testGetSequenceBad()   {
+        Protein ps;
+        ps = new Protein(BAD);
+    }
+    */
+
+    @Test public void testXml() throws IOException, SAXException {
+        super.testSupportsMarshalling(Protein.class);
+        super.testXmlRoundTrip();
+    }
 
 }

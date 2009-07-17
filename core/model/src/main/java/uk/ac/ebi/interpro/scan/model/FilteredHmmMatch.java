@@ -16,11 +16,16 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Hidden Markov Model match.
@@ -43,14 +48,13 @@ public class FilteredHmmMatch
 
     protected FilteredHmmMatch() {}
 
-    // TODO: Make Location(s) a required argument?
-    public FilteredHmmMatch(Signature signature, double score, double evalue) {
-        super(signature);
+    public FilteredHmmMatch(Signature signature, double score, double evalue, Set<HmmLocation> locations) {
+        super(signature, locations);
         this.score  = score;
         this.evalue = evalue;
     }
     
-    @XmlAttribute(name="evalue", required=true)
+    @XmlAttribute(required=true)
     public double getEvalue() {
         return evalue;
     }
@@ -82,6 +86,31 @@ public class FilteredHmmMatch
 
     @Override public void removeLocation(HmmLocation location) {
         super.removeLocation(location);
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof FilteredHmmMatch))
+            return false;
+        final FilteredHmmMatch m = (FilteredHmmMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(evalue, m.evalue)
+                .append(score, m.score)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 49)
+                .appendSuper(super.hashCode())
+                .append(evalue)
+                .append(score)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

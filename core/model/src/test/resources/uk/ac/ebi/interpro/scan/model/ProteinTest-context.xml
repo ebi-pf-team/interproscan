@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util 
+                           http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <import resource="oxm-context.xml"/>
+
+    <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+
+        <!-- TODO: Add xrefs -->
+        <entry key="Pfam">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg>
+                    <bean class="uk.ac.ebi.interpro.scan.model.Protein">
+                        <constructor-arg value="MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI"/>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                                    <constructor-arg>
+                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                                            <constructor-arg value="PF02310"/>
+                                            <constructor-arg value="B12-binding"/>
+                                        </bean>
+                                    </constructor-arg>
+                                    <constructor-arg value="0.035"/>   <!--Score-->
+                                    <constructor-arg value="3.7e-9"/>  <!--E-value-->
+                                    <constructor-arg>
+                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                                                <constructor-arg value="3"/>        <!--Start-->
+                                                <constructor-arg value="107"/>      <!--End-->
+                                                <constructor-arg value="3.0"/>      <!--Score-->
+                                                <constructor-arg value="3.7e-9"/>   <!--E-value-->
+                                                <constructor-arg value="1"/>        <!--HMM start-->
+                                                <constructor-arg value="104"/>      <!--HMM end-->
+                                                <constructor-arg value="N_TERMINAL_COMPLETE"
+                                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
+                                            </bean>
+                                        </util:set>
+                                     </constructor-arg>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <value>
+                    <![CDATA[
+                        <protein md5="5ab17489095dd2836122eec0e91db82d"
+                                 xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                            <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
+                            <matches>
+                                <hmm-match score="0.035" evalue="3.7E-9">
+                                    <signature ac="PF02310" name="B12-binding" />
+                                    <locations>
+                                        <hmm-location start="3" end="107" score="3.0" evalue="3.7E-9"
+                                                      hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
+                                    </locations>
+                                </hmm-match>
+                            </matches>
+                        </protein>
+                    ]]>
+                    </value>
+                </constructor-arg>
+            </bean>
+        </entry>
+
+    </util:map>
+
+</beans>

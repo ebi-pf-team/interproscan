@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -42,7 +46,11 @@ abstract class AbstractMatch<T extends Location> implements Match<T>, Serializab
     @Transient
     private Set<T> locations = new LinkedHashSet<T>();
 
-    public AbstractMatch()  { }
+    protected AbstractMatch()  { }
+
+    protected AbstractMatch(Set<T> locations)  {
+        setLocations(locations);
+    }
 
     @Id
     @XmlTransient                                                                          
@@ -72,8 +80,10 @@ abstract class AbstractMatch<T extends Location> implements Match<T>, Serializab
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
     // Doh - changed to public for JPA annotations.
-    public void setLocations(Set<T> locations) {
-        this.locations = locations;
+    private void setLocations(Set<T> locations) {
+        for (T t : locations)    {
+            addLocation(t);
+        }
     }
 
     // Suppress 'unchecked' warnings relating to location.getMatch().removeLocation(location);
@@ -95,6 +105,27 @@ abstract class AbstractMatch<T extends Location> implements Match<T>, Serializab
     public void removeLocation(T location)   {
         locations.remove(location);
         location.setMatch(null);
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof AbstractMatch))
+            return false;
+        final AbstractMatch m = (AbstractMatch) o;
+        return new EqualsBuilder()
+                .append(locations, m.locations)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 51)
+                .append(locations)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

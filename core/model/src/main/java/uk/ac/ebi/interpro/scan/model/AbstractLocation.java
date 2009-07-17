@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -27,6 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Collections;
 
 /**
  * Location of match on protein sequence.
@@ -43,10 +48,13 @@ abstract class AbstractLocation implements Location, Serializable {
 
     @Id
     private Long id;
+
     @Column(name="location_start")    // to match end - 'end' is reserved word in SQL.
-    private int start;                                                                                 
+    private int start;
+
     @Column (name="location_end")       // 'end' is reserved word in SQL.
     private int end;
+    
     @ManyToOne
     private Match match;
 
@@ -85,6 +93,7 @@ abstract class AbstractLocation implements Location, Serializable {
      *  Was private for Hibernate (see http://www.javalobby.org/java/forums/t49288.html)
      *  Now public for JPA (as defined in the interface).
       */
+    // TODO: Make setters private again!
     public void setStart(int start) {
         this.start = start;
     }
@@ -147,27 +156,53 @@ abstract class AbstractLocation implements Location, Serializable {
      */
     private final static class LocationsType {
 
-        private Set<HmmLocation> hmmLocations;
-        private Set<FingerPrintsLocation> fingerPrintsLocations;
+        @XmlElement(name = "hmm-location")
+        private final Set<HmmLocation> hmmLocations;
 
-        public LocationsType() { }
+        @XmlElement(name = "fingerprint-location")
+        private final Set<FingerPrintsLocation> fingerPrintsLocations;
+
+        public LocationsType() {
+            hmmLocations = null;        
+            fingerPrintsLocations = null;
+        }
 
         public LocationsType(Set<HmmLocation> hmmLocations, Set<FingerPrintsLocation> fingerPrintsLocations) {
             this.hmmLocations           = hmmLocations;
             this.fingerPrintsLocations  = fingerPrintsLocations;
         }
 
-        @XmlElement(name = "hmm-location")
         public Set<HmmLocation> getHmmLocations() {
-            return hmmLocations;
+            return (hmmLocations == null ? Collections.<HmmLocation>emptySet() : hmmLocations);
         }
-
-        @XmlElement(name = "fingerprint-location")
+        
         public Set<FingerPrintsLocation> getFingerPrintsLocations() {
-            return fingerPrintsLocations;
+            return (fingerPrintsLocations == null ? Collections.<FingerPrintsLocation>emptySet() : fingerPrintsLocations);
         }        
 
     }
 
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof AbstractLocation))
+            return false;
+        final AbstractLocation h = (AbstractLocation) o;
+        return new EqualsBuilder()
+                .append(start, h.start)
+                .append(end, h.end)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 55)
+                .append(start)
+                .append(end)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
     
 }

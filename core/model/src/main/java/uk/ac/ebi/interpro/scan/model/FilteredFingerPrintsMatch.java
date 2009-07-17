@@ -45,7 +45,7 @@ public class FilteredFingerPrintsMatch
         this.evalue = evalue;
     }
 
-    @XmlAttribute(name="evalue", required=true)
+    @XmlAttribute(required=true)
     public double getEvalue() {
         return evalue;
     }

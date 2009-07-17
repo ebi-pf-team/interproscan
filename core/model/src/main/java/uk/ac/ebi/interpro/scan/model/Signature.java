@@ -77,6 +77,11 @@ public class Signature implements Serializable {
         setAccession(accession);
     }
 
+    public Signature(String accession, String name) {
+        setAccession(accession);
+        setName(name);
+    }
+
     public Signature(String accession,
                      String name,
                      String type,                     
@@ -287,6 +292,50 @@ public class Signature implements Serializable {
         model.setSignature(null);
     }
 
+    /**
+     * Map models to and from XML representation
+     */
+    @XmlTransient
+    private static class ModelAdapter extends XmlAdapter<ModelsType, Map<String, Model>> {
+
+        /** Map Java to XML type */
+        @Override public ModelsType marshal(Map<String, Model> map) {
+            return (map == null || map.isEmpty() ? null : new ModelsType(new HashSet<Model>(map.values())));
+        }
+
+        /** Map XML type to Java */
+        @Override public Map<String, Model> unmarshal(ModelsType modelsType) {
+            Map<String, Model> map = new HashMap<String, Model>();
+            for (Model m : modelsType.getModels())  {
+                map.put(m.getKey(), m);
+            }
+            return map;
+        }
+
+    }
+
+    /**
+     * Helper class for ModelAdapter
+     */
+    private final static class ModelsType {
+
+        @XmlElement(name = "model")
+        private final Set<Model> models;
+
+        public ModelsType() { 
+            models = null;
+        }
+
+        public ModelsType(Set<Model> models) {
+            this.models = models;
+        }
+
+        public Set<Model> getModels() {
+            return models;
+        }
+
+    }    
+
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -318,48 +367,6 @@ public class Signature implements Serializable {
 
     @Override public String toString()  {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-    /**
-     * Map models to and from XML representation
-     */
-    @XmlTransient
-    private static class ModelAdapter extends XmlAdapter<ModelsType, Map<String, Model>> {
-
-        /** Map Java to XML type */
-        @Override public ModelsType marshal(Map<String, Model> map) {
-            return (map == null || map.isEmpty() ? null : new ModelsType(new HashSet<Model>(map.values())));
-        }
-
-        /** Map XML type to Java */
-        @Override public Map<String, Model> unmarshal(ModelsType modelsType) {
-            Map<String, Model> map = new HashMap<String, Model>();
-            for (Model m : modelsType.getModels())  {
-                map.put(m.getKey(), m);
-            }
-            return map;
-        }
-
-    }
-
-    /**
-     * Helper class for ModelAdapter
-     */
-    private final static class ModelsType {
-
-        @XmlElement(name = "model")
-        private Set<Model> models;
-
-        public ModelsType() { }
-
-        public ModelsType(Set<Model> models) {
-            this.models = models;
-        }
-
-        public Set<Model> getModels() {
-            return models;
-        }
-
     }
 
 }

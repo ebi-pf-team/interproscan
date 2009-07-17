@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
@@ -23,6 +27,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Collections;
 
 /**
  * Represents a filtered protein match.
@@ -40,7 +45,12 @@ abstract class AbstractFilteredMatch<T extends Location>
 
     AbstractFilteredMatch() {}
 
-    public AbstractFilteredMatch(Signature signature)  {
+    protected AbstractFilteredMatch(Signature signature)  {
+        this.signature = signature;
+    }
+
+    protected AbstractFilteredMatch(Signature signature, Set<T> locations)  {
+        super(locations);
         this.signature = signature;
     }
 
@@ -64,8 +74,7 @@ abstract class AbstractFilteredMatch<T extends Location>
     @XmlTransient
     static final class FilteredMatchAdapter extends XmlAdapter<FilteredMatchesType, Set<FilteredMatch>> {
 
-        // Adapt original Java construct to a type (MatchesType)
-        // which we can easily map to the XML output we want
+        /** Map Java to XML type */
         @Override public FilteredMatchesType marshal(Set<FilteredMatch> matches) {
             Set<FilteredHmmMatch> hmmMatches = new LinkedHashSet<FilteredHmmMatch>();
             Set<FilteredFingerPrintsMatch> fingerPrintsMatches = new LinkedHashSet<FilteredFingerPrintsMatch>();
@@ -80,10 +89,10 @@ abstract class AbstractFilteredMatch<T extends Location>
             return new FilteredMatchesType(hmmMatches, fingerPrintsMatches);
         }
 
-        // map XML type to Java
+        /** Map XML type to Java */
         @Override public Set<FilteredMatch> unmarshal(FilteredMatchesType matchTypes) {
-            // TODO: Test unmarshal
-            Set<FilteredMatch> matches = new HashSet<FilteredMatch>(matchTypes.getHmmMatches().size() + matchTypes.getFingerPrintsMatches().size());
+            int size = matchTypes.getHmmMatches().size() + matchTypes.getFingerPrintsMatches().size();
+            Set<FilteredMatch> matches = new HashSet<FilteredMatch>(size);
             for (FilteredMatch m : matchTypes.getHmmMatches()) {
                 matches.add(m);
             }
@@ -100,26 +109,53 @@ abstract class AbstractFilteredMatch<T extends Location>
      */
     private final static class FilteredMatchesType {
 
-        private Set<FilteredHmmMatch> hmmMatches;
-        private Set<FilteredFingerPrintsMatch> fingerPrintsMatches;
+        @XmlElement(name = "hmm-match")
+        private final Set<FilteredHmmMatch> hmmMatches;
 
-        public FilteredMatchesType() {}
+        @XmlElement(name = "fingerprints-match")
+        private final Set<FilteredFingerPrintsMatch> fingerPrintsMatches;
+
+        private FilteredMatchesType() {
+            hmmMatches          = null;   
+            fingerPrintsMatches = null;
+        }
 
         public FilteredMatchesType(Set<FilteredHmmMatch> hmmMatches, Set<FilteredFingerPrintsMatch> fingerPrintsMatches) {
             this.hmmMatches          = hmmMatches;
             this.fingerPrintsMatches = fingerPrintsMatches;
         }
 
-        @XmlElement(name = "hmm-match")
         public Set<FilteredHmmMatch> getHmmMatches() {
-            return hmmMatches;
+            return (hmmMatches == null ? Collections.<FilteredHmmMatch>emptySet() : hmmMatches);
         }
 
-        @XmlElement(name = "fingerprints-match")
         public Set<FilteredFingerPrintsMatch> getFingerPrintsMatches() {
-            return fingerPrintsMatches;
+            return (fingerPrintsMatches == null ? Collections.<FilteredFingerPrintsMatch>emptySet() : fingerPrintsMatches);
         }
 
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof AbstractFilteredMatch))
+            return false;
+        final AbstractFilteredMatch m = (AbstractFilteredMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(signature, m.signature)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 51)
+                .appendSuper(super.hashCode())
+                .append(signature)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

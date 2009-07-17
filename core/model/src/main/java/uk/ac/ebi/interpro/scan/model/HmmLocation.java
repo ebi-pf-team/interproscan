@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -58,9 +62,8 @@ public class HmmLocation
     protected HmmLocation() {}
 
     // TODO: Use Builder pattern so constructor-args are obvious?
-    public HmmLocation(int start, int end,
-                       int hmmStart, int hmmEnd, HmmBounds hmmBounds,
-                       double evalue, double score) {
+    public HmmLocation(int start, int end, double score, double evalue,
+                       int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
         super(start, end);
         this.hmmStart  = hmmStart;
         this.hmmEnd    = hmmEnd;
@@ -74,10 +77,18 @@ public class HmmLocation
         return hmmStart;
     }
 
+    private void setHmmStart(int hmmStart) {
+        this.hmmStart = hmmStart;
+    }
+
     @XmlAttribute(name="hmm-end", required=true)
     public int getHmmEnd() {
         return hmmEnd;
     }
+
+    private void setHmmEnd(int hmmEnd) {
+        this.hmmEnd = hmmEnd;
+    }    
 
     // Not using adapter because XML schema contains eg. "COMPLETE" instead of "[]"
     // @XmlJavaTypeAdapter(HmmBounds.HmmBoundsAdapter.class)
@@ -86,14 +97,26 @@ public class HmmLocation
         return hmmBounds;
     }
 
-    @XmlAttribute(name="evalue", required=true)
-    public double getEValue() {
+    private void setHmmBounds(HmmBounds hmmBounds) {
+        this.hmmBounds = hmmBounds;
+    }    
+
+    @XmlAttribute(required=true)
+    public double getEvalue() {
         return evalue;
     }
 
-    @XmlAttribute(name="score", required=true)
+    private void setEvalue(double evalue) {
+        this.evalue = evalue;
+    }    
+
+    @XmlAttribute(required=true)
     public double getScore() {
         return score;
+    }
+
+    private void setScore(double score) {
+        this.score = score;
     }
 
     // HMMER output notation for model match
@@ -164,4 +187,36 @@ public class HmmLocation
     @Override public Match getMatch() {
         return super.getMatch();
     }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof HmmLocation))
+            return false;
+        final HmmLocation h = (HmmLocation) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(hmmStart, h.hmmStart)
+                .append(hmmEnd, h.hmmEnd)
+                .append(hmmBounds, h.hmmBounds)
+                .append(score, h.score)
+                .append(evalue, h.evalue)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 53)
+                .appendSuper(super.hashCode())
+                .append(hmmStart)
+                .append(hmmEnd)
+                .append(hmmBounds)
+                .append(score)
+                .append(evalue)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
 }

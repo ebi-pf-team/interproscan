@@ -11,7 +11,12 @@
                            http://www.springframework.org/schema/oxm/spring-oxm-1.5.xsd">
 
     <bean id="jaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <property name="classesToBeBound" value="uk.ac.ebi.interpro.scan.model.Signature"/>
+        <property name="classesToBeBound">
+            <list>
+                <value>uk.ac.ebi.interpro.scan.model.Protein</value>
+                <value>uk.ac.ebi.interpro.scan.model.Signature</value>
+            </list>
+        </property>
         <property name="marshallerProperties">
             <util:map value-type="java.lang.Boolean">
                 <entry value="true">
