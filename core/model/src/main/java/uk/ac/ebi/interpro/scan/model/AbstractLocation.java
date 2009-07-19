@@ -20,18 +20,15 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.Collections;
 
 /**
  * Location of match on protein sequence.
@@ -47,6 +44,7 @@ import java.util.Collections;
 abstract class AbstractLocation implements Location, Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name="location_start")    // to match end - 'end' is reserved word in SQL.
