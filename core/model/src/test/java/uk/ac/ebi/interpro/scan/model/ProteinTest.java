@@ -36,7 +36,7 @@ import java.io.IOException;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class ProteinTest extends AbstractXmlTest<Protein> {
+public class ProteinTest extends AbstractTest<Protein> {
 
     // http://www.uniprot.org/uniparc/UPI0000000001.fasta
     static final String MULTILINE  =

@@ -125,13 +125,15 @@ public class JaxbTest extends TestCase {
         // Add a protein with a public identifier
         Protein protein = collection.addProtein(new Protein("MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCS"));
         Model model = new Model.Builder("PF00155").name("Aminotran_1_2").build();
-        RawHmmMatch rawMatch = protein.addRawMatch(new RawHmmMatch(model, 0.035, 4.3e-61));
-        rawMatch.addLocation(new HmmLocation(36, 381, 89.0, 4.3e-61, 1, 325, HmmLocation.HmmBounds.parseSymbol("[]")));
+        Set<HmmLocation> rawLocations = new HashSet<HmmLocation>();
+        rawLocations.add(new HmmLocation(36, 381, 89.0, 4.3e-61, 1, 325, HmmLocation.HmmBounds.parseSymbol("[]")));
+        protein.addRawMatch(new RawHmmMatch(model, 0.035, 4.3e-61, rawLocations));
 
         // ... and one with no public identifier
         protein = collection.addProtein(new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI"));
         model = new Model.Builder("PF00533").name("BRCT").build();
-        rawMatch = protein.addRawMatch(new RawHmmMatch(model, 0.035, 4.3e-61 + 1.5e-40));
+        // TODO: Add Builder to RawHmmMatch
+        RawHmmMatch rawMatch = protein.addRawMatch(new RawHmmMatch(model, 0.035, 4.3e-61 + 1.5e-40));
         // TODO: Disallow add and remove and force location in constructor like filtered match?
         rawMatch.addLocation(new HmmLocation(1642, 1723, 89.0, 4.3e-61, 1, 81, HmmLocation.HmmBounds.parseSymbol("[.")));
         rawMatch.addLocation(new HmmLocation(1756, 1842, 45.8, 1.5e-40, 1, 88, HmmLocation.HmmBounds.parseSymbol("..")));

@@ -18,6 +18,7 @@ package uk.ac.ebi.interpro.scan.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.oxm.Marshaller;
@@ -33,17 +34,21 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.util.Map;
 
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+
 /**
  * Utility class for running XmlUnit tests.
  *
  * @author  Antony Quinn
  * @version $Id$
  * @since   1.0
- * @see     XMLUnit
+ * @see     org.custommonkey.xmlunit.XMLUnit
  */
-abstract class AbstractXmlTest<T> {
+abstract class AbstractTest<T extends PersistentEntity> {
 
-    private static final Log logger = LogFactory.getLog(AbstractXmlTest.class);
+    private static final Log logger = LogFactory.getLog(AbstractTest.class);
+
+    private static final Long LONG_ZERO = 0L;
 
     @Resource
     private Marshaller marshaller;
@@ -54,22 +59,51 @@ abstract class AbstractXmlTest<T> {
     @Resource
     private Map<String, ObjectXmlPair<T>> objectXmlMap;
 
+    @Resource
+    private GenericDAO<T, Long> dao;
+
     static {
         // Ignore comments and whitespace when comparing XML
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);
     }
 
+    // TODO: Add method that tests non-XML objects (so can test with @XmlTransient data)
+
+    private void initJpa()   {
+        assertNotNull(dao);
+        dao.deleteAll();
+        assertEquals(LONG_ZERO, dao.count());
+    }
+
+    protected void testJpaXmlObjects(){
+        initJpa();
+        for (String key : objectXmlMap.keySet()) {
+            // Get expected object
+            T expectedObject   = objectXmlMap.get(key).getObject();
+            // Persist
+            dao.insert(expectedObject);
+            assertEquals(1, dao.retrieveAll().size());
+            // Retrieve
+            Long pk = expectedObject.getId();
+            T actualObject = dao.read(pk);
+            assertEquals(expectedObject, actualObject);
+            // Delete
+            dao.delete(actualObject);
+            assertEquals(0, dao.retrieveAll().size());
+        }
+    }
+
     protected void testSupportsMarshalling(Class c) {
         assertTrue(marshaller.supports(c));
         assertTrue(unmarshaller.supports(c));
     }
-    
+
     /**
-     * Performs XML round-trip using {@link Map} of {@link ObjectXmlPair}.
+     * Performs XML round-trip using {@link java.util.Map} of {@link uk.ac.ebi.interpro.scan.model.ObjectXmlPair}.
      *
-     * @throws IOException   if problem marshalling or unmarshalling
-     * @throws SAXException  if cannot parse expected or actual XML
+     * @throws java.io.IOException   if problem marshalling or unmarshalling
+     * @throws org.xml.sax.SAXException  if cannot parse expected or actual XML
      */
     protected void testXmlRoundTrip() throws IOException, SAXException {
         for (String key : objectXmlMap.keySet()) {
@@ -90,14 +124,14 @@ abstract class AbstractXmlTest<T> {
         }
     }
 
-    protected String marshal(T object) throws IOException  {
+    private String marshal(T object) throws IOException  {
         Writer writer = new StringWriter();
         marshaller.marshal(object, new StreamResult(writer));
         return writer.toString();
     }
 
     @SuppressWarnings("unchecked")
-    protected T unmarshal(String xml) throws IOException  {
+    private T unmarshal(String xml) throws IOException  {
         return (T) unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
     }
 
@@ -119,6 +153,5 @@ abstract class AbstractXmlTest<T> {
 //                }
 //            }
 //        }
-  
 
 }

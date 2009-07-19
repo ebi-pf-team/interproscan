@@ -49,8 +49,14 @@ public class RawHmmMatch
     // TODO: Make Location(s) a required argument?
     public RawHmmMatch(Model model, double score, double evalue) {
         super(model);
-        this.score  = score;
-        this.evalue = evalue;
+        setScore(score);
+        setEvalue(evalue);
+    }
+
+    public RawHmmMatch(Model model, double score, double evalue, Set<HmmLocation> locations) {
+        super(model, locations);
+        setScore(score);
+        setEvalue(evalue);
     }
 
     @XmlAttribute(required=true)
@@ -61,6 +67,7 @@ public class RawHmmMatch
     /**
      * Private setter required by JPA
      * TODO - see if this can be removed - do not understand why it is required as the @Column annotation is on the field.
+     * 
      * @param evalue
      */
     private void setEvalue(double evalue){
@@ -93,9 +100,5 @@ public class RawHmmMatch
     @Override public Set<HmmLocation> getLocations() {
         return super.getLocations ();
     }
-
-//    @Override private void setLocations(Set<HmmLocation> locations){
-//        super.setLocations(locations);
-//    }
 
 }

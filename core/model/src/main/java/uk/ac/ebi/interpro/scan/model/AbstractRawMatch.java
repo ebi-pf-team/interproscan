@@ -18,6 +18,7 @@ package uk.ac.ebi.interpro.scan.model;
 
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Represents a raw protein match.
@@ -36,8 +37,14 @@ abstract class AbstractRawMatch<T extends Location>
 
     protected AbstractRawMatch() {}
 
-    public AbstractRawMatch(Model model)  {
-        this.model = model;
+    protected AbstractRawMatch(Model model)  {
+        setModel(model);
+    }
+
+    // TODO: Make Location(s) a required argument?
+    protected AbstractRawMatch(Model model, Set<T> locations)  {
+        super(locations);
+        setModel(model);
     }
 
     @XmlElement(required=true)

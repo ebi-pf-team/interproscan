@@ -37,6 +37,7 @@ public interface Match<T extends Location> extends Serializable {
     @Id
     Long getId();
 
+    // TODO: Remove setId
     void setId (Long id);
 
     @Transient
