@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 @XmlType(name="ProteinType", propOrder={"md5", "sequence", "filteredMatches"})
 public class Protein
         extends AbstractMatchableEntity 
-        implements MatchableEntity, Serializable {
+        implements PersistentEntity, MatchableEntity, Serializable {
 
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
 

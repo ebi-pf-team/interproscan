@@ -37,7 +37,7 @@ import java.util.Set;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class SignatureTest extends AbstractXmlTest<Signature> {
+public class SignatureTest extends AbstractTest<Signature> {
 
     // TODO: Add Xrefs and Entry to Signature
     // TODO: Add Model MD5?
@@ -97,5 +97,10 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
         super.testSupportsMarshalling(Signature.class);
         super.testXmlRoundTrip();
     }
+
+    // TODO: Following fails with "failed to lazily initialize a collection of role: uk.ac.ebi.interpro.scan.model.Signature.models, no session or session was closed"
+//    @Test public void testJpa() {
+//        super.testJpaXmlObjects();
+//    }
 
 }

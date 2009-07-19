@@ -34,6 +34,7 @@ public interface RawMatch<T extends Location> extends Match<T> {
 
     @ManyToOne
     public Model getModel();
-    void setModel(Model model);    
+    // TODO: Why is setter required by Hibernate (and JPA?)
+    public void setModel(Model model);
 
 }
