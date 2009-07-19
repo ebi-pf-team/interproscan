@@ -52,10 +52,19 @@ public class Signature implements PersistentEntity, Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column (name="accession", nullable = false)
     private String accession;
+
+    @Column (name="name")
     private String name;
+
+    @Column (name="description")
     private String description;
+
+    @Column (name="type")
     private String type;
+
+    @Column (name="abstract_text")
     private String abstractText;
 
     @ManyToOne
@@ -64,7 +73,7 @@ public class Signature implements PersistentEntity, Serializable {
     // TODO: Decide whether to use Map or Set (see ChEBI team)
     // TODO: Use ConcurrentHashMap if need concurrent modification of signatures
     // TODO: Use Hashtable if want to disallow duplicate values
-    @OneToMany (mappedBy = "signature")
+    @OneToMany (mappedBy = "signature", cascade = CascadeType.PERSIST)
     @MapKey (name= "accession")
     private Map<String, Model> models = new HashMap<String, Model>();
 
