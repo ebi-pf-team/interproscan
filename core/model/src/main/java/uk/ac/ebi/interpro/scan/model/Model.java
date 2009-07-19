@@ -42,6 +42,7 @@ public class Model implements Serializable {
      * id as unique identifier of the Model record (e.g. for JPA persistence)
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(length = 50, nullable = false)
