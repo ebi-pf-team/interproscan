@@ -41,7 +41,7 @@ import java.util.Set;
  * @author Phil Jones, EMBL-EBI
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-ProteinDAOTest-config.xml"})
+@ContextConfiguration(locations={"/springconfig/spring-ProteinDAOTest-config.xml"})
 public class ProteinDAOTest {
 
     /**
