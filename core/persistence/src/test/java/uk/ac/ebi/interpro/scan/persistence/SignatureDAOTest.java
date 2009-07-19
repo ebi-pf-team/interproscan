@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+import uk.ac.ebi.interpro.scan.model.Signature;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -38,7 +38,7 @@ import java.util.List;
  * @author Phil Jones, EMBL-EBI
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration( locations={"/spring-SignatureDAOTest-config.xml"} )
+@ContextConfiguration( locations={"/springconfig/spring-SignatureDAOTest-config.xml"} )
 public class SignatureDAOTest {
 
     private static final Long LONG_ZERO = 0L;
