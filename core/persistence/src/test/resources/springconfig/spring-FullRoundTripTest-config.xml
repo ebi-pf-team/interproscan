@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=" http://www.springframework.org/schema/util
+                            http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                            http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                            http://www.springframework.org/schema/aop
+                            http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                            http://www.springframework.org/schema/tx
+                            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- All the common Spring config, found in src/main/resources/ -->
+    <import resource="../spring-persistence-config.xml"/>
+    <!-- Test stuff - move to a different spring-config.xml file. -->
+    <bean id="fullRoundTripTest" class="uk.ac.ebi.interpro.scan.persistence.FullRoundTripTest"/>
+
+    <bean id="signature_jaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound" value="uk.ac.ebi.interpro.scan.model.Signature"/>
+        <property name="marshallerProperties">
+            <util:map value-type="java.lang.Boolean">
+                <entry value="true">
+                    <key>
+                        <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/>
+                    </key>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="signatureMarshaller"   parent="signature_jaxb2"/>
+    <bean id="signatureUnmarshaller" parent="signature_jaxb2"/>
+
+    <bean id="protein_jaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound" value="uk.ac.ebi.interpro.scan.model.Protein"/>
+        <property name="marshallerProperties">
+            <util:map value-type="java.lang.Boolean">
+                <entry value="true">
+                    <key>
+                        <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/>
+                    </key>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="proteinMarshaller"   parent="protein_jaxb2"/>
+    <bean id="proteinUnmarshaller" parent="protein_jaxb2"/>
+    
+</beans>
