@@ -10,11 +10,11 @@ import java.util.List;
  *
  * @author Phil Jones, EMBL-EBI
  */
-public class xmlsForTesting {
+public class XmlsForTesting {
 
     private List<String> xmls;
 
-    public xmlsForTesting(List<String> xmls){
+    public XmlsForTesting(List<String> xmls){
         this.xmls = xmls;
     }
 
