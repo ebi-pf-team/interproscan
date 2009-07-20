@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
-<signature type="Family" name="OPSIN" desc="Opsin signature" ac="PR00238" xmlns='http://www.ebi.ac.uk/schema/interpro/scan/model'>
-    <models>
-        <model ac="PR00238"/>
-    </models>
-</signature>
