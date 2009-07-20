@@ -51,7 +51,20 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      */
     @Transactional(readOnly = true)
     public Protein getProteinAndCrossReferencesById (Long id){
-        Query query = entityManager.createQuery("select p from Protein p join fetch p.crossReferences where p.id = :id");
+        Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.crossReferences where p.id = :id");
+        query.setParameter("id", id);
+        return (Protein) query.getSingleResult();
+    }
+
+    /**
+     * Retrieves a Protein object by primary key and also retrieves any associated matches.
+     *
+     * @param id being the primary key of the required Protein.
+     * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
+     *         primary key is not present in the database.
+     */
+    public Protein getProteinAndMatchesById(Long id) {
+        Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.filteredMatches left outer join fetch p.rawMatches where p.id = :id");
         query.setParameter("id", id);
         return (Protein) query.getSingleResult();
     }
