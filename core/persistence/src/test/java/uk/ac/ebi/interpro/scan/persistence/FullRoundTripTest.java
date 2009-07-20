@@ -56,6 +56,12 @@ public class FullRoundTripTest {
     @Resource (name="proteinDAO")
     private ProteinDAO proteinDAO;
 
+    @Resource (name="proteinXmls")
+    private xmlsForTesting proteinXmls;
+
+    @Resource (name="signatureXmls")
+    private xmlsForTesting signatureXmls;
+
     public void setSignatureMarshaller(Marshaller signatureMarshaller) {
         this.signatureMarshaller = signatureMarshaller;
     }
@@ -80,11 +86,6 @@ public class FullRoundTripTest {
         this.proteinDAO = proteinDAO;
     }
 
-    private String[] signatureFiles = new String[]{"testXML/signature1.xml", "testXML/signature2.xml", "testXML/signature3.xml", "testXML/signature4.xml"};
-
-    private String[] proteinFiles = new String[]{"testXML/protein1.xml", "testXML/protein2.xml", "testXML/protein3.xml", "testXML/protein4.xml"};
-
-
     /**
      * Initializes XMLUnit so white space and comments are ignored.
      */
@@ -106,7 +107,7 @@ public class FullRoundTripTest {
                 return persistable.getId();
             }
         };
-        roundTrip (signatureFiles,
+        roundTrip (signatureXmls,
                 signatureDAO,
                 retriever,
                 signatureMarshaller,
@@ -124,7 +125,7 @@ public class FullRoundTripTest {
                 return persistable.getId();
             }
         };
-        roundTrip (proteinFiles,
+        roundTrip (proteinXmls,
                 proteinDAO,
                 retriever,
                 proteinMarshaller,
@@ -137,10 +138,10 @@ public class FullRoundTripTest {
     }
 
 
-    private <T, D extends GenericDAO> void roundTrip(String[] fileNames, D dao, ObjectRetriever<T, D> retriever, Marshaller marshaller, Unmarshaller unmarshaller){
-        for (String inputFileName : fileNames){
+    private <T, D extends GenericDAO> void roundTrip(xmlsForTesting testXMLs, D dao, ObjectRetriever<T, D> retriever, Marshaller marshaller, Unmarshaller unmarshaller){
+        for (String testXml : testXMLs.getXmls()){
+            String inputXml = testXml.trim();
             try{
-                String inputXml = readFile(inputFileName);
                 logger.debug("Input XML:\n" + inputXml);
                 T persistableObject = (T) unmarshal(unmarshaller, inputXml);
                 // First of all, test that round trip without persistence works...
@@ -177,45 +178,6 @@ public class FullRoundTripTest {
             } catch (SAXException e) {
                 logger.error("SAXExeption thrown when attempting comparison of XML files.", e);
                 fail ("SAXExeption thrown when attempting comparison of XML files (full stack trace logged): " + e.getMessage());
-            }
-        }
-    }
-
-
-    /**
-     * Reads in a file and writes its contents to a String.
-     * @param fileName being the file to be read in.
-     * @return a String containing the contents of the file or null if the file does not exist.
-     * @throws IOException if a problem occurs when closing streams.
-     */
-    private String readFile(String fileName) throws IOException{
-        BufferedReader reader = null;
-        StringWriter writer = null;
-        InputStream resourceStream = null;
-        try{
-            resourceStream = FullRoundTripTest.class.getClassLoader().getResourceAsStream(fileName);
-            if (resourceStream == null){
-                return null;
-            }
-            reader = new BufferedReader (
-                    new InputStreamReader(FullRoundTripTest.class.getClassLoader().getResourceAsStream(fileName))
-            );
-            writer = new StringWriter ();
-            while (reader.ready()){
-                writer.write(reader.readLine());
-                writer.write('\n');
-            }
-            return writer.toString();
-        }
-        finally{
-            if (resourceStream != null){
-                resourceStream.close();
-            }
-            if (reader != null){
-                reader.close();
-            }
-            if (writer != null){
-                writer.close();
             }
         }
     }
