@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
-<signature type="Family" name="7tm_2" desc="7 transmembrane receptor (rhodopsin family)" ac="PF00001" xmlns='http://www.ebi.ac.uk/schema/interpro/scan/model'>
-    <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins[pubmed:15774036]</abstract>
-    <models>
-        <model ac="PF00001"/>
-    </models>
-</signature>
