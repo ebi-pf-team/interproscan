@@ -35,7 +35,7 @@ import java.io.Serializable;
  */
 
 @Entity
-@XmlType(name="ModelType", propOrder={"accession", "name", "description"})
+@XmlType(name="ModelType")
 public class Model implements Serializable {
 
     /**

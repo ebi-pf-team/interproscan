@@ -12,7 +12,9 @@
 
     <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.Protein" />
-    </bean>    
+    </bean>
+    
+    <!-- TODO: Consider creating objects using Groovy lang:script -->
 
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
 
@@ -55,15 +57,13 @@
                 <constructor-arg>
                     <value>
                     <![CDATA[
-                        <protein md5="5ab17489095dd2836122eec0e91db82d"
-                                 xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                        <protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                             <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
                             <matches>
                                 <hmm-match score="0.035" evalue="3.7E-9">
                                     <signature ac="PF02310" name="B12-binding" />
                                     <locations>
-                                        <hmm-location start="3" end="107" score="3.0" evalue="3.7E-9"
-                                                      hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
+                                        <hmm-location start="3" end="107" score="3.0" evalue="3.7E-9" hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
                                     </locations>
                                 </hmm-match>
                             </matches>
@@ -178,6 +178,80 @@
                 3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194
                 3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274
                 3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322
+            -->
+        </entry>
+
+        <entry key="ProDom">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg>
+                    <bean class="uk.ac.ebi.interpro.scan.model.Protein">
+                        <constructor-arg value="MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL"/>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredBlastProDomMatch">
+                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredBlastProDomMatch">
+                                    <constructor-arg>
+                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                                            <constructor-arg value="PD001061"/>
+                                        </bean>
+                                    </constructor-arg>
+                                    <constructor-arg>
+                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomLocation">
+                                            <bean class="uk.ac.ebi.interpro.scan.model.BlastProDomLocation">
+                                                <constructor-arg value="9"/>        <!--Start-->
+                                                <constructor-arg value="150"/>      <!--End-->
+                                                <constructor-arg value="763"/>      <!--Score-->
+                                            </bean>
+                                        </util:set>
+                                     </constructor-arg>
+                                </bean>
+                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredBlastProDomMatch">
+                                    <constructor-arg>
+                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                                            <constructor-arg value="PD596253"/>
+                                        </bean>
+                                    </constructor-arg>
+                                    <constructor-arg>
+                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomLocation">
+                                            <bean class="uk.ac.ebi.interpro.scan.model.BlastProDomLocation">
+                                                <constructor-arg value="151"/>      <!--Start-->
+                                                <constructor-arg value="245"/>      <!--End-->
+                                                <constructor-arg value="496"/>      <!--Score-->
+                                            </bean>
+                                        </util:set>
+                                     </constructor-arg>
+                                </bean>                                
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <value>
+                    <![CDATA[
+                        <protein md5="daa9d1290a78528c68605d254f9ba358" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                            <sequence>MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
+                            <matches>
+                                <blastprodom-match>
+                                    <signature ac="PD596253"/>
+                                    <locations>
+                                        <blastprodom-location start="151" end="245" score="496.0"/>
+                                    </locations>
+                                </blastprodom-match>
+                                <blastprodom-match>
+                                    <signature ac="PD001061"/>
+                                    <locations>
+                                        <blastprodom-location start="9" end="150" score="763.0" />
+                                    </locations>
+                                </blastprodom-match>
+                            </matches>
+                        </protein>
+                    ]]>
+                    </value>
+                </constructor-arg>
+            </bean>
+            <!--
+                UPI000048E726      9    150 //  pd_PD001061;sp_Q5Q175_9INFA_Q5Q175;       0      0 // S=763    E=1e-80  //  (1503)  MATRIX VIRAL M1 MEMBRANE RNA-BINDING SPLICING ALTERNATIVE NUCLEAR STRUCTURAL M 	 Length = 142
+                UPI000048E726    151    245 //  pd_PD596253;sp_Q5DXV0_9INFA_Q5DXV0;       0      0 // S=496    E=1e-49  //  (1503)  MATRIX VIRAL M1 MEMBRANE ALTERNATIVE SPLICING RNA-BINDING STRUCTURAL NUCLEAR M 	 Length = 95
+                //
             -->
         </entry>
 

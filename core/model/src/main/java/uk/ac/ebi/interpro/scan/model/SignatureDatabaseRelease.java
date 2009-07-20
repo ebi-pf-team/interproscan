@@ -42,7 +42,7 @@ import java.util.Collection;
  */
 @Entity
 @XmlRootElement(name="signature-database-release")
-@XmlType(name="SignatureDatabaseReleaseType")//, propOrder={"provider", "version", "signatures"})
+@XmlType(name="SignatureDatabaseReleaseType")
 public class SignatureDatabaseRelease implements PersistentEntity, Serializable {
 
     @Id

@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -78,27 +79,30 @@ abstract class AbstractFilteredMatch<T extends Location>
         @Override public FilteredMatchesType marshal(Set<FilteredMatch> matches) {
             Set<FilteredHmmMatch> hmmMatches = new LinkedHashSet<FilteredHmmMatch>();
             Set<FilteredFingerPrintsMatch> fingerPrintsMatches = new LinkedHashSet<FilteredFingerPrintsMatch>();
+            Set<FilteredBlastProDomMatch> proDomMatches = new LinkedHashSet<FilteredBlastProDomMatch>();
             for (FilteredMatch m : matches) {
                 if (m instanceof FilteredHmmMatch) {
                     hmmMatches.add((FilteredHmmMatch)m);
                 }
-                else {
+                else if (m instanceof FilteredFingerPrintsMatch) {
                     fingerPrintsMatches.add((FilteredFingerPrintsMatch)m);
                 }
+                else if (m instanceof FilteredBlastProDomMatch) {
+                    proDomMatches.add((FilteredBlastProDomMatch)m);
+                }
+                else    {
+                    throw new IllegalArgumentException("Unrecognised FilteredMatch class: " + m);
+                }
             }
-            return new FilteredMatchesType(hmmMatches, fingerPrintsMatches);
+            return new FilteredMatchesType(hmmMatches, fingerPrintsMatches, proDomMatches);
         }
 
         /** Map XML type to Java */
         @Override public Set<FilteredMatch> unmarshal(FilteredMatchesType matchTypes) {
-            int size = matchTypes.getHmmMatches().size() + matchTypes.getFingerPrintsMatches().size();
-            Set<FilteredMatch> matches = new HashSet<FilteredMatch>(size);
-            for (FilteredMatch m : matchTypes.getHmmMatches()) {
-                matches.add(m);
-            }
-            for (FilteredMatch m : matchTypes.getFingerPrintsMatches()) {
-                matches.add(m);
-            }
+            Set<FilteredMatch> matches = new HashSet<FilteredMatch>();
+            matches.addAll(matchTypes.getHmmMatches());
+            matches.addAll(matchTypes.getFingerPrintsMatches());
+            matches.addAll(matchTypes.getProDomMatches());
             return matches;
         }
 
@@ -115,14 +119,21 @@ abstract class AbstractFilteredMatch<T extends Location>
         @XmlElement(name = "fingerprints-match")
         private final Set<FilteredFingerPrintsMatch> fingerPrintsMatches;
 
+        @XmlElement(name = "blastprodom-match")
+        private final Set<FilteredBlastProDomMatch> proDomMatches;
+
         private FilteredMatchesType() {
             hmmMatches          = null;   
             fingerPrintsMatches = null;
+            proDomMatches       = null;
         }
 
-        public FilteredMatchesType(Set<FilteredHmmMatch> hmmMatches, Set<FilteredFingerPrintsMatch> fingerPrintsMatches) {
+        public FilteredMatchesType(Set<FilteredHmmMatch> hmmMatches,
+                                   Set<FilteredFingerPrintsMatch> fingerPrintsMatches,
+                                   Set<FilteredBlastProDomMatch> proDomMatches) {
             this.hmmMatches          = hmmMatches;
             this.fingerPrintsMatches = fingerPrintsMatches;
+            this.proDomMatches       = proDomMatches;
         }
 
         public Set<FilteredHmmMatch> getHmmMatches() {
@@ -132,6 +143,10 @@ abstract class AbstractFilteredMatch<T extends Location>
         public Set<FilteredFingerPrintsMatch> getFingerPrintsMatches() {
             return (fingerPrintsMatches == null ? Collections.<FilteredFingerPrintsMatch>emptySet() : fingerPrintsMatches);
         }
+
+        public Set<FilteredBlastProDomMatch> getProDomMatches() {
+            return (proDomMatches == null ? Collections.<FilteredBlastProDomMatch>emptySet() : proDomMatches);
+        }        
 
     }
 
