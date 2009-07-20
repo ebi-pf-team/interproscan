@@ -82,7 +82,7 @@ public class FullRoundTripTest {
 
     private String[] signatureFiles = new String[]{"testXML/signature1.xml", "testXML/signature2.xml", "testXML/signature3.xml", "testXML/signature4.xml"};
 
-    private String[] proteinFiles = new String[]{"testXML/protein1.xml", "testXML/protein2.xml", "testXML/protein3.xml"};
+    private String[] proteinFiles = new String[]{"testXML/protein1.xml", "testXML/protein2.xml", "testXML/protein3.xml", "testXML/protein4.xml"};
 
 
     /**
@@ -117,7 +117,7 @@ public class FullRoundTripTest {
     public void newProteinRoundTrip(){
         ObjectRetriever<Protein, ProteinDAO> retriever = new ObjectRetriever<Protein, ProteinDAO>() {
             public Protein getObjectByPrimaryKey(ProteinDAO dao, Long primaryKey) {
-                return dao.getProteinAndCrossReferencesById(primaryKey);
+                return dao.getProteinAndMatchesById(primaryKey);
             }
 
             public Long getPrimaryKey(Protein persistable) {
@@ -156,7 +156,7 @@ public class FullRoundTripTest {
                 // Retrieve its primary key
                 Long id = retriever.getPrimaryKey(persistableObject);
                 assertNotNull("The stored persistableObject should not have a null primary key·", id);
-
+                logger.debug("Primary key of persisted object (mid round-trip following insert): "+ id);
                 // And retrieve into a new reference
                 T retrievedPersistable = retriever.getObjectByPrimaryKey(dao, id);
 
