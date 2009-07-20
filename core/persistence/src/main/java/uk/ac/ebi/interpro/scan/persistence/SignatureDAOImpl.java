@@ -27,7 +27,7 @@ public class SignatureDAOImpl extends GenericDAOImpl<Signature, Long> implements
     public Signature getSignatureAndMethodsDeep(Long id) {
         // TODO - probably need to go deeper than this?
         Query query = entityManager.createQuery(
-                "select s from Signature s join fetch s.models where s.id = :id"
+                "select s from Signature s left outer join fetch s.models where s.id = :id"
         );
         query.setParameter("id", id);
         return (Signature) query.getSingleResult();
