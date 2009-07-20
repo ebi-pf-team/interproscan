@@ -16,12 +16,4 @@ import java.util.List;
  */
 public interface ModelDAO extends GenericDAO<Model, Long> {
 
-    /**
-     * Returns a List containing all of the Models that correspond to the
-     * RawTransactionSlice passed in as argument.
-     * @param slice which contains a range of Models to include in the List.
-     * @return a List containing all of the Models that correspond to the
-     * RawTransactionSlice passed in as argument.
-     */
-    public List<Model> getModelsForTransactionSlice (RawTransactionSlice slice);
 }
