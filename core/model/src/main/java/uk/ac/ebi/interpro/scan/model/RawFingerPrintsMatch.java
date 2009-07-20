@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.xml.bind.annotation.*;
 import javax.persistence.Entity;
 import javax.persistence.Column;
@@ -51,11 +55,6 @@ public class RawFingerPrintsMatch
         return evalue;
     }
 
-    /**
-     * Private setter required by JPA
-     * TODO - see if this can be removed - do not understand why it is required as the @Column annotation is on the field.
-     * @param evalue
-     */
     private void setEvalue(double evalue){
         this.evalue = evalue;
     }        
@@ -73,9 +72,27 @@ public class RawFingerPrintsMatch
         return super.getLocations();
     }
 
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof RawFingerPrintsMatch))
+            return false;
+        final RawFingerPrintsMatch m = (RawFingerPrintsMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(evalue, m.evalue)
+                .isEquals();
+    }
 
-//    @Override public void setLocations(Set<FingerPrintsLocation> locations){
-//        super.setLocations(locations);
-//    }
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 75)
+                .appendSuper(super.hashCode())
+                .append(evalue)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }

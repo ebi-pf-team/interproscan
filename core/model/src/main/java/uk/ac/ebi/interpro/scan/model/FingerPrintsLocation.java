@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -49,11 +53,11 @@ public class FingerPrintsLocation
     }
 
     @XmlAttribute(name="pvalue", required=true)
-    public double getPValue() {
+    public double getPvalue() {
         return pvalue;
     }
 
-    private void setPValue(double pvalue) {
+    private void setPvalue(double pvalue) {
         this.pvalue = pvalue;
     }
 
@@ -63,4 +67,28 @@ public class FingerPrintsLocation
     @Override public Match getMatch() {
         return super.getMatch();
     }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof FingerPrintsLocation))
+            return false;
+        final FingerPrintsLocation f = (FingerPrintsLocation) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(pvalue, f.pvalue)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 61)
+                .appendSuper(super.hashCode())
+                .append(pvalue)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
 }

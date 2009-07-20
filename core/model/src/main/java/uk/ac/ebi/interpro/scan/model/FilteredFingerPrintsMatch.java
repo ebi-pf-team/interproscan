@@ -16,11 +16,16 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * FingerPRINTS match.
@@ -45,6 +50,11 @@ public class FilteredFingerPrintsMatch
         this.evalue = evalue;
     }
 
+    public FilteredFingerPrintsMatch(Signature signature, double evalue, Set<FingerPrintsLocation> locations) {
+        super(signature, locations);
+        this.evalue = evalue;
+    }    
+
     @XmlAttribute(required=true)
     public double getEvalue() {
         return evalue;
@@ -64,6 +74,29 @@ public class FilteredFingerPrintsMatch
 
     @Override public void removeLocation(FingerPrintsLocation location) {
         super.removeLocation(location);
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof FilteredFingerPrintsMatch))
+            return false;
+        final FilteredFingerPrintsMatch m = (FilteredFingerPrintsMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(evalue, m.evalue)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 63)
+                .appendSuper(super.hashCode())
+                .append(evalue)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

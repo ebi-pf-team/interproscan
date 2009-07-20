@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
@@ -89,17 +93,26 @@ abstract class AbstractSequenceIdentifier
     }
 
     @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SequenceIdentifier that = (SequenceIdentifier) o;
-        return identifier.equals(that.getIdentifier());
+        if (this == o)
+            return true;
+        if (!(o instanceof AbstractSequenceIdentifier))
+            return false;
+        final AbstractSequenceIdentifier m = (AbstractSequenceIdentifier) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(identifier, m.identifier)
+                .isEquals();
     }
 
     @Override public int hashCode() {
-        return identifier.hashCode();
+        return new HashCodeBuilder(19, 73)
+                .appendSuper(super.hashCode())
+                .append(identifier)
+                .toHashCode();
     }
 
-    @Override public String toString() {
-        return identifier;
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
+
 }

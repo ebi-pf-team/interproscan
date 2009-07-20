@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.xml.bind.annotation.*;
 import javax.persistence.Entity;
 import javax.persistence.Column;
@@ -64,12 +68,6 @@ public class RawHmmMatch
         return evalue;
     }
 
-    /**
-     * Private setter required by JPA
-     * TODO - see if this can be removed - do not understand why it is required as the @Column annotation is on the field.
-     * 
-     * @param evalue
-     */
     private void setEvalue(double evalue){
         this.evalue = evalue;
     }    
@@ -79,11 +77,6 @@ public class RawHmmMatch
         return score;
     }
 
-    /**
-     * Private setter required by JPA
-     * TODO - see if this can be removed - do not understand why it is required as the @Column annotation is on the field.
-     * @param score
-     */
     private void setScore (double score){
         this.score = score;
     }
@@ -99,6 +92,31 @@ public class RawHmmMatch
     @OneToMany(targetEntity = HmmLocation.class)
     @Override public Set<HmmLocation> getLocations() {
         return super.getLocations ();
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof RawHmmMatch))
+            return false;
+        final RawHmmMatch m = (RawHmmMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(evalue, m.evalue)
+                .append(score, m.score)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 77)
+                .appendSuper(super.hashCode())
+                .append(evalue)
+                .append(score)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

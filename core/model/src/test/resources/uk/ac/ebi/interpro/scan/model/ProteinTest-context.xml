@@ -74,6 +74,63 @@
             </bean>
         </entry>
 
+        <!--TODO: Add P02700 and OPSD_SHEEP as xrefs-->
+        <entry key="PRINTS">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg>
+                    <bean class="uk.ac.ebi.interpro.scan.model.Protein">
+                        <constructor-arg value="MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN"/>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
+                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
+                                    <constructor-arg>
+                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                                            <constructor-arg value="PR01713"/>
+                                            <constructor-arg value="NUCEPIMERASE"/>
+                                        </bean>
+                                    </constructor-arg>
+                                    <constructor-arg value="3.7E-9"/>               <!--E-value-->
+                                    <constructor-arg>
+                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                                <constructor-arg value="220"/>      <!--Start-->
+                                                <constructor-arg value="235"/>      <!--End-->
+                                                <constructor-arg value="3.7e-9"/>   <!--P-value-->
+                                            </bean>
+                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                                <constructor-arg value="243"/>      <!--Start-->
+                                                <constructor-arg value="258"/>      <!--End-->
+                                                <constructor-arg value="3.7e-9"/>   <!--P-value-->
+                                            </bean>                                            
+                                        </util:set>
+                                     </constructor-arg>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <value>
+                    <![CDATA[
+                       <protein md5="ae2f4d0c928c8017da2df2d5cf15f01"
+                                xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                           <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
+                           <matches>
+                               <fingerprints-match evalue="3.7E-9">
+                                   <signature ac="PR01713" name="NUCEPIMERASE"/>
+                                   <locations>
+                                       <fingerprint-location start="220" end="235" pvalue="3.7E-9"/>
+                                       <fingerprint-location start="243" end="258" pvalue="3.7E-9"/>
+                                   </locations>
+                               </fingerprints-match>
+                           </matches>
+                       </protein>
+                    ]]>
+                    </value>
+                </constructor-arg>
+            </bean>
+        </entry>                       
+
     </util:map>
 
 </beans>
