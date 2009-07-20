@@ -136,6 +136,9 @@ abstract class AbstractLocation implements Location, Serializable {
                 }
                 else if (l instanceof BlastProDomLocation) {
                     proDomLocations.add((BlastProDomLocation)l);
+                }
+                else    {
+                    throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }                
             }
             return new LocationsType(hmmLocations, fingerPrintsLocations, proDomLocations);

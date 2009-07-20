@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.XmlType;
  * @since   1.0
  */
 @Entity
-@XmlType(name="BlastProDomLocationType")
-public class BlastProDomLocation extends AbstractLocation implements Location {
+@XmlType(name="ProfileScanLocationType")
+public class ProfileScanLocation extends AbstractLocation implements Location {
 
     @Column (nullable = false)
     private double score;
@@ -43,9 +43,9 @@ public class BlastProDomLocation extends AbstractLocation implements Location {
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected BlastProDomLocation() {}
+    protected ProfileScanLocation() {}
 
-    public BlastProDomLocation(int start, int end, double score) {
+    public ProfileScanLocation(int start, int end, double score) {
         super(start, end);
         setScore(score);
     }
@@ -60,7 +60,7 @@ public class BlastProDomLocation extends AbstractLocation implements Location {
     }
 
     // TODO: Figure out which class to use
-    //@ManyToOne(targetEntity = BlastProDomMatch.class)
+    //@ManyToOne(targetEntity = ProfileScanMatch.class)
     @XmlTransient
     @Override public Match getMatch() {
         return super.getMatch();
@@ -69,9 +69,9 @@ public class BlastProDomLocation extends AbstractLocation implements Location {
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof BlastProDomLocation))
+        if (!(o instanceof ProfileScanLocation))
             return false;
-        final BlastProDomLocation f = (BlastProDomLocation) o;
+        final ProfileScanLocation f = (ProfileScanLocation) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
                 .append(score, f.score)
@@ -79,7 +79,7 @@ public class BlastProDomLocation extends AbstractLocation implements Location {
     }
 
     @Override public int hashCode() {
-        return new HashCodeBuilder(19, 21)
+        return new HashCodeBuilder(19, 81)
                 .appendSuper(super.hashCode())
                 .append(score)
                 .toHashCode();
