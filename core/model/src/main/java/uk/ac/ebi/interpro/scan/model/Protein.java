@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 
 @Entity
 @XmlRootElement(name="protein")
-@XmlType(name="ProteinType", propOrder={"md5", "sequence", "filteredMatches"})
+@XmlType(name="ProteinType", propOrder={"sequence", "filteredMatches"})
 public class Protein
         extends AbstractMatchableEntity 
         implements PersistentEntity, MatchableEntity, Serializable {

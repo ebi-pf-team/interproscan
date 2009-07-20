@@ -34,39 +34,20 @@ import javax.xml.bind.annotation.XmlType;
  * @since   1.0
  */
 @Entity
-@XmlType(name="FingerPrintsLocationType")
-public class FingerPrintsLocation
-        extends AbstractLocation
-        implements Location {
-
-    @Column (nullable = false)
-    private double pvalue;
+@XmlType(name="BlastProDomLocationType")
+public class BlastProDomLocation extends AbstractLocation implements Location {
 
     @Column (nullable = false)
     private double score;
 
-    @Column (nullable = false)
-    private int motifNumber;
-
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected FingerPrintsLocation() {}
+    protected BlastProDomLocation() {}
 
-    public FingerPrintsLocation(int start, int end, double pvalue, double score, int motifNumber) {
+    public BlastProDomLocation(int start, int end, double score) {
         super(start, end);
-        setPvalue(pvalue);
         setScore(score);
-        setMotifNumber(motifNumber);
-    }
-
-    @XmlAttribute(required=true)
-    public double getPvalue() {
-        return pvalue;
-    }
-
-    private void setPvalue(double pvalue) {
-        this.pvalue = pvalue;
     }
 
     @XmlAttribute(required=true)
@@ -78,17 +59,8 @@ public class FingerPrintsLocation
         this.score = score;
     }
 
-    @XmlAttribute(required=true)
-    public int getMotifNumber() {
-        return motifNumber;
-    }
-
-    private void setMotifNumber(int motifNumber) {
-        this.motifNumber = motifNumber;
-    }
-
-    // TODO: Figure out which class to use (FingerPrintsMatch replaced by RawFingerPrintsMatch and FilteredFingerPrintsMatch)
-    //@ManyToOne(targetEntity = FingerPrintsMatch.class)
+    // TODO: Figure out which class to use
+    //@ManyToOne(targetEntity = BlastProDomMatch.class)
     @XmlTransient
     @Override public Match getMatch() {
         return super.getMatch();
@@ -97,23 +69,19 @@ public class FingerPrintsLocation
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof FingerPrintsLocation))
+        if (!(o instanceof BlastProDomLocation))
             return false;
-        final FingerPrintsLocation f = (FingerPrintsLocation) o;
+        final BlastProDomLocation f = (BlastProDomLocation) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(pvalue, f.pvalue)
                 .append(score, f.score)
-                .append(motifNumber, f.motifNumber)
                 .isEquals();
     }
 
     @Override public int hashCode() {
         return new HashCodeBuilder(19, 61)
                 .appendSuper(super.hashCode())
-                .append(pvalue)
                 .append(score)
-                .append(motifNumber)                
                 .toHashCode();
     }
 

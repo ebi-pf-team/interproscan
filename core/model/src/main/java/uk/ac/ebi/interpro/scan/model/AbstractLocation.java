@@ -122,11 +122,11 @@ abstract class AbstractLocation implements Location, Serializable {
     @XmlTransient
     static final class LocationAdapter extends XmlAdapter<LocationsType, Set<? extends Location>> {
 
-        // Adapt original Java construct to a type (MatchesType)
-        // which we can easily map to the XML output we want
+        /** Map Java to XML type */
         @Override public LocationsType marshal(Set<? extends Location> locations) {
             Set<HmmLocation> hmmLocations = new LinkedHashSet<HmmLocation>();
             Set<FingerPrintsLocation> fingerPrintsLocations = new LinkedHashSet<FingerPrintsLocation>();
+            Set<BlastProDomLocation> proDomLocations = new LinkedHashSet<BlastProDomLocation>();
             for (Location l : locations) {
                 if (l instanceof HmmLocation) {
                     hmmLocations.add((HmmLocation)l);
@@ -134,16 +134,19 @@ abstract class AbstractLocation implements Location, Serializable {
                 else if (l instanceof FingerPrintsLocation) {
                     fingerPrintsLocations.add((FingerPrintsLocation)l);
                 }
+                else if (l instanceof BlastProDomLocation) {
+                    proDomLocations.add((BlastProDomLocation)l);
+                }                
             }
-            return new LocationsType(hmmLocations, fingerPrintsLocations);
+            return new LocationsType(hmmLocations, fingerPrintsLocations, proDomLocations);
         }
 
-        // map XML type to Java
+        /** Map XML type to Java */
         @Override public Set<Location> unmarshal(LocationsType locationsType) {
-            // TODO: Test unmarshal
             Set<Location> locations = new LinkedHashSet<Location>();
             locations.addAll(locationsType.getHmmLocations());
             locations.addAll(locationsType.getFingerPrintsLocations());
+            locations.addAll(locationsType.getProDomLocations());
             return locations;
         }
 
@@ -160,14 +163,21 @@ abstract class AbstractLocation implements Location, Serializable {
         @XmlElement(name = "fingerprints-location")
         private final Set<FingerPrintsLocation> fingerPrintsLocations;
 
+        @XmlElement(name = "blastprodom-location")
+        private final Set<BlastProDomLocation> proDomLocations;
+
         private LocationsType() {
-            hmmLocations = null;        
+            hmmLocations          = null;        
             fingerPrintsLocations = null;
+            proDomLocations       = null;
         }
 
-        public LocationsType(Set<HmmLocation> hmmLocations, Set<FingerPrintsLocation> fingerPrintsLocations) {
+        public LocationsType(Set<HmmLocation> hmmLocations,
+                             Set<FingerPrintsLocation> fingerPrintsLocations,
+                             Set<BlastProDomLocation> proDomLocations) {
             this.hmmLocations           = hmmLocations;
             this.fingerPrintsLocations  = fingerPrintsLocations;
+            this.proDomLocations        = proDomLocations;
         }
 
         public Set<HmmLocation> getHmmLocations() {
@@ -176,7 +186,11 @@ abstract class AbstractLocation implements Location, Serializable {
         
         public Set<FingerPrintsLocation> getFingerPrintsLocations() {
             return (fingerPrintsLocations == null ? Collections.<FingerPrintsLocation>emptySet() : fingerPrintsLocations);
-        }        
+        }
+
+        public Set<BlastProDomLocation> getProDomLocations() {
+            return (proDomLocations == null ? Collections.<BlastProDomLocation>emptySet() : proDomLocations);
+        }             
 
     }
 
