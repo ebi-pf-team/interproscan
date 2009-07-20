@@ -31,6 +31,11 @@
     <bean id="marshaller"   parent="jaxb2"/>
     <bean id="unmarshaller" parent="jaxb2"/>
 
+    <!--TODO: Read this from Maven properties-->
+    <bean id="schema" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg value="target/schemas/interproscan-model.xsd"/>
+    </bean>
+
     <!-- Alternative declaration if don't need to set any additional properties:
     <oxm:jaxb2-marshaller id="marshaller">
         <oxm:class-to-be-bound name="uk.ac.ebi.interpro.scan.model.Signature"/>

@@ -26,6 +26,7 @@ import org.springframework.oxm.Unmarshaller;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.Validator;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamResult;
@@ -55,6 +56,9 @@ abstract class AbstractTest<T extends PersistentEntity> {
 
     @Resource
     private Unmarshaller unmarshaller;
+
+    @Resource
+    private org.springframework.core.io.Resource schema;
 
     @Resource
     private Map<String, ObjectXmlPair<T>> objectXmlMap;
@@ -121,6 +125,8 @@ abstract class AbstractTest<T extends PersistentEntity> {
             // Order of attributes and elements is not important
             diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
             assertTrue(key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml, true);
+            // Validate against XML schema
+            validate(actualXml);
         }
     }
 
@@ -133,6 +139,13 @@ abstract class AbstractTest<T extends PersistentEntity> {
     @SuppressWarnings("unchecked")
     private T unmarshal(String xml) throws IOException  {
         return (T) unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
+    }
+
+    private void validate(String xml) throws SAXException, IOException {
+        Validator v = new Validator(xml);
+        v.useXMLSchema(true);
+        v.setJAXP12SchemaSource(schema.getInputStream());
+        v.assertIsValid();
     }
 
 //        Tried following in testUnmarshal() but will not work because no public setter methods in model!

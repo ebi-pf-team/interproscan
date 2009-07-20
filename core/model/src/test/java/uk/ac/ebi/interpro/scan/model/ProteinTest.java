@@ -122,4 +122,10 @@ public class ProteinTest extends AbstractTest<Protein> {
         super.testXmlRoundTrip();
     }
 
+    // TODO: Fails doing dao.insert() with :
+    // TODO: "org.hibernate.id.IdentifierGenerationException: ids for this class must be manually assigned before calling save(): uk.ac.ebi.interpro.scan.model.FilteredMatch"
+//    @Test public void testJpa() {
+//        super.testJpaXmlObjects();
+//    }
+
 }
