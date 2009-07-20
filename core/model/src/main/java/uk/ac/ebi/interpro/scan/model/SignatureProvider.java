@@ -93,13 +93,12 @@ public class SignatureProvider implements Serializable {
      */
     @XmlTransient
     static final class SignatureProviderAdapter extends XmlAdapter<String, SignatureProvider> {
-        // Map Java to XML type
+        /* Map Java to XML type */
         @Override public String marshal(SignatureProvider provider) {
             return provider.getName();
         }
-        // Map XML type to Java
+        /* Map XML type to Java */
         @Override public SignatureProvider unmarshal(String name) {
-            // TODO: Test unmarshal
             return new SignatureProvider(name);
         }
     }      

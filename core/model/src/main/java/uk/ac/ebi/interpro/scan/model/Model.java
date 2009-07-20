@@ -47,8 +47,10 @@ public class Model implements Serializable {
 
     @Column(length = 50, nullable = false)
     private String accession;
+
     @Column(length = 100)
     private String name;
+    
     @Column(length = 50000)
     private String description;
 

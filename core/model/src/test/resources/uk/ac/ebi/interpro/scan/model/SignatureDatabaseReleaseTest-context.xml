@@ -1,9 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <import resource="jpa-context.xml"/>
     <import resource="oxm-context.xml"/>
+
+    <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease" />
+    </bean>
+
+    <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+
+        <entry key="Pfam">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg>
+                    <bean class="uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease">
+                        <!-- Provider -->
+                        <constructor-arg>
+                            <bean class="uk.ac.ebi.interpro.scan.model.SignatureProvider">
+                                <constructor-arg value="Pfam"/>
+                            </bean>
+                        </constructor-arg>
+                        <!--Version-->
+                        <constructor-arg value="23.0"/>
+                        <!--Signatures-->
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.Signature">
+                                <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                                    <constructor-arg value="PF00001"/>  <!-- Accesion -->
+                                    <constructor-arg value="7tm_2"/>    <!-- Name -->
+                                    <constructor-arg value="family"/>   <!-- Type -->
+                                    <!-- Description -->
+                                    <constructor-arg value="7 transmembrane receptor (rhodopsin family)"/>
+                                    <!-- Abstract -->
+                                    <constructor-arg value="This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins [pubmed:15774036]"/>
+                                    <!-- SignatureDatabaseRelease marked as @XmlTransient so set to null -->
+                                    <constructor-arg><null/></constructor-arg>
+                                    <!--Models-->
+                                    <constructor-arg>
+                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.Model">
+                                            <bean class="uk.ac.ebi.interpro.scan.model.Model">
+                                                <constructor-arg value="PF00001"/>
+                                                <constructor-arg value="7tm_2"/>
+                                                <constructor-arg value="7 transmembrane receptor (rhodopsin family)"/>
+                                            </bean>
+                                        </util:set>
+                                    </constructor-arg>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <value>
+                    <![CDATA[
+                        <signature-database-release provider="Pfam" version="23.0"
+                                                    xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                            <signature ac="PF00001" name="7tm_2" type="family" desc="7 transmembrane receptor (rhodopsin family)">
+                                <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins [pubmed:15774036]</abstract>
+                                <models>
+                                    <model ac="PF00001" name="7tm_2" desc="7 transmembrane receptor (rhodopsin family)"/>
+                                </models>
+                            </signature>
+                        </signature-database-release>
+                    ]]>
+                    </value>
+                </constructor-arg>
+            </bean>
+        </entry>
+
+    </util:map>    
     
 </beans>

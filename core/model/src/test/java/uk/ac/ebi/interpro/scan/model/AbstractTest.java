@@ -87,14 +87,14 @@ abstract class AbstractTest<T extends PersistentEntity> {
             T expectedObject   = objectXmlMap.get(key).getObject();
             // Persist
             dao.insert(expectedObject);
-            assertEquals(1, dao.retrieveAll().size());
+            assertEquals(key, 1, dao.retrieveAll().size());
             // Retrieve
             Long pk = expectedObject.getId();
             T actualObject = dao.read(pk);
-            assertEquals(expectedObject, actualObject);
+            assertEquals(key, expectedObject, actualObject);
             // Delete
             dao.delete(actualObject);
-            assertEquals(0, dao.retrieveAll().size());
+            assertEquals(key, 0, dao.retrieveAll().size());
         }
     }
 
@@ -114,17 +114,19 @@ abstract class AbstractTest<T extends PersistentEntity> {
             // Get expected object and XML
             T expectedObject   = objectXmlMap.get(key).getObject();
             String expectedXml = objectXmlMap.get(key).getXml();
+            logger.debug(key + " (expected object XML):\n" + marshal(expectedObject));
             // Convert XML to object
             T actualObject = unmarshal(expectedXml);
             logger.debug(actualObject);
             assertEquals(key, expectedObject, actualObject);
             // ... and back again
             String actualXml = marshal(actualObject);
-            logger.debug(key + ":\n" + actualXml);
+            logger.debug(key + " (actual object XML):\n" + actualXml);
             Diff diff = new Diff(expectedXml, actualXml);
             // Order of attributes and elements is not important
             diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-            assertTrue(key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml, true);
+            String message = key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml;
+            assertTrue(message, diff.similar());
             // Validate against XML schema
             validate(actualXml);
         }

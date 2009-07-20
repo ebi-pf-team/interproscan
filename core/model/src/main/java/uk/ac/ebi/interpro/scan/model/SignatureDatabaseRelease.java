@@ -24,15 +24,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Collection;
 
 /**
  * Signature database release.
@@ -41,20 +40,22 @@ import java.util.Set;
  * @version $Id$
  * @since   1.0
  */
-@XmlRootElement(name="signature-database-release")
-@XmlType(name="SignatureDatabaseReleaseType", propOrder={"provider", "version", "signatures"})
 @Entity
-public class SignatureDatabaseRelease implements Serializable {
+@XmlRootElement(name="signature-database-release")
+@XmlType(name="SignatureDatabaseReleaseType")//, propOrder={"provider", "version", "signatures"})
+public class SignatureDatabaseRelease implements PersistentEntity, Serializable {
 
     @Id
     private Long id;
 
     @ManyToOne
-    private SignatureProvider       provider;
-    private String                  version;
+    private SignatureProvider provider;
+    
+    private String version;
 
     @OneToMany (mappedBy = "signatureDatabaseRelease")
-    private Set<Signature> signatures;
+    @XmlElement(name="signature", required=true)
+    private Set<Signature> signatures = new HashSet<Signature>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -64,6 +65,16 @@ public class SignatureDatabaseRelease implements Serializable {
     public SignatureDatabaseRelease(SignatureProvider provider, String version) {
         setProvider(provider);
         setVersion(version);
+    }
+
+    public SignatureDatabaseRelease(SignatureProvider provider, String version, Set<Signature> signatures) {
+        setProvider(provider);
+        setVersion(version);
+        setSignatures(signatures);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @XmlAttribute(required=true)
@@ -77,31 +88,19 @@ public class SignatureDatabaseRelease implements Serializable {
         this.provider = provider;
     }
 
-    /**
-     * Returns lazy-initialised internal reference to signatures.
-     * We lazy-initialise to avoid empty collection appearing as
-     * &lt;signatures/&gt; in the XML
-     *
-     * @return Modifiable reference to signatures collection.
-     */
-    private Set<Signature> getModifiableSignatures()    {
-        if (signatures == null) {
-            signatures = new HashSet<Signature>();
-        }
-        return signatures;
-    }    
-
-    //TODO: Re-add element wrapper when solved problem of "@XmlElementWrapper is only allowed on a collection property"
-    // Works in JAXB 2.0.3 but not 2.1.3 [http://forums.java.net/jive/thread.jspa?threadID=25940]
-    //@XmlElementWrapper(name="signatures")
-    @XmlElement(name="signature", required=true)
+    // TODO: Could not add JAXB annotation here (had to add to field) - THIS CAUSES PROBLEMS:
+    // TODO: Each signature will not have a reference to SignatureDatabaseRelease because setSignatures
+    // TODO: is not used (JAXB accesses the field directly).
+    // TODO: This needs fixing! (tried XmlAdapter to no avail -- see below)
     public Set<Signature> getSignatures() {
         return (signatures == null ? null : Collections.unmodifiableSet(signatures));
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
     private void setSignatures(Set<Signature> signatures) {
-        this.signatures = signatures;
+        for (Signature s : signatures)  {
+            addSignature(s);
+        }
     }
 
     public Signature addSignature(Signature signature) throws IllegalArgumentException {
@@ -112,12 +111,12 @@ public class SignatureDatabaseRelease implements Serializable {
             signature.getSignatureDatabaseRelease().removeSignature(signature);
         }
         signature.setSignatureDatabaseRelease(this);
-        getModifiableSignatures().add(signature);
+        signatures.add(signature);
         return signature;
     }
 
     public void removeSignature(Signature signature) {
-        getModifiableSignatures().remove(signature);
+        signatures.remove(signature);
         signature.setSignatureDatabaseRelease(null);
     }
 
@@ -154,22 +153,42 @@ public class SignatureDatabaseRelease implements Serializable {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    /*
-    private static class SignatureMapAdapter extends XmlAdapter<Collection<Signature>, Map<String, Signature>> {
-        // Map Java to XML type
-        public Collection<Signature> marshal(Map<String, Signature> map) {
-            return map.values();
-        }
-        // Map XML type to Java
-        // TODO: Test unmarshal
-        public Map<String, Signature> unmarshal(Collection<Signature> collection) {
-            Map<String, Signature> map = new HashMap<String, Signature>();
-            for (Signature s : collection)   {
-                map.put(s.getKey(), s);
-            }
-            return map;
-        }
-    }
-    */
+//    Could not get following to work    
+//    /**
+//     * Map Signatures to and from XML representation
+//     */
+//    @XmlTransient
+//    private static final class SignatureAdapter extends XmlAdapter<SignaturesType, Set<Signature>> {
+//        /** Map Java to XML type */
+//        @Override public SignaturesType marshal(Set<Signature> signatures) {
+//            return (signatures == null || signatures.isEmpty() ? null : new SignaturesType(signatures));
+//        }
+//        /** Map XML type to Java */
+//        @Override public Set<Signature> unmarshal(SignaturesType signaturesType) {
+//            return signaturesType.getSignatures();
+//        }
+//    }
+//
+//    /**
+//     * Helper class for SignatureAdapter
+//     */
+//    private final static class SignaturesType {
+//
+//        @XmlElement(name = "signature")
+//        private final Set<Signature> signatures;
+//
+//        private SignaturesType() {
+//            signatures = null;
+//        }
+//
+//        public SignaturesType(Set<Signature> signatures) {
+//            this.signatures = signatures;
+//        }
+//
+//        public Set<Signature> getSignatures() {
+//            return signatures;
+//        }
+//
+//    }    
 
 }
