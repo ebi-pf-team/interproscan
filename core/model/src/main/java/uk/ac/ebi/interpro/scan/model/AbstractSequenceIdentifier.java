@@ -32,10 +32,10 @@ import java.io.Serializable;
  * @version $Id$
  * @since   1.0
  */
-@XmlTransient
 @Entity
 @Table (name = "sequence_identifier")
 @DiscriminatorValue(value = "S")
+@XmlTransient
 abstract class AbstractSequenceIdentifier
         extends AbstractMatchableEntity
         implements SequenceIdentifier, MatchableEntity, Serializable {
@@ -51,14 +51,14 @@ abstract class AbstractSequenceIdentifier
     @Column (name = "identifier", nullable = false, unique = false, updatable = false)
     private String identifier;
 
-    AbstractSequenceIdentifier(String identifier){
-        this.identifier = identifier;
-    }
-
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
     protected AbstractSequenceIdentifier() {
+    }    
+
+    AbstractSequenceIdentifier(String identifier){
+        this.identifier = identifier;
     }
 
     /**

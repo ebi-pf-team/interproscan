@@ -138,7 +138,7 @@ public class Model implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
@@ -152,7 +152,7 @@ public class Model implements Serializable {
         return description;
     }
 
-    public void setDescription(String description) {
+    private void setDescription(String description) {
         this.description = description;
     }
 
@@ -161,7 +161,7 @@ public class Model implements Serializable {
         return signature;
     }
 
-    public void setSignature(Signature signature)  {
+    void setSignature(Signature signature)  {
         this.signature = signature;
     }
 

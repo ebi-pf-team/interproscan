@@ -36,8 +36,8 @@ import java.util.*;
  * @since   1.0
  */
 
-@XmlTransient
 @Entity
+@XmlTransient
 abstract class AbstractMatch<T extends Location> implements Match<T>, Serializable {
 
     private Long id;

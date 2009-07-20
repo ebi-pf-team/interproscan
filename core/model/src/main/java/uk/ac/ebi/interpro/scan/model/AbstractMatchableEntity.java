@@ -38,8 +38,8 @@ import java.util.Set;
  * @version $Id$
  * @since   1.0
  */
-@XmlTransient
 @MappedSuperclass   // Chosen not to make this an entity, as it would never be queried upon.
+@XmlTransient
 abstract class AbstractMatchableEntity implements MatchableEntity, Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

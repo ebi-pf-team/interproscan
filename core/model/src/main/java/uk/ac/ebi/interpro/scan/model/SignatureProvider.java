@@ -34,8 +34,8 @@ import java.io.Serializable;
  * @version $Id$
  * @since   1.0
  */
-@XmlType(name="SignatureProviderType")
 @Entity
+@XmlType(name="SignatureProviderType")
 public class SignatureProvider implements Serializable {
 
     // select upper(dbshort)||'("'||dbcode||'", "'||dbshort||'", "'||dbname||'"),'

@@ -50,8 +50,8 @@ public class FilteredHmmMatch
 
     public FilteredHmmMatch(Signature signature, double score, double evalue, Set<HmmLocation> locations) {
         super(signature, locations);
-        this.score  = score;
-        this.evalue = evalue;
+        setScore(score);
+        setEvalue(evalue);
     }
     
     @XmlAttribute(required=true)
@@ -59,18 +59,10 @@ public class FilteredHmmMatch
         return evalue;
     }
 
-    /**
-     * setter required by JPA. (private as not needed for any other reason)
-     * @param evalue
-     */
     private void setEvalue(double evalue) {
         this.evalue = evalue;
     }
 
-    /**
-     * setter required by JPA. (private as not needed for any other reason)
-     * @param score
-     */
     private void setScore(double score) {
         this.score = score;
     }

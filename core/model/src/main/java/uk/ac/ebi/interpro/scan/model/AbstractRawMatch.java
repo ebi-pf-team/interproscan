@@ -51,7 +51,6 @@ abstract class AbstractRawMatch<T extends Location>
         setModel(model);
     }
 
-    @XmlElement(required=true)
     public Model getModel() {
         return model;
     }
@@ -63,7 +62,6 @@ abstract class AbstractRawMatch<T extends Location>
     }
 
 
-    @XmlTransient
     public String getKey() {
         return model.getKey();
     }

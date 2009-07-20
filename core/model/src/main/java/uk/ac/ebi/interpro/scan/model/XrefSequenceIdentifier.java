@@ -34,8 +34,8 @@ import java.io.Serializable;
  * @since   1.0
  * @see     Match
  */
-@XmlTransient
 @Entity
+@XmlTransient
 public class XrefSequenceIdentifier
         extends AbstractSequenceIdentifier
         implements SequenceIdentifier, MatchableEntity, Serializable {
@@ -45,6 +45,22 @@ public class XrefSequenceIdentifier
      */
     @ManyToOne (optional = false)
     private Protein protein;
+
+    /**
+     * Zero arguments constructor just for Hibernate.
+     */
+    protected XrefSequenceIdentifier (){
+        super(null);
+    }
+
+    /**
+     * Constructor for an Xref that takes the xref String as an argument.
+     *
+     * @param identifier the Xref String.
+     */
+    public XrefSequenceIdentifier(String identifier){
+        super(identifier);
+    }    
 
     /**
      * Returns the Protein that this accession / ID cross reference annotates.
@@ -62,22 +78,6 @@ public class XrefSequenceIdentifier
      */
     void setProtein(Protein protein) {
         this.protein = protein;
-    }
-
-    /**
-     * Zero arguments constructor just for Hibernate.
-     */
-    protected XrefSequenceIdentifier (){
-        super(null);
-    }
-
-    /**
-     * Constructor for an Xref that takes the xref String as an argument.
-     * 
-     * @param identifier the Xref String.
-     */
-    public XrefSequenceIdentifier(String identifier){
-        super(identifier);
     }
 
     @Override public boolean equals(Object o) {
