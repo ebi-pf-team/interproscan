@@ -53,6 +53,10 @@ public class FingerPrintsLocation
         return pvalue;
     }
 
+    private void setPValue(double pvalue) {
+        this.pvalue = pvalue;
+    }
+
     // TODO: Figure out which class to use (FingerPrintsMatch replaced by RawFingerPrintsMatch and FilteredFingerPrintsMatch)
     //@ManyToOne(targetEntity = FingerPrintsMatch.class)
     @XmlTransient
