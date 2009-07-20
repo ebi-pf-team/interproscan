@@ -51,7 +51,7 @@
     <bean id="proteinMarshaller"   parent="protein_jaxb2"/>
     <bean id="proteinUnmarshaller" parent="protein_jaxb2"/>
 
-    <bean id="proteinXmls" class="uk.ac.ebi.interpro.scan.persistence.xmlsForTesting">
+    <bean id="proteinXmls" class="uk.ac.ebi.interpro.scan.persistence.XmlsForTesting">
         <constructor-arg>
             <list>
                 <value>
@@ -125,7 +125,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="signatureXmls" class="uk.ac.ebi.interpro.scan.persistence.xmlsForTesting">
+    <bean id="signatureXmls" class="uk.ac.ebi.interpro.scan.persistence.XmlsForTesting">
         <constructor-arg>
             <list>
                 <value>
