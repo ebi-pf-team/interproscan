@@ -57,10 +57,10 @@ public class FullRoundTripTest {
     private ProteinDAO proteinDAO;
 
     @Resource (name="proteinXmls")
-    private xmlsForTesting proteinXmls;
+    private XmlsForTesting proteinXmls;
 
     @Resource (name="signatureXmls")
-    private xmlsForTesting signatureXmls;
+    private XmlsForTesting signatureXmls;
 
     public void setSignatureMarshaller(Marshaller signatureMarshaller) {
         this.signatureMarshaller = signatureMarshaller;
@@ -138,7 +138,7 @@ public class FullRoundTripTest {
     }
 
 
-    private <T, D extends GenericDAO> void roundTrip(xmlsForTesting testXMLs, D dao, ObjectRetriever<T, D> retriever, Marshaller marshaller, Unmarshaller unmarshaller){
+    private <T, D extends GenericDAO> void roundTrip(XmlsForTesting testXMLs, D dao, ObjectRetriever<T, D> retriever, Marshaller marshaller, Unmarshaller unmarshaller){
         for (String testXml : testXMLs.getXmls()){
             String inputXml = testXml.trim();
             try{
