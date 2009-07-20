@@ -84,9 +84,25 @@ public class SignatureProvider implements Serializable {
         return description;
     }
 
-    public void setDescription(String description) {
+    private void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Map SignatureProvider to and from XML representation
+     */
+    @XmlTransient
+    static final class SignatureProviderAdapter extends XmlAdapter<String, SignatureProvider> {
+        // Map Java to XML type
+        @Override public String marshal(SignatureProvider provider) {
+            return provider.getName();
+        }
+        // Map XML type to Java
+        @Override public SignatureProvider unmarshal(String name) {
+            // TODO: Test unmarshal
+            return new SignatureProvider(name);
+        }
+    }      
 
     @Override public boolean equals(Object o) {
         if (this == o)
@@ -109,22 +125,6 @@ public class SignatureProvider implements Serializable {
 
     @Override public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }    
-
-    /**
-     * Map SignatureProvider to and from XML representation
-     */
-    @XmlTransient
-    static final class SignatureProviderAdapter extends XmlAdapter<String, SignatureProvider> {
-        // Map Java to XML type
-        @Override public String marshal(SignatureProvider provider) {
-            return provider.getName();
-        }
-        // Map XML type to Java
-        @Override public SignatureProvider unmarshal(String name) {
-            // TODO: Test unmarshal
-            return new SignatureProvider(name);
-        }
-    }    
+    }
     
 }

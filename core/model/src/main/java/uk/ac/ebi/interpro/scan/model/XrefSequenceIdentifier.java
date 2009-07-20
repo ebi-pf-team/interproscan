@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
@@ -44,6 +48,7 @@ public class XrefSequenceIdentifier
 
     /**
      * Returns the Protein that this accession / ID cross reference annotates.
+     *
      * @return the Protein that this accession / ID cross reference annotates.
      */
     public Protein getProtein() {
@@ -52,16 +57,12 @@ public class XrefSequenceIdentifier
 
     /**
      * Package private setter used by the Protein class to create a reference to the annotated protein.
+     *
      * @param protein the Protein that this accession / ID cross reference annotates.
      */
     void setProtein(Protein protein) {
         this.protein = protein;
     }
-
-    /**
-     * Logger for Junit logging. Log messages will be associated with the XrefSequenceIdentifier class.
-     */
-//    private static Logger LOGGER = Logger.getLogger(XrefSequenceIdentifier.class);
 
     /**
      * Zero arguments constructor just for Hibernate.
@@ -72,12 +73,32 @@ public class XrefSequenceIdentifier
 
     /**
      * Constructor for an Xref that takes the xref String as an argument.
+     * 
      * @param identifier the Xref String.
      */
     public XrefSequenceIdentifier(String identifier){
         super(identifier);
     }
 
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof XrefSequenceIdentifier))
+            return false;
+        final XrefSequenceIdentifier x = (XrefSequenceIdentifier) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .isEquals();
+    }
 
+    @Override public int hashCode() {
+        return new HashCodeBuilder(15, 51)
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }

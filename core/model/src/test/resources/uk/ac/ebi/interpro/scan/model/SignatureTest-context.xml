@@ -115,6 +115,42 @@
             </bean>
         </entry>
 
+        <entry key="PRINTS">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg>
+                    <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                        <constructor-arg value="PR00579"/>
+                        <constructor-arg value="RHODOPSIN"/>
+                        <constructor-arg value="family"/>
+                        <constructor-arg><null/></constructor-arg>
+                        <constructor-arg value="Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs)."/>
+                        <!-- Marked as @XmlTransient so set to null -->
+                        <constructor-arg><null/></constructor-arg>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.Model">
+                                <bean class="uk.ac.ebi.interpro.scan.model.Model">
+                                    <constructor-arg value="PR00579"/>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <value>
+                    <![CDATA[
+                        <signature ac="PR00579" name="RHODOPSIN" type="family"
+                                   xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                           <abstract>Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).</abstract>
+                           <models>
+                               <model ac="PR00579"/>
+                           </models>
+                        </signature>
+                    ]]>
+                    </value>
+                </constructor-arg>
+            </bean>
+        </entry>
+
     </util:map>
 
     <!--

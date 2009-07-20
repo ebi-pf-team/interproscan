@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -62,6 +66,29 @@ abstract class AbstractRawMatch<T extends Location>
     @XmlTransient
     public String getKey() {
         return model.getKey();
-    } 
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof AbstractRawMatch))
+            return false;
+        final AbstractRawMatch m = (AbstractRawMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(model, m.model)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 71)
+                .appendSuper(super.hashCode())
+                .append(model)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }
