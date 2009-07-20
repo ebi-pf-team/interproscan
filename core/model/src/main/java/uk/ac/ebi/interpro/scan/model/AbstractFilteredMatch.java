@@ -46,12 +46,12 @@ abstract class AbstractFilteredMatch<T extends Location>
     AbstractFilteredMatch() {}
 
     protected AbstractFilteredMatch(Signature signature)  {
-        this.signature = signature;
+        setSignature(signature);
     }
 
     protected AbstractFilteredMatch(Signature signature, Set<T> locations)  {
         super(locations);
-        this.signature = signature;
+        setSignature(signature);
     }
 
     @XmlElement(required=true)

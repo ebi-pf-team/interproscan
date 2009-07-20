@@ -31,8 +31,8 @@ import java.util.regex.Pattern;
  * @since   1.0
  * @see     Match
  */
-@XmlTransient
 @Entity
+@XmlTransient
 class MD5SequenceIdentifier extends AbstractSequenceIdentifier implements SequenceIdentifier, Serializable {
 
     /**

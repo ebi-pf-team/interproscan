@@ -39,8 +39,8 @@ import java.util.Set;
  * @since   1.0
  */
 
-@XmlTransient
 @Entity
+@XmlTransient
 abstract class AbstractLocation implements Location, Serializable {
 
     @Id
@@ -61,6 +61,11 @@ abstract class AbstractLocation implements Location, Serializable {
      */
     protected AbstractLocation()   { }
 
+    public AbstractLocation(int start, int end)   {
+        setStart(start);
+        setEnd(end);
+    }    
+
     /**
      * Needs to be public for JPA as defined in the interface.
      * @return the persistence unique identifier for this object.
@@ -75,11 +80,6 @@ abstract class AbstractLocation implements Location, Serializable {
      * @param id being the persistence unique identifier for this object.
      */
     public void setId(Long id) {
-    }
-
-    public AbstractLocation(int start, int end)   {
-        setStart(start);
-        setEnd(end);
     }
 
     @XmlAttribute(required=true)
@@ -157,7 +157,7 @@ abstract class AbstractLocation implements Location, Serializable {
         @XmlElement(name = "hmm-location")
         private final Set<HmmLocation> hmmLocations;
 
-        @XmlElement(name = "fingerprint-location")
+        @XmlElement(name = "fingerprints-location")
         private final Set<FingerPrintsLocation> fingerPrintsLocations;
 
         private LocationsType() {

@@ -43,16 +43,26 @@ public class FilteredFingerPrintsMatch
     @Column
     private double evalue;
 
+    @Column
+    private String graphscan;
+
+    @Column
+    private int motifCount;
+
     protected FilteredFingerPrintsMatch() {}
 
-    public FilteredFingerPrintsMatch(Signature signature, double evalue) {
+    public FilteredFingerPrintsMatch(Signature signature, double evalue, String graphscan, int motifCount) {
         super(signature);
-        this.evalue = evalue;
+        setEvalue(evalue);
+        setGraphscan(graphscan);
+        setMotifCount(motifCount);
     }
 
-    public FilteredFingerPrintsMatch(Signature signature, double evalue, Set<FingerPrintsLocation> locations) {
+    public FilteredFingerPrintsMatch(Signature signature, double evalue, String graphscan, int motifCount, Set<FingerPrintsLocation> locations) {
         super(signature, locations);
-        this.evalue = evalue;
+        setEvalue(evalue);
+        setGraphscan(graphscan);
+        setMotifCount(motifCount);        
     }    
 
     @XmlAttribute(required=true)
@@ -60,12 +70,26 @@ public class FilteredFingerPrintsMatch
         return evalue;
     }
 
-    /**
-     * setter required by JPA. (private as not needed for any other reason)
-     * @param evalue
-     */
     private void setEvalue(double evalue) {
         this.evalue = evalue;
+    }
+
+    @XmlAttribute(required=true)
+    public String getGraphscan() {
+        return graphscan;
+    }
+
+    private void setGraphscan(String graphscan) {
+        this.graphscan = graphscan;
+    }
+
+    @XmlAttribute(required=true)
+    public int getMotifCount() {
+        return motifCount;
+    }
+
+    private void setMotifCount(int motifCount) {
+        this.motifCount = motifCount;
     }
 
     @Override public FingerPrintsLocation addLocation(FingerPrintsLocation location) {

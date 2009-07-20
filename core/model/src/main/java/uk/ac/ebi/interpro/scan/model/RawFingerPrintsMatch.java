@@ -35,7 +35,7 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
-@XmlType(name="RawFingerPrintsMatchType")//, propOrder={"model", "locations"})
+@XmlTransient
 public class RawFingerPrintsMatch
         extends AbstractRawMatch<FingerPrintsLocation>
         implements RawMatch<FingerPrintsLocation>, Serializable {
@@ -43,21 +43,44 @@ public class RawFingerPrintsMatch
     @Column
     private double evalue;
 
+    @Column
+    private String graphscan;
+
+    @Column
+    private int motifCount;
+
     protected RawFingerPrintsMatch() {}
 
-    public RawFingerPrintsMatch(Model model, double evalue) {
+    public RawFingerPrintsMatch(Model model, double evalue, String graphscan, int motifCount) {
         super(model);
-        this.evalue = evalue;        
+        setEvalue(evalue);
+        setGraphscan(graphscan);
+        setMotifCount(motifCount);        
     }
 
-    @XmlAttribute(required=true)
     public double getEvalue() {
         return evalue;
     }
 
     private void setEvalue(double evalue){
         this.evalue = evalue;
-    }        
+    }
+
+    public String getGraphscan() {
+        return graphscan;
+    }
+
+    private void setGraphscan(String graphscan) {
+        this.graphscan = graphscan;
+    }
+
+    public int getMotifCount() {
+        return motifCount;
+    }
+
+    private void setMotifCount(int motifCount) {
+        this.motifCount = motifCount;
+    }    
 
     @Override public FingerPrintsLocation addLocation(FingerPrintsLocation location) {
         return super.addLocation(location);

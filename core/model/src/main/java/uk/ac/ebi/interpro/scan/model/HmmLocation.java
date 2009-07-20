@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Id$
  * @since   1.0
  */
-@XmlType(name="HmmLocationType", propOrder={"start", "end"})
 @Entity
+@XmlType(name="HmmLocationType", propOrder={"start", "end"})
 public class HmmLocation
         extends AbstractLocation
         implements Location {
@@ -65,11 +65,11 @@ public class HmmLocation
     public HmmLocation(int start, int end, double score, double evalue,
                        int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
         super(start, end);
-        this.hmmStart  = hmmStart;
-        this.hmmEnd    = hmmEnd;
-        this.hmmBounds = hmmBounds;
-        this.evalue    = evalue;
-        this.score     = score;
+        setHmmStart(hmmStart);
+        setHmmEnd(hmmEnd);
+        setHmmBounds(hmmBounds);
+        setEvalue(evalue);
+        setScore(score);
     }
 
     @XmlAttribute(name="hmm-start", required=true)
@@ -90,8 +90,6 @@ public class HmmLocation
         this.hmmEnd = hmmEnd;
     }    
 
-    // Not using adapter because XML schema contains eg. "COMPLETE" instead of "[]"
-    // @XmlJavaTypeAdapter(HmmBounds.HmmBoundsAdapter.class)
     @XmlAttribute(name="hmm-bounds", required=true)
     public HmmBounds getHmmBounds() {
         return hmmBounds;
@@ -161,23 +159,6 @@ public class HmmLocation
             }
             throw new IllegalArgumentException("Unrecognised symbol: " + symbol);
         }
-
-        /**
-         * Map HmmBounds to and from XML representation
-         */
-        /*
-        @XmlTransient
-        static final class HmmBoundsAdapter extends XmlAdapter<String, HmmBounds> {
-            // Map Java to XML type
-            @Override public String marshal(HmmBounds hmmBounds) {
-                return hmmBounds.getSymbol();
-            }
-            // Map XML type to Java
-            @Override public HmmBounds unmarshal(String symbol) {
-                return HmmBounds.parseSymbol(symbol);
-            }
-        }
-        */
 
     }
 

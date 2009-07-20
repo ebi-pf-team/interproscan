@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Id$
  * @since   1.0
  */
-@XmlType(name="FingerPrintsLocationType", propOrder={"start", "end"})
 @Entity
+@XmlType(name="FingerPrintsLocationType", propOrder={"start", "end"})
 public class FingerPrintsLocation
         extends AbstractLocation
         implements Location {
@@ -42,23 +42,49 @@ public class FingerPrintsLocation
     @Column (nullable = false)
     private double pvalue;
 
+    @Column (nullable = false)
+    private double score;
+
+    @Column (nullable = false)
+    private int motifNumber;
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
     protected FingerPrintsLocation() {}
 
-    public FingerPrintsLocation(int start, int end, double pvalue) {
+    public FingerPrintsLocation(int start, int end, double pvalue, double score, int motifNumber) {
         super(start, end);
-        this.pvalue = pvalue;
+        setPvalue(pvalue);
+        setScore(score);
+        setMotifNumber(motifNumber);
     }
 
-    @XmlAttribute(name="pvalue", required=true)
+    @XmlAttribute(required=true)
     public double getPvalue() {
         return pvalue;
     }
 
     private void setPvalue(double pvalue) {
         this.pvalue = pvalue;
+    }
+
+    @XmlAttribute(required=true)
+    public double getScore() {
+        return score;
+    }
+
+    private void setScore(double score) {
+        this.score = score;
+    }
+
+    @XmlAttribute(required=true)
+    public int getMotifNumber() {
+        return motifNumber;
+    }
+
+    private void setMotifNumber(int motifNumber) {
+        this.motifNumber = motifNumber;
     }
 
     // TODO: Figure out which class to use (FingerPrintsMatch replaced by RawFingerPrintsMatch and FilteredFingerPrintsMatch)
@@ -77,6 +103,8 @@ public class FingerPrintsLocation
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
                 .append(pvalue, f.pvalue)
+                .append(score, f.score)
+                .append(motifNumber, f.motifNumber)
                 .isEquals();
     }
 
@@ -84,6 +112,8 @@ public class FingerPrintsLocation
         return new HashCodeBuilder(19, 61)
                 .appendSuper(super.hashCode())
                 .append(pvalue)
+                .append(score)
+                .append(motifNumber)                
                 .toHashCode();
     }
 

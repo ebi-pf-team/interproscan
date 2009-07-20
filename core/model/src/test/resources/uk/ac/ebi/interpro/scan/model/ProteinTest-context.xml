@@ -85,22 +85,56 @@
                                 <bean class="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
                                     <constructor-arg>
                                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
-                                            <constructor-arg value="PR01713"/>
-                                            <constructor-arg value="NUCEPIMERASE"/>
+                                            <constructor-arg value="PR00579"/>
+                                            <constructor-arg value="RHODOPSIN"/>
                                         </bean>
                                     </constructor-arg>
-                                    <constructor-arg value="3.7E-9"/>               <!--E-value-->
+                                    <constructor-arg value="2.2e-64"/> <!--E-value-->
+                                    <constructor-arg value="IIIIII"/>  <!--Graphscan-->
+                                    <constructor-arg value="6"/>       <!--MotifCount-->
                                     <constructor-arg>
                                         <util:set value-type="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
                                             <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                                <constructor-arg value="220"/>      <!--Start-->
-                                                <constructor-arg value="235"/>      <!--End-->
-                                                <constructor-arg value="3.7e-9"/>   <!--P-value-->
+                                                <constructor-arg value="3"/>        <!--Start-->
+                                                <constructor-arg value="21"/>       <!--End-->
+                                                <constructor-arg value="1.45e-14"/> <!--P-value-->
+                                                <constructor-arg value="86.94"/>    <!--Score-->
+                                                <constructor-arg value="1"/>        <!--MotifNumber-->
                                             </bean>
                                             <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                                <constructor-arg value="243"/>      <!--Start-->
-                                                <constructor-arg value="258"/>      <!--End-->
-                                                <constructor-arg value="3.7e-9"/>   <!--P-value-->
+                                                <constructor-arg value="22"/>
+                                                <constructor-arg value="38"/>
+                                                <constructor-arg value="2.06e-10"/>
+                                                <constructor-arg value="80.20"/>
+                                                <constructor-arg value="2"/>
+                                            </bean>
+                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                                <constructor-arg value="85"/>
+                                                <constructor-arg value="101"/>
+                                                <constructor-arg value="1.83e-13"/>
+                                                <constructor-arg value="81.56"/>
+                                                <constructor-arg value="3"/>
+                                            </bean>
+                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                                <constructor-arg value="191"/>
+                                                <constructor-arg value="207"/>
+                                                <constructor-arg value="1.43e-10"/>
+                                                <constructor-arg value="77.83"/>
+                                                <constructor-arg value="4"/>
+                                            </bean>
+                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                                <constructor-arg value="271"/>
+                                                <constructor-arg value="289"/>
+                                                <constructor-arg value="9.33e-15"/>
+                                                <constructor-arg value="83.70"/>
+                                                <constructor-arg value="5"/>
+                                            </bean>
+                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                                <constructor-arg value="319"/>
+                                                <constructor-arg value="332"/>
+                                                <constructor-arg value="1.04e-09"/>
+                                                <constructor-arg value="81.87"/>
+                                                <constructor-arg value="6"/>
                                             </bean>                                            
                                         </util:set>
                                      </constructor-arg>
@@ -112,24 +146,40 @@
                 <constructor-arg>
                     <value>
                     <![CDATA[
-                       <protein md5="ae2f4d0c928c8017da2df2d5cf15f01"
-                                xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
-                           <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
-                           <matches>
-                               <fingerprints-match evalue="3.7E-9">
-                                   <signature ac="PR01713" name="NUCEPIMERASE"/>
-                                   <locations>
-                                       <fingerprint-location start="220" end="235" pvalue="3.7E-9"/>
-                                       <fingerprint-location start="243" end="258" pvalue="3.7E-9"/>
-                                   </locations>
-                               </fingerprints-match>
-                           </matches>
-                       </protein>
+                        <protein md5="ae2f4d0c928c8017da2df2d5cf15f01" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                            <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
+                            <matches>
+                                <fingerprints-match motifCount="6" graphscan="IIIIII" evalue="2.2E-64">
+                                    <signature ac="PR00579" name="RHODOPSIN" />
+                                    <locations>
+                                        <fingerprints-location motifNumber="1" start="3"   end="21"  score="86.94" pvalue="1.45E-14" />
+                                        <fingerprints-location motifNumber="2" start="22"  end="38"  score="80.2"  pvalue="2.06E-10" />
+                                        <fingerprints-location motifNumber="3" start="85"  end="101" score="81.56" pvalue="1.83E-13" />
+                                        <fingerprints-location motifNumber="4" start="191" end="207" score="77.83" pvalue="1.43E-10" />
+                                        <fingerprints-location motifNumber="5" start="271" end="289" score="83.7"  pvalue="9.33E-15" />
+                                        <fingerprints-location motifNumber="6" start="319" end="332" score="81.87" pvalue="1.04E-9" />
+                                    </locations>
+                                </fingerprints-match>
+                            </matches>
+                        </protein>
                     ]]>
                     </value>
                 </constructor-arg>
             </bean>
-        </entry>                       
+            <!--
+                2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan
+                2TBH RHODOPSIN       6  of  6  4.9e+02  82       4791       7.6e-70     2.2e-64     IIIIII
+                2TBF
+                3TBS
+                3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high
+                3TBH RHODOPSIN       1  of  6  86.94   898     1.45e-14  GTEGPNFYVPFSNKTGVVR                                     19   3    3     6
+                3TBH RHODOPSIN       2  of  6  80.20   808     2.06e-10  SPFEAPQYYLAEPWQFS                                       17   22   22    25
+                3TBH RHODOPSIN       3  of  6  81.56   763     1.83e-13  FMVFGGFTTTLYTSLHG                                       17   85   85    88
+                3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194
+                3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274
+                3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322
+            -->
+        </entry>
 
     </util:map>
 

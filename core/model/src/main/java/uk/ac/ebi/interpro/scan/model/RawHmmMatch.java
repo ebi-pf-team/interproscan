@@ -35,17 +35,17 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
-@XmlType(name="RawHmmMatchType")//, propOrder={"model", "locations"})
+@XmlTransient
 public class RawHmmMatch
         extends AbstractRawMatch<HmmLocation>
         implements RawMatch<HmmLocation>, Serializable {
 
     // TODO: Most of this code is the same as FilteredHmmMatch - can we share code, eg. by composition or generics? Same is true for FingerPrints 
 
-    @Column(nullable = false)
+    @Column
     private double evalue;
     
-    @Column (nullable = false)
+    @Column
     private double score;
 
     protected RawHmmMatch() {}
@@ -63,7 +63,6 @@ public class RawHmmMatch
         setEvalue(evalue);
     }
 
-    @XmlAttribute(required=true)
     public double getEvalue() {
         return evalue;
     }
@@ -72,7 +71,6 @@ public class RawHmmMatch
         this.evalue = evalue;
     }    
 
-    @XmlAttribute(name="score", required=true)
     public double getScore() {
         return score;
     }
