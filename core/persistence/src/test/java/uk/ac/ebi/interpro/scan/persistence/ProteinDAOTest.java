@@ -19,6 +19,9 @@ package uk.ac.ebi.interpro.scan.persistence;
 import static junit.framework.TestCase.*;
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -42,6 +45,7 @@ import java.util.Set;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/springconfig/spring-ProteinDAOTest-config.xml"})
+//@Ignore
 public class ProteinDAOTest {
 
     /**
@@ -65,7 +69,9 @@ public class ProteinDAOTest {
         this.dao = dao;
     }
 
-    private void emptyProteinTable(){
+    @Before
+    @After
+    public void emptyProteinTable(){
         dao.deleteAll();
         assertEquals("There should be no proteins in the Protein table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }

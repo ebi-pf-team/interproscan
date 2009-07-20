@@ -20,6 +20,9 @@ import junit.framework.Assert;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -39,6 +42,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( locations={"/springconfig/spring-SignatureDAOTest-config.xml"} )
+//@Ignore
 public class SignatureDAOTest {
 
     private static final Long LONG_ZERO = 0L;
@@ -50,7 +54,9 @@ public class SignatureDAOTest {
         this.dao = dao;
     }
 
-    private void emptySignatureTable(){
+    @Before
+    @After
+    public void emptySignatureTable(){
         dao.deleteAll();
         Assert.assertEquals("There should be no Signatures in the Signature table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
