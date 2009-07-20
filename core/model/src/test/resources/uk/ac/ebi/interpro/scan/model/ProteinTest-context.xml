@@ -231,15 +231,15 @@
                             <sequence>MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
                             <matches>
                                 <blastprodom-match>
-                                    <signature ac="PD596253"/>
-                                    <locations>
-                                        <blastprodom-location start="151" end="245" score="496.0"/>
-                                    </locations>
-                                </blastprodom-match>
-                                <blastprodom-match>
                                     <signature ac="PD001061"/>
                                     <locations>
                                         <blastprodom-location start="9" end="150" score="763.0" />
+                                    </locations>
+                                </blastprodom-match>                            
+                                <blastprodom-match>
+                                    <signature ac="PD596253"/>
+                                    <locations>
+                                        <blastprodom-location start="151" end="245" score="496.0"/>
                                     </locations>
                                 </blastprodom-match>
                             </matches>
