@@ -35,6 +35,7 @@ public interface FilteredMatch<T extends Location> extends Match<T> {
 
     @ManyToOne (cascade=CascadeType.PERSIST)
     public Signature getSignature();
+
     // TODO: Why is setter required by Hibernate (and JPA?)
     public void setSignature(Signature signature);
 

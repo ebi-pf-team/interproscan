@@ -18,12 +18,14 @@ package uk.ac.ebi.interpro.scan.model;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 
 /**
  * Test cases for {@link SignatureDatabaseRelease}
@@ -34,7 +36,9 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class SignatureDatabaseReleaseTest   {
+public class SignatureDatabaseReleaseTest extends AbstractTest<SignatureDatabaseRelease> {
+
+    // TODO: Add SuperFamily SSF53098    
 
     @Test public void testRemoveSignature()   {
         SignatureDatabaseRelease sdr = new SignatureDatabaseRelease(new SignatureProvider("Pfam"), "23.0");
@@ -59,6 +63,14 @@ public class SignatureDatabaseReleaseTest   {
         assertEquals("Should have no signatures", 0, sdr.getSignatures().size());
     }
 
-    // TODO: Add SuperFamily SSF53098    
+    @Test public void testXml() throws IOException, SAXException {
+        super.testSupportsMarshalling(SignatureDatabaseRelease.class);
+        super.testXmlRoundTrip();
+    }
+
+    // TODO: Fails with org.hibernate.id.IdentifierGenerationException: ids for this class must be manually assigned before calling save(): uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease
+//    @Test public void testJpa() {
+//        super.testJpaXmlObjects();
+//    }
 
 }

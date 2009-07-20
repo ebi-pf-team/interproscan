@@ -331,7 +331,7 @@ public class Signature implements PersistentEntity, Serializable {
         @XmlElement(name = "model")
         private final Set<Model> models;
 
-        public ModelsType() { 
+        private ModelsType() { 
             models = null;
         }
 

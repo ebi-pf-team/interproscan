@@ -160,7 +160,7 @@ abstract class AbstractLocation implements Location, Serializable {
         @XmlElement(name = "fingerprint-location")
         private final Set<FingerPrintsLocation> fingerPrintsLocations;
 
-        public LocationsType() {
+        private LocationsType() {
             hmmLocations = null;        
             fingerPrintsLocations = null;
         }
