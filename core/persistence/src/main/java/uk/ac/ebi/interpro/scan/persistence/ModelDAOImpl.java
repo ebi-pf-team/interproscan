@@ -22,16 +22,4 @@ public class ModelDAOImpl extends GenericDAOImpl<Model, Long> implements ModelDA
     public ModelDAOImpl(){
         super (Model.class);
     }
-
-    /**
-     * Returns a List containing all of the Models that correspond to the
-     * RawTransactionSlice passed in as argument.
-     *
-     * @param slice which contains a range of Models to include in the List.
-     * @return a List containing all of the Models that correspond to the
-     *         RawTransactionSlice passed in as argument.
-     */
-    public List<Model> getModelsForTransactionSlice(RawTransactionSlice slice) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }
