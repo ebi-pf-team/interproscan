@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -125,7 +124,7 @@ public class ProteinDAOTest {
         dao.update(protein);
         Long idAfterUpdate = protein.getId();
         assertEquals("The protein ID following update should be the same as before update", id, idAfterUpdate);
-        Protein firstRetrievedProtein = dao.getProteinAndCrossReferencesById(id);
+        Protein firstRetrievedProtein = dao.getProteinAndCrossReferencesByProteinId(id);
         // Check the retrieved protein
         assertNotNull("The retrieved protein should not be null", firstRetrievedProtein);
         assertEquals("The protein sequence of the retrieved object is not the same as the original object.", protein.getSequence(), firstRetrievedProtein.getSequence());
@@ -152,7 +151,7 @@ public class ProteinDAOTest {
         dao.update(firstRetrievedProtein);
 
         // Retrieve the protein from the database again and check it has no Xrefs.
-        Protein secondRetrievedProtein = dao.getProteinAndCrossReferencesById(id);
+        Protein secondRetrievedProtein = dao.getProteinAndCrossReferencesByProteinId(id);
         assertNotNull("The second retrieved protein should not be null", secondRetrievedProtein);
         assertEquals("The second retrieved protein should have " + (ACCESSIONS.length + 1) + " cross references.", (ACCESSIONS.length + 1), secondRetrievedProtein.getCrossReferences().size());
     }
