@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlType(name="PatternScanLocationType")
-public class PatternScanLocation extends AbstractLocation implements Location {
+public class PatternScanLocation extends AbstractLocation {
 
     @Column (nullable = false)
     private Level level;
@@ -130,10 +130,6 @@ public class PatternScanLocation extends AbstractLocation implements Location {
                 .appendSuper(super.hashCode())
                 .append(level)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

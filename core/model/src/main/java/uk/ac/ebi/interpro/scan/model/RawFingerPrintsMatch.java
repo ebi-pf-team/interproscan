@@ -36,9 +36,7 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawFingerPrintsMatch
-        extends AbstractRawMatch<FingerPrintsLocation>
-        implements RawMatch<FingerPrintsLocation>, Serializable {
+public class RawFingerPrintsMatch extends AbstractRawMatch<FingerPrintsLocation> {
 
     @Column
     private double evalue;
@@ -82,14 +80,6 @@ public class RawFingerPrintsMatch
         this.motifCount = motifCount;
     }    
 
-    @Override public FingerPrintsLocation addLocation(FingerPrintsLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(FingerPrintsLocation location) {
-        super.removeLocation(location);
-    }
-
     @OneToMany(targetEntity = FingerPrintsLocation.class)
     @Override public Set<FingerPrintsLocation> getLocations() {
         return super.getLocations();
@@ -112,10 +102,6 @@ public class RawFingerPrintsMatch
                 .appendSuper(super.hashCode())
                 .append(evalue)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

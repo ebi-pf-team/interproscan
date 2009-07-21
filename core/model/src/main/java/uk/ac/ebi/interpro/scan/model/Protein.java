@@ -45,9 +45,7 @@ import java.util.regex.Pattern;
 @Entity
 @XmlRootElement(name="protein")
 @XmlType(name="ProteinType", propOrder={"sequence", "filteredMatches"})
-public class Protein
-        extends AbstractMatchableEntity 
-        implements PersistentEntity, MatchableEntity, Serializable {
+public class Protein extends AbstractMatchableEntity implements PersistentEntity {
 
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
     // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>
@@ -226,10 +224,6 @@ public class Protein
                 .append(md5)
                 .append(crossReferences)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

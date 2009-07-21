@@ -36,9 +36,7 @@ import java.io.Serializable;
  */
 @Entity
 @XmlTransient
-public class XrefSequenceIdentifier
-        extends AbstractSequenceIdentifier
-        implements SequenceIdentifier, MatchableEntity, Serializable {
+public class XrefSequenceIdentifier extends AbstractSequenceIdentifier {
 
     /**
      * Reference to the protein that this Xref is an annotation of.
@@ -79,6 +77,8 @@ public class XrefSequenceIdentifier
     void setProtein(Protein protein) {
         this.protein = protein;
     }
+
+    // TODO: Do we need the the following?
 
     @Override public boolean equals(Object o) {
         if (this == o)

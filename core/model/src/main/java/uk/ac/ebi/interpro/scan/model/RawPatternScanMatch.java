@@ -32,9 +32,7 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawPatternScanMatch
-        extends AbstractRawMatch<PatternScanLocation>
-        implements RawMatch<PatternScanLocation>, Serializable {
+public class RawPatternScanMatch extends AbstractRawMatch<PatternScanLocation> {
 
     protected RawPatternScanMatch() {}
 
@@ -44,20 +42,6 @@ public class RawPatternScanMatch
 
     public RawPatternScanMatch(Model model, Set<PatternScanLocation> locations) {
         super(model, locations);
-    }
-
-    // TODO: Do we need any code at all here? We're using generics to check PatternScanLocation in abstract classes
-
-    @Override public PatternScanLocation addLocation(PatternScanLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(PatternScanLocation location) {
-        super.removeLocation(location);
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

@@ -32,9 +32,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name="FilteredBlastProDomMatchType", propOrder={"signature", "locations"})
-public class FilteredBlastProDomMatch
-        extends AbstractFilteredMatch<BlastProDomLocation>
-        implements FilteredMatch<BlastProDomLocation>, Serializable {
+public class FilteredBlastProDomMatch extends AbstractFilteredMatch<BlastProDomLocation> {
 
     protected FilteredBlastProDomMatch() {}
 
@@ -44,18 +42,6 @@ public class FilteredBlastProDomMatch
 
     public FilteredBlastProDomMatch(Signature signature, Set<BlastProDomLocation> locations) {
         super(signature, locations);
-    }
-
-    @Override public BlastProDomLocation addLocation(BlastProDomLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(BlastProDomLocation location) {
-        super.removeLocation(location);
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

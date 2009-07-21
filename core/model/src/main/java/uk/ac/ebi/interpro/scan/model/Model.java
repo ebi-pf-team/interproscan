@@ -204,7 +204,7 @@ public class Model implements Serializable {
                 .append("accession", accession)
                 .append("name", name)
                 .append("description", description)
-                .append("signature-ac", signature.getAccession())
+                .append("signature-ac", (signature == null ? null : signature.getAccession()))
                 .toString();
     }
 

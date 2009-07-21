@@ -36,9 +36,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name="FilteredHmmMatchType", propOrder={"signature", "locations"})
-public class FilteredHmmMatch
-        extends AbstractFilteredMatch<HmmLocation>
-        implements FilteredMatch<HmmLocation>, Serializable {
+public class FilteredHmmMatch extends AbstractFilteredMatch<HmmLocation> {
 
     @Column (nullable = false)
     private double evalue;
@@ -72,14 +70,6 @@ public class FilteredHmmMatch
         return score;
     }
 
-    @Override public HmmLocation addLocation(HmmLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(HmmLocation location) {
-        super.removeLocation(location);
-    }
-
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -99,10 +89,6 @@ public class FilteredHmmMatch
                 .append(evalue)
                 .append(score)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

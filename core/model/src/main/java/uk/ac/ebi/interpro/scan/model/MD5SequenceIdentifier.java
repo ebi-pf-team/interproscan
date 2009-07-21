@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 @Entity
 @XmlTransient
-class MD5SequenceIdentifier extends AbstractSequenceIdentifier implements SequenceIdentifier, Serializable {
+class MD5SequenceIdentifier extends AbstractSequenceIdentifier {
 
     /**
      * Logger for Junit logging. Log messages will be associated with the MD5 class.
