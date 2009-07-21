@@ -117,7 +117,7 @@ public class HmmLocation
         this.score = score;
     }
 
-    // HMMER output notation for model match
+    /** HMMER output notation for model match */
     public static enum HmmBounds {
 
         COMPLETE("[]", "Complete"),

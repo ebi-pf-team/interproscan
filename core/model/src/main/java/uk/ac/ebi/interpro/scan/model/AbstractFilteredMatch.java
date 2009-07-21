@@ -77,9 +77,11 @@ abstract class AbstractFilteredMatch<T extends Location>
 
         /** Map Java to XML type */
         @Override public FilteredMatchesType marshal(Set<FilteredMatch> matches) {
-            Set<FilteredHmmMatch> hmmMatches = new LinkedHashSet<FilteredHmmMatch>();
+            Set<FilteredHmmMatch> hmmMatches                 = new LinkedHashSet<FilteredHmmMatch>();
             Set<FilteredFingerPrintsMatch> fingerPrintsMatches = new LinkedHashSet<FilteredFingerPrintsMatch>();
-            Set<FilteredBlastProDomMatch> proDomMatches = new LinkedHashSet<FilteredBlastProDomMatch>();
+            Set<FilteredBlastProDomMatch> proDomMatches      = new LinkedHashSet<FilteredBlastProDomMatch>();
+            Set<FilteredPatternScanMatch> patternScanMatches = new LinkedHashSet<FilteredPatternScanMatch>();            
+            Set<FilteredProfileScanMatch> profileScanMatches = new LinkedHashSet<FilteredProfileScanMatch>();
             for (FilteredMatch m : matches) {
                 if (m instanceof FilteredHmmMatch) {
                     hmmMatches.add((FilteredHmmMatch)m);
@@ -90,11 +92,18 @@ abstract class AbstractFilteredMatch<T extends Location>
                 else if (m instanceof FilteredBlastProDomMatch) {
                     proDomMatches.add((FilteredBlastProDomMatch)m);
                 }
+                else if (m instanceof FilteredPatternScanMatch) {
+                    patternScanMatches.add((FilteredPatternScanMatch)m);
+                }
+                else if (m instanceof FilteredProfileScanMatch) {
+                    profileScanMatches.add((FilteredProfileScanMatch)m);
+                }
                 else    {
                     throw new IllegalArgumentException("Unrecognised FilteredMatch class: " + m);
                 }
             }
-            return new FilteredMatchesType(hmmMatches, fingerPrintsMatches, proDomMatches);
+            return new FilteredMatchesType(hmmMatches, fingerPrintsMatches, proDomMatches,
+                                           patternScanMatches, profileScanMatches);
         }
 
         /** Map XML type to Java */
@@ -103,6 +112,8 @@ abstract class AbstractFilteredMatch<T extends Location>
             matches.addAll(matchTypes.getHmmMatches());
             matches.addAll(matchTypes.getFingerPrintsMatches());
             matches.addAll(matchTypes.getProDomMatches());
+            matches.addAll(matchTypes.getPatternScanMatches());
+            matches.addAll(matchTypes.getProfileScanMatches());
             return matches;
         }
 
@@ -122,18 +133,30 @@ abstract class AbstractFilteredMatch<T extends Location>
         @XmlElement(name = "blastprodom-match")
         private final Set<FilteredBlastProDomMatch> proDomMatches;
 
+        @XmlElement(name = "patternscan-match")
+        private final Set<FilteredPatternScanMatch> patternScanMatches;
+
+        @XmlElement(name = "profilescan-match")
+        private final Set<FilteredProfileScanMatch> profileScanMatches;        
+
         private FilteredMatchesType() {
             hmmMatches          = null;   
             fingerPrintsMatches = null;
             proDomMatches       = null;
+            patternScanMatches  = null;
+            profileScanMatches  = null;
         }
 
         public FilteredMatchesType(Set<FilteredHmmMatch> hmmMatches,
                                    Set<FilteredFingerPrintsMatch> fingerPrintsMatches,
-                                   Set<FilteredBlastProDomMatch> proDomMatches) {
+                                   Set<FilteredBlastProDomMatch> proDomMatches,
+                                   Set<FilteredPatternScanMatch> patternScanMatches,
+                                   Set<FilteredProfileScanMatch> profileScanMatches) {
             this.hmmMatches          = hmmMatches;
             this.fingerPrintsMatches = fingerPrintsMatches;
             this.proDomMatches       = proDomMatches;
+            this.patternScanMatches  = patternScanMatches;
+            this.profileScanMatches  = profileScanMatches;
         }
 
         public Set<FilteredHmmMatch> getHmmMatches() {
@@ -144,9 +167,17 @@ abstract class AbstractFilteredMatch<T extends Location>
             return (fingerPrintsMatches == null ? Collections.<FilteredFingerPrintsMatch>emptySet() : fingerPrintsMatches);
         }
 
-        public Set<FilteredBlastProDomMatch> getProDomMatches() {
+        public Set<FilteredBlastProDomMatch> getPatternScanMatches() {
             return (proDomMatches == null ? Collections.<FilteredBlastProDomMatch>emptySet() : proDomMatches);
-        }        
+        }
+
+        public Set<FilteredPatternScanMatch> getProDomMatches() {
+            return (patternScanMatches == null ? Collections.<FilteredPatternScanMatch>emptySet() : patternScanMatches);
+        }
+
+        public Set<FilteredProfileScanMatch> getProfileScanMatches() {
+            return (profileScanMatches == null ? Collections.<FilteredProfileScanMatch>emptySet() : profileScanMatches);
+        }
 
     }
 

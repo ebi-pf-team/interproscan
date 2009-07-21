@@ -126,7 +126,9 @@ abstract class AbstractLocation implements Location, Serializable {
         @Override public LocationsType marshal(Set<? extends Location> locations) {
             Set<HmmLocation> hmmLocations = new LinkedHashSet<HmmLocation>();
             Set<FingerPrintsLocation> fingerPrintsLocations = new LinkedHashSet<FingerPrintsLocation>();
-            Set<BlastProDomLocation> proDomLocations = new LinkedHashSet<BlastProDomLocation>();
+            Set<BlastProDomLocation> blastProDomLocations = new LinkedHashSet<BlastProDomLocation>();
+            Set<PatternScanLocation> patternScanLocations = new LinkedHashSet<PatternScanLocation>();
+            Set<ProfileScanLocation> profileScanLocations = new LinkedHashSet<ProfileScanLocation>();
             for (Location l : locations) {
                 if (l instanceof HmmLocation) {
                     hmmLocations.add((HmmLocation)l);
@@ -135,13 +137,20 @@ abstract class AbstractLocation implements Location, Serializable {
                     fingerPrintsLocations.add((FingerPrintsLocation)l);
                 }
                 else if (l instanceof BlastProDomLocation) {
-                    proDomLocations.add((BlastProDomLocation)l);
+                    blastProDomLocations.add((BlastProDomLocation)l);
                 }
+                else if (l instanceof PatternScanLocation) {
+                    patternScanLocations.add((PatternScanLocation)l);
+                }
+                else if (l instanceof ProfileScanLocation) {
+                    profileScanLocations.add((ProfileScanLocation)l);
+                }                
                 else    {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }                
             }
-            return new LocationsType(hmmLocations, fingerPrintsLocations, proDomLocations);
+            return new LocationsType(hmmLocations, fingerPrintsLocations, blastProDomLocations,
+                                     patternScanLocations, profileScanLocations);
         }
 
         /** Map XML type to Java */
@@ -149,7 +158,9 @@ abstract class AbstractLocation implements Location, Serializable {
             Set<Location> locations = new LinkedHashSet<Location>();
             locations.addAll(locationsType.getHmmLocations());
             locations.addAll(locationsType.getFingerPrintsLocations());
-            locations.addAll(locationsType.getProDomLocations());
+            locations.addAll(locationsType.getBlastProDomLocations());
+            locations.addAll(locationsType.getPatternScanLocations());
+            locations.addAll(locationsType.getProfileScanLocations());
             return locations;
         }
 
@@ -167,20 +178,32 @@ abstract class AbstractLocation implements Location, Serializable {
         private final Set<FingerPrintsLocation> fingerPrintsLocations;
 
         @XmlElement(name = "blastprodom-location")
-        private final Set<BlastProDomLocation> proDomLocations;
+        private final Set<BlastProDomLocation> blastProDomLocations;
+
+        @XmlElement(name = "patternscan-location")
+        private final Set<PatternScanLocation> patternScanLocations;
+
+        @XmlElement(name = "profilescan-location")
+        private final Set<ProfileScanLocation> profileScanLocations;
 
         private LocationsType() {
             hmmLocations          = null;        
             fingerPrintsLocations = null;
-            proDomLocations       = null;
+            blastProDomLocations  = null;
+            patternScanLocations  = null;
+            profileScanLocations  = null;
         }
 
         public LocationsType(Set<HmmLocation> hmmLocations,
                              Set<FingerPrintsLocation> fingerPrintsLocations,
-                             Set<BlastProDomLocation> proDomLocations) {
+                             Set<BlastProDomLocation> blastProDomLocations,
+                             Set<PatternScanLocation> patternScanLocations,
+                             Set<ProfileScanLocation> profileScanLocations) {
             this.hmmLocations           = hmmLocations;
             this.fingerPrintsLocations  = fingerPrintsLocations;
-            this.proDomLocations        = proDomLocations;
+            this.blastProDomLocations   = blastProDomLocations;
+            this.patternScanLocations   = patternScanLocations;
+            this.profileScanLocations   = profileScanLocations;            
         }
 
         public Set<HmmLocation> getHmmLocations() {
@@ -191,9 +214,17 @@ abstract class AbstractLocation implements Location, Serializable {
             return (fingerPrintsLocations == null ? Collections.<FingerPrintsLocation>emptySet() : fingerPrintsLocations);
         }
 
-        public Set<BlastProDomLocation> getProDomLocations() {
-            return (proDomLocations == null ? Collections.<BlastProDomLocation>emptySet() : proDomLocations);
-        }             
+        public Set<BlastProDomLocation> getBlastProDomLocations() {
+            return (blastProDomLocations == null ? Collections.<BlastProDomLocation>emptySet() : blastProDomLocations);
+        }
+
+        public Set<PatternScanLocation> getPatternScanLocations() {
+            return (patternScanLocations == null ? Collections.<PatternScanLocation>emptySet() : patternScanLocations);
+        }
+        
+        public Set<ProfileScanLocation> getProfileScanLocations() {
+            return (profileScanLocations == null ? Collections.<ProfileScanLocation>emptySet() : profileScanLocations);
+        }
 
     }
 

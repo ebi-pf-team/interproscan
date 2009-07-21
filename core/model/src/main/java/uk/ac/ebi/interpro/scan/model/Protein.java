@@ -50,6 +50,7 @@ public class Protein
         implements PersistentEntity, MatchableEntity, Serializable {
 
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
+    // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>
 
     private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-Z]+$");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);

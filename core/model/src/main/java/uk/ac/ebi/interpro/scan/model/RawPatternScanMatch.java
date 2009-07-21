@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * ProfileScan raw match.
+ * PatternScan raw match.
  *
  * @author  Antony Quinn
  * @version $Id$
@@ -32,25 +32,27 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawProfileScanMatch
-        extends AbstractRawMatch<ProfileScanLocation>
-        implements RawMatch<ProfileScanLocation>, Serializable {
+public class RawPatternScanMatch
+        extends AbstractRawMatch<PatternScanLocation>
+        implements RawMatch<PatternScanLocation>, Serializable {
 
-    protected RawProfileScanMatch() {}
+    protected RawPatternScanMatch() {}
 
-    public RawProfileScanMatch(Model model) {
+    public RawPatternScanMatch(Model model) {
         super(model);
     }
 
-    public RawProfileScanMatch(Model model, Set<ProfileScanLocation> locations) {
+    public RawPatternScanMatch(Model model, Set<PatternScanLocation> locations) {
         super(model, locations);
     }
 
-    @Override public ProfileScanLocation addLocation(ProfileScanLocation location) {
+    // TODO: Do we need any code at all here? We're using generics to check PatternScanLocation in abstract classes
+
+    @Override public PatternScanLocation addLocation(PatternScanLocation location) {
         return super.addLocation(location);
     }
 
-    @Override public void removeLocation(ProfileScanLocation location) {
+    @Override public void removeLocation(PatternScanLocation location) {
         super.removeLocation(location);
     }
 
