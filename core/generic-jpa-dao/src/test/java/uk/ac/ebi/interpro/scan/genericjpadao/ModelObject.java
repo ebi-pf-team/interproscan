@@ -17,7 +17,16 @@
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.ArrayList;
 
+/**
+ * Test model class.
+ *
+ * @author Phil Jones, EMBL-EBI
+ */
 @Entity
 public class ModelObject {
 
@@ -25,10 +34,13 @@ public class ModelObject {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "test_field_one")
+    @Column (name = "test_field_one")
     private String testFieldOne;
 
-    private ModelObject() {
+    @OneToMany (mappedBy = "modelObject", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<RelatedModelObject> relatedObjects;
+
+    protected ModelObject() {
     }
 
     public ModelObject(String testFieldOne) {
@@ -47,7 +59,17 @@ public class ModelObject {
         this.testFieldOne = testFieldOne;
     }
 
-    @Override
+    public List<RelatedModelObject> getRelatedObjects() {
+        return relatedObjects;
+    }
+
+    void addRelatedModelObject(RelatedModelObject relatedObject){
+        if (relatedObjects == null){
+            relatedObjects = new ArrayList<RelatedModelObject>();
+        }
+        relatedObjects.add(relatedObject);
+    }
+
     public boolean equals(Object o) {
         if (null == o) return true;
         if (!(o instanceof ModelObject)) return false;
@@ -60,7 +82,6 @@ public class ModelObject {
         return true;
     }
 
-    @Override
     public int hashCode() {
         return testFieldOne != null ? testFieldOne.hashCode() : 0;
     }

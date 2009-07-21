@@ -131,6 +131,45 @@ public class GenericDAOImpl<T, PK extends Serializable>
     }
 
     /**
+     * Retrieve an object that was previously persisted to the database using
+     * the indicated id as primary key and go deep on the fields listed.
+     *
+     * TODO - Could make use of reflection to determine if the field name passed in is accessible via a public getter.
+     *
+     * @param id         being the primary key value of the required object.
+     * @param deepFields being the names of the fields to retrieve with the main object.
+     * @return a single instance of the object with the specified primary key,
+     *         or null if it does not exist, with the lazy objects initialised.
+     */
+    @Transactional(readOnly = true)
+    public T readDeep(PK id, String... deepFields) {
+        StringBuffer queryString = new StringBuffer("select o from ");
+        queryString .append (unqualifiedModelClassName)
+                    .append (" o ");
+
+        for (String field : deepFields){
+            queryString .append (" left outer join fetch o.")
+                        .append (field);
+        }
+
+        queryString.append (" where o.id = :id");
+
+        Query query = this.entityManager.createQuery(queryString.toString());
+        query.setParameter("id", id);
+
+        // Originally this made use of query.getSingleResult
+        // however this method throws an Exception if there is no
+        // matching object, which seems like overkill.  Modified to return
+        // null if there is no matching object.
+
+        List<T> results = query.getResultList();
+        if (results.size() == 0){
+            return null;
+        }
+        else return results.get(0);
+    }
+
+    /**
      * Remove an object from persistent storage in the database
      * @param persistentObject being the (attached or unattached) object to be deleted.
      */
