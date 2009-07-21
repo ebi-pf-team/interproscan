@@ -12,4 +12,5 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
  * To change this template use File | Settings | File Templates.
  */
 public class BlastProDomLocationDAOImpl extends GenericDAOImpl<BlastProDomLocation, Long> implements BlastProDomLocationDAO{
+    
 }
