@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -133,6 +134,32 @@ public class GenericDAOTest {
         for (ModelObject retrieved : retrievedObjects){
             assertNotNull("The List of retrieved objects should not contain any null objects", retrieved);
         }
+    }
+
+    /**
+     * Test the readDeep method that allows retrieval of FetchType.LAZY related objects.
+     */
+    @Test
+    public void testReadDeep(){
+        final int RELATED_OBJECT_COUNT = 10;
+
+        emptyTable();
+        ModelObject persistable = new ModelObject(INITIAL_VALUE);
+        for (int i = 0; i < RELATED_OBJECT_COUNT; i++){
+            new RelatedModelObject(persistable, "value_" + i);
+        }
+        assertNotNull(persistable.getRelatedObjects());
+        assertEquals(RELATED_OBJECT_COUNT, persistable.getRelatedObjects().size());
+        
+        dao.insert(persistable);
+        Long pk = persistable.getId();
+
+        // Should have persisted a ModelObject with 10 RelatedModelObjects. Try to retrieve them.
+        ModelObject retrieved = dao.readDeep(pk, "relatedObjects");
+
+        assertNotNull(retrieved);
+        assertNotNull(retrieved.getRelatedObjects());
+        assertEquals(RELATED_OBJECT_COUNT, retrieved.getRelatedObjects().size());
     }
 
     /**

@@ -55,6 +55,16 @@ public interface GenericDAO <T, PK extends Serializable> {
     T read(PK id);
 
     /**
+     * Retrieve an object that was previously persisted to the database using
+     *  the indicated id as primary key and go deep on the fields listed.
+     * @param id being the primary key value of the required object.
+     * @param deepFields being the names of the fields to retrieve with the main object.
+     * @return a single instance of the object with the specified primary key,
+     * or null if it does not exist, with the lazy objects initialised.
+     */
+    T readDeep(PK id, String ... deepFields);
+
+    /**
      * Remove an object from persistent storage in the database
      * @param persistentObject being the (attached or unattached) object to be deleted.
      */
