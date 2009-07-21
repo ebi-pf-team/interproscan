@@ -7,6 +7,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import javax.annotation.Resource;
 
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+
 /**
  * Developed using IntelliJ IDEA.
  * User: pjones
@@ -20,9 +22,9 @@ import javax.annotation.Resource;
 public class ModelDAOTest {
 
     @Resource(name= "modelDAO")
-    private ProteinDAO dao;
+    private GenericDAO dao;
 
-    public void setDao(ProteinDAO dao) {
+    public void setDao(GenericDAO dao) {
         this.dao = dao;
     }
 
