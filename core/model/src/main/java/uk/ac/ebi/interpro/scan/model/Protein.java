@@ -37,14 +37,14 @@ import java.util.regex.Pattern;
  * Protein.
  *
  * @author  Antony Quinn
- * @author Phil Jones
+ * @author  Phil Jones
  * @version $Id$
  * @since   1.0
  */
 
 @Entity
 @XmlRootElement(name="protein")
-@XmlType(name="ProteinType", propOrder={"sequence", "filteredMatches"})
+@XmlType(name="ProteinType", propOrder={"sequence", "crossReferences", "filteredMatches"})
 public class Protein extends AbstractMatchableEntity implements PersistentEntity {
 
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
@@ -66,6 +66,7 @@ public class Protein extends AbstractMatchableEntity implements PersistentEntity
     private String md5;
 
     @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "protein")
+    @XmlElement(name="xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<XrefSequenceIdentifier> crossReferences = new HashSet<XrefSequenceIdentifier>();
 
     /**
@@ -82,9 +83,10 @@ public class Protein extends AbstractMatchableEntity implements PersistentEntity
         setSequenceAndMd5(sequence);
     }        
 
-    public Protein(String sequence, Set<RawMatch> rawMatches, Set<FilteredMatch> filteredMatches) {
-        super(rawMatches, filteredMatches);
+    public Protein(String sequence, Set<FilteredMatch> filteredMatches, Set<XrefSequenceIdentifier> crossReferences) {
+        super(filteredMatches);
         setSequenceAndMd5(sequence);
+        setCrossReferences(crossReferences);
     }
 
     private void setSequenceAndMd5(String sequence)    {
@@ -160,8 +162,26 @@ public class Protein extends AbstractMatchableEntity implements PersistentEntity
      *
      * @return cross-references
      */
+     // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
+     // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
+    /*
+     java.lang.UnsupportedOperationException
+        at java.util.Collections$UnmodifiableCollection.clear(Collections.java:1037)
+        at com.sun.xml.bind.v2.runtime.reflect.Lister$CollectionLister.startPacking(Lister.java:296)
+            ...
+        at javax.xml.bind.helpers.AbstractUnmarshallerImpl.unmarshal(AbstractUnmarshallerImpl.java:105)
+            ...
+        at uk.ac.ebi.interpro.scan.model.AbstractTest.unmarshal(AbstractTest.java:150)
+     */
+    //@XmlElement(name="xref")
     public Set<XrefSequenceIdentifier> getCrossReferences() {
         return Collections.unmodifiableSet(crossReferences);
+    }
+
+    private void setCrossReferences(Set<XrefSequenceIdentifier> crossReferences) {
+        for (XrefSequenceIdentifier xref : crossReferences)    {
+            addCrossReference(xref);
+        }
     }
 
     /**

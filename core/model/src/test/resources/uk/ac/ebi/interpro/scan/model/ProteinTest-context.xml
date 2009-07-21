@@ -18,7 +18,6 @@
 
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
 
-        <!-- TODO: Add xrefs -->
         <entry key="Pfam">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
                 <constructor-arg>
@@ -52,6 +51,13 @@
                                 </bean>
                             </util:set>
                         </constructor-arg>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                    <constructor-arg value="A0A000_9ACTO"/>
+                                </bean>                          
+                            </util:set>
+                        </constructor-arg>
                     </bean>
                 </constructor-arg>
                 <constructor-arg>
@@ -59,6 +65,7 @@
                     <![CDATA[
                         <protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                             <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
+                            <xref id="A0A000_9ACTO"/>
                             <matches>
                                 <hmm-match score="0.035" evalue="3.7E-9">
                                     <signature ac="PF02310" name="B12-binding" />
@@ -74,7 +81,6 @@
             </bean>
         </entry>
 
-        <!--TODO: Add P02700 and OPSD_SHEEP as xrefs-->
         <entry key="PRINTS">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
                 <constructor-arg>
@@ -140,7 +146,17 @@
                                      </constructor-arg>
                                 </bean>
                             </util:set>
-                        </constructor-arg>
+                        </constructor-arg>         
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                    <constructor-arg value="P02700"/>
+                                </bean>
+                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                    <constructor-arg value="OPSD_SHEEP"/>
+                                </bean>                                
+                            </util:set>
+                        </constructor-arg>                        
                     </bean>
                 </constructor-arg>
                 <constructor-arg>
@@ -148,6 +164,8 @@
                     <![CDATA[
                         <protein md5="ae2f4d0c928c8017da2df2d5cf15f01" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                             <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
+                            <xref id="P02700"/>
+                            <xref id="OPSD_SHEEP"/>
                             <matches>
                                 <fingerprints-match motifCount="6" graphscan="IIIIII" evalue="2.2E-64">
                                     <signature ac="PR00579" name="RHODOPSIN" />
@@ -222,6 +240,13 @@
                                 </bean>                                
                             </util:set>
                         </constructor-arg>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                    <constructor-arg value="UPI000048E726"/>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
                     </bean>
                 </constructor-arg>
                 <constructor-arg>
@@ -229,6 +254,7 @@
                     <![CDATA[
                         <protein md5="daa9d1290a78528c68605d254f9ba358" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                             <sequence>MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
+                            <xref id="UPI000048E726"/>
                             <matches>
                                 <blastprodom-match>
                                     <signature ac="PD001061"/>
@@ -298,6 +324,13 @@
                                 </bean>
                             </util:set>
                         </constructor-arg>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                    <constructor-arg value="UPI0001AF8DCD"/>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
                     </bean>
                 </constructor-arg>
                 <constructor-arg>
@@ -305,6 +338,7 @@
                     <![CDATA[
                         <protein md5="de25966e66a6340eed9d837b05ffc58b" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                             <sequence>MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
+                            <xref id="UPI0001AF8DCD"/>
                             <matches>
                                 <profilescan-match>
                                     <signature name="RHODANESE_3" ac="PS50206"/>
@@ -357,6 +391,13 @@
                                 </bean>
                             </util:set>
                         </constructor-arg>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                                    <constructor-arg value="UPI0001AFC88D"/>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
                     </bean>
                 </constructor-arg>
                 <constructor-arg>
@@ -364,6 +405,7 @@
                     <![CDATA[
                         <protein md5="386964a0a573631d643f2a7e7de03066" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                             <sequence>MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
+                            <xref id="UPI0001AFC88D"/>
                             <matches>
                                 <patternscan-match>
                                     <signature ac="PS00675" name="SIGMA54_INTERACT_1"/>

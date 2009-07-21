@@ -125,14 +125,13 @@ public class ProteinTest extends AbstractTest<Protein> {
         super.testXmlRoundTrip();
     }
 
-    // TODO: Fails doing dao.insert() with :
-    // TODO: "org.hibernate.id.IdentifierGenerationException: ids for this class must be manually assigned before calling save(): uk.ac.ebi.interpro.scan.model.FilteredMatch"
+    // TODO: Re-enable when JPA works OK with FilteredMatch interface
     @Test
     @Ignore
     public void testJpa() {
         super.testJpaXmlObjects(new ObjectRetriever<Protein>(){
             public Protein getObjectByPrimaryKey(GenericDAO<Protein, Long> dao, Long primaryKey) {
-                return dao.read(primaryKey);
+                return dao.readDeep(primaryKey, "rawMatches", "filteredMatches");
             }
 
             public Long getPrimaryKey(Protein protein) {
