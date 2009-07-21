@@ -45,6 +45,12 @@ public class FilteredHmmMatch extends AbstractFilteredMatch<HmmLocation> {
     private double score;
 
     protected FilteredHmmMatch() {}
+    
+    public FilteredHmmMatch(Signature signature, double score, double evalue) {
+        super(signature);
+        setScore(score);
+        setEvalue(evalue);
+    }
 
     public FilteredHmmMatch(Signature signature, double score, double evalue, Set<HmmLocation> locations) {
         super(signature, locations);
