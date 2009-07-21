@@ -26,49 +26,11 @@ public class BlastProDomLocationDAOImpl extends GenericDAOImpl<BlastProDomLocati
         super(BlastProDomLocation.class);
     }
 
-     /**
-     * Retrieves a Protein object by primary key and also retrieves any associated cross references.
-     * @param id being the primary key of the required Protein.
-     * @return The Protein, with cross references loaded. (Xrefs are LAZY by default) or null if the
-     * primary key is not present in the database.
-     */
-    @Transactional(readOnly = true)
-    public Protein getProteinAndCrossReferencesByProteinId(Long id){
-        Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.crossReferences where p.id = :id");
-        query.setParameter("id", id);
-        return (Protein) query.getSingleResult();
-    }
-
-    /**
-     * Retrieves a Protein object by primary key and also retrieves any associated matches.
-     *
-     * @param id being the primary key of the required Protein.
-     * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
-     *         primary key is not present in the database.
-     */
-    public Protein getProteinAndMatchesById(Long id) {
-        Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.filteredMatches left outer join fetch p.rawMatches where p.id = :id");
-        query.setParameter("id", id);
-        return (Protein) query.getSingleResult();
-    }
-
-    /**
-     * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
-     * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
-     * @param slice defining a Transaction.
-     * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("unchecked")
-    public List<Protein> getProteinsInTransactionSlice(TransactionSlice slice) {
-        Query query = entityManager.createQuery("select p from Protein p where p.id >= :bottom and p.id <= :top");
-        query.setParameter("bottom", slice.getBottom());
-        query.setParameter("top", slice.getTop());
-        return (List<Protein>) query.getResultList();
-    }
-
     public List<BlastProDomLocation> getBlastProDomHitLocationByScore(Double score) {
-        
+            Query query = entityManager.createQuery("select bpl from BlastProDomLocation bpl where bpl.score= " + score.doubleValue());
+        //query.setParameter("bottom", slice.getBottom());
+        //query.setParameter("top", slice.getTop());
+        return (List<BlastProDomLocation>) query.getResultList();
     }
     
 }
