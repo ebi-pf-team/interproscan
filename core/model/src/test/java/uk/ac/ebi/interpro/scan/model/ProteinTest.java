@@ -20,12 +20,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 /**
  * Tests cases for {@link Protein}.
@@ -124,8 +127,18 @@ public class ProteinTest extends AbstractTest<Protein> {
 
     // TODO: Fails doing dao.insert() with :
     // TODO: "org.hibernate.id.IdentifierGenerationException: ids for this class must be manually assigned before calling save(): uk.ac.ebi.interpro.scan.model.FilteredMatch"
-//    @Test public void testJpa() {
-//        super.testJpaXmlObjects();
-//    }
+    @Test
+    @Ignore
+    public void testJpa() {
+        super.testJpaXmlObjects(new ObjectRetriever<Protein>(){
+            public Protein getObjectByPrimaryKey(GenericDAO<Protein, Long> dao, Long primaryKey) {
+                return dao.read(primaryKey);
+            }
+
+            public Long getPrimaryKey(Protein protein) {
+                return protein.getId();
+            }
+        });
+    }
 
 }
