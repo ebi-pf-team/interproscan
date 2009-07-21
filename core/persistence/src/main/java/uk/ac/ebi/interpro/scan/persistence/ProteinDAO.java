@@ -39,7 +39,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * @return The Protein, with cross references loaded. (Xrefs are LAZY by default) or null if the
      * primary key is not present in the database.
      */
-    public Protein getProteinAndCrossReferencesById (Long id);
+    public Protein getProteinAndCrossReferencesByProteinId(Long id);
 
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated matches.

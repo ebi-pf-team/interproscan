@@ -50,7 +50,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      * primary key is not present in the database.
      */
     @Transactional(readOnly = true)
-    public Protein getProteinAndCrossReferencesById (Long id){
+    public Protein getProteinAndCrossReferencesByProteinId(Long id){
         Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.crossReferences where p.id = :id");
         query.setParameter("id", id);
         return (Protein) query.getSingleResult();
