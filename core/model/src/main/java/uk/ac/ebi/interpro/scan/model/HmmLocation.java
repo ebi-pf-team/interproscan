@@ -35,9 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlType(name="HmmLocationType", propOrder={"start", "end"})
-public class HmmLocation
-        extends AbstractLocation
-        implements Location {
+public class HmmLocation extends AbstractLocation {
 
     @Column (nullable = false)
     private int hmmStart;
@@ -194,10 +192,6 @@ public class HmmLocation
                 .append(score)
                 .append(evalue)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

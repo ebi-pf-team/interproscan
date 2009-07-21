@@ -38,9 +38,7 @@ import java.util.Collections;
  * @since   1.0
  */
 @XmlTransient
-abstract class AbstractFilteredMatch<T extends Location>
-        extends AbstractMatch<T>
-        implements FilteredMatch<T>, Serializable {
+abstract class AbstractFilteredMatch<T extends Location> extends AbstractMatch<T> implements FilteredMatch<T> {
     
     private Signature signature;
 
@@ -198,10 +196,6 @@ abstract class AbstractFilteredMatch<T extends Location>
                 .appendSuper(super.hashCode())
                 .append(signature)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

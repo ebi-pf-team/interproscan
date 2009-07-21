@@ -36,9 +36,7 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawHmmMatch
-        extends AbstractRawMatch<HmmLocation>
-        implements RawMatch<HmmLocation>, Serializable {
+public class RawHmmMatch extends AbstractRawMatch<HmmLocation> {
 
     // TODO: Most of this code is the same as FilteredHmmMatch - can we share code, eg. by composition or generics? Same is true for FingerPrints 
 
@@ -79,14 +77,6 @@ public class RawHmmMatch
         this.score = score;
     }
 
-    @Override public HmmLocation addLocation(HmmLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(HmmLocation location) {
-        super.removeLocation(location);
-    }
-
     @OneToMany(targetEntity = HmmLocation.class)
     @Override public Set<HmmLocation> getLocations() {
         return super.getLocations ();
@@ -111,10 +101,6 @@ public class RawHmmMatch
                 .append(evalue)
                 .append(score)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

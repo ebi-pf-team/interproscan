@@ -33,9 +33,7 @@ import java.util.Set;
  */
 
 @XmlTransient
-abstract class AbstractRawMatch<T extends Location>
-        extends AbstractMatch<T>
-        implements RawMatch<T>, Serializable {
+abstract class AbstractRawMatch<T extends Location> extends AbstractMatch<T> implements RawMatch<T> {
 
     private Model model;
 
@@ -61,7 +59,6 @@ abstract class AbstractRawMatch<T extends Location>
         this.model = model;
     }
 
-
     public String getKey() {
         return model.getKey();
     }
@@ -83,10 +80,6 @@ abstract class AbstractRawMatch<T extends Location>
                 .appendSuper(super.hashCode())
                 .append(model)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

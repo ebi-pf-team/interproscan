@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlType(name="BlastProDomLocationType")
-public class BlastProDomLocation extends AbstractLocation implements Location {
+public class BlastProDomLocation extends AbstractLocation {
 
     @Column (nullable = false)
     private double score;
@@ -83,10 +83,6 @@ public class BlastProDomLocation extends AbstractLocation implements Location {
                 .appendSuper(super.hashCode())
                 .append(score)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

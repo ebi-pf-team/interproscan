@@ -32,9 +32,7 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawProfileScanMatch
-        extends AbstractRawMatch<ProfileScanLocation>
-        implements RawMatch<ProfileScanLocation>, Serializable {
+public class RawProfileScanMatch extends AbstractRawMatch<ProfileScanLocation> {
 
     protected RawProfileScanMatch() {}
 
@@ -44,18 +42,6 @@ public class RawProfileScanMatch
 
     public RawProfileScanMatch(Model model, Set<ProfileScanLocation> locations) {
         super(model, locations);
-    }
-
-    @Override public ProfileScanLocation addLocation(ProfileScanLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(ProfileScanLocation location) {
-        super.removeLocation(location);
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

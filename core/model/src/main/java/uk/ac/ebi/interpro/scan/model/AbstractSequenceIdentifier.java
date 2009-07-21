@@ -36,9 +36,7 @@ import java.io.Serializable;
 @Table (name = "sequence_identifier")
 @DiscriminatorValue(value = "S")
 @XmlTransient
-abstract class AbstractSequenceIdentifier
-        extends AbstractMatchableEntity
-        implements SequenceIdentifier, MatchableEntity, Serializable {
+abstract class AbstractSequenceIdentifier extends AbstractMatchableEntity implements SequenceIdentifier{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -87,8 +85,7 @@ abstract class AbstractSequenceIdentifier
      *
      * @param identifier DO NOT USE - added only for JPA.
      */
-    @Override
-    public void setIdentifier(String identifier) {
+    @Override public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
 
@@ -109,10 +106,6 @@ abstract class AbstractSequenceIdentifier
                 .appendSuper(super.hashCode())
                 .append(identifier)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

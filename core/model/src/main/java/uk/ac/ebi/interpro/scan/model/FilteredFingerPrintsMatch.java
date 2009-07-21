@@ -36,9 +36,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name="FilteredFingerPrintsMatchType", propOrder={"signature", "locations"})
-public class FilteredFingerPrintsMatch
-        extends AbstractFilteredMatch<FingerPrintsLocation>
-        implements FilteredMatch<FingerPrintsLocation>, Serializable {
+public class FilteredFingerPrintsMatch extends AbstractFilteredMatch<FingerPrintsLocation> {
 
     @Column
     private double evalue;
@@ -92,14 +90,6 @@ public class FilteredFingerPrintsMatch
         this.motifCount = motifCount;
     }
 
-    @Override public FingerPrintsLocation addLocation(FingerPrintsLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(FingerPrintsLocation location) {
-        super.removeLocation(location);
-    }
-
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -117,10 +107,6 @@ public class FilteredFingerPrintsMatch
                 .appendSuper(super.hashCode())
                 .append(evalue)
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

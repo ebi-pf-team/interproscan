@@ -35,9 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlType(name="FingerPrintsLocationType")
-public class FingerPrintsLocation
-        extends AbstractLocation
-        implements Location {
+public class FingerPrintsLocation extends AbstractLocation {
 
     @Column (nullable = false)
     private double pvalue;
@@ -115,10 +113,6 @@ public class FingerPrintsLocation
                 .append(score)
                 .append(motifNumber)                
                 .toHashCode();
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

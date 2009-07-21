@@ -32,9 +32,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name="FilteredPatternScanMatchType", propOrder={"signature", "locations"})
-public class FilteredPatternScanMatch
-        extends AbstractFilteredMatch<PatternScanLocation>
-        implements FilteredMatch<PatternScanLocation>, Serializable {
+public class FilteredPatternScanMatch extends AbstractFilteredMatch<PatternScanLocation> {
 
     protected FilteredPatternScanMatch() {}
 
@@ -44,18 +42,6 @@ public class FilteredPatternScanMatch
 
     public FilteredPatternScanMatch(Signature signature, Set<PatternScanLocation> locations) {
         super(signature, locations);
-    }
-
-    @Override public PatternScanLocation addLocation(PatternScanLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(PatternScanLocation location) {
-        super.removeLocation(location);
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

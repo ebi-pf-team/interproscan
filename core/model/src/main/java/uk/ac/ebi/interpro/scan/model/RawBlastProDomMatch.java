@@ -32,9 +32,7 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawBlastProDomMatch
-        extends AbstractRawMatch<BlastProDomLocation>
-        implements RawMatch<BlastProDomLocation>, Serializable {
+public class RawBlastProDomMatch extends AbstractRawMatch<BlastProDomLocation> {
 
     protected RawBlastProDomMatch() {}
 
@@ -44,18 +42,6 @@ public class RawBlastProDomMatch
 
     public RawBlastProDomMatch(Model model, Set<BlastProDomLocation> locations) {
         super(model, locations);
-    }
-
-    @Override public BlastProDomLocation addLocation(BlastProDomLocation location) {
-        return super.addLocation(location);
-    }
-
-    @Override public void removeLocation(BlastProDomLocation location) {
-        super.removeLocation(location);
-    }
-
-    @Override public String toString()  {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

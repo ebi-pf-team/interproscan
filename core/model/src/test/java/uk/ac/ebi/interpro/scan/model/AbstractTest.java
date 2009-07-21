@@ -123,8 +123,6 @@ abstract class AbstractTest<T extends PersistentEntity> {
             logger.debug(key + " (actual object XML):\n" + actualXml);
             Diff diff = new Diff(expectedXml, actualXml);
             // Order of attributes and elements is not important
-            //diff.overrideElementQualifier(new ElementNameAndAttributeQualifier()); // Atttributes in any order
-            //diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier()); // Elements in any order
             diff.overrideElementQualifier(new RecursiveElementNameAndAttributeQualifier());
             String message = key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml;
             assertTrue(message, diff.similar());
@@ -167,6 +165,9 @@ abstract class AbstractTest<T extends PersistentEntity> {
          * @return true    if the elements are comparable, false otherwise
          */
         @Override public boolean qualifyForComparison(Element control, Element test) {
+            // TODO: This should ensure the order of attributes and elements is not important, BUT...
+            // TODO: sometimes it does not work. Perhaps best solution is to order elements in normalised form
+            // TODO: using XSLT before using Diff()
             boolean isElementsComparable = recursiveElementQualifier.qualifyForComparison(control, test);
             boolean isAttributesComparable = super.areAttributesComparable(control, test);
             return (isElementsComparable && isAttributesComparable);
