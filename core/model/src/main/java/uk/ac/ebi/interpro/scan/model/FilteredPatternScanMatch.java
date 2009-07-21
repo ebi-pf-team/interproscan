@@ -19,38 +19,38 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Set;
 
 /**
- * ProfileScan raw match.
+ * PatternScan filtered match.
  *
  * @author  Antony Quinn
  * @version $Id$
  * @since   1.0
  */
 @Entity
-@XmlTransient
-public class RawProfileScanMatch
-        extends AbstractRawMatch<ProfileScanLocation>
-        implements RawMatch<ProfileScanLocation>, Serializable {
+@XmlType(name="FilteredPatternScanMatchType", propOrder={"signature", "locations"})
+public class FilteredPatternScanMatch
+        extends AbstractFilteredMatch<PatternScanLocation>
+        implements FilteredMatch<PatternScanLocation>, Serializable {
 
-    protected RawProfileScanMatch() {}
+    protected FilteredPatternScanMatch() {}
 
-    public RawProfileScanMatch(Model model) {
-        super(model);
+    public FilteredPatternScanMatch(Signature signature) {
+        super(signature);
     }
 
-    public RawProfileScanMatch(Model model, Set<ProfileScanLocation> locations) {
-        super(model, locations);
+    public FilteredPatternScanMatch(Signature signature, Set<PatternScanLocation> locations) {
+        super(signature, locations);
     }
 
-    @Override public ProfileScanLocation addLocation(ProfileScanLocation location) {
+    @Override public PatternScanLocation addLocation(PatternScanLocation location) {
         return super.addLocation(location);
     }
 
-    @Override public void removeLocation(ProfileScanLocation location) {
+    @Override public void removeLocation(PatternScanLocation location) {
         super.removeLocation(location);
     }
 

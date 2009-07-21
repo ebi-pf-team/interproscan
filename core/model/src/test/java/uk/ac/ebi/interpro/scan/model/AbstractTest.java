@@ -23,11 +23,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.Validator;
+import org.custommonkey.xmlunit.*;
+import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -124,7 +123,9 @@ abstract class AbstractTest<T extends PersistentEntity> {
             logger.debug(key + " (actual object XML):\n" + actualXml);
             Diff diff = new Diff(expectedXml, actualXml);
             // Order of attributes and elements is not important
-            diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+            //diff.overrideElementQualifier(new ElementNameAndAttributeQualifier()); // Atttributes in any order
+            //diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier()); // Elements in any order
+            diff.overrideElementQualifier(new RecursiveElementNameAndAttributeQualifier());
             String message = key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml;
             assertTrue(message, diff.similar());
             // Validate against XML schema
@@ -148,6 +149,29 @@ abstract class AbstractTest<T extends PersistentEntity> {
         v.useXMLSchema(true);
         v.setJAXP12SchemaSource(schema.getInputStream());
         v.assertIsValid();
+    }
+
+    /**
+     * Tests two elements for tag name and attribute name comparability, ignoring the order of elements and the order
+     * of attributes
+     */
+    private static final class RecursiveElementNameAndAttributeQualifier extends ElementNameAndAttributeQualifier {
+
+        private final ElementQualifier recursiveElementQualifier = new RecursiveElementNameAndTextQualifier();
+
+        /**
+         * Determine whether two elements qualify for further Difference comparison.
+         * 
+         * @param  control an Element from the control XML NodeList
+         * @param  test    an Element from the test XML NodeList
+         * @return true    if the elements are comparable, false otherwise
+         */
+        @Override public boolean qualifyForComparison(Element control, Element test) {
+            boolean isElementsComparable = recursiveElementQualifier.qualifyForComparison(control, test);
+            boolean isAttributesComparable = super.areAttributesComparable(control, test);
+            return (isElementsComparable && isAttributesComparable);
+        }
+
     }
 
 //        Tried following in testUnmarshal() but will not work because no public setter methods in model!

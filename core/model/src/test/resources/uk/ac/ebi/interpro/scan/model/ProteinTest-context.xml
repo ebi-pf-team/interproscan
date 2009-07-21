@@ -255,6 +255,133 @@
             -->
         </entry>
 
+        <entry key="ProSiteProfiles">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg>
+                    <bean class="uk.ac.ebi.interpro.scan.model.Protein">
+                        <constructor-arg value="MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS"/>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredProfileScanMatch">
+                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredProfileScanMatch">
+                                    <constructor-arg>
+                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                                            <constructor-arg value="PS50042"/>
+                                            <constructor-arg value="CNMP_BINDING_3"/>
+                                        </bean>
+                                    </constructor-arg>
+                                    <constructor-arg>
+                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanLocation">
+                                            <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanLocation">
+                                                <constructor-arg value="171"/>      <!--Start-->
+                                                <constructor-arg value="275"/>      <!--End-->
+                                                <constructor-arg value="24.202"/>   <!--Score-->
+                                            </bean>
+                                        </util:set>
+                                     </constructor-arg>
+                                </bean>
+                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredProfileScanMatch">
+                                    <constructor-arg>
+                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                                            <constructor-arg value="PS50206"/>
+                                            <constructor-arg value="RHODANESE_3"/>
+                                        </bean>
+                                    </constructor-arg>
+                                    <constructor-arg>
+                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanLocation">
+                                            <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanLocation">
+                                                <constructor-arg value="292"/>      <!--Start-->
+                                                <constructor-arg value="370"/>      <!--End-->
+                                                <constructor-arg value="15.158"/>   <!--Score-->
+                                            </bean>
+                                        </util:set>
+                                     </constructor-arg>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <value>
+                    <![CDATA[
+                        <protein md5="de25966e66a6340eed9d837b05ffc58b" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                            <sequence>MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
+                            <matches>
+                                <profilescan-match>
+                                    <signature name="RHODANESE_3" ac="PS50206"/>
+                                    <locations>
+                                        <profilescan-location start="292" end="370" score="15.158"/>
+                                    </locations>
+                                </profilescan-match>
+                                <profilescan-match>
+                                    <signature name="CNMP_BINDING_3" ac="PS50042"/>
+                                    <locations>
+                                        <profilescan-location start="171" end="275" score="24.202"/>
+                                    </locations>
+                                </profilescan-match>
+                            </matches>
+                        </protein>
+                    ]]>
+                    </value>
+                </constructor-arg>
+            </bean>
+            <!-- Note: dash ("-") replaced by hyphen ("–") so HTML comments not messed up:
+                UPI0001AF8DCD	ps_scan|v1.57	PS50042	171	275	24.202	.	.	Name "CNMP_BINDING_3" ; Level 1 ; RawScore 1207 ; FeatureFrom 1 ; FeatureTo –18 ; Sequence "VFSKVPVANIEAMFQRMERINTVAGQVIIQQGAAGDYYYLIESGTVLVTRADGVnaHPLLVAELQSGDAFGEEALVSDNKRNATVAMKTDGQLLRLNKHDFVALL–––––––––––––––––" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 5
+                UPI0001AF8DCD	ps_scan|v1.57	PS50206	292	370	15.158	.	.	Name "RHODANESE_3" ; Level 0 ; RawScore 60203 ; FeatureFrom 1 ; FeatureTo –1 ; Sequence "IaDGAIWVDAR––––––––––––––––––LPSEYQYDHIDGAINLPLNEIR–––––––––––––QKLLeLDYRKSHVVYCQT–GRRSSAAAFILAQNGF–DVVVLK––––––––GGARAN" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 0
+            -->
+        </entry>
+
+        <entry key="ProSitePatterns">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg>
+                    <bean class="uk.ac.ebi.interpro.scan.model.Protein">
+                        <constructor-arg value="MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG"/>
+                        <constructor-arg>
+                            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredPatternScanMatch">
+                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredPatternScanMatch">
+                                    <constructor-arg>
+                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                                            <constructor-arg value="PS00675"/>
+                                            <constructor-arg value="SIGMA54_INTERACT_1"/>
+                                        </bean>
+                                    </constructor-arg>
+                                    <constructor-arg>
+                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.PatternScanLocation">
+                                            <bean class="uk.ac.ebi.interpro.scan.model.PatternScanLocation">
+                                                <constructor-arg value="166"/>      <!--Start-->
+                                                <constructor-arg value="179"/>      <!--End-->
+                                                <constructor-arg value="STRONG"
+                                                                 type="uk.ac.ebi.interpro.scan.model.PatternScanLocation$Level"/>
+                                            </bean>
+                                        </util:set>
+                                     </constructor-arg>
+                                </bean>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <value>
+                    <![CDATA[
+                        <protein md5="386964a0a573631d643f2a7e7de03066" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                            <sequence>MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
+                            <matches>
+                                <patternscan-match>
+                                    <signature ac="PS00675" name="SIGMA54_INTERACT_1"/>
+                                    <locations>
+                                        <patternscan-location start="166" end="179" level="STRONG"/>
+                                    </locations>
+                                </patternscan-match>
+                            </matches>
+                        </protein>
+                    ]]>
+                    </value>
+                </constructor-arg>
+            </bean>
+            <!-- 
+                UPI0001AFC88D	ps_scan|v1.57	PS00675	166	179	.	.	.	Name "SIGMA54_INTERACT_1" ; LevelTag "(0)" ; Sequence "VLLtGETGTGKevF" ; SequenceDescription "UPI0001AFC88D" ; KnownFalsePos 209
+            -->
+        </entry>
+
     </util:map>
 
 </beans>
