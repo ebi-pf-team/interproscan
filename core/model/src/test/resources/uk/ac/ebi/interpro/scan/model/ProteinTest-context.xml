@@ -2,10 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang"        
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util 
-                           http://www.springframework.org/schema/util/spring-util.xsd">
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/lang
+                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
 
     <import resource="jpa-context.xml"/>
     <import resource="oxm-context.xml"/>
@@ -14,9 +17,48 @@
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.Protein" />
     </bean>
     
-    <!-- TODO: Consider creating objects using Groovy lang:script -->
+    <!--TODO: Groovy works great (8 lines of Groovy vs 37 lines of XML) -->
+    <!--TODO: ... unfortunately a little too well, because it highlights the problem-->
+    <!--TODO: with the @Xml annotation on setCrossReferences() (see Protein class) - this needs further work-->
+    <!--<lang:groovy id="gtest">-->
+        <!--<lang:inline-script>-->
+            <!--<![CDATA[-->
+                <!--import uk.ac.ebi.interpro.scan.model.*-->
+                <!--Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI")-->
+                <!--p.addCrossReference(new XrefSequenceIdentifier("A0A000_9ACTO"))-->
+                <!--FilteredHmmMatch m =-->
+                    <!--p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9))-->
+                <!--m.addLocation(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE))-->
+                <!--return p-->
+            <!--]]>-->
+        <!--</lang:inline-script>-->
+    <!--</lang:groovy>-->
 
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+        
+        <!--<entry key="TestGroovy">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">-->
+                <!--<constructor-arg ref="gtest"/>-->
+                <!--<constructor-arg>-->
+                    <!--<value>-->
+                    <!--<![CDATA[-->
+                        <!--<protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">-->
+                            <!--<sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>-->
+                            <!--<xref id="A0A000_9ACTO"/>-->
+                            <!--<matches>-->
+                                <!--<hmm-match score="0.035" evalue="3.7E-9">-->
+                                    <!--<signature ac="PF02310" name="B12-binding" />-->
+                                    <!--<locations>-->
+                                        <!--<hmm-location start="3" end="107" score="3.0" evalue="3.7E-9" hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />-->
+                                    <!--</locations>-->
+                                <!--</hmm-match>-->
+                            <!--</matches>-->
+                        <!--</protein>-->
+                    <!--]]>-->
+                    <!--</value>-->
+                <!--</constructor-arg>                -->
+            <!--</bean>-->
+        <!--</entry>-->
 
         <entry key="Pfam">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
