@@ -44,7 +44,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
  * @since   1.0
  * @see     org.custommonkey.xmlunit.XMLUnit
  */
-abstract class AbstractTest<T extends PersistentEntity> {
+abstract class AbstractTest<T> {
 
     private static final Log logger = LogFactory.getLog(AbstractTest.class);
 
@@ -79,17 +79,29 @@ abstract class AbstractTest<T extends PersistentEntity> {
         assertEquals(LONG_ZERO, dao.count());
     }
 
-    protected void testJpaXmlObjects(){
+    interface ObjectRetriever<P>{
+
+        P getObjectByPrimaryKey(GenericDAO<P, Long> dao, Long primaryKey);
+
+        Long getPrimaryKey(P persistable);
+    }
+
+    protected void testJpaXmlObjects(ObjectRetriever<T> retriever){
+//    protected void testJpaXmlObjects(){
         initJpa();
         for (String key : objectXmlMap.keySet()) {
             // Get expected object
             T expectedObject   = objectXmlMap.get(key).getObject();
             // Persist
+            System.out.println("expectedObject class = " + expectedObject.getClass().getName());
+            System.out.println("expectedObject = " + expectedObject);
             dao.insert(expectedObject);
             assertEquals(key, 1, dao.retrieveAll().size());
             // Retrieve
-            Long pk = expectedObject.getId();
-            T actualObject = dao.read(pk);
+//            Long pk = expectedObject.getId();
+            Long pk = retriever.getPrimaryKey(expectedObject);
+            T actualObject = retriever.getObjectByPrimaryKey(dao, pk);
+//            T actualObject = dao.read(pk);
             assertEquals(key, expectedObject, actualObject);
             // Delete
             dao.delete(actualObject);

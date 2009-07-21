@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.runner.RunWith;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.xml.sax.SAXException;
@@ -27,6 +28,8 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 /**
  * Test cases for {@link Signature}
@@ -99,8 +102,18 @@ public class SignatureTest extends AbstractTest<Signature> {
     }
 
     // TODO: Following fails with "failed to lazily initialize a collection of role: uk.ac.ebi.interpro.scan.model.Signature.models, no session or session was closed"
-//    @Test public void testJpa() {
-//        super.testJpaXmlObjects();
-//    }
+    @Test
+    @Ignore
+    public void testJpa() {
+        super.testJpaXmlObjects(new ObjectRetriever<Signature>(){
+            public Signature getObjectByPrimaryKey(GenericDAO<Signature, Long> dao, Long primaryKey) {
+                return dao.readDeep(primaryKey, "models");
+            }
+
+            public Long getPrimaryKey(Signature signature) {
+                return signature.getId();
+            }
+        });
+    }
 
 }
