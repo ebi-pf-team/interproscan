@@ -87,23 +87,19 @@ abstract class AbstractTest<T> {
     }
 
     protected void testJpaXmlObjects(ObjectRetriever<T> retriever){
-//    protected void testJpaXmlObjects(){
         initJpa();
         for (String key : objectXmlMap.keySet()) {
             // Get expected object
             T expectedObject   = objectXmlMap.get(key).getObject();
             // Persist
-            System.out.println("expectedObject class = " + expectedObject.getClass().getName());
-            System.out.println("expectedObject = " + expectedObject);
             dao.insert(expectedObject);
             assertEquals(key, 1, dao.retrieveAll().size());
             // Retrieve
-//            Long pk = expectedObject.getId();
             Long pk = retriever.getPrimaryKey(expectedObject);
             T actualObject = retriever.getObjectByPrimaryKey(dao, pk);
-//            T actualObject = dao.read(pk);
             assertEquals(key, expectedObject, actualObject);
             // Delete
+            logger.debug("Deleting: " + actualObject);
             dao.delete(actualObject);
             assertEquals(key, 0, dao.retrieveAll().size());
         }

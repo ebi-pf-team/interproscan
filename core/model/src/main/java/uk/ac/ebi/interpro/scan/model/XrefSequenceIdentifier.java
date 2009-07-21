@@ -35,7 +35,6 @@ import java.io.Serializable;
  * @see     Match
  */
 @Entity
-@XmlTransient
 public class XrefSequenceIdentifier extends AbstractSequenceIdentifier {
 
     /**
@@ -65,6 +64,7 @@ public class XrefSequenceIdentifier extends AbstractSequenceIdentifier {
      *
      * @return the Protein that this accession / ID cross reference annotates.
      */
+    @XmlTransient
     public Protein getProtein() {
         return protein;
     }

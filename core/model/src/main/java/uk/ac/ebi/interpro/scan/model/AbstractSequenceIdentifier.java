@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAttribute;
 import java.io.Serializable;
 
 /**
@@ -76,6 +77,7 @@ abstract class AbstractSequenceIdentifier extends AbstractMatchableEntity implem
      *
      * @return Sequence identifier
      */
+    @XmlAttribute(name="id")
     @Override public String getIdentifier() {
         return identifier;
     }

@@ -101,7 +101,7 @@ public class SignatureTest extends AbstractTest<Signature> {
         super.testXmlRoundTrip();
     }
 
-    // TODO: Following fails with "failed to lazily initialize a collection of role: uk.ac.ebi.interpro.scan.model.Signature.models, no session or session was closed"
+    // TODO: Re-enable test when fixed "org.hibernate.exception.GenericJDBCException: Could not execute JDBC batch update"
     @Test
     @Ignore
     public void testJpa() {
