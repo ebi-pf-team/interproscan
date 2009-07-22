@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:lang="http://www.springframework.org/schema/lang"        
+       xmlns:lang="http://www.springframework.org/schema/lang"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util 
@@ -17,228 +17,38 @@
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.Protein" />
     </bean>
     
-    <!--TODO: Groovy works great (8 lines of Groovy vs 37 lines of XML) -->
-    <!--TODO: ... unfortunately a little too well, because it highlights the problem-->
-    <!--TODO: with the @Xml annotation on setCrossReferences() (see Protein class) - this needs further work-->
-    <!--<lang:groovy id="gtest">-->
-        <!--<lang:inline-script>-->
-            <!--<![CDATA[-->
-                <!--import uk.ac.ebi.interpro.scan.model.*-->
-                <!--Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI")-->
-                <!--p.addCrossReference(new XrefSequenceIdentifier("A0A000_9ACTO"))-->
-                <!--FilteredHmmMatch m =-->
-                    <!--p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9))-->
-                <!--m.addLocation(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE))-->
-                <!--return p-->
-            <!--]]>-->
-        <!--</lang:inline-script>-->
-    <!--</lang:groovy>-->
-
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
-        
-        <!--<entry key="TestGroovy">-->
-            <!--<bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">-->
-                <!--<constructor-arg ref="gtest"/>-->
-                <!--<constructor-arg>-->
-                    <!--<value>-->
-                    <!--<![CDATA[-->
-                        <!--<protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">-->
-                            <!--<sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>-->
-                            <!--<xref id="A0A000_9ACTO"/>-->
-                            <!--<matches>-->
-                                <!--<hmm-match score="0.035" evalue="3.7E-9">-->
-                                    <!--<signature ac="PF02310" name="B12-binding" />-->
-                                    <!--<locations>-->
-                                        <!--<hmm-location start="3" end="107" score="3.0" evalue="3.7E-9" hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />-->
-                                    <!--</locations>-->
-                                <!--</hmm-match>-->
-                            <!--</matches>-->
-                        <!--</protein>-->
-                    <!--]]>-->
-                    <!--</value>-->
-                <!--</constructor-arg>                -->
-            <!--</bean>-->
-        <!--</entry>-->
 
+        <!-- HMM databases -->
+
+        <entry key="Gene3D">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="gene3dObject"/>
+                <constructor-arg ref="gene3dXml"/>
+            </bean>
+        </entry>
+        
         <entry key="Pfam">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
-                <constructor-arg>
-                    <bean class="uk.ac.ebi.interpro.scan.model.Protein">
-                        <constructor-arg value="MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI"/>
-                        <constructor-arg>
-                            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
-                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
-                                    <constructor-arg>
-                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
-                                            <constructor-arg value="PF02310"/>
-                                            <constructor-arg value="B12-binding"/>
-                                        </bean>
-                                    </constructor-arg>
-                                    <constructor-arg value="0.035"/>   <!--Score-->
-                                    <constructor-arg value="3.7e-9"/>  <!--E-value-->
-                                    <constructor-arg>
-                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
-                                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
-                                                <constructor-arg value="3"/>        <!--Start-->
-                                                <constructor-arg value="107"/>      <!--End-->
-                                                <constructor-arg value="3.0"/>      <!--Score-->
-                                                <constructor-arg value="3.7e-9"/>   <!--E-value-->
-                                                <constructor-arg value="1"/>        <!--HMM start-->
-                                                <constructor-arg value="104"/>      <!--HMM end-->
-                                                <constructor-arg value="N_TERMINAL_COMPLETE"
-                                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
-                                            </bean>
-                                        </util:set>
-                                     </constructor-arg>
-                                </bean>
-                            </util:set>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                                    <constructor-arg value="A0A000_9ACTO"/>
-                                </bean>                          
-                            </util:set>
-                        </constructor-arg>
-                    </bean>
-                </constructor-arg>
-                <constructor-arg>
-                    <value>
-                    <![CDATA[
-                        <protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
-                            <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
-                            <xref id="A0A000_9ACTO"/>
-                            <matches>
-                                <hmm-match score="0.035" evalue="3.7E-9">
-                                    <signature ac="PF02310" name="B12-binding" />
-                                    <locations>
-                                        <hmm-location start="3" end="107" score="3.0" evalue="3.7E-9" hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
-                                    </locations>
-                                </hmm-match>
-                            </matches>
-                        </protein>
-                    ]]>
-                    </value>
-                </constructor-arg>
+                <constructor-arg ref="pfamObject"/>
+                <constructor-arg ref="pfamXml"/>
             </bean>
         </entry>
 
+        <entry key="SMART">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="smartObject"/>
+                <constructor-arg ref="smartXml"/>
+            </bean>
+        </entry>
+
+        <!-- Non-HMM databases -->
+
         <entry key="PRINTS">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
-                <constructor-arg>
-                    <bean class="uk.ac.ebi.interpro.scan.model.Protein">
-                        <constructor-arg value="MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN"/>
-                        <constructor-arg>
-                            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
-                                <bean class="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
-                                    <constructor-arg>
-                                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
-                                            <constructor-arg value="PR00579"/>
-                                            <constructor-arg value="RHODOPSIN"/>
-                                        </bean>
-                                    </constructor-arg>
-                                    <constructor-arg value="2.2e-64"/> <!--E-value-->
-                                    <constructor-arg value="IIIIII"/>  <!--Graphscan-->
-                                    <constructor-arg value="6"/>       <!--MotifCount-->
-                                    <constructor-arg>
-                                        <util:set value-type="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                                <constructor-arg value="3"/>        <!--Start-->
-                                                <constructor-arg value="21"/>       <!--End-->
-                                                <constructor-arg value="1.45e-14"/> <!--P-value-->
-                                                <constructor-arg value="86.94"/>    <!--Score-->
-                                                <constructor-arg value="1"/>        <!--MotifNumber-->
-                                            </bean>
-                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                                <constructor-arg value="22"/>
-                                                <constructor-arg value="38"/>
-                                                <constructor-arg value="2.06e-10"/>
-                                                <constructor-arg value="80.20"/>
-                                                <constructor-arg value="2"/>
-                                            </bean>
-                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                                <constructor-arg value="85"/>
-                                                <constructor-arg value="101"/>
-                                                <constructor-arg value="1.83e-13"/>
-                                                <constructor-arg value="81.56"/>
-                                                <constructor-arg value="3"/>
-                                            </bean>
-                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                                <constructor-arg value="191"/>
-                                                <constructor-arg value="207"/>
-                                                <constructor-arg value="1.43e-10"/>
-                                                <constructor-arg value="77.83"/>
-                                                <constructor-arg value="4"/>
-                                            </bean>
-                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                                <constructor-arg value="271"/>
-                                                <constructor-arg value="289"/>
-                                                <constructor-arg value="9.33e-15"/>
-                                                <constructor-arg value="83.70"/>
-                                                <constructor-arg value="5"/>
-                                            </bean>
-                                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                                                <constructor-arg value="319"/>
-                                                <constructor-arg value="332"/>
-                                                <constructor-arg value="1.04e-09"/>
-                                                <constructor-arg value="81.87"/>
-                                                <constructor-arg value="6"/>
-                                            </bean>                                            
-                                        </util:set>
-                                     </constructor-arg>
-                                </bean>
-                            </util:set>
-                        </constructor-arg>         
-                        <constructor-arg>
-                            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                                    <constructor-arg value="P02700"/>
-                                </bean>
-                                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                                    <constructor-arg value="OPSD_SHEEP"/>
-                                </bean>                                
-                            </util:set>
-                        </constructor-arg>                        
-                    </bean>
-                </constructor-arg>
-                <constructor-arg>
-                    <value>
-                    <![CDATA[
-                        <protein md5="ae2f4d0c928c8017da2df2d5cf15f01" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
-                            <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
-                            <xref id="P02700"/>
-                            <xref id="OPSD_SHEEP"/>
-                            <matches>
-                                <fingerprints-match motifCount="6" graphscan="IIIIII" evalue="2.2E-64">
-                                    <signature ac="PR00579" name="RHODOPSIN" />
-                                    <locations>
-                                        <fingerprints-location motifNumber="1" start="3"   end="21"  score="86.94" pvalue="1.45E-14" />
-                                        <fingerprints-location motifNumber="2" start="22"  end="38"  score="80.2"  pvalue="2.06E-10" />
-                                        <fingerprints-location motifNumber="3" start="85"  end="101" score="81.56" pvalue="1.83E-13" />
-                                        <fingerprints-location motifNumber="4" start="191" end="207" score="77.83" pvalue="1.43E-10" />
-                                        <fingerprints-location motifNumber="5" start="271" end="289" score="83.7"  pvalue="9.33E-15" />
-                                        <fingerprints-location motifNumber="6" start="319" end="332" score="81.87" pvalue="1.04E-9" />
-                                    </locations>
-                                </fingerprints-match>
-                            </matches>
-                        </protein>
-                    ]]>
-                    </value>
-                </constructor-arg>
+                <constructor-arg ref="printsObject"/>
+                <constructor-arg ref="printsXml"/>
             </bean>
-            <!--
-                2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan
-                2TBH RHODOPSIN       6  of  6  4.9e+02  82       4791       7.6e-70     2.2e-64     IIIIII
-                2TBF
-                3TBS
-                3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high
-                3TBH RHODOPSIN       1  of  6  86.94   898     1.45e-14  GTEGPNFYVPFSNKTGVVR                                     19   3    3     6
-                3TBH RHODOPSIN       2  of  6  80.20   808     2.06e-10  SPFEAPQYYLAEPWQFS                                       17   22   22    25
-                3TBH RHODOPSIN       3  of  6  81.56   763     1.83e-13  FMVFGGFTTTLYTSLHG                                       17   85   85    88
-                3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194
-                3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274
-                3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322
-            -->
         </entry>
 
         <entry key="ProDom">
@@ -467,5 +277,378 @@
         </entry>
 
     </util:map>
+
+    <!-- HMM databases -->
+
+    <bean id="gene3dObject" class="uk.ac.ebi.interpro.scan.model.Protein">
+        <constructor-arg value="MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG"/>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                    <constructor-arg>
+                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                            <constructor-arg value="G3DSA:2.40.50.140"/>                <!-- Accession -->
+                            <constructor-arg value="Nucleic acid-binding proteins"/>    <!-- Name -->
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg value="-8.9"/>   <!--Score-->
+                    <constructor-arg value="0.28"/>   <!--E-value-->
+                    <constructor-arg>
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                                <constructor-arg value="74"/>      <!--Start-->
+                                <constructor-arg value="93"/>      <!--End-->
+                                <constructor-arg value="-8.9"/>    <!--Score-->
+                                <constructor-arg value="0.28"/>    <!--E-value-->
+                                <constructor-arg value="63"/>      <!--HMM start-->
+                                <constructor-arg value="82"/>      <!--HMM end-->
+                                <constructor-arg value="INCOMPLETE"
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
+                            </bean>
+                        </util:set>
+                     </constructor-arg>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                    <constructor-arg value="A0A314"/>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <!--
+            hmmpfam – search one or more sequences against HMM database
+            HMMER 2.3.2 (Oct 2003)
+            Copyright (C) 1992–2003 HHMI/Washington University School of Medicine
+            Freely distributed under the GNU General Public License (GPL)
+            – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
+            HMM file:                 1o7iB00.hmm
+            Sequence file:            A0A314.fasta
+            – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
+
+            Query sequence: sp|A0A314|RR12_COFAR
+            Accession:      [none]
+            Description:    30S ribosomal protein S12, chloroplastic OS=Coffea arabica GN=rps12–A PE=3 SV=1
+
+            Scores for sequence family classification (score includes all domains):
+            Model    Description                                    Score    E–value  N
+            –––––––– –––––––––––                                    –––––    ––––––– –––
+            1o7iB00                                                  –8.9       0.28   1
+
+            Parsed for domains:
+            Model    Domain  seq–f seq–t    hmm–f hmm–t      score  E–value
+            –––––––– ––––––– ––––– –––––    ––––– –––––      –––––  –––––––
+            1o7iB00    1/1      74    93 ..    63    82 ..    –8.9     0.28
+
+            Alignments of top–scoring domains:
+            1o7iB00: domain 1 of 1, from 74 to 93: score –8.9, E = 0.28
+                               *–>leegdvvriknayvkefngr<–*
+                                  l+e +vv +++++vk   g+
+              sp|A0A314|    74    LQEHSVVLVRGGRVKDLPGV    93
+        -->
+    </bean>
+    <bean id="gene3dXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+            <protein md5="1de2cf633901ff1f00785735c8ce7e70" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <sequence>MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
+                <xref id="A0A314"/>
+                <matches>
+                    <hmm-match score="-8.9" evalue="0.28">
+                        <signature ac="G3DSA:2.40.50.140" name="Nucleic acid-binding proteins" />
+                        <locations>
+                            <hmm-location start="74" end="93" score="-8.9" evalue="0.28" hmm-start="63" hmm-end="82" hmm-bounds="INCOMPLETE" />
+                        </locations>
+                    </hmm-match>
+                </matches>
+            </protein>
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="pfamObject" class="uk.ac.ebi.interpro.scan.model.Protein">
+        <constructor-arg value="MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI"/>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                    <constructor-arg>
+                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                            <constructor-arg value="PF02310"/>
+                            <constructor-arg value="B12-binding"/>
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg value="0.035"/>   <!--Score-->
+                    <constructor-arg value="3.7e-9"/>  <!--E-value-->
+                    <constructor-arg>
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                                <constructor-arg value="3"/>        <!--Start-->
+                                <constructor-arg value="107"/>      <!--End-->
+                                <constructor-arg value="3.0"/>      <!--Score-->
+                                <constructor-arg value="3.7e-9"/>   <!--E-value-->
+                                <constructor-arg value="1"/>        <!--HMM start-->
+                                <constructor-arg value="104"/>      <!--HMM end-->
+                                <constructor-arg value="N_TERMINAL_COMPLETE"
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
+                            </bean>
+                        </util:set>
+                     </constructor-arg>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                    <constructor-arg value="A0A000_9ACTO"/>
+                </bean>
+            </util:set>
+        </constructor-arg>
+    </bean>
+    <bean id="pfamXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+            <protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
+                <xref id="A0A000_9ACTO"/>
+                <matches>
+                    <hmm-match score="0.035" evalue="3.7E-9">
+                        <signature ac="PF02310" name="B12-binding" />
+                        <locations>
+                            <hmm-location start="3" end="107" score="3.0" evalue="3.7E-9" hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
+                        </locations>
+                    </hmm-match>
+                </matches>
+            </protein>
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="smartObject" class="uk.ac.ebi.interpro.scan.model.Protein">
+        <constructor-arg value="MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK"/>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                    <constructor-arg>
+                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                            <constructor-arg value="SM00323"/>  <!-- Accession -->
+                            <constructor-arg value="RasGAP_2"/> <!-- Name -->
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg value="543.4"    type="double"/> <!--Score-->
+                    <constructor-arg value="2.7e-164" type="double"/> <!--E-value-->
+                    <constructor-arg>
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                                <constructor-arg value="512" />        <!--Start-->
+                                <constructor-arg value="857" />        <!--End-->
+                                <constructor-arg value="543.4" type="double"/>      <!--Score-->
+                                <constructor-arg value="2.7e-164" type="double"/>   <!--E-value-->
+                                <constructor-arg value="1" />          <!--HMM start-->
+                                <constructor-arg value="390" />        <!--HMM end-->
+                                <constructor-arg value="COMPLETE"
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
+                            </bean>
+                        </util:set>
+                     </constructor-arg>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                    <constructor-arg value="GAP2_CAEEL"/>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <!--
+            hmmpfam – search one or more sequences against HMM database
+            HMMER 2.3.2 (Oct 2003)
+            Copyright (C) 1992–2003 HHMI/Washington University School of Medicine
+            Freely distributed under the GNU General Public License (GPL)
+            – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
+            HMM file:                 SM00323.hmm
+            Sequence file:            GAP2_CAEEL.fasta
+            – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
+
+            Query sequence: sp|Q8MLZ5|GAP2_CAEEL
+            Accession:      [none]
+            Description:    Ras GTPase–activating protein gap–2 OS=Caenorhabditis elegans GN=gap–2 PE=2 SV=2
+
+            Scores for sequence family classification (score includes all domains):
+            Model    Description                                    Score    E–value  N
+            –––––––– –––––––––––                                    –––––    ––––––– –––
+            RasGAP_2                                                543.4   2.7e–164   1
+
+            Parsed for domains:
+            Model    Domain  seq–f seq–t    hmm–f hmm–t      score  E–value
+            –––––––– ––––––– ––––– –––––    ––––– –––––      –––––  –––––––
+            RasGAP_2   1/1     512   857 ..     1   390 []   543.4 2.7e–164
+
+            Alignments of top–scoring domains:
+            RasGAP_2: domain 1 of 1, from 512 to 857: score 543.4, E = 2.7e–164
+                               *–>lkqgelgslrlktvyttdfilpseaYeeLleLllesvdvepltasla
+                                  ++ +e +slr+k++++ ++ilp++aY++Lle l+++++      +l+
+              sp|Q8MLZ5|   512    SSSQESPSLRIKARWQSVHILPLRAYDNLLETLCYNYL––––––PLC 552
+        -->
+    </bean>
+    <bean id="smartXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+            <protein md5="829339ede4627f6a6bf9166f3e9526d9" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <sequence>MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
+                <xref id="GAP2_CAEEL"/>
+                <matches>
+                    <hmm-match score="543.4" evalue="2.7E-164">
+                        <signature ac="SM00323" name="RasGAP_2"/>
+                        <locations>
+                            <hmm-location start="512" end="857" score="543.4" evalue="2.7E-164" hmm-start="1" hmm-end="390" hmm-bounds="COMPLETE"/>
+                        </locations>
+                    </hmm-match>
+                </matches>
+            </protein>
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <!-- Non-HMM databases -->
+
+    <bean id="printsObject" class="uk.ac.ebi.interpro.scan.model.Protein">
+        <constructor-arg value="MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN"/>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
+                    <constructor-arg>
+                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                            <constructor-arg value="PR00579"/>
+                            <constructor-arg value="RHODOPSIN"/>
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg value="2.2e-64"/> <!--E-value-->
+                    <constructor-arg value="IIIIII"/>  <!--Graphscan-->
+                    <constructor-arg value="6"/>       <!--MotifCount-->
+                    <constructor-arg>
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                <constructor-arg value="3"/>        <!--Start-->
+                                <constructor-arg value="21"/>       <!--End-->
+                                <constructor-arg value="1.45e-14"/> <!--P-value-->
+                                <constructor-arg value="86.94"/>    <!--Score-->
+                                <constructor-arg value="1"/>        <!--MotifNumber-->
+                            </bean>
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                <constructor-arg value="22"/>
+                                <constructor-arg value="38"/>
+                                <constructor-arg value="2.06e-10"/>
+                                <constructor-arg value="80.20"/>
+                                <constructor-arg value="2"/>
+                            </bean>
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                <constructor-arg value="85"/>
+                                <constructor-arg value="101"/>
+                                <constructor-arg value="1.83e-13"/>
+                                <constructor-arg value="81.56"/>
+                                <constructor-arg value="3"/>
+                            </bean>
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                <constructor-arg value="191"/>
+                                <constructor-arg value="207"/>
+                                <constructor-arg value="1.43e-10"/>
+                                <constructor-arg value="77.83"/>
+                                <constructor-arg value="4"/>
+                            </bean>
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                <constructor-arg value="271"/>
+                                <constructor-arg value="289"/>
+                                <constructor-arg value="9.33e-15"/>
+                                <constructor-arg value="83.70"/>
+                                <constructor-arg value="5"/>
+                            </bean>
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                                <constructor-arg value="319"/>
+                                <constructor-arg value="332"/>
+                                <constructor-arg value="1.04e-09"/>
+                                <constructor-arg value="81.87"/>
+                                <constructor-arg value="6"/>
+                            </bean>
+                        </util:set>
+                     </constructor-arg>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                    <constructor-arg value="P02700"/>
+                </bean>
+                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                    <constructor-arg value="OPSD_SHEEP"/>
+                </bean>
+            </util:set>
+        </constructor-arg>
+            <!--
+                2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan
+                2TBH RHODOPSIN       6  of  6  4.9e+02  82       4791       7.6e-70     2.2e-64     IIIIII
+                2TBF
+                3TBS
+                3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high
+                3TBH RHODOPSIN       1  of  6  86.94   898     1.45e-14  GTEGPNFYVPFSNKTGVVR                                     19   3    3     6
+                3TBH RHODOPSIN       2  of  6  80.20   808     2.06e-10  SPFEAPQYYLAEPWQFS                                       17   22   22    25
+                3TBH RHODOPSIN       3  of  6  81.56   763     1.83e-13  FMVFGGFTTTLYTSLHG                                       17   85   85    88
+                3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194
+                3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274
+                3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322
+            -->
+    </bean>
+    <bean id="printsXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <protein md5="ae2f4d0c928c8017da2df2d5cf15f01" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                    <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
+                    <xref id="P02700"/>
+                    <xref id="OPSD_SHEEP"/>
+                    <matches>
+                        <fingerprints-match motifCount="6" graphscan="IIIIII" evalue="2.2E-64">
+                            <signature ac="PR00579" name="RHODOPSIN" />
+                            <locations>
+                                <fingerprints-location motifNumber="1" start="3"   end="21"  score="86.94" pvalue="1.45E-14" />
+                                <fingerprints-location motifNumber="2" start="22"  end="38"  score="80.2"  pvalue="2.06E-10" />
+                                <fingerprints-location motifNumber="3" start="85"  end="101" score="81.56" pvalue="1.83E-13" />
+                                <fingerprints-location motifNumber="4" start="191" end="207" score="77.83" pvalue="1.43E-10" />
+                                <fingerprints-location motifNumber="5" start="271" end="289" score="83.7"  pvalue="9.33E-15" />
+                                <fingerprints-location motifNumber="6" start="319" end="332" score="81.87" pvalue="1.04E-9" />
+                            </locations>
+                        </fingerprints-match>
+                    </matches>
+                </protein>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+
+    <!--TODO: Groovy works great (8 lines of Groovy vs 37 lines of XML) -->
+    <!--TODO: ... unfortunately a little too well, because it highlights the problem-->
+    <!--TODO: with the @Xml annotation on setCrossReferences() (see Protein class) - this needs further work-->
+    <!--<lang:groovy id="gtest">-->
+        <!--<lang:inline-script>-->
+            <!--<![CDATA[-->
+                <!--import uk.ac.ebi.interpro.scan.model.*-->
+                <!--Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI")-->
+                <!--p.addCrossReference(new XrefSequenceIdentifier("A0A000_9ACTO"))-->
+                <!--FilteredHmmMatch m =-->
+                    <!--p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9))-->
+                <!--m.addLocation(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE))-->
+                <!--return p-->
+            <!--]]>-->
+        <!--</lang:inline-script>-->
+    <!--</lang:groovy>-->    
 
 </beans>
