@@ -142,12 +142,18 @@ public class FullRoundTripTest {
         for (String testXml : testXMLs.getXmls()){
             String inputXml = testXml.trim();
             try{
-                logger.debug("Input XML:\n" + inputXml);
                 T persistableObject = (T) unmarshal(unmarshaller, inputXml);
                 // First of all, test that round trip without persistence works...
                 String unpersistedOutputXml = marshal(marshaller, persistableObject);
-                logger.debug("Unpersisted output XML:\n" + unpersistedOutputXml);
                 Diff myDiff = new Diff(inputXml, unpersistedOutputXml);
+                if (! myDiff.similar()) {
+                    logger.error("\nNot similar: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
+                    logger.error("\ntoString(): \n\n" + persistableObject.toString());
+                }
+                else if (! myDiff.identical()){
+                    logger.error("\nNot identical: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
+                    logger.error("\ntoString(): \n\n" + persistableObject.toString());
+                }
                 assertTrue("Round trip XML (not persistence) should be similar." + myDiff, myDiff.similar());
                 assertTrue("Round trip XML (not persistence) should be identical." + myDiff, myDiff.identical());
 
@@ -166,8 +172,14 @@ public class FullRoundTripTest {
 
                 // Finally unmarshall the retrieved persistableObject and compare the XML.
                 String persistedOutputXML = marshal(marshaller, retrievedPersistable);
-                logger.debug("Persisted output XML:\n" + persistedOutputXML);
                 myDiff = new Diff(inputXml, persistedOutputXML);
+                if (! myDiff.similar()) {
+                    logger.error("\nNot similar: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
+                }
+                else if (! myDiff.identical()){
+                    logger.error("\nNot identical: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
+
+                }
                 assertTrue("Round trip XML (persisted) should be similar." + myDiff, myDiff.similar());
                 assertTrue("Round trip XML (persisted) should be identical." + myDiff, myDiff.identical());
 
