@@ -42,6 +42,13 @@
             </bean>
         </entry>
 
+        <entry key="SUPERFAMILY">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="superfamilyObject"/>
+                <constructor-arg ref="superfamilyXml"/>
+            </bean>
+        </entry>
+
         <!-- Non-HMM databases -->
 
         <entry key="PRINTS">
@@ -439,15 +446,15 @@
                             <constructor-arg value="RasGAP_2"/> <!-- Name -->
                         </bean>
                     </constructor-arg>
-                    <constructor-arg value="543.4"    type="double"/> <!--Score-->
-                    <constructor-arg value="2.7e-164" type="double"/> <!--E-value-->
+                    <constructor-arg value="543.4"   /> <!--Score-->
+                    <constructor-arg value="2.7e-164"/> <!--E-value-->
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
                                 <constructor-arg value="512" />        <!--Start-->
                                 <constructor-arg value="857" />        <!--End-->
-                                <constructor-arg value="543.4" type="double"/>      <!--Score-->
-                                <constructor-arg value="2.7e-164" type="double"/>   <!--E-value-->
+                                <constructor-arg value="543.4" />      <!--Score-->
+                                <constructor-arg value="2.7e-164" />   <!--E-value-->
                                 <constructor-arg value="1" />          <!--HMM start-->
                                 <constructor-arg value="390" />        <!--HMM end-->
                                 <constructor-arg value="COMPLETE"
@@ -508,6 +515,95 @@
                         <signature ac="SM00323" name="RasGAP_2"/>
                         <locations>
                             <hmm-location start="512" end="857" score="543.4" evalue="2.7E-164" hmm-start="1" hmm-end="390" hmm-bounds="COMPLETE"/>
+                        </locations>
+                    </hmm-match>
+                </matches>
+            </protein>
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="superfamilyObject" class="uk.ac.ebi.interpro.scan.model.Protein">
+        <constructor-arg value="MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD"/>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+                    <constructor-arg>
+                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
+                            <constructor-arg value="SSF53098"/>             <!-- Accession -->
+                            <constructor-arg value="Ribonuclease H-like"/>  <!-- Name -->
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg value="93.8"/>     <!--Score-->
+                    <constructor-arg value="2.4e-32"/>  <!--E-value-->
+                    <constructor-arg>
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                                <constructor-arg value="1"/>        <!--Start-->
+                                <constructor-arg value="237"/>      <!--End-->
+                                <constructor-arg value="93.8"/>     <!--Score-->
+                                <constructor-arg value="2.4e-32"/>  <!--E-value-->
+                                <constructor-arg value="1"/>        <!--HMM start-->
+                                <constructor-arg value="262"/>      <!--HMM end-->
+                                <constructor-arg value="N_TERMINAL_COMPLETE"
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
+                            </bean>
+                        </util:set>
+                     </constructor-arg>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                    <constructor-arg value="A6Q974"/>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <!--
+            hmmpfam – search one or more sequences against HMM database
+            HMMER 2.3.2 (Oct 2003)
+            Copyright (C) 1992–2003 HHMI/Washington University School of Medicine
+            Freely distributed under the GNU General Public License (GPL)
+            – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
+            HMM file:                 0037839.hmm
+            Sequence file:            A6Q974_SULNB.fasta
+            – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
+
+            Query sequence: tr|A6Q974|A6Q974_SULNB
+            Accession:      [none]
+            Description:    Exonuclease OS=Sulfurovum sp. (strain NBC37–1) GN=SUN_1076 PE=4 SV=1
+
+            Scores for sequence family classification (score includes all domains):
+            Model    Description                                    Score    E–value  N
+            –––––––– –––––––––––                                    –––––    ––––––– –––
+            0037839  Ribonuclease H–like                             93.8    2.4e–32   1
+
+            Parsed for domains:
+            Model    Domain  seq–f seq–t    hmm–f hmm–t      score  E–value
+            –––––––– ––––––– ––––– –––––    ––––– –––––      –––––  –––––––
+            0037839    1/1       1   237 [.     1   262 [.    93.8  2.4e–32
+
+            Alignments of top–scoring domains:
+            0037839: domain 1 of 1, from 1 to 237: score 93.8, E = 2.4e–32
+                               *–>ektfvviDlETTGlnpeldriieiAavrtdaglniigepevfyilvn
+                                  + ++v +D+ETTG + + drii+i+a ++ +   i    evf  l +
+              tr|A6Q974|     1    MAKYVLFDTETTGNQEA–DRIIQIGAMIVHSKDEI––––EVFDELCS 42
+        -->
+    </bean>
+    <bean id="superfamilyXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+            <protein md5="992407d4eb2062c4e4b90ae12b568311" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <sequence>MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
+                <xref id="A6Q974"/>
+                <matches>
+                    <hmm-match score="93.8" evalue="2.4E-32">
+                        <signature ac="SSF53098" name="Ribonuclease H-like"/>
+                        <locations>
+                            <hmm-location start="1" end="237" score="93.8" evalue="2.4E-32" hmm-start="1" hmm-end="262" hmm-bounds="N_TERMINAL_COMPLETE"/>
                         </locations>
                     </hmm-match>
                 </matches>
