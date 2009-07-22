@@ -38,8 +38,6 @@ import java.io.IOException;
 @ContextConfiguration
 public class SignatureDatabaseReleaseTest extends AbstractTest<SignatureDatabaseRelease> {
 
-    // TODO: Add SuperFamily SSF53098    
-
     @Test public void testRemoveSignature()   {
         SignatureDatabaseRelease sdr = new SignatureDatabaseRelease(new SignatureProvider("Pfam"), "23.0");
         Signature s1 = sdr.addSignature(new Signature("PF00001"));
