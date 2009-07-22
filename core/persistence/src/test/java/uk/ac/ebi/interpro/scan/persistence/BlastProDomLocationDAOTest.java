@@ -34,6 +34,10 @@ public class BlastProDomLocationDAOTest {
      */
     private static Logger LOGGER = Logger.getLogger(BlastProDomLocationDAOTest.class);
 
+    private static final Long LONG_ZERO = 0L;
+
+    private static final Long LONG_ONE = 1L;
+
     // First line of UPI0000000001.fasta
    // public static final String GOOD       = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
 
