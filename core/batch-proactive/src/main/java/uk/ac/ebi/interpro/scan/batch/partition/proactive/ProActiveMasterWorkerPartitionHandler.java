@@ -101,6 +101,8 @@ public class ProActiveMasterWorkerPartitionHandler implements PartitionHandler, 
             master.solve(tasks);
 
             // Collect results
+            // TODO: Get results individually rather than waiting for all to return
+            // TODO: See http://forum.springsource.org/showthread.php?t=71961&goto=newpost
             results = master.waitAllResults();
             
         }
