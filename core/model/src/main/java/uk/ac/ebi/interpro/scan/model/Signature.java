@@ -38,7 +38,7 @@ import java.util.*;
 @Entity
 @XmlRootElement(name="signature")
 @XmlType(name="SignatureType")
-public class Signature implements PersistentEntity, Serializable {
+public class Signature implements Serializable {
 
     // TODO: IMPACT XML: Handle Pfam Clans, FingerPrints Hierachiesm SMART thresholds ...etc [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
 

@@ -16,14 +16,12 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -45,7 +43,7 @@ import java.util.regex.Pattern;
 @Entity
 @XmlRootElement(name="protein")
 @XmlType(name="ProteinType", propOrder={"sequence", "crossReferences", "filteredMatches"})
-public class Protein extends AbstractMatchableEntity implements PersistentEntity {
+public class Protein extends AbstractMatchableEntity {
 
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
     // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>

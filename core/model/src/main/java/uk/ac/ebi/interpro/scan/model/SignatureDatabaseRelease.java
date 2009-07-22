@@ -26,12 +26,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Collection;
 
 /**
  * Signature database release.
@@ -43,7 +41,7 @@ import java.util.Collection;
 @Entity
 @XmlRootElement(name="signature-database-release")
 @XmlType(name="SignatureDatabaseReleaseType")
-public class SignatureDatabaseRelease implements PersistentEntity, Serializable {
+public class SignatureDatabaseRelease implements Serializable {
 
     @Id
     private Long id;
