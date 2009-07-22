@@ -16,7 +16,8 @@ public class OverlapItemProcessor implements ItemProcessor<Protein, Protein> {
 
     public Protein process(Protein item) throws Exception {
 
-        // TODO: Translate Onion code into i5 code
+        // TODO: Translate Onion post-processing code into i5
+        // TODO: Good explanation in http://www.ebi.ac.uk/seqdb/confluence/display/InterPro/Gene3D+overlap+removal
 
 //        boolean overlaps = false;
 //        Iterator<IPRScanMatch> iter = seqHitsSoFar.iterator();

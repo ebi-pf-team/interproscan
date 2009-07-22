@@ -32,7 +32,7 @@ public class ShortMatchLocationItemProcessor implements ItemProcessor<Protein, P
         this.cutoff = cutoff;
     }
 
-    // TODO: Why can't we do for (Location location : match.getLocations()) ?
+    // TODO: Why can't we do "for (Location location : match.getLocations())" ?
 
     public Protein process(Protein item) throws Exception {
         // Get copy of matches to avoid ConcurrentModificationException
@@ -42,7 +42,6 @@ public class ShortMatchLocationItemProcessor implements ItemProcessor<Protein, P
             Set<Location> locations = new HashSet<Location>(match.getLocations());
             for (Location location : locations)  {
                 if (location.getEnd() - location.getStart() <= cutoff)    {
-                    // TODO: Write toString method for Location implementations
                     logger.info("Removing " + location);
                     match.removeLocation(location);
                     // Remove match from protein if removed all locations
