@@ -38,7 +38,6 @@
     </bean>
     <bean id="blastProdomLocationDAO"
           class="uk.ac.ebi.interpro.scan.persistence.BlastProDomLocationDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.BlastProDomLocation" />
     </bean>
 
 </beans>
