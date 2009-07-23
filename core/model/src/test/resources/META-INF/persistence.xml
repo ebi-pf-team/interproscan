@@ -23,6 +23,7 @@
         <!-- Concrete Locations. -->
         <class>uk.ac.ebi.interpro.scan.model.FingerPrintsLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.HmmLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomLocation</class>
 
         <!-- Concrete Matches -->
         <class>uk.ac.ebi.interpro.scan.model.RawFingerPrintsMatch</class>
