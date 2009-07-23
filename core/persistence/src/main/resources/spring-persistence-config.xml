@@ -38,6 +38,7 @@
     </bean>
     <bean id="blastProdomLocationDAO"
           class="uk.ac.ebi.interpro.scan.persistence.BlastProDomLocationDAOImpl">
+        
     </bean>
 
 </beans>
