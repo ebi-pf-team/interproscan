@@ -27,7 +27,7 @@ public class BlastProDomLocationDAOImpl extends GenericDAOImpl<BlastProDomLocati
     }
 
     public List<BlastProDomLocation> getBlastProDomHitLocationByScore(Double score) {
-            Query query = entityManager.createQuery("select bpl from BlastProDomLocation bpl where bpl.score= " + score.doubleValue());
+            Query query = entityManager.createQuery("select bpl from BlastProDomLocation bpl where bpl.score >= " + score.doubleValue());
         //query.setParameter("bottom", slice.getBottom());
         //query.setParameter("top", slice.getTop());
         return (List<BlastProDomLocation>) query.getResultList();
