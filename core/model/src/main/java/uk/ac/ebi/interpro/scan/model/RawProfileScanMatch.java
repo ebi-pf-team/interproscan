@@ -16,11 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -32,7 +29,7 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawProfileScanMatch extends AbstractRawMatch<ProfileScanLocation> {
+public class RawProfileScanMatch extends RawMatch<ProfileScanLocation> {
 
     protected RawProfileScanMatch() {}
 

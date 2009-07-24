@@ -18,13 +18,11 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -36,7 +34,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name="FilteredHmmMatchType", propOrder={"signature", "locations"})
-public class FilteredHmmMatch extends AbstractFilteredMatch<HmmLocation> {
+public class FilteredHmmMatch extends FilteredMatch<HmmLocation> {
 
     @Column (nullable = false)
     private double evalue;

@@ -16,25 +16,72 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import javax.persistence.*;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import javax.xml.bind.annotation.*;
+import javax.persistence.ManyToOne;
+import javax.persistence.Entity;
+import java.util.Set;
 
 /**
- * Represents raw protein match.
+ * Represents a raw protein match.
  *
  * @author  Antony Quinn
  * @version $Id$
  * @since   1.0
  */
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public interface RawMatch<T extends Location> extends Match<T> {
 
-    @Id
-    Long getId();
+@Entity
+@XmlTransient
+public abstract class RawMatch<T extends Location> extends Match<T> {
 
     @ManyToOne
-    public Model getModel();
-    // TODO: Why is setter required by Hibernate (and JPA?)
-    public void setModel(Model model);
+    private Model model;
+
+    protected RawMatch() {}
+
+    protected RawMatch(Model model)  {
+        setModel(model);
+    }
+
+    // TODO: Make Location(s) a required argument?
+    protected RawMatch(Model model, Set<T> locations)  {
+        super(locations);
+        setModel(model);
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    // Private for Hibernate (see http://www.javalobby.org/java/forums/t49288.html)
+    // Uh-oh - changed to public for JPA.
+    public void setModel(Model model) {
+        this.model = model;
+    }
+
+    public String getKey() {
+        return model.getKey();
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof RawMatch))
+            return false;
+        final RawMatch m = (RawMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(model, m.model)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 71)
+                .appendSuper(super.hashCode())
+                .append(model)
+                .toHashCode();
+    }
 
 }
