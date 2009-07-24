@@ -18,7 +18,6 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlType(name="BlastProDomLocationType")
-public class BlastProDomLocation extends AbstractLocation {
+public class BlastProDomLocation extends Location {
 
     @Column (nullable = false)
     private double score;

@@ -31,7 +31,7 @@ import java.util.*;
  *
  * @author  Antony Quinn
  * @author Phil Jones
- * @version $Id$
+ * @version $Id: Match.java 103 2009-07-24 10:20:54Z philip.j.r.jones $
  * @since   1.0
  */
 
@@ -78,7 +78,7 @@ public abstract class Match<T extends Location> implements Serializable {
     }
 
     @Transient    
-    @XmlJavaTypeAdapter(AbstractLocation.LocationAdapter.class)
+    @XmlJavaTypeAdapter(Location.LocationAdapter.class)
     public Set<T> getLocations() {
         return Collections.unmodifiableSet(locations);
     }
