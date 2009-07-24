@@ -114,12 +114,12 @@ public class HmmerParser implements Parser {
                     int end        = Integer.parseInt(domainMatcher.group(3));
                     int hmmStart   = Integer.parseInt(domainMatcher.group(4));
                     int hmmEnd     = Integer.parseInt(domainMatcher.group(5));
-                    HmmMatch.HmmBounds hmmBounds = HmmMatch.HmmBounds.parseSymbol(domainMatcher.group(6));
+                    HmmLocation.HmmBounds hmmBounds = HmmLocation.HmmBounds.parseSymbol(domainMatcher.group(6));
                     double score    = Double.parseDouble(domainMatcher.group(7));
                     double evalue   = Double.parseDouble(domainMatcher.group(8));
                     // TODO: Find match for given modelAccession, add locations and bounds
-                    HmmMatch.HmmLocation location =
-                            new HmmMatch.HmmLocation(start, end, hmmStart, hmmEnd, hmmBounds, score, evalue);
+                    HmmLocation location =
+                            new HmmLocation(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
                     checkSequenceIdentifier(sequenceIdentifier);
                 }
                 else    {
@@ -128,22 +128,19 @@ public class HmmerParser implements Parser {
                     if (sequenceMatcher.find())  {
                         // Get model data
                         String modelAccession = sequenceMatcher.group(1);
-                        Model model           = new Model(modelAccession);
-                        model.setDescription(sequenceMatcher.group(2));
+                        Model model           = new Model(modelAccession, null, sequenceMatcher.group(2));
                         // Get match data
                         double score    = Double.parseDouble(sequenceMatcher.group(3));
                         double evalue   = Double.parseDouble(sequenceMatcher.group(4));
                         // Add match
                         checkSequenceIdentifier(sequenceIdentifier);
-                        sequenceIdentifier.addMatch(new HmmMatch(model, score, evalue));
+                        sequenceIdentifier.addRawMatch(new RawHmmMatch(model, score, evalue));
                     }
                     else    {
                         // We're not interested in anything else
                     }
                 }
-
-            }            
-            
+            }
         }
         return seqIds;
     }
