@@ -1,29 +1,18 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import static junit.framework.Assert.*;
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.After;
-import org.junit.Test;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.model.BlastProDomLocation;
 
 import javax.annotation.Resource;
-import javax.persistence.PersistenceException;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier;
-import uk.ac.ebi.interpro.scan.model.BlastProDomLocation;
-import uk.ac.ebi.interpro.scan.model.transactiontracking.TransactionSlice;
-import uk.ac.ebi.interpro.scan.model.transactiontracking.RawTransactionSliceImpl;
-
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
