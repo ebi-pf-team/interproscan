@@ -18,7 +18,6 @@ package uk.ac.ebi.interpro.scan.model;
 
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -33,7 +32,7 @@ import java.util.regex.Pattern;
  */
 @Entity
 @XmlTransient
-class MD5SequenceIdentifier extends AbstractSequenceIdentifier {
+class MD5SequenceIdentifier extends SequenceIdentifier {
 
     /**
      * Logger for Junit logging. Log messages will be associated with the MD5 class.
