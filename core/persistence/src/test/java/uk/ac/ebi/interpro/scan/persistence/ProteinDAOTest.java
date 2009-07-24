@@ -26,7 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier;
-import uk.ac.ebi.interpro.scan.model.transactiontracking.RawTransactionSliceImpl;
+import uk.ac.ebi.interpro.scan.model.transactiontracking.RawTransactionSlice;
 import uk.ac.ebi.interpro.scan.model.transactiontracking.TransactionSlice;
 
 import javax.annotation.Resource;
@@ -207,13 +207,13 @@ public class ProteinDAOTest {
         }
         assertEquals("The difference between the highest and lowest primary key values is not as expected.", (proteinSequences.length - 1), maxPrimaryKey - minPrimaryKey);
         // Build a TransactionSlice including the protein ID range of the proteins just entered.
-        TransactionSlice slice = new RawTransactionSliceImpl(minPrimaryKey, maxPrimaryKey);
+        TransactionSlice slice = new RawTransactionSlice(minPrimaryKey, maxPrimaryKey);
         // Now try to retrieve the proteins
         List<Protein> retrievedProteins = dao.getProteinsInTransactionSlice(slice);
         assertEquals("The wrong number of proteins were returned from the database.", proteinSequences.length, retrievedProteins.size());
 
         // Now build a new, smaller slice and see if a smaller number of proteins are returned.
-        slice = new RawTransactionSliceImpl(minPrimaryKey + 1, maxPrimaryKey - 1);
+        slice = new RawTransactionSlice(minPrimaryKey + 1, maxPrimaryKey - 1);
         retrievedProteins= dao.getProteinsInTransactionSlice(slice);
         assertEquals("The wrong number of proteins returned from the database for the smaller slice.", (proteinSequences.length - 2), retrievedProteins.size());
     }
