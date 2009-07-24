@@ -102,8 +102,20 @@ public class SignatureTest extends AbstractTest<Signature> {
     }
 
     // TODO: Re-enable test when fixed "org.hibernate.exception.GenericJDBCException: Could not execute JDBC batch update"
+    /**
+     * This test is currently not correct.  It can be made to work be setting CascadeType.DELETE (or CascadeType.ALL)
+     * on Signature.models.  This would not be correct however, as Models can have an independent life
+     * to Signatures, so should not be cascade-deleted when a Signature is deleted.  The
+     * testJpaXmlObjects() method that this test calls is attempting to delete both the Signature and
+     * its Models in one go. (However, I do not understand why this is causing the error:
+     *
+     * Could not synchronize database state with session [org.hibernate.event.def.AbstractFlushingEventListener]
+     * org.hibernate.exception.GenericJDBCException: Could not execute JDBC batch update
+     *
+     * PJ.
+     */
     @Test
-    @Ignore
+    @Ignore ("This test is currently failing, and in its current form, should fail.  See comment on test method.")
     public void testJpa() {
         super.testJpaXmlObjects(new ObjectRetriever<Signature>(){
             public Signature getObjectByPrimaryKey(GenericDAO<Signature, Long> dao, Long primaryKey) {

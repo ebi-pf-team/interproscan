@@ -127,7 +127,7 @@ public class ProteinTest extends AbstractTest<Protein> {
 
     // TODO: Re-enable when JPA works OK with FilteredMatch interface
     @Test
-    @Ignore
+    @Ignore ("Current fails due to problems with the structure of, and JPA annotation of Match / Location.")
     public void testJpa() {
         super.testJpaXmlObjects(new ObjectRetriever<Protein>(){
             public Protein getObjectByPrimaryKey(GenericDAO<Protein, Long> dao, Long primaryKey) {
