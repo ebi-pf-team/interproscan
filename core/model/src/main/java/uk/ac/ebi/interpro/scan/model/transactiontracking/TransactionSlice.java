@@ -31,7 +31,7 @@ public abstract class TransactionSlice {
 
     public TransactionSlice(Long bottom, Long top){
         if (top < bottom){
-            throw new IllegalArgumentException("Invalid Transaction Slice Initialisation - it makes no sense for the bottom of the slice to be a higher value than the top.");
+            throw new IllegalArgumentException("Invalid Transaction Slice Initialisation - the bottom of the slice cannot have a higher value than the top.");
         }
         this.bottom = bottom;
         this.top = top;
