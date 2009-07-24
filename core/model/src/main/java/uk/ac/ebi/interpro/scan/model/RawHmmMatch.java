@@ -18,13 +18,11 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.*;
 import javax.persistence.Entity;
 import javax.persistence.Column;
 import javax.persistence.OneToMany;
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -36,7 +34,7 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawHmmMatch extends AbstractRawMatch<HmmLocation> {
+public class RawHmmMatch extends RawMatch<HmmLocation> {
 
     // TODO: Most of this code is the same as FilteredHmmMatch - can we share code, eg. by composition or generics? Same is true for FingerPrints 
 

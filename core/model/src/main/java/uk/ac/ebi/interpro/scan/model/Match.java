@@ -16,45 +16,101 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Protein sequence match to model.
  *
  * @author  Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  * @since   1.0
  */
+
 @Entity
-@Inheritance (strategy = InheritanceType.TABLE_PER_CLASS)
-public interface Match<T extends Location> extends Serializable {
+@XmlTransient
+public abstract class Match<T extends Location> implements Serializable {
 
     // TODO: IMPACT XML: Add evidence, e.g. "HMMER 2.3.2 (Oct 2003)" [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
     // TODO: See http://www.ebi.ac.uk/seqdb/confluence/x/DYAg#ND3.3StandardXMLformatforallcommondatatypes-SMART
 
-    @Id
-    Long getId();
 
-    // TODO: Remove setId
-    void setId (Long id);
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private MatchableEntity sequence;
 
     @Transient
-    public Set<T> getLocations();
+    private Set<T> locations = new LinkedHashSet<T>();
 
-    /**
-     * Made public for JPA, but should NOT be used in other circumstances.
-     * @param locations DO NOT USE.
-     */
-    //public void setLocations(Set<T> locations);
+    protected Match()  { }
 
-    public T addLocation(T location);
-    public void removeLocation(T location);
+    protected Match(Set<T> locations)  {
+        setLocations(locations);
+    }
 
-    public MatchableEntity getSequence();
 
-    public void setSequence(MatchableEntity sequence);
+    @XmlTransient                                                                          
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @XmlTransient
+    public MatchableEntity getSequence()  {
+        return sequence;
+    }
+
+    public void setSequence(MatchableEntity sequence) {
+        this.sequence = sequence;
+
+    }
+
+    @Transient    
+    @XmlJavaTypeAdapter(AbstractLocation.LocationAdapter.class)
+    public Set<T> getLocations() {
+        return Collections.unmodifiableSet(locations);
+    }
+
+    // Private so can only be set by JAXB, Hibernate ...etc via reflection
+    // Doh - changed to public for JPA annotations.
+    private void setLocations(Set<T> locations) {
+        for (T t : locations)    {
+            addLocation(t);
+        }
+    }
+
+    // Suppress 'unchecked' warnings relating to location.getMatch().removeLocation(location);
+    // In sub-classes, for example RawHmmMatch, we only allow a single location type,
+    // for example HmmLocation, so the type we remove should be the same type we added.
+    @SuppressWarnings("unchecked")
+    public T addLocation(T location) {
+        if (location == null) {
+            throw new IllegalArgumentException("'Location' is null");
+        }
+        if (location.getMatch() != null) {
+            location.getMatch().removeLocation(location);
+        }
+        location.setMatch(this);
+        locations.add(location);
+        return location;
+    }
+
+    public void removeLocation(T location)   {
+        locations.remove(location);
+        location.setMatch(null);
+    }
 
     /**
      * Returns key to use in, for example, HashMap.
@@ -62,6 +118,27 @@ public interface Match<T extends Location> extends Serializable {
      * @return Key to use in, for example, HashMap.
      */
     @Transient
-    public String getKey();
+    public abstract String getKey();
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Match))
+            return false;
+        final Match m = (Match) o;
+        return new EqualsBuilder()
+                .append(locations, m.locations)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(19, 51)
+                .append(locations)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }

@@ -18,13 +18,11 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.*;
 import javax.persistence.Entity;
 import javax.persistence.Column;
 import javax.persistence.OneToMany;
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -36,7 +34,7 @@ import java.util.Set;
  */
 @Entity
 @XmlTransient
-public class RawFingerPrintsMatch extends AbstractRawMatch<FingerPrintsLocation> {
+public class RawFingerPrintsMatch extends RawMatch<FingerPrintsLocation> {
 
     @Column
     private double evalue;

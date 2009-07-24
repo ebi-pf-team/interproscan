@@ -140,7 +140,7 @@ public class Protein extends AbstractMatchableEntity {
      * @see    FilteredMatch
      */
     @XmlElement(name="matches", required=true)
-    @XmlJavaTypeAdapter(AbstractFilteredMatch.FilteredMatchAdapter.class)
+    @XmlJavaTypeAdapter(FilteredMatch.FilteredMatchAdapter.class)
     @Override public Set<FilteredMatch> getFilteredMatches() {
         return super.getFilteredMatches();
     }

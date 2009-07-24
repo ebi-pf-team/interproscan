@@ -16,11 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -32,7 +29,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name="FilteredPatternScanMatchType", propOrder={"signature", "locations"})
-public class FilteredPatternScanMatch extends AbstractFilteredMatch<PatternScanLocation> {
+public class FilteredPatternScanMatch extends FilteredMatch<PatternScanLocation> {
 
     protected FilteredPatternScanMatch() {}
 
