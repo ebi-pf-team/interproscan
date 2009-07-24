@@ -23,7 +23,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
 
 /**
  * Sequence cross-reference
@@ -35,7 +34,7 @@ import java.io.Serializable;
  * @see     Match
  */
 @Entity
-public class XrefSequenceIdentifier extends AbstractSequenceIdentifier {
+public class XrefSequenceIdentifier extends SequenceIdentifier {
 
     /**
      * Reference to the protein that this Xref is an annotation of.
