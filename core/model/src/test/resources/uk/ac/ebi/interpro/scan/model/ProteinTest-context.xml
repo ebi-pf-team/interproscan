@@ -474,6 +474,12 @@
             </util:set>
         </constructor-arg>
             <!--
+                Sn; sp|P02700|OPSD_SHEEP Rhodopsin OS=Ovis aries GN=RHO PE=1 SV=2
+                Si; Fasta sequence
+                1TBS
+                1TBH RHODOPSIN       2.186312e-64
+                1TBF
+                2TBS
                 2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan
                 2TBH RHODOPSIN       6  of  6  4.9e+02  82       4791       7.6e-70     2.2e-64     IIIIII
                 2TBF
