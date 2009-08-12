@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Instances of this class can be instantiated to build a generic 'commmand line conversation'.
@@ -107,7 +108,7 @@ public class CommandLineConversationImpl implements CommandLineConversation{
 	 */
 	//@Override
 	public int runCommand(boolean mergeErrorIntoOutput, String... commands) throws IOException, InterruptedException {
-        return runCommand(mergeErrorIntoOutput, new ArrayList<String>(commands.length));
+        return runCommand(mergeErrorIntoOutput, new ArrayList<String>(Arrays.asList(commands)));
     }
 
 
