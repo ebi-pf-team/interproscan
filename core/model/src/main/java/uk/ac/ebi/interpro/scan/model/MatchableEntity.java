@@ -43,7 +43,7 @@ import java.util.Set;
 public abstract class MatchableEntity implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<RawMatch> rawMatches      = new HashSet<RawMatch>();
+    private Set<RawMatch> rawMatches = new HashSet<RawMatch>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<FilteredMatch> filteredMatches = new HashSet<FilteredMatch>();

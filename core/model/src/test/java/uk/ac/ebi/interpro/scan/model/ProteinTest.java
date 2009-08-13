@@ -18,6 +18,7 @@ package uk.ac.ebi.interpro.scan.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.Ignore;
@@ -25,8 +26,12 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.xml.sax.SAXException;
+import org.apache.commons.lang.SerializationUtils;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.HashSet;
 
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
@@ -41,14 +46,16 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 @ContextConfiguration
 public class ProteinTest extends AbstractTest<Protein> {
 
+    private static Logger LOGGER = Logger.getLogger(ProteinTest.class);
+
     // http://www.uniprot.org/uniparc/UPI0000000001.fasta
-    static final String MULTILINE  =
+    private static final String MULTILINE  =
                               "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD\n" +
                               "ADAQLDAVLSAATETYSGLTPEQKAYVPAMFTAALNIQTSVNTVVRDFENYVKQTCNSSA\n" +
                               "VVDNKLKIQNVIIDECYGAPGSPTNLEFINTGSSKGNCAIKALMQLTTKATTQIAPKQVA\n" +
                               "GTGVQFYMIVIGVIILAALFMYYAKRMLFTSTNDKIKLILANKENVHWTTYMDTFFRTSP\n" +
                               "MVIATTDMQN";
-    static final String SINGLELINE  =
+    private static final String SINGLELINE  =
                                "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD" +
                                "ADAQLDAVLSAATETYSGLTPEQKAYVPAMFTAALNIQTSVNTVVRDFENYVKQTCNSSA" +
                                "VVDNKLKIQNVIIDECYGAPGSPTNLEFINTGSSKGNCAIKALMQLTTKATTQIAPKQVA" +
@@ -56,14 +63,14 @@ public class ProteinTest extends AbstractTest<Protein> {
                                "MVIATTDMQN";
 
     // First line of UPI0000000001.fasta
-    public static final String GOOD = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
+    private static final String GOOD = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
 
     // echo -n "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD" | md5sum
-    static final String GOOD_MD5 = "9d380adca504b0b1a2654975c340af78";
+    private static final String GOOD_MD5 = "9d380adca504b0b1a2654975c340af78";
 
 
     // Contains "." so should fail when create protein
-    static final String BAD = "MGAAASIQTTVNTLSERISSKLEQE.ANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
+    private static final String BAD = "MGAAASIQTTVNTLSERISSKLEQE.ANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
 
     /**
      * Tests that protein can be instantiated with amino acids sequences with and without whitespace
@@ -92,6 +99,58 @@ public class ProteinTest extends AbstractTest<Protein> {
         assertEquals(id, xref.getIdentifier());
         protein.removeCrossReference(xref);
         assertEquals(0, protein.getCrossReferences().size());
+    }
+
+    /**
+     * Tests the equals() method works as expected
+     */
+    @Test public void testEquals() {
+        Protein original = new Protein(GOOD);
+        Protein copy = (Protein)SerializationUtils.clone(original);
+        // Original should equal itself
+        assertEquals(original, original);
+        // Original and copy should be equal
+        assertEquals(original, copy);
+        // Original and copy should not be equal
+        XrefSequenceIdentifier xref = original.addCrossReference(new XrefSequenceIdentifier("A0A000_9ACTO"));
+        assertFalse("Original and copy should not be equal", original.equals(copy));
+        //  Original and copy should be equal again
+        copy.addCrossReference((XrefSequenceIdentifier)SerializationUtils.clone(xref));
+        assertEquals(original, copy);
+        // Original and copy should not be equal
+        FilteredHmmMatch match =
+            original.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9));
+        assertFalse("Original and copy should not be equal", original.equals(copy));
+        //  Original and copy should be equal again
+        FilteredHmmMatch matchCopy = (FilteredHmmMatch)SerializationUtils.clone(match);
+        copy.addFilteredMatch(matchCopy);
+        assertEquals(original, copy);
+        // Try with locations
+        original.removeFilteredMatch(match);
+        copy.removeFilteredMatch(matchCopy);
+        Set<HmmLocation> locations = new HashSet<HmmLocation>();
+        locations.add(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
+        match = original.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+        assertFalse("Original and copy should not be equal", original.equals(copy));
+        copy.addFilteredMatch((FilteredHmmMatch)SerializationUtils.clone(match));
+        assertEquals(original, copy);
+        // TODO: Following does not work (locations set not considered equal for some reason) yet works if pass locations to Match constructor -- why?? 
+//        // Original and copy should not be equal
+//        HmmLocation location =
+//            match.addLocation(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
+//        assertFalse("Original and copy should not be equal", original.equals(copy));
+//        //  Original and copy should be equal again
+//        matchCopy.addLocation((HmmLocation)SerializationUtils.clone(location));
+//        // Problem here - says "not contains" (even when no locations added -- says "equal" but "not contains")
+//        if (original.getFilteredMatches().iterator().next().getLocations().contains(original.getFilteredMatches().iterator().next().getLocations()))   {
+//            System.out.println("Locations - contains");
+//        }
+//        else    {
+//            System.out.println("Locations - not contains");
+//        }
+//        assertEquals(original.getFilteredMatches(), original.getFilteredMatches());
+//        assertEquals(original.getFilteredMatches(), copy.getFilteredMatches());
+//        assertEquals(original, copy);
     }
 
     /**
@@ -127,7 +186,7 @@ public class ProteinTest extends AbstractTest<Protein> {
 
     // TODO: Re-enable when JPA works OK with FilteredMatch interface
     @Test
-    @Ignore ("Current fails due to problems with the structure of, and JPA annotation of Match / Location.")
+    @Ignore ("Fails due to problems with the structure and JPA-annotation of Match and Location.")
     public void testJpa() {
         super.testJpaXmlObjects(new ObjectRetriever<Protein>(){
             public Protein getObjectByPrimaryKey(GenericDAO<Protein, Long> dao, Long primaryKey) {

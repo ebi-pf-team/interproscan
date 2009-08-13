@@ -51,14 +51,12 @@ public class HmmLocation extends Location {
     @Column (nullable = false)
     private double score;
 
-    // TODO: Do we need private setters for Hibernate? (see http://www.javalobby.org/java/forums/t49288.html)
-
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
     protected HmmLocation() {}
 
-    // TODO: Use Builder pattern so constructor-args are obvious?
+    // Don't use Builder pattern because all fields are required
     public HmmLocation(int start, int end, double score, double evalue,
                        int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
         super(start, end);
