@@ -161,44 +161,26 @@
         </constructor-arg>
     </bean>
 
-    <bean id="pfamObject" class="uk.ac.ebi.interpro.scan.model.Protein">
-        <constructor-arg value="MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI"/>
-        <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
-                    <constructor-arg>
-                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
-                            <constructor-arg value="PF02310"/>
-                            <constructor-arg value="B12-binding"/>
-                        </bean>
-                    </constructor-arg>
-                    <constructor-arg value="0.035"/>   <!--Score-->
-                    <constructor-arg value="3.7e-9"/>  <!--E-value-->
-                    <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
-                                <constructor-arg value="3"/>        <!--Start-->
-                                <constructor-arg value="107"/>      <!--End-->
-                                <constructor-arg value="3.0"/>      <!--Score-->
-                                <constructor-arg value="3.7e-9"/>   <!--E-value-->
-                                <constructor-arg value="1"/>        <!--HMM start-->
-                                <constructor-arg value="104"/>      <!--HMM end-->
-                                <constructor-arg value="N_TERMINAL_COMPLETE"
-                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
-                            </bean>
-                        </util:set>
-                     </constructor-arg>
-                </bean>
-            </util:set>
-        </constructor-arg>
-        <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                    <constructor-arg value="A0A000_9ACTO"/>
-                </bean>
-            </util:set>
-        </constructor-arg>
-    </bean>
+    <!-- TODO: OK if pass locations to constructor, but not if use match.addLocation(). Why? Weird stuff going on with generics? -->
+    <lang:groovy id="pfamObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI");
+                p.addCrossReference(new XrefSequenceIdentifier("A0A000_9ACTO"));
+                Set<HmmLocation> locations = new HashSet<HmmLocation>();
+                locations.add(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
+                FilteredHmmMatch m =
+                    p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+                // FilteredHmmMatch m =
+                //    p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9));
+                // m.addLocation(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
+                // Using named parameters also works in Groovy:
+                // m.addLocation(new HmmLocation(start:3, end:107, score:3.0, evalue:3.7e-9, hmmStart:1, hmmEnd:104, hmmBounds:HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
+                return p;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
     <bean id="pfamXml" class="java.lang.String">
         <constructor-arg>
             <value>
@@ -732,23 +714,5 @@
             </value>
         </constructor-arg>
     </bean>
-
-
-    <!--TODO: Groovy works great (8 lines of Groovy vs 37 lines of XML) -->
-    <!--TODO: ... unfortunately a little too well, because it highlights the problem-->
-    <!--TODO: with the @Xml annotation on setCrossReferences() (see Protein class) - this needs further work-->
-    <!--<lang:groovy id="gtest">-->
-        <!--<lang:inline-script>-->
-            <!--<![CDATA[-->
-                <!--import uk.ac.ebi.interpro.scan.model.*-->
-                <!--Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI")-->
-                <!--p.addCrossReference(new XrefSequenceIdentifier("A0A000_9ACTO"))-->
-                <!--FilteredHmmMatch m =-->
-                    <!--p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9))-->
-                <!--m.addLocation(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE))-->
-                <!--return p-->
-            <!--]]>-->
-        <!--</lang:inline-script>-->
-    <!--</lang:groovy>-->    
 
 </beans>

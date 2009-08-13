@@ -132,12 +132,9 @@ public class Protein extends MatchableEntity {
     }
 
     /**
-     * Returns filtered matches
+     * Returns {@link FilteredMatch}es
      *
-     * TODO - Check why this is here - does it need to be?  Probably does to allow JPA annotations to know what Entity to map to.
-     * 
-     * @return Filtered matches.
-     * @see    FilteredMatch
+     * @return {@link FilteredMatch}es
      */
     @XmlElement(name="matches", required=true)
     @XmlJavaTypeAdapter(FilteredMatch.FilteredMatchAdapter.class)
@@ -172,6 +169,10 @@ public class Protein extends MatchableEntity {
         at uk.ac.ebi.interpro.scan.model.AbstractTest.unmarshal(AbstractTest.java:150)
      */
     //@XmlElement(name="xref")
+    // TODO: Example: Expected: XrefSequenceIdentifier[protein=uk.ac.ebi.interpro.scan.model.Protein@1f49969]
+    // TODO: Example: Actual:   XrefSequenceIdentifier[protein=<null>]
+    // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
+    // TODO: JAXB or do we have to use an XmlAdapter?
     public Set<XrefSequenceIdentifier> getCrossReferences() {
         return Collections.unmodifiableSet(crossReferences);
     }

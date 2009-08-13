@@ -69,6 +69,7 @@ public abstract class FilteredMatch<T extends Location> extends Match<T> {
         return signature.getKey();
     }
 
+    // TODO: Now we're using abstract classes instead of interfaces, can we get rid of the following?
     /**
      *  Ensure sub-classes of AbstractFilteredMatch are represented correctly in XML.
      */
@@ -80,7 +81,7 @@ public abstract class FilteredMatch<T extends Location> extends Match<T> {
             Set<FilteredHmmMatch> hmmMatches                 = new LinkedHashSet<FilteredHmmMatch>();
             Set<FilteredFingerPrintsMatch> fingerPrintsMatches = new LinkedHashSet<FilteredFingerPrintsMatch>();
             Set<FilteredBlastProDomMatch> proDomMatches      = new LinkedHashSet<FilteredBlastProDomMatch>();
-            Set<FilteredPatternScanMatch> patternScanMatches = new LinkedHashSet<FilteredPatternScanMatch>();            
+            Set<FilteredPatternScanMatch> patternScanMatches = new LinkedHashSet<FilteredPatternScanMatch>();
             Set<FilteredProfileScanMatch> profileScanMatches = new LinkedHashSet<FilteredProfileScanMatch>();
             for (FilteredMatch m : matches) {
                 if (m instanceof FilteredHmmMatch) {
@@ -137,10 +138,10 @@ public abstract class FilteredMatch<T extends Location> extends Match<T> {
         private final Set<FilteredPatternScanMatch> patternScanMatches;
 
         @XmlElement(name = "profilescan-match")
-        private final Set<FilteredProfileScanMatch> profileScanMatches;        
+        private final Set<FilteredProfileScanMatch> profileScanMatches;
 
         private FilteredMatchesType() {
-            hmmMatches          = null;   
+            hmmMatches          = null;
             fingerPrintsMatches = null;
             proDomMatches       = null;
             patternScanMatches  = null;
