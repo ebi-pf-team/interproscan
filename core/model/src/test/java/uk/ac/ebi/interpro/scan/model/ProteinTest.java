@@ -134,24 +134,55 @@ public class ProteinTest extends AbstractTest<Protein> {
         assertFalse("Original and copy should not be equal", original.equals(copy));
         copy.addFilteredMatch((FilteredHmmMatch)SerializationUtils.clone(match));
         assertEquals(original, copy);
-        // TODO: Following does not work (locations set not considered equal for some reason) yet works if pass locations to Match constructor -- why?? 
-//        // Original and copy should not be equal
-//        HmmLocation location =
-//            match.addLocation(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
-//        assertFalse("Original and copy should not be equal", original.equals(copy));
-//        //  Original and copy should be equal again
-//        matchCopy.addLocation((HmmLocation)SerializationUtils.clone(location));
-//        // Problem here - says "not contains" (even when no locations added -- says "equal" but "not contains")
-//        if (original.getFilteredMatches().iterator().next().getLocations().contains(original.getFilteredMatches().iterator().next().getLocations()))   {
-//            System.out.println("Locations - contains");
-//        }
-//        else    {
-//            System.out.println("Locations - not contains");
-//        }
-//        assertEquals(original.getFilteredMatches(), original.getFilteredMatches());
-//        assertEquals(original.getFilteredMatches(), copy.getFilteredMatches());
-//        assertEquals(original, copy);
     }
+
+    /**
+     * Tests the equals() method works as expected using protein.match.addLocation()
+     * As of 14 August this does not work. There may be an issue with generics.
+     * See FilteredHmmMatchTest for tests -- it works in that context but for some reason not via Protein. Why??
+     * Seems to be to do with Set: equals() works OK, but perhaps hashCode() does not behave as expected?
+     */
+    @Ignore
+    @Test public void testEqualsAddLocation() {
+        Protein original = new Protein(GOOD);
+        Protein copy     = (Protein)SerializationUtils.clone(original);
+        FilteredHmmMatch match     = new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9);
+        FilteredHmmMatch matchCopy = (FilteredHmmMatch)SerializationUtils.clone(match);
+        HmmLocation location     = new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE);
+        HmmLocation locationCopy = (HmmLocation)SerializationUtils.clone(location);
+        original.addFilteredMatch(match);
+        copy.addFilteredMatch(matchCopy);
+        // TODO: Following does not work (locations set not considered equal for some reason) yet works if pass locations to Match constructor -- why??
+        // Original and copy should not be equal
+        match.addLocation(location);
+        assertFalse("Original and copy should not be equal", original.equals(copy));
+        //  Original and copy should be equal again
+        matchCopy.addLocation(locationCopy);
+        // Locations look OK, but get warning about Locations type -- generics problem?
+        // TODO: We can't do the following -- need to change declaration of Location class
+        // TODO: to Location<T extends Match>? But how would we know in eg. HmmLocation that Match class is
+        // TODO: FilteredHmmMatch or RawHmmMatch? Would need to parameterise HmmLocation and other sub-classes of Location
+        // Trouble is a protein can have different types of filtered match...
+        //Set<FilteredHmmMatch> matchesOriginal = original.getFilteredMatches();
+        //Set<FilteredHmmMatch> matchesCopy     = copy.getFilteredMatches();
+        Set<FilteredMatch> matchesOriginal = original.getFilteredMatches();
+        Set<FilteredMatch> matchesCopy     = copy.getFilteredMatches();
+        // TODO: Whether we remove addLocation and removeLocation or not, we still need to solve generics warning here:
+        Set<HmmLocation> locationsOriginal = matchesOriginal.iterator().next().getLocations();
+        Set<HmmLocation> locationsCopy     = matchesCopy.iterator().next().getLocations();
+        assertEquals("Locations should be equal", locationsOriginal, locationsCopy);
+        assertEquals("Location hashcodes should be equal", locationsOriginal.hashCode(), locationsCopy.hashCode());
+        assertTrue("Original locations should contain locations copy element", locationsOriginal.contains(locationsCopy.iterator().next()));
+        // Matches not OK
+        assertEquals("Matches hashcodes should be equal", matchesOriginal.hashCode(), matchesCopy.hashCode());
+        assertEquals("Original matches should be equal", matchesOriginal, matchesOriginal);
+        // TODO: Following fails -- did manual eyeball and found no differences!
+        assertEquals("Original and matches copy should be equal", matchesOriginal, matchesCopy);        
+        assertTrue("Original matches should contain original matches element", matchesOriginal.contains(matchesCopy.iterator().next()));
+        assertTrue("Original matches should contain matches copy element", matchesOriginal.contains(matchesCopy.iterator().next()));
+        assertEquals("Original and copy should be equal", original, copy);
+    }
+
 
     /**
      * Tests that MD5 checksum can be calculated for the protein sequence
