@@ -145,9 +145,10 @@ abstract class AbstractTest<T> {
         return writer.toString();
     }
 
-    @SuppressWarnings("unchecked")
     private T unmarshal(String xml) throws IOException  {
-        return (T) unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
+        // There's no guarantee that this cast is correct, but it's test code so let's not clutter the compiler output
+        @SuppressWarnings("unchecked") T result = (T) unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
+        return result;
     }
 
     private void validate(String xml) throws SAXException, IOException {
