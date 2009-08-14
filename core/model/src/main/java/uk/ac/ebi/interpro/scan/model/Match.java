@@ -31,7 +31,7 @@ import java.util.*;
  *
  * @author  Antony Quinn
  * @author Phil Jones
- * @version $Id: Match.java 103 2009-07-24 10:20:54Z philip.j.r.jones $
+ * @version $Id$
  * @since   1.0
  */
 
@@ -91,16 +91,15 @@ public abstract class Match<T extends Location> implements Serializable {
         }
     }
 
-    // Suppress 'unchecked' warnings relating to location.getMatch().removeLocation(location);
-    // In sub-classes, for example RawHmmMatch, we only allow a single location type,
-    // for example HmmLocation, so the type we remove should be the same type we added.
-    @SuppressWarnings("unchecked")
     public T addLocation(T location) {
         if (location == null) {
             throw new IllegalArgumentException("'Location' is null");
         }
         if (location.getMatch() != null) {
-            location.getMatch().removeLocation(location);
+            // This cast is correct because in sub-classes, for example RawHmmMatch, we only allow a single 
+            // location type, for example HmmLocation, so the type we remove is the same type we added.            
+            @SuppressWarnings("unchecked") Match<T> match = location.getMatch();
+            match.removeLocation(location);
         }
         location.setMatch(this);
         locations.add(location);
