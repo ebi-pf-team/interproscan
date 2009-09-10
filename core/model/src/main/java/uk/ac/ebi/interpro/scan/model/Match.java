@@ -39,6 +39,9 @@ import java.util.*;
 @XmlTransient
 public abstract class Match<T extends Location> implements Serializable {
 
+    // TODO: Make this package-private like Location -- need to specify type (raw or filtered) when instantiate
+    // TODO: Location so knows if raw or filtered (see Generics)
+
     // TODO: IMPACT XML: Add evidence, e.g. "HMMER 2.3.2 (Oct 2003)" [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
     // TODO: See http://www.ebi.ac.uk/seqdb/confluence/x/DYAg#ND3.3StandardXMLformatforallcommondatatypes-SMART
 
@@ -86,6 +89,9 @@ public abstract class Match<T extends Location> implements Serializable {
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
     // Doh - changed to public for JPA annotations.
     private void setLocations(Set<T> locations) {
+        if (locations.isEmpty())    {
+            throw new IllegalArgumentException("There must be at least one location for the match");
+        }
         for (T t : locations)    {
             addLocation(t);
         }
