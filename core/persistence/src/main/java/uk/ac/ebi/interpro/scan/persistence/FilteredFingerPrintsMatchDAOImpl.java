@@ -7,5 +7,5 @@ package uk.ac.ebi.interpro.scan.persistence;
  * Time: 15:54:30
  * To change this template use File | Settings | File Templates.
  */
-public class FilteredFingerPrintsMatchADOImpl {
+public class FilteredFingerPrintsMatchDAOImpl {
 }
