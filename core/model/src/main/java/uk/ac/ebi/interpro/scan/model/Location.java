@@ -41,7 +41,7 @@ import java.util.Set;
 
 @Entity
 @XmlTransient
-abstract class Location implements Serializable {
+public abstract class Location implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
