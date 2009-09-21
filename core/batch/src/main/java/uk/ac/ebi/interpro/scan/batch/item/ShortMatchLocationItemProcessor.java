@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Location;
+import uk.ac.ebi.interpro.scan.model.FilteredMatch;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -35,9 +36,9 @@ public class ShortMatchLocationItemProcessor implements ItemProcessor<Protein, P
     // TODO: Why can't we do "for (Location location : match.getLocations())" ?
 
     public Protein process(Protein item) throws Exception {
-        // Get copy of matches to avoid ConcurrentModificationException
-        Set<Match> matches = new HashSet<Match>(item.getMatches().values());
-        for (Match match : matches)   {
+        // Get copy  of matches to avoid ConcurrentModificationException
+        Set<FilteredMatch> matches = item.getFilteredMatches();
+        for (FilteredMatch match : matches)   {
             // Get copy of locations to avoid ConcurrentModificationException
             Set<Location> locations = new HashSet<Location>(match.getLocations());
             for (Location location : locations)  {
@@ -47,7 +48,7 @@ public class ShortMatchLocationItemProcessor implements ItemProcessor<Protein, P
                     // Remove match from protein if removed all locations
                     // TODO: Add to model code? (Remove match from protein if removed all locations)
                     if (match.getLocations().size() == 0)   {
-                        item.removeMatch(match);
+                        item.removeFilteredMatch(match);
                     }
                 }
             }
