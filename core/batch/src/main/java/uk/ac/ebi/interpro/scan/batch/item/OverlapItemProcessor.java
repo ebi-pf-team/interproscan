@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.batch.item;
 import org.springframework.batch.item.ItemProcessor;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Match;
-import uk.ac.ebi.interpro.scan.model.Location;
 
 /**
  * Removes overlapping {@link Location)s from {@link Match}es.
