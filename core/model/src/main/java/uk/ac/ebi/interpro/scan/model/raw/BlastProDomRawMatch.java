@@ -1,5 +1,9 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import javax.persistence.Entity;
+import javax.persistence.Column;
+import java.io.Serializable;
+
 /**
  * TODO: Add class description
  *
@@ -7,8 +11,10 @@ package uk.ac.ebi.interpro.scan.model.raw;
  * @version $Id$
  * @since 1.0
  */
-public final class BlastProDomRawMatch extends RawMatch {
-
+@Entity
+//public final class BlastProDomRawMatch extends RawMatch implements Serializable {
+public class BlastProDomRawMatch extends RawMatch implements Serializable {
+    @Column(name="SCORE")
     private double score;   // location.score
     
     public BlastProDomRawMatch() { }
