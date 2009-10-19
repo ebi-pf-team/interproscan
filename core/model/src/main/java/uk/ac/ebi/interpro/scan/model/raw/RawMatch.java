@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import javax.persistence.*;
+
 /**
  * TODO: Add class description
  * TODO: Design for "abstract" (Bloch)
@@ -10,17 +12,36 @@ package uk.ac.ebi.interpro.scan.model.raw;
  * @version $Id$
  * @since   1.0
  */
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="MODEL")
 public abstract class RawMatch {
 
     // TODO: Don't need any foreign keys -- just index fields we will search on
-
+    @Column(name="UPI")
     private String sequenceIdentifier;  // eg. MD5
-    private String model;               // eg. "PF00001"
+
+    @Column(name="MODEL")
+    private String model;   // eg. "PF00001"
+
+
+
+    @Column(name="MEMBER_DBNAME")
+    private String dbname; //for ex: PFAM, or GENE3D
+
     // TODO: Get dbversion from Spring Batch JobParameter?
-    private String dbversion;           // eg. "23.0"
-    private String generator;           // eg. "HMMER 2.3.1"
-    private long start;                 // location.start
+    @Column (name="DBVERSION")
+    private String dbversion;// eg. "23.0"
+
+    @Column (name="ALGORITHM")
+    private String generator;  // eg. "HMMER 2.3.1"
+
+    @Column (name="SEQ_START")
+    private long start;
+
+    @Column (name="SEQ_END")// location.start
     private long end;                   // location.end
+    
 
     protected RawMatch() { }
 
@@ -52,6 +73,14 @@ public abstract class RawMatch {
         return generator;
     }
 
+     public String getDbname() {
+        return dbname;
+    }
+
+    public void setDbname(String dbname) {
+        this.dbname = dbname;
+    }
+    
     public void setGenerator(String generator) {
         this.generator = generator;
     }
