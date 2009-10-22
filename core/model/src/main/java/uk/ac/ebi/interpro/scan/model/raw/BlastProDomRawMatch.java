@@ -18,6 +18,11 @@ public class BlastProDomRawMatch extends RawMatch implements Serializable {
     private double score;   // location.score
     
     public BlastProDomRawMatch() { }
+    
+     public BlastProDomRawMatch(String identifier, String model, String dbn, String dbver, String gen, long start, long end,double score) {
+        super(identifier,model,dbn,dbver,gen,start,end);
+        setScore(score);
+    }
 
     public double getScore() {
         return score;
