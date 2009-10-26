@@ -14,8 +14,8 @@ import javax.persistence.*;
  */
 @IdClass(uk.ac.ebi.interpro.scan.model.raw.RawMatchKey.class)
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="METHOD_AC",discriminatorType=DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+//@DiscriminatorColumn(name="METHOD_AC",discriminatorType=DiscriminatorType.STRING)
 public abstract class RawMatch {
 
     //Primary key representation for RawMatch
@@ -33,27 +33,27 @@ public abstract class RawMatch {
             referencedColumnName="ALGORITHM")
     }) */
     // TODO: Don't need any foreign keys -- just index fields we will search on
-    @Column(name="UPI",nullable = false)
+    //@Column(name="UPI",nullable = false)
     private String sequenceIdentifier;  // eg. MD5
     //@Id
-    @Column(name="METHOD_AC",nullable = false, unique = true, updatable = false, length = 50)
+    //@Column(name="METHOD_AC",nullable = false, unique = true, updatable = false, length = 50)
     private String model;   // eg. "PF00001"
 
     //@Column(name="MEMBER_DBNAME")
    // private String dbname; //for ex: PFAM, or GENE3D
 
     // TODO: Get dbversion from Spring Batch JobParameter?
-    @Column (name="DBVERSION",nullable = false, updatable = false, length = 10)
+    //@Column (name="DBVERSION",nullable = false, updatable = false, length = 10)
     private String dbversion;// eg. "23.0"
 
-    @Column (name="ALGORITHM")
+    //@Column (name="ALGORITHM")
 
     private String generator;  // eg. "HMMER 2.3.1"
 
-    @Column (name="SEQ_START")
+    //@Column (name="SEQ_START")
     private long start;
 
-    @Column (name="SEQ_END")// location.start
+   // @Column (name="SEQ_END")// location.start
     private long end;                   // location.end
     
 
