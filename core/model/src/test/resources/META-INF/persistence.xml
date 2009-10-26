@@ -7,11 +7,17 @@
             Test persistence-unit that uses an in-memory HSQLDB database.
         </description>
 
-        <!-- Abstract classes -->
+        <!-- Interfaces -->
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
         <class>uk.ac.ebi.interpro.scan.model.RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.FilteredMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.SequenceIdentifier</class>
+
+        <!-- Abstract classes -->
+        <class>uk.ac.ebi.interpro.scan.model.Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.MatchableEntity</class>
         <class>uk.ac.ebi.interpro.scan.model.SequenceIdentifier</class>
 
         <!-- Concrete Locations. -->
@@ -36,10 +42,10 @@
         <properties>
             <property name="hibernate.show_sql"         value="true" />
             <property name="hibernate.format_sql"       value="true" />
-            <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver" />
+            <property name="hibernate.connection.driver_class" value="${test.database.driver}" />
             <property name="hibernate.connection.url"   value="jdbc:hsqldb:mem:mem:testmodel" />
             <property name="hibernate.connection.username" value="sa" />
-            <property name="hibernate.dialect"          value="org.hibernate.dialect.HSQLDialect" />
+            <property name="hibernate.dialect"          value="${test.hibernate.dialect}" />
             <property name="hibernate.hbm2ddl.auto"     value="create" />
         </properties>
 
