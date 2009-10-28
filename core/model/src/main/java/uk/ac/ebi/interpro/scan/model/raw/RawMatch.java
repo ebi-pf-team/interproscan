@@ -62,7 +62,7 @@ public abstract class RawMatch {
     public RawMatch(String model) {
         setModel(model);
     }
-    public RawMatch(String identifier, String model, String dbn, String dbver, String gen, long start, long end) {
+    public RawMatch(String identifier, String model,String dbver, String gen, long start, long end) {
         setSequenceIdentifier(identifier);
         setModel(model);
         //setDbname(dbn);
