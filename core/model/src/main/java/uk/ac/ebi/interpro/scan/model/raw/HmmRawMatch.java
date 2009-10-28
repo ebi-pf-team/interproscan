@@ -14,28 +14,34 @@ import javax.persistence.Entity;
  */
 @Entity
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class HmmRawMatch extends RawMatch {
+public abstract class HmmRawMatch extends RawMatch {
 
     // TODO: evalue and score can be calculated -- do we need to store? Needs testing
     //@Column(name="EVALUE",nullable = false, updatable = false)
-    private double evalue;
+    protected double evalue;
 
     //@Column(name="SCORE",nullable = false, updatable = false)
-    private double score;
+    protected double score;
     //@Column(name="HMM_START")
-    private long hmmStart;
+    protected long hmmStart;
     //@Column(name="HMM_END")
-    private long hmmEnd;
+    protected long hmmEnd;
     //@Column(name="HMM_BOUNDS")
-    private String hmmBounds;
+    protected String hmmBounds;
     //@Column(name="LOCATION_EVALUE")
-    private double locationEvalue;
+    protected double locationEvalue;
     //@Column(name="SEQ_SCORE")
-    private double locationScore;
+   protected double locationScore;
     //@Column(name="ALIGNMENT")
-    private String alignment;   // CIGAR format
+   protected String alignment;   // CIGAR format
 
     public HmmRawMatch() { }
+    public HmmRawMatch(String identifier, String model,String dbver, String gen, long start, long end) {
+        super(identifier,model,dbver,gen,start,end);
+    }
+    public HmmRawMatch(String model) {
+        super(model);
+    }
 
     public String getAlignment() {
         return alignment;
