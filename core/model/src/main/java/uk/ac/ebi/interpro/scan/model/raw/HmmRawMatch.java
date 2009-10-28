@@ -13,26 +13,26 @@ import javax.persistence.Entity;
  * @since 1.0
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class HmmRawMatch extends RawMatch {
 
     // TODO: evalue and score can be calculated -- do we need to store? Needs testing
-    @Column(name="EVALUE",nullable = false, updatable = false)
+    //@Column(name="EVALUE",nullable = false, updatable = false)
     private double evalue;
 
-    @Column(name="SCORE",nullable = false, updatable = false)
+    //@Column(name="SCORE",nullable = false, updatable = false)
     private double score;
-    @Column(name="HMM_START")
+    //@Column(name="HMM_START")
     private long hmmStart;
-    @Column(name="HMM_END")
+    //@Column(name="HMM_END")
     private long hmmEnd;
-    @Column(name="HMM_BOUNDS")
+    //@Column(name="HMM_BOUNDS")
     private String hmmBounds;
-    @Column(name="LOCATION_EVALUE")
+    //@Column(name="LOCATION_EVALUE")
     private double locationEvalue;
-    @Column(name="SEQ_SCORE")
+    //@Column(name="SEQ_SCORE")
     private double locationScore;
-    @Column(name="ALIGNMENT")
+    //@Column(name="ALIGNMENT")
     private String alignment;   // CIGAR format
 
     public HmmRawMatch() { }
