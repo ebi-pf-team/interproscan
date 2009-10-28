@@ -130,6 +130,24 @@ public class GenericDAOImpl<T, PK extends Serializable>
         else return results.get(0);
     }
 
+     @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    public T readSpecific(PK id) {
+        String queryString = String.format("select o from %s o where o.model = :id", unqualifiedModelClassName);
+        Query query = this.entityManager.createQuery(queryString);
+        query.setParameter("model", id);
+
+        // Originally this made use of query.getSingleResult
+        // however this method throws an Exception if there is no
+        // matching object, which seems like overkill.  Modified to return
+        // null if there is no matching object.
+
+        List<T> results = query.getResultList();
+        if (results.size() == 0){
+            return null;
+        }
+        else return results.get(0);
+    }
     /**
      * Retrieve an object that was previously persisted to the database using
      * the indicated id as primary key and go deep on the fields listed.
