@@ -132,7 +132,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
 
      @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
-    public T readSpecific(PK id) {
+    public T readSpecific(String id) {
         String queryString = String.format("select o from %s o where o.model = :id", unqualifiedModelClassName);
         Query query = this.entityManager.createQuery(queryString);
         query.setParameter("model", id);
