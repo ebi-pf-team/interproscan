@@ -20,7 +20,7 @@ public class BlastProDomRawMatch extends RawMatch implements Serializable {
     public BlastProDomRawMatch() { }
     
      public BlastProDomRawMatch(String identifier, String model, String dbn, String dbver, String gen, long start, long end,double score) {
-        super(identifier,model,dbn,dbver,gen,start,end);
+        super(identifier,model,dbver,gen,start,end);
         setScore(score);
     }
 
