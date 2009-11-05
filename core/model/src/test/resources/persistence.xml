@@ -40,13 +40,14 @@
         <class>uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease</class>
 
         <properties>
-            <property name="hibernate.show_sql"         value="true" />
-            <property name="hibernate.format_sql"       value="true" />
+            <property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />
+            <property name="hibernate.format_sql"       value="${test.hibernate.format_sql}" />
             <property name="hibernate.connection.driver_class" value="${test.database.driver}" />
             <property name="hibernate.connection.url"   value="${test.connection.url}" />
-            <property name="hibernate.connection.username" value="iprscan" />
+            <property name="hibernate.connection.username" value="${test.username}" />
+            <property name="hibernate.connection.password" value="${test.password}" />
             <property name="hibernate.dialect"          value="${test.hibernate.dialect}" />
-            <property name="hibernate.hbm2ddl.auto"     value="create" />
+            <property name="hibernate.hbm2ddl.auto"     value="${test.hibernate.hbm2ddl.auto}" />
         </properties>
 
     </persistence-unit>
