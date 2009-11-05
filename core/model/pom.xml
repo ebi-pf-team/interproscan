@@ -189,12 +189,23 @@
     </dependencies>
     
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources/</directory>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
                 <filtering>true</filtering>
-            </resource>
-        </resources>
+                <targetPath>META-INF</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <!-- Use Java 6 language features -->
             <plugin>
@@ -300,7 +311,13 @@
             </activation>
             <properties>
                 <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
+                <test.connection.url>jdbc:hsqldb:mem:mem:testmodel</test.connection.url>
+                <test.username>sa</test.username>
+                <test.password></test.password>
                 <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
+                <test.hibernate.show_sql>true</test.hibernate.show_sql>
+                <test.hibernate.format_sql>true</test.hibernate.format_sql>
+                <test.hibernate.hbm2ddl.auto>create</test.hibernate.hbm2ddl.auto>
             </properties>
         </profile>
     </profiles>
