@@ -1,9 +1,10 @@
-                          InterProScan Domain Model
+                          Generic JPA Data Access Objects
 
   What is it?
   -----------
 
-  InterProScan Domain Model represents the domain model for the InterProScan project.
+  This module provides a generic interface and implementation for basic
+  CRUD activities for use with any data model using JPA annotations.
 
   Requirements
   ------------
@@ -38,6 +39,7 @@
   Contacts
   --------
 
+  Phil Jones <pjones@ebi.ac.uk>
   Antony Quinn <aquinn@ebi.ac.uk>
 
   Acknowledgments
