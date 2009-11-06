@@ -36,6 +36,7 @@ import java.util.*;
  */
 
 @Entity
+@Table (name="Hit")
 @XmlTransient
 public abstract class Match<T extends Location> implements Serializable {
 
