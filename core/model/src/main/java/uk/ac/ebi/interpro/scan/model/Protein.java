@@ -57,7 +57,7 @@ public class Protein extends MatchableEntity {
     
     // TODO Consider whether this needs to be based upon CHUNKING as used in PRIDE, so a long protein sequence is stored
     // TODO in indexed VARCHAR columns, rather than using CLOBs that give very poor performance.
-    @Column(name="protein_sequence", length = 100000, unique = true, updatable = false)     // Length based upon current longest protein in UniParc: 37777 residues.
+    @Column(name="protein_sequence", length = 100000, updatable = false)     // Length based upon current longest protein in UniParc: 37777 residues.
     private String sequence;
 
     @Column(nullable = false, unique = true, updatable = false, length = 32)
