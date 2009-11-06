@@ -36,8 +36,8 @@ public abstract class HmmRawMatch extends RawMatch {
    protected String alignment;   // CIGAR format
 
     public HmmRawMatch() { }
-    public HmmRawMatch(String identifier, String model,String dbver, String gen, long start, long end) {
-        super(identifier,model,dbver,gen,start,end);
+    public HmmRawMatch(String seqIdentifier, String model,String dbname,String dbversion, String generator, long start, long end) {
+        super(seqIdentifier,model,dbname,dbversion,generator,start,end);
     }
     public HmmRawMatch(String model) {
         super(model);
