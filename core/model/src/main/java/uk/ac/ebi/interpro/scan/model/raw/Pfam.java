@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+//import javax.persistence.Inheritance;
+//import javax.persistence.InheritanceType;
+//import javax.persistence.Table;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,8 +18,8 @@ import javax.persistence.Table;
 public class Pfam extends HmmRawMatch {
     public Pfam() { }
 
-    public Pfam(String seqIdentifier, String model, String dbV, String generator,long start,long end) {
-         super(seqIdentifier,model,dbV,generator,start,end);
+    public Pfam(String seqIdentifier, String model,String dbname, String dbversion, String generator,long start,long end) {
+         super(seqIdentifier,model,dbname,dbversion,generator,start,end);
     }
     public Pfam(String model) {
         super(model);
