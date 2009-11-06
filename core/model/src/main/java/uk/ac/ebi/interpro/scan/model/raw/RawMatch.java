@@ -12,7 +12,7 @@ import javax.persistence.*;
  * @version $Id$
  * @since   1.0
  */
-@IdClass(uk.ac.ebi.interpro.scan.model.raw.RawMatchKey.class)
+//@IdClass(uk.ac.ebi.interpro.scan.model.raw.RawMatchKey.class)
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //@DiscriminatorColumn(name="METHOD_AC",discriminatorType=DiscriminatorType.STRING)
@@ -34,16 +34,20 @@ public abstract class RawMatch {
     }) */
     // TODO: Don't need any foreign keys -- just index fields we will search on
     //@Column(name="UPI",nullable = false)
+     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String sequenceIdentifier;  // eg. MD5
-    //@Id
+    
     //@Column(name="METHOD_AC",nullable = false, unique = true, updatable = false, length = 50)
     private String model;   // eg. "PF00001"
 
-    //@Column(name="MEMBER_DBNAME")
-   // private String dbname; //for ex: PFAM, or GENE3D
+   //@Column(name="MEMBER_DBNAME")
+   private String dbname; //for ex: PFAM, or GENE3D
 
     // TODO: Get dbversion from Spring Batch JobParameter?
     //@Column (name="DBVERSION",nullable = false, updatable = false, length = 10)
+
     private String dbversion;// eg. "23.0"
 
     //@Column (name="ALGORITHM")
@@ -51,6 +55,7 @@ public abstract class RawMatch {
     private String generator;  // eg. "HMMER 2.3.1"
 
     //@Column (name="SEQ_START")
+
     private long start;
 
    // @Column (name="SEQ_END")// location.start
@@ -62,16 +67,16 @@ public abstract class RawMatch {
     public RawMatch(String model) {
         setModel(model);
     }
-    public RawMatch(String identifier, String model,String dbver, String gen, long start, long end) {
-        setSequenceIdentifier(identifier);
+    public RawMatch(String seqIdentifier, String model,String dbname,String dbversion, String generator, long start, long end) {
+        setSequenceIdentifier(seqIdentifier);
         setModel(model);
-        //setDbname(dbn);
-        setDbversion(dbver);
-        setGenerator(gen);
+        setDbname(dbname);
+        setDbversion(dbversion);
+        setGenerator(generator);
         setStart(start);
         setEnd(end);
     }
-    @Id
+   // @Id
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -79,7 +84,7 @@ public abstract class RawMatch {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    @Id
+    //@Id
     public String getModel() {
         return model;
     }
@@ -87,7 +92,14 @@ public abstract class RawMatch {
     public void setModel(String model) {
         this.model = model;
     }
-     @Id
+     public String getDbname() {
+        return dbname;
+    }
+
+    public void setDbname(String dbname) {
+        this.dbname = dbname;
+    }
+     //@Id
     public String getDbversion() {
         return dbversion;
     }
@@ -95,23 +107,17 @@ public abstract class RawMatch {
     public void setDbversion(String dbversion) {
         this.dbversion = dbversion;
     }
-     @Id
+    
+     //@Id
     public String getGenerator() {
         return generator;
     }
 
-    /* public String getDbname() {
-        return dbname;
-    }
 
-    public void setDbname(String dbname) {
-        this.dbname = dbname;
-    }  */
-    
     public void setGenerator(String generator) {
         this.generator = generator;
     }
-    @Id
+    //@Id
     public long getStart() {
         return start;
     }
