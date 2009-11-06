@@ -14,13 +14,13 @@ import java.io.Serializable;
 @Entity
 //public final class BlastProDomRawMatch extends RawMatch implements Serializable {
 public class BlastProDomRawMatch extends RawMatch implements Serializable {
-    @Column(name="SCORE")
+    //@Column(name="SCORE")
     private double score;   // location.score
     
     public BlastProDomRawMatch() { }
     
-     public BlastProDomRawMatch(String identifier, String model, String dbn, String dbver, String gen, long start, long end,double score) {
-        super(identifier,model,dbver,gen,start,end);
+     public BlastProDomRawMatch(String seqIdentifier, String model,String dbname,String dbversion, String generator, long start, long end,double score) {
+        super(seqIdentifier,model,dbname,dbversion,generator,start,end);
         setScore(score);
     }
 
