@@ -11,6 +11,6 @@
     <!-- All the common Spring config, found in src/main/resources/ -->
     <import resource="../spring-persistence-config.xml"/>
     <!-- Test stuff - move to a different spring-config.xml file. -->
-    <bean id="modelGenericDAOtest" class="uk.ac.ebi.interpro.scan.persistence.ModelDAOTest"/>
+    <bean id="modelDAOtest" class="uk.ac.ebi.interpro.scan.persistence.ModelDAOTest"/>
 
 </beans>
