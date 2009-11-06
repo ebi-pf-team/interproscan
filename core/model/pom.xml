@@ -324,7 +324,7 @@
                 <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
                 <test.hibernate.show_sql>true</test.hibernate.show_sql>
                 <test.hibernate.format_sql>true</test.hibernate.format_sql>
-                <test.hibernate.hbm2ddl.auto>create</test.hibernate.hbm2ddl.auto>
+                <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
             </properties>
         </profile>
     </profiles>
