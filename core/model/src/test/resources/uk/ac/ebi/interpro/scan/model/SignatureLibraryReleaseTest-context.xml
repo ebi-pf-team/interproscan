@@ -14,7 +14,7 @@
     <import resource="oxm-context.xml"/>
 
     <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease" />
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" />
     </bean>
 
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
@@ -76,7 +76,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("Gene 3D"), "3.1.0")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("Gene 3D"), "3.1.0")
                 Signature signature = release.addSignature(
                         new Signature.Builder("G3DSA:2.40.50.140")
                                 .name("Nucleic acid-binding proteins")
@@ -91,13 +91,13 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-database-release provider="Gene 3D" version="3.1.0" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <signature-library-release library="Gene 3D" version="3.1.0" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="G3DSA:2.40.50.140" type="domain" name="Nucleic acid-binding proteins">
                         <models>
                             <model ac="1o7iB00" name="1o7iB00" desc="Nucleic acid-binding proteins"/>
                         </models>
                     </signature>
-                </signature-database-release>
+                </signature-library-release>
                 ]]>
             </value>
         </constructor-arg>
@@ -107,7 +107,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("Pfam"), "23.0")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("Pfam"), "23.0")
                 Signature signature = release.addSignature(
                         new Signature.Builder("PF00001")
                                 .name("7tm_2")
@@ -124,14 +124,14 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-database-release provider="Pfam" version="23.0" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <signature-library-release library="Pfam" version="23.0" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="PF00001" name="7tm_2" type="family" desc="7 transmembrane receptor (rhodopsin family)">
                         <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins [pubmed:15774036]</abstract>
                         <models>
                             <model ac="PF00001" name="7tm_2" desc="7 transmembrane receptor (rhodopsin family)"/>
                         </models>
                     </signature>
-                </signature-database-release>
+                </signature-library-release>
                 ]]>
             </value>
         </constructor-arg>
@@ -141,7 +141,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("SMART"), "5.1")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("SMART"), "5.1")
                 Signature signature = release.addSignature(
                         new Signature.Builder("SM00323")
                                 .name("RasGAP_2")
@@ -158,14 +158,14 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-database-release provider="SMART" version="5.1" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <signature-library-release library="SMART" version="5.1" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="SM00323" type="domain" name="RasGAP_2" desc="GTPase-activator protein for Ras-like GTPases">
                         <abstract>All alpha-helical domain that accelerates the GTPase activity of Ras, thereby "switching" it into an "off" position. Improved domain limits from structure.</abstract>
                         <models>
                             <model ac="SM00323" name="RasGAP_2" desc="GTPase-activator protein for Ras-like GTPases" />
                         </models>
                     </signature>
-                </signature-database-release>
+                </signature-library-release>
                 ]]>
             </value>
         </constructor-arg>
@@ -175,7 +175,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("SUPERFAMILY"), "1.73")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("SUPERFAMILY"), "1.73")
                 Signature signature = release.addSignature(
                         new Signature.Builder("SSF53098")
                                 .name("Ribonuclease H-like")
@@ -192,7 +192,7 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-database-release provider="SUPERFAMILY" version="1.73" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <signature-library-release library="SUPERFAMILY" version="1.73" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="SSF53098" type="family" name="Ribonuclease H-like">
                         <models>
                             <model ac="0035188"/>
@@ -200,7 +200,7 @@
                             <model ac="0035463"/>
                         </models>
                     </signature>
-                </signature-database-release>
+                </signature-library-release>
                 ]]>
             </value>
         </constructor-arg>
@@ -212,7 +212,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("PRINTS"), "38.1")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("PRINTS"), "38.1")
                 Signature s1 = release.addSignature(
                         new Signature.Builder("PR00238")
                                 .name("OPSIN")
@@ -235,7 +235,7 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-database-release provider="PRINTS" version="38.1" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <signature-library-release library="PRINTS" version="38.1" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="PR00238" name="OPSIN" type="family" desc="Opsin signature">
                         <models>
                             <model ac="PR00238"/>
@@ -247,7 +247,7 @@
                             <model ac="PR00579"/>
                         </models>
                     </signature>
-                </signature-database-release>
+                </signature-library-release>
                 ]]>
             </value>
         </constructor-arg>
@@ -257,7 +257,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("ProDom"), "2006.1")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("ProDom"), "2006.1")
                 Signature signature = release.addSignature(
                         new Signature.Builder("PD001061")
                                 .type("family")
@@ -272,13 +272,13 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-database-release provider="ProDom" version="2006.1" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <signature-library-release library="ProDom" version="2006.1" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="PD001061" type="family" desc="MATRIX VIRAL M1 MEMBRANE RNA-BINDING SPLICING ALTERNATIVE NUCLEAR STRUCTURAL M">
                         <models>
                             <model ac="PD001061"/>
                         </models>
                     </signature>
-                </signature-database-release>
+                </signature-library-release>
                 ]]>
             </value>
         </constructor-arg>
@@ -288,7 +288,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("ProSite"), "20.35")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("ProSite"), "20.35")
                 Signature signature = release.addSignature(
                         new Signature.Builder("PS00675")
                                 .name("SIGMA54_INTERACT_1")
@@ -305,14 +305,14 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-database-release provider="ProSite" version="20.35" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <signature-library-release library="ProSite" version="20.35" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="PS00675" type="domain" name="SIGMA54_INTERACT_1" desc="Sigma-54 interaction domain ATP-binding region A signature.">
                         <abstract>Some bacterial regulatory proteins activate the expression of genes from promoters recognized by core RNA polymerase associated with the alternative sigma-54 factor. These have a conserved domain of about 230 residues involved in the ATP-dependent [1,2] interaction with sigma-54.</abstract>
                         <models>
                             <model ac="PS00675"/>
                         </models>
                     </signature>
-                </signature-database-release>
+                </signature-library-release>
                 ]]>
             </value>
         </constructor-arg>
@@ -322,7 +322,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("ProSite"), "20.35")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("ProSite"), "20.35")
                 Signature signature = release.addSignature(
                         new Signature.Builder("PS50042")
                                 .name("CNMP_BINDING_3")
@@ -339,14 +339,14 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-database-release provider="ProSite" version="20.35" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <signature-library-release library="ProSite" version="20.35" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="PS50042" type="domain" name="CNMP_BINDING_3" desc="cAMP/cGMP binding motif profile">
                         <abstract>Proteins that bind cyclic nucleotides (cAMP or cGMP) share a structural domain of about 120 residues [1,2,3]. The best studied of these proteins is the prokaryotic catabolite gene activator (also known as the cAMP receptor protein) (gene crp) where such a domain is known to be composed of three α-helices and a distinctive eight-stranded, antiparallel β-barrel structure.</abstract>
                         <models>
                             <model ac="PS50042"/>
                         </models>
                     </signature>
-                </signature-database-release>
+                </signature-library-release>
                 ]]>
             </value>
         </constructor-arg>

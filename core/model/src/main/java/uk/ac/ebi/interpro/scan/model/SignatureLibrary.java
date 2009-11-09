@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
 
 /**
- * Signature provider.
+ * Signature library, for example Pfam or PRINTS.
  *
  * @author  Antony Quinn
  * @version $Id$
  * @since   1.0
  */
 @Entity
-@XmlType(name="SignatureProviderType")
-public class SignatureProvider implements Serializable {
+@XmlType(name="SignatureLibraryType")
+public class SignatureLibrary implements Serializable {
 
     // select upper(dbshort)||'("'||dbcode||'", "'||dbshort||'", "'||dbname||'"),'
     // from interpro.cv_database order by dbshort;
@@ -58,13 +58,13 @@ public class SignatureProvider implements Serializable {
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected SignatureProvider() { }
+    protected SignatureLibrary() { }
 
-    public SignatureProvider(String name) {
+    public SignatureLibrary(String name) {
         setName(name);
     }
 
-    public SignatureProvider(String name, String description) {
+    public SignatureLibrary(String name, String description) {
         setName(name);
         setDescription(description);
     }
@@ -89,26 +89,26 @@ public class SignatureProvider implements Serializable {
     }
 
     /**
-     * Map SignatureProvider to and from XML representation
+     * Map SignatureLibrary to and from XML representation
      */
     @XmlTransient
-    static final class SignatureProviderAdapter extends XmlAdapter<String, SignatureProvider> {
+    static final class SignatureLibraryAdapter extends XmlAdapter<String, SignatureLibrary> {
         /* Map Java to XML type */
-        @Override public String marshal(SignatureProvider provider) {
-            return provider.getName();
+        @Override public String marshal(SignatureLibrary library) {
+            return library.getName();
         }
         /* Map XML type to Java */
-        @Override public SignatureProvider unmarshal(String name) {
-            return new SignatureProvider(name);
+        @Override public SignatureLibrary unmarshal(String name) {
+            return new SignatureLibrary(name);
         }
     }      
 
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof SignatureProvider))
+        if (!(o instanceof SignatureLibrary))
             return false;
-        final SignatureProvider s = (SignatureProvider) o;
+        final SignatureLibrary s = (SignatureLibrary) o;
         return new EqualsBuilder()
                 .append(name, s.name)
                 .append(description, s.description)

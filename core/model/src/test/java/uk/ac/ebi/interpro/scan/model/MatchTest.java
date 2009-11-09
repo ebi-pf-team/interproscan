@@ -3,6 +3,10 @@ package uk.ac.ebi.interpro.scan.model;
 import junit.framework.TestCase;
 import org.junit.Test;
 
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
+
 /**
  * Test cases for {@link Match} implementations
  *
@@ -12,31 +16,15 @@ import org.junit.Test;
  */
 public class MatchTest extends TestCase {
 
-    // TODO: Write test code for all Raw... and Filtered... classes
+    // TODO: Write test code for all sub-classes of Match
 
-    private static final Model MOD1     = new Model("MOD001");
-    private static final Signature SIG1 = new Signature("SIG001");
-
-    @Test public void testFilteredProfileScanMatch()    {
-        FilteredProfileScanMatch m = new FilteredProfileScanMatch(SIG1);
-        ProfileScanLocation l1 = m.addLocation(new ProfileScanLocation(1, 2, 3));
-        ProfileScanLocation l2 = m.addLocation(new ProfileScanLocation(4, 5, 6));
+    @Test public void testProfileScanMatch()    {
+        Set<ProfileScanMatch.ProfileScanLocation> locations = new HashSet<ProfileScanMatch.ProfileScanLocation>(Arrays.asList(
+                new ProfileScanMatch.ProfileScanLocation(1, 2, 3),
+                new ProfileScanMatch.ProfileScanLocation(4, 5, 6)
+        ));
+        ProfileScanMatch m = new ProfileScanMatch(new Signature("SIG001"), locations);
         assertEquals(2, m.getLocations().size());
-        m.removeLocation(l2);
-        assertEquals(1, m.getLocations().size());
-        m.removeLocation(l1);
-        assertEquals(0, m.getLocations().size());
     }
-    
-    @Test public void testRawProfileScanMatch()    {
-        RawProfileScanMatch m = new RawProfileScanMatch(MOD1);
-        ProfileScanLocation l1 = m.addLocation(new ProfileScanLocation(1, 2, 3));
-        ProfileScanLocation l2 = m.addLocation(new ProfileScanLocation(4, 5, 6));
-        assertEquals(2, m.getLocations().size());
-        m.removeLocation(l2);
-        assertEquals(1, m.getLocations().size());
-        m.removeLocation(l1);
-        assertEquals(0, m.getLocations().size());
-    }    
-    
+       
 }

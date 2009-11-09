@@ -68,7 +68,7 @@ public class Signature implements Serializable {
     private String abstractText;
 
     @ManyToOne
-    private SignatureDatabaseRelease signatureDatabaseRelease;
+    private SignatureLibraryRelease signatureLibraryRelease;
 
     // TODO: Decide whether to use Map or Set (see ChEBI team)
     // TODO: Use ConcurrentHashMap if need concurrent modification of signatures
@@ -96,14 +96,14 @@ public class Signature implements Serializable {
                      String type,                     
                      String description,
                      String abstractText,
-                     SignatureDatabaseRelease signatureDatabaseRelease,
+                     SignatureLibraryRelease signatureLibraryRelease,
                      Set<Model> models) {
         setAccession(accession);
         setName(name);
         setDescription(description);
         setType(type);
         setAbstract(abstractText);
-        setSignatureDatabaseRelease(signatureDatabaseRelease);
+        setSignatureLibraryRelease(signatureLibraryRelease);
         setModels(models);
     }
 
@@ -118,7 +118,7 @@ public class Signature implements Serializable {
         private String description;
         private String type;
         private String abstractText;
-        private SignatureDatabaseRelease signatureDatabaseRelease;
+        private SignatureLibraryRelease signatureLibraryRelease;
         Set<Model> models;
 
         public Builder(String accession) {
@@ -131,7 +131,7 @@ public class Signature implements Serializable {
             signature.setDescription(description);
             signature.setType(type);
             signature.setAbstract(abstractText);
-            signature.setSignatureDatabaseRelease(signatureDatabaseRelease);
+            signature.setSignatureLibraryRelease(signatureLibraryRelease);
             if (models != null) {
                 signature.setModels(models);
             }
@@ -158,8 +158,8 @@ public class Signature implements Serializable {
             return this;
         }
 
-        public Builder signatureDatabaseRelease(SignatureDatabaseRelease signatureDatabaseRelease) {
-            this.signatureDatabaseRelease = signatureDatabaseRelease;
+        public Builder signatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease) {
+            this.signatureLibraryRelease = signatureLibraryRelease;
             return this;
         }
 
@@ -248,12 +248,12 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
-    public SignatureDatabaseRelease getSignatureDatabaseRelease()    {
-        return signatureDatabaseRelease;
+    public SignatureLibraryRelease getSignatureLibraryRelease()    {
+        return signatureLibraryRelease;
     }
 
-    void setSignatureDatabaseRelease(SignatureDatabaseRelease signatureDatabaseRelease)  {
-        this.signatureDatabaseRelease = signatureDatabaseRelease;
+    void setSignatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease)  {
+        this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
     @XmlJavaTypeAdapter(ModelAdapter.class)
@@ -343,7 +343,7 @@ public class Signature implements Serializable {
             return models;
         }
 
-    }    
+    }        
 
     @Override public boolean equals(Object o) {
         if (this == o)
@@ -357,7 +357,7 @@ public class Signature implements Serializable {
                 .append(type, s.type)
                 .append(description, s.description)
                 .append(abstractText, s.abstractText)
-                .append(signatureDatabaseRelease, s.signatureDatabaseRelease)
+                .append(signatureLibraryRelease, s.signatureLibraryRelease)
                 .append(models, s.models)
                 .isEquals();
     }
@@ -369,7 +369,7 @@ public class Signature implements Serializable {
                 .append(type)
                 .append(description)
                 .append(abstractText)
-                .append(signatureDatabaseRelease)
+                .append(signatureLibraryRelease)
                 .append(models)
                 .toHashCode();
     }

@@ -21,7 +21,7 @@ import org.apache.commons.lang.SerializationUtils;
 import junit.framework.TestCase;
 
 /**
- * Tests cases for {@link HmmLocation}.
+ * Tests cases for {@link uk.ac.ebi.interpro.scan.model.HmmerMatch.HmmerLocation}.
  *
  * @author  Antony Quinn
  * @version $Id$
@@ -33,14 +33,14 @@ public class HmmLocationTest extends TestCase {
      * Tests the equals() method works as expected
      */
     @Test public void testEquals() {
-        HmmLocation original = new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE);
-        HmmLocation copy = (HmmLocation)SerializationUtils.clone(original);
+        HmmerMatch.HmmerLocation original = new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE);
+        HmmerMatch.HmmerLocation copy = (HmmerMatch.HmmerLocation)SerializationUtils.clone(original);
         // Original should equal itself
         assertEquals(original, original);
         // Original and copy should be equal
         assertEquals(original, copy);
         // Original and copy should not be equal
-        copy = new HmmLocation(1, 2, 3, 4, 5, 6, HmmLocation.HmmBounds.COMPLETE);
+        copy = new HmmerMatch.HmmerLocation(1, 2, 3, 4, 5, 6, HmmerMatch.HmmerLocation.HmmBounds.COMPLETE);
         assertFalse("Original and copy should not be equal", original.equals(copy));
     }
     

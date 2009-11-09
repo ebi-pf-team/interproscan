@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 
 /**
- * Test cases for {@link SignatureDatabaseRelease}
+ * Test cases for {@link SignatureLibraryRelease}
  *
  * @author  Antony Quinn
  * @version $Id$
@@ -36,10 +36,10 @@ import java.io.IOException;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class SignatureDatabaseReleaseTest extends AbstractTest<SignatureDatabaseRelease> {
+public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRelease> {
 
     @Test public void testRemoveSignature()   {
-        SignatureDatabaseRelease sdr = new SignatureDatabaseRelease(new SignatureProvider("Pfam"), "23.0");
+        SignatureLibraryRelease sdr = new SignatureLibraryRelease(new SignatureLibrary("Pfam"), "23.0");
         Signature s1 = sdr.addSignature(new Signature("PF00001"));
         Signature s2 = sdr.addSignature(new Signature("PF00002"));
         // Should be OK
@@ -62,11 +62,11 @@ public class SignatureDatabaseReleaseTest extends AbstractTest<SignatureDatabase
     }
 
     @Test public void testXml() throws IOException, SAXException {
-        super.testSupportsMarshalling(SignatureDatabaseRelease.class);
+        super.testSupportsMarshalling(SignatureLibraryRelease.class);
         super.testXmlRoundTrip();
     }
 
-    // TODO: Fails with org.hibernate.id.IdentifierGenerationException: ids for this class must be manually assigned before calling save(): uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease
+    // TODO: Fails with org.hibernate.id.IdentifierGenerationException: ids for this class must be manually assigned before calling save(): uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease
 //    @Test public void testJpa() {
 //        super.testJpaXmlObjects();
 //    }

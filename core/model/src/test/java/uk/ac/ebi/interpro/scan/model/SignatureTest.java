@@ -51,7 +51,7 @@ public class SignatureTest extends AbstractTest<Signature> {
         final String TYPE     = "domain";
         final String DESC     = NAME;
         final String ABSTRACT = NAME;
-        SignatureDatabaseRelease release = new SignatureDatabaseRelease(new SignatureProvider("TST"), "1.0");
+        SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("TST"), "1.0");
         Set<Model> models = new HashSet<Model>();
         models.add(new Model("MOD001"));
         models.add(new Model("MOD002"));
@@ -61,7 +61,7 @@ public class SignatureTest extends AbstractTest<Signature> {
                 .type(TYPE)
                 .description(NAME)
                 .abstractText(NAME)
-                .signatureDatabaseRelease(release)
+                .signatureLibraryRelease(release)
                 .models(models)
                 .build();
         assertEquals(AC, signature.getAccession());
@@ -69,7 +69,7 @@ public class SignatureTest extends AbstractTest<Signature> {
         assertEquals(TYPE, signature.getType());
         assertEquals(DESC, signature.getDescription());
         assertEquals(ABSTRACT, signature.getAbstract());
-        assertEquals(release, signature.getSignatureDatabaseRelease());
+        assertEquals(release, signature.getSignatureLibraryRelease());
         assertEquals(numModels, signature.getModels().size());
     }       
 

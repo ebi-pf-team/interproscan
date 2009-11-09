@@ -32,41 +32,41 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Signature database release.
+ * Signature library release.
  *
  * @author  Antony Quinn
  * @version $Id$
  * @since   1.0
  */
 @Entity
-@XmlRootElement(name="signature-database-release")
-@XmlType(name="SignatureDatabaseReleaseType")
-public class SignatureDatabaseRelease implements Serializable {
+@XmlRootElement(name="signature-library-release")
+@XmlType(name="SignatureLibraryReleaseType")
+public class SignatureLibraryRelease implements Serializable {
 
     @Id
     private Long id;
 
     @ManyToOne
-    private SignatureProvider provider;
+    private SignatureLibrary library;
     
     private String version;
 
-    @OneToMany (mappedBy = "signatureDatabaseRelease")
+    @OneToMany (mappedBy = "signatureLibraryRelease")
     @XmlElement(name="signature", required=true)
     private Set<Signature> signatures = new HashSet<Signature>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected SignatureDatabaseRelease() { }
+    protected SignatureLibraryRelease() { }
 
-    public SignatureDatabaseRelease(SignatureProvider provider, String version) {
-        setProvider(provider);
+    public SignatureLibraryRelease(SignatureLibrary library, String version) {
+        setLibrary(library);
         setVersion(version);
     }
 
-    public SignatureDatabaseRelease(SignatureProvider provider, String version, Set<Signature> signatures) {
-        setProvider(provider);
+    public SignatureLibraryRelease(SignatureLibrary library, String version, Set<Signature> signatures) {
+        setLibrary(library);
         setVersion(version);
         setSignatures(signatures);
     }
@@ -76,18 +76,18 @@ public class SignatureDatabaseRelease implements Serializable {
     }
 
     @XmlAttribute(required=true)
-    @XmlJavaTypeAdapter(SignatureProvider.SignatureProviderAdapter.class)
-    public SignatureProvider getProvider() {
-        return provider;
+    @XmlJavaTypeAdapter(SignatureLibrary.SignatureLibraryAdapter.class)
+    public SignatureLibrary getLibrary() {
+        return library;
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
-    private void setProvider(SignatureProvider provider) {
-        this.provider = provider;
+    private void setLibrary(SignatureLibrary library) {
+        this.library = library;
     }
 
     // TODO: Could not add JAXB annotation here (had to add to field) - THIS CAUSES PROBLEMS:
-    // TODO: Each signature will not have a reference to SignatureDatabaseRelease because setSignatures
+    // TODO: Each signature will not have a reference to SignatureLibraryRelease because setSignatures
     // TODO: is not used (JAXB accesses the field directly).
     // TODO: This needs fixing! (tried XmlAdapter to no avail -- see below)
     public Set<Signature> getSignatures() {
@@ -105,17 +105,17 @@ public class SignatureDatabaseRelease implements Serializable {
         if (signature == null) {
             throw new IllegalArgumentException("'Signature' must not be null");
         }
-        if (signature.getSignatureDatabaseRelease() != null) {
-            signature.getSignatureDatabaseRelease().removeSignature(signature);
+        if (signature.getSignatureLibraryRelease() != null) {
+            signature.getSignatureLibraryRelease().removeSignature(signature);
         }
-        signature.setSignatureDatabaseRelease(this);
+        signature.setSignatureLibraryRelease(this);
         signatures.add(signature);
         return signature;
     }
 
     public void removeSignature(Signature signature) {
         signatures.remove(signature);
-        signature.setSignatureDatabaseRelease(null);
+        signature.setSignatureLibraryRelease(null);
     }
 
     @XmlAttribute(required=true)
@@ -131,19 +131,19 @@ public class SignatureDatabaseRelease implements Serializable {
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof SignatureDatabaseRelease))
+        if (!(o instanceof SignatureLibraryRelease))
             return false;
-        final SignatureDatabaseRelease s = (SignatureDatabaseRelease) o;
+        final SignatureLibraryRelease s = (SignatureLibraryRelease) o;
         return new EqualsBuilder()
                 .append(version, s.version)
-                .append(provider, s.provider)
+                .append(library, s.library)
                 .isEquals();
     }
 
     @Override public int hashCode() {
         return new HashCodeBuilder(19, 39)
                 .append(version)
-                .append(provider)
+                .append(library)
                 .toHashCode();
     }
 

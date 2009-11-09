@@ -15,8 +15,8 @@
             <list>
                 <value>uk.ac.ebi.interpro.scan.model.Protein</value>
                 <value>uk.ac.ebi.interpro.scan.model.Signature</value>
-                <value>uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease</value>
-                <value>uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier</value>
+                <value>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</value>
+                <value>uk.ac.ebi.interpro.scan.model.Xref</value>
             </list>
         </property>
         <property name="marshallerProperties">
