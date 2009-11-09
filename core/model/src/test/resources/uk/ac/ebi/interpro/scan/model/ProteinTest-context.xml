@@ -75,8 +75,8 @@
     <bean id="gene3dObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="G3DSA:2.40.50.140"/>                <!-- Accession -->
@@ -86,8 +86,8 @@
                     <constructor-arg value="-8.9"/>   <!--Score-->
                     <constructor-arg value="0.28"/>   <!--E-value-->
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch.HmmerLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation">
                                 <constructor-arg value="74"/>      <!--Start-->
                                 <constructor-arg value="93"/>      <!--End-->
                                 <constructor-arg value="-8.9"/>    <!--Score-->
@@ -95,7 +95,7 @@
                                 <constructor-arg value="63"/>      <!--HMM start-->
                                 <constructor-arg value="82"/>      <!--HMM end-->
                                 <constructor-arg value="INCOMPLETE"
-                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation$HmmBounds"/>
                             </bean>
                         </util:set>
                      </constructor-arg>
@@ -103,8 +103,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
+                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
                     <constructor-arg value="A0A314"/>
                 </bean>
             </util:set>
@@ -167,16 +167,16 @@
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
                 Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI");
-                p.addCrossReference(new XrefSequenceIdentifier("A0A000_9ACTO"));
-                Set<HmmLocation> locations = new HashSet<HmmLocation>();
-                locations.add(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
-                FilteredHmmMatch m =
-                    p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+                p.addCrossReference(new Xref("A0A000_9ACTO"));
+                Set<HmmerMatch.HmmerLocation> locations = new HashSet<HmmerMatch.HmmerLocation>();
+                locations.add(new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
+                HmmerMatch m =
+                    p.addMatch(new HmmerMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
                 // FilteredHmmMatch m =
                 //    p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9));
-                // m.addLocation(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
+                // m.addLocation(new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
                 // Using named parameters also works in Groovy:
-                // m.addLocation(new HmmLocation(start:3, end:107, score:3.0, evalue:3.7e-9, hmmStart:1, hmmEnd:104, hmmBounds:HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
+                // m.addLocation(new HmmerMatch.HmmerLocation(start:3, end:107, score:3.0, evalue:3.7e-9, hmmStart:1, hmmEnd:104, hmmBounds:HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
                 return p;
             ]]>
         </lang:inline-script>
@@ -205,8 +205,8 @@
     <bean id="smartObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="SM00323"/>  <!-- Accession -->
@@ -216,8 +216,8 @@
                     <constructor-arg value="543.4"   /> <!--Score-->
                     <constructor-arg value="2.7e-164"/> <!--E-value-->
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch.HmmerLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation">
                                 <constructor-arg value="512" />        <!--Start-->
                                 <constructor-arg value="857" />        <!--End-->
                                 <constructor-arg value="543.4" />      <!--Score-->
@@ -225,7 +225,7 @@
                                 <constructor-arg value="1" />          <!--HMM start-->
                                 <constructor-arg value="390" />        <!--HMM end-->
                                 <constructor-arg value="COMPLETE"
-                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation$HmmBounds"/>
                             </bean>
                         </util:set>
                      </constructor-arg>
@@ -233,8 +233,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
+                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
                     <constructor-arg value="GAP2_CAEEL"/>
                 </bean>
             </util:set>
@@ -294,8 +294,8 @@
     <bean id="superfamilyObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredHmmMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="SSF53098"/>             <!-- Accession -->
@@ -305,8 +305,8 @@
                     <constructor-arg value="93.8"/>     <!--Score-->
                     <constructor-arg value="2.4e-32"/>  <!--E-value-->
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.HmmLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch.HmmerLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation">
                                 <constructor-arg value="1"/>        <!--Start-->
                                 <constructor-arg value="237"/>      <!--End-->
                                 <constructor-arg value="93.8"/>     <!--Score-->
@@ -314,7 +314,7 @@
                                 <constructor-arg value="1"/>        <!--HMM start-->
                                 <constructor-arg value="262"/>      <!--HMM end-->
                                 <constructor-arg value="N_TERMINAL_COMPLETE"
-                                                 type="uk.ac.ebi.interpro.scan.model.HmmLocation$HmmBounds"/>
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation$HmmBounds"/>
                             </bean>
                         </util:set>
                      </constructor-arg>
@@ -322,8 +322,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
+                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
                     <constructor-arg value="A6Q974"/>
                 </bean>
             </util:set>
@@ -385,8 +385,8 @@
     <bean id="printsObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="PR00579"/>
@@ -397,43 +397,43 @@
                     <constructor-arg value="IIIIII"/>  <!--Graphscan-->
                     <constructor-arg value="6"/>       <!--MotifCount-->
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch.FingerPrintsLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation">
                                 <constructor-arg value="3"/>        <!--Start-->
                                 <constructor-arg value="21"/>       <!--End-->
                                 <constructor-arg value="1.45e-14"/> <!--P-value-->
                                 <constructor-arg value="86.94"/>    <!--Score-->
                                 <constructor-arg value="1"/>        <!--MotifNumber-->
                             </bean>
-                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation">
                                 <constructor-arg value="22"/>
                                 <constructor-arg value="38"/>
                                 <constructor-arg value="2.06e-10"/>
                                 <constructor-arg value="80.20"/>
                                 <constructor-arg value="2"/>
                             </bean>
-                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation">
                                 <constructor-arg value="85"/>
                                 <constructor-arg value="101"/>
                                 <constructor-arg value="1.83e-13"/>
                                 <constructor-arg value="81.56"/>
                                 <constructor-arg value="3"/>
                             </bean>
-                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation">
                                 <constructor-arg value="191"/>
                                 <constructor-arg value="207"/>
                                 <constructor-arg value="1.43e-10"/>
                                 <constructor-arg value="77.83"/>
                                 <constructor-arg value="4"/>
                             </bean>
-                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation">
                                 <constructor-arg value="271"/>
                                 <constructor-arg value="289"/>
                                 <constructor-arg value="9.33e-15"/>
                                 <constructor-arg value="83.70"/>
                                 <constructor-arg value="5"/>
                             </bean>
-                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation">
                                 <constructor-arg value="319"/>
                                 <constructor-arg value="332"/>
                                 <constructor-arg value="1.04e-09"/>
@@ -446,11 +446,11 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
+                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
                     <constructor-arg value="P02700"/>
                 </bean>
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
                     <constructor-arg value="OPSD_SHEEP"/>
                 </bean>
             </util:set>
@@ -505,16 +505,16 @@
     <bean id="proDomObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredBlastProDomMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredBlastProDomMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.BlastProDomMatch">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="PD001061"/>
                         </bean>
                     </constructor-arg>
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.BlastProDomLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomMatch.BlastProDomLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation">
                                 <constructor-arg value="9"/>        <!--Start-->
                                 <constructor-arg value="150"/>      <!--End-->
                                 <constructor-arg value="763"/>      <!--Score-->
@@ -522,27 +522,27 @@
                         </util:set>
                      </constructor-arg>
                 </bean>
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredBlastProDomMatch">
-                    <constructor-arg>
-                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
-                            <constructor-arg value="PD596253"/>
-                        </bean>
-                    </constructor-arg>
-                    <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.BlastProDomLocation">
-                                <constructor-arg value="151"/>      <!--Start-->
-                                <constructor-arg value="245"/>      <!--End-->
-                                <constructor-arg value="496"/>      <!--Score-->
-                            </bean>
-                        </util:set>
-                     </constructor-arg>
-                </bean>
+                <!--<bean class="uk.ac.ebi.interpro.scan.model.BlastProDomMatch                  -->
+                    <!--<constructor-arg>-->
+                        <!--<bean class="uk.ac.ebi.interpro.scan.model.Signature">-->
+                            <!--<constructor-arg value="PD596253"/>-->
+                        <!--</bean>-->
+                    <!--</constructor-arg>-->
+                    <!--<constructor-arg>-->
+                        <!--<util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomMatch.BlastProDomLocationastProDomLocation">-->
+                            <!--<bean class="uk.ac.ebi.interpro.scan.model.BlastProDomMatch.BlastProDomLocationastProDomLocation">-->
+                                <!--<constructor-arg value="151"/>      --><!--Start-->
+                                <!--<constructor-arg value="245"/>      --><!--End-->
+                                <!--<constructor-arg value="496"/>      --><!--Score-->
+                            <!--</bean>-->
+                        <!--</util:set>-->
+                     <!--</constructor-arg>-->
+                <!--</bean>-->
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
+                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
                     <constructor-arg value="UPI000048E726"/>
                 </bean>
             </util:set>
@@ -567,12 +567,12 @@
                             <blastprodom-location start="9" end="150" score="763.0" />
                         </locations>
                     </blastprodom-match>
-                    <blastprodom-match>
-                        <signature ac="PD596253"/>
-                        <locations>
-                            <blastprodom-location start="151" end="245" score="496.0"/>
-                        </locations>
-                    </blastprodom-match>
+                    <!--<blastprodom-match>-->
+                        <!--<signature ac="PD596253"/>-->
+                        <!--<locations>-->
+                            <!--<blastprodom-location start="151" end="245" score="496.0"/>-->
+                        <!--</locations>-->
+                    <!--</blastprodom-match>-->
                 </matches>
             </protein>
             ]]>
@@ -583,8 +583,8 @@
     <bean id="proSitePatternsObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredPatternScanMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredPatternScanMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.PatternScanMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.PatternScanMatch">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="PS00675"/>
@@ -592,12 +592,12 @@
                         </bean>
                     </constructor-arg>
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.PatternScanLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.PatternScanLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.PatternScanMatch.PatternScanLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation">
                                 <constructor-arg value="166"/>      <!--Start-->
                                 <constructor-arg value="179"/>      <!--End-->
                                 <constructor-arg value="STRONG"
-                                                 type="uk.ac.ebi.interpro.scan.model.PatternScanLocation$Level"/>
+                                                 type="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation$Level"/>
                             </bean>
                         </util:set>
                      </constructor-arg>
@@ -605,8 +605,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
+                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
                     <constructor-arg value="UPI0001AFC88D"/>
                 </bean>
             </util:set>
@@ -639,8 +639,8 @@
     <bean id="proSiteProfilesObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.FilteredProfileScanMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredProfileScanMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="PS50042"/>
@@ -648,8 +648,8 @@
                         </bean>
                     </constructor-arg>
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch.ProfileScanLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation">
                                 <constructor-arg value="171"/>      <!--Start-->
                                 <constructor-arg value="275"/>      <!--End-->
                                 <constructor-arg value="24.202"/>   <!--Score-->
@@ -657,7 +657,7 @@
                         </util:set>
                      </constructor-arg>
                 </bean>
-                <bean class="uk.ac.ebi.interpro.scan.model.FilteredProfileScanMatch">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="PS50206"/>
@@ -665,8 +665,8 @@
                         </bean>
                     </constructor-arg>
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch.ProfileScanLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation">
                                 <constructor-arg value="292"/>      <!--Start-->
                                 <constructor-arg value="370"/>      <!--End-->
                                 <constructor-arg value="15.158"/>   <!--Score-->
@@ -677,8 +677,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
-                <bean class="uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
+                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
                     <constructor-arg value="UPI0001AF8DCD"/>
                 </bean>
             </util:set>
@@ -697,17 +697,17 @@
                     <xref id="UPI0001AF8DCD"/>
                     <matches>
                         <profilescan-match>
-                            <signature name="RHODANESE_3" ac="PS50206"/>
-                            <locations>
-                                <profilescan-location start="292" end="370" score="15.158"/>
-                            </locations>
-                        </profilescan-match>
-                        <profilescan-match>
                             <signature name="CNMP_BINDING_3" ac="PS50042"/>
                             <locations>
                                 <profilescan-location start="171" end="275" score="24.202"/>
                             </locations>
                         </profilescan-match>
+                        <profilescan-match>
+                            <signature name="RHODANESE_3" ac="PS50206"/>
+                            <locations>
+                                <profilescan-location start="292" end="370" score="15.158"/>
+                            </locations>
+                        </profilescan-match>                        
                     </matches>
                 </protein>
                 ]]>

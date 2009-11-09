@@ -141,32 +141,32 @@ public abstract class Location implements Serializable {
 
         /** Map Java to XML type */
         @Override public LocationsType marshal(Set<? extends Location> locations) {
-            Set<HmmLocation> hmmLocations = new LinkedHashSet<HmmLocation>();
-            Set<FingerPrintsLocation> fingerPrintsLocations = new LinkedHashSet<FingerPrintsLocation>();
-            Set<BlastProDomLocation> blastProDomLocations = new LinkedHashSet<BlastProDomLocation>();
-            Set<PatternScanLocation> patternScanLocations = new LinkedHashSet<PatternScanLocation>();
-            Set<ProfileScanLocation> profileScanLocations = new LinkedHashSet<ProfileScanLocation>();
+            Set<HmmerMatch.HmmerLocation> hmmerLocations = new LinkedHashSet<HmmerMatch.HmmerLocation>();
+            Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations = new LinkedHashSet<FingerPrintsMatch.FingerPrintsLocation>();
+            Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations = new LinkedHashSet<BlastProDomMatch.BlastProDomLocation>();
+            Set<PatternScanMatch.PatternScanLocation> patternScanLocations = new LinkedHashSet<PatternScanMatch.PatternScanLocation>();
+            Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations = new LinkedHashSet<ProfileScanMatch.ProfileScanLocation>();
             for (Location l : locations) {
-                if (l instanceof HmmLocation) {
-                    hmmLocations.add((HmmLocation)l);
+                if (l instanceof HmmerMatch.HmmerLocation) {
+                    hmmerLocations.add((HmmerMatch.HmmerLocation)l);
                 }
-                else if (l instanceof FingerPrintsLocation) {
-                    fingerPrintsLocations.add((FingerPrintsLocation)l);
+                else if (l instanceof FingerPrintsMatch.FingerPrintsLocation) {
+                    fingerPrintsLocations.add((FingerPrintsMatch.FingerPrintsLocation)l);
                 }
-                else if (l instanceof BlastProDomLocation) {
-                    blastProDomLocations.add((BlastProDomLocation)l);
+                else if (l instanceof BlastProDomMatch.BlastProDomLocation) {
+                    blastProDomLocations.add((BlastProDomMatch.BlastProDomLocation)l);
                 }
-                else if (l instanceof PatternScanLocation) {
-                    patternScanLocations.add((PatternScanLocation)l);
+                else if (l instanceof PatternScanMatch.PatternScanLocation) {
+                    patternScanLocations.add((PatternScanMatch.PatternScanLocation)l);
                 }
-                else if (l instanceof ProfileScanLocation) {
-                    profileScanLocations.add((ProfileScanLocation)l);
+                else if (l instanceof ProfileScanMatch.ProfileScanLocation) {
+                    profileScanLocations.add((ProfileScanMatch.ProfileScanLocation)l);
                 }                
                 else    {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }                
             }
-            return new LocationsType(hmmLocations, fingerPrintsLocations, blastProDomLocations,
+            return new LocationsType(hmmerLocations, fingerPrintsLocations, blastProDomLocations,
                                      patternScanLocations, profileScanLocations);
         }
 
@@ -189,58 +189,58 @@ public abstract class Location implements Serializable {
     private final static class LocationsType {
 
         @XmlElement(name = "hmm-location")
-        private final Set<HmmLocation> hmmLocations;
+        private final Set<HmmerMatch.HmmerLocation> hmmerLocations;
 
         @XmlElement(name = "fingerprints-location")
-        private final Set<FingerPrintsLocation> fingerPrintsLocations;
+        private final Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations;
 
         @XmlElement(name = "blastprodom-location")
-        private final Set<BlastProDomLocation> blastProDomLocations;
+        private final Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations;
 
         @XmlElement(name = "patternscan-location")
-        private final Set<PatternScanLocation> patternScanLocations;
+        private final Set<PatternScanMatch.PatternScanLocation> patternScanLocations;
 
         @XmlElement(name = "profilescan-location")
-        private final Set<ProfileScanLocation> profileScanLocations;
+        private final Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations;
 
         private LocationsType() {
-            hmmLocations          = null;        
+            hmmerLocations = null;
             fingerPrintsLocations = null;
             blastProDomLocations  = null;
             patternScanLocations  = null;
             profileScanLocations  = null;
         }
 
-        public LocationsType(Set<HmmLocation> hmmLocations,
-                             Set<FingerPrintsLocation> fingerPrintsLocations,
-                             Set<BlastProDomLocation> blastProDomLocations,
-                             Set<PatternScanLocation> patternScanLocations,
-                             Set<ProfileScanLocation> profileScanLocations) {
-            this.hmmLocations           = hmmLocations;
+        public LocationsType(Set<HmmerMatch.HmmerLocation> hmmerLocations,
+                             Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations,
+                             Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations,
+                             Set<PatternScanMatch.PatternScanLocation> patternScanLocations,
+                             Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations) {
+            this.hmmerLocations = hmmerLocations;
             this.fingerPrintsLocations  = fingerPrintsLocations;
             this.blastProDomLocations   = blastProDomLocations;
             this.patternScanLocations   = patternScanLocations;
             this.profileScanLocations   = profileScanLocations;            
         }
 
-        public Set<HmmLocation> getHmmLocations() {
-            return (hmmLocations == null ? Collections.<HmmLocation>emptySet() : hmmLocations);
+        public Set<HmmerMatch.HmmerLocation> getHmmLocations() {
+            return (hmmerLocations == null ? Collections.<HmmerMatch.HmmerLocation>emptySet() : hmmerLocations);
         }
         
-        public Set<FingerPrintsLocation> getFingerPrintsLocations() {
-            return (fingerPrintsLocations == null ? Collections.<FingerPrintsLocation>emptySet() : fingerPrintsLocations);
+        public Set<FingerPrintsMatch.FingerPrintsLocation> getFingerPrintsLocations() {
+            return (fingerPrintsLocations == null ? Collections.<FingerPrintsMatch.FingerPrintsLocation>emptySet() : fingerPrintsLocations);
         }
 
-        public Set<BlastProDomLocation> getBlastProDomLocations() {
-            return (blastProDomLocations == null ? Collections.<BlastProDomLocation>emptySet() : blastProDomLocations);
+        public Set<BlastProDomMatch.BlastProDomLocation> getBlastProDomLocations() {
+            return (blastProDomLocations == null ? Collections.<BlastProDomMatch.BlastProDomLocation>emptySet() : blastProDomLocations);
         }
 
-        public Set<PatternScanLocation> getPatternScanLocations() {
-            return (patternScanLocations == null ? Collections.<PatternScanLocation>emptySet() : patternScanLocations);
+        public Set<PatternScanMatch.PatternScanLocation> getPatternScanLocations() {
+            return (patternScanLocations == null ? Collections.<PatternScanMatch.PatternScanLocation>emptySet() : patternScanLocations);
         }
         
-        public Set<ProfileScanLocation> getProfileScanLocations() {
-            return (profileScanLocations == null ? Collections.<ProfileScanLocation>emptySet() : profileScanLocations);
+        public Set<ProfileScanMatch.ProfileScanLocation> getProfileScanLocations() {
+            return (profileScanLocations == null ? Collections.<ProfileScanMatch.ProfileScanLocation>emptySet() : profileScanLocations);
         }
 
     }

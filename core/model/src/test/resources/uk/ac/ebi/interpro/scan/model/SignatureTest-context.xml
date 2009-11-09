@@ -30,9 +30,9 @@
                         <!-- Marked as @XmlTransient so set to null -->
                         <constructor-arg>
                             <null/>
-                            <!--<bean class="uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease">-->
+                            <!--<bean class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease>-->
                                 <!--<constructor-arg>-->
-                                    <!--<bean class="uk.ac.ebi.interpro.scan.model.SignatureProvider">-->
+                                    <!--<bean class="uk.ac.ebi.interpro.scan.model.SignatureLibrary>-->
                                         <!--<constructor-arg value="Pfam"/>-->
                                     <!--</bean>-->
                                 <!--</constructor-arg>-->

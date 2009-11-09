@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import junit.framework.TestCase;
 import org.junit.Test;
-import org.junit.Ignore;
 
 import java.util.Set;
 import java.util.HashSet;

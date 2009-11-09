@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Arrays;
 
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
@@ -93,7 +94,7 @@ public class ProteinTest extends AbstractTest<Protein> {
     @Test public void testCrossReferences() {
         final String id = "test";
         Protein protein = new Protein(GOOD);
-        XrefSequenceIdentifier xref = protein.addCrossReference(new XrefSequenceIdentifier(id));
+        Xref xref = protein.addCrossReference(new Xref(id));
         assertEquals(1, protein.getCrossReferences().size());
         assertNotNull(xref);
         assertEquals(id, xref.getIdentifier());
@@ -112,27 +113,17 @@ public class ProteinTest extends AbstractTest<Protein> {
         // Original and copy should be equal
         assertEquals(original, copy);
         // Original and copy should not be equal
-        XrefSequenceIdentifier xref = original.addCrossReference(new XrefSequenceIdentifier("A0A000_9ACTO"));
+        Xref xref = original.addCrossReference(new Xref("A0A000_9ACTO"));
         assertFalse("Original and copy should not be equal", original.equals(copy));
         //  Original and copy should be equal again
-        copy.addCrossReference((XrefSequenceIdentifier)SerializationUtils.clone(xref));
-        assertEquals(original, copy);
-        // Original and copy should not be equal
-        FilteredHmmMatch match =
-            original.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9));
-        assertFalse("Original and copy should not be equal", original.equals(copy));
-        //  Original and copy should be equal again
-        FilteredHmmMatch matchCopy = (FilteredHmmMatch)SerializationUtils.clone(match);
-        copy.addFilteredMatch(matchCopy);
+        copy.addCrossReference((Xref)SerializationUtils.clone(xref));
         assertEquals(original, copy);
         // Try with locations
-        original.removeFilteredMatch(match);
-        copy.removeFilteredMatch(matchCopy);
-        Set<HmmLocation> locations = new HashSet<HmmLocation>();
-        locations.add(new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE));
-        match = original.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+        Set<HmmerMatch.HmmerLocation> locations = new HashSet<HmmerMatch.HmmerLocation>();
+        locations.add(new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
+        Match match = original.addMatch(new HmmerMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
         assertFalse("Original and copy should not be equal", original.equals(copy));
-        copy.addFilteredMatch((FilteredHmmMatch)SerializationUtils.clone(match));
+        copy.addMatch((HmmerMatch)SerializationUtils.clone(match));
         assertEquals(original, copy);
     }
 
@@ -146,30 +137,24 @@ public class ProteinTest extends AbstractTest<Protein> {
     @Test public void testEqualsAddLocation() {
         Protein original = new Protein(GOOD);
         Protein copy     = (Protein)SerializationUtils.clone(original);
-        FilteredHmmMatch match     = new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9);
-        FilteredHmmMatch matchCopy = (FilteredHmmMatch)SerializationUtils.clone(match);
-        HmmLocation location     = new HmmLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmLocation.HmmBounds.N_TERMINAL_COMPLETE);
-        HmmLocation locationCopy = (HmmLocation)SerializationUtils.clone(location);
-        original.addFilteredMatch(match);
-        copy.addFilteredMatch(matchCopy);
-        // TODO: Following does not work (locations set not considered equal for some reason) yet works if pass locations to Match constructor -- why??
-        // Original and copy should not be equal
-        match.addLocation(location);
-        assertFalse("Original and copy should not be equal", original.equals(copy));
-        //  Original and copy should be equal again
-        matchCopy.addLocation(locationCopy);
+        HmmerMatch.HmmerLocation location       = new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE);
+        Set<HmmerMatch.HmmerLocation> locations = new HashSet<HmmerMatch.HmmerLocation>(Arrays.asList(location));
+        HmmerMatch match     = new HmmerMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations);
+        HmmerMatch matchCopy = (HmmerMatch)SerializationUtils.clone(match);
+        original.addMatch(match);
+        copy.addMatch(matchCopy);
         // Locations look OK, but get warning about Locations type -- generics problem?
         // TODO: We can't do the following -- need to change declaration of Location class
-        // TODO: to Location<T extends Match>? But how would we know in eg. HmmLocation that Match class is
-        // TODO: FilteredHmmMatch or RawHmmMatch? Would need to parameterise HmmLocation and other sub-classes of Location
+        // TODO: to Location<T extends Match>? But how would we know in eg. HmmerLocation that Match class is
+        // TODO: HmmerMatch or RawHmmMatch? Would need to parameterise HmmerLocation and other sub-classes of Location
         // Trouble is a protein can have different types of filtered match...
-        //Set<FilteredHmmMatch> matchesOriginal = original.getFilteredMatches();
-        //Set<FilteredHmmMatch> matchesCopy     = copy.getFilteredMatches();
-        Set<FilteredMatch> matchesOriginal = original.getFilteredMatches();
-        Set<FilteredMatch> matchesCopy     = copy.getFilteredMatches();
+        //Set<HmmerMatch> matchesOriginal = original.getFilteredMatches();
+        //Set<HmmerMatch> matchesCopy     = copy.getFilteredMatches();
+        Set<Match> matchesOriginal = original.getMatches();
+        Set<Match> matchesCopy     = copy.getMatches();
         // TODO: Whether we remove addLocation and removeLocation or not, we still need to solve generics warning here:
-        Set<HmmLocation> locationsOriginal = matchesOriginal.iterator().next().getLocations();
-        Set<HmmLocation> locationsCopy     = matchesCopy.iterator().next().getLocations();
+        Set<HmmerMatch.HmmerLocation> locationsOriginal = matchesOriginal.iterator().next().getLocations();
+        Set<HmmerMatch.HmmerLocation> locationsCopy     = matchesCopy.iterator().next().getLocations();
         assertEquals("Locations should be equal", locationsOriginal, locationsCopy);
         assertEquals("Location hashcodes should be equal", locationsOriginal.hashCode(), locationsCopy.hashCode());
         assertTrue("Original locations should contain locations copy element", locationsOriginal.contains(locationsCopy.iterator().next()));
@@ -194,10 +179,12 @@ public class ProteinTest extends AbstractTest<Protein> {
 
     @Test public void testRemoveMatch()    {
         Protein protein = new Protein(GOOD);
-        RawMatch match = protein.addRawMatch(new RawHmmMatch(new Model("PF00155"), 0.035, 4.3e-61));
-        assertEquals("Protein should have one match", 1, protein.getRawMatches().size());
-        protein.removeRawMatch(match);
-        assertEquals("Protein should have no matches", 0, protein.getRawMatches().size());
+        Set<HmmerMatch.HmmerLocation> locations = new HashSet<HmmerMatch.HmmerLocation>();
+        locations.add(new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
+        Match match = protein.addMatch(new HmmerMatch(new Signature("PF00155"), 0.035, 4.3e-61, locations));
+        assertEquals("Protein should have one match", 1, protein.getMatches().size());
+        protein.removeMatch(match);
+        assertEquals("Protein should have no matches", 0, protein.getMatches().size());
     }
 
     // Note: The following does not work perhaps because IllegalArgumentException is a runtime exception, and only

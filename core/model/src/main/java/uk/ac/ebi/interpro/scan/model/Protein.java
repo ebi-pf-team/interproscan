@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.io.Serializable;
 
 /**
  * Protein.
@@ -42,8 +43,8 @@ import java.util.regex.Pattern;
 
 @Entity
 @XmlRootElement(name="protein")
-@XmlType(name="ProteinType", propOrder={"sequence", "crossReferences", "filteredMatches"})
-public class Protein extends MatchableEntity {
+@XmlType(name="ProteinType", propOrder={"sequence", "crossReferences", "matches"})
+public class Protein implements Serializable {
 
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
     // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>
@@ -63,9 +64,12 @@ public class Protein extends MatchableEntity {
     @Column(nullable = false, unique = true, updatable = false, length = 32)
     private String md5;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Match> matches = new HashSet<Match>();    
+
     @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "protein")
     @XmlElement(name="xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
-    private Set<XrefSequenceIdentifier> crossReferences = new HashSet<XrefSequenceIdentifier>();
+    private Set<Xref> crossReferences = new HashSet<Xref>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -76,20 +80,20 @@ public class Protein extends MatchableEntity {
         setSequenceAndMd5(sequence);
     }
 
-    public Protein(String sequence, Set<FilteredMatch> filteredMatches) {
-        super(filteredMatches);
+    public Protein(String sequence, Set<Match> matches) {
+        setMatches(matches);
         setSequenceAndMd5(sequence);
     }        
 
-    public Protein(String sequence, Set<FilteredMatch> filteredMatches, Set<XrefSequenceIdentifier> crossReferences) {
-        super(filteredMatches);
+    public Protein(String sequence, Set<Match> matches, Set<Xref> crossReferences) {
+        setMatches(matches);
         setSequenceAndMd5(sequence);
         setCrossReferences(crossReferences);
     }
 
     private void setSequenceAndMd5(String sequence)    {
         setSequence(sequence);
-        setMd5(calculateMd5(sequence));
+        setMd5(Md5Helper.calculateMd5(sequence));
     }
 
     /**
@@ -108,6 +112,54 @@ public class Protein extends MatchableEntity {
 
     private void setMd5(String md5) {
         this.md5 = md5;
+    }
+  
+    /**
+     * Returns {@link Match}es
+     *
+     * @return {@link Match}es
+     */
+    @XmlElement(name="matches", required=true)
+    @XmlJavaTypeAdapter(Match.MatchAdapter.class)
+    public Set<Match> getMatches() {
+        return Collections.unmodifiableSet(matches);
+    }
+
+    private void setMatches(Set<Match> matches) {
+        for (Match m : matches)   {
+            addMatch(m);
+        }
+    }
+
+    // TODO: Make add and remove private?
+
+    /**
+     * Adds and returns filtered match to sequence
+     *
+     * @param  match Match to add
+     * @return Match to sequence
+     * @throws IllegalArgumentException if match is null
+     */
+    public <T extends Match> T addMatch(T match) throws IllegalArgumentException {
+        if (match == null) {
+            throw new IllegalArgumentException("'Match' must not be null");
+        }
+        if (match.getProtein() != null) {
+            match.getProtein().removeMatch(match);
+        }
+        match.setProtein(this);
+        matches.add(match);
+        return match;
+    }
+
+    /**
+     * Removes filtered match from sequence
+     *
+     * @param match Match to remove
+     */
+    public <T extends Match> void removeMatch(T match) {
+        matches.remove(match);
+        match.setProtein(null);
     }
 
     @XmlElement
@@ -132,27 +184,6 @@ public class Protein extends MatchableEntity {
     }
 
     /**
-     * Returns {@link FilteredMatch}es
-     *
-     * @return {@link FilteredMatch}es
-     */
-    @XmlElement(name="matches", required=true)
-    @XmlJavaTypeAdapter(FilteredMatch.FilteredMatchAdapter.class)
-    @Override public Set<FilteredMatch> getFilteredMatches() {
-        return super.getFilteredMatches();
-    }
-
-    /**
-     * Returns key to use in, for example, HashMap.
-     *
-     * @return Key to use in, for example, HashMap.
-     */
-    @XmlTransient
-    public String getKey() {
-        return getMd5();
-    }
-
-    /**
      * Returns cross-references.
      *
      * @return cross-references
@@ -169,16 +200,16 @@ public class Protein extends MatchableEntity {
         at uk.ac.ebi.interpro.scan.model.AbstractTest.unmarshal(AbstractTest.java:150)
      */
     //@XmlElement(name="xref")
-    // TODO: Example: Expected: XrefSequenceIdentifier[protein=uk.ac.ebi.interpro.scan.model.Protein@1f49969]
-    // TODO: Example: Actual:   XrefSequenceIdentifier[protein=<null>]
+    // TODO: Example: Expected: Xref[protein=uk.ac.ebi.interpro.scan.model.Protein@1f49969]
+    // TODO: Example: Actual:   Xref[protein=<null>]
     // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
     // TODO: JAXB or do we have to use an XmlAdapter?
-    public Set<XrefSequenceIdentifier> getCrossReferences() {
+    public Set<Xref> getCrossReferences() {
         return Collections.unmodifiableSet(crossReferences);
     }
 
-    private void setCrossReferences(Set<XrefSequenceIdentifier> crossReferences) {
-        for (XrefSequenceIdentifier xref : crossReferences)    {
+    private void setCrossReferences(Set<Xref> crossReferences) {
+        for (Xref xref : crossReferences)    {
             addCrossReference(xref);
         }
     }
@@ -190,7 +221,7 @@ public class Protein extends MatchableEntity {
      * @return Cross-reference
      * @throws IllegalArgumentException if xref is null
      */
-    public XrefSequenceIdentifier addCrossReference(XrefSequenceIdentifier xref) throws IllegalArgumentException {
+    public Xref addCrossReference(Xref xref) throws IllegalArgumentException {
         if (xref == null) {
             throw new IllegalArgumentException("'xref' must not be null");
         }
@@ -204,22 +235,8 @@ public class Protein extends MatchableEntity {
      *
      * @param xref Cross-reference to remove
      */
-    public void removeCrossReference(XrefSequenceIdentifier xref) {
+    public void removeCrossReference(Xref xref) {
         crossReferences.remove(xref);
-    }
-
-    private static String calculateMd5(String sequence)   {
-        try {
-            // TODO - Check this - the JavaDoc suggests that this method call creates a new instance of
-            // TODO - the digest each time it is called.  Is this thread safe?  If so, make singleton or static.
-            MessageDigest m = MessageDigest.getInstance("MD5");
-            m.update(sequence.getBytes(), 0, sequence.length());
-            final int RADIX = 16; // TODO: Why is radix 16?
-            String md5 = new BigInteger(1, m.digest()).toString(RADIX);
-            return (md5.toLowerCase(Locale.ENGLISH));
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("MD5 implementation not available", e);
-        }
     }
 
     @Override public boolean equals(Object o) {
@@ -229,20 +246,63 @@ public class Protein extends MatchableEntity {
             return false;
         final Protein p = (Protein) o;
         return new EqualsBuilder()
-                .appendSuper(super.equals(o))
                 .append(sequence, p.sequence)
                 .append(md5, p.md5)
+                .append(matches, p.matches)
                 .append(crossReferences, p.crossReferences)
                 .isEquals();
     }
 
     @Override public int hashCode() {
         return new HashCodeBuilder(19, 47)
-                .appendSuper(super.hashCode())
                 .append(sequence)
                 .append(md5)
+                .append(matches)
                 .append(crossReferences)
                 .toHashCode();
+    }
+
+    /**
+     *
+     */
+
+    /**
+     * MD5 helper class.
+     *
+     * @author  Phil Jones
+     * @author  Antony Quinn
+     */
+    private static class Md5Helper {
+
+        private static final Pattern MD5_PATTERN = Pattern.compile("^[A-Fa-f0-9]{32}$");
+
+
+        // TODO: Do we need isMd5()?
+        /**
+         * Returns true if string is an MD5 digest in hexadecimal format.
+         *
+         * @param  candidate Strint to test
+         * @return true if string is an MD5 digest in hexadecimal format.
+         */
+        static boolean isMd5(String candidate) {
+            return candidate != null && MD5_PATTERN.matcher(candidate).matches();
+        }
+        
+        static String calculateMd5(String sequence)   {
+            try {
+                // TODO - Check this - the JavaDoc suggests that this method call creates a new instance of
+                // TODO - the digest each time it is called.  Is this thread safe?  If so, make singleton or static.
+                MessageDigest m = MessageDigest.getInstance("MD5");
+                m.update(sequence.getBytes(), 0, sequence.length());
+                final int RADIX = 16; // TODO: Why is radix 16?
+                String md5 = new BigInteger(1, m.digest()).toString(RADIX);
+                return (md5.toLowerCase(Locale.ENGLISH));
+            } 
+            catch (NoSuchAlgorithmException e) {
+                throw new IllegalStateException("MD5 implementation not available", e);
+            }
+        }
+
     }
 
 }

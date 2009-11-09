@@ -20,21 +20,28 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAttribute;
+import java.io.Serializable;
 
 /**
- * Sequence cross-reference
+ * Protein cross-reference.
  *
  * @author  Phil Jones
  * @author  Antony Quinn
  * @version $Id$
- * @since   1.0
- * @see     Match
  */
 @Entity
-public class XrefSequenceIdentifier extends SequenceIdentifier {
+public class Xref implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected Long id;
+
+    // TODO consider column name again...  (not urgent as does not affect functionality)
+    @Column (name = "identifier", nullable = false, unique = false, updatable = false)
+    private String identifier;    
 
     /**
      * Reference to the protein that this Xref is an annotation of.
@@ -45,18 +52,49 @@ public class XrefSequenceIdentifier extends SequenceIdentifier {
     /**
      * Zero arguments constructor just for Hibernate.
      */
-    protected XrefSequenceIdentifier (){
-        super(null);
-    }
+    protected Xref() { }
 
     /**
      * Constructor for an Xref that takes the xref String as an argument.
      *
      * @param identifier the Xref String.
      */
-    public XrefSequenceIdentifier(String identifier){
-        super(identifier);
-    }    
+    public Xref(String identifier){
+        this.identifier = identifier;
+    }
+
+    /**
+     * Returns the unique identifier for this Entity.
+     *
+     * @return the unique identifier for this Entity.
+     */
+    @XmlTransient
+    public Long getId() {
+        return id;
+    }
+
+    private void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * Returns sequence identifier
+     *
+     * @return Sequence identifier
+     */
+    @XmlAttribute(name="id")
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * Sets sequence identifier.
+     *
+     * @param identifier Sequence identifier
+     */
+    private void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
 
     /**
      * Returns the Protein that this accession / ID cross reference annotates.
@@ -77,22 +115,20 @@ public class XrefSequenceIdentifier extends SequenceIdentifier {
         this.protein = protein;
     }
 
-    // TODO: Do we need the the following?
-
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof XrefSequenceIdentifier))
+        if (!(o instanceof Xref))
             return false;
-        final XrefSequenceIdentifier x = (XrefSequenceIdentifier) o;
+        final Xref x = (Xref) o;
         return new EqualsBuilder()
-                .appendSuper(super.equals(o))
+                .append(identifier, x.identifier)
                 .isEquals();
     }
 
     @Override public int hashCode() {
         return new HashCodeBuilder(15, 51)
-                .appendSuper(super.hashCode())
+                .append(identifier)
                 .toHashCode();
     }
 
