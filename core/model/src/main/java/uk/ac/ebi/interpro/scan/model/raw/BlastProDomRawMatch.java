@@ -1,19 +1,23 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
-import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
  * TODO: Add class description
  *
- * @author Antony Quinn
+ * @author  Antony Quinn
  * @version $Id$
- * @since 1.0
+ * @since   1.0
  */
 @Entity
 //public final class BlastProDomRawMatch extends RawMatch implements Serializable {
 public class BlastProDomRawMatch extends RawMatch implements Serializable {
+
+    // TODO: Algorithm classes should be abstract so can sub-class based on member DB name
+    // TODO: eg. ProDomRawMatch, PfamRawMatch, TigrFamRawMatch ...etc
+    // TODO: No need for member DBs where algorithm is unique to them, eg. PRINTS, Panther
+
     //@Column(name="SCORE")
     private double score;   // location.score
     
