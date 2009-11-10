@@ -12,10 +12,6 @@ import uk.ac.ebi.interpro.scan.model.raw.Pfam;
  * To change this template use File | Settings | File Templates.
  */
 public interface PfamDAO extends GenericDAO<Pfam, Long> {
-
-        public Pfam getPfamMatchesByModel (String methodAc);
-
-        //public Pfam
-
+     public Pfam getPfamMatchesByModel (String methodAc);
 
 }
