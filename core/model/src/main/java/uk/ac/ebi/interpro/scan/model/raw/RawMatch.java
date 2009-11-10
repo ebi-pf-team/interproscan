@@ -76,6 +76,9 @@ public abstract class RawMatch {
         setStart(start);
         setEnd(end);
     }
+    public Long getId() {
+        return id;
+    }
    // @Id
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
