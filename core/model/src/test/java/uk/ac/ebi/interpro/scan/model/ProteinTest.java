@@ -202,13 +202,13 @@ public class ProteinTest extends AbstractTest<Protein> {
         super.testXmlRoundTrip();
     }
 
-    // TODO: Re-enable when JPA works OK with FilteredMatch interface
+    // TODO: Re-enable when JPA works OK (does not read Match.Location -- everything else OK)
     @Test
     @Ignore ("Fails due to problems with the structure and JPA-annotation of Match and Location.")
     public void testJpa() {
         super.testJpaXmlObjects(new ObjectRetriever<Protein>(){
             public Protein getObjectByPrimaryKey(GenericDAO<Protein, Long> dao, Long primaryKey) {
-                return dao.readDeep(primaryKey, "rawMatches", "filteredMatches");
+                return dao.readDeep(primaryKey, "matches", "crossReferences");
             }
 
             public Long getPrimaryKey(Protein protein) {
