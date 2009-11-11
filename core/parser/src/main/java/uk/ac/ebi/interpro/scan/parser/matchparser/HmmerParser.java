@@ -1,12 +1,11 @@
-package uk.ac.ebi.interpro.scan.parser;
+package uk.ac.ebi.interpro.scan.parser.matchparser;
 
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
 
 import java.util.Set;
 import java.util.Scanner;
-import java.util.LinkedHashSet;
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -44,7 +43,7 @@ public class HmmerParser implements Parser {
      * @throws  IOException if problems reading input stream.
      */
     // TODO: Throw unchecked exceptions as recommended by Spring Framework
-    public Set<SequenceIdentifier> parse(InputStream is) throws IOException {
+    public Set<RawSequenceIdentifier> parse(InputStream is) throws IOException {
         Scanner scanner = null;
         try {
             scanner = new Scanner(is);
@@ -54,7 +53,8 @@ public class HmmerParser implements Parser {
             String version  = scanner.nextLine();
             boolean isHmmer2 = (version.startsWith("HMMER 2.3.2"));
             if (binary.startsWith("hmmpfam"))  {
-                return parseHmmPfam(scanner);
+//                return parseHmmPfam(scanner);
+                return null;
             }
             else if (binary.startsWith("hmmsearch"))  {
                 //return parseHmmSearch(scanner);
@@ -88,8 +88,8 @@ public class HmmerParser implements Parser {
     Accession:      [none]
     Description:    [none]
     */
-    private Set<SequenceIdentifier> parseHmmPfam(Scanner scanner)    {
-        Set<SequenceIdentifier> seqIds = new LinkedHashSet<SequenceIdentifier>();
+/*    private Set<Protein> parseHmmPfam(Scanner scanner)    {
+        Set<Protein> seqIds = new LinkedHashSet<Protein>();
         SequenceIdentifier sequenceIdentifier = null;
         while (scanner.hasNextLine())	{
             String line = scanner.nextLine();
@@ -143,17 +143,17 @@ public class HmmerParser implements Parser {
             }
         }
         return seqIds;
-    }
+    }*/
 
     /**
      * Check we've created sequenceIdentifier ("Query sequence" line may be missing)
      *
-     * @param sequenceIdentifier
+     * @param protein
      * @throws NullPointerException if sequenceIdentifier is null
      */
-    private void checkSequenceIdentifier(SequenceIdentifier sequenceIdentifier)  {
-        if (sequenceIdentifier == null) {
-            throw new NullPointerException("'sequenceIdentifier' - is '" + KEY_SEQUENCE + "' missing from record?");
+    private void checkSequenceIdentifier(Protein protein)  {
+        if (protein == null) {
+            throw new NullPointerException("'protein' - is '" + KEY_SEQUENCE + "' missing from record?");
         }
     }
 

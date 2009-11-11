@@ -1,13 +1,9 @@
-package uk.ac.ebi.interpro.scan.parser;
+package uk.ac.ebi.interpro.scan.parser.matchparser;
 
 import org.junit.Test;
+import org.junit.Ignore;
 import junit.framework.TestCase;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Set;
-
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.SequenceIdentifier;
 
 /**
  * JUnit tests for ProfileParser
@@ -15,12 +11,14 @@ import uk.ac.ebi.interpro.scan.model.SequenceIdentifier;
  * @author  Manjula Thimma
  * @version $Id$
  * @since   1.0
- * @see     ProfileParser
+ * @see     uk.ac.ebi.interpro.scan.parser.matchparser.ProfileParser
  */
 public class ProfileParserTest extends TestCase {
 
     // TODO: Add prosite/* files to resources directory and re-enable tests
-    @Test public void testParseProfile() throws IOException {
+    @Test
+    @Ignore
+    public void testParseProfile() throws IOException {
         /*
         InputStream is = getClass().getClassLoader().getResourceAsStream("prosite/prosite_output.txt");
         Parser parser = new ProfileParser();
@@ -28,7 +26,9 @@ public class ProfileParserTest extends TestCase {
         */
     }
 
-    @Test public void testParseProfileHamap() throws IOException {
+    @Test
+    @Ignore
+    public void testParseProfileHamap() throws IOException {
         /*
         InputStream is = getClass().getClassLoader().getResourceAsStream("prosite/hamap_output.txt");
         Parser parser = new ProfileParser();
