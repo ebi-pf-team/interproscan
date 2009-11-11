@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.transactiontracking;
 
-import uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import static uk.ac.ebi.interpro.scan.persistence.transactiontracking.TransactionPriorityCriteria.LOWEST_PROTEIN_ID;
 
 /**
@@ -17,7 +17,7 @@ public class SliceSelectionCriteriaImpl implements SliceSelectionCriteria {
 
     private Long modelCount;
 
-    private SignatureDatabaseRelease signatureDatabaseRelease;
+    private SignatureLibraryRelease SignatureLibraryRelease;
 
     private TransactionPriorityCriteria transactionPriorityCriteria = LOWEST_PROTEIN_ID;
 
@@ -40,12 +40,12 @@ public class SliceSelectionCriteriaImpl implements SliceSelectionCriteria {
         this.modelCount = modelCount;
     }
 
-    public SignatureDatabaseRelease getSignatureDatabaseRelease() {
-        return signatureDatabaseRelease;
+    public SignatureLibraryRelease getSignatureLibraryRelease() {
+        return SignatureLibraryRelease;
     }
 
-    public void setSignatureDatabaseRelease(SignatureDatabaseRelease signatureDatabaseRelease) {
-        this.signatureDatabaseRelease = signatureDatabaseRelease;
+    public void setSignatureLibraryRelease(SignatureLibraryRelease SignatureLibraryRelease) {
+        this.SignatureLibraryRelease = SignatureLibraryRelease;
     }
 
     public TransactionPriorityCriteria getFirstChoiceCriteria() {

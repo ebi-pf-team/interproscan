@@ -154,6 +154,7 @@ public class FullRoundTripTest {
 
     /**
      * Generic method to perform a full round-trip test on any xml type.
+     *
      * @param testXMLs which holds a Collection of xmls to be tested.
      * @param dao being the specific DataAccessObject (extending GenericDAO) for
      * object persistence / retrieval.

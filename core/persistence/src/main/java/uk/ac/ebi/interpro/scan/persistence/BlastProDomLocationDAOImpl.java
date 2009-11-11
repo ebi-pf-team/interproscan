@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.BlastProDomLocation;
+import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
 import uk.ac.ebi.interpro.scan.model.transactiontracking.TransactionSlice;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,21 +16,21 @@ import java.util.List;
  * Time: 14:25:10
  * To change this template use File | Settings | File Templates.
  */
-public class BlastProDomLocationDAOImpl extends GenericDAOImpl<BlastProDomLocation, Long> implements BlastProDomLocationDAO{
+public class BlastProDomLocationDAOImpl extends GenericDAOImpl<BlastProDomMatch.BlastProDomLocation, Long> implements BlastProDomLocationDAO{
 
     /**
      * Calls the GenericDAOImpl constructor passing in Protein.class as
      * argument, so that this DAO is set up to handle the correct class of model.
      */
     public BlastProDomLocationDAOImpl(){
-        super(BlastProDomLocation.class);
+        super(BlastProDomMatch.BlastProDomLocation.class);
     }
 
-    public List<BlastProDomLocation> getBlastProDomHitLocationByScore(Double score) {
+    public List<BlastProDomMatch.BlastProDomLocation> getBlastProDomHitLocationByScore(Double score) {
             Query query = entityManager.createQuery("select bpl from BlastProDomLocation bpl where bpl.score >= " + score.doubleValue());
         //query.setParameter("bottom", slice.getBottom());
         //query.setParameter("top", slice.getTop());
-        return (List<BlastProDomLocation>) query.getResultList();
+        return (List<BlastProDomMatch.BlastProDomLocation>) query.getResultList();
     }
     
 }

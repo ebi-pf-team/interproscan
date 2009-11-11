@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch;
+import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.transactiontracking.RawTransactionSlice;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;

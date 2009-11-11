@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.transactiontracking;
 
-import uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -20,9 +20,9 @@ public interface SliceSelectionCriteria {
 
     void setModelCount(Long modelCount);
 
-    SignatureDatabaseRelease getSignatureDatabaseRelease();
+    SignatureLibraryRelease getSignatureLibraryRelease();
 
-    void setSignatureDatabaseRelease(SignatureDatabaseRelease signatureDatabaseRelease);
+    void setSignatureLibraryRelease(SignatureLibraryRelease SignatureLibraryRelease);
 
     TransactionPriorityCriteria getFirstChoiceCriteria();
 
