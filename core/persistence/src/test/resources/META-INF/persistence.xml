@@ -12,35 +12,23 @@
         <!-- Interfaces -->
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
-        <class>uk.ac.ebi.interpro.scan.model.RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.FilteredMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.SequenceIdentifier</class>
-
-        <!-- Abstract classes -->
-        <class>uk.ac.ebi.interpro.scan.model.AbstractLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.AbstractMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.AbstractMatchableEntity</class>
-        <class>uk.ac.ebi.interpro.scan.model.AbstractSequenceIdentifier</class>
 
         <!-- Concrete Locations. -->
-        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.HmmLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.BlastProDomLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
 
         <!-- Concrete Matches -->
-        <class>uk.ac.ebi.interpro.scan.model.RawFingerPrintsMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.RawHmmMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.FilteredFingerPrintsMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.FilteredHmmMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.HmmerMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
 
         <class>uk.ac.ebi.interpro.scan.model.Protein</class>
         <class>uk.ac.ebi.interpro.scan.model.Model</class>
-        <class>uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier</class>
-        <class>uk.ac.ebi.interpro.scan.model.MD5SequenceIdentifier</class>
-        <!--<class>uk.ac.ebi.interpro.scan.model.ProteinSignatureCollection</class>-->
+        <class>uk.ac.ebi.interpro.scan.model.Xref</class>
         <class>uk.ac.ebi.interpro.scan.model.Signature</class>
-        <class>uk.ac.ebi.interpro.scan.model.SignatureProvider</class>
-        <class>uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignatureLibrary</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
         <properties>
             <property name="hibernate.show_sql" value="true" />

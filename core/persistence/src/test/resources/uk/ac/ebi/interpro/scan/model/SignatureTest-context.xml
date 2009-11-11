@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="oxm-context.xml"/>
 
@@ -20,14 +20,23 @@
                    G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins
                    [pubmed:15774036]"/>
         <constructor-arg>
-            <bean class="uk.ac.ebi.interpro.scan.model.SignatureDatabaseRelease">
+            <bean class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
                 <constructor-arg>
-                    <bean class="uk.ac.ebi.interpro.scan.model.SignatureProvider">
+                    <bean class="uk.ac.ebi.interpro.scan.model.SignatureLibrary">
                         <constructor-arg value="Pfam"/>
                     </bean>
                 </constructor-arg>
                 <constructor-arg value="23.0"/>
             </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Model">
+                <bean class="uk.ac.ebi.interpro.scan.model.Model">
+                    <constructor-arg value="PF00001"/>
+                    <constructor-arg value="7tm_2"/>
+                    <constructor-arg value="7 transmembrane receptor (rhodopsin family)"/>
+                </bean>
+            </util:set>
         </constructor-arg>
     </bean>
 

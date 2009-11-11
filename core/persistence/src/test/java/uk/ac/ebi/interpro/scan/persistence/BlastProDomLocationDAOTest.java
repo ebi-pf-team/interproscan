@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.model.BlastProDomLocation;
+import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -71,20 +71,20 @@ public class BlastProDomLocationDAOTest {
     ("Test works in general, but persistence fails due to constraint violation")
     public void storeAndRetrieveBlastProDomLocation(){
         //emptyBPLocationTable();
-        BlastProDomLocation b = new BlastProDomLocation (23, 89,0.01);
+        BlastProDomMatch.BlastProDomLocation b = new BlastProDomMatch.BlastProDomLocation(23, 89,0.01);
         assertNotNull("The BPLDAOImpl object should be not-null.", b);
         dao.insert(b);
         Long id = b.getId();
         assertEquals("The count of BPLocns in the database is not correct.", LONG_ONE, dao.count());
-        b =   new BlastProDomLocation (23, 89,0.02);
+        b =   new BlastProDomMatch.BlastProDomLocation(23, 89,0.02);
         assertNotNull("The BPLDAOImpl object should be not-null.", b);
         dao.insert(b);
         id = b.getId();
         assertEquals("The count of BPLocns in the database is not correct.", LONG_ONE, dao.count());
-        BlastProDomLocation bp = dao.read(id);
+        BlastProDomMatch.BlastProDomLocation bp = dao.read(id);
         assertEquals("The BPLocation details of the retrieved object is not the same as the original object.", b.getStart(), bp.getStart());
         //retrieve locations with score equal to or more than 0.01
-        List<BlastProDomLocation>  retrievedBPLList = dao.getBlastProDomHitLocationByScore(0.01);
+        List<BlastProDomMatch.BlastProDomLocation>  retrievedBPLList = dao.getBlastProDomHitLocationByScore(0.01);
         assertEquals( 2, retrievedBPLList.size());
 
         dao.delete(bp);

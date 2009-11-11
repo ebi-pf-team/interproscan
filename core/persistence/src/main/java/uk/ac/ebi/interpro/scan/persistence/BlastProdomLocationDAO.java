@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.model.BlastProDomLocation;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
 import uk.ac.ebi.interpro.scan.model.transactiontracking.TransactionSlice;
 
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
@@ -15,7 +15,7 @@ import java.util.List;
  * Time: 13:43:42
  * To change this template use File | Settings | File Templates.
  */
-public interface BlastProdomLocationDAO extends GenericDAO<BlastProDomLocation, Long> {
+public interface BlastProdomLocationDAO extends GenericDAO<BlastProDomMatch.BlastProDomLocation, Long> {
 
     /**
      * Retrieves a Blast ProDom Location by score.
@@ -23,7 +23,7 @@ public interface BlastProdomLocationDAO extends GenericDAO<BlastProDomLocation, 
      * @return The BlastProDomLocation, A list of BPL objects with a particular score.
      * 
      */
-     public List<BlastProDomLocation> getBlastProDomHitLocationByScore(Double score);
+     public List<BlastProDomMatch.BlastProDomLocation> getBlastProDomHitLocationByScore(Double score);
 
 
 
