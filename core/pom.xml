@@ -27,6 +27,7 @@
         <module>model</module>
 		<module>persistence</module>
         <module>parser</module>
+        <module>management</module>
         <module>batch-proactive</module>
         <module>batch</module>
     </modules>
