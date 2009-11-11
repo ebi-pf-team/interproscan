@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.parser;
+package uk.ac.ebi.interpro.scan.parser.matchparser;
 
 import org.apache.log4j.Logger;
 
@@ -11,10 +11,9 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.SequenceIdentifier;
+import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
 
- /**
+/**
  * Parser for the output from Prodom
  *
  * @author  Phil Jones
@@ -51,8 +50,8 @@ public class ProdomParser implements Parser{
             "^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+//\\s+pd_(.+?);.+?;\\s+(\\d+)\\s+(\\d+)\\s+//\\s+S=(((\\b[0-9]+)?\\.)?\\b[0-9]+([eE][-+]?[0-9]+)?\\b)\\s+E=(((\\b[0-9]+)?\\.)?\\b[0-9]+([eE][-+]?[0-9]+)?\\b)\\s+//\\s+\\((\\d+)\\)\\s+.+?Length = \\d+$"
     );
 
-    public Set<SequenceIdentifier> parse(InputStream is) throws IOException {
-        Set<SequenceIdentifier> seqIds = new HashSet<SequenceIdentifier>();
+    public Set<RawSequenceIdentifier> parse(InputStream is) throws IOException {
+        Set<RawSequenceIdentifier> seqIds = new HashSet<RawSequenceIdentifier>();
         BufferedReader reader = null;
         try{
             reader = new BufferedReader(new InputStreamReader(is));

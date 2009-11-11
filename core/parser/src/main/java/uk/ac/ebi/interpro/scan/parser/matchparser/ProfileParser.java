@@ -1,7 +1,6 @@
-package uk.ac.ebi.interpro.scan.parser;
+package uk.ac.ebi.interpro.scan.parser.matchparser;
 
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.SequenceIdentifier;
+import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -46,8 +45,8 @@ FalsePos 0
             "^(\\S+)\\tps_scan\\|v[.0-9]+\\t(\\S+)\\t(\\d+)\\t(\\d+)\\t([.0-9]+)\\t\\.\\t\\.\\t(.+)"
     );
 
-    public Set<SequenceIdentifier> parse(InputStream is) throws IOException {
-        Set<SequenceIdentifier> seqIds = new HashSet<SequenceIdentifier>();
+    public Set<RawSequenceIdentifier> parse(InputStream is) throws IOException {
+        Set<RawSequenceIdentifier> seqIds = new HashSet<RawSequenceIdentifier>();
         BufferedReader reader = null;
         try{
             reader = new BufferedReader(new InputStreamReader(is));
