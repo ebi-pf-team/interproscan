@@ -33,7 +33,7 @@ import java.util.Arrays;
  * @version $Id$
  * @since   1.0
  */
-public class HmmMatchTest extends TestCase {
+public class HmmerMatchTest extends TestCase {
 
     /**
      * Tests the equals() method works as expected
