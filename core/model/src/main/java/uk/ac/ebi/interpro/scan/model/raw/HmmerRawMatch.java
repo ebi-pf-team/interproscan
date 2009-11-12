@@ -34,14 +34,30 @@ public abstract class HmmerRawMatch extends RawMatch  {
 
     //@Column(name="SEQ_SCORE")
     private double locationScore;
+
+    protected HmmerRawMatch() { }
     
-    public HmmerRawMatch() { }
+    protected HmmerRawMatch(String sequenceIdentifier, String model,
+                            String signatureLibraryName, String signatureLibraryRelease,
+                            long locationStart, long locationEnd,
+                            double evalue, double score,
+                            long hmmStart, long hmmEnd, String hmmBounds,
+                            double locationEvalue, double locationScore, String generator) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
+        this.evalue = evalue;
+        this.score = score;
+        this.hmmStart = hmmStart;
+        this.hmmEnd = hmmEnd;
+        this.hmmBounds = hmmBounds;
+        this.locationEvalue = locationEvalue;
+        this.locationScore = locationScore;
+    }
 
     public double getEvalue() {
         return evalue;
     }
 
-    public void setEvalue(double evalue) {
+    private void setEvalue(double evalue) {
         this.evalue = evalue;
     }
 
@@ -49,7 +65,7 @@ public abstract class HmmerRawMatch extends RawMatch  {
         return score;
     }
 
-    public void setScore(double score) {
+    private void setScore(double score) {
         this.score = score;
     }
 
@@ -57,7 +73,7 @@ public abstract class HmmerRawMatch extends RawMatch  {
         return hmmStart;
     }
 
-    public void setHmmStart(long hmmStart) {
+    private void setHmmStart(long hmmStart) {
         this.hmmStart = hmmStart;
     }
 
@@ -65,7 +81,7 @@ public abstract class HmmerRawMatch extends RawMatch  {
         return hmmEnd;
     }
 
-    public void setHmmEnd(long hmmEnd) {
+    private void setHmmEnd(long hmmEnd) {
         this.hmmEnd = hmmEnd;
     }
 
@@ -73,7 +89,7 @@ public abstract class HmmerRawMatch extends RawMatch  {
         return hmmBounds;
     }
 
-    public void setHmmBounds(String hmmBounds) {
+    private void setHmmBounds(String hmmBounds) {
         this.hmmBounds = hmmBounds;
     }
 
@@ -81,7 +97,7 @@ public abstract class HmmerRawMatch extends RawMatch  {
         return locationEvalue;
     }
 
-    public void setLocationEvalue(double locationEvalue) {
+    private void setLocationEvalue(double locationEvalue) {
         this.locationEvalue = locationEvalue;
     }
 
@@ -89,7 +105,7 @@ public abstract class HmmerRawMatch extends RawMatch  {
         return locationScore;
     }
 
-    public void setLocationScore(double locationScore) {
+    private void setLocationScore(double locationScore) {
         this.locationScore = locationScore;
     }
 

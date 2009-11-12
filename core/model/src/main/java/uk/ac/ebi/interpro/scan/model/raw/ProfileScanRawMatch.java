@@ -13,13 +13,21 @@ public abstract class ProfileScanRawMatch extends RawMatch {
 
     private double score; // location.score
 
-    public ProfileScanRawMatch() { }
+    protected ProfileScanRawMatch() { }
+
+    protected ProfileScanRawMatch(String sequenceIdentifier, String model,
+                                  String signatureLibraryName, String signatureLibraryRelease,
+                                  long locationStart, long locationEnd,
+                                  double score, String generator) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
+        this.score = score;
+    }
 
     public double getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    private void setScore(double score) {
         this.score = score;
     }
     

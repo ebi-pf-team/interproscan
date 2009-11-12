@@ -14,11 +14,27 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
     // Sequence alignment in CIGAR format
     private String cigarAlignment;
 
+    protected Gene3dHmmer3RawMatch() { }
+
+    public Gene3dHmmer3RawMatch(String sequenceIdentifier, String model,
+                                String signatureLibraryName, String signatureLibraryRelease,
+                                long locationStart, long locationEnd,
+                                double evalue, double score,
+                                long hmmStart, long hmmEnd, String hmmBounds,
+                                double locationEvalue, double locationScore,
+                                int envelopeStart, int envelopeEnd,
+                                double expectedAccuracy, double fullSequenceBias,
+                                double domainCeValue, double domainIeValue, double domainBias,
+                                String cigarAlignment, String generator) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationEvalue, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias, generator);
+        this.cigarAlignment = cigarAlignment;
+    }
+
     public String getCigarAlignment() {
         return cigarAlignment;
     }
 
-    public void setCigarAlignment(String cigarAlignment) {
+    private void setCigarAlignment(String cigarAlignment) {
         this.cigarAlignment = cigarAlignment;
     }    
 

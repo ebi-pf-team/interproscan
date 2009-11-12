@@ -6,22 +6,25 @@ import javax.persistence.Entity;
  * TODO: Add class description
  *
  * @author  Antony Quinn
- * @author  Manjula Thimma
  * @version $Id$
  */
 @Entity
 public class PfamHmmer3RawMatch extends Hmmer3RawMatch {
-    public PfamHmmer3RawMatch() { }
-    public PfamHmmer3RawMatch(String seqIdentifier, String model,String signatureLibraryName, String signatureLibraryRelease, String generator,long hmmStart, long hmmEnd) {
-           super.setSequenceIdentifier(seqIdentifier);
-        super.setModel(model);
-        super.setSignatureLibraryName(signatureLibraryName);
-        super.setSignatureLibraryRelease(signatureLibraryRelease);
-        super.setGenerator(generator);
-        super.setHmmEnd(hmmStart);
-        super.setHmmEnd(hmmEnd);
 
+    // TODO: Consider Builder to make more readable
 
+    protected PfamHmmer3RawMatch() { }    
+
+    public PfamHmmer3RawMatch(String sequenceIdentifier, String model,
+                              String signatureLibraryName, String signatureLibraryRelease,
+                              long locationStart, long locationEnd,
+                              double evalue, double score,
+                              long hmmStart, long hmmEnd, String hmmBounds,
+                              double locationEvalue, double locationScore,
+                              int envelopeStart, int envelopeEnd,
+                              double expectedAccuracy, double fullSequenceBias,
+                              double domainCeValue, double domainIeValue, double domainBias,
+                              String generator) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationEvalue, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias, generator);
     }
-
 }

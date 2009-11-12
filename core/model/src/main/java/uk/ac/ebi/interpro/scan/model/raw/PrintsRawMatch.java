@@ -18,13 +18,29 @@ public class PrintsRawMatch extends RawMatch {
     private double score;
     private int motifNumber;
 
-    public PrintsRawMatch() { }
+    protected PrintsRawMatch() { }    
+
+    public PrintsRawMatch(String sequenceIdentifier, String model,
+                          String signatureLibraryName, String signatureLibraryRelease,
+                          long locationStart, long locationEnd,
+                          double evalue, String graphscan,
+                          int motifCount, int motifNumber, 
+                          double pvalue, double score,
+                          String generator) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
+        this.evalue = evalue;
+        this.graphscan = graphscan;
+        this.motifCount = motifCount;
+        this.pvalue = pvalue;
+        this.score = score;
+        this.motifNumber = motifNumber;
+    }
 
     public double getEvalue() {
         return evalue;
     }
 
-    public void setEvalue(double evalue) {
+    private void setEvalue(double evalue) {
         this.evalue = evalue;
     }
 
@@ -32,7 +48,7 @@ public class PrintsRawMatch extends RawMatch {
         return graphscan;
     }
 
-    public void setGraphscan(String graphscan) {
+    private void setGraphscan(String graphscan) {
         this.graphscan = graphscan;
     }
 
@@ -40,7 +56,7 @@ public class PrintsRawMatch extends RawMatch {
         return motifCount;
     }
 
-    public void setMotifCount(int motifCount) {
+    private void setMotifCount(int motifCount) {
         this.motifCount = motifCount;
     }
 
@@ -48,7 +64,7 @@ public class PrintsRawMatch extends RawMatch {
         return pvalue;
     }
 
-    public void setPvalue(double pvalue) {
+    private void setPvalue(double pvalue) {
         this.pvalue = pvalue;
     }
 
@@ -56,7 +72,7 @@ public class PrintsRawMatch extends RawMatch {
         return score;
     }
 
-    public void setScore(double score) {
+    private void setScore(double score) {
         this.score = score;
     }
 
@@ -64,7 +80,7 @@ public class PrintsRawMatch extends RawMatch {
         return motifNumber;
     }
 
-    public void setMotifNumber(int motifNumber) {
+    private void setMotifNumber(int motifNumber) {
         this.motifNumber = motifNumber;
     }
 }
