@@ -60,7 +60,7 @@ public class Hmmer3SearchParser implements Parser {
     private Hmmer3ParserSupport hmmer3ParserSupport;
 
     @Required
-    public void setMatchConverter(Hmmer3ParserSupport hmmer3ParserSupport) {
+    public void setParserSupport(Hmmer3ParserSupport hmmer3ParserSupport) {
         this.hmmer3ParserSupport = hmmer3ParserSupport;
     }
 
@@ -193,6 +193,8 @@ public class Hmmer3SearchParser implements Parser {
 
                         case PARSING_DOMAIN_ALIGNMENTS:
                             // TODO Code to parse alignments should go here...
+                            // TODO Note - an additional field (for the alignment) needs to be added
+                            // TODO to the parsing model.
 
 
 
