@@ -20,11 +20,11 @@ public class PfamHmmer3RawMatch extends Hmmer3RawMatch {
                               long locationStart, long locationEnd,
                               double evalue, double score,
                               long hmmStart, long hmmEnd, String hmmBounds,
-                              double locationEvalue, double locationScore,
+                              double locationScore,
                               int envelopeStart, int envelopeEnd,
                               double expectedAccuracy, double fullSequenceBias,
                               double domainCeValue, double domainIeValue, double domainBias,
                               String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationEvalue, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias, generator);
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias, generator);
     }
 }
