@@ -19,10 +19,13 @@
         <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
 
         <!-- Concrete Matches -->
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfamRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.HmmRawMatch</class>
+
         <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.HmmerMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
-
         <class>uk.ac.ebi.interpro.scan.model.Protein</class>
         <class>uk.ac.ebi.interpro.scan.model.Model</class>
         <class>uk.ac.ebi.interpro.scan.model.Xref</class>
