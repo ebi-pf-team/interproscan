@@ -29,9 +29,6 @@ public abstract class HmmerRawMatch extends RawMatch  {
     //@Column(name="HMM_BOUNDS")
     private String hmmBounds;
 
-    //@Column(name="LOCATION_EVALUE")
-    private double locationEvalue;
-
     //@Column(name="SEQ_SCORE")
     private double locationScore;
 
@@ -42,14 +39,13 @@ public abstract class HmmerRawMatch extends RawMatch  {
                             long locationStart, long locationEnd,
                             double evalue, double score,
                             long hmmStart, long hmmEnd, String hmmBounds,
-                            double locationEvalue, double locationScore, String generator) {
+                            double locationScore, String generator) {
         super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
         this.evalue = evalue;
         this.score = score;
         this.hmmStart = hmmStart;
         this.hmmEnd = hmmEnd;
         this.hmmBounds = hmmBounds;
-        this.locationEvalue = locationEvalue;
         this.locationScore = locationScore;
     }
 
@@ -91,14 +87,6 @@ public abstract class HmmerRawMatch extends RawMatch  {
 
     private void setHmmBounds(String hmmBounds) {
         this.hmmBounds = hmmBounds;
-    }
-
-    public double getLocationEvalue() {
-        return locationEvalue;
-    }
-
-    private void setLocationEvalue(double locationEvalue) {
-        this.locationEvalue = locationEvalue;
     }
 
     public double getLocationScore() {

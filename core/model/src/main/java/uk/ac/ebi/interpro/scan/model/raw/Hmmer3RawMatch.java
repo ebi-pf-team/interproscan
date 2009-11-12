@@ -29,12 +29,12 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                              long locationStart, long locationEnd,
                              double evalue, double score,
                              long hmmStart, long hmmEnd, String hmmBounds,
-                             double locationEvalue, double locationScore,
+                             double locationScore,
                              int envelopeStart, int envelopeEnd,
                              double expectedAccuracy, double fullSequenceBias,
                              double domainCeValue, double domainIeValue, double domainBias,
                              String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationEvalue, locationScore, generator);
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, generator);
         this.envelopeStart = envelopeStart;
         this.envelopeEnd = envelopeEnd;
         this.expectedAccuracy = expectedAccuracy;

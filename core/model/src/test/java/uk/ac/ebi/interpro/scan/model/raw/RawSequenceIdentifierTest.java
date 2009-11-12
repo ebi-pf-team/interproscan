@@ -24,8 +24,8 @@ public final class RawSequenceIdentifierTest extends TestCase {
         sequence.addMatch(new ProDomRawMatch(MD5, "PD001061", "ProDom", "2006.01", 9, 150, 763, "BlastProDom"));
         sequence.addMatch(new ProDomRawMatch(MD5, "PD001061", "ProDom", "2006.01", 151, 245, 469, "BlastProDom"));
         sequence.addMatch(
-                new PfamHmmer3RawMatch(MD5, "PF02310", "Pfam", "24.0", 3, 107, 3.7E-9, 0.035, 1, 104, "[]",
-                        3.7E-9, 3.0, 0, 0, 0, 0, 0, 0, 0, "HMMER 2.3.2")
+                new PfamHmmer3RawMatch(MD5, "PF02310", "Pfam", "24.0", 3, 107, 3.7E-9, 0.035, 1, 104, "[]", 3.0,
+                        0, 0, 0, 0, 0, 0, 0, "HMMER 2.3.2")
         );
         // Test
         assertEquals(MD5, sequence.getSequenceIdentifier());
