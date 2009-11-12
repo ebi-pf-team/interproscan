@@ -6,6 +6,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.Collections;
 import java.util.Collection;
+import java.util.HashSet;
 import java.io.Serializable;
 
 /**
@@ -23,21 +24,23 @@ import java.io.Serializable;
 public final class RawSequenceIdentifier implements Serializable {
 
     private final String sequenceIdentifier;
-    private final Collection<? extends RawMatch> matches;
+    private final Collection<RawMatch> matches = new HashSet<RawMatch>();
 
     private RawSequenceIdentifier() {
         this.sequenceIdentifier = null;
-        this.matches = null;
     }
 
-    public RawSequenceIdentifier(String sequenceIdentifier, Collection<? extends RawMatch> matches) {
+    public RawSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-        this.matches = matches;
     }
 
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
+
+    public void addMatch(RawMatch match)  {
+        matches.add(match);
+    }    
 
     public Collection<? extends RawMatch> getMatches() {
         return Collections.unmodifiableCollection(matches);

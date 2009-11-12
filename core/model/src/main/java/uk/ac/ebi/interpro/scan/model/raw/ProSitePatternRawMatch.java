@@ -12,15 +12,23 @@ import javax.persistence.Entity;
 public class ProSitePatternRawMatch extends RawMatch {
 
     // TODO: Should we use enum for level?
-    private String level; 
+    private String level;
 
-    public ProSitePatternRawMatch() { }
+    protected ProSitePatternRawMatch() { }
+
+    public ProSitePatternRawMatch(String sequenceIdentifier, String model,
+                                  String signatureLibraryName, String signatureLibraryRelease,
+                                  long locationStart, long locationEnd,
+                                  String level, String generator) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
+        this.level = level;
+    }
 
     public String getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    private void setLevel(String level) {
         this.level = level;
     }
     

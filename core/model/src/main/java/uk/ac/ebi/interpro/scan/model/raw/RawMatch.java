@@ -63,7 +63,19 @@ public abstract class RawMatch implements Serializable {
     private long locationEnd;
 
     protected RawMatch() { }
-      
+
+    protected RawMatch(String sequenceIdentifier, String model,
+                       String signatureLibraryName, String signatureLibraryRelease,
+                       long locationStart, long locationEnd, String generator) {
+        this.sequenceIdentifier     = sequenceIdentifier;
+        this.model                  = model;
+        this.signatureLibraryName   = signatureLibraryName;
+        this.signatureLibraryRelease = signatureLibraryRelease;
+        this.locationStart          = locationStart;
+        this.locationEnd            = locationEnd;
+        this.generator              = generator;
+    }
+
     public Long getId() {
         return id;
     }
@@ -72,7 +84,7 @@ public abstract class RawMatch implements Serializable {
         return sequenceIdentifier;
     }
 
-    public void setSequenceIdentifier(String sequenceIdentifier) {
+    private void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
@@ -80,14 +92,14 @@ public abstract class RawMatch implements Serializable {
         return model;
     }
 
-    public void setModel(String model) {
+    private void setModel(String model) {
         this.model = model;
     }
      public String getSignatureLibraryName() {
         return signatureLibraryName;
     }
 
-    public void setSignatureLibraryName(String signatureLibraryName) {
+    private void setSignatureLibraryName(String signatureLibraryName) {
         this.signatureLibraryName = signatureLibraryName;
     }
 
@@ -95,7 +107,7 @@ public abstract class RawMatch implements Serializable {
         return signatureLibraryRelease;
     }
 
-    public void setSignatureLibraryRelease(String signatureLibraryRelease) {
+    private void setSignatureLibraryRelease(String signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
@@ -103,7 +115,7 @@ public abstract class RawMatch implements Serializable {
         return generator;
     }
 
-    public void setGenerator(String generator) {
+    private void setGenerator(String generator) {
         this.generator = generator;
     }
 
@@ -111,7 +123,7 @@ public abstract class RawMatch implements Serializable {
         return locationStart;
     }
 
-    public void setLocationStart(long locationStart) {
+    private void setLocationStart(long locationStart) {
         this.locationStart = locationStart;
     }
 
@@ -119,7 +131,7 @@ public abstract class RawMatch implements Serializable {
         return locationEnd;
     }
 
-    public void setLocationEnd(long locationEnd) {
+    private void setLocationEnd(long locationEnd) {
         this.locationEnd = locationEnd;
     }
 

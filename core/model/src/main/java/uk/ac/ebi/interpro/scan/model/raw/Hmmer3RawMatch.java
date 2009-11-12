@@ -22,11 +22,33 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
     private double domainIeValue;
     private double domainBias;
 
+    protected Hmmer3RawMatch() { }
+
+    protected Hmmer3RawMatch(String sequenceIdentifier, String model,
+                             String signatureLibraryName, String signatureLibraryRelease,
+                             long locationStart, long locationEnd,
+                             double evalue, double score,
+                             long hmmStart, long hmmEnd, String hmmBounds,
+                             double locationEvalue, double locationScore,
+                             int envelopeStart, int envelopeEnd,
+                             double expectedAccuracy, double fullSequenceBias,
+                             double domainCeValue, double domainIeValue, double domainBias,
+                             String generator) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationEvalue, locationScore, generator);
+        this.envelopeStart = envelopeStart;
+        this.envelopeEnd = envelopeEnd;
+        this.expectedAccuracy = expectedAccuracy;
+        this.fullSequenceBias = fullSequenceBias;
+        this.domainCeValue = domainCeValue;
+        this.domainIeValue = domainIeValue;
+        this.domainBias = domainBias;
+    }
+
     public int getEnvelopeStart() {
         return envelopeStart;
     }
 
-    public void setEnvelopeStart(int envelopeStart) {
+    private void setEnvelopeStart(int envelopeStart) {
         this.envelopeStart = envelopeStart;
     }
 
@@ -34,7 +56,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         return envelopeEnd;
     }
 
-    public void setEnvelopeEnd(int envelopeEnd) {
+    private void setEnvelopeEnd(int envelopeEnd) {
         this.envelopeEnd = envelopeEnd;
     }
 
@@ -42,7 +64,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         return expectedAccuracy;
     }
 
-    public void setExpectedAccuracy(double expectedAccuracy) {
+    private void setExpectedAccuracy(double expectedAccuracy) {
         this.expectedAccuracy = expectedAccuracy;
     }
 
@@ -50,7 +72,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         return fullSequenceBias;
     }
 
-    public void setFullSequenceBias(double fullSequenceBias) {
+    private void setFullSequenceBias(double fullSequenceBias) {
         this.fullSequenceBias = fullSequenceBias;
     }
 
@@ -58,7 +80,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         return domainCeValue;
     }
 
-    public void setDomainCeValue(double domainCeValue) {
+    private void setDomainCeValue(double domainCeValue) {
         this.domainCeValue = domainCeValue;
     }
 
@@ -66,7 +88,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         return domainIeValue;
     }
 
-    public void setDomainIeValue(double domainIeValue) {
+    private void setDomainIeValue(double domainIeValue) {
         this.domainIeValue = domainIeValue;
     }
 
@@ -74,7 +96,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         return domainBias;
     }
 
-    public void setDomainBias(double domainBias) {
+    private void setDomainBias(double domainBias) {
         this.domainBias = domainBias;
     }
 
