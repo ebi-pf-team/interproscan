@@ -1,13 +1,15 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import javax.persistence.Entity;
+
 /**
  * TODO: Add class description
  *
- * @author Antony Quinn
+ * @author  Antony Quinn
  * @version $Id$
- * @since 1.0
  */
-public final class FingerPrintsRawMatch extends RawMatch {
+@Entity
+public class PrintsRawMatch extends RawMatch {
 
     private double evalue;
     private String graphscan;
@@ -16,7 +18,7 @@ public final class FingerPrintsRawMatch extends RawMatch {
     private double score;
     private int motifNumber;
 
-    public FingerPrintsRawMatch() { }
+    public PrintsRawMatch() { }
 
     public double getEvalue() {
         return evalue;

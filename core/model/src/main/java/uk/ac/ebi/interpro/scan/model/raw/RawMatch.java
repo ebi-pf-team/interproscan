@@ -1,6 +1,11 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * TODO: Add class description
@@ -10,13 +15,12 @@ import javax.persistence.*;
  *
  * @author  Antony Quinn
  * @version $Id$
- * @since   1.0
  */
 //@IdClass(uk.ac.ebi.interpro.scan.model.raw.RawMatchKey.class)
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //@DiscriminatorColumn(name="METHOD_AC",discriminatorType=DiscriminatorType.STRING)
-public abstract class RawMatch {
+public abstract class RawMatch implements Serializable {
 
     //Primary key representation for RawMatch
     /*@ManyToOne
@@ -25,16 +29,16 @@ public abstract class RawMatch {
             referencedColumnName="UPI"),
         @JoinColumn(name="model",
             referencedColumnName="METHOD_AC"),
-         @JoinColumn(name="dbversion",
+         @JoinColumn(name="signatureLibraryRelease",
             referencedColumnName="RELNO_MAJOR"),
-            @JoinColumn(name="start",
+            @JoinColumn(name="locationStart",
             referencedColumnName="SEQ_START"),
             @JoinColumn(name="generator",
             referencedColumnName="ALGORITHM")
     }) */
+    
     // TODO: Don't need any foreign keys -- just index fields we will search on
-    //@Column(name="UPI",nullable = false)
-     @Id
+    @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)    //TODO - Removed as causing problem with 'one table per class'.
     private Long id;
     private String sequenceIdentifier;  // eg. MD5
@@ -43,43 +47,27 @@ public abstract class RawMatch {
     private String model;   // eg. "PF00001"
 
    //@Column(name="MEMBER_DBNAME")
-   private String dbname; //for ex: PFAM, or GENE3D
+   private String signatureLibraryName; //for ex: PFAM, or GENE3D
 
-    // TODO: Get dbversion from Spring Batch JobParameter?
+    // TODO: Get signatureLibraryRelease from Spring Batch JobParameter?
     //@Column (name="DBVERSION",nullable = false, updatable = false, length = 10)
-
-    private String dbversion;// eg. "23.0"
+    private String signatureLibraryRelease;// eg. "23.0"
 
     //@Column (name="ALGORITHM")
-
     private String generator;  // eg. "HMMER 2.3.1"
 
     //@Column (name="SEQ_START")
+    private long locationStart;
 
-    private long start;
-
-   // @Column (name="SEQ_END")// location.start
-    private long end;                   // location.end
-    
+   // @Column (name="SEQ_END")
+    private long locationEnd;
 
     protected RawMatch() { }
-    
-    public RawMatch(String model) {
-        setModel(model);
-    }
-    public RawMatch(String seqIdentifier, String model,String dbname,String dbversion, String generator, long start, long end) {
-        setSequenceIdentifier(seqIdentifier);
-        setModel(model);
-        setDbname(dbname);
-        setDbversion(dbversion);
-        setGenerator(generator);
-        setStart(start);
-        setEnd(end);
-    }
+      
     public Long getId() {
         return id;
     }
-   // @Id
+
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -87,7 +75,7 @@ public abstract class RawMatch {
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
-    //@Id
+
     public String getModel() {
         return model;
     }
@@ -95,45 +83,77 @@ public abstract class RawMatch {
     public void setModel(String model) {
         this.model = model;
     }
-     public String getDbname() {
-        return dbname;
+     public String getSignatureLibraryName() {
+        return signatureLibraryName;
     }
 
-    public void setDbname(String dbname) {
-        this.dbname = dbname;
-    }
-     //@Id
-    public String getDbversion() {
-        return dbversion;
+    public void setSignatureLibraryName(String signatureLibraryName) {
+        this.signatureLibraryName = signatureLibraryName;
     }
 
-    public void setDbversion(String dbversion) {
-        this.dbversion = dbversion;
+    public String getSignatureLibraryRelease() {
+        return signatureLibraryRelease;
     }
-    
-     //@Id
+
+    public void setSignatureLibraryRelease(String signatureLibraryRelease) {
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
     public String getGenerator() {
         return generator;
     }
 
-
     public void setGenerator(String generator) {
         this.generator = generator;
     }
-    //@Id
-    public long getStart() {
-        return start;
+
+    public long getLocationStart() {
+        return locationStart;
     }
 
-    public void setStart(long start) {
-        this.start = start;
+    public void setLocationStart(long locationStart) {
+        this.locationStart = locationStart;
     }
 
-    public long getEnd() {
-        return end;
+    public long getLocationEnd() {
+        return locationEnd;
     }
 
-    public void setEnd(long end) {
-        this.end = end;
+    public void setLocationEnd(long locationEnd) {
+        this.locationEnd = locationEnd;
     }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof RawMatch))
+            return false;
+        final RawMatch m = (RawMatch) o;
+        return new EqualsBuilder()
+                .append(sequenceIdentifier, m.sequenceIdentifier)
+                .append(signatureLibraryName, m.signatureLibraryName)
+                .append(signatureLibraryRelease, m.signatureLibraryRelease)
+                .append(generator, m.generator)
+                .append(model, m.model)
+                .append(locationStart, m.locationStart)
+                .append(locationEnd, m.locationEnd)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(21, 51)
+                .append(sequenceIdentifier)
+                .append(signatureLibraryName)
+                .append(signatureLibraryRelease)
+                .append(generator)
+                .append(model)
+                .append(locationStart)
+                .append(locationEnd)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
 }

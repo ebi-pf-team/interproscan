@@ -1,13 +1,15 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import javax.persistence.Entity;
+
 /**
  * TODO: Add class description
  *
- * @author Antony Quinn
+ * @author  Antony Quinn
  * @version $Id$
- * @since 1.0
  */
-public final class ProfileScanRawMatch extends RawMatch {
+@Entity
+public abstract class ProfileScanRawMatch extends RawMatch {
 
     private double score; // location.score
 
