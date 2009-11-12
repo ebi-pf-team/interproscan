@@ -11,29 +11,33 @@ import java.io.Serializable;
  */
 public final class RawMatchKey implements Serializable {
 
-        private String seqIdentifier;
-        private String method_ac;
-        private String generator;
-        private String dbVersion;
-        private long seq_start;
+        private String sequenceIdentifier;
+        private String model;
 
-    public String getSeqIdentifier() {
-        return seqIdentifier;
+
+
+    private String generator;
+        private String dbversion;
+        private long start;
+
+
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
     }
 
-    public void setSeqIdentifier(String seqIdentifier) {
-        this.seqIdentifier = seqIdentifier;
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
     }
 
-    public String getMethod_ac() {
-        return method_ac;
+    public String getModel() {
+        return model;
     }
 
-    public void setMethod_ac(String method_ac) {
-        this.method_ac = method_ac;
+    public void setModel(String model) {
+        this.model = model;
     }
 
-    public String getGenerator() {
+     public String getGenerator() {
         return generator;
     }
 
@@ -41,21 +45,24 @@ public final class RawMatchKey implements Serializable {
         this.generator = generator;
     }
 
-    public String getDbVersion() {
-        return dbVersion;
+    public String getDbversion() {
+        return dbversion;
     }
 
-    public void setDbVersion(String dbVersion) {
-        this.dbVersion = dbVersion;
+    public void setDbversion(String dbversion) {
+        this.dbversion = dbversion;
     }
 
-    public long getSeq_start() {
-        return seq_start;
+    public long getStart() {
+        return start;
     }
 
-    public void setSeq_start(long seq_start) {
-        this.seq_start = seq_start;
+    public void setStart(long start) {
+        this.start = start;
     }
+
+
+
 
     //default equals and override method based on field types
     @Override
@@ -65,11 +72,11 @@ public final class RawMatchKey implements Serializable {
 
         RawMatchKey that = (RawMatchKey) o;
 
-        if (seq_start != that.seq_start) return false;
-        if (dbVersion != null ? !dbVersion.equals(that.dbVersion) : that.dbVersion != null) return false;
+        if (start != that.start) return false;
+        if (dbversion != null ? !dbversion.equals(that.dbversion) : that.dbversion != null) return false;
         if (generator != null ? !generator.equals(that.generator) : that.generator != null) return false;
-        if (method_ac != null ? !method_ac.equals(that.method_ac) : that.method_ac != null) return false;
-        if (seqIdentifier != null ? !seqIdentifier.equals(that.seqIdentifier) : that.seqIdentifier != null)
+        if (model != null ? !model.equals(that.model) : that.model != null) return false;
+        if (sequenceIdentifier != null ? !sequenceIdentifier.equals(that.sequenceIdentifier) : that.sequenceIdentifier != null)
             return false;
 
         return true;
@@ -77,11 +84,11 @@ public final class RawMatchKey implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = seqIdentifier != null ? seqIdentifier.hashCode() : 0;
-        result = 31 * result + (method_ac != null ? method_ac.hashCode() : 0);
+        int result = sequenceIdentifier != null ? sequenceIdentifier.hashCode() : 0;
+        result = 31 * result + (model != null ? model.hashCode() : 0);
         result = 31 * result + (generator != null ? generator.hashCode() : 0);
-        result = 31 * result + (dbVersion != null ? dbVersion.hashCode() : 0);
-        result = 31 * result + (int) (seq_start ^ (seq_start >>> 32));
+        result = 31 * result + (dbversion != null ? dbversion.hashCode() : 0);
+        result = 31 * result + (int) (start ^ (start >>> 32));
         return result;
     }
 
@@ -106,7 +113,7 @@ public final class RawMatchKey implements Serializable {
         }
              */
         public String toString() {
-            return "" + seqIdentifier + "-" + method_ac + "-" + dbVersion + "-" + generator + "-" + seq_start;
+            return "" + sequenceIdentifier + "-" + model + "-" + dbversion + "-" + generator + "-" + start;
         }
 
     
