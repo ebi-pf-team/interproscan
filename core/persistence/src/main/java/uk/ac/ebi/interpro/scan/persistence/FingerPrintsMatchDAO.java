@@ -9,13 +9,12 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: thimma
- * Date: 20-Jul-2009
- * Time: 15:13:18
- * To change this template use File | Settings | File Templates.
+ * TODO: Add class description
+ *
+ * @author  Manjula Thimma
+ * @version $Id$
  */
-public interface FilteredFingerPrintsMatchDAO  extends GenericDAO<Match, Long> {
+public interface FingerPrintsMatchDAO extends GenericDAO<Match, Long> {
 
 
            /**

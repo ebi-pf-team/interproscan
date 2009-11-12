@@ -9,11 +9,10 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: thimma
- * Date: 21-Jul-2009
- * Time: 13:43:42
- * To change this template use File | Settings | File Templates.
+ * TODO: Add class description
+ *
+ * @author  Manjula Thimma
+ * @version $Id$
  */
 public interface BlastProDomLocationDAO extends GenericDAO<BlastProDomMatch.BlastProDomLocation, Long> {
 
