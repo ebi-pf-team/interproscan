@@ -11,5 +11,17 @@ import javax.persistence.Entity;
  */
 @Entity
 public class PfamHmmer3RawMatch extends Hmmer3RawMatch {
+    public PfamHmmer3RawMatch() { }
+    public PfamHmmer3RawMatch(String seqIdentifier, String model,String signatureLibraryName, String signatureLibraryRelease, String generator,long hmmStart, long hmmEnd) {
+           super.setSequenceIdentifier(seqIdentifier);
+        super.setModel(model);
+        super.setSignatureLibraryName(signatureLibraryName);
+        super.setSignatureLibraryRelease(signatureLibraryRelease);
+        super.setGenerator(generator);
+        super.setHmmEnd(hmmStart);
+        super.setHmmEnd(hmmEnd);
+
+
+    }
 
 }
