@@ -11,10 +11,10 @@
                            http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
 
     <bean id="parser" class="uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.Hmmer3SearchParser">
-        <property name="matchConverter" ref="matchConverter"/>
+        <property name="parserSupport" ref="parserSupport"/>
     </bean>
 
-    <bean id="matchConverter" class="uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+    <bean id="parserSupport" class="uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
         <property name="gaValuesRetriever" ref="gaValueRetriever"/>
         <property name="signatureLibraryRelease" value="Pfam-A"/>
         <property name="signatureLibraryName" value="24.0"/>
