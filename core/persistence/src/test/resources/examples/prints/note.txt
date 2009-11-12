@@ -1,2 +1,0 @@
-Fugru seqs are fragments and therefore dont show up in the scanning db.
-They do hit the fingerprint, however, as the FPScan results show.

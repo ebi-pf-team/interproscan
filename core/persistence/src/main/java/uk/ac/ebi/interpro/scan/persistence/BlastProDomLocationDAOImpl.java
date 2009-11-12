@@ -10,11 +10,10 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: thimma
- * Date: 21-Jul-2009
- * Time: 14:25:10
- * To change this template use File | Settings | File Templates.
+ * TODO: Add class description
+ *
+ * @author  Manjula Thimma
+ * @version $Id$
  */
 public class BlastProDomLocationDAOImpl extends GenericDAOImpl<BlastProDomMatch.BlastProDomLocation, Long> implements BlastProDomLocationDAO{
 

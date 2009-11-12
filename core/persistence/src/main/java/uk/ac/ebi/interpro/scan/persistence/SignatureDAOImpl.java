@@ -7,11 +7,10 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import javax.persistence.Query;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mumdad
- * Date: 16-Jul-2009
- * Time: 20:30:37
- * To change this template use File | Settings | File Templates.
+ * TODO: Add class description
+ *
+ * @author  Phil Jones, EMBL-EBI
+ * @version $Id$
  */
 public class SignatureDAOImpl extends GenericDAOImpl<Signature, Long> implements SignatureDAO {
 

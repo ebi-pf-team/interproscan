@@ -41,7 +41,7 @@
         
     </bean>
     <bean id="pfamDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.PfamDAOImpl">
+          class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl">
     </bean>
 
 </beans>
