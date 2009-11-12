@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,6 +32,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/springconfig/spring-PfamDAOTest-config.xml"})
+@Ignore
 public class PfamDAOTest {
       /**
      * Logger for Junit logging. Log messages will be associated with the ProteinPersistenceTest class.

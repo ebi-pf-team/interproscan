@@ -35,7 +35,7 @@ public abstract class RawMatch {
     // TODO: Don't need any foreign keys -- just index fields we will search on
     //@Column(name="UPI",nullable = false)
      @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @GeneratedValue(strategy = GenerationType.AUTO)    //TODO - Removed as causing problem with 'one table per class'.
     private Long id;
     private String sequenceIdentifier;  // eg. MD5
     
