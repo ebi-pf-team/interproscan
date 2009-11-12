@@ -18,7 +18,7 @@ import static junit.framework.Assert.assertNotNull;
 /*import static junit.framework.Assert.fail;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier;  */
-import uk.ac.ebi.interpro.scan.model.raw.PfamRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 
 import java.util.List;
 //import java.util.Set;
@@ -33,7 +33,7 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/springconfig/spring-PfamDAOTest-config.xml"})
 @Ignore
-public class PfamDAOTest {
+public class PfamHmmer3RawDAOTest {
       /**
      * Logger for Junit logging. Log messages will be associated with the ProteinPersistenceTest class.
        *
@@ -48,7 +48,7 @@ public class PfamDAOTest {
             final long start =15,  hmmStart=18,hmmEnd=320;
             final long end=345;
             final double evalue=0.00005,score=512.3, locationEvalue=-5.60205984115601,locationScore=779.4;
-    //private static Logger LOGGER = Logger.getLogger(PfamDAOTest.class);
+    //private static Logger LOGGER = Logger.getLogger(PfamHmmer3RawDAOTest.class);
 
     //private static final String[] ACCESSIONS = {"Q12345","P99999", "IPI01234567", "ENSP120923423423234"};
 
@@ -60,9 +60,9 @@ public class PfamDAOTest {
     public static final String GOOD       = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
 
     @Resource(name= "pfamDAO")
-    private PfamDAO dao;
+    private PfamHmmer3RawDAO dao;
 
-    public void setDao(PfamDAO dao) {
+    public void setDao(PfamHmmer3RawDAO dao) {
         this.dao = dao;
     }
 
@@ -85,15 +85,15 @@ public class PfamDAOTest {
     @Test
     public void storeAndRetrieveProtein(){
         emptyPfamTable();
-        PfamRawMatch p = new PfamRawMatch(UPI,MODEL,dbname,dbVersion,generator, start, end);
-        assertNotNull("The PfamDAOImpl object should be not-null.", dao);
+        PfamHmmer3RawMatch p = new PfamHmmer3RawMatch(UPI,MODEL,dbname,dbVersion,generator, start, end);
+        assertNotNull("The PfamHmmer3RawDAOImpl object should be not-null.", dao);
         dao.insert(p);
         Long id = p.getId();
         assertEquals("The count of pfams in the database is not correct.", LONG_ONE, dao.count());
-        PfamRawMatch retrievedPfam = dao.read(id);
+        PfamHmmer3RawMatch retrievedPfam = dao.read(id);
         assertEquals("The pfam methodAc of the retrieved object is not the same as the original object.", p.getModel(), retrievedPfam.getModel());
         dao.delete(retrievedPfam);
-        List<PfamRawMatch> retrievedPfamList = dao.retrieveAll();
+        List<PfamHmmer3RawMatch> retrievedPfamList = dao.retrieveAll();
         assertEquals("There should be no pfams in the database, following removal of the single pfam that was added.", 0, retrievedPfamList.size());
         assertEquals("The count of pfams in the database is not correct.", LONG_ZERO, dao.count());
         emptyPfamTable();
@@ -107,7 +107,7 @@ public class PfamDAOTest {
     @Test (expected = PersistenceException.class)
     public void testPersistenceExceptionOnSecondInsert(){
         emptyPfamTable();
-        PfamRawMatch p = new PfamRawMatch("UPIblachabla","PF04041","PFAM","23.0","HMMER3.0",101,145);
+        PfamHmmer3RawMatch p = new PfamHmmer3RawMatch("UPIblachabla","PF04041","PFAM","23.0","HMMER3.0",101,145);
         dao.insert(p);
         dao.insert(p);
     }
@@ -121,7 +121,7 @@ public class PfamDAOTest {
         String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLOPPY", "GHGHGHGHG", "GRUFF"};
         Long maxPrimaryKey = 0l;
         for (String sequence : proteinSequences){
-            PfamRawMatch p = new PfamRawMatch(sequence,"PF04041","PFAM","23.0","HMMER3.0",101,145);
+            PfamHmmer3RawMatch p = new PfamHmmer3RawMatch(sequence,"PF04041","PFAM","23.0","HMMER3.0",101,145);
             dao.insert(p);
             if (p.getId() > maxPrimaryKey){
                 maxPrimaryKey = p.getId();
