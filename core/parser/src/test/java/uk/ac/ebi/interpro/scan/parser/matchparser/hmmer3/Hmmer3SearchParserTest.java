@@ -28,6 +28,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
+@Ignore ("Currently need to have an entire hmm library in the classpath, so this needs to be switched on manually.  Note that the location / name of the hmm linbrary and the hmm results file should be set in the test context.xml file src/test/resources/uk/ac/ebi/interpro/scan/parser/matchparser/hmmer3/Hmmer3SearchParserTest-context.xml")
 public class Hmmer3SearchParserTest {
 
     private static Logger LOGGER = Logger.getLogger(Hmmer3SearchParserTest.class);
