@@ -15,13 +15,13 @@ import javax.persistence.Entity;
 @Entity
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 //@Table(name="PFAM")
-public class Pfam extends HmmRawMatch {
-    public Pfam() { }
+public class PfamRawMatch extends HmmRawMatch {
+    public PfamRawMatch() { }
 
-    public Pfam(String seqIdentifier, String model,String dbname, String dbversion, String generator,long start,long end) {
+    public PfamRawMatch(String seqIdentifier, String model,String dbname, String dbversion, String generator,long start,long end) {
          super(seqIdentifier,model,dbname,dbversion,generator,start,end);
     }
-    public Pfam(String model) {
+    public PfamRawMatch(String model) {
         super(model);
     }
     
