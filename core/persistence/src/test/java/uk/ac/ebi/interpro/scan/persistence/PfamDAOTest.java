@@ -105,7 +105,7 @@ public class PfamDAOTest {
     @Test (expected = PersistenceException.class)
     public void testPersistenceExceptionOnSecondInsert(){
         emptyPfamTable();
-        PfamRawMatch p = new PfamRawMatch("UPIblachabla","PF04041","PFAM","23.0","HMMER£.0",101,145);
+        PfamRawMatch p = new PfamRawMatch("UPIblachabla","PF04041","PFAM","23.0","HMMER3.0",101,145);
         dao.insert(p);
         dao.insert(p);
     }
@@ -119,7 +119,7 @@ public class PfamDAOTest {
         String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLOPPY", "GHGHGHGHG", "GRUFF"};
         Long maxPrimaryKey = 0l;
         for (String sequence : proteinSequences){
-            PfamRawMatch p = new PfamRawMatch(sequence,"PF04041","PFAM","23.0","HMMER£.0",101,145);
+            PfamRawMatch p = new PfamRawMatch(sequence,"PF04041","PFAM","23.0","HMMER3.0",101,145);
             dao.insert(p);
             if (p.getId() > maxPrimaryKey){
                 maxPrimaryKey = p.getId();
