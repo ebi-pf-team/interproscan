@@ -26,13 +26,35 @@
             <artifactId>interproscan-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <!-- Note: cannot go beyond version 4.4 as incompatible with spring-test. Will be fixed in Spring 3.0 -->
             <version>4.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+        <spring.version>2.5.6</spring.version>
+        <spring.oxm.version>1.5.7</spring.oxm.version>
+    </properties>
+
+
+
     <build>
         <resources>
             <resource>

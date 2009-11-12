@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/lang
+                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+
+    <bean id="parser" class="uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.Hmmer3SearchParser">
+        <property name="matchConverter" ref="matchConverter"/>
+    </bean>
+
+    <bean id="matchConverter" class="uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+        <property name="gaValuesRetriever" ref="gaValueRetriever"/>
+        <property name="signatureLibraryRelease" value="Pfam-A"/>
+        <property name="signatureLibraryName" value="24.0"/>
+    </bean>
+
+    <bean id="gaValueRetriever" class="uk.ac.ebi.interpro.scan.parser.modelFileParser.GaValuesRetriever">
+        <constructor-arg ref="hmmFileResource"/>
+    </bean>
+
+    <bean id="hmmFileResource" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="hmmer3/hmmsearch/Pfam-A.hmm" />
+    </bean>
+
+    <bean id="testFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="hmmer3/hmmsearch/hmmer3b2-large"/>
+    </bean>
+</beans>

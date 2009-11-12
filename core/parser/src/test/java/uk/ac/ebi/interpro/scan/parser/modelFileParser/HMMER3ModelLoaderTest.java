@@ -5,10 +5,8 @@ import static org.junit.Assert.*;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.Model;
 
 import java.io.IOException;
-import java.io.File;
 import java.net.URL;
 
 /**
@@ -24,7 +22,7 @@ public class HMMER3ModelLoaderTest {
     public void testParser() throws IOException{
         URL url = HMMER3ModelLoaderTest.class.getClassLoader().getResource("hmmer3/library/pfam-small.hmm");
         SignatureLibrary library = new SignatureLibrary("Pfam-A", "Pfam A");
-        HMMER3ModelLoader loader = new HMMER3ModelLoader(library, "24.0");
+        Hmmer3ModelLoader loader = new Hmmer3ModelLoader(library, "24.0");
         SignatureLibraryRelease release = loader.parse(url.getPath());
         assertEquals(library, release.getLibrary());
         assertNotNull(release.getSignatures());
