@@ -28,8 +28,8 @@
 		<module>persistence</module>
         <module>parser</module>
         <module>management</module>
-        <module>batch-proactive</module>
-        <module>batch</module>
+        <!--<module>batch-proactive</module>-->
+        <!--<module>batch</module>-->
     </modules>
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
     <dependencies>
