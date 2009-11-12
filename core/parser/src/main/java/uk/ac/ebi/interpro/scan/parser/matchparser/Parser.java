@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
+import uk.ac.ebi.interpro.scan.parser.ParseException;
 
 /**
  * Parser.
@@ -14,5 +15,5 @@ import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
  * @since   1.0
  */
 public interface Parser {
-    public Set<RawSequenceIdentifier> parse(InputStream is) throws IOException;
+    public Set<RawSequenceIdentifier> parse(InputStream is) throws IOException, ParseException;
 }

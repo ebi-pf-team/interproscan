@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.parser.modelFileParser;
 
+import org.springframework.core.io.Resource;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Properties;
@@ -7,6 +9,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.io.*;
 import java.nio.channels.FileLock;
+
+import uk.ac.ebi.interpro.scan.parser.ParseException;
 
 /**
 *
@@ -31,7 +35,7 @@ import java.nio.channels.FileLock;
  * @since 1.0
  */
 
-public class HMMER3GaValues {
+public class GaValuesRetriever {
 
     /**
      * Extracts the GA values in the forms "24.0 24.0" as group 1.
@@ -55,7 +59,7 @@ public class HMMER3GaValues {
      * @param modelFileAbsolutePath the model file to parse.
      * @throws java.io.IOException in the event of a problem reading the file or cleaning up afterwards.
      */
-    public HMMER3GaValues(String modelFileAbsolutePath) throws IOException{
+    public GaValuesRetriever(Resource modelFileAbsolutePath) throws IOException, ParseException{
         // Check to see if the mapping has been dumped to a map file - if it has, load it from there for speed.
         File mapFile = createMapFileObject(modelFileAbsolutePath);
         if (mapFile.exists()){
@@ -72,13 +76,16 @@ public class HMMER3GaValues {
             String accession = (String) accessionObject;
             String gaString = (String) accessionToGAProps.get(accessionObject);
             String values[] = gaString.split("\\s");
+            if (values.length < 2){
+                throw new ParseException("The GA line format is not as expected (was expecting at least two floating point numbers separated by a space).", "NOT_A_FILE", gaString, 1);
+            }
             ACC_TO_SEQUENCE_GA.put(accession, new Double(values[0]));
             ACC_TO_DOMAIN_GA.put(accession, new Double(values[1]));
         }
     }
 
-    private File createMapFileObject (String modelFileAbsolutePath){
-        return new File (modelFileAbsolutePath + MAP_FILE_EXTENSION);
+    private File createMapFileObject (Resource modelFileAbsolutePath) throws IOException {
+        return new File (modelFileAbsolutePath.getFile().getAbsolutePath() + MAP_FILE_EXTENSION);
     }
 
     /**
@@ -94,7 +101,7 @@ public class HMMER3GaValues {
      * @param modelFileAbsolutePath the absolute path to the Model file.
      * @throws java.io.IOException thrown when writing / locking / closing streams.
      */
-    private synchronized void storeMappingToPropertiesFile(String modelFileAbsolutePath) throws IOException{
+    private synchronized void storeMappingToPropertiesFile(Resource modelFileAbsolutePath) throws IOException{
         File mapFile = createMapFileObject(modelFileAbsolutePath);
         if (mapFile.exists()){
             return; // A different process has started creating the map file since this process loaded the mappings, so don't try to create it again.
@@ -145,11 +152,11 @@ public class HMMER3GaValues {
         }
     }
 
-    public void parseModelFile(String modelFileAbsolutePath) throws IOException{
+    public void parseModelFile(Resource modelFileAbsolutePath) throws IOException{
         BufferedReader reader = null;
         accessionToGAProps = new Properties();
         try{
-            reader = new BufferedReader (new FileReader(modelFileAbsolutePath));
+            reader = new BufferedReader (new FileReader(modelFileAbsolutePath.getFile()));
             String accession = null, gaValues = null;
             int lineNumber = 0;
             while (reader.ready()){

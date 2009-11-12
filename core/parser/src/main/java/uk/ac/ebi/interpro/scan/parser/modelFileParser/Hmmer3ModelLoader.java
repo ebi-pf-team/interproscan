@@ -19,7 +19,7 @@ import java.io.IOException;
  * Date: 11-Nov-2009
  * Time: 20:35:32
  */
-public class HMMER3ModelLoader {
+public class Hmmer3ModelLoader {
 
     private SignatureLibrary library;
 
@@ -45,7 +45,7 @@ public class HMMER3ModelLoader {
     private static final String END_OF_RECORD = "//";
 
 
-    public HMMER3ModelLoader(SignatureLibrary library, String releaseVersion){
+    public Hmmer3ModelLoader(SignatureLibrary library, String releaseVersion){
         this.library = library;
         this.releaseVersion = releaseVersion;
     }
