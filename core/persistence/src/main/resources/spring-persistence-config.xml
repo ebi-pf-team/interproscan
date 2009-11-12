@@ -40,5 +40,8 @@
           class="uk.ac.ebi.interpro.scan.persistence.BlastProDomLocationDAOImpl">
         
     </bean>
+    <bean id="pfamDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.PfamDAOImpl">
+    </bean>
 
 </beans>
