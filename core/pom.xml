@@ -29,6 +29,7 @@
         <module>parser</module>
         <module>business</module>
         <module>management</module>
+        <module>jms-implementation</module>
         <!--<module>batch-proactive</module>-->
         <!--<module>batch</module>-->
     </modules>
