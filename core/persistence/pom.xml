@@ -130,6 +130,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.10</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>xmlunit</groupId>
@@ -150,6 +157,23 @@
 
     </dependencies>
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <!-- Use Java 6 language features -->
             <plugin>
@@ -179,4 +203,25 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!-- Copy this profile into your own [HOME]/.m2/settings.xml file, rename and
+             edit appropriately. Use with "mvn -P profile-id GOAL" -->
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
+                <test.connection.url>jdbc:hsqldb:mem:mem:testmodel</test.connection.url>
+                <test.username>sa</test.username>
+                <test.password></test.password>
+                <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
+                <test.hibernate.show_sql>true</test.hibernate.show_sql>
+                <test.hibernate.format_sql>true</test.hibernate.format_sql>
+                <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
+            </properties>
+        </profile>
+    </profiles>
 </project>
