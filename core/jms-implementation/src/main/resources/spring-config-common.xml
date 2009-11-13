@@ -7,7 +7,7 @@
 
     <!-- Values set from maven profile - IntelliJ is probably whinging about the brokerPort parameter. -->
     <bean id="sessionHandler"
-          class="test.SessionHandler"
+          class="uk.ac.ebi.interpro.scan.jms.SessionHandler"
           p:brokerHostUrl="${broker.host.name}"
           p:brokerPort="${broker.port.number}"
           scope="prototype"/>  <!-- Used in more than one thread, is NOT thread safe, so needs
