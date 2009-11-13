@@ -1,10 +1,11 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.jms.dumb_object.DumbObject;
+//import uk.ac.ebi.interpro.scan.jms.dumb_object.DumbObject;
 
 import java.util.UUID;
 import java.net.UnknownHostException;
+import java.io.Serializable;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -222,9 +223,9 @@ public class TestWorkerObject implements Worker {
                         e.printStackTrace();
                         System.exit(1);
                     }
-                    DumbObject messageObject = (DumbObject)requestMessage.getObject();
+                    Serializable messageObject = (Serializable)requestMessage.getObject();
                     //String messageString = "I am " + hostName + " and I received message: " + requestMessage.getObject().getText();
-                    System.out.println("Sending message back to broker: " + messageObject.getSize());
+                    System.out.println("Sending message back to broker");
                     responseMessage = sessionHandler.createObjectMessage(messageObject);
                     messageProducer.send(responseMessage); // Reply to the response queue on the broker, to be picked up by the master application.
                     requestMessage.acknowledge();   // Explicitly acknowledge the message, when it has been successfully dealt with.
