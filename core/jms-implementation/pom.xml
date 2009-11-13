@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>jms-implementation</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>jar</packaging>
+
+    <name>InterProScan JMS Implementation Module</name>
+    <description>InterProScan JMS Implementation Module</description>
+    <url>http://www.ebi.ac.uk/interpro/</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <distributionManagement>
+        <repository>
+            <id>ebi-repo</id>
+            <name>EBI Repository</name>
+            <url>scp://lobster.ebi.ac.uk/homes/maven/public_html/m2repo</url>
+        </repository>
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>ebi-repo-snapshots</id>
+            <name>EBI Snapshots Repository</name>
+            <url>scp://lobster.ebi.ac.uk/homes/maven/public_html/m2repo_snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>http://interproscan.googlecode.com/svn/</connection>
+        <url>http://interproscan.googlecode.com/svn/</url>
+    </scm>
+
+    <organization>
+        <name>EMBL - European Bioinformatics Institute</name>
+        <url>http://www.ebi.ac.uk/</url>
+    </organization>
+
+    <properties>
+        <spring.version>2.5.6</spring.version>
+        <spring.batch.version>2.0.3.RELEASE</spring.batch.version>
+        <spring.oxm.version>1.5.7</spring.oxm.version>
+    </properties>
+
+    <repositories>
+        <!--<repository>-->
+            <!--<id>springsource-external</id>-->
+            <!--<url>http://repository.springsource.com/maven/bundles/external</url>-->
+        <!--</repository>-->
+
+        <!--<repository>-->
+            <!--<id>springsource-snapshot</id>-->
+            <!--<url>http://repository.springsource.com/maven/bundles/snapshot</url>-->
+        <!--</repository>-->
+
+        <!--<repository>-->
+            <!--<id>springsource-milestone</id>-->
+            <!--<url>http://repository.springsource.com/maven/bundles/milestone</url>-->
+        <!--</repository>-->
+
+        <!--<repository>-->
+            <!--<id>springsource-release</id>-->
+            <!--<url>http://repository.springsource.com/maven/bundles/release</url>-->
+        <!--</repository>-->
+
+        <repository>
+            <id>apache-maven-snapshots</id>
+            <name>Apache snapshot repository</name>
+            <url>http://svn.apache.org/maven-snapshot-repository/</url>
+            <layout>default</layout>
+        </repository>
+
+        <!--<repository>-->
+            <!--<id>spring-sourceforge-release</id>-->
+            <!--<name>Spring Release Repository</name>-->
+            <!--<url>svn:https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>-->
+        <!--</repository>-->
+
+        <repository>
+            <id>spring-releases</id>
+            <name>Spring Maven RELEASE Repository</name>
+            <url>http://s3.amazonaws.com/maven.springframework.org/release</url>
+        </repository>
+        
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>interval:10080</updatePolicy>
+            </releases>
+            <id>jboss.release</id>
+
+            <name>JBoss releases</name>
+            <url>http://repository.jboss.org/maven2</url>
+        </repository>
+
+
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-management</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-test</artifactId>
+            <version>${spring.batch.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- All of the following should be inherited. -->
+
+        <!-- JAXB API -->
+        <!--<dependency>-->
+        <!--<groupId>javax.xml.bind</groupId>-->
+        <!--<artifactId>jaxb-api</artifactId>-->
+        <!--<version>2.1</version>-->
+        <!--</dependency>-->
+
+        <!-- JPA -->
+        <!--<dependency>-->
+        <!--<groupId>javax.persistence</groupId>-->
+        <!--<artifactId>persistence-api</artifactId>-->
+        <!--<version>1.0</version>-->
+        <!--</dependency>-->
+
+        <!-- Logging -->
+        <!--<dependency>-->
+        <!--<groupId>log4j</groupId>-->
+        <!--<artifactId>log4j</artifactId>-->
+        <!--<version>1.2.14</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>commons-logging</groupId>-->
+        <!--<artifactId>commons-logging</artifactId>-->
+        <!--<version>1.1.1</version>-->
+        <!--</dependency>-->
+
+        <!--
+        === All dependcies below here are TEST scope only. ===
+        -->
+
+        <!--<dependency>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring</artifactId>-->
+        <!--<version>${spring.version}</version>-->
+        <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <!-- Note: cannot go beyond version 4.4 as incompatible with spring-test. Will be fixed in Spring 3.0 -->
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JAXB tests -->
+
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.1.9</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>org.springframework.ws</groupId>-->
+        <!--<artifactId>spring-oxm</artifactId>-->
+        <!--<version>${spring.oxm.version}</version>-->
+        <!--<scope>test</scope>            -->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+        <!--<groupId>org.springframework.ws</groupId>-->
+        <!--<artifactId>spring-oxm-tiger</artifactId>-->
+        <!--<version>${spring.oxm.version}</version>-->
+        <!--<scope>test</scope>            -->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>1.6.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JPA tests -->
+
+         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.4.0.GA</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-core</artifactId>
+            <version>2.0.0.BETA5</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-jms</artifactId>
+            <version>2.0.0.BETA5</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-logging</artifactId>
+            <version>2.0.0.BETA5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-transports</artifactId>
+            <version>2.0.0.BETA5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.netty</groupId>
+
+            <artifactId>netty</artifactId>
+            <version>3.1.0.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.javaee</groupId>
+            <artifactId>jboss-jms-api</artifactId>
+            <version>1.1.0.GA</version>
+
+            <scope>compile</scope>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring</artifactId>-->
+            <!--<version>2.5.5</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+        
+
+        <dependency>
+            <groupId>com.jgoodies</groupId>
+            <artifactId>looks</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+
+        <!-- PUBLICLY-AVAILABLE Maven repository downloads for Quartz:-->
+
+        <dependency>
+            <groupId>org.opensymphony.quartz</groupId>
+            <artifactId>quartz-all</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+
+
+
+        <plugins>
+            <!-- Use Java 6 language features -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <!-- JavaDocs (generate: mvn javadoc:javadoc, package: mvn javadoc:jar) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <overview />
+                </configuration>
+            </plugin>
+            <!-- Create JAR of source files (source:jar, source:test-jar) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <!--configuration>
+                    <finalName>filename-of-generated-jar-file</finalName>
+                    <attach>false</attach>
+                    </configuration-->
+            </plugin>
+            <!--
+                schemagen: generate XML schema from source code using Ant task
+                Notes:
+                * Maven schemagen plugin is a year out of date (as of October 2008) so cannot use
+                  http://www.nabble.com/maven-jaxb-schemagen-plugin-additional-hand-written-schema-import-td18921720.html
+                * Considered exec:java on com.sun.tools.jxc.SchemaGenerator but did not offer enough control:
+                  java com.sun.tools.jxc.SchemaGenerator -cp target/classes/
+                                                         src/main/java/uk/ac/ebi/impact/model/ModelDatabaseRelease.java
+             -->
+           
+            <!--plugin>
+                <groupId>com.sun.tools.jxc.maven2</groupId>
+                <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-xml-schema</id>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin-->
+        </plugins>
+    </build>
+
+    <profiles>
+
+        <!--profile>
+            <id>runBroker</id>
+            <build><plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>java</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <mainClass>test.main.RunBroker</mainClass>
+                    </configuration>
+                </plugin>
+            </plugins></build>
+        </profile-->
+
+        <profile>
+            <!-- Copy this profile into your own [HOME]/.m2/settings.xml file, rename and
+             edit appropriately. Use with "mvn -P profile-id GOAL" -->
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
+                <test.connection.url>jdbc:hsqldb:mem:mem:testmodel</test.connection.url>
+                <test.username>sa</test.username>
+                <test.password></test.password>
+                <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
+                <test.hibernate.show_sql>true</test.hibernate.show_sql>
+                <test.hibernate.format_sql>true</test.hibernate.format_sql>
+                <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
+                <broker.host.name>Please.configure.your.profile</broker.host.name>
+                <broker.port.number>5445</broker.port.number>
+                <unix.username>Please.configure.your.profile</unix.username>
+                <lsf.notification.emailaddress>Please.configure.your.profile</lsf.notification.emailaddress>
+
+                <!-- You can rename the queues to anything you like-->
+                <job.submission.queue>job_submission_queue</job.submission.queue>
+                <worker.job.request.queue>worker_job_request_queue</worker.job.request.queue>
+                <worker.job.response.queue>worker_job_response_queue</worker.job.response.queue>
+                <worker.manager.topic>worker_manager_topic</worker.manager.topic>
+                <worker.manager.response.queue>worker_manager_response_queue</worker.manager.response.queue>
+            </properties>                
+        </profile>
+    </profiles>
+</project>
