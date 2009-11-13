@@ -217,6 +217,9 @@ public class FullRoundTripTest {
                 logger.error("SAXExeption thrown when attempting comparison of XML files.", e);
                 fail ("SAXExeption thrown when attempting comparison of XML files (full stack trace logged): " + e.getMessage());
             }
+            finally {
+                dao.deleteAll();
+            }
         }
     }
 
