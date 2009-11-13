@@ -2,11 +2,9 @@
 
     <!-- JPA Persistence unit for local testing in HSQLDB - current in-memory database, but may change. -->
     <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
+        
         <description>
             Test persistence-unit that uses an in-memory HSQLDB database.
-            Also need a test persistence-unit that uses
-            a database that can be accessed independently to reverse-engineer the
-            generated database structure - MySQL probably?
         </description>
 
         <!-- Interfaces -->
@@ -34,16 +32,16 @@
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
         <properties>
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.format_sql" value="true" />
-
-            <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver" />
-            <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:mem:testmodel" />
-            <property name="hibernate.connection.username" value="sa" />
-
-            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
-            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />
+            <property name="hibernate.format_sql"       value="${test.hibernate.format_sql}" />
+            <property name="hibernate.connection.driver_class" value="${test.database.driver}" />
+            <property name="hibernate.connection.url"   value="${test.connection.url}" />
+            <property name="hibernate.connection.username" value="${test.username}" />
+            <property name="hibernate.connection.password" value="${test.password}" />
+            <property name="hibernate.dialect"          value="${test.hibernate.dialect}" />
+            <property name="hibernate.hbm2ddl.auto"     value="${test.hibernate.hbm2ddl.auto}" />
         </properties>
+
     </persistence-unit>
 
 </persistence>
