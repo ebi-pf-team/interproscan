@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.management.model;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * TODO: Description
@@ -11,7 +12,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class StepInstance {
+public class StepInstance implements Serializable {
 
     private Long id;
 
