@@ -18,7 +18,8 @@ import java.io.Serializable;
  */
 //@IdClass(uk.ac.ebi.interpro.scan.model.raw.RawMatchKey.class)
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //@DiscriminatorColumn(name="METHOD_AC",discriminatorType=DiscriminatorType.STRING)
 public abstract class RawMatch implements Serializable {
 
@@ -39,7 +40,8 @@ public abstract class RawMatch implements Serializable {
     
     // TODO: Don't need any foreign keys -- just index fields we will search on
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)    //TODO - Removed as causing problem with 'one table per class'.
+//    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String sequenceIdentifier;  // eg. MD5
     
