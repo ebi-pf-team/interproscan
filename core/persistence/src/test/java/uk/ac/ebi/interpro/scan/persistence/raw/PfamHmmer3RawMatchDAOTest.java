@@ -21,6 +21,7 @@ import uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier;  */
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 
 import java.util.List;
+import java.util.Map;
 //import java.util.Set;
 
 /**
@@ -32,7 +33,6 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-@Ignore
 public class PfamHmmer3RawMatchDAOTest {
     /**
      * Logger for Junit logging. Log messages will be associated with the ProteinPersistenceTest class.
@@ -108,7 +108,7 @@ public class PfamHmmer3RawMatchDAOTest {
     @Test (expected = PersistenceException.class)
     public void testPersistenceExceptionOnSecondInsert(){
         emptyPfamTable();
-        PfamHmmer3RawMatch p = getMatchExample();
+        PfamHmmer3RawMatch p = getMatchExample(null);
         dao.insert(p);
         dao.insert(p);
     }
@@ -119,10 +119,9 @@ public class PfamHmmer3RawMatchDAOTest {
     @Test
     public void testMaximumPrimaryKeyCount(){
         emptyPfamTable();
-        String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLOPPY", "GHGHGHGHG", "GRUFF"};
         Long maxPrimaryKey = 0l;
-        for (String sequence : proteinSequences){
-            PfamHmmer3RawMatch p = getMatchExample();
+        for (int counter = 0; counter < 10; counter++){
+            PfamHmmer3RawMatch p = getMatchExample(null);
             dao.insert(p);
             if (p.getId() > maxPrimaryKey){
                 maxPrimaryKey = p.getId();
@@ -131,10 +130,30 @@ public class PfamHmmer3RawMatchDAOTest {
         assertEquals("The maximum primary key is not as expected", maxPrimaryKey, dao.getMaximumPrimaryKey());
     }
 
-    private PfamHmmer3RawMatch getMatchExample()   {
-        return new PfamHmmer3RawMatch("UPIblachabla","PF04041","PFAM","23.0", 101, 145,
+    private PfamHmmer3RawMatch getMatchExample(String proteinId)   {
+        if (proteinId == null){
+            proteinId = "UPIblachabla";
+        }
+
+        return new PfamHmmer3RawMatch(proteinId,"PF04041","PFAM","23.0", (int)(Math.random() * 20), (int)(Math.random() * 100 + 20),
                 3.7E-9, 0.035, 1, 104, "[]", 3.0, 0, 0, 0, 0, 0, 0, 0, "HMMER3.0");
-    }    
+    }
+
+    /**
+     * Test of the getMatchesForProteinIdsInRange() method.
+     */
+    @Test
+    public void testGetMatchesForProteinIdsInRange(){
+        emptyPfamTable();
+        String[] proteinIds = {"001", "002", "003", "003", "004", "005", "006", "007", "008"};
+        for (String proteinId : proteinIds){
+            PfamHmmer3RawMatch p = getMatchExample(proteinId);
+            dao.insert(p);
+        }
+        Map<String, List<PfamHmmer3RawMatch>> matches = dao.getMatchesForProteinIdsInRange("003", "006");
+        assertEquals(4, matches.size());
+    }
+
 
     /**
      * Tests the ProteinDAO.getProteinsInTransactionSlice() method.
