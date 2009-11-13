@@ -8,12 +8,12 @@
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
 
-    <bean id="monitor" class="test.monitor.WorkerMonitorController">
+    <bean id="monitor" class="uk.ac.ebi.interpro.scan.jms.monitor.WorkerMonitorController">
         <property name="refreshInterval" value="3000"/>
         <property name="swingWorker" ref="swingWorker"/>
     </bean>
 
-    <bean id="swingWorker" class="test.monitor.MonitorSwingWorker">
+    <bean id="swingWorker" class="uk.ac.ebi.interpro.scan.jms.monitor.MonitorSwingWorker">
         <property name="workerManagerTopicName" value="jms.topic.${worker.manager.topic}"/>
         <property name="workerManagerResponseQueueName" value="jms.queue.${worker.manager.response.queue}"/>
         <property name="sessionHandler" ref="sessionHandler"/>

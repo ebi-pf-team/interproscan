@@ -8,7 +8,7 @@
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
 
-    <bean id="destinationRunner" class="test.broker.platforms.LSFWorkerRunner">
+    <bean id="destinationRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LSFWorkerRunner">
         <!-- ssh -x " + username + "@ant17.ebi.ac.uk bsub mvn -P runDestination -f /net/isilon3/production/seqdb2/production/interpro/jira/IBU-1067/hornetQ_Test/pom.xml exec:java -->
         <property name="command" value="mvn -P runDestination -f /net/isilon3/production/seqdb2/production/interpro/jira/IBU-1067/hornetQ_Test/pom.xml exec:java" />
         <property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk" />
@@ -16,14 +16,14 @@
         <property name="lsfQueueName" value="production" />
     </bean>
 
-    <bean id="queueJumper" class="test.broker.QueueJumper">
+    <bean id="queueJumper" class="uk.ac.ebi.interpro.scan.jms.broker.QueueJumper">
         <property name="connectionConfiguration" ref="sessionHandler"/>
         <property name="workerRunner" ref="destinationRunner"/>
         <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
     </bean>
 
-    <bean id="broker" class="test.broker.OnionBroker">
+    <bean id="broker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">
         <property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>
         <property name="queueJumper" ref="queueJumper"/>
         <property name="jmsConfigurationXml" value="hornetq-jms.xml"/>
