@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.management.model;
 
 import org.springframework.beans.factory.annotation.Required;
 
+import java.io.Serializable;
+
 /**
  * Instances of this class describe / provide a template
  * for a step.  A single step corresponds to a single
@@ -18,7 +20,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public abstract class Step {
+public abstract class Step implements Serializable {
 
     protected Long id;
 
