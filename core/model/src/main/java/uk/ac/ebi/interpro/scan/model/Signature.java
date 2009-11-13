@@ -58,13 +58,13 @@ public class Signature implements Serializable {
     @Column (name="name")
     private String name;
 
-    @Column (name="description")
+    @Column (name="description", length=20000)
     private String description;
 
     @Column (name="type")
     private String type;
 
-    @Column (name="abstract_text")
+    @Column (name="abstract_text", length = 20000)
     private String abstractText;
 
     @ManyToOne
@@ -73,7 +73,7 @@ public class Signature implements Serializable {
     // TODO: Decide whether to use Map or Set (see ChEBI team)
     // TODO: Use ConcurrentHashMap if need concurrent modification of signatures
     // TODO: Use Hashtable if want to disallow duplicate values
-    @OneToMany (mappedBy = "signature", cascade = CascadeType.PERSIST)
+    @OneToMany (mappedBy = "signature", cascade = CascadeType.ALL)
     @MapKey (name= "accession")
     private Map<String, Model> models = new HashMap<String, Model>();
 
