@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- Import common beans -->
+    <import resource="spring-config-common.xml"/>
+
+    <bean id="master" class="test.master.TestMasterQuartz">
+        <property name="sessionHandler" ref="sessionHandler"/>
+        <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
+        <property name="responseMonitor" ref="responseMonitor"/>
+        <property name="managementRequestTopicName" value="jms.topic.${worker.manager.topic}"/>
+    </bean>
+
+    <bean id="responseMonitor" class="test.master.ResponseMonitorImpl">
+        <property name="monitorResponseTimeout" value="5000"/>
+        <property name="sessionHandler" ref="sessionHandler"/>
+        <property name="handler" ref="responseHandler"/>
+        <property name="workerJobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
+    </bean>
+
+    <bean id="responseHandler" class="test.master.ResponseHandlerImpl"/>
+</beans>
+        

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- Import common beans -->
+    <import resource="spring-config-common.xml"/>
+
+    <bean id="destinationRunner" class="test.broker.platforms.LSFWorkerRunner">
+        <!-- ssh -x " + username + "@ant17.ebi.ac.uk bsub mvn -P runDestination -f /net/isilon3/production/seqdb2/production/interpro/jira/IBU-1067/hornetQ_Test/pom.xml exec:java -->
+        <property name="command" value="mvn -P runDestination -f /net/isilon3/production/seqdb2/production/interpro/jira/IBU-1067/hornetQ_Test/pom.xml exec:java" />
+        <property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk" />
+        <property name="lsfEmailNotification" value="${lsf.notification.emailaddress}" />
+        <property name="lsfQueueName" value="production" />
+    </bean>
+
+    <bean id="queueJumper" class="test.broker.QueueJumper">
+        <property name="connectionConfiguration" ref="sessionHandler"/>
+        <property name="workerRunner" ref="destinationRunner"/>
+        <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
+        <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
+    </bean>
+
+    <bean id="broker" class="test.broker.OnionBroker">
+        <property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>
+        <property name="queueJumper" ref="queueJumper"/>
+        <property name="jmsConfigurationXml" value="hornetq-jms.xml"/>
+    </bean>
+    
+</beans>
+        

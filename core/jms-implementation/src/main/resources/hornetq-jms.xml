@@ -1,0 +1,36 @@
+<configuration xmlns="urn:hornetq"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="urn:hornetq ../../../schemas/hornetq-jms.xsd">
+    <!--the connection factory used by the example-->
+    <connection-factory name="ConnectionFactory">
+        <connector-ref connector-name="netty-connector"/>
+        <entries>
+            <entry name="ConnectionFactory"/>
+        </entries>
+
+        <!-- Turned off buffering of messages on the client side. -->
+        <!--<consumer-window-size>0</consumer-window-size>-->
+    </connection-factory>
+
+    <queue name="${job.submission.queue}">
+        <entry name="jms.queue.${job.submission.queue}"/>
+    </queue>
+
+    <queue name="${worker.job.request.queue}">
+        <entry name="jms.queue.${worker.job.request.queue}"/>
+    </queue>
+
+    <queue name="${worker.job.response.queue}">
+        <entry name="jms.queue.${worker.job.response.queue}" />
+    </queue>
+
+    <topic name="${worker.manager.topic}">
+        <entry name="jms.topic.${worker.manager.topic}"/>
+    </topic>
+
+    <queue name="${worker.manager.response.queue}">
+        <entry name="jms.queue.${worker.manager.response.queue}"/>
+    </queue>
+
+
+</configuration>

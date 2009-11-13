@@ -1,0 +1,64 @@
+<configuration xmlns="urn:hornetq"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="urn:hornetq ../../../schemas/hornetq-configuration.xsd">
+
+    <!-- Turned on so can monitor the number of messages added to queues. -->
+    <!--<jmx-management-enabled>false</jmx-management-enabled>-->
+    <!--<message-counter-enabled>true</message-counter-enabled>-->
+    <!--<message-counter-sample-period>2000</message-counter-sample-period>-->
+    <!--<message-counter-max-day-history>2</message-counter-max-day-history>-->
+
+    <management-address>hornetq.management</management-address>
+
+
+    <connectors>
+        <connector name="netty-connector">
+            <factory-class>org.hornetq.integration.transports.netty.NettyConnectorFactory</factory-class>
+            <!--param key="hornetq.remoting.netty.host"  value="phildell.windows.ebi.ac.uk" type="String"/-->
+            <param key="hornetq.remoting.netty.host"  value="${broker.host.name}" type="String"/>
+            <param key="hornetq.remoting.netty.port" value="${broker.port.number}" type="Integer"/>
+        </connector>
+
+    </connectors>
+
+    <acceptors>
+        <acceptor name="netty-acceptor">
+            <factory-class>org.hornetq.integration.transports.netty.NettyAcceptorFactory</factory-class>
+            <!--param key="hornetq.remoting.netty.host"  value="phildell.windows.ebi.ac.uk" type="String"/-->
+            <param key="hornetq.remoting.netty.host"  value="${broker.host.name}" type="String"/>
+            <param key="hornetq.remoting.netty.port"  value="${broker.port.number}" type="Integer"/>
+        </acceptor>
+    </acceptors>
+
+    <security-settings>
+        <security-setting match="jms.queue.${job.submission.queue}">
+            <permission type="manage" roles="guest"/>
+            <permission type="send" roles="guest"/>
+            <permission type="consume" roles="guest"/>
+        </security-setting>
+        <security-setting match="jms.queue.${worker.job.request.queue}">
+            <permission type="manage" roles="guest"/>
+            <permission type="send" roles="guest"/>
+            <permission type="consume" roles="guest"/>
+        </security-setting>
+        <security-setting match="jms.queue.${worker.job.response.queue}">
+            <permission type="manage" roles="guest"/>
+            <permission type="send" roles="guest"/>
+            <permission type="consume" roles="guest"/>
+        </security-setting>
+        <security-setting match="jms.topic.${worker.manager.topic}">
+            <permission type="manage" roles="guest"/>
+            <permission type="send" roles="guest"/>
+            <permission type="consume" roles="guest"/>
+        </security-setting>
+        <security-setting match="jms.queue.${worker.manager.response.queue}">
+            <permission type="manage" roles="guest"/>
+            <permission type="send" roles="guest"/>
+            <permission type="consume" roles="guest"/>
+        </security-setting>
+    </security-settings>
+    
+    <security-enabled>false</security-enabled>
+
+
+</configuration>

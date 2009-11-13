@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- Values set from maven profile - IntelliJ is probably whinging about the brokerPort parameter. -->
+    <bean id="sessionHandler"
+          class="test.SessionHandler"
+          p:brokerHostUrl="${broker.host.name}"
+          p:brokerPort="${broker.port.number}"
+          scope="prototype"/>  <!-- Used in more than one thread, is NOT thread safe, so needs
+          prototype scope. Don't try to fix this - javax.jms.Session is NOT thread safe, so
+           the SessionHandler cannot be made thread safe.-->
+
+</beans>
