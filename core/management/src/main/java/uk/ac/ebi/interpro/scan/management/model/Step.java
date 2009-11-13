@@ -29,6 +29,11 @@ public abstract class Step {
     protected Queue queue;
 
     /**
+     * Number of retries
+     */
+    protected int retries;
+
+    /**
      * Step which must be completed prior to this one.
      */
     protected Step dependsUpon;
@@ -121,5 +126,14 @@ public abstract class Step {
     @Required
     public void setQueue(Queue queue) {
         this.queue = queue;
+    }
+
+    public int getRetries() {
+        return retries;
+    }
+
+    @Required
+    public void setRetries(int retries) {
+        this.retries = retries;
     }
 }
