@@ -34,6 +34,12 @@
         </dependency>
 
         <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-persistence</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
             <version>${spring.version}</version>
@@ -52,6 +58,28 @@
             <version>4.4</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.4.0.GA</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -61,6 +89,25 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+
         <plugins>
             <!-- Use Java 5 language features -->
             <plugin>
@@ -101,6 +148,15 @@
                 <logging.level.interpro.scan.business>DEBUG</logging.level.interpro.scan.business>
                 <logging.interpro.scan.business.file>target/parse.log</logging.interpro.scan.business.file>
                 <logging.interpro.scan.business.max.file.size>2097152</logging.interpro.scan.business.max.file.size>
+
+                <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
+                <test.connection.url>jdbc:hsqldb:mem:mem:testmodel</test.connection.url>
+                <test.username>sa</test.username>
+                <test.password></test.password>
+                <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
+                <test.hibernate.show_sql>true</test.hibernate.show_sql>
+                <test.hibernate.format_sql>true</test.hibernate.format_sql>
+                <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
             </properties>
         </profile>
     </profiles>
