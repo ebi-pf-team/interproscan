@@ -160,12 +160,14 @@ public class ProteinDAOTest {
      * Test that a PersistenceException is thrown if an attempt is made to
      * insert the same Protein twice.
      */
-    @Test (expected = PersistenceException.class)
-    public void testPersistenceExceptionOnSecondInsert(){
+    @Test
+    public void testSecondInsertOfSameProtein(){
         emptyProteinTable();
-        Protein protein = new Protein (GOOD);
-        dao.insert(protein);
-        dao.insert(protein);
+        Protein protein1 = new Protein (GOOD);
+        Protein protein2 = new Protein (GOOD);
+
+        dao.insert(protein1);
+        assertEquals(protein1.getId(), (dao.insert(protein2)).getId());
     }
 
     /**
