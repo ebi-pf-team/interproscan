@@ -22,6 +22,8 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Interface that defines additional functionality for Protein Data Access.
  * 
@@ -56,5 +58,18 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
      */
     public List<Protein> getProteinsInTransactionSlice (TransactionSlice slice);
+
+    /**
+     * Inserts new Proteins.
+     * If there are Protein objects with the same MD5 / sequence in the database,
+     * this method updates these proteins, rather than inserting the new ones.
+     *
+     * Note that this method inserts the new Protein objects AND and new Xrefs
+     * (possibly updating an existing Protein object if necessary with the new Xref.)
+     * @param newProteins being a List of new Protein objects to insert
+     * @return a new List<Protein> containing all of the inserted / updated Protein objects.
+     * (Allows the caller to retrieve the primary keys for the proteins).
+     */
+    public List<Protein> insertOrUpdate(List<Protein> newProteins);
 
 }
