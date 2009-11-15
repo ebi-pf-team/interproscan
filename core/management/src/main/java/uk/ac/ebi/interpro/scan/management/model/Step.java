@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Required;
 import java.io.Serializable;
 import java.util.UUID;
 import java.util.List;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
 
 /**
  * Instances of this class describe / provide a template
@@ -169,4 +171,10 @@ public abstract class Step<I extends StepInstance, E extends StepExecution> impl
     public int hashCode() {
         return id.hashCode();
     }
+
+    /**
+     * The format used for file names based upon integers
+     * to ensure that they order correctly in the filesystem.
+     */
+    public static final NumberFormat TWELVE_DIGIT_INTEGER = new DecimalFormat("000000000000");
 }

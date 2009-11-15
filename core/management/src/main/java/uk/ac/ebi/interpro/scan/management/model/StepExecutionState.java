@@ -33,6 +33,11 @@ public enum StepExecutionState {
     STEP_EXECUTION_SUBMITTED,
 
     /**
+     * The StepExecution is now running.
+     */
+    STEP_EXECUTION_RUNNING,
+
+    /**
      * The StepExecution has been successfully completed.
      */
     STEP_EXECUTION_SUCCESSFUL,
@@ -40,5 +45,6 @@ public enum StepExecutionState {
     /**
      * The StepExecution has failed.  Try again.
      */
-    STEP_EXECUTION_FAILED
+    STEP_EXECUTION_FAILED;
+
 }

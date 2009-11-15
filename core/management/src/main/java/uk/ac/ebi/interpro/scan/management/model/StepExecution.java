@@ -1,8 +1,10 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
+import org.apache.log4j.Logger;
+
+import javax.swing.event.EventListenerList;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Abstract class for executing a Step.
@@ -11,7 +13,9 @@ import java.util.UUID;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public abstract class StepExecution<S extends Step, I extends StepInstance> implements Serializable {
+public abstract class StepExecution<I extends StepInstance> implements Serializable {
+
+    protected static final Logger LOGGER = Logger.getLogger(StepExecution.class);
 
     private String id;
 
@@ -21,9 +25,13 @@ public abstract class StepExecution<S extends Step, I extends StepInstance> impl
 
     private Date createdTime;
 
+    private Date startedRunningTime;
+
     private Date submittedTime;
 
     private Date completedTime;
+
+    private Double proportionCompleted;
 
     protected StepExecution(UUID id, I stepInstance) {
         this.stepInstance = stepInstance;
@@ -43,7 +51,7 @@ public abstract class StepExecution<S extends Step, I extends StepInstance> impl
         return id;
     }
 
-    public StepInstance getStepInstance() {
+    public I getStepInstance() {
         return stepInstance;
     }
 
@@ -59,8 +67,27 @@ public abstract class StepExecution<S extends Step, I extends StepInstance> impl
         return submittedTime;
     }
 
+    public Date getStartedRunningTime() {
+        return startedRunningTime;
+    }
+
     public Date getCompletedTime() {
         return completedTime;
+    }
+
+    public Double getProportionCompleted() {
+        return proportionCompleted;
+    }
+
+    /**
+     * If this method is called, the proportion complete is set and
+     * all listeners to this StepExecution are informed that the
+     * state has changed.
+     * @param proportionCompleted between 0.0d and 1.0d to indicate
+     * how much of the job has been completed.
+     */
+    protected void setProportionCompleted(Double proportionCompleted) {
+        this.proportionCompleted = proportionCompleted;
     }
 
     /**
@@ -81,11 +108,19 @@ public abstract class StepExecution<S extends Step, I extends StepInstance> impl
         submittedTime = new Date();
     }
 
+    public void running(){
+        if (state != StepExecutionState.STEP_EXECUTION_SUBMITTED){
+            throw new IllegalStateException ("Attempting to set the state of this stepExecution to 'RUNNING', however it has not been submitted.  Current state: " + state);
+        }
+        state = StepExecutionState.STEP_EXECUTION_RUNNING;
+        startedRunningTime = new Date();
+    }
+
     /**
      * Called by the execute() method implementation to indicate successful completion.
      */
     protected void completeSuccessfully(){
-        if (state != StepExecutionState.STEP_EXECUTION_SUBMITTED){
+        if (state != StepExecutionState.STEP_EXECUTION_RUNNING){
             throw new IllegalStateException("Try to set the state of this StepExecution to 'STEP_EXECUTION_SUCCESSFUL', however it is currently in state "+ state);
         }
         state = StepExecutionState.STEP_EXECUTION_SUCCESSFUL;
@@ -96,7 +131,7 @@ public abstract class StepExecution<S extends Step, I extends StepInstance> impl
      * Called by the execute() method implementation to indicate a failure of execution.
      */
     protected void fail(){
-        if (state != StepExecutionState.STEP_EXECUTION_SUBMITTED){
+        if (state != StepExecutionState.STEP_EXECUTION_RUNNING){
             throw new IllegalStateException("Try to set the state of this StepExecution to 'STEP_EXECUTION_FAILED', however it is currently in state "+ state);
         }
         state = StepExecutionState.STEP_EXECUTION_FAILED;
