@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.io.Serializable;
 
 /**
@@ -11,11 +12,11 @@ import java.io.Serializable;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class StepInstance implements Serializable {
+public abstract class StepInstance<S extends Step, E extends StepExecution> implements Serializable {
 
-    private Long id;
+    private String id;
 
-    private Step step;
+    private S step;
 
     private Long bottomProtein;
 
@@ -27,10 +28,10 @@ public class StepInstance implements Serializable {
 
     private List<StepInstance> dependencies = new ArrayList<StepInstance>();
 
-    private List<StepExecution> executions = new ArrayList<StepExecution>();
+    private List<E> executions = new ArrayList<E>();
 
-    public StepInstance(Long id, Step step) {
-        this.id = id;
+    public StepInstance(UUID id, S step) {
+        this.id = id.toString();
         this.step = step;
     }
 
@@ -54,9 +55,9 @@ public class StepInstance implements Serializable {
         this.dependencies.add (dependentStepInstance);
     }
 
-    public void addStepExecution(StepExecution stepExecution){
+    public void addStepExecution(E stepExecution){
         // Sanity check
-        for (StepExecution previousExecutions : executions){
+        for (E previousExecutions : executions){
             if (previousExecutions.getState() != StepExecutionState.STEP_EXECUTION_FAILED){
                 throw new IllegalStateException ("Attempting to add a new StepExecution to step " + this + " when there is an existing (NON-STEP_EXECUTION_FAILED) step execution.");
             }
@@ -72,7 +73,7 @@ public class StepInstance implements Serializable {
         if (executions.size() == 0){
             return StepExecutionState.NEW_STEP_INSTANCE;
         }
-        for (StepExecution exec : executions){
+        for (E exec : executions){
             switch (exec.getState()){
                 case NEW_STEP_EXECUTION:
                 case STEP_EXECUTION_SUBMITTED:
@@ -85,11 +86,11 @@ public class StepInstance implements Serializable {
         return StepExecutionState.STEP_EXECUTION_FAILED;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public Step getStep() {
+    public S getStep() {
         return step;
     }
 
@@ -113,7 +114,24 @@ public class StepInstance implements Serializable {
         return dependencies;
     }
 
-    public List<StepExecution> getExecutions() {
+    public List<E> getExecutions() {
         return executions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StepInstance)) return false;
+
+        StepInstance that = (StepInstance) o;
+
+        if (!id.equals(that.id)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Abstract class for executing a Step.
@@ -10,11 +11,11 @@ import java.util.Date;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public abstract class StepExecution implements Serializable {
+public abstract class StepExecution<S extends Step, I extends StepInstance> implements Serializable {
 
-    private Long id;
+    private String id;
 
-    protected StepInstance stepInstance;
+    protected I stepInstance;
 
     private StepExecutionState state = StepExecutionState.NEW_STEP_EXECUTION;
 
@@ -24,14 +25,13 @@ public abstract class StepExecution implements Serializable {
 
     private Date completedTime;
 
-    protected StepExecution(Long id, StepInstance stepInstance, StepExecutionState state) {
+    protected StepExecution(UUID id, I stepInstance) {
         this.stepInstance = stepInstance;
-        this.state = state;
-        this.id = id;
+        this.id = id.toString();
         createdTime = new Date();
     }
 
-    public void setStepInstance(StepInstance stepInstance) {
+    public void setStepInstance(I stepInstance) {
         this.stepInstance = stepInstance;
     }
 
@@ -39,7 +39,7 @@ public abstract class StepExecution implements Serializable {
         this.state = state;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -101,5 +101,22 @@ public abstract class StepExecution implements Serializable {
         }
         state = StepExecutionState.STEP_EXECUTION_FAILED;
         completedTime = new Date();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StepExecution)) return false;
+
+        StepExecution that = (StepExecution) o;
+
+        if (!id.equals(that.id)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
