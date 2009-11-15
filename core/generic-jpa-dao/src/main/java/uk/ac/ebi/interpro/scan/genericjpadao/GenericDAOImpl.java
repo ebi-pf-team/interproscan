@@ -83,13 +83,17 @@ public class GenericDAOImpl<T, PK extends Serializable>
     /**
      * Insert a new Model instance.
      * @param newInstance being a new instance to persist.
+     * @return the inserted Instance.  This MAY NOT be the same object as
+     * has been passed in, for sub-classes that check for the pre-existence of the object
+     * in the database.
      */
     @Transactional
-    public void insert(T newInstance) {
+    public T insert(T newInstance) {
         if (entityManager.contains(newInstance)){
             throw new IllegalArgumentException ("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
         }
         entityManager.persist(newInstance);
+        return newInstance;
     }
 
     /**
