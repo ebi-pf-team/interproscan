@@ -98,19 +98,19 @@ public class ClanFileParser {
 
     private static final Pattern ACCESSION_EXTRACTOR_PATTERN = Pattern.compile("^\\#=GF\\s+[A-Z]{2}\\s+([A-Z0-9]+).*$");
 
-    private Resource pfamASeedFile;
+    private String pfamASeedFile;
 
-    private Resource pfamCFile;
+    private String pfamCFile;
 
     private PfamClanData clanData;
 
     @Required
-    public void setPfamASeedFile(Resource pfamASeedFile) {
+    public void setPfamASeedFile(String pfamASeedFile) {
         this.pfamASeedFile = pfamASeedFile;
     }
 
     @Required
-    public void setPfamCFile(Resource pfamCFile) {
+    public void setPfamCFile(String pfamCFile) {
         this.pfamCFile = pfamCFile;
     }
 
@@ -152,7 +152,7 @@ public class ClanFileParser {
         Map<String, List<String>> modelAccessionNestsModelAccession = new HashMap<String, List<String>>();
 
         try{
-            reader = new BufferedReader(new FileReader(pfamASeedFile.getFile()));
+            reader = new BufferedReader(new FileReader(new File(pfamASeedFile)));
             RecordHolder record = new RecordHolder();
             while (reader.ready()){
                 String line = reader.readLine();
@@ -193,7 +193,7 @@ public class ClanFileParser {
         BufferedReader reader = null;
 
         try{
-            reader = new BufferedReader(new FileReader(pfamCFile.getFile()));
+            reader = new BufferedReader(new FileReader(new File(pfamCFile)));
             PfamClan clan = null;
             while (reader.ready()){
                 String line = reader.readLine();
@@ -208,7 +208,7 @@ public class ClanFileParser {
                 }
                 else if (line.startsWith(CLAN_MEMBER_MODEL_AC_LINE)){
                     if (clan == null){
-                        throw new IllegalStateException ("Found an entry in file " + pfamCFile.getFile().getAbsolutePath() + " where there appears to be no clan accession.");
+                        throw new IllegalStateException ("Found an entry in file " + pfamCFile + " where there appears to be no clan accession.");
                     }
                     Matcher clanAccessionMatcher = ACCESSION_EXTRACTOR_PATTERN.matcher(line);
                     if (clanAccessionMatcher.find()){
