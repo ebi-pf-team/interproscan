@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
 import java.net.UnknownHostException;
@@ -13,7 +14,7 @@ import java.lang.IllegalStateException;
  * @version $Id: TestWorkerMonitor.java,v 1.5 2009/10/26 12:06:56 pjones Exp $
  * @since 1.0
  */
-public class TestWorkerMonitor implements WorkerMonitor {
+public class InterProScanMonitor implements WorkerMonitor {
 
     private long startTimeMillis = System.currentTimeMillis();
 
@@ -103,11 +104,20 @@ public class TestWorkerMonitor implements WorkerMonitor {
                             worker.getWorkerUniqueIdentification(),
                             worker.isSingleUseOnly()
                     );
-                    workerState.setJobDescription("Job description, as passed from the broker in the JMS header.");
                     workerState.setJobId("Unique Job ID as passed from the broker in the JMS header. (TODO)");
                     workerState.setProportionComplete(worker.getProportionOfWorkDone());
-                    workerState.setStatus((worker.isRunning()) ? "Running" : "Not Running");
-
+                    workerState.setWorkerStatus((worker.isRunning()) ? "Running" : "Not Running");
+                    StepExecution stepExecution = worker.getCurrentStepExecution();
+                    if (stepExecution == null){
+                        workerState.setStepExecutionState(null);
+                        workerState.setJobId("-");
+                        workerState.setJobDescription("-");
+                    }
+                    else {
+                        workerState.setStepExecutionState(stepExecution.getState());
+                        workerState.setJobId(stepExecution.getId());
+                        workerState.setJobDescription(stepExecution.getStepInstance().getStep().getStepDescription());
+                    }
                     ObjectMessage responseObject = sessionHandler.createObjectMessage(workerState);
 
                     // Find out if there is a 'requestee' header, which should be added to the response message

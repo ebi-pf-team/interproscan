@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import java.util.UUID;
 
@@ -116,4 +118,12 @@ public interface Worker {
      * @return a unique identifier for the Worker (using java.util.UUID)
      */
     UUID getWorkerUniqueIdentification();
+
+    /**
+     * Returns the current StepExecution.
+     * Note that this may return null, if the Worker currently has
+     * no StepExecution to run.
+     * @return the current StepExecution.
+     */
+    StepExecution getCurrentStepExecution();
 }

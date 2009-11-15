@@ -4,7 +4,6 @@ import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
-import java.net.UnknownHostException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Required;
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Id: TestWorker.java,v 1.4 2009/10/29 17:58:00 pjones Exp $
  * @since 1.0
  */
-public class InterproscanWorker implements Worker {
+public class InterProScanWorker implements Worker {
 
     private SessionHandler sessionHandler;
 
@@ -34,6 +33,10 @@ public class InterproscanWorker implements Worker {
     private boolean singleUseOnly;
 
     private Double workDone;
+
+    private String workerStatus = "Running";
+
+    private volatile StepExecution currentStepExecution;
 
     private final UUID uniqueWorkerIdentification = UUID.randomUUID();
 
@@ -127,9 +130,7 @@ public class InterproscanWorker implements Worker {
      */
     @Override
     public String getStatusMessage() {
-        return (running)
-                ? "Well, I'm doing something!"
-                : "I've finished whatever it was I was doing.";
+        return "Worker: " + workerStatus + "";
     }
 
     /**
@@ -170,6 +171,10 @@ public class InterproscanWorker implements Worker {
     }
 
 
+    public StepExecution getCurrentStepExecution() {
+        return currentStepExecution;
+    }
+
     public void start(){
         try{
             if (workerManager != null){
@@ -189,10 +194,10 @@ public class InterproscanWorker implements Worker {
             while (running){
                 ObjectMessage stepExecutionMessage = (ObjectMessage) messageConsumer.receive(receiveTimeout);
                 if (stepExecutionMessage != null){  // receive has received a message before timing out.
-                    StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
-                    if (stepExecution != null){
-                        stepExecution.execute();
-                        ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
+                    currentStepExecution = (StepExecution) stepExecutionMessage.getObject();
+                    if (currentStepExecution != null){
+                        currentStepExecution.execute();
+                        ObjectMessage responseMessage = sessionHandler.createObjectMessage(currentStepExecution);
                         messageProducer.send(responseMessage);
                         stepExecutionMessage.acknowledge();
                     }

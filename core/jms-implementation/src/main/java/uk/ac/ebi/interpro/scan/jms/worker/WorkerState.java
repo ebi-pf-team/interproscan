@@ -5,6 +5,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
 import java.util.UUID;
 
+import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
+
 /**
  * The WorkerState class is used to transmit the state of
  * a Worker to a caller.
@@ -45,7 +47,12 @@ public class WorkerState implements Serializable {
      * String with any content (at the moment!) describing
      * the status of the Worker.
      */
-    private String status;
+    private String workerStatus;
+
+    /**
+     * Last known state of the current StepExecution
+     */
+    private StepExecutionState stepExecutionStatus;
 
     /**
      * The host that the Worker is running on.
@@ -80,8 +87,8 @@ public class WorkerState implements Serializable {
         this.proportionComplete = proportionComplete;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setWorkerStatus(String workerStatus) {
+        this.workerStatus = workerStatus;
     }
 
     public void setExceptionThrown(Throwable exceptionThrown) {
@@ -96,6 +103,14 @@ public class WorkerState implements Serializable {
         this.jobDescription = jobDescription;
     }
 
+    public StepExecutionState getStepExecutionStatus() {
+        return stepExecutionStatus;
+    }
+
+    public void setStepExecutionState(StepExecutionState stepExecutionStatus) {
+        this.stepExecutionStatus = stepExecutionStatus;
+    }
+
     public long getTimeAliveMillis() {
         return timeAliveMillis;
     }
@@ -108,8 +123,8 @@ public class WorkerState implements Serializable {
         return jobDescription;
     }
 
-    public String getStatus() {
-        return status;
+    public String getWorkerStatus() {
+        return workerStatus;
     }
 
     public String getHostName() {
@@ -150,7 +165,7 @@ public class WorkerState implements Serializable {
         if (jobId != null ? !jobId.equals(that.jobId) : that.jobId != null) return false;
         if (proportionComplete != null ? !proportionComplete.equals(that.proportionComplete) : that.proportionComplete != null)
             return false;
-        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        if (workerStatus != null ? !workerStatus.equals(that.workerStatus) : that.workerStatus != null) return false;
         if (!workerIdentification.equals(that.workerIdentification)) return false;
 
         return true;
@@ -162,7 +177,7 @@ public class WorkerState implements Serializable {
         result = 31 * result + (proportionComplete != null ? proportionComplete.hashCode() : 0);
         result = 31 * result + (jobDescription != null ? jobDescription.hashCode() : 0);
         result = 31 * result + (jobId != null ? jobId.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (workerStatus != null ? workerStatus.hashCode() : 0);
         result = 31 * result + hostName.hashCode();
         result = 31 * result + workerIdentification.hashCode();
         result = 31 * result + (exceptionThrown != null ? exceptionThrown.hashCode() : 0);
@@ -176,7 +191,7 @@ public class WorkerState implements Serializable {
                 append("proportionComplete", proportionComplete).
                 append("jobDescription", jobDescription).
                 append("jobId", jobId).
-                append("status", status).
+                append("workerStatus", workerStatus).
                 append("hostName", hostName).
                 append("singleUseOnly", singleUseOnly).
                 append("workerIdentification", workerIdentification).
