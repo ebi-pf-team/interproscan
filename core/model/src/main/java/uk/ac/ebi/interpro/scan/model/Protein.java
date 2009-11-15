@@ -58,7 +58,7 @@ public class Protein implements Serializable {
     
     // TODO Consider whether this needs to be based upon CHUNKING as used in PRIDE, so a long protein sequence is stored
     // TODO in indexed VARCHAR columns, rather than using CLOBs that give very poor performance.
-    @Column(name="protein_sequence", length = 100000, updatable = false)     // Length based upon current longest protein in UniParc: 37777 residues.
+    @Column(name="protein_sequence", length = 500000, updatable = false, nullable = false)     // Length based upon current longest protein in UniParc: 37777 residues.
     private String sequence;
 
     @Column(nullable = false, unique = true, updatable = false, length = 32)
@@ -276,6 +276,18 @@ public class Protein implements Serializable {
 
         private static final Pattern MD5_PATTERN = Pattern.compile("^[A-Fa-f0-9]{32}$");
 
+        private static final MessageDigest m;
+
+        private static final int HEXADECIMAL_RADIX = 16;
+
+        static {
+            try{
+                m = MessageDigest.getInstance("MD5");
+            }
+            catch (NoSuchAlgorithmException e) {
+                throw new IllegalStateException ("Cannot find MD5 algorithm", e);
+            }
+        }
 
         // TODO: Do we need isMd5()?
         /**
@@ -289,18 +301,16 @@ public class Protein implements Serializable {
         }
         
         static String calculateMd5(String sequence)   {
-            try {
-                // TODO - Check this - the JavaDoc suggests that this method call creates a new instance of
-                // TODO - the digest each time it is called.  Is this thread safe?  If so, make singleton or static.
-                MessageDigest m = MessageDigest.getInstance("MD5");
+            String md5;
+            // As using single instance of MessageDigest, make thread safe.
+            // This should be much faster than creating a new MessageDigest object
+            // each time this method is called.
+            synchronized (m){
+                m.reset();
                 m.update(sequence.getBytes(), 0, sequence.length());
-                final int RADIX = 16; // TODO: Why is radix 16?
-                String md5 = new BigInteger(1, m.digest()).toString(RADIX);
-                return (md5.toLowerCase(Locale.ENGLISH));
-            } 
-            catch (NoSuchAlgorithmException e) {
-                throw new IllegalStateException("MD5 implementation not available", e);
+                md5 = new BigInteger(1, m.digest()).toString(HEXADECIMAL_RADIX);
             }
+            return (md5.toLowerCase(Locale.ENGLISH));
         }
 
     }
