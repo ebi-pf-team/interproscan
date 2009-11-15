@@ -57,6 +57,19 @@ public interface CommandLineConversation extends Serializable {
     void setEnvironment (Map<String, String> environmentVariables, boolean overrideAll);
 
     /**
+     * Redirects the output from the command directly to the specified file.
+     * If a filePath is set, then the method 'getOutput' will return null.
+     * @param filePath the path of the file to which output should be redirected.
+     */
+    void setOutputPathToFile (String filePath, boolean overwriteIfExists, boolean append) throws IOException;
+
+    /**
+     * Redirects the error stream from the command directly to the specified file.
+     * If a filePath is set, then the method 'getError' will return null.
+     * @param filePath the path of the file to which error output should be redirected.
+     */
+    void setErrorPathToFile(String filePath, boolean overwriteIfExists, boolean append) throws IOException;
+    /**
      * Sets the working directory for subsequent commands.
      *
      * @param directoryPath being a valid path to a working directory
