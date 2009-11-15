@@ -3,6 +3,8 @@ package uk.ac.ebi.interpro.scan.management.model;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.Serializable;
+import java.util.UUID;
+import java.util.List;
 
 /**
  * Instances of this class describe / provide a template
@@ -20,9 +22,9 @@ import java.io.Serializable;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public abstract class Step implements Serializable {
+public abstract class Step<I extends StepInstance, E extends StepExecution> implements Serializable {
 
-    protected Long id;
+    protected String id;
 
     protected Job job;
 
@@ -61,11 +63,23 @@ public abstract class Step implements Serializable {
      */
     protected Integer maxModels;
 
-    public Long getId() {
+    /**
+     * List of instances of this Step.
+     */
+    protected List<I> stepInstances;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    /**
+     * Must be set in configuration to unique value.
+     * Note that if this is changed between one run of the master node and another,
+     * the step instances / executions will no longer be associated with this step.
+     * @param id being any unique String.
+     */
+    @Required
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -137,5 +151,22 @@ public abstract class Step implements Serializable {
     @Required
     public void setRetries(int retries) {
         this.retries = retries;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Step)) return false;
+
+        Step step = (Step) o;
+
+        if (!id.equals(step.id)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
