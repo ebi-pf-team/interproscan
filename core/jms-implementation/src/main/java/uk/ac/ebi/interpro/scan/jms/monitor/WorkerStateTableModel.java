@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.monitor;
 
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
+import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 
 import javax.swing.table.TableModel;
 import javax.swing.event.TableModelListener;
@@ -129,20 +130,22 @@ public class WorkerStateTableModel implements TableModel {
             case 4:
                 return state.getJobDescription();
             case 5:
-                return state.getProportionComplete();
+                return state.getStepExecutionStatus().toString();
             case 6:
-                return state.getStatus();
+                return state.getProportionComplete();
             case 7:
-                return (state.isSingleUseOnly()) ? "Single" : "Multiple";
+                return state.getWorkerStatus();
             case 8:
+                return (state.isSingleUseOnly()) ? "Single" : "Multiple";
+            case 9:
                 String exceptionMessage = "No Problems";
                 if (state.getExceptionThrown() != null){
                     exceptionMessage = state.getExceptionThrown().getMessage();
                 }
                 return exceptionMessage;
-            case 9:
-                return "Shutdown";
             case 10:
+                return "Shutdown";
+            case 11:
                 return "Kill";
             default:
                 throw new IllegalArgumentException ("There is no column number "+ columnIndex + " defined. (Programming error");
@@ -191,14 +194,15 @@ public class WorkerStateTableModel implements TableModel {
         HOST(0, "Host", String.class),
         JVM_ID(1, "JVM ID", String.class),
         TIME_ALIVE(2, "Time Alive (ms)", Long.class),
-        JOB_ID(3, "Job ID", String.class),
-        JOB_DESCRIPTION(4, "Job Description", String.class),
-        PROGRESS(5, "Progress", Double.class),
-        STATUS(6, "Status", String.class),
-        SINGLE_USE_ONLY(7, "Single Use Only?", String.class),
-        EXCEPTIONS(8, "Exceptions", String.class),
-        SHUTDOWN(9, "", String.class),
-        KILL(10, "", String.class)
+        JOB_ID(3, "Step ID", String.class),
+        JOB_DESCRIPTION(4, "Step Description", String.class),
+        JOB_STATUS(5, "Step Status", String.class),
+        PROGRESS(6, "Progress", Double.class),
+        STATUS(7, "Worker Status", String.class),
+        SINGLE_USE_ONLY(8, "Single Use Only?", String.class),
+        EXCEPTIONS(9, "Exceptions", String.class),
+        SHUTDOWN(10, "", String.class),
+        KILL(11, "", String.class)
         ;
 
         private static final Map <Integer, Column> columnNumberToColumnMap = new HashMap<Integer, Column> (Column.values().length);
