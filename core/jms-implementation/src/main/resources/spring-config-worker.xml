@@ -8,13 +8,13 @@
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
 
-    <bean id="workerManager" class="uk.ac.ebi.interpro.scan.jms.worker.TestWorkerMonitor">
+    <bean id="workerManager" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanMonitor">
         <property name="workerManagerTopicName" value="jms.topic.${worker.manager.topic}"/>
         <property name="workerManagerResponseQueueName" value="jms.queue.${worker.manager.response.queue}"/>
         <property name="sessionHandler" ref="sessionHandler"/>
     </bean>
 
-    <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.worker.TestWorker">
+    <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker">
         <!-- If set to true, then the worker
         JVM starts up, processes at most 1 job and then closes down.
         if false, the worker JVM will start up and process jobs until
