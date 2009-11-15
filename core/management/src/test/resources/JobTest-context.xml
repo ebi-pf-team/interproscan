@@ -32,8 +32,6 @@
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!!!!! Queues-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
-
-
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="job_pfam_A" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"                        value="Pfam HMMER3 Raw Analysis and Post Processing"/>
@@ -41,16 +39,20 @@
 
 
     <!-- STEP 1 -->
-    <bean id="step_pfam_A_write_fasta_file" class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep">
+    <bean id="step_pfam_A_write_fasta_file"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep">
         <property name="job"                                ref="job_pfam_A"/>
         <!-- This step has no depdencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"                    value="If it is not already available on the path, write the appropriate fasta file."/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
         <property name="queue"                              ref="parallelTaskSubmissionQueue"/>
+        <property name="id"                                 value="step_pfam_A_write_fasta_file"/>
+        <property name="retries"                            value="0"/>
+        <property name="fastaFilePathTemplate"
+                  value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND].fasta"/>
     </bean>
 
     <!-- STEP 2 -->
-    <bean id="step_pfam_A_run_HMMER3" class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHMMER3Step">
+    <bean id="step_pfam_A_run_HMMER3"                       class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step">
         <property name="job"                                ref="job_pfam_A"/>
 
         <property name="dependsUpon"                        ref="step_pfam_A_write_fasta_file"/>
@@ -58,14 +60,18 @@
         <property name="createStepInstancesForNewProteins"  value="true"/>
         <property name="queue"                              ref="parallelTaskSubmissionQueue"/>
 
-        <property name="fullPathToBinary"                   value="/path/to/hmmsearch"/>
+        <property name="fullPathToBinary"                   value="/ebi/production/interpro/binaries/64_bit_Linux/HMMER3.0b2/hmmscan"/>
         <property name="binarySwitches"                     value="--cutga"/>
-        <property name="fullPathToHmmFile"                  value="/path/to/pfamA.hmm"/>
-        <property name="fullPathOfOutputFile"               value="/path/to/output_file"/>
+        <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
+        <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
+        <property name="id"                                 value="step_pfam_A_run_HMMER3"/>
+        <property name="retries"                            value="0"/>
+        <property name="fastaFilePathNameTemplate"
+                  value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND].fasta"/>
     </bean>
 
     <!-- STEP 3 -->
-    <bean id="step_pfam_A_parse_HMMER3_output" class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStep">
+    <bean id="step_pfam_A_parse_HMMER3_output"              class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStep">
         <property name="job"                                ref="job_pfam_A"/>
 
         <property name="dependsUpon"                        ref="step_pfam_A_run_HMMER3"/>
@@ -73,19 +79,34 @@
         <property name="createStepInstancesForNewProteins"  value="true"/>
         <property name="queue"                              ref="serialTaskSubmissionQueue"/>
 
-        <property name="runBinaryStep"                      ref="step_pfam_A_run_HMMER3"/>
+        <property name="id" value="step_pfam_A_parse_HMMER3_output"/>
+        <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
+        <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
+        <property name="retries"                            value="0"/>
     </bean>
 
     <!-- STEP 4 -->
-    <bean id="step_pfam_A_post_processing" class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep">
+    <bean id="step_pfam_A_post_processing"                  class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep">
         <property name="job"                                ref="job_pfam_A"/>
 
         <property name="dependsUpon"                        ref="step_pfam_A_parse_HMMER3_output"/>
         <property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
         <property name="queue"                              ref="serialTaskSubmissionQueue"/>
+        <property name="id"                                 value="step_pfam_A_post_processing"/>
+        <property name="retries"                            value="0"/>
+        <property name="postProcessor"                      ref="pfam_A_post_processor"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="pfam_A_post_processor"                        class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing">
+        <property name="clanFileParser"                     ref="pfam_A_clanFileParser"/>
+    </bean>
 
+    <bean id="pfam_A_clanFileParser"                        class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
+        <property name="pfamASeedFile"                      value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.seed"/>
+        <property name="pfamCFile"                          value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-C"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
