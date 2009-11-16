@@ -2,10 +2,7 @@ package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
 import uk.ac.ebi.interpro.scan.model.Protein;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.File;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -17,7 +14,7 @@ import java.util.List;
  * Time: 12:11:20
  * To change this template use File | Settings | File Templates.
  */
-public class WriteFastaFile {
+public class WriteFastaFile implements Serializable {
 
     private int sequenceLineLength = 60;
 
