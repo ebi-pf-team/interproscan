@@ -134,4 +134,6 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
     public int hashCode() {
         return id.hashCode();
     }
+
+    public abstract E createStepExecution();
 }

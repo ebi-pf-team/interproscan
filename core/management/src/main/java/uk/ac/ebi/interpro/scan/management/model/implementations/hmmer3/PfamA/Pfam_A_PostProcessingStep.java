@@ -59,6 +59,11 @@ public class Pfam_A_PostProcessingStep extends Step<Pfam_A_PostProcessingStep.Pf
             super(id, step);
         }
 
+        @Override
+        public Pfam_A_PostProcessingStepExecution createStepExecution() {
+            return new Pfam_A_PostProcessingStepExecution(UUID.randomUUID(), this);
+        }
+
     }
 
     /**
@@ -66,7 +71,7 @@ public class Pfam_A_PostProcessingStep extends Step<Pfam_A_PostProcessingStep.Pf
      */
     public class Pfam_A_PostProcessingStepExecution extends StepExecution<Pfam_A_PostProcessingStepInstance> {
 
-        Map<String, List<PfamHmmer3RawMatch>> proteinAcToFilteredMatchMap;
+        private Map<String, List<PfamHmmer3RawMatch>> proteinAcToFilteredMatchMap;
 
 
         /**
@@ -79,6 +84,10 @@ public class Pfam_A_PostProcessingStep extends Step<Pfam_A_PostProcessingStep.Pf
          */
         protected Pfam_A_PostProcessingStepExecution(UUID id, Pfam_A_PostProcessingStepInstance stepInstance) {
             super(id, stepInstance);
+        }
+
+        public Map<String, List<PfamHmmer3RawMatch>> getProteinAcToFilteredMatchMap() {
+            return proteinAcToFilteredMatchMap;
         }
 
         /**

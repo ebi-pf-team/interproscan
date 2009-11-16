@@ -33,6 +33,17 @@ public class WriteFastaFileStep extends Step<WriteFastaFileStep.WriteFastaFileSt
 
     public class WriteFastaFileStepInstance extends StepInstance<WriteFastaFileStep, WriteFastaFileStepExecution> {
 
+        public WriteFastaFileStepInstance(UUID id, WriteFastaFileStep step, List<Protein> proteins, long bottomProteinId, long topProteinId) {
+            super(id, step);
+            this.proteins = proteins;
+            this.setBottomProtein(bottomProteinId);
+            this.setTopProtein(topProteinId);
+            this.fastaFilePathName = filterFileNameProteinBounds(
+                    this.getStep().getFastaFilePathTemplate(),
+                    bottomProteinId, topProteinId
+            );
+        }
+
         private List<Protein> proteins;
 
         private String fastaFilePathName;
@@ -41,20 +52,17 @@ public class WriteFastaFileStep extends Step<WriteFastaFileStep.WriteFastaFileSt
             return fastaFilePathName;
         }
 
-        public void setFastaFilePathName(String fastaFilePathName) {
-            this.fastaFilePathName = fastaFilePathName;
-        }
-
-        public void setProteins(List<Protein> proteins) {
-            this.proteins = proteins;
-        }
-
         public List<Protein> getProteins() {
             return proteins;
         }
 
         public WriteFastaFileStepInstance(UUID id, WriteFastaFileStep step) {
             super(id, step);
+        }
+
+        @Override
+        public WriteFastaFileStepExecution createStepExecution() {
+            return new WriteFastaFileStepExecution(UUID.randomUUID(), this);
         }
     }
 
