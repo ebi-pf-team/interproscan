@@ -122,13 +122,13 @@ public class InterProScanMaster implements Master {
             sessionHandler.init();
 
             List<StepInstance> stepInstances = buildStepInstancesTheStupidWay();
-
+            System.out.println("Returned from building step instances method.");
             while(true){
 //                sendMessage(jobSubmissionQueueName, "Message number " + i);  // Send a message every second or so.
 
 
                 for (StepInstance stepInstance : stepInstances){
-                    if (stepInstance.getState() == StepExecutionState.NEW_STEP_EXECUTION){
+                    if (stepInstance.getState() == StepExecutionState.NEW_STEP_INSTANCE){
                         // Check if dependcies exist...
                         boolean canRun = stepInstance.stepInstanceDependsUpon() == null;
                         // If they do exist, check if they are (all) complete...
@@ -147,6 +147,7 @@ public class InterProScanMaster implements Master {
                             StepExecution stepExecution = stepInstance.createStepExecution();
 //                            sendMessage(stepExecution.getStepInstance().getStep().getQueue().getName(), stepExecution);
                             // TODO - for the moment, just sending to the default job submission queue.
+                            System.out.println("Sending message.");
                             sendMessage(jobSubmissionQueueName, stepExecution);
                         }
                     }
@@ -179,9 +180,11 @@ public class InterProScanMaster implements Master {
 
         // Then retrieve the first 99.
         List<Protein> proteins = proteinDAO.getProteinsBetweenIds(1l, 100l);
-
+        System.out.println("Got some proteins...");
         for (Step step : job.getSteps()){
+            System.out.println("Looking at the job");
             if (step instanceof WriteFastaFileStep){
+                System.out.println("Found a step I can run.");
                 stepInstances.add(new WriteFastaFileStepInstance(
                         UUID.randomUUID(),
                         (WriteFastaFileStep)step,
@@ -190,6 +193,7 @@ public class InterProScanMaster implements Master {
                         100l
                 ));
             }
+            System.out.println("Built Collection of stepInstances");
         }
         return stepInstances;
     }
