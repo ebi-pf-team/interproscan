@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
@@ -17,7 +18,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class Job {
+public class Job implements Serializable {
 
     private Long id;
 
