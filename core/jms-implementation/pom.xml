@@ -337,7 +337,18 @@
 
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/main/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -414,6 +425,136 @@
 
     <profiles>
 
+        <profile>
+            <id>runBroker</id>
+            <build><plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.1</version>
+
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>java</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+
+                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunBroker</mainClass>
+                    </configuration>
+                </plugin>
+            </plugins></build>
+        </profile>
+
+        <profile>
+            <id>runMaster</id>
+
+            <build><plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.1</version>
+                    <executions>
+                        <execution>
+
+                            <goals>
+                                <goal>java</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunMaster</mainClass>
+                    </configuration>
+
+                </plugin>
+            </plugins></build>
+        </profile>
+
+        <profile>
+            <id>runDestination</id>
+            <build><plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>java</goal>
+                            </goals>
+
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunWorker</mainClass>
+                    </configuration>
+                </plugin>
+            </plugins></build>
+        </profile>
+
+        <profile>
+            <id>runMonitor</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.intellij</groupId>
+                    <artifactId>javac2</artifactId>
+                    <version>7.0.3</version>
+
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1</version>
+
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+
+                            <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunMonitor</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>ideauidesigner-maven-plugin</artifactId>
+                        <executions>
+
+                            <execution>
+                                <goals>
+                                    <goal>javac2</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <fork>true</fork>
+
+                            <debug>true</debug>
+                            <failOnError>true</failOnError>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.intellij</groupId>
+                                <artifactId>javac2</artifactId>
+
+                                <version>7.0.3</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+
         <!--profile>
             <id>runBroker</id>
             <build><plugins>
@@ -443,6 +584,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+
                 <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
                 <test.connection.url>jdbc:hsqldb:mem:mem:testmodel</test.connection.url>
                 <test.username>sa</test.username>
@@ -451,10 +593,11 @@
                 <test.hibernate.show_sql>true</test.hibernate.show_sql>
                 <test.hibernate.format_sql>true</test.hibernate.format_sql>
                 <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
-                <broker.host.name>Please.configure.your.profile</broker.host.name>
+
+                <broker.host.name>localhost</broker.host.name>
                 <broker.port.number>5445</broker.port.number>
-                <unix.username>Please.configure.your.profile</unix.username>
-                <lsf.notification.emailaddress>Please.configure.your.profile</lsf.notification.emailaddress>
+                <unix.username>mumdad</unix.username>
+                <lsf.notification.emailaddress>pjones@ebi.ac.uk</lsf.notification.emailaddress>
 
                 <!-- You can rename the queues to anything you like-->
                 <job.submission.queue>job_submission_queue</job.submission.queue>
@@ -462,6 +605,7 @@
                 <worker.job.response.queue>worker_job_response_queue</worker.job.response.queue>
                 <worker.manager.topic>worker_manager_topic</worker.manager.topic>
                 <worker.manager.response.queue>worker_manager_response_queue</worker.manager.response.queue>
+
             </properties>                
         </profile>
     </profiles>
