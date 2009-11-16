@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
+import java.io.Serializable;
+
 /**
  * TODO: Description
  *
@@ -7,7 +9,7 @@ package uk.ac.ebi.interpro.scan.management.model;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public enum StepExecutionState {
+public enum StepExecutionState implements Serializable {
 
     /**
      * Condition where a new StepInstance has been created,
