@@ -109,8 +109,8 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
     }
 
     public void running(){
-        if (state != StepExecutionState.STEP_EXECUTION_SUBMITTED){
-            throw new IllegalStateException ("Attempting to set the state of this stepExecution to 'RUNNING', however it has not been submitted.  Current state: " + state);
+        if (state == StepExecutionState.STEP_EXECUTION_SUCCESSFUL || state == StepExecutionState.STEP_EXECUTION_FAILED){
+            throw new IllegalStateException ("Attempting to set the state of this stepExecution to 'RUNNING', however it has already been completed.");
         }
         state = StepExecutionState.STEP_EXECUTION_RUNNING;
         startedRunningTime = new Date();
@@ -120,8 +120,8 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
      * Called by the execute() method implementation to indicate successful completion.
      */
     protected void completeSuccessfully(){
-        if (state != StepExecutionState.STEP_EXECUTION_RUNNING){
-            throw new IllegalStateException("Try to set the state of this StepExecution to 'STEP_EXECUTION_SUCCESSFUL', however it is currently in state "+ state);
+        if (state == StepExecutionState.STEP_EXECUTION_FAILED){
+            throw new IllegalStateException("Try to set the state of this StepExecution to 'STEP_EXECUTION_SUCCESSFUL', however has previously been set to 'FAILED'.");
         }
         state = StepExecutionState.STEP_EXECUTION_SUCCESSFUL;
         completedTime = new Date();
@@ -131,9 +131,6 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
      * Called by the execute() method implementation to indicate a failure of execution.
      */
     protected void fail(){
-        if (state != StepExecutionState.STEP_EXECUTION_RUNNING){
-            throw new IllegalStateException("Try to set the state of this StepExecution to 'STEP_EXECUTION_FAILED', however it is currently in state "+ state);
-        }
         state = StepExecutionState.STEP_EXECUTION_FAILED;
         completedTime = new Date();
     }
