@@ -7,12 +7,18 @@
 
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
+    <import resource="pfam-A-job-context.xml"/>
 
-    <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.TestMasterQuartz">
+    <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
         <property name="sessionHandler" ref="sessionHandler"/>
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
         <property name="responseMonitor" ref="responseMonitor"/>
         <property name="managementRequestTopicName" value="jms.topic.${worker.manager.topic}"/>
+        <property name="jobs">
+            <list>
+                <ref bean="job_pfam_A"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
@@ -22,6 +28,6 @@
         <property name="workerJobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
     </bean>
 
-    <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.ResponseHandlerImpl"/>
+    <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl"/>
 </beans>
         
