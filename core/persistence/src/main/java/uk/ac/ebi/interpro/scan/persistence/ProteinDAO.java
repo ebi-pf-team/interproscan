@@ -54,10 +54,9 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
     /**
      * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
      * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
-     * @param slice defining a Transaction.
      * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
      */
-    public List<Protein> getProteinsInTransactionSlice (TransactionSlice slice);
+    public List<Protein> getProteinsBetweenIds(long bottom, long top);
 
     /**
      * Inserts new Proteins.

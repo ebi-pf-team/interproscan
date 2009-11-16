@@ -73,15 +73,14 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     /**
      * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
      * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
-     * @param slice defining a Transaction.
      * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
-    public List<Protein> getProteinsInTransactionSlice(TransactionSlice slice) {
+    public List<Protein> getProteinsBetweenIds(long bottom, long top) {
         Query query = entityManager.createQuery("select p from Protein p where p.id >= :bottom and p.id <= :top");
-        query.setParameter("bottom", slice.getBottom());
-        query.setParameter("top", slice.getTop());
+        query.setParameter("bottom", bottom);
+        query.setParameter("top", top);
         return (List<Protein>) query.getResultList();
     }
 
