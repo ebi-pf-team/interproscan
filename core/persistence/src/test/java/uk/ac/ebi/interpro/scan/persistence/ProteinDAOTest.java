@@ -30,7 +30,6 @@ import uk.ac.ebi.interpro.scan.model.transactiontracking.RawTransactionSlice;
 import uk.ac.ebi.interpro.scan.model.transactiontracking.TransactionSlice;
 
 import javax.annotation.Resource;
-import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Set;
 
@@ -209,14 +208,12 @@ public class ProteinDAOTest {
         }
         assertEquals("The difference between the highest and lowest primary key values is not as expected.", (proteinSequences.length - 1), maxPrimaryKey - minPrimaryKey);
         // Build a TransactionSlice including the protein ID range of the proteins just entered.
-        TransactionSlice slice = new RawTransactionSlice(minPrimaryKey, maxPrimaryKey);
         // Now try to retrieve the proteins
-        List<Protein> retrievedProteins = dao.getProteinsInTransactionSlice(slice);
+        List<Protein> retrievedProteins = dao.getProteinsBetweenIds(minPrimaryKey, maxPrimaryKey);
         assertEquals("The wrong number of proteins were returned from the database.", proteinSequences.length, retrievedProteins.size());
 
         // Now build a new, smaller slice and see if a smaller number of proteins are returned.
-        slice = new RawTransactionSlice(minPrimaryKey + 1, maxPrimaryKey - 1);
-        retrievedProteins= dao.getProteinsInTransactionSlice(slice);
+        retrievedProteins= dao.getProteinsBetweenIds(minPrimaryKey + 1, maxPrimaryKey - 1);
         assertEquals("The wrong number of proteins returned from the database for the smaller slice.", (proteinSequences.length - 2), retrievedProteins.size());
     }
 }
