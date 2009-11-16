@@ -73,6 +73,11 @@ public class ParseHMMER3OutputStep extends Step<ParseHMMER3OutputStep.ParseHMMER
         public ParseHMMER3OutputStepInstance(UUID id, ParseHMMER3OutputStep step) {
             super(id, step);
         }
+
+        @Override
+        public ParseHMMER3OutputStepExecution createStepExecution() {
+            return new ParseHMMER3OutputStepExecution(UUID.randomUUID(), this);
+        }
     }
 
 
@@ -84,10 +89,6 @@ public class ParseHMMER3OutputStep extends Step<ParseHMMER3OutputStep.ParseHMMER
 
         public Set<RawSequenceIdentifier> getParsedResults() {
             return parsedResults;
-        }
-
-        public void setParsedResults(Set<RawSequenceIdentifier> parsedResults) {
-            this.parsedResults = parsedResults;
         }
 
         protected ParseHMMER3OutputStepExecution(UUID id, ParseHMMER3OutputStepInstance stepInstance) {

@@ -103,6 +103,11 @@ public class RunHmmer3Step extends Step<RunHmmer3Step.RunHmmer3StepInstance, Run
         public RunHmmer3StepInstance(UUID id, RunHmmer3Step step) {
             super(id, step);
         }
+
+        @Override
+        public RunHmmer3StepExecution createStepExecution() {
+            return new RunHmmer3StepExecution(UUID.randomUUID(), this);
+        }
     }
 
     public class RunHmmer3StepExecution extends StepExecution<RunHmmer3StepInstance> {
