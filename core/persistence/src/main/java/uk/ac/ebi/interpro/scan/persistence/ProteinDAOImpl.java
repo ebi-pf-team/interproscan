@@ -111,51 +111,51 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     @SuppressWarnings("unchecked")
     public List<Protein> insertOrUpdate(List<Protein> newProteins) {
         final List<Protein> persistentProteins = new ArrayList<Protein>(newProteins.size());
+        if (newProteins.size() > 0){
+            // Create a List of MD5s (just as Strings) to query the database with
+            final List<String> newMd5s = new ArrayList<String>(newProteins.size());
+            for (Protein newProtein : newProteins){
+                newMd5s.add (newProtein.getMd5());
+            }
+            // Retrieve any proteins AND associated xrefs that have the same MD5 as one of the 'new' proteins
+            // being inserted and place in a Map of MD5 to Protein object.
+            final Map<String, Protein> md5ToExistingProtein = new HashMap<String, Protein>();
+            final Query query = entityManager.createQuery("select p from Protein p left outer join fetch P.crossReferences where p.md5 in (:md5)");
+            query.setParameter("md5", newMd5s);
+            for (Protein existingProtein : (List<Protein>) query.getResultList()){
+                md5ToExistingProtein.put (existingProtein.getMd5(), existingProtein);
+            }
 
-        // Create a List of MD5s (just as Strings) to query the database with
-        final List<String> newMd5s = new ArrayList<String>(newProteins.size());
-        for (Protein newProtein : newProteins){
-            newMd5s.add (newProtein.getMd5());
-        }
-        // Retrieve any proteins AND associated xrefs that have the same MD5 as one of the 'new' proteins
-        // being inserted and place in a Map of MD5 to Protein object.
-        final Map<String, Protein> md5ToExistingProtein = new HashMap<String, Protein>();
-        final Query query = entityManager.createQuery("select p from Protein p left outer join fetch P.crossReferences where p.md5 in (:md5)");
-        query.setParameter("md5", newMd5s);
-        for (Protein existingProtein : (List<Protein>) query.getResultList()){
-             md5ToExistingProtein.put (existingProtein.getMd5(), existingProtein);
-        }
+            // Now have the List of 'new' proteins, and a list of existing proteins that match
+            // them. Insert / update proteins as appropriate.
+            for (Protein candidate : newProteins){
 
-        // Now have the List of 'new' proteins, and a list of existing proteins that match
-        // them. Insert / update proteins as appropriate.
-        for (Protein candidate : newProteins){
-
-            // PROTEIN ALREADY EXISTS in the DB. - update cross references and save.
-            if (md5ToExistingProtein.keySet().contains(candidate.getMd5())){
-                // This protein is already in the database - add any new Xrefs and update.
-                Protein existingProtein = md5ToExistingProtein.get(candidate.getMd5());
-                boolean updateRequired = false;
-                if (candidate.getCrossReferences() != null){
-                    for (Xref xref : candidate.getCrossReferences()){
-                        // Add any NEW cross references.
-                        if (! existingProtein.getCrossReferences().contains(xref)){
-                            existingProtein.addCrossReference(xref);
-                            updateRequired = true;
+                // PROTEIN ALREADY EXISTS in the DB. - update cross references and save.
+                if (md5ToExistingProtein.keySet().contains(candidate.getMd5())){
+                    // This protein is already in the database - add any new Xrefs and update.
+                    Protein existingProtein = md5ToExistingProtein.get(candidate.getMd5());
+                    boolean updateRequired = false;
+                    if (candidate.getCrossReferences() != null){
+                        for (Xref xref : candidate.getCrossReferences()){
+                            // Add any NEW cross references.
+                            if (! existingProtein.getCrossReferences().contains(xref)){
+                                existingProtein.addCrossReference(xref);
+                                updateRequired = true;
+                            }
                         }
                     }
+                    if (updateRequired){
+                        entityManager.persist(existingProtein);
+                    }
+                    persistentProteins.add(existingProtein);
                 }
-                if (updateRequired){
-                    entityManager.persist(existingProtein);
+                // PROTEIN IS NEW - save it.
+                else {
+                    entityManager.persist(candidate);
+                    persistentProteins.add(candidate);
                 }
-                persistentProteins.add(existingProtein);
-            }
-            // PROTEIN IS NEW - save it.
-            else {
-                entityManager.persist(candidate);
-                persistentProteins.add(candidate);
             }
         }
-
         // Finally return all the persisted Protein objects (new or existing)
         return persistentProteins;
     }
