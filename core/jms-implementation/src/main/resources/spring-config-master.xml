@@ -40,7 +40,7 @@
     </bean>
 
     <bean id="testFastaFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="testdata/5k.fasta" />
+        <constructor-arg value="5k.fasta" />
     </bean>
 </beans>
         
