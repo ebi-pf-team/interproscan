@@ -12,7 +12,7 @@ import javax.jms.JMSException;
  * @version $Id: ResponseHandlerImpl.java,v 1.1.1.1 2009/10/07 13:37:52 pjones Exp $
  * @since 1.0
  */
-public class ResponseHandlerImpl implements ResponseHandler{
+public class InterProScanHandlerImpl implements ResponseHandler{
     /**
      * Recieves a Message and does whatever is needed.
      *

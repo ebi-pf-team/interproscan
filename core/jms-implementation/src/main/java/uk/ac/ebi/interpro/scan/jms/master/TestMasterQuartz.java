@@ -86,7 +86,7 @@ public class TestMasterQuartz implements Master  {
             Thread responseMonitorThread = new Thread(responseMonitor);
             responseMonitorThread.start();
 
-            Log log = LogFactory.getLog(TestMaster.class);
+            Log log = LogFactory.getLog(InterProScanMaster.class);
 
             // Initialise the sessionHandler for the master thread
             sessionHandler.init();
