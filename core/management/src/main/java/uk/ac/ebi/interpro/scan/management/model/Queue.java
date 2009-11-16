@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.management.model;
 
 import org.springframework.beans.factory.annotation.Required;
 
+import java.io.Serializable;
+
 /**
  * TODO: Description
  *
@@ -9,7 +11,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class Queue {
+public class Queue implements Serializable {
 
     private String name;
 
