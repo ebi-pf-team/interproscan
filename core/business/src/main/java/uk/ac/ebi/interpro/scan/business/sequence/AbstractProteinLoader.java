@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This abstract class knows how to store protein sequences and cross references
@@ -60,8 +61,11 @@ public class AbstractProteinLoader {
     }
 
     public List<Protein> persist(){
-        List<Protein> persistedProteins = proteinDAO.insertOrUpdate(proteinsAwaitingPersistence);
-        proteinsAwaitingPersistence.clear();
+        List<Protein> persistedProteins = Collections.emptyList();
+        if (proteinsAwaitingPersistence.size() > 0){
+            persistedProteins = proteinDAO.insertOrUpdate(proteinsAwaitingPersistence);
+            proteinsAwaitingPersistence.clear();
+        }
         return persistedProteins;
     }
 }
