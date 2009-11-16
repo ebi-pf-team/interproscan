@@ -87,6 +87,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
             switch (exec.getState()){
                 case NEW_STEP_EXECUTION:
                 case STEP_EXECUTION_SUBMITTED:
+                case STEP_EXECUTION_RUNNING:
                 case STEP_EXECUTION_SUCCESSFUL:
                     return exec.getState();
                 default:
