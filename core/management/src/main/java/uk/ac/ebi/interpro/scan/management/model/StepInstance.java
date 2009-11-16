@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
 
 /**
  * TODO: Description
@@ -13,6 +15,14 @@ import java.io.Serializable;
  * @since 1.0-SNAPSHOT
  */
 public abstract class StepInstance<S extends Step, E extends StepExecution> implements Serializable {
+
+    private static final String PROTEIN_BOTTOM_HOLDER = "\\[PROTSTART\\]";
+
+    private static final String PROTEIN_TOP_HOLDER = "\\[PROTEND\\]";
+
+    private static final String MODEL_BOTTOM_HOLDER = "\\[MODSTART\\]";
+
+    private static final String MODEL_TOP_HOLDER = "\\[MODEND\\]";
 
     private String id;
 
@@ -136,4 +146,22 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
     }
 
     public abstract E createStepExecution();
+
+        /**
+     * The format used for file names based upon integers
+     * to ensure that they order correctly in the filesystem.
+     */
+    public static final NumberFormat TWELVE_DIGIT_INTEGER = new DecimalFormat("000000000000");
+
+    public String filterFileNameProteinBounds (String fileNameTemplate, long bottomProteinId, long topProteinId){
+        fileNameTemplate = fileNameTemplate.replaceAll(PROTEIN_BOTTOM_HOLDER, TWELVE_DIGIT_INTEGER.format(bottomProteinId));
+        fileNameTemplate = fileNameTemplate.replaceAll(PROTEIN_TOP_HOLDER, TWELVE_DIGIT_INTEGER.format(topProteinId));
+        return fileNameTemplate;
+    }
+
+     public String filterFileNameModelBounds (String fileNameTemplate, long bottomModelId, long topModelId){
+        fileNameTemplate = fileNameTemplate.replaceAll(MODEL_BOTTOM_HOLDER, TWELVE_DIGIT_INTEGER.format(bottomModelId));
+        fileNameTemplate = fileNameTemplate.replaceAll(MODEL_TOP_HOLDER, TWELVE_DIGIT_INTEGER.format(topModelId));
+        return fileNameTemplate;
+    }
 }

@@ -34,13 +34,7 @@ public abstract class Step<I extends StepInstance, E extends StepExecution> impl
 
     protected Queue queue;
 
-    private static final String PROTEIN_BOTTOM_HOLDER = "\\[PROTSTART\\]";
 
-    private static final String PROTEIN_TOP_HOLDER = "\\[PROTEND\\]";
-
-    private static final String MODEL_BOTTOM_HOLDER = "\\[MODSTART\\]";
-
-    private static final String MODEL_TOP_HOLDER = "\\[MODEND\\]";
 
     /**
      * Number of retries
@@ -180,21 +174,5 @@ public abstract class Step<I extends StepInstance, E extends StepExecution> impl
         return id.hashCode();
     }
 
-    /**
-     * The format used for file names based upon integers
-     * to ensure that they order correctly in the filesystem.
-     */
-    public static final NumberFormat TWELVE_DIGIT_INTEGER = new DecimalFormat("000000000000");
 
-    public String filterFileNameProteinBounds (String fileNameTemplate, long bottomProteinId, long topProteinId){
-        fileNameTemplate = fileNameTemplate.replaceAll(PROTEIN_BOTTOM_HOLDER, TWELVE_DIGIT_INTEGER.format(bottomProteinId));
-        fileNameTemplate = fileNameTemplate.replaceAll(PROTEIN_TOP_HOLDER, TWELVE_DIGIT_INTEGER.format(topProteinId));
-        return fileNameTemplate;
-    }
-
-     public String filterFileNameModelBounds (String fileNameTemplate, long bottomModelId, long topModelId){
-        fileNameTemplate = fileNameTemplate.replaceAll(MODEL_BOTTOM_HOLDER, TWELVE_DIGIT_INTEGER.format(bottomModelId));
-        fileNameTemplate = fileNameTemplate.replaceAll(MODEL_TOP_HOLDER, TWELVE_DIGIT_INTEGER.format(topModelId));
-        return fileNameTemplate;
-    }
 }
