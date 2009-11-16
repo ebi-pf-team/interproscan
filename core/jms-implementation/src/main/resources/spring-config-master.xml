@@ -8,6 +8,7 @@
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
     <import resource="pfam-A-job-context.xml"/>
+    <import resource="persistence-config.xml"/>
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
         <property name="sessionHandler" ref="sessionHandler"/>
@@ -19,6 +20,8 @@
                 <ref bean="job_pfam_A"/>
             </list>
         </property>
+        <property name="loader" ref="loader"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
     <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
@@ -29,5 +32,15 @@
     </bean>
 
     <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl"/>
+
+        <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile">
+        <constructor-arg ref="testFastaFile"/>
+        <property name="transactionProteinCount" value="250"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <bean id="testFastaFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="testdata/5k.fasta" />
+    </bean>
 </beans>
         
