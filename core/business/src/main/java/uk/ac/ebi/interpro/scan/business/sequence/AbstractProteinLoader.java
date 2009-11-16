@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Required;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.io.Serializable;
 
 /**
  * This abstract class knows how to store protein sequences and cross references
