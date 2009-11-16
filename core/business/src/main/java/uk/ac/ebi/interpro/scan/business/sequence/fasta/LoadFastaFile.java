@@ -49,6 +49,7 @@ public class LoadFastaFile extends AbstractProteinLoader {
             // Store the final record (if there were any at all!)
             if (currentId != null){
                 store (currentSequence.toString(), currentId);
+                persist();
             }
         }
         catch (FileNotFoundException e) {
