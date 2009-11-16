@@ -1,19 +1,22 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.management.model.Job;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.management.model.*;
+import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStepInstance;
+import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
-import javax.jms.TextMessage;
 import javax.jms.ObjectMessage;
 
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Pretending to be the InterProScan master application.
@@ -33,6 +36,15 @@ public class InterProScanMaster implements Master {
     private List<Job> jobs;
 
     private String managementRequestTopicName;
+
+    private LoadFastaFile loader;
+
+    private ProteinDAO proteinDAO;
+
+    @Required
+    public void setLoader(LoadFastaFile loader) {
+        this.loader = loader;
+    }
 
     /**
      * Sets the SessionHandler.  This looks after connecting to the
@@ -88,6 +100,15 @@ public class InterProScanMaster implements Master {
         this.jobs = jobs;
     }
 
+    public ProteinDAO getProteinDAO() {
+        return proteinDAO;
+    }
+
+    @Required
+    public void setProteinDAO(ProteinDAO proteinDAO) {
+        this.proteinDAO = proteinDAO;
+    }
+
     /**
      * Run the Master Application.
      */
@@ -125,7 +146,7 @@ public class InterProScanMaster implements Master {
                         if (canRun){
                             StepExecution stepExecution = stepInstance.createStepExecution();
 //                            sendMessage(stepExecution.getStepInstance().getStep().getQueue().getName(), stepExecution);
-                            // TODO - for the moment, just sending to the defalt job submission queue.
+                            // TODO - for the moment, just sending to the default job submission queue.
                             sendMessage(jobSubmissionQueueName, stepExecution);
                         }
                     }
@@ -150,7 +171,27 @@ public class InterProScanMaster implements Master {
     }
 
     private List<StepInstance> buildStepInstancesTheStupidWay() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        List<StepInstance> stepInstances = new ArrayList<StepInstance>();
+        Job job = jobs.iterator().next();
+
+        // Load some proteins into the database.
+        loader.loadSequences();
+
+        // Then retrieve the first 99.
+        List<Protein> proteins = proteinDAO.getProteinsBetweenIds(1l, 100l);
+
+        for (Step step : job.getSteps()){
+            if (step instanceof WriteFastaFileStep){
+                stepInstances.add(new WriteFastaFileStepInstance(
+                        UUID.randomUUID(),
+                        (WriteFastaFileStep)step,
+                        proteins,
+                        1l,
+                        100l
+                ));
+            }
+        }
+        return stepInstances;
     }
 
     /**
