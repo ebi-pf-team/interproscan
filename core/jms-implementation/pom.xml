@@ -118,12 +118,12 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.springframework.batch</groupId>
-            <artifactId>spring-batch-test</artifactId>
-            <version>${spring.batch.version}</version>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.batch</groupId>-->
+            <!--<artifactId>spring-batch-test</artifactId>-->
+            <!--<version>${spring.batch.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
 
         <!-- All of the following should be inherited. -->
@@ -216,7 +216,7 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>1.6.3</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
 
         <!-- JPA tests -->
@@ -225,63 +225,63 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.4.0.GA</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
 
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>1.8.0.10</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.10</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
 
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.5.2</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
 
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core</artifactId>
             <version>2.0.0.BETA5</version>
-            <scope>compile</scope>
+            <!--<scope>compile</scope>-->
         </dependency>
 
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms</artifactId>
             <version>2.0.0.BETA5</version>
-            <scope>compile</scope>
+            <!--<scope>compile</scope>-->
         </dependency>
 
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-logging</artifactId>
             <version>2.0.0.BETA5</version>
-            <scope>compile</scope>
+            <!--<scope>compile</scope>-->
         </dependency>
         <dependency>
 
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-transports</artifactId>
             <version>2.0.0.BETA5</version>
-            <scope>compile</scope>
+            <!--<scope>compile</scope>-->
         </dependency>
         <dependency>
             <groupId>org.jboss.netty</groupId>
@@ -294,7 +294,7 @@
             <artifactId>jboss-jms-api</artifactId>
             <version>1.1.0.GA</version>
 
-            <scope>compile</scope>
+            <!--<scope>compile</scope>-->
         </dependency>
 
         <!--<dependency>-->
@@ -319,11 +319,11 @@
 
         <!-- PUBLICLY-AVAILABLE Maven repository downloads for Quartz:-->
 
-        <dependency>
-            <groupId>org.opensymphony.quartz</groupId>
-            <artifactId>quartz-all</artifactId>
-            <version>1.6.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.opensymphony.quartz</groupId>-->
+            <!--<artifactId>quartz-all</artifactId>-->
+            <!--<version>1.6.1</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>commons-collections</groupId>
