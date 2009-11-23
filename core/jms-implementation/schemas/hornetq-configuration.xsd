@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="urn:hornetq" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:hornetq" version="1.0">
+
+	<xsd:element name="configuration">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="clustered"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="file-deployment-enabled"/>	
+				<xsd:element maxOccurs="1" minOccurs="0" ref="persistence-enabled"/>	
+				<xsd:element maxOccurs="1" minOccurs="0" name="scheduled-thread-pool-max-size" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>
+							Maximum number of threads to use for the scheduled thread pool
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="thread-pool-max-size" type="xsd:int">
+					<xsd:annotation>
+						<xsd:documentation>
+							Maximum number of threads to use for the thread pool
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="security-enabled" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="security-invalidation-interval" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="wild-card-routing-enabled" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="management-address" type="xsd:string">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="management-notification-address" type="xsd:string">
+				</xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="management-cluster-user" type="xsd:string">
+                </xsd:element>				
+                <xsd:element maxOccurs="1" minOccurs="0" name="management-cluster-password" type="xsd:string">
+                </xsd:element>				
+                <xsd:element maxOccurs="1" minOccurs="0" name="management-request-timeout" type="xsd:long">
+                </xsd:element>              
+				<xsd:element maxOccurs="1" minOccurs="0" name="jmx-management-enabled" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="message-counter-enabled" type="xsd:boolean">
+				</xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="message-counter-sample-period" type="xsd:long">
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="message-counter-max-day-history" type="xsd:int">
+            </xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="connection-ttl-override" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="async-connection-execution-enabled" type="xsd:boolean">
+				</xsd:element>				
+				<xsd:element maxOccurs="1" minOccurs="0" name="transaction-timeout" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="transaction-timeout-scan-period" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="message-expiry-scan-period" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="message-expiry-thread-priority" type="xsd:int">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="id-cache-size" type="xsd:int">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="persist-id-cache" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="remoting-interceptors">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="queue-activation-timeout" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="backup" type="xsd:boolean">
+				</xsd:element>				
+				<xsd:element maxOccurs="1" minOccurs="0" name="persist-delivery-count-before-delivery" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="backup-connector-ref" type="backup-connectorType">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="connectors">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element maxOccurs="unbounded" minOccurs="0" name="connector" type="connectorType"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="acceptors">
+                    <xsd:complexType>
+                        <xsd:sequence>
+	               			<xsd:element maxOccurs="unbounded" minOccurs="1" name="acceptor" type="acceptorType">
+				            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="broadcast-groups">
+                    <xsd:complexType>
+                        <xsd:sequence>
+            				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="broadcast-group">
+				            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="discovery-groups">
+                    <xsd:complexType>
+                        <xsd:sequence>
+            				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="discovery-group">
+				            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="diverts">
+                    <xsd:complexType>
+                        <xsd:sequence>
+            				<xsd:element maxOccurs="unbounded" minOccurs="0" name="divert" type="divertType">
+	               			</xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="queues">
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="bridges">
+                    <xsd:complexType>
+                        <xsd:sequence>
+            				<xsd:element maxOccurs="unbounded" minOccurs="0" name="bridge" type="bridgeType">
+    				        </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="cluster-connections">
+                    <xsd:complexType>
+                        <xsd:sequence>
+            				<xsd:element maxOccurs="unbounded" minOccurs="0" name="cluster-connection" type="clusterConnectionType">
+				        </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="paging-directory" type="xsd:string">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="bindings-directory" type="xsd:string">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="create-bindings-dir" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-directory" type="xsd:string">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="create-journal-dir" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-type" type="journalType">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-aio-buffer-timeout" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-aio-buffer-size" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-aio-flush-on-sync" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-sync-transactional" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-sync-non-transactional" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="log-journal-write-rate" type="xsd:boolean">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-file-size" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-min-files" type="xsd:int">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-compact-percentage" type="xsd:int">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-compact-min-files" type="xsd:int">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="journal-max-aio" type="xsd:int">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="perf-blast-pages" type="xsd:int">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="server-dump-interval" type="xsd:long">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" name="large-messages-directory" type="xsd:string">
+				</xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="security-settings">
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="address-settings">
+                </xsd:element>
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="clustered" type="xsd:boolean"/>
+	
+	<xsd:element name="file-deployment-enabled" type="xsd:boolean"/>
+	
+	<xsd:element name="persistence-enabled" type="xsd:boolean"/>
+
+	<xsd:element name="local-bind-address" type="xsd:string"/>
+
+	<xsd:element name="local-bind-port" type="xsd:int"/>
+
+	<xsd:element name="group-address" type="xsd:string"/>
+
+	<xsd:element name="group-port" type="xsd:int"/>
+
+	<xsd:element name="broadcast-period" type="xsd:long"/>
+
+	<xsd:element name="connector-ref" type="connector-refType">
+	</xsd:element>
+
+	<xsd:element name="broadcast-group">
+		<xsd:complexType>
+			<xsd:sequence>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="local-bind-address">
+                </xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="local-bind-port">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="1" ref="group-address">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="1" ref="group-port">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="broadcast-period">
+				</xsd:element>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="connector-ref">
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:ID" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="refresh-timeout" type="xsd:int"/>
+
+	<xsd:element name="discovery-group">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="1" minOccurs="1" ref="group-address">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="1" ref="group-port">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="refresh-timeout">
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:ID" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="discovery-group-ref">
+		<xsd:complexType>
+			<xsd:attribute name="discovery-group-name" type="xsd:IDREF">
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="connector-refType">
+		<xsd:attribute name="connector-name" type="xsd:IDREF" use="required">
+		</xsd:attribute>
+		<xsd:attribute name="backup-connector-name" type="xsd:IDREF" use="optional">
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:element name="remoting-interceptors">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="unbounded" minOccurs="1" name="class-name" type="xsd:string">
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="paramType">
+		<xsd:attribute name="key" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+		<xsd:attribute name="type" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="String"/>
+					<xsd:enumeration value="Integer"/>
+					<xsd:enumeration value="Long"/>
+					<xsd:enumeration value="Boolean"/>
+					<xsd:enumeration value="Float"/>
+					<xsd:enumeration value="Double"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="connectorType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" name="factory-class" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="param" type="paramType">
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:ID" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="acceptorType">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" name="factory-class" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="param" type="paramType">
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="bridgeType">	   
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" name="queue-name" type="xsd:IDREF">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="1" name="forwarding-address" type="xsd:string">
+			</xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="filter">
+                <xsd:complexType>
+                   <xsd:attribute name="string" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="transformer-class-name" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="retry-interval" type="xsd:long">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="retry-interval-multiplier" type="xsd:double">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="reconnect-attempts" type="xsd:int">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="failover-on-server-shutdown" type="xsd:boolean">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="use-duplicate-detection" type="xsd:boolean">
+			</xsd:element>
+			<xsd:choice>
+				<xsd:element maxOccurs="1" minOccurs="1" name="connector-ref" type="connector-refType">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="1" name="discovery-group-ref">
+					<xsd:complexType>
+						<xsd:attribute name="discovery-group-name" type="xsd:IDREF" use="required">
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>	
+		<xsd:attribute name="name" type="xsd:string" use="required"/>	
+	</xsd:complexType>
+	
+   <xsd:complexType name="clusterConnectionType">      
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" name="address" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="retry-interval" type="xsd:long">
+			</xsd:element>			
+			<xsd:element maxOccurs="1" minOccurs="0" name="use-duplicate-detection" type="xsd:boolean">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="forward-when-no-consumers" type="xsd:boolean">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="max-hops" type="xsd:int">
+			</xsd:element>
+			
+			<xsd:choice>
+				<xsd:element maxOccurs="unbounded" minOccurs="1" name="connector-ref" type="connector-refType">
+				</xsd:element>
+				<xsd:element maxOccurs="1" minOccurs="1" name="discovery-group-ref">
+					<xsd:complexType>
+						<xsd:attribute name="discovery-group-name" type="xsd:IDREF" use="required">
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="divertType">	   
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="routing-name" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="1" name="address" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="1" name="forwarding-address" type="xsd:string">
+			</xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="filter">
+                <xsd:complexType>
+                   <xsd:attribute name="string" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="transformer-class-name" type="xsd:string">
+			</xsd:element>
+			<xsd:element maxOccurs="1" minOccurs="0" name="exclusive" type="xsd:boolean">
+			</xsd:element>
+		</xsd:sequence>	
+		<xsd:attribute name="name" type="xsd:string" use="required"/>	
+	</xsd:complexType>
+
+	<xsd:simpleType name="journalType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ASYNCIO"/>
+			<xsd:enumeration value="NIO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+  <xsd:element name="security-settings">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="security-setting">
+            </xsd:element>
+          </xsd:sequence>
+       </xsd:complexType>
+    </xsd:element>
+
+   <xsd:element name="security-setting">
+    <xsd:complexType>
+        <xsd:sequence>
+           <xsd:element maxOccurs="unbounded" minOccurs="0" name="permission">
+              <xsd:complexType>
+                 <xsd:attribute name="type" type="xsd:string" use="required"/>
+                 <xsd:attribute name="roles" type="xsd:string" use="required"/>
+              </xsd:complexType>
+           </xsd:element>
+        </xsd:sequence>
+            <xsd:attribute name="match" type="xsd:string" use="required"/>
+        </xsd:complexType>
+   </xsd:element>
+
+  <xsd:element name="address-settings">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="address-setting">
+            </xsd:element>
+          </xsd:sequence>
+       </xsd:complexType>
+    </xsd:element>
+    
+   <xsd:element name="address-setting">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element maxOccurs="1" minOccurs="0" name="clustered" type="xsd:boolean">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="dead-letter-address" type="xsd:string">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="expiry-address" type="xsd:string">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="redelivery-delay" type="xsd:long">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="max-delivery-attempts" type="xsd:int">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="max-size-bytes" type="xsd:long">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="page-size-bytes" type="xsd:int">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="drop-messages-when-full" type="xsd:boolean">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="distribution-policy-class" type="xsd:string">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="message-counter-history-day-limit" type="xsd:int">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="last-value-queue" type="xsd:boolean">
+        </xsd:element>
+        <xsd:element maxOccurs="1" minOccurs="0" name="redistribution-delay" type="xsd:long">
+        </xsd:element>
+      </xsd:all>
+    <xsd:attribute name="match" type="xsd:string" use="required"/>
+   </xsd:complexType> 
+   </xsd:element>
+     
+   <xsd:element name="queues">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="queue">
+            </xsd:element>
+         </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
+   
+   <xsd:element name="queue">
+      <xsd:complexType>
+        <xsd:all>
+            <xsd:element maxOccurs="1" minOccurs="1" name="address" type="xsd:string">
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="filter">
+                <xsd:complexType>
+                   <xsd:attribute name="string" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="durable" type="xsd:boolean">
+            </xsd:element>
+        </xsd:all>
+        <xsd:attribute name="name" type="xsd:ID" use="required"/>
+       </xsd:complexType>
+    </xsd:element>
+    
+	<xsd:complexType name="backup-connectorType">
+		<xsd:attribute name="connector-name" type="xsd:IDREF" use="required">
+		</xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>
