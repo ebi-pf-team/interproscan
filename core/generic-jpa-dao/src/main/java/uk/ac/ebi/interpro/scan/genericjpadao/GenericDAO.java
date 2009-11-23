@@ -42,6 +42,16 @@ public interface GenericDAO <T, PK extends Serializable> {
      * in the database.
      */
     T insert(T newInstance);
+
+    /**
+     * Insert a List of new Model instances.
+     * @param newInstances being a List of instances to persist.
+     * @return the Collection of persisted instances.
+     * This MAY NOT contain the same objects as
+     * have been passed in, for sub-classes that check for the pre-existence of the object
+     * in the database.
+     */
+    List<T> insert(List<T> newInstances);
     /**
      * Update the instance into the database
      *
