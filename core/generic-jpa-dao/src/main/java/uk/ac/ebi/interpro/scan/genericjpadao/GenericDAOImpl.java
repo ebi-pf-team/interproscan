@@ -97,6 +97,26 @@ public class GenericDAOImpl<T, PK extends Serializable>
     }
 
     /**
+     * Insert a List of new Model instances.
+     *
+     * @param newInstances being a List of instances to persist.
+     * @return the Collection of persisted instances.
+     *         This MAY NOT contain the same objects as
+     *         have been passed in, for sub-classes that check for the pre-existence of the object
+     *         in the database.
+     */
+    @Transactional
+    public List<T> insert(List<T> newInstances) {
+        for (T newInstance : newInstances){
+            if (entityManager.contains(newInstance)){
+                throw new IllegalArgumentException ("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
+            }
+            entityManager.persist(newInstance);
+        }
+        return newInstances;
+    }
+
+    /**
      * Update the instance into the database
      *
      * @param modifiedInstance being an attached or unattached, persisted object that has been modified.
