@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamModel;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.io.Serializable;
 
 /**
  * The in-memory java representation of a Clan file.
@@ -15,7 +16,7 @@ import java.util.TreeMap;
  * @version $Id: PfamClanData.java,v 1.3 2009/10/26 14:10:24 pjones Exp $
  * @since 1.0
  */
-public class PfamClanData {
+public class PfamClanData implements Serializable {
 
     private final Map<String, PfamClan> clanIdToClanMap = new TreeMap<String, PfamClan>();
 
