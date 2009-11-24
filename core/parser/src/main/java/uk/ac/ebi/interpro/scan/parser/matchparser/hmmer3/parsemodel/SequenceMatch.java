@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.Serializable;
 
 /**
  * This model object accepts the data parsed from a sequence match line in the hmmsearch output format.
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class SequenceMatch {
+public class SequenceMatch implements Serializable {
 
     /**
      * Group 1: Sequence E-value
