@@ -78,7 +78,7 @@ public class WorkerMonitorController {
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.add(mainLayoutManager);
 
-        refreshRateSpinner.setModel(new SpinnerNumberModel(refreshInterval, 2000, 20000, 200));
+        refreshRateSpinner.setModel(new SpinnerNumberModel(refreshInterval, 500, 20000, 100));
         refreshRateSpinner.addChangeListener(new RefreshSpinnerListener());
         stateTableModel = new WorkerStateTableModel(new ArrayList<WorkerState>());
         workerDisplayTable.setModel(stateTableModel);
@@ -94,7 +94,7 @@ public class WorkerMonitorController {
         }
         SwingUtilities.updateComponentTreeUI(mainFrame);
         mainFrame.pack();
-//        mainFrame.setVisible(true);
+        mainFrame.setVisible(true);
     }
 
     private void setUpProgressColumn(TableColumn progressColumn) {

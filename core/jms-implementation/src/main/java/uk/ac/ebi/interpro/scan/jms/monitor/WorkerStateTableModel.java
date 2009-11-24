@@ -130,7 +130,12 @@ public class WorkerStateTableModel implements TableModel {
             case 4:
                 return state.getJobDescription();
             case 5:
-                return state.getStepExecutionStatus().toString();
+                if (state.getStepExecutionStatus() != null){
+                    return state.getStepExecutionStatus().toString();
+                }
+                else {
+                    return "Unknown";
+                }
             case 6:
                 return state.getProportionComplete();
             case 7:
