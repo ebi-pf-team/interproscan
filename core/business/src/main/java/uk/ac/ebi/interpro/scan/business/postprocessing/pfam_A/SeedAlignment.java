@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
 
+import java.io.Serializable;
+
 /**
  * Simple immutable POJO holding the details of a single Seed alignment
  * Use the basic SeedAlignment class for retrieval from the database for
@@ -9,7 +11,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
  * @version $Id: SeedAlignment.java,v 1.1 2009/10/23 15:05:00 pjones Exp $
  * @since 1.0
  */
-public class SeedAlignment {
+public class SeedAlignment implements Serializable {
 
     private final String modelAccession;
 

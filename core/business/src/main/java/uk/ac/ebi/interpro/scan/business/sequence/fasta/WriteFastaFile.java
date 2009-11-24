@@ -32,7 +32,7 @@ public class WriteFastaFile implements Serializable {
         try{
             File file = new File(filePath);
             if (! file.createNewFile()){
-                throw new FastaFileWritingException ("Attempting to write a fasta file to path " + filePath + " however there is already a file at this location.", filePath);
+                return; // File already exists, so don't try to write it again.
             }
             writer = new BufferedWriter(new FileWriter(file));
             for (Protein protein : proteins){
@@ -82,5 +82,12 @@ public class WriteFastaFile implements Serializable {
         public String getFilePath() {
             return filePath;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "WriteFastaFile{" +
+                "sequenceLineLength=" + sequenceLineLength +
+                '}';
     }
 }
