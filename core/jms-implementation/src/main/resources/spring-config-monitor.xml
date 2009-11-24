@@ -9,7 +9,7 @@
     <import resource="spring-config-common.xml"/>
 
     <bean id="monitor" class="uk.ac.ebi.interpro.scan.jms.monitor.WorkerMonitorController">
-        <property name="refreshInterval" value="3000"/>
+        <property name="refreshInterval" value="500"/>
         <property name="swingWorker" ref="swingWorker"/>
     </bean>
 

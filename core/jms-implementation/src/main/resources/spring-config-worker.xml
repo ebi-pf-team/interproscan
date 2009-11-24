@@ -19,8 +19,8 @@
         JVM starts up, processes at most 1 job and then closes down.
         if false, the worker JVM will start up and process jobs until
         explicitly closed down. -->
-        <property name="singleUseOnly" value="false"/>
-        <property name="receiveTimeoutMillis" value="10000"/>
+        <property name="singleUseOnly" value="true"/>
+        <property name="receiveTimeoutMillis" value="50000"/>
         <property name="jobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
         <property name="jobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
         <property name="mainSessionHandler" ref="sessionHandler"/>

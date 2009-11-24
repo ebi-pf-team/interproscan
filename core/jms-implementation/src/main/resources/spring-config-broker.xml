@@ -10,7 +10,7 @@
 
     <bean id="destinationRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LSFWorkerRunner">
         <!-- ssh -x " + username + "@ant17.ebi.ac.uk bsub mvn -P runDestination -f /net/isilon3/production/seqdb2/production/interpro/jira/IBU-1067/hornetQ_Test/pom.xml exec:java -->
-        <property name="command" value="mvn -P runDestination -f /net/isilon3/production/seqdb2/production/interpro/jira/IBU-1067/hornetQ_Test/pom.xml exec:java" />
+        <property name="command" value="/homes/pjones/program_files/apache-maven-2.2.1/bin/mvn -e -P runWorker -f /ebi/sp/pro1/interpro/programmers/pjones/projects/i5_new/jms-implementation/pom.xml exec:java" />
         <property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk" />
         <property name="lsfEmailNotification" value="${lsf.notification.emailaddress}" />
         <property name="lsfQueueName" value="production" />
