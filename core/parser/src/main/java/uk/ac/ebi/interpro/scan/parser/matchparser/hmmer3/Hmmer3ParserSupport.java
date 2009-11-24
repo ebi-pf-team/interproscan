@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
 
 import java.util.Map;
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * TODO: Description
@@ -13,7 +14,7 @@ import java.io.IOException;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public interface Hmmer3ParserSupport {
+public interface Hmmer3ParserSupport extends Serializable {
 
 
     /**
