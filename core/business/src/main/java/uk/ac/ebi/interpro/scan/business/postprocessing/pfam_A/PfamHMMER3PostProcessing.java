@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamModel;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 
 import java.util.*;
+import java.io.Serializable;
 
 /**
  * This class performs post processing of HMMER3 output for
@@ -17,7 +18,7 @@ import java.util.*;
  * @version $Id: PfamHMMER3PostProcessing.java,v 1.10 2009/11/09 13:35:50 craigm Exp $
  * @since 1.0
  */
-public class PfamHMMER3PostProcessing {
+public class PfamHMMER3PostProcessing implements Serializable {
 
     private static Logger LOGGER = Logger.getLogger(SeedAlignmentPersister.class);
 
