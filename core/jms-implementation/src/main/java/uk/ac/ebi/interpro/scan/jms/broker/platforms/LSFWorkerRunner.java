@@ -21,6 +21,8 @@ public class LSFWorkerRunner implements WorkerRunner {
 
     private String lsfEmailNotification;
 
+    private int memoryUsageMB = 1000;
+
     /**
      * Command line prior to the bsub command.
      * For example, the master application may not be running on the LSF submission host,
@@ -61,6 +63,10 @@ public class LSFWorkerRunner implements WorkerRunner {
         this.lsfEmailNotification = lsfEmailNotification;
     }
 
+    public void setMemoryUsageMB(int memoryUsageMB) {
+        this.memoryUsageMB = memoryUsageMB;
+    }
+
     /**
      * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
      *
@@ -79,7 +85,9 @@ public class LSFWorkerRunner implements WorkerRunner {
         if (optionalPrefix != null){
             commandBuf.append(optionalPrefix).append(' ');
         }
-        commandBuf.append("bsub -M 64 -R \"rusage[mem=64]\" ");
+        commandBuf  .append("bsub -R \"rusage[mem=")
+                    .append(memoryUsageMB)
+                    .append("]\" ");
         if (queueName != null){
             commandBuf.append("-q ").append(queueName).append(' ');
         }
@@ -88,9 +96,8 @@ public class LSFWorkerRunner implements WorkerRunner {
             commandBuf.append("-u ").append(lsfEmailNotification).append(' ');
         }
 
-        commandBuf.append(command);
-        // All hacked - for example, grabbing current users username.
-        String username = System.getProperty("user.name");
+        commandBuf.append('"').append(command).append('"');
+        System.out.println("LSF Command:\n" + commandBuf);
         try{
 //            Runtime.getRuntime().exec("ssh -x " + username + "@ant17.ebi.ac.uk bsub mvn -P runDestination -f /net/isilon3/production/seqdb2/production/interpro/jira/IBU-1067/hornetQ_Test/pom.xml exec:java");
             Runtime.getRuntime().exec(commandBuf.toString());
