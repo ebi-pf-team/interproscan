@@ -192,19 +192,28 @@ public class InterProScanWorker implements Worker {
             MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
             MessageProducer messageProducer = sessionHandler.getMessageProducer(jobResponseQueueName);
             while (running){
-                ObjectMessage stepExecutionMessage = (ObjectMessage) messageConsumer.receive(receiveTimeout);
-                if (stepExecutionMessage != null){  // receive has received a message before timing out.
-                    currentStepExecution = (StepExecution) stepExecutionMessage.getObject();
-                    if (currentStepExecution != null){
-                        currentStepExecution.execute();
-                        ObjectMessage responseMessage = sessionHandler.createObjectMessage(currentStepExecution);
-                        messageProducer.send(responseMessage);
-                        stepExecutionMessage.acknowledge();
+                System.out.println("About to invoke receive()");
+                Message message = messageConsumer.receive(receiveTimeout);
+                if (message != null){
+                    System.out.println("Message was not null");
+                    if (message instanceof ObjectMessage){
+                        System.out.println("Message was a non-null ObjectMessage");
+                        ObjectMessage stepExecutionMessage = (ObjectMessage) message;
+                        System.out.println("stepExecutionMessage.toString() = " + stepExecutionMessage);
+                        final StepExecution stepExec = (StepExecution) stepExecutionMessage.getObject();
+                        currentStepExecution = stepExec;
+                        System.out.println("Got currentStepExecution, which is...");
+                        if (stepExec != null){
+                            System.out.println("Not null!");
+                            stepExec.execute();
+                            ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExec);
+                            messageProducer.send(responseMessage);
+                            stepExecutionMessage.acknowledge();
+                        }
                     }
-
-                    if (singleUseOnly){
-                        break;
-                    }
+                }
+                if (singleUseOnly){
+                    break;
                 }
             }
         }
