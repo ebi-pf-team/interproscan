@@ -63,6 +63,11 @@ public class LSFWorkerRunner implements WorkerRunner {
         this.lsfEmailNotification = lsfEmailNotification;
     }
 
+    /**
+     * Optional setter for the memory usage requirement to be passed to the bsub command.
+     * Default to 1000MB.
+     * @param memoryUsageMB the memory usage requirement to be passed to the bsub command.
+     */
     public void setMemoryUsageMB(int memoryUsageMB) {
         this.memoryUsageMB = memoryUsageMB;
     }
