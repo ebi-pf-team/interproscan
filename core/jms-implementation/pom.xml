@@ -319,11 +319,11 @@
 
         <!-- PUBLICLY-AVAILABLE Maven repository downloads for Quartz:-->
 
-        <!--<dependency>-->
-            <!--<groupId>org.opensymphony.quartz</groupId>-->
-            <!--<artifactId>quartz-all</artifactId>-->
-            <!--<version>1.6.1</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.opensymphony.quartz</groupId>
+            <artifactId>quartz-all</artifactId>
+            <version>1.6.1</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-collections</groupId>
@@ -473,7 +473,7 @@
         </profile>
 
         <profile>
-            <id>runDestination</id>
+            <id>runWorker</id>
             <build><plugins>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -594,6 +594,10 @@
                 <test.hibernate.format_sql>true</test.hibernate.format_sql>
                 <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
 
+                <broker.bindings.directory>target/data/bindings</broker.bindings.directory>
+                <broker.journal.directory>target/data/journal</broker.journal.directory>
+                <broker.large.messages.directory>target/data/largemessages</broker.large.messages.directory>
+                <broker.paging.directory>target/data/paging</broker.paging.directory> 
                 <broker.host.name>localhost</broker.host.name>
                 <broker.port.number>5445</broker.port.number>
                 <unix.username>mumdad</unix.username>
