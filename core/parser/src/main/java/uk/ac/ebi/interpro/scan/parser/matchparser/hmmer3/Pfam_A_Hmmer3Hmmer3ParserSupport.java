@@ -4,6 +4,7 @@ import uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.parsemodel.HmmsearchOut
 import uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.parser.modelFileParser.GaValuesRetriever;
+import uk.ac.ebi.interpro.scan.parser.ParseException;
 import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 
@@ -49,50 +50,54 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport {
     }
 
     public void addMatch(HmmsearchOutputMethod methodMatches, Map<String, RawSequenceIdentifier> rawResults) throws IOException {
-        for (SequenceMatch sequenceMatch : methodMatches.getSequenceMatches().values()){
-            for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()){
+        try{
+            for (SequenceMatch sequenceMatch : methodMatches.getSequenceMatches().values()){
+                for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()){
 
-                // Find out if the sequence match / domain match pass the GA cutoff.
-                if ((sequenceMatch.getScore() >=  gaValuesRetriever.getSequenceGAForAccession(methodMatches.getMethodAccession()))
-                        &&
-                        (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getMethodAccession()))){
+                    // Find out if the sequence match / domain match pass the GA cutoff.
+                    if ((sequenceMatch.getScore() >=  gaValuesRetriever.getSequenceGAForAccession(methodMatches.getMethodAccession()))
+                            &&
+                            (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getMethodAccession()))){
 
-                    // Good sequence / domain match, so add to the rawResults.
+                        // Good sequence / domain match, so add to the rawResults.
 
-                    // Either retrieve the correct RawSequenceIdentifer, or create a new one
-                    // and add it to the Map.
-                    RawSequenceIdentifier sequenceIdentifier = rawResults.get(sequenceMatch.getUpi());
-                    if (sequenceIdentifier == null){
-                        sequenceIdentifier = new RawSequenceIdentifier(sequenceMatch.getUpi());
-                        rawResults.put(sequenceMatch.getUpi(), sequenceIdentifier);
-                    }
+                        // Either retrieve the correct RawSequenceIdentifer, or create a new one
+                        // and add it to the Map.
+                        RawSequenceIdentifier sequenceIdentifier = rawResults.get(sequenceMatch.getUpi());
+                        if (sequenceIdentifier == null){
+                            sequenceIdentifier = new RawSequenceIdentifier(sequenceMatch.getUpi());
+                            rawResults.put(sequenceMatch.getUpi(), sequenceIdentifier);
+                        }
 
-                    final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
-                            sequenceMatch.getUpi(),
-                            methodMatches.getMethodAccession(),
-                            signatureLibraryName,
-                            signatureLibraryRelease,
-                            domainMatch.getAliFrom(),
-                            domainMatch.getAliTo(),
-                            sequenceMatch.getEValue(),
-                            sequenceMatch.getScore(),
-                            domainMatch.getHmmfrom(),
-                            domainMatch.getHmmto(),
-                            domainMatch.getHmmBounds(),
-                            domainMatch.getScore(),
-                            domainMatch.getEnvFrom(),
-                            domainMatch.getEnvTo(),
-                            domainMatch.getAcc(),
-                            sequenceMatch.getBias(),
-                            domainMatch.getCEvalue(),
-                            domainMatch.getIEvalue(),
-                            domainMatch.getBias(),
-                            null
-                    );
-                    sequenceIdentifier.addMatch(match);
-                } // End of testing if pass GA cutoff.
-            } // End of looping over domain matches
-        } // End of looping over sequence matches
+                        final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
+                                sequenceMatch.getUpi(),
+                                methodMatches.getMethodAccession(),
+                                signatureLibraryName,
+                                signatureLibraryRelease,
+                                domainMatch.getAliFrom(),
+                                domainMatch.getAliTo(),
+                                sequenceMatch.getEValue(),
+                                sequenceMatch.getScore(),
+                                domainMatch.getHmmfrom(),
+                                domainMatch.getHmmto(),
+                                domainMatch.getHmmBounds(),
+                                domainMatch.getScore(),
+                                domainMatch.getEnvFrom(),
+                                domainMatch.getEnvTo(),
+                                domainMatch.getAcc(),
+                                sequenceMatch.getBias(),
+                                domainMatch.getCEvalue(),
+                                domainMatch.getIEvalue(),
+                                domainMatch.getBias(),
+                                null
+                        );
+                        sequenceIdentifier.addMatch(match);
+                    } // End of testing if pass GA cutoff.
+                } // End of looping over domain matches
+            } // End of looping over sequence matches
+        } catch (ParseException e) {
+            throw new IllegalStateException ("Unable to parse the GA values from the HMM library.", e);
+        }
     }
 
     /**
