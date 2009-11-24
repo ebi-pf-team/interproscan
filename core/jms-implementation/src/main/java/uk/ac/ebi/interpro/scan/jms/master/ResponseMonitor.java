@@ -2,6 +2,9 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+
+import java.util.Map;
 
 /**
  * This interface defines the contract for a ResponseMonitor, which runs in
@@ -44,4 +47,13 @@ public interface ResponseMonitor extends Runnable{
      */
     void shutDownMonitor();
 
+    /**
+     * Sets a reference to the Map of StepExecutions so that the
+     * ResponseMonitor can update their state.
+     *
+     * Temporary only - will eventually update the StepExecutions
+     * in the database.
+     * @param stepExecutions
+     */
+    void setStepExecutionMap(Map<String, StepExecution> stepExecutions);
 }

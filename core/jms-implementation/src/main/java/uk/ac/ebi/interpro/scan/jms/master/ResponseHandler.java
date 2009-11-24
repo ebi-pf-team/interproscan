@@ -1,6 +1,9 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+
 import javax.jms.Message;
+import java.util.Map;
 
 /**
  * Interface for a Handler that can respond appropriately to any message
@@ -19,4 +22,10 @@ public interface ResponseHandler {
      */
     void handleResponse (Message message);
 
+    /**
+     * Sets a reference to the stepExecutions so that they can be
+     * updated from the response to the Master.
+     * @param stepExecutions that have been completed on remote nodes.
+     */
+    void setStepExecutionMap(Map<String, StepExecution> stepExecutions);
 }
