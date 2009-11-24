@@ -35,6 +35,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
 
     protected StepExecution(UUID id, I stepInstance) {
         this.stepInstance = stepInstance;
+        this.stepInstance.addStepExecution(this);
         this.id = id.toString();
         createdTime = new Date();
     }
@@ -108,7 +109,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
         submittedTime = new Date();
     }
 
-    public void running(){
+    public void setToRun(){
         if (state == StepExecutionState.STEP_EXECUTION_SUCCESSFUL || state == StepExecutionState.STEP_EXECUTION_FAILED){
             throw new IllegalStateException ("Attempting to set the state of this stepExecution to 'RUNNING', however it has already been completed.");
         }
@@ -150,5 +151,36 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "StepExecution{" +
+                "id='" + id + '\'' +
+                ", stepInstance=" + stepInstance +
+                ", state=" + state +
+                ", createdTime=" + createdTime +
+                ", startedRunningTime=" + startedRunningTime +
+                ", submittedTime=" + submittedTime +
+                ", completedTime=" + completedTime +
+                ", proportionCompleted=" + proportionCompleted +
+                '}';
+    }
+
+    /**
+     * Updates the state of this StepExecution based upon the state
+     * of the freshStepExecution that has been returned from the
+     * worker process.
+     * @param freshStepExecution
+     */
+    public void refresh(StepExecution freshStepExecution) {
+        assert (this.getId().equals(freshStepExecution.getId()));
+        assert (this != freshStepExecution);
+        this.completedTime = freshStepExecution.completedTime;
+        this.createdTime = freshStepExecution.createdTime;
+        this.proportionCompleted = freshStepExecution.proportionCompleted;
+        this.startedRunningTime = freshStepExecution.startedRunningTime;
+        this.submittedTime = freshStepExecution.submittedTime;
+        this.state = freshStepExecution.state;
     }
 }
