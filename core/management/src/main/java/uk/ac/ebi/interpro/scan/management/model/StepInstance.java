@@ -38,11 +38,23 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
 
     private List<StepInstance> dependencies = new ArrayList<StepInstance>();
 
-    private List<E> executions = new ArrayList<E>();
+    /**
+     * List of all the executions of this StepInstance.
+     * Set to transient so they don't all get shoved over the
+     * wire when submitting new StepExecutions to the messaging system.
+     */
+    private transient List<E> executions = new ArrayList<E>();
 
     public StepInstance(UUID id, S step) {
         this.id = id.toString();
         this.step = step;
+    }
+
+    public StepInstance(UUID id, S step, long bottomProteinId, long topProteinId) {
+        this.id = id.toString();
+        this.step = step;
+        this.bottomProtein = bottomProteinId;
+        this.topProtein = topProteinId;
     }
 
     public void setBottomProtein(Long bottomProtein) {
@@ -125,6 +137,36 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
         return dependencies;
     }
 
+    /**
+     * This method returns true if this StepInstance is a candidate to be submitted.
+     *
+     * The requirements for re-submission are:
+     * 1. This method has never been submitted before, OR it has failed previously and
+     * the number of submissions does not exceed the retry count for this step.
+     * 2. All of the dependencies of this stepInstance (StepInstances that must have
+     * successfully completed prior to this StepInstance) have completed.
+     * @return true if this StepInstance can be submitted.
+     */
+    public boolean canBeSubmitted(){
+        // First, check if the state of this StepInstance allows it to be run...
+        // (Not submitted or previously failed, and number of retries not exceeded)
+        if (StepExecutionState.NEW_STEP_INSTANCE == getState()
+                ||
+            (StepExecutionState.STEP_EXECUTION_FAILED == getState() && this.getExecutions().size() < this.getStep().getRetries())){
+            // Then check that all the dependencies have been completed successfully.
+            if (dependencies != null){
+                for (StepInstance dependency : dependencies){
+                    if (dependency.getState() != StepExecutionState.STEP_EXECUTION_SUCCESSFUL){
+                        return false;
+                    }
+                }
+            }
+            // All requirements met, so can submit.
+            return true;
+        }
+        return false;
+    }
+
     public List<E> getExecutions() {
         return executions;
     }
@@ -148,7 +190,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
 
     public abstract E createStepExecution();
 
-        /**
+    /**
      * The format used for file names based upon integers
      * to ensure that they order correctly in the filesystem.
      */
@@ -160,7 +202,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
         return fileNameTemplate;
     }
 
-     public String filterFileNameModelBounds (String fileNameTemplate, long bottomModelId, long topModelId){
+    public String filterFileNameModelBounds (String fileNameTemplate, long bottomModelId, long topModelId){
         fileNameTemplate = fileNameTemplate.replaceAll(MODEL_BOTTOM_HOLDER, TWELVE_DIGIT_INTEGER.format(bottomModelId));
         fileNameTemplate = fileNameTemplate.replaceAll(MODEL_TOP_HOLDER, TWELVE_DIGIT_INTEGER.format(topModelId));
         return fileNameTemplate;
