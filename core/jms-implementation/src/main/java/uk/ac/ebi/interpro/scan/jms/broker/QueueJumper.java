@@ -7,6 +7,10 @@ import javax.jms.*;
 
 import uk.ac.ebi.interpro.scan.jms.broker.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+
+import java.io.Serializable;
+import java.lang.IllegalStateException;
 
 /**
  * Runs on the broker in a separate thread, moving any
@@ -84,13 +88,37 @@ public class QueueJumper implements Runnable{
             while (running){
                 System.out.println("Waiting for message on submission queue...");
                 Message message = messageConsumer.receive();
+                Message outgoingMessage = null;
+
+
+                if (message != null){
+                    if (message instanceof ObjectMessage){
+                        final Serializable serializedObject = ((ObjectMessage) message).getObject();
+                        if (serializedObject != null){
+                            outgoingMessage = sessionHandler.createObjectMessage(serializedObject);
+                        }
+                    }
+                    else if (message instanceof TextMessage){
+                        final String text = ((TextMessage) message).getText();
+                        if (text != null){
+                            outgoingMessage = sessionHandler.createTextMessage(text);
+                        }
+                    }
+                }
+
+
                 System.out.println("Message recieved on submission queue - routing to worker request queue.");
-                if (((workersStarted++) % 5) == 0){
+                if (((++workersStarted) % 5) == 0){
                     // Start up an extra worker every now and then...
+                    System.out.println("Starting up an extra worker...");
                     workerRunner.startupNewWorker();
                 }
+
                 workerRunner.startupNewWorker();
-                producer.send(message);
+                if (outgoingMessage == null){
+                    throw new IllegalStateException("The QueueJumper was unable to forward the incoming message.");
+                }
+                producer.send(outgoingMessage);
                 message.acknowledge();
             }
 
