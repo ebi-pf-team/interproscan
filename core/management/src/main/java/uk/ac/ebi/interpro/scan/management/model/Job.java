@@ -44,7 +44,11 @@ public class Job implements Serializable {
      */
     private List<SignatureLibraryRelease> signatureLibraryReleases;
 
-    private List<Step> steps = new ArrayList<Step>();
+    /**
+     * List of steps.  this is transient so they don't all get shoved
+     * over the wire when each StepExecution is run.
+     */
+    private transient List<Step> steps = new ArrayList<Step>();
 
     public Job() {
     }
