@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Id: ClanFileParser.java,v 1.3 2009/10/26 17:33:17 pjones Exp $
  * @since 1.0
  */
-public class ClanFileParser {
+public class ClanFileParser implements Serializable {
 
     /*
     Pfam-A.seed
