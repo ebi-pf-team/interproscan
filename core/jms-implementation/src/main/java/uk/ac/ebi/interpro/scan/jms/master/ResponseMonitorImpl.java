@@ -1,11 +1,13 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.jms.MessageConsumer;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import java.util.Map;
 
 /**
  * This implementation recieves responses on the destinationResponseQueue
@@ -29,6 +31,7 @@ public class ResponseMonitorImpl implements ResponseMonitor{
     private volatile boolean running = true;
 
     private int monitorResponseTimeout;
+
 
     /**
      * Sets the ResponseHandler.  This is the implementation
@@ -75,9 +78,23 @@ public class ResponseMonitorImpl implements ResponseMonitor{
      */
     @Override
     public void shutDownMonitor() {
-        // Sets the running flag to false.  The monitor will finish handling
+        // Sets the setToRun flag to false.  The monitor will finish handling
         // the current message prior to ending.
         running = false;
+    }
+
+    /**
+     * Sets a reference to the Map of StepExecutions so that the
+     * ResponseMonitor can update their state.
+     * <p/>
+     * Temporary only - will eventually update the StepExecutions
+     * in the database.
+     *
+     * @param stepExecutions
+     */
+    @Override
+    public void setStepExecutionMap(Map<String, StepExecution> stepExecutions) {
+        this.handler.setStepExecutionMap(stepExecutions);
     }
 
     /**
