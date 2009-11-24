@@ -1,9 +1,18 @@
 package uk.ac.ebi.interpro.scan.jms;
 
+import org.hornetq.core.config.TransportConfiguration;
+import org.hornetq.integration.transports.netty.NettyConnectorFactory;
+import static org.hornetq.integration.transports.netty.TransportConstants.HOST_PROP_NAME;
+import static org.hornetq.integration.transports.netty.TransportConstants.PORT_PROP_NAME;
+import org.hornetq.jms.HornetQDestination;
+import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.jms.*;
 import java.io.Serializable;
+import java.lang.IllegalStateException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Simple bean holding information about queues and the JMS Broker.
@@ -18,9 +27,10 @@ import java.io.Serializable;
  */
 public class SessionHandler {
 
+    private Connection connection;
+    private Session session;
     private String brokerHostUrl;
     private int brokerPort;
-    private SessionHandlerFactory factory = new SessionHandlerFactory();
 
     @Required
     public void setBrokerHostUrl(String brokerHostUrl) {
@@ -32,34 +42,58 @@ public class SessionHandler {
         this.brokerPort = brokerPort;
     }
 
+
     public void init() throws JMSException {
-        factory.getSession(brokerHostUrl, brokerPort);
+        if (connection != null || session != null){
+            throw new IllegalStateException("Possible programming error - SessionHandler.init() has been called more than once.");
+        }
+        Map<String, Object> connectionParams = new HashMap<String, Object>();
+        connectionParams.put(HOST_PROP_NAME, brokerHostUrl);
+        connectionParams.put(PORT_PROP_NAME, brokerPort);
+
+        TransportConfiguration transportConfiguration = new TransportConfiguration(NettyConnectorFactory.class.getName(),
+                connectionParams);
+
+        ConnectionFactory cf = new HornetQConnectionFactory(transportConfiguration);
+
+        connection = cf.createConnection();
+        session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+        connection.start();
     }
+
 
     public MessageConsumer getMessageConsumer (String destinationName) throws JMSException {
         return getMessageConsumer(destinationName, null);
     }
 
     public MessageConsumer getMessageConsumer (String destinationName, String messageSelector) throws JMSException {
-        return factory.getMessageConsumer (destinationName, messageSelector);
+        Destination destination = HornetQDestination.fromAddress (destinationName);
+        if (messageSelector == null){
+            return session.createConsumer(destination);
+        }
+        else {
+            return session.createConsumer(destination, messageSelector);
+        }
     }
 
     public MessageProducer getMessageProducer (String destinationName) throws JMSException {
-        return factory.getMessageProducer(destinationName);
-    }
-
-    public SessionHandler() {
+        Destination destination = HornetQDestination.fromAddress (destinationName);
+        return session.createProducer(destination);
     }
 
     public void close() throws JMSException {
-        factory.close();
+        session.close();
+        connection.close();
     }
 
     public TextMessage createTextMessage (String message) throws JMSException {
-        return factory.createTextMessage(message);
+        return session.createTextMessage(message);
     }
 
     public ObjectMessage createObjectMessage (Serializable objectMessage) throws JMSException {
-        return factory.createObjectMessage(objectMessage);
+        ObjectMessage om = session.createObjectMessage();
+        om.setObject(objectMessage);
+        return om;
     }
 }
+
