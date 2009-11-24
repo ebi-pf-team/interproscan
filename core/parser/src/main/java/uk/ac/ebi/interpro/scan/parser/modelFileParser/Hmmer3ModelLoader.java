@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Parses an hmm file and creates Signature / Method objects
@@ -19,7 +20,7 @@ import java.io.IOException;
  * Date: 11-Nov-2009
  * Time: 20:35:32
  */
-public class Hmmer3ModelLoader {
+public class Hmmer3ModelLoader implements Serializable {
 
     private SignatureLibrary library;
 
