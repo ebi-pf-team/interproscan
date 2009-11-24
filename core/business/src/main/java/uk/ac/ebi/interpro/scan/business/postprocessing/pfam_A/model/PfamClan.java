@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model;
 
+import java.io.Serializable;
+
 /**
  * Domain class representing a PFAM Clan.
  * Hmm.  Probably don't need this class at all - little more than a String.
@@ -9,7 +11,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model;
  * @version $Id: PfamClan.java,v 1.3 2009/10/26 13:46:33 pjones Exp $
  * @since 1.0
  */
-public class PfamClan {
+public class PfamClan implements Serializable {
 
     /**
      * The accession of the clan.
