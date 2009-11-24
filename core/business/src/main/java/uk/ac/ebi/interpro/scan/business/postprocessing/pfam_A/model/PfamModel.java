@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClan;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.io.Serializable;
 
 /**
  * Domain class representing a Model, in the context of Clans
@@ -14,7 +15,7 @@ import java.util.Collections;
  * @version $Id: PfamModel.java,v 1.3 2009/10/27 12:01:17 pjones Exp $
  * @since 1.0
  */
-public class PfamModel {
+public class PfamModel implements Serializable {
 
     /**
      * Optional clan that this model is in.
