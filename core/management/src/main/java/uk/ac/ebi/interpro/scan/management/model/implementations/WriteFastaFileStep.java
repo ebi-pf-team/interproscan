@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
 import java.util.List;
 import java.util.UUID;
 import java.io.File;
+import java.io.Serializable;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -18,7 +19,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class WriteFastaFileStep extends Step<WriteFastaFileStepInstance, WriteFastaFileStepExecution> {
+public class WriteFastaFileStep extends Step<WriteFastaFileStepInstance, WriteFastaFileStepExecution> implements Serializable {
 
     private String fastaFilePathTemplate;
 

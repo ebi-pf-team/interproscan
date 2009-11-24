@@ -5,13 +5,13 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 
 import java.util.UUID;
 import java.util.List;
+import java.io.Serializable;
 
-public class WriteFastaFileStepInstance extends StepInstance<WriteFastaFileStep, WriteFastaFileStepExecution> {
+public class WriteFastaFileStepInstance extends StepInstance<WriteFastaFileStep, WriteFastaFileStepExecution> implements Serializable {
 
         public WriteFastaFileStepInstance(UUID id, WriteFastaFileStep step, List<Protein> proteins, long bottomProteinId, long topProteinId) {
             super(id, step);
             this.proteins = proteins;
-            this.setBottomProtein(bottomProteinId);
             this.setTopProtein(topProteinId);
             this.fastaFilePathName = filterFileNameProteinBounds(
                     this.getStep().getFastaFilePathTemplate(),

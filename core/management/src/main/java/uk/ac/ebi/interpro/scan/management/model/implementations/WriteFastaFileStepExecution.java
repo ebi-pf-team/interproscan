@@ -4,9 +4,9 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
 
 import java.util.UUID;
-import java.io.File;
+import java.io.Serializable;
 
-public class WriteFastaFileStepExecution extends StepExecution<WriteFastaFileStepInstance> {
+public class WriteFastaFileStepExecution extends StepExecution<WriteFastaFileStepInstance>  implements Serializable {
 
     private final WriteFastaFile fastaFile = new WriteFastaFile();
 
@@ -16,17 +16,22 @@ public class WriteFastaFileStepExecution extends StepExecution<WriteFastaFileSte
 
     @Override
     public void execute() {
-        this.running();
+        this.setToRun();
         try{
-            File file = new File(this.getStepInstance().getStep().getFastaFilePathTemplate());
-            // Only write the file if it has not been written before.
-            if (! file.exists()){
-                fastaFile.writeFastaFile(this.getStepInstance().getProteins(), this.getStepInstance().getFastaFilePathName());
-            }
+            fastaFile.writeFastaFile(this.getStepInstance().getProteins(), this.getStepInstance().getFastaFilePathName());
             this.completeSuccessfully();
         } catch (Exception e) {
             this.fail();
             LOGGER.error ("Exception thrown when attempting to write out a Fasta file to path " , e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "WriteFastaFileStepExecution{" +
+                "fastaFile=" + fastaFile +
+                super.toString() +
+                "protein count=" + this.getStepInstance().getProteins().size() +
+                '}';
     }
 }
