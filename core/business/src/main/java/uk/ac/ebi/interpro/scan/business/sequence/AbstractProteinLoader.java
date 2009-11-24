@@ -16,7 +16,7 @@ import java.io.Serializable;
  * Date: 14-Nov-2009
  * Time: 14:04:59
  */
-public class AbstractProteinLoader {
+public class AbstractProteinLoader implements Serializable {
 
     private ProteinDAO proteinDAO;
 

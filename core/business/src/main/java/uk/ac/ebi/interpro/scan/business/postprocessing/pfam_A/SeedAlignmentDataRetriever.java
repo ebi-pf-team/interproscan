@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.io.Serializable;
 
 /**
  * Used in post-processing to load seed alignment data into memory
@@ -16,7 +17,7 @@ import java.sql.ResultSet;
  * @version $Id: SeedAlignmentDataRetriever.java,v 1.5 2009/11/04 16:24:31 craigm Exp $
  * @since 1.0
  */
-public class SeedAlignmentDataRetriever {
+public class SeedAlignmentDataRetriever implements Serializable {
 
     /**
      * Retrieves a Map of UPI (protein accession) to List<SeedAlignment> for use in
@@ -35,7 +36,7 @@ public class SeedAlignmentDataRetriever {
         return seedAlignmentData;
     }
 
-    public class SeedAlignmentData {
+    public class SeedAlignmentData implements Serializable {
 
         private final Map<String, List<SeedAlignment>> data =  new HashMap<String, List<SeedAlignment>>();
 

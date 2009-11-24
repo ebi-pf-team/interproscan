@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Id: SeedAlignmentPersister.java,v 1.3 2009/11/09 13:34:28 craigm Exp $
  * @since 1.0
  */
-public class SeedAlignmentPersister {
+public class SeedAlignmentPersister implements Serializable {
 
     private static Logger LOGGER = Logger.getLogger(SeedAlignmentPersister.class);
 
