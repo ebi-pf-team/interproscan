@@ -13,7 +13,7 @@ import java.nio.channels.FileLock;
 import uk.ac.ebi.interpro.scan.parser.ParseException;
 
 /**
-*
+ *
  * This class creates a map of model names to GA values, for a particular model
  * file.  If this object is being created for the first time, it parses the model
  * file to create this mapping.  This can be a little time consuming, so it then
@@ -35,12 +35,14 @@ import uk.ac.ebi.interpro.scan.parser.ParseException;
  * @since 1.0
  */
 
-public class GaValuesRetriever {
+public class GaValuesRetriever implements Serializable{
 
     /**
      * Extracts the GA values in the forms "24.0 24.0" as group 1.
      */
     private static final Pattern GA_LINE_PATTERN = Pattern.compile("^GA\\s+(.+);$");
+
+    // TODO Inject the OPTION of stripping off the version number from the model.
     // Strips of accession version number.
     private static final Pattern ACCESSION_PATTERN = Pattern.compile("^ACC\\s+([A-Z0-9]+)\\.?.*$");
     private static final String END_OF_RECORD = "//";
@@ -53,39 +55,23 @@ public class GaValuesRetriever {
 
     private static final Map<String, Double> ACC_TO_DOMAIN_GA = new HashMap<String, Double>();
 
+    private boolean initialised = false;
+
+    private final String modelFileAbsolutePath;
+
     /**
      * Constructs a new Map of names to accessions based upon the model file passed in
      * as an argument.
      * @param modelFileAbsolutePath the model file to parse.
      * @throws java.io.IOException in the event of a problem reading the file or cleaning up afterwards.
      */
-    public GaValuesRetriever(Resource modelFileAbsolutePath) throws IOException, ParseException{
-        // Check to see if the mapping has been dumped to a map file - if it has, load it from there for speed.
-        File mapFile = createMapFileObject(modelFileAbsolutePath);
-        if (mapFile.exists()){
-            loadMappingFromPropertiesFile(mapFile);
-        }
+    public GaValuesRetriever(String modelFileAbsolutePath) throws IOException, ParseException{
+        this.modelFileAbsolutePath = modelFileAbsolutePath;
 
-        else {
-            // Parse the PfamModel file and store the mapping to a map file.
-            parseModelFile(modelFileAbsolutePath);
-            storeMappingToPropertiesFile(modelFileAbsolutePath);
-        }
-        // Finally stick the double values into the appropriate maps.
-        for (Object accessionObject : accessionToGAProps.keySet()){
-            String accession = (String) accessionObject;
-            String gaString = (String) accessionToGAProps.get(accessionObject);
-            String values[] = gaString.split("\\s");
-            if (values.length < 2){
-                throw new ParseException("The GA line format is not as expected (was expecting at least two floating point numbers separated by a space).", "NOT_A_FILE", gaString, 1);
-            }
-            ACC_TO_SEQUENCE_GA.put(accession, new Double(values[0]));
-            ACC_TO_DOMAIN_GA.put(accession, new Double(values[1]));
-        }
     }
 
-    private File createMapFileObject (Resource modelFileAbsolutePath) throws IOException {
-        return new File (modelFileAbsolutePath.getFile().getAbsolutePath() + MAP_FILE_EXTENSION);
+    private File createMapFileObject (String modelFileAbsolutePath) throws IOException {
+        return new File (modelFileAbsolutePath + MAP_FILE_EXTENSION);
     }
 
     /**
@@ -101,7 +87,7 @@ public class GaValuesRetriever {
      * @param modelFileAbsolutePath the absolute path to the Model file.
      * @throws java.io.IOException thrown when writing / locking / closing streams.
      */
-    private synchronized void storeMappingToPropertiesFile(Resource modelFileAbsolutePath) throws IOException{
+    private synchronized void storeMappingToPropertiesFile(String modelFileAbsolutePath) throws IOException{
         File mapFile = createMapFileObject(modelFileAbsolutePath);
         if (mapFile.exists()){
             return; // A different process has started creating the map file since this process loaded the mappings, so don't try to create it again.
@@ -152,11 +138,11 @@ public class GaValuesRetriever {
         }
     }
 
-    public void parseModelFile(Resource modelFileAbsolutePath) throws IOException{
+    public void parseModelFile(String modelFileAbsolutePath) throws IOException{
         BufferedReader reader = null;
         accessionToGAProps = new Properties();
         try{
-            reader = new BufferedReader (new FileReader(modelFileAbsolutePath.getFile()));
+            reader = new BufferedReader (new FileReader(modelFileAbsolutePath));
             String accession = null, gaValues = null;
             int lineNumber = 0;
             while (reader.ready()){
@@ -211,11 +197,41 @@ public class GaValuesRetriever {
         }
     }
 
-    public double getSequenceGAForAccession(String modelAccession){
+    public double getSequenceGAForAccession(String modelAccession) throws IOException, ParseException{
+        lazyInitialise();
         return ACC_TO_SEQUENCE_GA.get(modelAccession);
     }
 
-    public double getDomainGAForAccession(String modelAccession){
+    public double getDomainGAForAccession(String modelAccession) throws IOException, ParseException{
+        lazyInitialise();
         return ACC_TO_DOMAIN_GA.get(modelAccession);
+    }
+
+    private void lazyInitialise() throws IOException, ParseException{
+        if (! initialised){
+            // Check to see if the mapping has been dumped to a map file - if it has, load it from there for speed.
+            File mapFile = createMapFileObject(modelFileAbsolutePath);
+            if (mapFile.exists()){
+                loadMappingFromPropertiesFile(mapFile);
+            }
+
+            else {
+                // Parse the PfamModel file and store the mapping to a map file.
+                parseModelFile(modelFileAbsolutePath);
+                storeMappingToPropertiesFile(modelFileAbsolutePath);
+            }
+            // Finally stick the double values into the appropriate maps.
+            for (Object accessionObject : accessionToGAProps.keySet()){
+                String accession = (String) accessionObject;
+                String gaString = (String) accessionToGAProps.get(accessionObject);
+                String values[] = gaString.split("\\s");
+                if (values.length < 2){
+                    throw new ParseException("The GA line format is not as expected (was expecting at least two floating point numbers separated by a space).", "NOT_A_FILE", gaString, 1);
+                }
+                ACC_TO_SEQUENCE_GA.put(accession, new Double(values[0]));
+                ACC_TO_DOMAIN_GA.put(accession, new Double(values[1]));
+            }
+            initialised = true;
+        }
     }
 }
