@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.parsemodel;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.io.Serializable;
 
 /**
  * Provides a match for a Domain line in hmmsearch output format.
@@ -10,7 +11,7 @@ import java.util.regex.Matcher;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class DomainMatch {
+public class DomainMatch implements Serializable {
 
     /**
      * Group[1] Score (float)
