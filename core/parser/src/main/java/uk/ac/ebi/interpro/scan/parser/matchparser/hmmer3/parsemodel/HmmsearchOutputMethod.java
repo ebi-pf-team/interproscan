@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.parsemodel;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.io.Serializable;
 
 /**
  * This model object represents a single record in the hmmsearch output format,
@@ -12,7 +13,7 @@ import java.util.HashMap;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class HmmsearchOutputMethod {
+public class HmmsearchOutputMethod implements Serializable {
 
     private final String methodAccession;
 
