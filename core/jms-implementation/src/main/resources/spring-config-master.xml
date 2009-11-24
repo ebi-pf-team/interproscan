@@ -33,7 +33,7 @@
 
     <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl"/>
 
-        <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile">
+    <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile">
         <constructor-arg ref="testFastaFile"/>
         <property name="transactionProteinCount" value="250"/>
         <property name="proteinDAO" ref="proteinDAO"/>
@@ -43,4 +43,4 @@
         <constructor-arg value="5k.fasta" />
     </bean>
 </beans>
-        
+

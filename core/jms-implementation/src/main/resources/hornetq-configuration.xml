@@ -10,6 +10,11 @@
 
     <management-address>hornetq.management</management-address>
 
+    <!-- Location of all of the JMS data. -->
+    <bindings-directory>${broker.bindings.directory}</bindings-directory>
+    <journal-directory>${broker.journal.directory}</journal-directory>
+    <large-messages-directory>${broker.large.messages.directory}</large-messages-directory>
+    <paging-directory>${broker.paging.directory}</paging-directory>
 
     <connectors>
         <connector name="netty-connector">
