@@ -82,7 +82,6 @@ public class Hmmer3SearchParser implements Parser {
         BufferedReader reader = null;
         try{
             reader = new BufferedReader(new InputStreamReader(is));
-            List<String> remainingProteins = new ArrayList<String>();
             HmmsearchOutputMethod method = null;
             String domainSectionCurrentUPI = null;
             ParsingStage stage = ParsingStage.LOOKING_FOR_METHOD_ACCESSION;
@@ -95,9 +94,6 @@ public class Hmmer3SearchParser implements Parser {
                     // for the method.
                     if (method == null){
                         throw new ParseException("Got to the end of a hmmscan full output file section without finding any details of a method.", null, line, lineNumber);
-                    }
-                    if (remainingProteins.size() > 0){
-                        throw new ParseException ("Have not found the matching proteins for all of the models.  Missing domain for: " + remainingProteins.toString(), null, line, lineNumber);
                     }
                     // Store the matches to the method.
                     hmmer3ParserSupport.addMatch (method, rawResults);
@@ -140,7 +136,6 @@ public class Hmmer3SearchParser implements Parser {
                                     // Found a sequence match line above the threshold.
                                     // Make a record of the UPI.
                                     String upi = sequenceMatchLineMatcher.group(SequenceMatch.UPI_GROUP);
-                                    remainingProteins.add (upi);
                                     SequenceMatch sequenceMatch = new SequenceMatch(sequenceMatchLineMatcher);
                                     method.addSequenceMatch(sequenceMatch);
                                 }
@@ -150,28 +145,15 @@ public class Hmmer3SearchParser implements Parser {
                         case LOOKING_FOR_DOMAIN_SECTION:
 
                             if (line.startsWith(DOMAIN_SECTION_START)){
-                                // Found the start of a domain section:
-                                if (remainingProteins.isEmpty()){
-                                    // Have finished looking at all the relevant models in the domain section
-                                    // so flag to stop looking.
-                                    // (Ensures don't try to parse domain sections for
-                                    // sequence matches that failed)
-                                    stage = ParsingStage.FINISHED_SEARCHING_RECORD;
+                                // Find out which model the domain matches are for and then parse them.
+                                Matcher domainSectionHeaderMatcher = DOMAIN_SECTION_START_PATTERN.matcher(line);
+                                if (domainSectionHeaderMatcher.matches()){
+                                    domainSectionCurrentUPI  = domainSectionHeaderMatcher.group(1);
                                 }
                                 else {
-                                    // Find out which model the domain matches are for and then parse them.
-                                    Matcher domainSectionHeaderMatcher = DOMAIN_SECTION_START_PATTERN.matcher(line);
-                                    if (domainSectionHeaderMatcher.matches()){
-                                        domainSectionCurrentUPI  = domainSectionHeaderMatcher.group(1);
-                                        if (! remainingProteins.remove(domainSectionCurrentUPI)){
-                                            throw new ParseException ("The parser is currently assuming that the domain lines associated with the sequence matches that have passed are at the top of the domain section.  Looks like this is not true...", null, line, lineNumber);
-                                        }
-                                    }
-                                    else {
-                                        throw new ParseException("This line looks like a domain section header line, but I cannot parse out the methodAccession id.", null, line, lineNumber);
-                                    }
-                                    stage = ParsingStage.LOOKING_FOR_DOMAIN_DATA_LINE;
+                                    throw new ParseException("This line looks like a domain section header line, but I cannot parse out the methodAccession id.", null, line, lineNumber);
                                 }
+                                stage = ParsingStage.LOOKING_FOR_DOMAIN_DATA_LINE;
                             }
 
                             break;
@@ -219,7 +201,4 @@ public class Hmmer3SearchParser implements Parser {
         }
         return new HashSet<RawSequenceIdentifier> (rawResults.values());
     }
-
-
-
 }
