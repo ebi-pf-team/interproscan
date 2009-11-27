@@ -1,0 +1,62 @@
+hmmsearch - search a sequence database with a profile HMM
+HMMER 2.3.2 (Oct 2003)
+Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
+Freely distributed under the GNU General Public License (GPL)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HMM file:                   hmms/pfam-fs/PF00008.18.hmm [EGF]
+Sequence database:          data/big.fasta
+per-sequence score cutoff:  >= 23.2 [GA1]
+per-domain score cutoff:    >= 23.2 [GA2]
+per-sequence Eval cutoff:   [none]
+per-domain Eval cutoff:     [none]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query HMM:   EGF
+Accession:   PF00008.18
+Description: EGF-like domain
+  [HMM has been calibrated; E-values are empirical estimates]
+
+Scores for complete sequences (score includes all domains):
+Sequence      Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+UPI0000013598                                           916.7   1.1e-275  87
+
+Parsed for domains:
+Sequence      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+UPI0000013598  44/87   2397  2426 ..     1    36 [.    28.5  5.4e-10
+UPI0000013598  10/87    501   532 ..     1    36 [.    27.4  1.1e-09
+UPI0000013598   9/87    461   490 ..     1    36 [.    26.2  2.3e-09
+UPI0000013598  41/87   2231  2267 ..     1    38 []    25.3  4.2e-09
+UPI0000013598   7/87    342   374 ..     1    34 [.    25.3  4.3e-09
+UPI0000013598   6/87    302   331 ..     1    36 [.    23.9  1.1e-08
+
+Histogram of all scores:
+score    obs    exp  (one = represents 1 sequences)
+-----    ---    ---
+<  -3      2      -|==                                                         
+   -3      1      0|=                                                          
+   -2      2      0|==                                                         
+   -1      2      0|==                                                         
+>   0      3      -|===                                                        
+
+
+% Statistical details of theoretical EVD fit:
+              mu =    -8.0680
+          lambda =     0.6469
+chi-sq statistic =     0.0000
+  P(chi-square)  =          0
+
+Total sequences searched: 10
+
+Whole sequence top hits:
+tophits_s report:
+     Total hits:           1
+     Satisfying E cutoff:  1
+     Total memory:         20K
+
+Domain top hits:
+tophits_s report:
+     Total hits:           6
+     Satisfying E cutoff:  6
+     Total memory:         22K
