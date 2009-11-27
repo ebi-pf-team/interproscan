@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.Hmmer3SearchParser;
+import uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser;
 
 import java.io.Serializable;
 
@@ -19,13 +19,13 @@ public class ParseHMMER3OutputStep extends Step<ParseHMMER3OutputStepInstance, P
 
     private String hmmerOutputFilePathTemplate;
 
-    private Hmmer3SearchParser parser;
+    private Hmmer3SearchMatchParser parser;
 
-    public Hmmer3SearchParser getParser() {
+    public Hmmer3SearchMatchParser getParser() {
         return parser;
     }
 
-    public void setParser(Hmmer3SearchParser parser) {
+    public void setParser(Hmmer3SearchMatchParser parser) {
         this.parser = parser;
     }
 

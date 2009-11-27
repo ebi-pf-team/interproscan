@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.io.Serializable;
 import java.io.InputStream;
@@ -18,9 +18,9 @@ import java.util.UUID;
  */
 public class ParseHMMER3OutputStepExecution extends StepExecution<ParseHMMER3OutputStepInstance> implements Serializable {
 
-        private Set<RawSequenceIdentifier> parsedResults;
+        private Set<RawProtein> parsedResults;
 
-        public Set<RawSequenceIdentifier> getParsedResults() {
+        public Set<RawProtein> getParsedResults() {
             return parsedResults;
         }
 
