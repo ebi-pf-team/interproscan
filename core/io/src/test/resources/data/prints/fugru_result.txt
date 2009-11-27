@@ -1,0 +1,51 @@
+Sn; tr|Q5F4R9|Q5F4R9_FUGRU Interleukin-16 (Fragment) OS=Fugu rubripes GN=il-16 PE=4 SV=1
+Si; Fasta sequence
+1TBS
+1TBN NO SIGNIFICANT RESULTS ABOVE 1.000e-04
+1TBF
+2TBS
+2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan               
+2TBN SIBAPROTEIN     2  of  4  47       23       562        1e-06       0.58        i.i.            
+2TBN MARCKS          2  of  4  67.27    33.63    571        8.2e-06     5.7         .II.            
+2TBN HISTAMINEH3R    2  of  8  65.34    32.67    524        1.3e-05     8.9         ....I.i.        
+2TBN OTX1HOMEOBOX    2  of  3  118.91   59.46    459        5.6e-05     87          I.I             
+2TBN PHGLYCKINASE    2  of  9  45.65    22.82    379        9.9e-05     77          .....i..i       
+2TBN INTEGRINA       2  of  8  59.61    29.81    362        0.00016     1.3e+02     I...i...        
+2TBN PLPEROXIDASE    2  of  9  43.85    21.93    322        0.00031     2.4e+02     i......i.       
+2TBN PRICHEXTENSN    2  of  8  69.41    34.71    466        0.00041     4e+02       ....i..I        
+2TBN WORMGLOBIN      2  of  5  59.72    29.86    297        0.0007      7.7e+02     .i.I.           
+2TBN BCTRLSENSOR     2  of  4  47.18    23.59    276        0.0011      9.9e+02     i.i.            
+2TBF
+3TBS
+3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high 
+3TBN SIBAPROTEIN     1  of  4  26.34   248     6.20e-04  PAVVVVGKKAEPEGAREGGRMEESGSAG                            28   211  402   214  
+3TBN SIBAPROTEIN     3  of  4  20.50   314     1.67e-03  QWSSGGSLVGLNEGGSAKFGLLVC#                               25   312  522   367  
+3TBB
+3TBN MARCKS          2  of  4  35.45   339     6.21e-04  SGSVENGKDEGPEDIQADPSP                                   21   21   90    27   
+3TBN MARCKS          3  of  4  31.82   232     1.33e-02  SPDSVPASFSVSGFSAQKHITS                                  22   89   226   155  
+3TBB
+3TBN HISTAMINEH3R    5  of  8  35.71   294     1.13e-03  NPSPVEGRTASPPPTS                                        16   240  160   242  
+3TBN HISTAMINEH3R    7  of  8  29.63   230     1.15e-02  SVPASFSVSGFSAQKHITSCSTVGFSL                             27   276  229   324  
+3TBB
+3TBN OTX1HOMEOBOX    1  of  3  48.08   219     1.78e-02  PDSVPASFSVSGF                                           13   170  227   184  
+3TBN OTX1HOMEOBOX    3  of  3  70.83   240     3.11e-03  GTGLGF                                                  6    279  333   307  
+3TBB
+3TBN PHGLYCKINASE    6  of  9  20.49   218     1.65e-03  FSIAGGSDLENKAPTVHKVF                                    20   184  338   301  
+3TBN PHGLYCKINASE    9  of  9  25.15   161     6.02e-02  LNEGGSAKFGLLVC####                                      18   357  532   483  
+3TBB
+3TBN INTEGRINA       1  of  8  31.89   171     1.61e-02  SLYLGFSRQVSQA                                           13   40   189   457  
+3TBN INTEGRINA       5  of  8  27.72   191     9.74e-03  LGFSIAGGSDLENKAPTVHKVF                                  22   412  336   644  
+3TBB
+3TBN PLPEROXIDASE    1  of  9  17.11   136     6.80e-02  CEDTSGLTSASIQAALSAIP                                    20   11   279   488  
+3TBN PLPEROXIDASE    8  of  9  26.74   186     4.54e-03  TLEGGRGSIHGDRPLVIN                                      18   230  460   738  
+3TBB
+3TBN PRICHEXTENSN    5  of  8  29.41   212     4.00e-02  PPVAPKPPWFRQSLRKI                                       17   102  3     194  
+3TBN PRICHEXTENSN    8  of  8  40.00   254     1.02e-02  PVEGRTASPPPTS                                           13   255  163   338  
+3TBB
+3TBN WORMGLOBIN      2  of  5  26.39   132     5.72e-02  GAAITVQLDKGA                                            12   59   443   67   
+3TBN WORMGLOBIN      4  of  5  33.33   165     1.23e-02  LGDVLLQVEDVRVQD                                         15   106  488   112  
+3TBB
+3TBN BCTRLSENSOR     1  of  4  26.09   158     1.27e-02  VVVLHKDEGTGLGFS                                         15   219  325   1911 
+3TBN BCTRLSENSOR     3  of  4  21.09   118     9.00e-02  GAAGVGFTLEGGRGSIHGD                                     19   252  453   1946 
+3TBB
+3TBF

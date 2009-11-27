@@ -1,0 +1,108 @@
+# hmmsearch :: search profile HMM(s) against a sequence database
+# HMMER 3.0a1 (January 2009); http://hmmer.org/
+# Copyright (C) 2009 Howard Hughes Medical Institute.
+# Freely distributed under the GNU General Public License (GPLv3).
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# query HMM file:                  PF00001_ls.hmm
+# target sequence database:        Q4SMD5.fasta
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query:       7tm_1  [M=272]
+Accession:   PF00001.13
+Description: 7 transmembrane receptor (rhodopsin family)
+Scores for complete sequences (score includes all domains):
+ --- full sequence ---   --- best 1 domain ---    -#dom-
+  E-value  score  bias    E-value  score  bias    exp  N  Sequence               Description
+  ------- ------ -----    ------- ------ -----   ---- --  --------               -----------
+ 4.2e-174  565.7 103.3    5.4e-51  159.4  14.9    5.1  5  tr|Q4SMD5|Q4SMD5_TETNG Chromosome 3 SCAF14553, whole genome sh
+
+Domain and alignment annotation for each sequence:
+>> tr|Q4SMD5|Q4SMD5_TETNG  Chromosome 3 SCAF14553, whole genome shotgun sequence. (Fragment) OS=Tetraodon nigroviridis G
+     # bit score    bias    E-value ind Evalue hmm from   hmm to    ali from   ali to    env from   env to    ali-acc
+   --- --------- ------- ---------- ---------- -------- --------    -------- --------    -------- --------    -------
+     1     159.4    14.9    5.4e-51    5.4e-51        2      225 ..       38      255 ..       37      256 ..    0.97
+     2     123.3    10.5    4.5e-40    4.5e-40        2      115 ..      310      421 ..      309      423 ..    0.99
+     3      86.7     4.5    5.7e-29    5.7e-29       13       95 ..      437      518 ..      436      519 ..    0.97
+     4      87.0     5.0    4.5e-29    4.5e-29       10       95 ..      515      599 ..      514      600 ..    0.97
+     5     138.5    16.0    1.1e-44    1.1e-44       11      223 ..      597      803 ..      596      807 ..    0.97
+
+  Alignments for each domain:
+  == domain 1    score: 159.4 bits;  conditional E-value: 5.4e-51
+                             HHHHHHHHHHSCCHHSHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHT.SSTTTHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH CS
+                   7tm_1   2 NlLVilvilrtkklrtptnifilNLAvADLLflltlppwalyylvggedWpfGsalCklvtaldvvnmyaSillLtaISiDRYlAIv 88 
+                             NlLVi++i+++++l+tptn+++l+LAv+DLL++l+++p++++++v+ ++W++G+++C+l++++++++++aS++++++ISiDRYlAI+
+  tr|Q4SMD5|Q4SMD5_TETNG  38 NLLVIVSISHFRQLHTPTNALLLSLAVSDLLVGLLVMPIEGLRYVE-MCWRLGKLMCVLAPYVSYSVLSASVGNMVLISIDRYLAIC 123
+                             **********************************************.6*************************************** PP
+
+                             TTSSS-SS-C.CHHHHHHHHHHHHHHHHHHSTHHHTSSCCEEECTEE..TTTEEEE-SS-SS--.TTTCHHHHHHHHHHHHCHHHHH CS
+                   7tm_1  89 hPlryrrrrtsprrAkvvillvWvlalllslPpllfswvktveegngvvnvttClidfpevstasvktwlvsyallstlvgFvlPll 175
+                             +Pl+y++++t ++rAk++++++W++++l+++++l+++++++++++++   +++C+++++++s           ++++++++F++P++
+  tr|Q4SMD5|Q4SMD5_TETNG 124 DPLLYSNKVT-LKRAKIAVCVCWAGSVLHNGCILIGHLKHPERYSSC---HGECVVVIDHIS-----------GTVDLFITFFAPCT 195
+                             **********.*****************999999**99999999985...***********9...........************** PP
+
+                             HHHHHHHHHHHCTSSSSSSSTT..........--THHHHHHHHHHHHHHHHHHHHHHHHH CS
+                   7tm_1 176 vilvcYtrIlrtlrkrarkgas..........kkrsskerkaaktllvvvvvFvlCWlPy 225
+                             +++v+Y+r+++++++++r++++++++++++++++++++e+kaa+tl++vv+vF++C++Py
+  tr|Q4SMD5|Q4SMD5_TETNG 196 IMVVMYMRVFAAAVAQMRVIRLqnaavavntaTTVKKSEWKAARTLGIVVSVFLMCFCPY 255
+                             *************99999888899************************************ PP
+
+  == domain 2    score: 123.3 bits;  conditional E-value: 4.5e-40
+                             HHHHHHHHHHSCCHHSHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHT.SSTTTHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH CS
+                   7tm_1   2 NlLVilvilrtkklrtptnifilNLAvADLLflltlppwalyylvggedWpfGsalCklvtaldvvnmyaSillLtaISiDRYlAIv 88 
+                             NlLVi++i+++++l+tptn+++l+LAv+DLL++l+++p++++++v+ ++W++Gs++C+l++++++++++aS++++++ISiDRYlAI+
+  tr|Q4SMD5|Q4SMD5_TETNG 310 NLLVIISISHFRQLHTPTNALLLSLAVSDLLVGLLVMPIESLRYVE-TCWLLGSLMCALTPYVSLCIISASVGTMVLISIDRYLAIC 395
+                             **********************************************.6*************************************** PP
+
+                             TTSSS-SS-C.CHHHHHHHHHHHHHHH CS
+                   7tm_1  89 hPlryrrrrtsprrAkvvillvWvlal 115
+                             +Pl+y++++t ++rAk++i+++W+++l
+  tr|Q4SMD5|Q4SMD5_TETNG 396 DPLLYSNKVT-LKRAKIAICVCWACSL 421
+                             **********.**************97 PP
+
+  == domain 3    score: 86.7 bits;  conditional E-value: 5.7e-29
+                             CCHHSHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHT.SSTTTHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHTTSSS-S CS
+                   7tm_1  13 kklrtptnifilNLAvADLLflltlppwalyylvggedWpfGsalCklvtaldvvnmyaSillLtaISiDRYlAIvhPlryrr 95 
+                             ++l+tptn+++l+LAv+DLL++l+++p++++++v+ ++W++Gs++C+l++++++++++aS++++++ISiDRYlAI++Pl+y++
+  tr|Q4SMD5|Q4SMD5_TETNG 437 RQLHTPTNALLLSLAVSDLLVGLLVMPIESLRYVE-TCWLLGSLMCALTPYVSLCIISASVGTMVLISIDRYLAICDPLLYSN 518
+                             89*********************************.6********************************************86 PP
+
+  == domain 4    score: 87.0 bits;  conditional E-value: 4.5e-29
+                             HHSCCHHSHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHT.SSTTTHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHTTSSS-S CS
+                   7tm_1  10 lrtkklrtptnifilNLAvADLLflltlppwalyylvggedWpfGsalCklvtaldvvnmyaSillLtaISiDRYlAIvhPlryrr 95 
+                             l+++kl+tptn+++l+LAv+DLL++l+++p++++++v+ ++W++Gs++C+l++++++++++aS++++++ISiDRYlAI++Pl+y++
+  tr|Q4SMD5|Q4SMD5_TETNG 515 LYSNKLHTPTNALLLSLAVSDLLVGLLVMPIEGLRYVE-TCWLLGSLMCALTPYVSYSVLSASVGNMVLISIDRYLAICDPLLYSN 599
+                             6899**********************************.6********************************************86 PP
+
+  == domain 5    score: 138.5 bits;  conditional E-value: 1.1e-44
+                             HSCCHHSHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHT.SSTTTHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHTTSSS-SS- CS
+                   7tm_1  11 rtkklrtptnifilNLAvADLLflltlppwalyylvggedWpfGsalCklvtaldvvnmyaSillLtaISiDRYlAIvhPlryrrrr 97 
+                             +++kl+tptn+++l+LAv+DLL++l+++p++++++v+ ++W++Gs++C+l++++++++++aS++++++ISiDRYlAI++Pl+y++++
+  tr|Q4SMD5|Q4SMD5_TETNG 597 YSNKLHTPTNALLLSLAVSDLLVGLLVMPIESLRYVE-TCWLLGSLMCALTPYVSLCIISASVGTMVLISIDRYLAICDPLLYSNKV 682
+                             789**********************************.6************************************************ PP
+
+                             C.CHHHHHHHHHHHHHHHHHHSTHHHTSSCCEEECTEE..TTTEEEE-SS-SS--.TTTCHHHHHHHHHHHHCHHHHHHHHHHHHHH CS
+                   7tm_1  98 tsprrAkvvillvWvlalllslPpllfswvktveegngvvnvttClidfpevstasvktwlvsyallstlvgFvlPllvilvcYtrI 184
+                             t ++rAk++i+++W+++l++++++l+++++++++++++   +++C+++++++s           +++++++++v+P+++++v+Y+r+
+  tr|Q4SMD5|Q4SMD5_TETNG 683 T-LKRAKIAICVCWACSLFYNGCILMGHLKHPERYSSC---HGECVVVIDHIS-----------GTADLFITVVFPCAIMVVMYMRV 754
+                             *.**********************9**99999999884...***********9...........*********************** PP
+
+                             HHCTSSSSSSSTT..........--THHHHHHHHHHHHHHHHHHHHHHH CS
+                   7tm_1 185 lrtlrkrarkgas..........kkrsskerkaaktllvvvvvFvlCWl 223
+                             ++++++++r++++++++++++++++++++e+kaa+tl++v++vF++C+l
+  tr|Q4SMD5|Q4SMD5_TETNG 755 FAAAVAQMRVIRLqnaavavntaTTVKKSEWKAARTLGIVIAVFLMCFL 803
+                             ****99999888899*********************************9 PP
+
+
+//
+Internal statistics summary:
+----------------------------
+Query HMM(s):                              1  (272 nodes)
+Target sequences:                          1  (812 residues)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (seqZ):               1  [actual number of target seqs]
+Domain search space  (domZ):               1  [number of seqs reported over threshold]
+Mc/sec:                                 2.76
+# CPU time: 0.08u 0.00s 00:00:00.08 Elapsed: 00:00:00
+
