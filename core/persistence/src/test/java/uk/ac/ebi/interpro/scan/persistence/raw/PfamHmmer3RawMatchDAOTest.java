@@ -25,11 +25,10 @@ import java.util.Map;
 //import java.util.Set;
 
 /**
- * Created by IntelliJ IDEA.
- * User: thimma
- * Date: 06-Nov-2009
- * Time: 16:29:20
- * To change this template use File | Settings | File Templates.
+ * Units tests for {@link PfamHmmer3RawMatchDAO}
+ *
+ * @author  Manjula Thimma
+ * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration

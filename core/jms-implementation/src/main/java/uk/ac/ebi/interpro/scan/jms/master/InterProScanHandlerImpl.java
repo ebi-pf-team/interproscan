@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStepExecution;
-import uk.ac.ebi.interpro.scan.model.raw.RawSequenceIdentifier;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 
 import javax.jms.Message;
@@ -64,8 +64,8 @@ public class InterProScanHandlerImpl implements ResponseHandler{
             // TODO - Persist the raw matches.
             ParseHMMER3OutputStepExecution parsedOutputExecution = (ParseHMMER3OutputStepExecution) freshStepExecution;
             parsedOutputExecution.getParsedResults();
-            Set<RawSequenceIdentifier> rawMatches = parsedOutputExecution.getParsedResults();
-            for (RawSequenceIdentifier identifier : rawMatches){
+            Set<RawProtein> rawMatches = parsedOutputExecution.getParsedResults();
+            for (RawProtein identifier : rawMatches){
                 for (RawMatch rawMatch : identifier.getMatches()){
                     System.out.print("RAW: ");
                     System.out.print(rawMatch.toString());

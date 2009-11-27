@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
 
-import uk.ac.ebi.interpro.scan.parser.ParseException;
+import uk.ac.ebi.interpro.scan.io.ParseException;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;

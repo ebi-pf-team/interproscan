@@ -21,21 +21,21 @@ import java.io.Serializable;
  * @author  Antony Quinn
  * @version $Id$
  */
-public final class RawSequenceIdentifier implements Serializable {
+public final class RawProtein implements Serializable {
 
-    private final String sequenceIdentifier;
+    private final String proteinIdentifier;
     private final Collection<RawMatch> matches = new HashSet<RawMatch>();
 
-    private RawSequenceIdentifier() {
-        this.sequenceIdentifier = null;
+    private RawProtein() {
+        this.proteinIdentifier = null;
     }
 
-    public RawSequenceIdentifier(String sequenceIdentifier) {
-        this.sequenceIdentifier = sequenceIdentifier;
+    public RawProtein(String proteinIdentifier) {
+        this.proteinIdentifier = proteinIdentifier;
     }
 
-    public String getSequenceIdentifier() {
-        return sequenceIdentifier;
+    public String getProteinIdentifier() {
+        return proteinIdentifier;
     }
 
     public void addMatch(RawMatch match)  {
@@ -49,18 +49,18 @@ public final class RawSequenceIdentifier implements Serializable {
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof RawSequenceIdentifier))
+        if (!(o instanceof RawProtein))
             return false;
-        final RawSequenceIdentifier s = (RawSequenceIdentifier) o;
+        final RawProtein s = (RawProtein) o;
         return new EqualsBuilder()
-                .append(sequenceIdentifier, s.sequenceIdentifier)
+                .append(proteinIdentifier, s.proteinIdentifier)
                 .append(matches, s.matches)
                 .isEquals();
     }
 
     @Override public int hashCode() {
         return new HashCodeBuilder(21, 53)
-                .append(sequenceIdentifier)
+                .append(proteinIdentifier)
                 .append(matches)
                 .toHashCode();
     }

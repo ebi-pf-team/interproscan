@@ -115,17 +115,17 @@
         <property name="pfamCFile"                          value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-C"/>
     </bean>
 
-    <bean id="hmmer3SearchParser" class="uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.Hmmer3SearchParser">
+    <bean id="hmmer3SearchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
         <property name="parserSupport" ref="parserSupport"/>
     </bean>
 
-    <bean id="parserSupport" class="uk.ac.ebi.interpro.scan.parser.matchparser.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+    <bean id="parserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
         <property name="gaValuesRetriever" ref="gaValuesRetriever"/>
         <property name="signatureLibraryRelease" value="24.0"/>
         <property name="signatureLibraryName" value="Pfam"/>
     </bean>
 
-    <bean id="gaValuesRetriever" class="uk.ac.ebi.interpro.scan.parser.modelFileParser.GaValuesRetriever">
+    <bean id="gaValuesRetriever" class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
         <constructor-arg value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

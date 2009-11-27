@@ -13,7 +13,9 @@ import java.util.Map;
  * @author Phil Jones
  * @version $Id$
  */
-public interface PfamHmmer3RawMatchDAO extends GenericDAO<PfamHmmer3RawMatch, Long> {
+public interface
+        
+        PfamHmmer3RawMatchDAO extends GenericDAO<PfamHmmer3RawMatch, Long> {
 
     public PfamHmmer3RawMatch getPfamMatchesByModel (String methodAc);
 

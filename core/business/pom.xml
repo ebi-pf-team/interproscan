@@ -29,7 +29,7 @@
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
-            <artifactId>interproscan-parser</artifactId>
+            <artifactId>interproscan-io</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
