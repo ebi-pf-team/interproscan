@@ -10,25 +10,46 @@
                            http://www.springframework.org/schema/lang
                            http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
 
-    <bean id="parser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
-        <property name="parserSupport" ref="parserSupport"/>
-    </bean>
-
-    <bean id="parserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
-        <property name="gaValuesRetriever" ref="gaValueRetriever"/>
-        <property name="signatureLibraryRelease" value="Pfam-A"/>
-        <property name="signatureLibraryName" value="24.0"/>
-    </bean>
-
-    <bean id="gaValueRetriever" class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
-        <constructor-arg>
-            <bean class="org.springframework.core.io.ClassPathResource">
-                <constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm" />
+    <bean id="pfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
+        <property name="parserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+                <property name="gaValuesRetriever">
+                    <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
+                        <constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm" />
+                        <!--<constructor-arg>-->
+                            <!--<bean class="org.springframework.core.io.ClassPathResource">-->
+                                <!--<constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm" />-->
+                            <!--</bean>-->
+                        <!--</constructor-arg>-->
+                    </bean>
+                </property>
+                <property name="signatureLibraryRelease" value="Pfam-A"/>
+                <property name="signatureLibraryName"    value="24.0"/>
             </bean>
-        </constructor-arg>
+        </property>
     </bean>
 
-    <bean id="testFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/hmmer3/hmmsearch/hmmer3b2-large"/>
+    <!--TODO: Get up-to-date HMMER3 sample file for testing    -->
+    <bean id="pfamFile" class="org.springframework.core.io.ClassPathResource">
+        <!--TODO: Add hmmer3b2-large to Subversion -->
+        <!--<constructor-arg value="data/hmmer3/hmmsearch/hmmer3b2-large"/>-->
+        <constructor-arg value="data/hmmer3/hmmsearch/CELR2-PF12003.txt"/>
     </bean>
+
+    <bean id="gene3dParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
+        <property name="parserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Gene3DHmmer3ParserSupport">
+                <property name="signatureLibraryRelease" value="Gene3D"/>
+                <property name="signatureLibraryName"    value="3.3.0"/>
+                <property name="alignmentEncoder">
+                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="gene3dFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/hmmer3/hmmsearch/CELR2-PF12003.txt"/>
+    </bean>
+    
 </beans>

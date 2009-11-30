@@ -53,6 +53,8 @@ public class DomainMatch implements Serializable {
 
     private final double acc;
 
+    private final String alignment;
+
     public DomainMatch(Matcher domainLineMatcher) {
         this.score = Double.parseDouble(domainLineMatcher.group(1));
         this.bias = Double.parseDouble(domainLineMatcher.group(2));
@@ -66,7 +68,13 @@ public class DomainMatch implements Serializable {
         this.envFrom = Integer.parseInt(domainLineMatcher.group(10));
         this.envTo = Integer.parseInt(domainLineMatcher.group(11));
         this.acc = Double.parseDouble(domainLineMatcher.group(12));
+        // TODO: Parse alignment from HMMER3 output
+        this.alignment = "LDSGRSQ-QLALLLRNAT"; // TODO: Remove ASAP!!!!!!!!!
     }
+
+    public String getAlignment() {
+        return alignment;
+    }    
 
     public double getScore() {
         return score;
@@ -115,4 +123,6 @@ public class DomainMatch implements Serializable {
     public double getAcc() {
         return acc;
     }
+
+
 }

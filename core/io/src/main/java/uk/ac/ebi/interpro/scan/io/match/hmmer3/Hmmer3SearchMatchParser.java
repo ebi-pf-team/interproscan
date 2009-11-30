@@ -177,11 +177,9 @@ public class Hmmer3SearchMatchParser implements MatchParser {
                             // TODO Code to parse alignments should go here...
                             // TODO Note - an additional field (for the alignment) needs to be added
                             // TODO to the parsing model.
-
-
-
-
-
+                            if (hmmer3ParserSupport.parseAlignments())  {
+                                System.out.println("Parsing alignments...");
+                            }
                             // TODO End of alignment parsing code.
                             // .. followed by... (just switching directly to this at the moment)
                             stage = ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
