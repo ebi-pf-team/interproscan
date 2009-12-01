@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
+import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import java.util.UUID;
 import java.io.Serializable;
@@ -15,7 +16,7 @@ public class WriteFastaFileStepExecution extends StepExecution<WriteFastaFileSte
     }
 
     @Override
-    public void execute() {
+    public void execute(DAOManager daoManager) {
         this.setToRun();
         try{
             fastaFile.writeFastaFile(this.getStepInstance().getProteins(), this.getStepInstance().getFastaFilePathName());

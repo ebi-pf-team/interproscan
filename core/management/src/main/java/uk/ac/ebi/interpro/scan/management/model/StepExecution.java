@@ -6,6 +6,8 @@ import javax.swing.event.EventListenerList;
 import java.io.Serializable;
 import java.util.*;
 
+import uk.ac.ebi.interpro.scan.persistence.DAOManager;
+
 /**
  * Abstract class for executing a Step.
  *
@@ -98,8 +100,9 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
      *
      * Note that the implementation DOES have access to the protected stepInstance,
      * and from their to the protected Step, to allow it to access parameters for execution.
+     * @param daoManager
      */
-    public abstract void execute();
+    public abstract void execute(DAOManager daoManager);
 
     public void submit(){
         if (state != StepExecutionState.NEW_STEP_EXECUTION){
