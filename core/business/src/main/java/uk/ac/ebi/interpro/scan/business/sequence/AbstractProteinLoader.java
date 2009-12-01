@@ -5,9 +5,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Xref;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.io.Serializable;
 
 /**
@@ -22,14 +20,14 @@ public class AbstractProteinLoader implements Serializable {
 
     private int transactionProteinCount;
 
-    private List<Protein> proteinsAwaitingPersistence;
+    private Set<Protein> proteinsAwaitingPersistence;
 
 
 
     @Required
     public void setTransactionProteinCount(int transactionProteinCount) {
         this.transactionProteinCount = transactionProteinCount;
-        proteinsAwaitingPersistence = new ArrayList<Protein>(transactionProteinCount);
+        proteinsAwaitingPersistence = new HashSet<Protein>(transactionProteinCount);
     }
 
     @Required
@@ -42,7 +40,7 @@ public class AbstractProteinLoader implements Serializable {
      * @param sequence
      * @param crossReferences
      */
-    public List<Protein> store(String sequence, String... crossReferences) {
+    public Set<Protein> store(String sequence, String... crossReferences) {
         if (sequence != null && sequence.length() > 0){
             Protein protein = new Protein(sequence);
             if (crossReferences != null){
@@ -61,10 +59,10 @@ public class AbstractProteinLoader implements Serializable {
         }
     }
 
-    public List<Protein> persist(){
-        List<Protein> persistedProteins = Collections.emptyList();
+    public Set<Protein> persist(){
+        Set<Protein> persistedProteins = Collections.emptySet();
         if (proteinsAwaitingPersistence.size() > 0){
-            persistedProteins = proteinDAO.insertOrUpdate(proteinsAwaitingPersistence);
+            persistedProteins = proteinDAO.insert(proteinsAwaitingPersistence);
             proteinsAwaitingPersistence.clear();
         }
         return persistedProteins;
