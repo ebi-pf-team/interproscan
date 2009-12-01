@@ -59,19 +59,7 @@ public class InterProScanHandlerImpl implements ResponseHandler{
     }
 
     private void processStepExecution(StepExecution freshStepExecution) {
-        // Spit out raw match results.
-        if (freshStepExecution instanceof ParseHMMER3OutputStepExecution){
-            // TODO - Persist the raw matches.
-            ParseHMMER3OutputStepExecution parsedOutputExecution = (ParseHMMER3OutputStepExecution) freshStepExecution;
-            parsedOutputExecution.getParsedResults();
-            Set<RawProtein> rawMatches = parsedOutputExecution.getParsedResults();
-            for (RawProtein identifier : rawMatches){
-                for (RawMatch rawMatch : identifier.getMatches()){
-                    System.out.print("RAW: ");
-                    System.out.print(rawMatch.toString());
-                }
-            }
-        }
+        // Currently no-op - hopefully it will stay that way.
     }
 
     /**
