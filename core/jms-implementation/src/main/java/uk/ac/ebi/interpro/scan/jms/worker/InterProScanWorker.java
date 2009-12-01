@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import javax.jms.*;
 import java.util.UUID;
@@ -39,6 +40,10 @@ public class InterProScanWorker implements Worker {
     private volatile StepExecution currentStepExecution;
 
     private final UUID uniqueWorkerIdentification = UUID.randomUUID();
+
+    private String jmsMessageSelector;
+
+    private DAOManager daoManager;
 
     /**
      * Sets the timeout on the Worker.  This should be set reasonably low (a few seconds perhaps)
@@ -90,6 +95,16 @@ public class InterProScanWorker implements Worker {
     }
 
     /**
+     * Optional DAOManager - it is likely this will only
+     * be injected into the Serial worker.
+     * @param daoManager optional handle on the DAO objects
+     * for database access.
+     */
+    public void setDaoManager(DAOManager daoManager) {
+        this.daoManager = daoManager;
+    }
+
+    /**
      * OPTIONALLY a workerManager runnable may be injected.
      * If this is injected, it should be run in a high priority thread
      * (will block most of the time, so should not interfere with the
@@ -104,6 +119,13 @@ public class InterProScanWorker implements Worker {
         this.workerManager = workerManager;
     }
 
+    /**
+     * Optional JMS message selector.
+     * @param jmsMessageSelector optional JMS message selector.
+     */
+    public void setJmsMessageSelector(String jmsMessageSelector) {
+        this.jmsMessageSelector = jmsMessageSelector;
+    }
 
     /**
      * Tells the Worker to shut down gracefully (finish whatever it's doing, then shut down.)
@@ -189,7 +211,14 @@ public class InterProScanWorker implements Worker {
             }
 
             sessionHandler.init();
-            MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
+            MessageConsumer messageConsumer = null;
+            if (jmsMessageSelector == null){
+                messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
+            }
+            else {
+                messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName, jmsMessageSelector);
+            }
+
             MessageProducer messageProducer = sessionHandler.getMessageProducer(jobResponseQueueName);
             while (running){
                 System.out.println("About to invoke receive()");
@@ -205,7 +234,7 @@ public class InterProScanWorker implements Worker {
                         System.out.println("Got currentStepExecution, which is...");
                         if (stepExec != null){
                             System.out.println("Not null!");
-                            stepExec.execute();
+                            stepExec.execute(daoManager);
                             ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExec);
                             messageProducer.send(responseMessage);
                             stepExecutionMessage.acknowledge();
