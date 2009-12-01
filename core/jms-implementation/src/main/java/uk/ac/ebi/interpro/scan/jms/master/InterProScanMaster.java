@@ -140,7 +140,7 @@ public class InterProScanMaster implements Master {
                         stepExecutions.put(stepExecution.getId(), stepExecution);
                         // TODO - for the moment, just sending to the default job submission queue.
                         System.out.println("Submitting "+ stepExecution.getStepInstance().getStep().getStepDescription());
-                        sendMessage(jobSubmissionQueueName, stepExecution);
+                        sendMessage(stepExecution);
                     }
                 }
                 Thread.sleep(2000);
@@ -172,9 +172,11 @@ public class InterProScanMaster implements Master {
         // Load some proteins into the database.
         loader.loadSequences();
 
+        final long sliceSize = 500l;
+
         // Then retrieve the first 99.
-        for (long bottomProteinId = 1; bottomProteinId <= 5000l; bottomProteinId+=100l){
-            final long topProteinId = bottomProteinId + 99l;
+        for (long bottomProteinId = 1; bottomProteinId <= 10000l; bottomProteinId += sliceSize){
+            final long topProteinId = bottomProteinId + sliceSize;
             WriteFastaFileStepInstance fastaStepInstance = null;
             RunHmmer3StepInstance hmmer3StepInstance = null;
             ParseHMMER3OutputStepInstance hmmer3ParserStepInstance = null;
@@ -249,9 +251,10 @@ public class InterProScanMaster implements Master {
      * @param stepExecution being the StepExecution to send as a message
      * @throws JMSException in the event of a failure sending the message to the JMS Broker.
      */
-    private void sendMessage(String destination, StepExecution stepExecution) throws JMSException {
+    private void sendMessage(StepExecution stepExecution) throws JMSException {
         stepExecution.submit();
         ObjectMessage message = sessionHandler.createObjectMessage(stepExecution);
+        message.setBooleanProperty("parallel", stepExecution.getStepInstance().getStep().isParallel());
         if (message.getObject() == null){
             System.out.println("message.getObject() is null.  Throwing IllegalStateException.");
             throw new IllegalStateException ("The object message is empty:" + message.toString());
