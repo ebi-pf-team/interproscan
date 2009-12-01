@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Xref;
-import uk.ac.ebi.interpro.scan.model.transactiontracking.TransactionSlice;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 
 import javax.persistence.Query;
@@ -91,7 +90,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     @Transactional
     @Override
     public Protein insert(Protein newInstance) {
-        List<Protein> proteinList = insertOrUpdate(Collections.singletonList(newInstance));
+        Set<Protein> proteinList = insert(Collections.singleton(newInstance));
         assert proteinList != null;
         assert proteinList.size() == 1;
         return proteinList.iterator().next();
@@ -109,8 +108,8 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      */
     @Transactional
     @SuppressWarnings("unchecked")
-    public List<Protein> insertOrUpdate(List<Protein> newProteins) {
-        final List<Protein> persistentProteins = new ArrayList<Protein>(newProteins.size());
+    public Set<Protein> insert(Set<Protein> newProteins) {
+        final Set<Protein> persistentProteins = new HashSet<Protein>(newProteins.size());
         if (newProteins.size() > 0){
             // Create a List of MD5s (just as Strings) to query the database with
             final List<String> newMd5s = new ArrayList<String>(newProteins.size());
