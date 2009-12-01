@@ -18,6 +18,7 @@ package uk.ac.ebi.interpro.scan.genericjpadao;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -44,14 +45,14 @@ public interface GenericDAO <T, PK extends Serializable> {
     T insert(T newInstance);
 
     /**
-     * Insert a List of new Model instances.
-     * @param newInstances being a List of instances to persist.
-     * @return the Collection of persisted instances.
+     * Insert a Set of new Model instances.
+     * @param newInstances being a Set of instances to persist.
+     * @return the Set of persisted instances.
      * This MAY NOT contain the same objects as
      * have been passed in, for sub-classes that check for the pre-existence of the object
      * in the database.
      */
-    List<T> insert(List<T> newInstances);
+    Set<T> insert(Set<T> newInstances);
     /**
      * Update the instance into the database
      *

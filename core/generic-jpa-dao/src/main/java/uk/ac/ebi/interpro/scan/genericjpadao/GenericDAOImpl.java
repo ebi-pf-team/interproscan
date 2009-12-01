@@ -23,6 +23,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A generic DAO implementation that can be used with any model class.
@@ -106,7 +107,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
      *         in the database.
      */
     @Transactional
-    public List<T> insert(List<T> newInstances) {
+    public Set<T> insert(Set<T> newInstances) {
         for (T newInstance : newInstances){
             if (entityManager.contains(newInstance)){
                 throw new IllegalArgumentException ("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
