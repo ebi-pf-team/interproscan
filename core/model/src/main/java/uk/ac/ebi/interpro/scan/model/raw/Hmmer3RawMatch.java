@@ -39,8 +39,8 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         this.envelopeEnd = envelopeEnd;
         this.expectedAccuracy = expectedAccuracy;
         this.fullSequenceBias = fullSequenceBias;
-        this.domainCeValue = domainCeValue;
-        this.domainIeValue = domainIeValue;
+        this.domainCeValue = Math.log10(domainCeValue);
+        this.domainIeValue = Math.log10(domainIeValue);
         this.domainBias = domainBias;
     }
 
