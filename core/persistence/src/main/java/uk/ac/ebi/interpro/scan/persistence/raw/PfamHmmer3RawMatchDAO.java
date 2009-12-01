@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 import java.util.List;
 import java.util.Map;
@@ -13,9 +13,7 @@ import java.util.Map;
  * @author Phil Jones
  * @version $Id$
  */
-public interface
-        
-        PfamHmmer3RawMatchDAO extends GenericDAO<PfamHmmer3RawMatch, Long> {
+public interface PfamHmmer3RawMatchDAO extends GenericDAO<PfamHmmer3RawMatch, Long> {
 
     public PfamHmmer3RawMatch getPfamMatchesByModel (String methodAc);
 
