@@ -16,7 +16,7 @@ import java.util.Map;
  * @version $Id: LANWorkerRunner.java,v 1.1.1.1 2009/10/07 13:37:52 pjones Exp $
  * @since 1.0
  */
-public class LANWorkerRunner {
+public class LANWorkerRunner implements WorkerRunner {
 
     Map<String, Integer> hostNameToJVMCount;
 
@@ -57,5 +57,13 @@ public class LANWorkerRunner {
         this.accessPrefix = accessPrefix;
     }
 
-    
+
+    /**
+     * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
+     * Assumes that the jar being executed has a main class define in the MANIFEST.
+     */
+    @Override
+    public void startupNewWorker() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
