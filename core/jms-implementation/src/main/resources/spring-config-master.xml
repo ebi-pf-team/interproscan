@@ -8,7 +8,7 @@
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
     <import resource="pfam-A-job-context.xml"/>
-    <import resource="persistence-config.xml"/>
+
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
         <property name="sessionHandler" ref="sessionHandler"/>
