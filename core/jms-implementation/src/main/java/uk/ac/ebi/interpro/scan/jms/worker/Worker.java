@@ -126,4 +126,10 @@ public interface Worker {
      * @return the current StepExecution.
      */
     StepExecution getCurrentStepExecution();
+
+    /**
+     * Optional JMS message selector.
+     * @param jmsMessageSelector optional JMS message selector.
+     */
+    void setJmsMessageSelector(String jmsMessageSelector);
 }
