@@ -12,12 +12,6 @@ public interface WorkerRunner {
 
     /**
      * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
-     * @param mainClassName the main class to call.
-     */
-    public void startupNewWorker(String mainClassName);
-
-    /**
-     * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
      * Assumes that the jar being executed has a main class define in the MANIFEST.
      */
     public void startupNewWorker();
