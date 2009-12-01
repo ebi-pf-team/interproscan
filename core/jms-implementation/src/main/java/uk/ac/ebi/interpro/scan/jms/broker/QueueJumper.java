@@ -7,7 +7,6 @@ import javax.jms.*;
 
 import uk.ac.ebi.interpro.scan.jms.broker.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import java.io.Serializable;
 import java.lang.IllegalStateException;
@@ -25,7 +24,7 @@ public class QueueJumper implements Runnable{
 
     private int workersStarted = 0;
 
-    private WorkerRunner workerRunner;
+    private WorkerRunner parallelWorkerRunner;
 
     private SessionHandler sessionHandler;
 
@@ -35,9 +34,11 @@ public class QueueJumper implements Runnable{
 
     private volatile boolean running = true;
 
+    private String jmsMessageSelector;
+
     @Required
-    public void setWorkerRunner(WorkerRunner workerRunner) {
-        this.workerRunner = workerRunner;
+    public void setParallelWorkerRunner(WorkerRunner workerRunner) {
+        this.parallelWorkerRunner = workerRunner;
     }
 
     @Required
@@ -62,7 +63,16 @@ public class QueueJumper implements Runnable{
         running = false;
     }
 
-    
+     /**
+     * Optional setter to allow a JMS filter to be passed in.
+     * <p/>
+     * See JMS Version 1.1 documentation for building selector clauses.
+     *
+     * @param messageSelector JMS message selector clause.
+     */
+    public void setJmsMessageSelector(String messageSelector) {
+        this.jmsMessageSelector = messageSelector;
+    }
 
     /**
      * When an object implementing interface <code>Runnable</code> is used
@@ -80,10 +90,14 @@ public class QueueJumper implements Runnable{
 
         try{
             sessionHandler.init();
-            MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(jobSubmissionQueueName);
-            System.out.println("Got message consumer....");
+            MessageConsumer messageConsumer = null;
+            if (jmsMessageSelector == null){
+                messageConsumer = sessionHandler.getMessageConsumer(jobSubmissionQueueName);
+            }
+            else {
+                messageConsumer = sessionHandler.getMessageConsumer(jobSubmissionQueueName, jmsMessageSelector);
+            }
             MessageProducer producer = sessionHandler.getMessageProducer(workerJobRequestQueueName);
-            System.out.println("Got message producer...");
 
             while (running){
                 System.out.println("Waiting for message on submission queue...");
@@ -111,10 +125,10 @@ public class QueueJumper implements Runnable{
                 if (((++workersStarted) % 5) == 0){
                     // Start up an extra worker every now and then...
                     System.out.println("Starting up an extra worker...");
-                    workerRunner.startupNewWorker();
+                    parallelWorkerRunner.startupNewWorker();
                 }
 
-                workerRunner.startupNewWorker();
+                parallelWorkerRunner.startupNewWorker();
                 if (outgoingMessage == null){
                     throw new IllegalStateException("The QueueJumper was unable to forward the incoming message.");
                 }
