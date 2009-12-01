@@ -22,7 +22,7 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
                              long hmmStart, long hmmEnd, String hmmBounds,
                              double locationEvalue, double locationScore, String generator) {
         super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, generator);
-        this.locationEvalue = locationEvalue;
+        this.locationEvalue = Math.log10(locationEvalue);
     }
 
     public double getLocationEvalue() {

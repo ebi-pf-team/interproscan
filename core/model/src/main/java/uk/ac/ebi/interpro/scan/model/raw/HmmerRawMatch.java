@@ -41,7 +41,7 @@ public abstract class HmmerRawMatch extends RawMatch  {
                             long hmmStart, long hmmEnd, String hmmBounds,
                             double locationScore, String generator) {
         super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
-        this.evalue = evalue;
+        this.evalue = Math.log10(evalue);
         this.score = score;
         this.hmmStart = hmmStart;
         this.hmmEnd = hmmEnd;
