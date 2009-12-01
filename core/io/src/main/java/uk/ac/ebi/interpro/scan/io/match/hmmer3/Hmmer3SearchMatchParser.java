@@ -22,6 +22,53 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Phil Jones
  * @version $Id$
  * @since 1.0-SNAPSHOT
+ *
+Query:       7tm_2  [M=242]
+Accession:   PF00002.17
+Description: 7 transmembrane receptor (Secretin family)
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence      Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------      -----------
+      8e-42  152.1   7.7    1.1e-41  151.6   5.3    1.2  1  UPI00000015B6
+
+
+Domain and alignment annotation for each sequence:
+>> UPI00000015B6
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !  151.6   5.3   1.3e-48   1.1e-41       4     242 .]    2376    2605 ..    2373    2605 .. 0.94
+
+  Alignments for each domain:
+  == domain 1    score: 151.6 bits;  conditional E-value: 1.3e-48
+                     ----S----------------------------------------------------------------------------------------- CS
+          7tm_2    4 lkvittvGlslSlvaLlvaivilllfrklrctrntihlnLflslilrailvlvkiaalenkeeeseakCkvvavflhYfllanffWllvEglyl 97
+                     lk++t+v+l++ l+aLl++++ l+l+r lr++++ i  nL ++l l+++++l++i++ +   +     C+v+a++lh+++l++f W l+E+l+l
+  UPI00000015B6 2376 LKTLTYVALGVTLAALLLTFFFLTLLRILRSNQHGIRRNLTAALGLAQLVFLLGINQADLPFA-----CTVIAILLHFLYLCTFSWALLEALHL 2464
+                     799*****************************************************9999997.....************************** PP
+
+                     -------------------------------------.--------.----------------------------------------------- CS
+          7tm_2   98 ylllvltffserkklkvylliGwgvPavvvvvwaivrkagyenekc.WlsnekkllwiikgpvlviilvNfvllinilrvlvqklrsketseke 190
+                     y++l++++  ++  +++y+++GwgvPa ++ ++++++++gy+n ++ Wls  ++l+w+++gpv++++ + ++l i   r  ++  r+  ++ k
+  UPI00000015B6 2465 YRALTEVRDVNTGPMRFYYMLGWGVPAFITGLAVGLDPEGYGNPDFcWLSIYDTLIWSFAGPVAFAVSMSVFLYILAARASCAAQRQGFEK-KG 2557
+                     *************************************99****8877****99*****************************998844444.44 PP
+
+                     ---------------------------------------------------- CS
+          7tm_2  191 kkrkklvkstlvllpLLGityvlflfapeekvssvvflyleailnslqGffv 242
+                       +   ++ ++++l+LL+ t++l+l+ ++++  + +f+yl+a+ n++qG f+
+  UPI00000015B6 2558 PVS--GLQPSFAVLLLLSATWLLALLSVNSD--TLLFHYLFATCNCIQGPFI 2605
+                     444..58999********************5..8***************886 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (242 nodes)
+Target sequences:                          1  (2923 residues)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+
+
  */
 public class Hmmer3SearchMatchParser implements MatchParser {
 
