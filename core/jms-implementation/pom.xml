@@ -52,23 +52,23 @@
 
     <repositories>
         <!--<repository>-->
-            <!--<id>springsource-external</id>-->
-            <!--<url>http://repository.springsource.com/maven/bundles/external</url>-->
+        <!--<id>springsource-external</id>-->
+        <!--<url>http://repository.springsource.com/maven/bundles/external</url>-->
         <!--</repository>-->
 
         <!--<repository>-->
-            <!--<id>springsource-snapshot</id>-->
-            <!--<url>http://repository.springsource.com/maven/bundles/snapshot</url>-->
+        <!--<id>springsource-snapshot</id>-->
+        <!--<url>http://repository.springsource.com/maven/bundles/snapshot</url>-->
         <!--</repository>-->
 
         <!--<repository>-->
-            <!--<id>springsource-milestone</id>-->
-            <!--<url>http://repository.springsource.com/maven/bundles/milestone</url>-->
+        <!--<id>springsource-milestone</id>-->
+        <!--<url>http://repository.springsource.com/maven/bundles/milestone</url>-->
         <!--</repository>-->
 
         <!--<repository>-->
-            <!--<id>springsource-release</id>-->
-            <!--<url>http://repository.springsource.com/maven/bundles/release</url>-->
+        <!--<id>springsource-release</id>-->
+        <!--<url>http://repository.springsource.com/maven/bundles/release</url>-->
         <!--</repository>-->
 
         <repository>
@@ -79,9 +79,9 @@
         </repository>
 
         <!--<repository>-->
-            <!--<id>spring-sourceforge-release</id>-->
-            <!--<name>Spring Release Repository</name>-->
-            <!--<url>svn:https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>-->
+        <!--<id>spring-sourceforge-release</id>-->
+        <!--<name>Spring Release Repository</name>-->
+        <!--<url>svn:https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>-->
         <!--</repository>-->
 
         <repository>
@@ -89,7 +89,7 @@
             <name>Spring Maven RELEASE Repository</name>
             <url>http://s3.amazonaws.com/maven.springframework.org/release</url>
         </repository>
-        
+
         <repository>
             <snapshots>
                 <enabled>false</enabled>
@@ -117,12 +117,31 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.1.0.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+        </dependency>
+
+
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.batch</groupId>-->
-            <!--<artifactId>spring-batch-test</artifactId>-->
-            <!--<version>${spring.batch.version}</version>-->
-            <!--<scope>test</scope>-->
+        <!--<groupId>org.springframework.batch</groupId>-->
+        <!--<artifactId>spring-batch-test</artifactId>-->
+        <!--<version>${spring.batch.version}</version>-->
+        <!--<scope>test</scope>-->
         <!--</dependency>-->
 
 
@@ -221,26 +240,16 @@
 
         <!-- JPA tests -->
 
-         <dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.4.0.GA</version>
             <!--<scope>test</scope>-->
         </dependency>
 
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
-            <!--<scope>test</scope>-->
-        </dependency>
 
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.10</version>
-            <!--<scope>test</scope>-->
-        </dependency>
+
+
 
         <dependency>
             <groupId>cglib</groupId>
@@ -298,9 +307,9 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring</artifactId>-->
-            <!--<version>2.5.5</version>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring</artifactId>-->
+        <!--<version>2.5.5</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -308,7 +317,7 @@
             <artifactId>commons-lang</artifactId>
             <version>2.4</version>
         </dependency>
-        
+
 
         <dependency>
             <groupId>com.jgoodies</groupId>
@@ -409,7 +418,7 @@
                   java com.sun.tools.jxc.SchemaGenerator -cp target/classes/
                                                          src/main/java/uk/ac/ebi/impact/model/ModelDatabaseRelease.java
              -->
-           
+
             <!--plugin>
                 <groupId>com.sun.tools.jxc.maven2</groupId>
                 <artifactId>maven-jaxb-schemagen-plugin</artifactId>
@@ -441,7 +450,6 @@
                         </execution>
                     </executions>
                     <configuration>
-
                         <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunBroker</mainClass>
                     </configuration>
                 </plugin>
@@ -473,7 +481,7 @@
         </profile>
 
         <profile>
-            <id>runWorker</id>
+            <id>runParallelWorker</id>
             <build><plugins>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -489,7 +497,30 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunWorker</mainClass>
+                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunParallelWorker</mainClass>
+                    </configuration>
+                </plugin>
+            </plugins></build>
+        </profile>
+
+        <profile>
+            <id>runSerialWorker</id>
+            <build><plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>java</goal>
+                            </goals>
+
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunSerialWorker</mainClass>
                     </configuration>
                 </plugin>
             </plugins></build>
@@ -553,7 +584,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
 
         <!--profile>
             <id>runBroker</id>
@@ -583,6 +614,15 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+
+            <dependencies>
+                <dependency>
+                    <groupId>hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>1.8.0.10</version>
+                </dependency>
+            </dependencies>
+
             <properties>
 
                 <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
@@ -593,11 +633,14 @@
                 <test.hibernate.show_sql>true</test.hibernate.show_sql>
                 <test.hibernate.format_sql>true</test.hibernate.format_sql>
                 <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
+                <test.hibernate.default_schema>testmodel</test.hibernate.default_schema>
+                <test.hibernate.jdbc.batch.size>30</test.hibernate.jdbc.batch.size>
+                <test.hibernate.use_sql_comments>true</test.hibernate.use_sql_comments>
 
                 <broker.bindings.directory>target/data/bindings</broker.bindings.directory>
                 <broker.journal.directory>target/data/journal</broker.journal.directory>
                 <broker.large.messages.directory>target/data/largemessages</broker.large.messages.directory>
-                <broker.paging.directory>target/data/paging</broker.paging.directory> 
+                <broker.paging.directory>target/data/paging</broker.paging.directory>
                 <broker.host.name>localhost</broker.host.name>
                 <broker.port.number>5445</broker.port.number>
                 <unix.username>mumdad</unix.username>
@@ -610,7 +653,9 @@
                 <worker.manager.topic>worker_manager_topic</worker.manager.topic>
                 <worker.manager.response.queue>worker_manager_response_queue</worker.manager.response.queue>
 
-            </properties>                
+            </properties>
         </profile>
+
+
     </profiles>
 </project>
