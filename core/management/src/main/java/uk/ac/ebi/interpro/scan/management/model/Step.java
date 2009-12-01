@@ -32,7 +32,7 @@ public abstract class Step<I extends StepInstance, E extends StepExecution> impl
 
     protected String stepDescription;
 
-    protected Queue queue;
+    protected boolean parallel;
 
 
 
@@ -139,13 +139,13 @@ public abstract class Step<I extends StepInstance, E extends StepExecution> impl
         this.stepDescription = stepDescription;
     }
 
-    public Queue getQueue() {
-        return queue;
+    public boolean isParallel() {
+        return parallel;
     }
 
     @Required
-    public void setQueue(Queue queue) {
-        this.queue = queue;
+    public void setParallel(boolean parallel) {
+        this.parallel = parallel;
     }
 
     public int getRetries() {
