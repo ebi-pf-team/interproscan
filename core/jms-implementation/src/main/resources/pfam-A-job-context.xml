@@ -20,17 +20,7 @@
 
          TODO -->
 
-    <!-- ######################## Queues ############################  -->
-    <bean id="parallelTaskSubmissionQueue" class="uk.ac.ebi.interpro.scan.management.model.Queue">
-        <property name="name"                               value="taskSubmissionQueue"/>
-    </bean>
-
-    <!-- TODO - Playing around with ideas - additional queue for 'serial' tasks like persistence?
-         TODO - Or just use message filtering?                                 -->
-    <bean id="serialTaskSubmissionQueue" class="uk.ac.ebi.interpro.scan.management.model.Queue">
-        <property name="name"                               value="persistenceSubmissionQueue"/>
-    </bean>
-    <!-- !!!!!!!!!!!!!!!!!!!!!!!! Queues-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <import resource="persistence-config.xml"/>
 
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="job_pfam_A" class="uk.ac.ebi.interpro.scan.management.model.Job">
@@ -44,11 +34,11 @@
         <!-- This step has no depdencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"                    value="Create fasta file."/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-        <property name="queue"                              ref="parallelTaskSubmissionQueue"/>
         <property name="id"                                 value="step_pfam_A_write_fasta_file"/>
         <property name="retries"                            value="0"/>
         <property name="fastaFilePathTemplate"
                   value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
+        <property name="parallel"                           value="true"/>
     </bean>
 
     <!-- STEP 2 -->
@@ -58,7 +48,6 @@
         <property name="dependsUpon"                        ref="step_pfam_A_write_fasta_file"/>
         <property name="stepDescription"                    value="Run HMMER 3 Binary for selected proteins"/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-        <property name="queue"                              ref="parallelTaskSubmissionQueue"/>
 
         <property name="fullPathToBinary"                   value="/ebi/production/interpro/binaries/64_bit_Linux/HMMER3.0b2/hmmsearch"/>
         <property name="binarySwitches" >
@@ -74,6 +63,7 @@
         <property name="retries"                            value="0"/>
         <property name="fastaFilePathNameTemplate"
                   value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
+        <property name="parallel"                           value="true"/>
     </bean>
 
     <!-- STEP 3 -->
@@ -83,13 +73,13 @@
         <property name="dependsUpon"                        ref="step_pfam_A_run_HMMER3"/>
         <property name="stepDescription"                    value="Parse the output from HMMER3"/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-        <property name="queue"                              ref="serialTaskSubmissionQueue"/>
 
         <property name="id" value="step_pfam_A_parse_HMMER3_output"/>
         <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
         <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
         <property name="retries"                            value="0"/>
         <property name="parser"                             ref="hmmer3SearchParser"/>
+        <property name="parallel"                           value="false"/>
     </bean>
 
     <!-- STEP 4 -->
@@ -98,10 +88,10 @@
         <property name="dependsUpon"                        ref="step_pfam_A_parse_HMMER3_output"/>
         <property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-        <property name="queue"                              ref="serialTaskSubmissionQueue"/>
         <property name="id"                                 value="step_pfam_A_post_processing"/>
         <property name="retries"                            value="0"/>
         <property name="postProcessor"                      ref="pfam_A_post_processor"/>
+        <property name="parallel"                           value="false"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 

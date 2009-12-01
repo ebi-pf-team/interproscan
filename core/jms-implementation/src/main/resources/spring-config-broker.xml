@@ -8,22 +8,38 @@
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
 
-    <bean id="destinationRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LSFWorkerRunner">
-        <!-- ssh -x " + username + "@ant17.ebi.ac.uk bsub mvn -P runDestination -f /net/isilon3/production/seqdb2/production/interpro/jira/IBU-1067/hornetQ_Test/pom.xml exec:java -->
-        <property name="command" value="/homes/pjones/program_files/apache-maven-2.2.1/bin/mvn -e -P runWorker -f /ebi/sp/pro1/interpro/programmers/pjones/projects/i5_new/jms-implementation/pom.xml exec:java" />
+    <!-- Starts up parallel workers.  Used by the queueJumper bean, which starts up
+    a new parallel worker each time a parallel TaskExecution is run. -->
+    <bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LSFWorkerRunner">
+        <property name="command" value="/homes/pjones/program_files/apache-maven-2.2.1/bin/mvn -e -P runParallelWorker -f /ebi/sp/pro1/interpro/programmers/pjones/projects/i5_new/jms-implementation/pom.xml exec:java" />
+        <property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk" />
+        <property name="lsfEmailNotification" value="${lsf.notification.emailaddress}" />
+        <property name="lsfQueueName" value="production" />
+    </bean>
+
+    <!-- Starts up a serial worker.  Used by the broker bean to start up a single
+    multi-use worker. -->
+    <bean id="serialWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LSFWorkerRunner">
+        <property name="command" value='/homes/pjones/program_files/apache-maven-2.2.1/bin/mvn -e -P runSerialWorker -f /ebi/sp/pro1/interpro/programmers/pjones/projects/i5_new/jms-implementation/pom.xml exec:java' />
         <property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk" />
         <property name="lsfEmailNotification" value="${lsf.notification.emailaddress}" />
         <property name="lsfQueueName" value="production" />
     </bean>
 
     <bean id="queueJumper" class="uk.ac.ebi.interpro.scan.jms.broker.QueueJumper">
+        <!-- This filter ensures that the QueueJumper only starts up new JVMs for
+        parallel tasks.  Serial tasks are filtered by a specific worker directly from
+        the workerJobRequestQueue. -->
+        <property name="jmsMessageSelector" value="parallel = TRUE"/>
         <property name="connectionConfiguration" ref="sessionHandler"/>
-        <property name="workerRunner" ref="destinationRunner"/>
+        <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
+
         <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
     </bean>
 
     <bean id="broker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">
+        <property name="serialWorkerRunner" ref="serialWorkerRunner"/>
         <property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>
         <property name="queueJumper" ref="queueJumper"/>
         <property name="jmsConfigurationXml" value="hornetq-jms.xml"/>
