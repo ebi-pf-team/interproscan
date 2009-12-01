@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA;
 
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import java.io.Serializable;
 import java.util.List;
@@ -42,9 +43,10 @@ public class Pfam_A_PostProcessingStepExecution extends StepExecution<Pfam_A_Pos
          * <p/>
          * Note that the implementation DOES have access to the protected stepInstance,
          * and from their to the protected Step, to allow it to access parameters for execution.
+         * @param daoManager
          */
         @Override
-        public void execute() {
+        public void execute(DAOManager daoManager) {
             this.setToRun();
             try{
                 proteinAcToFilteredMatchMap = this.getStepInstance().getStep().getPostProcessor().process(this.getStepInstance().getProteinAcToRawMatchMap());
