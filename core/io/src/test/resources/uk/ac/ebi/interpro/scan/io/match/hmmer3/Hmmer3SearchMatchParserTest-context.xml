@@ -49,7 +49,7 @@
     </bean>
 
     <bean id="gene3dFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/hmmer3/hmmsearch/CELR2-PF12003.txt"/>
+        <constructor-arg value="data/hmmer3/hmmsearch/A0AK98-PF08239.txt"/>
     </bean>
     
 </beans>
