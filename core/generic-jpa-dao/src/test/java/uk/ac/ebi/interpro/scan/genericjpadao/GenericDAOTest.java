@@ -24,7 +24,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -178,14 +177,19 @@ public class GenericDAOTest {
                  toDelete = persistable;
             }
         }
-        Long primaryKeyOfDeletable = toDelete.getId();
+        if (toDelete != null){
+            Long primaryKeyOfDeletable = toDelete.getId();
 
-        assertEquals("All of the objects should be present prior to deleteion.", new Long(ARRAY_OF_VALUES.length), dao.count());
-        // Now delete one of the objects.
-        dao.delete(toDelete);
-        assertEquals("One of the inserted objects has been removed, so the count should be decremented.", new Long(ARRAY_OF_VALUES.length - 1), dao.count());
+            assertEquals("All of the objects should be present prior to deleteion.", new Long(ARRAY_OF_VALUES.length), dao.count());
+            // Now delete one of the objects.
+            dao.delete(toDelete);
+            assertEquals("One of the inserted objects has been removed, so the count should be decremented.", new Long(ARRAY_OF_VALUES.length - 1), dao.count());
 
-        ModelObject shouldBeNull = dao.read(primaryKeyOfDeletable);
-        assertNull("The primary key of the deleted object should return null.", shouldBeNull);
+            ModelObject shouldBeNull = dao.read(primaryKeyOfDeletable);
+            assertNull("The primary key of the deleted object should return null.", shouldBeNull);
+        }
+        else {
+            fail("There should be an object to delete, however the expected reference is null");
+        }
     }
 }

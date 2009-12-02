@@ -17,10 +17,8 @@
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test model class.
