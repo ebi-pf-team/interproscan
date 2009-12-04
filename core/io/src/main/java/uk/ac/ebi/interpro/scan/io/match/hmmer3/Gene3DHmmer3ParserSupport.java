@@ -54,7 +54,7 @@ public class Gene3DHmmer3ParserSupport implements Hmmer3ParserSupport<Gene3dHmme
         for (SequenceMatch sequenceMatch : methodMatches.getSequenceMatches().values()){
             for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()){
                 // Get existing protein or add new one
-                String id = sequenceMatch.getUpi();
+                String id = sequenceMatch.getSequenceIdentifier();
                 RawProtein<Gene3dHmmer3RawMatch> protein = rawResults.get(id);
                 if (protein == null){
                     protein = new RawProtein<Gene3dHmmer3RawMatch>(id);
@@ -64,7 +64,7 @@ public class Gene3DHmmer3ParserSupport implements Hmmer3ParserSupport<Gene3dHmme
                 String encodedAlignment = alignmentEncoder.encode(domainMatch.getAlignment());
                 // Create raw match
                 final Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
-                        sequenceMatch.getUpi(),
+                        sequenceMatch.getSequenceIdentifier(),
                         methodMatches.getMethodAccession(),
                         signatureLibraryName,
                         signatureLibraryRelease,

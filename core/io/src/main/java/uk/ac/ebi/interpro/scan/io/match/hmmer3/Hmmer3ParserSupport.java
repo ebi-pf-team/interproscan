@@ -49,7 +49,7 @@ public interface Hmmer3ParserSupport<T extends RawMatch> extends Serializable {
 
     enum HmmKey {
 
-        ACCESSION("Accession"), NAME("Query");
+        ACCESSION("Accession:"), NAME("Query:");
 
         private final String prefix;
 

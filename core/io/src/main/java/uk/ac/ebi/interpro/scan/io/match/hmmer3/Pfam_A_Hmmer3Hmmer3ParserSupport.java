@@ -63,14 +63,14 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
 
                         // Either retrieve the correct RawSequenceIdentifer, or create a new one
                         // and add it to the Map.
-                        RawProtein<PfamHmmer3RawMatch> sequenceIdentifier = rawResults.get(sequenceMatch.getUpi());
+                        RawProtein<PfamHmmer3RawMatch> sequenceIdentifier = rawResults.get(sequenceMatch.getSequenceIdentifier());
                         if (sequenceIdentifier == null){
-                            sequenceIdentifier = new RawProtein<PfamHmmer3RawMatch>(sequenceMatch.getUpi());
-                            rawResults.put(sequenceMatch.getUpi(), sequenceIdentifier);
+                            sequenceIdentifier = new RawProtein<PfamHmmer3RawMatch>(sequenceMatch.getSequenceIdentifier());
+                            rawResults.put(sequenceMatch.getSequenceIdentifier(), sequenceIdentifier);
                         }
 
                         final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
-                                sequenceMatch.getUpi(),
+                                sequenceMatch.getSequenceIdentifier(),
                                 methodMatches.getMethodAccession(),
                                 signatureLibraryName,
                                 signatureLibraryRelease,
