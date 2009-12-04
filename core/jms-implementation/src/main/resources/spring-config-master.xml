@@ -20,8 +20,12 @@
                 <ref bean="job_pfam_A"/>
             </list>
         </property>
+
+        <!-- The following properties are just for the 'hacked' demonstration. (Loading proteins
+        and Pfam models prior to running the analysis. -->
         <property name="loader" ref="loader"/>
-        <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="daoManager" ref="daoManager"/>
+        <property name="pfamHMMfilePath" value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
     </bean>
 
     <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">

@@ -36,19 +36,16 @@
         <property name="createStepInstancesForNewProteins"  value="true"/>
         <property name="id"                                 value="step_pfam_A_write_fasta_file"/>
         <property name="retries"                            value="0"/>
-        <property name="fastaFilePathTemplate"
-                  value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
+        <property name="fastaFilePathTemplate"              value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
         <property name="parallel"                           value="true"/>
     </bean>
 
     <!-- STEP 2 -->
     <bean id="step_pfam_A_run_HMMER3"                       class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step">
         <property name="job"                                ref="job_pfam_A"/>
-
         <property name="dependsUpon"                        ref="step_pfam_A_write_fasta_file"/>
         <property name="stepDescription"                    value="Run HMMER 3 Binary for selected proteins"/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-
         <property name="fullPathToBinary"                   value="/ebi/production/interpro/binaries/64_bit_Linux/HMMER3.0b2/hmmsearch"/>
         <property name="binarySwitches" >
             <list>
@@ -61,20 +58,17 @@
         <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
         <property name="id"                                 value="step_pfam_A_run_HMMER3"/>
         <property name="retries"                            value="0"/>
-        <property name="fastaFilePathNameTemplate"
-                  value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
+        <property name="fastaFilePathNameTemplate"          value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
         <property name="parallel"                           value="true"/>
     </bean>
 
     <!-- STEP 3 -->
     <bean id="step_pfam_A_parse_HMMER3_output"              class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStep">
         <property name="job"                                ref="job_pfam_A"/>
-
         <property name="dependsUpon"                        ref="step_pfam_A_run_HMMER3"/>
         <property name="stepDescription"                    value="Parse the output from HMMER3"/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-
-        <property name="id" value="step_pfam_A_parse_HMMER3_output"/>
+        <property name="id"                                 value="step_pfam_A_parse_HMMER3_output"/>
         <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
         <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
         <property name="retries"                            value="0"/>
@@ -92,6 +86,8 @@
         <property name="retries"                            value="0"/>
         <property name="postProcessor"                      ref="pfam_A_post_processor"/>
         <property name="parallel"                           value="false"/>
+        <property name="signatureLibraryRelease"            value="24.0"/>
+        <property name="signatureLibraryName"               value="Pfam"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
@@ -106,17 +102,17 @@
     </bean>
 
     <bean id="hmmer3SearchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
-        <property name="parserSupport" ref="parserSupport"/>
+        <property name="parserSupport"                      ref="parserSupport"/>
     </bean>
 
     <bean id="parserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
-        <property name="gaValuesRetriever" ref="gaValuesRetriever"/>
-        <property name="signatureLibraryRelease" value="24.0"/>
-        <property name="signatureLibraryName" value="Pfam"/>
+        <property name="gaValuesRetriever"                  ref="gaValuesRetriever"/>
+        <property name="signatureLibraryRelease"            value="24.0"/>
+        <property name="signatureLibraryName"               value="Pfam"/>
     </bean>
 
     <bean id="gaValuesRetriever" class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
-        <constructor-arg value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
+        <constructor-arg                                    value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

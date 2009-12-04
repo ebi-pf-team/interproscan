@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.springframework.beans.factory.annotation.Required;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.*;
@@ -13,12 +14,18 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMME
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
+import uk.ac.ebi.interpro.scan.persistence.DAOManager;
+import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import java.util.*;
+import java.io.IOException;
 
 /**
  * Pretending to be the InterProScan master application.
@@ -28,6 +35,8 @@ import java.util.*;
  * @since 1.0
  */
 public class InterProScanMaster implements Master {
+
+    private static final Logger LOGGER = Logger.getLogger(InterProScanMaster.class);
 
     private SessionHandler sessionHandler;
 
@@ -45,7 +54,9 @@ public class InterProScanMaster implements Master {
 
     private LoadFastaFile loader;
 
-    private ProteinDAO proteinDAO;
+    private DAOManager daoManager;
+
+    private String pfamHMMfilePath;
 
     private MessageProducer producer;
 
@@ -108,13 +119,14 @@ public class InterProScanMaster implements Master {
         this.jobs = jobs;
     }
 
-    public ProteinDAO getProteinDAO() {
-        return proteinDAO;
+    @Required
+    public void setDaoManager(DAOManager daoManager) {
+        this.daoManager = daoManager;
     }
 
     @Required
-    public void setProteinDAO(ProteinDAO proteinDAO) {
-        this.proteinDAO = proteinDAO;
+    public void setPfamHMMfilePath(String pfamHMMfilePath) {
+        this.pfamHMMfilePath = pfamHMMfilePath;
     }
 
     /**
@@ -147,9 +159,11 @@ public class InterProScanMaster implements Master {
             }
 
         } catch (JMSException e) {
-            e.printStackTrace();
+            LOGGER.error ("JMSException", e);
+            System.exit(1);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error ("InterruptedException", e);
+            System.exit(1);
         }
         finally {
             if (sessionHandler != null){
@@ -168,9 +182,33 @@ public class InterProScanMaster implements Master {
         // TODO - steps, following the addition of new proteins has yet to be written.
 
         Job job = jobs.iterator().next();
-
         // Load some proteins into the database.
         loader.loadSequences();
+
+        // Load the models into the database.
+
+        // Build a SignatureLibrary object.
+        SignatureLibrary sigLibrary = new SignatureLibrary("Pfam", "Pfam database signatures.");
+        LOGGER.debug("Storing SignatureLibrary...");
+        // Store it.
+        daoManager.getSignatureLibraryDAO().insert(sigLibrary);
+        LOGGER.debug("Storing SignatureLibrary...DONE");
+        // Now parse and retrieve the signatures.
+        Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(sigLibrary, "24.0");
+        SignatureLibraryRelease release = null;
+        try{
+            release = modelLoader.parse(pfamHMMfilePath);
+        } catch (IOException e) {
+            LOGGER.debug("IOException thrown when parsing HMM file.");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            System.exit(1);
+        }
+
+        // And store the Models / Signatures to the database.
+        LOGGER.debug("Storing SignatureLibraryRelease...");
+        daoManager.getSignatureLibraryReleaseDAO().insert(release);
+        LOGGER.debug("Storing SignatureLibraryRelease...DONE");
+
 
         final long sliceSize = 500l;
 
@@ -185,7 +223,7 @@ public class InterProScanMaster implements Master {
             // Create the fastafilestep
             for (Step step : job.getSteps()){
                 if (step instanceof WriteFastaFileStep){
-                    List<Protein> proteins = proteinDAO.getProteinsBetweenIds(bottomProteinId, topProteinId);
+                    List<Protein> proteins = daoManager.getProteinDAO().getProteinsBetweenIds(bottomProteinId, topProteinId);
 
                     System.out.println("Creating WriteFastaFileStepInstance for range "+ bottomProteinId + " - " + topProteinId);
                     fastaStepInstance = new WriteFastaFileStepInstance(

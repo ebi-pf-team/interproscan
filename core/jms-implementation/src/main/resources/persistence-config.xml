@@ -31,6 +31,9 @@
         <property name="modelDAO" ref="modelDAO"/>
         <property name="rawMatchDAO" ref="rawMatchDAO"/>
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
+        <property name="signatureLibraryDAO" ref="signatureLibraryDAO"/>
+        <property name="pfamFilteredMatchDAO" ref="pfamFilteredMatchDAO"/>
     </bean>
 
     <!-- DAO Beans -->
@@ -56,5 +59,16 @@
     </bean>
 
     <bean id="rawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl"/>
+
+
+    <bean id="signatureLibraryReleaseDAO" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" />
+    </bean>
+
+    <bean id="signatureLibraryDAO" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureLibrary" />
+    </bean>
+
+    <bean id="pfamFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
 
 </beans>
