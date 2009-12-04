@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.persistence.raw;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 
 import java.util.Set;
 
@@ -21,5 +22,5 @@ public interface RawMatchDAO{
      * contain a Collection of RawMatch objects to be persisted.
      */
     @Transactional
-    public void insertRawSequenceIdentifiers(Set<RawProtein> parsedResults);
+    public <T extends RawMatch> void insertRawSequenceIdentifiers(Set<RawProtein<T>> parsedResults);
 }

@@ -3,6 +3,10 @@ package uk.ac.ebi.interpro.scan.persistence;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+import uk.ac.ebi.interpro.scan.model.Model;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.model.Signature;
 
 import javax.annotation.Resource;
 
@@ -21,7 +25,11 @@ public class DAOManager {
 
     private SignatureDAO signatureDAO;
 
-    private GenericDAO modelDAO;
+    private GenericDAO<Model, Long> modelDAO;
+
+    private GenericDAO<SignatureLibrary, Long> SignatureLibraryDAO;
+
+    private GenericDAO<SignatureLibraryRelease, Long> SignatureLibraryReleaseDAO;
 
     private BlastProDomLocationDAO blastProdomLocationDAO;
 
@@ -29,9 +37,20 @@ public class DAOManager {
 
     private RawMatchDAO rawMatchDAO;
 
+    private PfamFilteredMatchDAO pfamFilteredMatchDAO;
+
+
+    public ProteinDAO getProteinDAO() {
+        return proteinDAO;
+    }
+
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
+    }
+
+    public SignatureDAO getSignatureDAO() {
+        return signatureDAO;
     }
 
     @Required
@@ -39,9 +58,35 @@ public class DAOManager {
         this.signatureDAO = signatureDAO;
     }
 
+    public GenericDAO<Model, Long> getModelDAO() {
+        return modelDAO;
+    }
+
     @Required
-    public void setModelDAO(GenericDAO modelDAO) {
+    public void setModelDAO(GenericDAO<Model, Long> modelDAO) {
         this.modelDAO = modelDAO;
+    }
+
+    public GenericDAO<SignatureLibrary, Long> getSignatureLibraryDAO() {
+        return SignatureLibraryDAO;
+    }
+
+    @Required
+    public void setSignatureLibraryDAO(GenericDAO<SignatureLibrary, Long> signatureLibraryDAO) {
+        SignatureLibraryDAO = signatureLibraryDAO;
+    }
+
+    public GenericDAO<SignatureLibraryRelease, Long> getSignatureLibraryReleaseDAO() {
+        return SignatureLibraryReleaseDAO;
+    }
+
+    @Required
+    public void setSignatureLibraryReleaseDAO(GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO) {
+        SignatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
+    }
+
+    public BlastProDomLocationDAO getBlastProdomLocationDAO() {
+        return blastProdomLocationDAO;
     }
 
     @Required
@@ -49,9 +94,17 @@ public class DAOManager {
         this.blastProdomLocationDAO = blastProdomLocationDAO;
     }
 
+    public PfamHmmer3RawMatchDAO getPfamRawMatchDAO() {
+        return pfamRawMatchDAO;
+    }
+
     @Required
     public void setPfamRawMatchDAO(PfamHmmer3RawMatchDAO pfamRawMatchDAO) {
         this.pfamRawMatchDAO = pfamRawMatchDAO;
+    }
+
+    public RawMatchDAO getRawMatchDAO() {
+        return rawMatchDAO;
     }
 
     @Required
@@ -59,27 +112,12 @@ public class DAOManager {
         this.rawMatchDAO = rawMatchDAO;
     }
 
-    public ProteinDAO getProteinDAO() {
-        return proteinDAO;
+    public PfamFilteredMatchDAO getPfamFilteredMatchDAO() {
+        return pfamFilteredMatchDAO;
     }
 
-    public SignatureDAO getSignatureDAO() {
-        return signatureDAO;
-    }
-
-    public GenericDAO getModelDAO() {
-        return modelDAO;
-    }
-
-    public BlastProDomLocationDAO getBlastProdomLocationDAO() {
-        return blastProdomLocationDAO;
-    }
-
-    public PfamHmmer3RawMatchDAO getPfamRawMatchDAO() {
-        return pfamRawMatchDAO;
-    }
-
-    public RawMatchDAO getRawMatchDAO() {
-        return rawMatchDAO;
+    @Required
+    public void setPfamFilteredMatchDAO(PfamFilteredMatchDAO pfamFilteredMatchDAO) {
+        this.pfamFilteredMatchDAO = pfamFilteredMatchDAO;
     }
 }

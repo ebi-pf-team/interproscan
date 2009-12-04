@@ -4,7 +4,6 @@ import org.junit.runner.RunWith;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
-import org.junit.Ignore;
 
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,9 +18,11 @@ import static junit.framework.Assert.assertNotNull;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier;  */
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 //import java.util.Set;
 
 /**
@@ -44,8 +45,8 @@ public class PfamHmmer3RawMatchDAOTest {
     private final String generator     = "HMMER3.0";
     private final String hmmBounds = "[]";
     private final String alignment="";
-    private final long start =15,  hmmStart=18,hmmEnd=320;
-    private final long end=345;
+    private final int start =15,  hmmStart=18,hmmEnd=320;
+    private final int end=345;
     private final double evalue=0.00005,score=512.3, locationEvalue=-5.60205984115601,locationScore=779.4;
     //private static Logger LOGGER = Logger.getLogger(PfamHmmer3RawMatchDAOTest.class);
 
@@ -134,7 +135,7 @@ public class PfamHmmer3RawMatchDAOTest {
             proteinId = "UPIblachabla";
         }
 
-        return new PfamHmmer3RawMatch(proteinId,"PF04041","PFAM","23.0", (int)(Math.random() * 20), (int)(Math.random() * 100 + 20),
+        return new PfamHmmer3RawMatch(proteinId,"PF04041","PFAM",dbVersion, (int)(Math.random() * 20), (int)(Math.random() * 100 + 20),
                 3.7E-9, 0.035, 1, 104, "[]", 3.0, 0, 0, 0, 0, 0, 0, 0, "HMMER3.0");
     }
 
@@ -149,8 +150,12 @@ public class PfamHmmer3RawMatchDAOTest {
             PfamHmmer3RawMatch p = getMatchExample(proteinId);
             dao.insert(p);
         }
-        Map<String, List<PfamHmmer3RawMatch>> matches = dao.getMatchesForProteinIdsInRange("003", "006");
-        assertEquals(4, matches.size());
+        Map<String, RawProtein<PfamHmmer3RawMatch>> matches = dao.getRawMatchesForProteinIdsInRange("003", "006", dbVersion);
+        int matchCount = 0;
+        for (RawProtein rawProtein : matches.values()){
+            matchCount += rawProtein.getMatches().size();
+        }
+        assertEquals(5, matchCount);
     }
 
 

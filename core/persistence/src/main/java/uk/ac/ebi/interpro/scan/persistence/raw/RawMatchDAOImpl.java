@@ -37,9 +37,9 @@ public class RawMatchDAOImpl implements RawMatchDAO{
      *                      contain a Collection of RawMatch objects to be persisted.
      */
     @Transactional
-    public void insertRawSequenceIdentifiers(Set<RawProtein> parsedResults) {
-        for (RawProtein rawSeqIdentifier : parsedResults){
-            for (RawMatch newRawMatch : rawSeqIdentifier.getMatches()){
+    public <T extends RawMatch> void insertRawSequenceIdentifiers(Set<RawProtein<T>> parsedResults) {
+        for (RawProtein<T> rawProtein : parsedResults){
+            for (T newRawMatch : rawProtein.getMatches()){
                 if (entityManager.contains(newRawMatch)){
                     throw new IllegalArgumentException ("EntityManager.insert has been called on a RawMatch " + newRawMatch + " that has already been persisted.");
                 }
