@@ -155,7 +155,7 @@ public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
                     pfamRawMatchObject.getLocationStart(),
                     pfamRawMatchObject.getLocationEnd(),
                     pfamRawMatchObject.getLocationScore(),
-                    pfamRawMatchObject.getDomainCeValue(),     // TODO - NOT CERTAIN about this - should it be the IeValue?
+                    pfamRawMatchObject.getDomainIeValue(),
                     pfamRawMatchObject.getHmmStart(),
                     pfamRawMatchObject.getHmmEnd(),
                     HmmBounds.parseSymbol(pfamRawMatchObject.getHmmBounds())
