@@ -40,7 +40,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
     @Column
     private double evalue;
 
-    @Column
+    @Column (length=15)
     private String graphscan;
 
     @Column

@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Entity;
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -17,14 +18,14 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
 
     // TODO: No need for member DBs where algorithm is unique to them, eg. PRINTS, Panther
 
-    //@Column(name="SCORE")
+    @Column
     private double score;   // location.score
 
     protected ProDomRawMatch() { }    
 
     public ProDomRawMatch(String sequenceIdentifier, String model,
                           String signatureLibraryName, String signatureLibraryRelease,
-                          long locationStart, long locationEnd,
+                          int locationStart, int locationEnd,
                           double score, String generator) {
         super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
         this.score = score;

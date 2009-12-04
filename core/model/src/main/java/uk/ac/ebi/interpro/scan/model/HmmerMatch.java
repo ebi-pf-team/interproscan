@@ -25,6 +25,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.Set;
+import java.util.Collections;
+
+import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 
 /**
  * HMMER match.
@@ -39,16 +42,28 @@ public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
 
     @Column (nullable = false)
     private double evalue;
-    
+
     @Column (nullable = false)
     private double score;
 
     protected HmmerMatch() {}
-    
+
     public HmmerMatch(Signature signature, double score, double evalue, Set<HmmerLocation> locations) {
         super(signature, locations);
         setScore(score);
         setEvalue(evalue);
+    }
+
+    /**
+     * Builds a new HmmerMatch object based upon a Signature object
+     * and a PfamHmmer3RawMatch object
+     * @param signature being the Signature to Match to.
+     * @param rawMatch being the RawMatch representation of the Match.
+     */
+    public HmmerMatch(Signature signature, PfamHmmer3RawMatch rawMatch){
+        super(signature, Collections.singleton(new HmmerMatch.HmmerLocation(rawMatch)));
+        setScore(rawMatch.getScore());
+        setEvalue(rawMatch.getEvalue());
     }
 
     @XmlAttribute(required=true)
@@ -121,13 +136,30 @@ public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
 
         // Don't use Builder pattern because all fields are required
         public HmmerLocation(int start, int end, double score, double evalue,
-                           int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
+                             int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
             super(start, end);
             setHmmStart(hmmStart);
             setHmmEnd(hmmEnd);
             setHmmBounds(hmmBounds);
             setEvalue(evalue);
             setScore(score);
+        }
+
+        /**
+         * Constructor that builds a HmmerMatch object from a
+         * PfamHmmer3RawMatch object.
+         * @param pfamRawMatchObject being the Raw representation of the Match.
+         */
+        public HmmerLocation(PfamHmmer3RawMatch pfamRawMatchObject){
+            this(
+                    pfamRawMatchObject.getLocationStart(),
+                    pfamRawMatchObject.getLocationEnd(),
+                    pfamRawMatchObject.getLocationScore(),
+                    pfamRawMatchObject.getDomainCeValue(),     // TODO - NOT CERTAIN about this - should it be the IeValue?
+                    pfamRawMatchObject.getHmmStart(),
+                    pfamRawMatchObject.getHmmEnd(),
+                    HmmBounds.parseSymbol(pfamRawMatchObject.getHmmBounds())
+            );
         }
 
         @XmlAttribute(name="hmm-start", required=true)
@@ -253,6 +285,5 @@ public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
                     .append(evalue)
                     .toHashCode();
         }
-
     }
 }

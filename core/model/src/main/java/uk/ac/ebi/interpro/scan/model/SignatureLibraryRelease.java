@@ -20,10 +20,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
@@ -44,14 +41,17 @@ import java.util.Set;
 public class SignatureLibraryRelease implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
     private SignatureLibrary library;
-    
+
+    @Column (length = 255)
     private String version;
 
-    @OneToMany (mappedBy = "signatureLibraryRelease")
+    // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
+    @OneToMany (mappedBy = "signatureLibraryRelease", cascade = CascadeType.ALL)
     @XmlElement(name="signature", required=true)
     private Set<Signature> signatures = new HashSet<Signature>();
 

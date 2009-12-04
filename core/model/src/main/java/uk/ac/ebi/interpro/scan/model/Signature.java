@@ -58,7 +58,7 @@ public class Signature implements Serializable {
     @Column (name="name")
     private String name;
 
-    @Column (name="description", length=20000)
+    @Column (name="description", length = 4000)
     private String description;
 
     @Column (name="type")
@@ -67,7 +67,7 @@ public class Signature implements Serializable {
     @Column (name="abstract_text", length = 20000)
     private String abstractText;
 
-    @ManyToOne
+    @ManyToOne // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
     private SignatureLibraryRelease signatureLibraryRelease;
 
     // TODO: Decide whether to use Map or Set (see ChEBI team)

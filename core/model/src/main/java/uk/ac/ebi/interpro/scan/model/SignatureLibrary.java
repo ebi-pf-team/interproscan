@@ -48,10 +48,10 @@ public class SignatureLibrary implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name="name")
+    @Column(name="name", length=255)
     private String name;
 
-    @Column(name="description")
+    @Column(name="description", length=4000)
     private String description;
     
 

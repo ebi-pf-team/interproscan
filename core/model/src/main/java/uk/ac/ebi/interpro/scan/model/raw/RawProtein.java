@@ -18,13 +18,16 @@ import java.io.Serializable;
  *
  * Note: Not stored in database, just returned by DAO as a convenience class.
  *
+ * Type T is the type of RawMatch object that this instance references.
+ *
  * @author  Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
-public final class RawProtein implements Serializable {
+public final class RawProtein <T extends RawMatch> implements Serializable {
 
     private final String proteinIdentifier;
-    private final Collection<RawMatch> matches = new HashSet<RawMatch>();
+    private final Collection<T> matches = new HashSet<T>();
 
     private RawProtein() {
         this.proteinIdentifier = null;
@@ -38,11 +41,11 @@ public final class RawProtein implements Serializable {
         return proteinIdentifier;
     }
 
-    public void addMatch(RawMatch match)  {
+    public void addMatch(T match)  {
         matches.add(match);
     }    
 
-    public Collection<? extends RawMatch> getMatches() {
+    public Collection<T> getMatches() {
         return Collections.unmodifiableCollection(matches);
     }
 

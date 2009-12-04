@@ -18,8 +18,8 @@ import java.io.Serializable;
  */
 //@IdClass(uk.ac.ebi.interpro.scan.model.raw.RawMatchKey.class)
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //@DiscriminatorColumn(name="METHOD_AC",discriminatorType=DiscriminatorType.STRING)
 public abstract class RawMatch implements Serializable {
 
@@ -40,8 +40,8 @@ public abstract class RawMatch implements Serializable {
     
     // TODO: Don't need any foreign keys -- just index fields we will search on
     @Id
-//    @GeneratedValue(strategy=GenerationType.SEQUENCE)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String sequenceIdentifier;  // eg. MD5
     
@@ -59,16 +59,16 @@ public abstract class RawMatch implements Serializable {
     private String generator;  // eg. "HMMER 2.3.1"
 
     //@Column (name="SEQ_START")
-    private long locationStart;
+    private int locationStart;
 
    // @Column (name="SEQ_END")
-    private long locationEnd;
+    private int locationEnd;
 
     protected RawMatch() { }
 
     protected RawMatch(String sequenceIdentifier, String model,
                        String signatureLibraryName, String signatureLibraryRelease,
-                       long locationStart, long locationEnd, String generator) {
+                       int locationStart, int locationEnd, String generator) {
         this.sequenceIdentifier     = sequenceIdentifier;
         this.model                  = model;
         this.signatureLibraryName   = signatureLibraryName;
@@ -121,19 +121,19 @@ public abstract class RawMatch implements Serializable {
         this.generator = generator;
     }
 
-    public long getLocationStart() {
+    public int getLocationStart() {
         return locationStart;
     }
 
-    private void setLocationStart(long locationStart) {
+    private void setLocationStart(int locationStart) {
         this.locationStart = locationStart;
     }
 
-    public long getLocationEnd() {
+    public int getLocationEnd() {
         return locationEnd;
     }
 
-    private void setLocationEnd(long locationEnd) {
+    private void setLocationEnd(int locationEnd) {
         this.locationEnd = locationEnd;
     }
 
