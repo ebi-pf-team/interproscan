@@ -20,10 +20,12 @@
     <!-- Starts up a serial worker.  Used by the broker bean to start up a single
     multi-use worker. -->
     <bean id="serialWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LSFWorkerRunner">
-        <property name="command" value='/homes/pjones/program_files/apache-maven-2.2.1/bin/mvn -e -P runSerialWorker -f /ebi/sp/pro1/interpro/programmers/pjones/projects/i5_new/jms-implementation/pom.xml exec:java' />
+        <property name="command" value='/homes/pjones/program_files/apache-maven-2.2.1/bin/mvn -e -P runSerialWorker -f /ebi/sp/pro1/interpro/programmers/pjones/projects/i5_new/jms-implementation/pom.xml exec:java -DXmx=2048m' />
         <property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk" />
         <property name="lsfEmailNotification" value="${lsf.notification.emailaddress}" />
         <property name="lsfQueueName" value="production" />
+        <property name="memoryUsageMB" value="2048" />
+        <property name="outFilePath" value="/net/nas10b/vol1/homes/pjones/projects/i5_new/jms-implementation/temp-serial-worker.out" />
     </bean>
 
     <bean id="queueJumper" class="uk.ac.ebi.interpro.scan.jms.broker.QueueJumper">
