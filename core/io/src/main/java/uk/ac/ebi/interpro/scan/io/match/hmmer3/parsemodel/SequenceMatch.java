@@ -30,7 +30,7 @@ public class SequenceMatch implements Serializable {
     public static final int BIAS_GROUP = 3;
     public static final int UPI_GROUP = 4;
 
-    private String upi;
+    private String sequenceIdentifier;
 
     private double eValue;
 
@@ -44,11 +44,11 @@ public class SequenceMatch implements Serializable {
         this.eValue = Double.parseDouble(domainLineMatcher.group(EVALUE_GROUP));
         this.score = Double.parseDouble(domainLineMatcher.group(SCORE_GROUP));
         this.bias = Double.parseDouble(domainLineMatcher.group(BIAS_GROUP));
-        this.upi = domainLineMatcher.group(UPI_GROUP);
+        this.sequenceIdentifier = domainLineMatcher.group(UPI_GROUP);
     }
 
-    public String getUpi() {
-        return upi;
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
     }
 
     public double getEValue() {

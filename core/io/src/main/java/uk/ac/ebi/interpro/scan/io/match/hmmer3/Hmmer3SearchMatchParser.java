@@ -80,12 +80,10 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
 
     private static final String END_OF_RECORD = "//";
 
-    private static final String MODEL_ACCESSION_LINE = "Accession:";
-
     /**
      * Group 1: Model accession.
      */
-    private static final Pattern MODEL_ACCESSION_LINE_PATTERN = Pattern.compile ("^Accession:\\s+([0-9A-Z]+)\\.?\\d*$" );
+    private static final Pattern MODEL_ACCESSION_LINE_PATTERN = Pattern.compile ("^[^:]*:\\s+(\\w+).*$" );
 
     /**
      * DON'T GET RID OF THIS!  If HMMER3 is working properly, this is used to
@@ -97,7 +95,10 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
 
     private static final String DOMAIN_SECTION_START = ">> ";
 
+    private static final String DOMAIN_ALIGNMENT_SECTION_START = "  ==";
+
     private static final String START_OF_DOMAIN_ALIGNMENT_SECTION = "Alignments for each domain";
+    
 
     // Group 1: Uniparc protein accession
     private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^>>\\s+(\\S+).+$");
@@ -136,8 +137,12 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         try{
             reader = new BufferedReader(new InputStreamReader(is));
             HmmsearchOutputMethod method = null;
-            String domainSectionCurrentUPI = null;
+            String currentSequenceIdentifier = null;
+            Map<String, DomainMatch> domains = new HashMap<String, DomainMatch>();
+            StringBuilder alignSeq = new StringBuilder();
+            DomainMatch currentDomain =null;
             ParsingStage stage = ParsingStage.LOOKING_FOR_METHOD_ACCESSION;
+            Matcher domainAlignSequenceMatcher = null;
             int lineNumber = 0;
             while (reader.ready()){
                 lineNumber++;
@@ -156,14 +161,16 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                 else {   // Trying to be efficient - only look for EXPECTED lines in the entry.
                     switch (stage){
                         case LOOKING_FOR_METHOD_ACCESSION:
-                            if (line.startsWith(MODEL_ACCESSION_LINE)){
+                            //if (hmmer3ParserSupport.getHmmKey()== Hmmer3ParserSupport.HmmKey.ACCESSION)
+                            //if (line.startsWith(MODEL_ACCESSION_LINE)){
+                            if(line.startsWith( hmmer3ParserSupport.getHmmKey().getPrefix())) {
                                 stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
                                 Matcher queryLineMatcher = MODEL_ACCESSION_LINE_PATTERN.matcher(line);
                                 if (queryLineMatcher.matches()){
                                     method = new HmmsearchOutputMethod(queryLineMatcher.group(1));
                                 }
                                 else {
-                                    throw new ParseException("Found a line starting with " + MODEL_ACCESSION_LINE + " but cannot parse it with the MODEL_ACCESSION_LINE regex.",null, line, lineNumber);
+                                    throw new ParseException("Found a line starting with " + hmmer3ParserSupport.getHmmKey().getPrefix() + " but cannot parse it with the MODEL_ACCESSION_LINE regex.",null, line, lineNumber);
                                 }
                             }
                             break;
@@ -182,6 +189,8 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 stage = (method.getSequenceMatches().size() == 0)
                                         ? ParsingStage.FINISHED_SEARCHING_RECORD
                                         : ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
+                                currentSequenceIdentifier=null;
+                                currentDomain=null;
                             }
                             else {
                                 Matcher sequenceMatchLineMatcher = SequenceMatch.SEQUENCE_LINE_PATTERN.matcher(line);
@@ -201,13 +210,42 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 // Find out which model the domain matches are for and then parse them.
                                 Matcher domainSectionHeaderMatcher = DOMAIN_SECTION_START_PATTERN.matcher(line);
                                 if (domainSectionHeaderMatcher.matches()){
-                                    domainSectionCurrentUPI  = domainSectionHeaderMatcher.group(1);
+                                    domains.clear();
+                                    currentSequenceIdentifier  = domainSectionHeaderMatcher.group(1);
                                 }
                                 else {
                                     throw new ParseException("This line looks like a domain section header line, but I cannot parse out the methodAccession id.", null, line, lineNumber);
                                 }
                                 stage = ParsingStage.LOOKING_FOR_DOMAIN_DATA_LINE;
                             }
+                            
+                            
+                            //to handle domain alignment
+                            if ( line.startsWith(DOMAIN_ALIGNMENT_SECTION_START)){
+                                Matcher domainAlignmentMatcher = DomainMatch.DOMAIN_ALIGNMENT_LINE_PATTERN.matcher(line);
+                                if (domainAlignmentMatcher.matches()){
+                                    System.out.println("Parsing alignments...");
+                                    alignSeq.setLength(0);
+                                    String domainNumber = domainAlignmentMatcher.group(1);
+                                    currentDomain = domains.get(domainNumber); //get the current domain object.
+                                }
+                            }
+                            // getting the actual alignment sequence string
+
+                            if ( (currentDomain!=null) && (currentSequenceIdentifier!=null) && (line.trim().startsWith(currentSequenceIdentifier) )){
+                                Matcher alignmentSequencePattern = DomainMatch.ALIGNMENT_SEQUENCE_PATTERN.matcher(line);
+                                if(alignmentSequencePattern.matches()){
+                                    String seqId =  alignmentSequencePattern.group(1);
+                                    if (seqId.equals(currentSequenceIdentifier)) {
+                                        alignSeq.append(alignmentSequencePattern.group(3));
+                                        currentDomain.setAlignment(alignSeq.toString());
+                                        //TODO
+                                        //Make sure removed after test
+                                        System.out.println(currentSequenceIdentifier +" ***** " +  alignSeq.toString());
+                                    }
+                                }
+                            }
+
 
                             break;
 
@@ -222,22 +260,12 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                             }
                             else if (domainDataLineMatcher.matches()){
                                 DomainMatch domainMatch = new DomainMatch(domainDataLineMatcher);
-                                method.addDomainMatch(domainSectionCurrentUPI, domainMatch);
+                                method.addDomainMatch(currentSequenceIdentifier, domainMatch);
+                                domains.put(domainDataLineMatcher.group(1),domainMatch);
                             }
                             break;
 
-                        case PARSING_DOMAIN_ALIGNMENTS:
-                            // TODO Code to parse alignments should go here...
-                            // TODO Note - an additional field (for the alignment) needs to be added
-                            // TODO to the parsing model.
-                            if (hmmer3ParserSupport.parseAlignments())  {
-                                System.out.println("Parsing alignments...");
-                            }
-                            // TODO End of alignment parsing code.
-                            // .. followed by... (just switching directly to this at the moment)
-                            stage = ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
 
-                            break;
                     }
                 }
             }
@@ -252,4 +280,5 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         }
         return new HashSet<RawProtein<T>> (rawResults.values());
     }
+
 }

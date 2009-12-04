@@ -24,7 +24,7 @@ public class HmmsearchOutputMethod implements Serializable {
     }
 
     public void addSequenceMatch (SequenceMatch sequenceMatch){
-        this.sequenceMatches.put (sequenceMatch.getUpi(), sequenceMatch);
+        this.sequenceMatches.put (sequenceMatch.getSequenceIdentifier(), sequenceMatch);
     }
 
     public void addDomainMatch (String modelId, DomainMatch domainMatch){
