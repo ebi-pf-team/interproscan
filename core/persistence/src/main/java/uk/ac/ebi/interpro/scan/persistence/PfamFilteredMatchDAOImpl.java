@@ -25,7 +25,7 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
     private static final Logger LOGGER = Logger.getLogger(PfamFilteredMatchDAOImpl.class);
     /**
      * Sets the class of the model that the DOA instance handles.
-      *
+     *
      */
     public PfamFilteredMatchDAOImpl() {
         super(HmmerMatch.class);
@@ -50,9 +50,9 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
 
         Query signatureQuery = entityManager.createQuery(
                 "select s from Signature s " +
-                "where s.accession in (:modelId) " +
-                "and s.signatureLibraryRelease.version = :signatureLibraryVersion " +
-                "and s.signatureLibraryRelease.library.name = :signatureLibraryName");
+                        "where s.accession in (:modelId) " +
+                        "and s.signatureLibraryRelease.version = :signatureLibraryVersion " +
+                        "and s.signatureLibraryRelease.library.name = :signatureLibraryName");
 
 
 
@@ -64,10 +64,11 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
         // to complete building the queries for the appropriate Signatures and Proteins.
         String signatureLibraryName = null;
         String signatureLibraryVersion = null;
-        int filteredMatchCount = 0;
+        List<String> modelAccessions = new ArrayList<String>();
+        List<Long> proteinIds = new ArrayList<Long>();
+
         for (RawProtein<PfamHmmer3RawMatch> rawProtein : rawProteins){
             for (PfamHmmer3RawMatch match : rawProtein.getMatches()){
-                filteredMatchCount++;
                 if (signatureLibraryName == null){
                     signatureLibraryName = match.getSignatureLibraryName();
                     signatureLibraryVersion = match.getSignatureLibraryRelease();
@@ -76,26 +77,29 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
                         ! signatureLibraryVersion.equals(match.getSignatureLibraryRelease())){
                     throw new IllegalArgumentException ("The filtered matches that you are attempting to store using the persistFileredMatches method come from different signature library versions.");
                 }
-                signatureQuery.setParameter("modelId", match.getModel());
-                proteinQuery.setParameter("proteinId", Long.parseLong(match.getSequenceIdentifier()));
-            }
-        }
-        if (signatureLibraryName == null || signatureLibraryVersion == null){
-            if (filteredMatchCount == 0){
-                LOGGER.debug("No filtered matches to store.");
-                return;     // Nothing to do.
-            }
-            else {
-                throw new IllegalArgumentException("The filtered matches that you are attempting to store do not have signature library name / version information.");
+
+                modelAccessions.add(match.getModel());
+                proteinIds.add(Long.parseLong(match.getSequenceIdentifier()));
             }
         }
 
+        if (modelAccessions.size() == 0){
+            LOGGER.debug("No filtered matches to store.");
+            return;     // Nothing to do.
+        }
+        else if (signatureLibraryName == null || signatureLibraryVersion == null){
+            throw new IllegalArgumentException("The filtered matches that you are attempting to store do not have signature library name / version information.");
+        }
+
+        // Set all of the query parameters.
         signatureQuery.setParameter("signatureLibraryName", signatureLibraryName);
         signatureQuery.setParameter("signatureLibraryVersion", signatureLibraryVersion);
+        signatureQuery.setParameter("modelId", modelAccessions);
+        proteinQuery.setParameter("proteinId", proteinIds);
 
         // Retrieve the signatures and proteins and place them in Maps for quick lookup.
         final Map<String, Signature> signatureAccessionToSignatureMap = getSignatureAccessionToSignatureMap (signatureQuery);
-        final Map<Long, Protein> proteinIdToProteinMap = getProteinIdToProteinMap (proteinQuery);
+        final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap (proteinQuery);
 
         // Finally build and store the HmmerMatch objects.
         buildHmmerMatches(rawProteins, signatureAccessionToSignatureMap, proteinIdToProteinMap);
@@ -108,9 +112,10 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
      * @param signatureAccessionToSignatureMap being a lookup Map of Signature objects.
      * @param proteinIdToProteinMap being a Lookup Map of Protein objects.
      */
+    @SuppressWarnings("unchecked")
     private void buildHmmerMatches(Collection<RawProtein<PfamHmmer3RawMatch>> rawProteins,
                                    Map<String, Signature> signatureAccessionToSignatureMap,
-                                   Map<Long, Protein> proteinIdToProteinMap){
+                                   Map<String, Protein> proteinIdToProteinMap){
         // Iterate over the filtered matches again and link the appropriate Signature and Protein objects.
         for (RawProtein<PfamHmmer3RawMatch> rawProtein : rawProteins){
             for (PfamHmmer3RawMatch rawMatchObject : rawProtein.getMatches()){
@@ -140,6 +145,7 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
      * @param signatureQuery being the query to retrieve the Signatures.
      * @return a Map of signature accessions to Signature objects.
      */
+    @SuppressWarnings("unchecked")
     private Map<String, Signature> getSignatureAccessionToSignatureMap (Query signatureQuery){
         List<Signature> signatures = signatureQuery.getResultList();
         if (LOGGER.isDebugEnabled()){
@@ -160,15 +166,16 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
      * @param proteinQuery being the query to retrieve the Proteins
      * @return a Map of protein IDs to Protein objects.
      */
-    private Map<Long, Protein> getProteinIdToProteinMap (Query proteinQuery){
+    @SuppressWarnings("unchecked")
+    private Map<String, Protein> getProteinIdToProteinMap (Query proteinQuery){
         List<Protein> proteins = proteinQuery.getResultList();
         if (LOGGER.isDebugEnabled()){
             LOGGER.debug("Number of proteins retrieved: " + proteins.size());
             LOGGER.debug("Proteins retrieved from database: " + proteins);
         }
-        Map<Long, Protein> proteinIdToProteinMap = new HashMap<Long, Protein>(proteins.size());
+        Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(proteins.size());
         for (Protein protein : proteins){
-            proteinIdToProteinMap.put(protein.getId(), protein);
+            proteinIdToProteinMap.put(protein.getId().toString(), protein);
         }
         return proteinIdToProteinMap;
     }
