@@ -1,10 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
-import uk.ac.ebi.interpro.scan.model.transactiontracking.TransactionSlice;
-
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
 
 import java.util.List;
 
