@@ -2,10 +2,10 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA;
 
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,8 +16,6 @@ import java.util.UUID;
  * Time: 15:40:12
  */
 public class Pfam_A_PostProcessingStepExecution extends StepExecution<Pfam_A_PostProcessingStepInstance> implements Serializable {
-
-        private Map<String, List<PfamHmmer3RawMatch>> proteinAcToFilteredMatchMap;
 
 
         /**
@@ -32,10 +30,6 @@ public class Pfam_A_PostProcessingStepExecution extends StepExecution<Pfam_A_Pos
             super(id, stepInstance);
         }
 
-        public Map<String, List<PfamHmmer3RawMatch>> getProteinAcToFilteredMatchMap() {
-            return proteinAcToFilteredMatchMap;
-        }
-
         /**
          * This method is called to execute the action that the StepExecution must perform.
          * This method should typically perform its activity in a try / catch / finally block
@@ -43,18 +37,46 @@ public class Pfam_A_PostProcessingStepExecution extends StepExecution<Pfam_A_Pos
          * <p/>
          * Note that the implementation DOES have access to the protected stepInstance,
          * and from their to the protected Step, to allow it to access parameters for execution.
-         * @param daoManager
+         * @param daoManager required to allow data retrieval and storage in this process.
          */
         @Override
         public void execute(DAOManager daoManager) {
             this.setToRun();
             try{
-                proteinAcToFilteredMatchMap = this.getStepInstance().getStep().getPostProcessor().process(this.getStepInstance().getProteinAcToRawMatchMap());
+                if (daoManager == null){
+                    throw new IllegalArgumentException ("This StepExecution must have a valid DAOManager object passed in.");
+                }
+                // Retrieve raw results for protein range.
+                Map<String, RawProtein<PfamHmmer3RawMatch>> rawMatches = daoManager.getPfamRawMatchDAO().getRawMatchesForProteinIdsInRange(
+                        Long.toString(this.getStepInstance().getBottomProtein()),
+                        Long.toString(this.getStepInstance().getTopProtein()),
+                        this.getStepInstance().getStep().getSignatureLibraryRelease()
+                );
+
+                if (LOGGER.isDebugEnabled()){
+                    LOGGER.debug("Count of unfiltered matches: " + countMatches(rawMatches));
+                }
+                // Post process
+                Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = this.getStepInstance().getStep().getPostProcessor().process(rawMatches);
+                if (LOGGER.isDebugEnabled()){
+                    LOGGER.debug("Count of filtered matches: " + countMatches(filteredMatches));
+                }
+                LOGGER.debug("About to store filtered matches...");
+                daoManager.getPfamFilteredMatchDAO().persistFilteredMatches(filteredMatches.values());
+                LOGGER.debug("About to store filtered matches...DONE");
                 this.completeSuccessfully();
             } catch (Exception e) {
                 this.fail();
                 // TODO - Complete explanation.
-                LOGGER.error ("Explanation..." , e);
+                LOGGER.error ("Exception thrown:" , e);
             }
         }
+
+    private int countMatches(Map<String, RawProtein<PfamHmmer3RawMatch>> matches) {
+        int count = 0;
+        for (RawProtein<PfamHmmer3RawMatch> protein : matches.values()){
+            if (protein.getMatches() != null) count += protein.getMatches().size();
+        }
+        return count;
     }
+}

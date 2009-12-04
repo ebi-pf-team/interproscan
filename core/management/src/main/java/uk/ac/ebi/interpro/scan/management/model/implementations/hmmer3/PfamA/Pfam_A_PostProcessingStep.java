@@ -1,17 +1,10 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA;
 
-import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing;
-import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
-
-import java.util.UUID;
-import java.util.List;
-import java.util.Map;
-import java.io.Serializable;
-
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing;
+import uk.ac.ebi.interpro.scan.management.model.Step;
+
+import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,6 +16,20 @@ public class Pfam_A_PostProcessingStep extends Step<Pfam_A_PostProcessingStepIns
 
     private PfamHMMER3PostProcessing postProcessor;
 
+    private String signatureLibraryName;
+
+    private String signatureLibraryRelease;
+
+    @Required
+    public void setSignatureLibraryName(String signatureLibraryName) {
+        this.signatureLibraryName = signatureLibraryName;
+    }
+
+    @Required
+    public void setSignatureLibraryRelease(String signatureLibraryRelease) {
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
     public PfamHMMER3PostProcessing getPostProcessor() {
         return postProcessor;
     }
@@ -30,5 +37,13 @@ public class Pfam_A_PostProcessingStep extends Step<Pfam_A_PostProcessingStepIns
     @Required
     public void setPostProcessor(PfamHMMER3PostProcessing postProcessor) {
         this.postProcessor = postProcessor;
+    }
+
+    public String getSignatureLibraryName() {
+        return signatureLibraryName;
+    }
+
+    public String getSignatureLibraryRelease() {
+        return signatureLibraryRelease;
     }
 }
