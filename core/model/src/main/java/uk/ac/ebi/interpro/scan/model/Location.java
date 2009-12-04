@@ -40,11 +40,12 @@ import java.util.Set;
  */
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlTransient
 public abstract class Location implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name="location_start")    // to match end - 'end' is reserved word in SQL.
