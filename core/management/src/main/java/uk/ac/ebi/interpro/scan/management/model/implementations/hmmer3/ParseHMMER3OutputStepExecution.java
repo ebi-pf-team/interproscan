@@ -2,12 +2,15 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
+import uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser;
 
-import java.io.Serializable;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,15 +22,11 @@ import java.util.UUID;
  */
 public class ParseHMMER3OutputStepExecution extends StepExecution<ParseHMMER3OutputStepInstance> implements Serializable {
 
-        private Set<RawProtein> parsedResults;
-
-        public Set<RawProtein> getParsedResults() {
-            return parsedResults;
-        }
-
         protected ParseHMMER3OutputStepExecution(UUID id, ParseHMMER3OutputStepInstance stepInstance) {
             super(id, stepInstance);
         }
+
+
 
         /**
          * This method is called to execute the action that the StepExecution must perform.
@@ -36,7 +35,7 @@ public class ParseHMMER3OutputStepExecution extends StepExecution<ParseHMMER3Out
          * <p/>
          * Note that the implementation DOES have access to the protected stepInstance,
          * and from their to the protected Step, to allow it to access parameters for execution.
-         * @param daoManager
+         * @param daoManager mandatory to allows storage of results.
          */
         @Override
         public void execute(DAOManager daoManager) {
@@ -51,8 +50,8 @@ public class ParseHMMER3OutputStepExecution extends StepExecution<ParseHMMER3Out
                     throw new IllegalStateException ("The DAOManager is present, but does not contain a RawMatchDAO.");
                 }
                 is = new FileInputStream(this.getStepInstance().getHmmerOutputFilePath());
-                Set<RawProtein> parsedResults = this.getStepInstance().getStep().getParser().parse(is);
-                // TODO - Need to get the RawMatchDAO from the object calling execute - cannot be passed over the wire.
+                Hmmer3SearchMatchParser parser = this.getStepInstance().getStep().getParser();
+                Set<RawProtein<Hmmer3RawMatch>> parsedResults = parser.parse(is);
 
                 daoManager.getRawMatchDAO().insertRawSequenceIdentifiers(parsedResults);
                 this.completeSuccessfully();

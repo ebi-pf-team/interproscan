@@ -33,6 +33,8 @@ public class Pfam_A_PostProcessingStepInstance extends StepInstance<Pfam_A_PostP
      *
      * @param id   being a unique ID (UUID) object.
      * @param step the Step template used to create this StepInstance.
+     * @param bottomProteinId being the lowest inclusive protein ID to include
+     * @param topProteinId being the highest inclusive protein ID to include.
      */
     public Pfam_A_PostProcessingStepInstance(UUID id, Pfam_A_PostProcessingStep step, long bottomProteinId, long topProteinId) {
         super(id, step, bottomProteinId, topProteinId);
