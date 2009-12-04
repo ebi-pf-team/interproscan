@@ -39,5 +39,14 @@ public interface Hmmer3ParserSupport<T extends RawMatch> extends Serializable {
      * Implementations for member databases such as Gene3D should return true from this method.
      * @return boolean indicating if the alignment section should be parsed.
      */
+
     boolean parseAlignments();
+    /**
+     * To be flexible with different hmmer3 search output file, this method gets either accession or query
+     *  accordingly
+     *
+     */
+
+    enum HmmKey {ACCESSION, NAME}
+    HmmKey getHmmKey();
 }
