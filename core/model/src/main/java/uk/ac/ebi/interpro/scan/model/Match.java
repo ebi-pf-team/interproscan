@@ -38,7 +38,7 @@ import java.util.*;
  */
 
 @Entity
-@Table (name="Hit") // TODO: Use "ProteinMatch" or "Matches" instead of "Hit" for table name
+@Table (name="match_") // TODO: Use "ProteinMatch" or "Matches" instead of "Hit" for table name
 @XmlTransient
 public abstract class Match<T extends Location> implements Serializable {
 
@@ -48,12 +48,14 @@ public abstract class Match<T extends Location> implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @ManyToOne(cascade=CascadeType.REFRESH, optional = false)
     private Protein protein;
 
-    @ManyToOne(cascade= CascadeType.PERSIST)
+    @ManyToOne(cascade= CascadeType.PERSIST, optional = false)
     private Signature signature;
 
-    @Transient
+    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Location.class)
     private Set<T> locations = new LinkedHashSet<T>();
    
     protected Match() {}
