@@ -47,6 +47,23 @@ public interface Hmmer3ParserSupport<T extends RawMatch> extends Serializable {
      *
      */
 
-    enum HmmKey {ACCESSION, NAME}
+    enum HmmKey {
+
+        ACCESSION("Accession"), NAME("Query");
+
+        private final String prefix;
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        HmmKey(String prefix) {
+            this.prefix = prefix;
+        }
+
+
+    }
+
+
     HmmKey getHmmKey();
 }
