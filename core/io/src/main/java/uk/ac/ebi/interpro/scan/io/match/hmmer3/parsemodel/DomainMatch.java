@@ -27,7 +27,14 @@ public class DomainMatch implements Serializable {
      * Group[11] envTo   (int)
      * Group[12] acc (float)
      */
-    public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^\\s+\\d+\\s+[!?]\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+)$");
+    public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+[!?]\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+)$");
+    //entered by Manjula
+    public static final Pattern DOMAIN_ALIGNMENT_LINE_PATTERN = Pattern.compile("^\\s+==\\s+domain\\s+(\\d+)\\.+");
+    
+    public static final Pattern ALIGNMENT_SEQUENCE_PATTERN = Pattern.compile("^\\s+(\\w+)\\s+(\\d+)\\s+([a-zA-Z-]+)\\s+(\\d+)$");
+
+   //entered by Manjula for Gene3D parser
+    //private final int domainNumber;
 
     private final double score;
 
@@ -53,24 +60,29 @@ public class DomainMatch implements Serializable {
 
     private final double acc;
 
-    private final String alignment;
+
+
+    private String alignment;
 
     public DomainMatch(Matcher domainLineMatcher) {
-        this.score = Double.parseDouble(domainLineMatcher.group(1));
-        this.bias = Double.parseDouble(domainLineMatcher.group(2));
-        this.cEvalue = Double.parseDouble(domainLineMatcher.group(3));
-        this.iEvalue = Double.parseDouble(domainLineMatcher.group(4));
-        this.hmmfrom = Integer.parseInt(domainLineMatcher.group(5));
-        this.hmmto = Integer.parseInt(domainLineMatcher.group(6));
-        this.hmmBounds = domainLineMatcher.group(7);
-        this.aliFrom = Integer.parseInt(domainLineMatcher.group(8));
-        this.aliTo = Integer.parseInt(domainLineMatcher.group(9));
-        this.envFrom = Integer.parseInt(domainLineMatcher.group(10));
-        this.envTo = Integer.parseInt(domainLineMatcher.group(11));
-        this.acc = Double.parseDouble(domainLineMatcher.group(12));
+        //this.domainNumber = Integer.parseInt(domainLineMatcher.group(1));// entered by Manjula to handle mutiple domains for same model
+        this.score = Double.parseDouble(domainLineMatcher.group(2));
+        this.bias = Double.parseDouble(domainLineMatcher.group(3));
+        this.cEvalue = Double.parseDouble(domainLineMatcher.group(4));
+        this.iEvalue = Double.parseDouble(domainLineMatcher.group(5));
+        this.hmmfrom = Integer.parseInt(domainLineMatcher.group(6));
+        this.hmmto = Integer.parseInt(domainLineMatcher.group(7));
+        this.hmmBounds = domainLineMatcher.group(8);
+        this.aliFrom = Integer.parseInt(domainLineMatcher.group(9));
+        this.aliTo = Integer.parseInt(domainLineMatcher.group(10));
+        this.envFrom = Integer.parseInt(domainLineMatcher.group(11));
+        this.envTo = Integer.parseInt(domainLineMatcher.group(12));
+        this.acc = Double.parseDouble(domainLineMatcher.group(13));
         // TODO: Parse alignment from HMMER3 output
         this.alignment = "LDSGRSQ-QLALLLRNAT"; // TODO: Remove ASAP!!!!!!!!!
     }
+
+
 
     public String getAlignment() {
         return alignment;
@@ -122,6 +134,9 @@ public class DomainMatch implements Serializable {
 
     public double getAcc() {
         return acc;
+    }
+     public void setAlignment(String alignment) {
+        this.alignment = alignment;
     }
 
 
