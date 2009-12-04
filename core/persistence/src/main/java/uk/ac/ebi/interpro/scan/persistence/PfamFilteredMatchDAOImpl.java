@@ -57,7 +57,7 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
 
 
         Query proteinQuery = entityManager.createQuery(
-                "select p from Protein p where p.id = :proteinId"
+                "select p from Protein p where p.id in (:proteinId)"
         );
 
         // Iterate over the matches in the Collection of RawProtein objects
@@ -132,6 +132,7 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
                 }
                 // Now link the Signature and Protein with a HmmerMatch object.
                 HmmerMatch match = new HmmerMatch(signature, rawMatchObject);
+                protein.addMatch(match);  // This also joins the match to the protein.
                 // ... and store the match
                 // (This may be the wrong way of persisting this - perhaps need to persist the Protein object in the next loop out.
                 entityManager.persist(match);
@@ -170,8 +171,8 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<HmmerMatch,  Long> 
     private Map<String, Protein> getProteinIdToProteinMap (Query proteinQuery){
         List<Protein> proteins = proteinQuery.getResultList();
         if (LOGGER.isDebugEnabled()){
-            LOGGER.debug("Number of proteins retrieved: " + proteins.size());
-            LOGGER.debug("Proteins retrieved from database: " + proteins);
+            LOGGER.error("Number of proteins retrieved: " + proteins.size());
+            LOGGER.error("Proteins retrieved from database: " + proteins);
         }
         Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(proteins.size());
         for (Protein protein : proteins){
