@@ -35,6 +35,7 @@ public class RunHmmer3StepExecution extends StepExecution<RunHmmer3StepInstance>
         public void execute(DAOManager daoManager) {
             this.setToRun();
             try{
+                Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
                 List<String> command = new ArrayList<String>();
                 command.add(this.getStepInstance().getStep().getFullPathToBinary());
                 command.addAll(this.getStepInstance().getStep().getBinarySwitches());

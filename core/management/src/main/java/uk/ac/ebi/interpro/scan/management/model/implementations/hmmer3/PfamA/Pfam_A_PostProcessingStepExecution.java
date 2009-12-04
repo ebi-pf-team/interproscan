@@ -43,6 +43,7 @@ public class Pfam_A_PostProcessingStepExecution extends StepExecution<Pfam_A_Pos
         public void execute(DAOManager daoManager) {
             this.setToRun();
             try{
+                Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
                 if (daoManager == null){
                     throw new IllegalArgumentException ("This StepExecution must have a valid DAOManager object passed in.");
                 }

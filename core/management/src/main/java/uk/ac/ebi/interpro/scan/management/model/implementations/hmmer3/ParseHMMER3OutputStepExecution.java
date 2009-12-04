@@ -43,6 +43,7 @@ public class ParseHMMER3OutputStepExecution extends StepExecution<ParseHMMER3Out
             this.setToRun();
             InputStream is = null;
             try{
+                Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
                 if (daoManager == null){
                     throw new IllegalStateException ("The Hmmer3 Output Parser cannot run without a DAOManager.");
                 }
