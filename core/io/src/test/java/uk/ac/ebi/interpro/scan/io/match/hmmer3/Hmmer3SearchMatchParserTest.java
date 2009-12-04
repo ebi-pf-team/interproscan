@@ -55,22 +55,20 @@ public class Hmmer3SearchMatchParserTest {
         parse(pfamParser, pfamFile.getInputStream(), null);
     }
 
-    private void parse(Hmmer3SearchMatchParser parser, InputStream is, RawMatchListener listener) throws ParseException, IOException {
+    private void parse(Hmmer3SearchMatchParser<Hmmer3RawMatch> parser, InputStream is, RawMatchListener listener) throws ParseException, IOException {
         try{
-            Set<RawProtein> proteins = parser.parse(is);
+            Set<RawProtein<Hmmer3RawMatch>> proteins = parser.parse(is);
             assertTrue("Must be at least one protein in collection", proteins.size() > 0);
-            for (RawProtein protein : proteins){
+            for (RawProtein<Hmmer3RawMatch> protein : proteins){
                 LOGGER.debug("Protein ID: " + protein.getProteinIdentifier());
                 for (RawMatch rawMatch : protein.getMatches()){
-                    if (rawMatch instanceof Hmmer3RawMatch){
-                        Hmmer3RawMatch hmmer3RawMatch = (Hmmer3RawMatch) rawMatch;
-                        LOGGER.debug("\tmodel = " + hmmer3RawMatch.getModel());
-                        LOGGER.debug("\tstart = " + hmmer3RawMatch.getLocationStart());
-                        LOGGER.debug("\tend = "   + hmmer3RawMatch.getLocationEnd());
-                        // Call-back handler here for member DB-specific testing
-                        if (listener != null)   {
-                            listener.afterDebug(hmmer3RawMatch);
-                        }
+                    Hmmer3RawMatch hmmer3RawMatch = (Hmmer3RawMatch) rawMatch;
+                    LOGGER.debug("\tmodel = " + hmmer3RawMatch.getModel());
+                    LOGGER.debug("\tstart = " + hmmer3RawMatch.getLocationStart());
+                    LOGGER.debug("\tend = "   + hmmer3RawMatch.getLocationEnd());
+                    // Call-back handler here for member DB-specific testing
+                    if (listener != null)   {
+                        listener.afterDebug(hmmer3RawMatch);
                     }
                 }
             }

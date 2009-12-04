@@ -1,18 +1,24 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer3;
 
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmsearchOutputMethod;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmsearchOutputMethod;
+import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.*;
-
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Parser for HMMER3 output, based upon the working parser used in Onion.
@@ -70,7 +76,7 @@ Passed bias filter:                        1  (1); expected 0.0 (0.02)
 
 
  */
-public class Hmmer3SearchMatchParser implements MatchParser {
+public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser {
 
     private static final String END_OF_RECORD = "//";
 
@@ -87,7 +93,7 @@ public class Hmmer3SearchMatchParser implements MatchParser {
      * threshold line is useless.  The code below has a line commented out which can
      * easily be put back to use the inclusion threshold.
      */
-    private static final String END_OF_GOOD_SEQUENCE_MATCHES = "inclusion threshold";
+//    private static final String END_OF_GOOD_SEQUENCE_MATCHES = "inclusion threshold";
 
     private static final String DOMAIN_SECTION_START = ">> ";
 
@@ -104,10 +110,10 @@ public class Hmmer3SearchMatchParser implements MatchParser {
      * filtering the raw results by specific criteria, such as GA value
      * cutoff.
      */
-    private Hmmer3ParserSupport hmmer3ParserSupport;
+    private Hmmer3ParserSupport<T> hmmer3ParserSupport;
 
     @Required
-    public void setParserSupport(Hmmer3ParserSupport hmmer3ParserSupport) {
+    public void setParserSupport(Hmmer3ParserSupport<T> hmmer3ParserSupport) {
         this.hmmer3ParserSupport = hmmer3ParserSupport;
     }
 
@@ -123,9 +129,9 @@ public class Hmmer3SearchMatchParser implements MatchParser {
         FINISHED_SEARCHING_RECORD
     }
 
-    public Set<RawProtein> parse(InputStream is) throws IOException, ParseException {
+    public Set<RawProtein<T>> parse(InputStream is) throws IOException, ParseException {
 
-        Map<String, RawProtein> rawResults = new HashMap<String, RawProtein>();
+        Map<String, RawProtein<T>> rawResults = new HashMap<String, RawProtein<T>>();
         BufferedReader reader = null;
         try{
             reader = new BufferedReader(new InputStreamReader(is));
@@ -182,7 +188,7 @@ public class Hmmer3SearchMatchParser implements MatchParser {
                                 if (sequenceMatchLineMatcher.matches()){
                                     // Found a sequence match line above the threshold.
                                     // Make a record of the UPI.
-                                    String upi = sequenceMatchLineMatcher.group(SequenceMatch.UPI_GROUP);
+//                                    String upi = sequenceMatchLineMatcher.group(SequenceMatch.UPI_GROUP);
                                     SequenceMatch sequenceMatch = new SequenceMatch(sequenceMatchLineMatcher);
                                     method.addSequenceMatch(sequenceMatch);
                                 }
@@ -244,6 +250,6 @@ public class Hmmer3SearchMatchParser implements MatchParser {
                 reader.close();
             }
         }
-        return new HashSet<RawProtein> (rawResults.values());
+        return new HashSet<RawProtein<T>> (rawResults.values());
     }
 }

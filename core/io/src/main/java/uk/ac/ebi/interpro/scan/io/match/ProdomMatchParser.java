@@ -12,6 +12,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 
 /**
  * Parser for the output from Prodom
@@ -50,8 +52,8 @@ public class ProdomMatchParser implements MatchParser {
             "^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+//\\s+pd_(.+?);.+?;\\s+(\\d+)\\s+(\\d+)\\s+//\\s+S=(((\\b[0-9]+)?\\.)?\\b[0-9]+([eE][-+]?[0-9]+)?\\b)\\s+E=(((\\b[0-9]+)?\\.)?\\b[0-9]+([eE][-+]?[0-9]+)?\\b)\\s+//\\s+\\((\\d+)\\)\\s+.+?Length = \\d+$"
     );
 
-    public Set<RawProtein> parse(InputStream is) throws IOException {
-        Set<RawProtein> seqIds = new HashSet<RawProtein>();
+    public Set<RawProtein<ProDomRawMatch>> parse(InputStream is) throws IOException {
+        Set<RawProtein<ProDomRawMatch>> seqIds = new HashSet<RawProtein<ProDomRawMatch>>();
         BufferedReader reader = null;
         try{
             reader = new BufferedReader(new InputStreamReader(is));
@@ -83,6 +85,8 @@ public class ProdomMatchParser implements MatchParser {
                             "  bracketedValue: " +      bracketedValue
                         );
                     }
+
+                    // TODO - Not finished - currently don't seem to be adding any RawMatch objects to the RawProtein.
                     
                 }
                 else {

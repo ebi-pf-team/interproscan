@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 
 /**
@@ -16,5 +17,5 @@ import uk.ac.ebi.interpro.scan.io.ParseException;
  * @since   1.0
  */
 public interface MatchParser extends Serializable {
-    public Set<RawProtein> parse(InputStream is) throws IOException, ParseException;
+    public <T extends RawMatch> Set<RawProtein<T>> parse(InputStream is) throws IOException, ParseException;
 }

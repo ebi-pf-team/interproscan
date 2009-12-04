@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.Ignore;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class ProdomMatchParserTest extends TestCase {
     public void testParse() throws IOException, ParseException {
         InputStream is = getClass().getClassLoader().getResourceAsStream("data/prodom/prodom_output.txt");
         MatchParser parser = new ProdomMatchParser();
-        Set<RawProtein> proteins = parser.parse(is);
+        Set<RawProtein<ProDomRawMatch>> proteins = parser.parse(is);
         assertNotNull(proteins);
     }
 }

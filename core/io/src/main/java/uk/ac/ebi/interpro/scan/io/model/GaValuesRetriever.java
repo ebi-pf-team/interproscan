@@ -62,6 +62,7 @@ public class GaValuesRetriever implements Serializable{
      * as an argument.
      * @param modelFileAbsolutePath the model file to parse.
      * @throws java.io.IOException in the event of a problem reading the file or cleaning up afterwards.
+     * @throws uk.ac.ebi.interpro.scan.io.ParseException if an Exception is thrown during parsing.
      */
     public GaValuesRetriever(String modelFileAbsolutePath) throws IOException, ParseException{
         this.modelFileAbsolutePath = modelFileAbsolutePath;

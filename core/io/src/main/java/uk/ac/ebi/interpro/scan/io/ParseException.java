@@ -21,6 +21,9 @@ public class ParseException extends Exception {
      *
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
+     * @param fileName of the file being parsed (OPTIONAL)
+     * @param line being the actual line the problem is on (OPTIONAL)
+     * @param lineNumber being the number of the line in the file when the problem was detected. (OPTIONAL)
      */
     public ParseException(String message, String fileName, String line, Integer lineNumber) {
         super(message);
@@ -36,6 +39,7 @@ public class ParseException extends Exception {
      *
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
+     * @param line being the contents of the failed line.
      */
     public ParseException(String message, String line) {
        this(message, null, line, null);
