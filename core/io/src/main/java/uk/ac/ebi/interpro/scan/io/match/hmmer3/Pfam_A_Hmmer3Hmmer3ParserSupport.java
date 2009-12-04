@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport {
+public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<PfamHmmer3RawMatch> {
 
     private String signatureLibraryName;
 
@@ -49,7 +49,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport {
         this.gaValuesRetriever = gaValuesRetriever;
     }
 
-    public void addMatch(HmmsearchOutputMethod methodMatches, Map<String, RawProtein> rawResults) throws IOException {
+    public void addMatch(HmmsearchOutputMethod methodMatches, Map<String, RawProtein<PfamHmmer3RawMatch>> rawResults) throws IOException {
         try{
             for (SequenceMatch sequenceMatch : methodMatches.getSequenceMatches().values()){
                 for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()){
@@ -63,9 +63,9 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport {
 
                         // Either retrieve the correct RawSequenceIdentifer, or create a new one
                         // and add it to the Map.
-                        RawProtein sequenceIdentifier = rawResults.get(sequenceMatch.getUpi());
+                        RawProtein<PfamHmmer3RawMatch> sequenceIdentifier = rawResults.get(sequenceMatch.getUpi());
                         if (sequenceIdentifier == null){
-                            sequenceIdentifier = new RawProtein(sequenceMatch.getUpi());
+                            sequenceIdentifier = new RawProtein<PfamHmmer3RawMatch>(sequenceMatch.getUpi());
                             rawResults.put(sequenceMatch.getUpi(), sequenceIdentifier);
                         }
 

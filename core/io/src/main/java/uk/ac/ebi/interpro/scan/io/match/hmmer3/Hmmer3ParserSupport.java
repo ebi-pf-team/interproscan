@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.io.match.hmmer3;
 
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmsearchOutputMethod;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 
 import java.util.Map;
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.io.Serializable;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public interface Hmmer3ParserSupport extends Serializable {
+public interface Hmmer3ParserSupport<T extends RawMatch> extends Serializable {
 
 
     /**
@@ -26,9 +27,9 @@ public interface Hmmer3ParserSupport extends Serializable {
      * HMMER 3 hmmsearch output.
      * @param rawResults being the Map of protein accessions to RawProteins
      * that the raw results should be added to.
-     * @throws java.io.IOException
+     * @throws java.io.IOException in the event of an IO problem.
      */
-    void addMatch(HmmsearchOutputMethod methodMatches, Map<String, RawProtein> rawResults)
+    void addMatch(HmmsearchOutputMethod methodMatches, Map<String, RawProtein<T>> rawResults)
             throws IOException;
 
     /**

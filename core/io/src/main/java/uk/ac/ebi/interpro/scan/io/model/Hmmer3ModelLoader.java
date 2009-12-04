@@ -13,6 +13,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
 /**
  * Parses an hmm file and creates Signature / Method objects
  * appropriately.
@@ -21,6 +23,8 @@ import java.io.Serializable;
  * Time: 20:35:32
  */
 public class Hmmer3ModelLoader implements Serializable {
+
+    private static final Logger LOGGER = Logger.getLogger(Hmmer3ModelLoader.class);
 
     private SignatureLibrary library;
 
@@ -52,13 +56,19 @@ public class Hmmer3ModelLoader implements Serializable {
     }
 
     public SignatureLibraryRelease parse(String hmmFilePath) throws IOException {
+        LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
         BufferedReader reader = null;
         try{
             String accession = null, name = null, description = null;
 
             reader = new BufferedReader (new FileReader(hmmFilePath));
+            int lineNumber = 0;
             while (reader.ready()){
+                if (lineNumber++ % 500 == 0){
+                    LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
+                    LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
+                }
                 String line = reader.readLine();
                 // Speed things up a LOT - there are lots of lines we are not
                 // interested in parsing, so just check the first char of each line
