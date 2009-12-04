@@ -21,7 +21,9 @@ public class LSFWorkerRunner implements WorkerRunner {
 
     private String lsfEmailNotification;
 
-    private int memoryUsageMB = 1000;
+    private int memoryUsageMB = 1024;
+
+    private String outFilePath;
 
     /**
      * Command line prior to the bsub command.
@@ -72,6 +74,10 @@ public class LSFWorkerRunner implements WorkerRunner {
         this.memoryUsageMB = memoryUsageMB;
     }
 
+    public void setOutFilePath(String outFilePath) {
+        this.outFilePath = outFilePath;
+    }
+
     /**
      * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
      * Assumes that the jar being executed has a main class define in the MANIFEST.
@@ -90,6 +96,10 @@ public class LSFWorkerRunner implements WorkerRunner {
 
         if (this.lsfEmailNotification != null){
             commandBuf.append("-u ").append(lsfEmailNotification).append(' ');
+        }
+
+        if (this.outFilePath != null){
+            commandBuf.append("-o ").append(outFilePath).append(' ');
         }
 
         commandBuf.append('"').append(command).append('"');
