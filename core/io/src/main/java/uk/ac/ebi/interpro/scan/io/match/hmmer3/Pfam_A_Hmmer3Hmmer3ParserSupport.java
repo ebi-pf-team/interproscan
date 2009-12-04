@@ -107,4 +107,10 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
     public boolean parseAlignments() {
         return false;
     }
+
+    @Override
+    public HmmKey getHmmKey() {
+        return HmmKey.ACCESSION;
+        
+    }
 }

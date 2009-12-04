@@ -18,6 +18,11 @@ import java.util.Map;
  */
 public class Gene3DHmmer3ParserSupport implements Hmmer3ParserSupport<Gene3dHmmer3RawMatch> {
 
+    @Override
+    public HmmKey getHmmKey() {
+        return HmmKey.NAME;  //Later on inject value for this through spring, for flexibility
+    }
+
     // TODO: Signature info is common to all RawMatch implementations so use composition or package-private abstract class to reduce code?
     private String signatureLibraryName;
     private String signatureLibraryRelease;
