@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
+import javax.persistence.Column;
 
 /**
  * TODO: Add class description
@@ -14,31 +15,31 @@ import javax.persistence.Entity;
 public abstract class HmmerRawMatch extends RawMatch  {
 
     // TODO: evalue and score can be calculated -- do we need to store? Needs testing
-    //@Column(name="EVALUE",nullable = false, updatable = false)
+    @Column(name="EVALUE",nullable = false, updatable = false)
     private double evalue;
     
-    //@Column(name="SCORE",nullable = false, updatable = false)
+    @Column(name="SCORE",nullable = false, updatable = false)
     private double score;
 
-    //@Column(name="HMM_START")
-    private long hmmStart;
+    @Column(name="HMM_START")
+    private int hmmStart;
 
-    //@Column(name="HMM_END")
-    private long hmmEnd;
+    @Column(name="HMM_END")
+    private int hmmEnd;
 
-    //@Column(name="HMM_BOUNDS")
+    @Column(name="HMM_BOUNDS", length = 2)
     private String hmmBounds;
 
-    //@Column(name="SEQ_SCORE")
+    @Column(name="SEQ_SCORE")
     private double locationScore;
 
     protected HmmerRawMatch() { }
     
     protected HmmerRawMatch(String sequenceIdentifier, String model,
                             String signatureLibraryName, String signatureLibraryRelease,
-                            long locationStart, long locationEnd,
+                            int locationStart, int locationEnd,
                             double evalue, double score,
-                            long hmmStart, long hmmEnd, String hmmBounds,
+                            int hmmStart, int hmmEnd, String hmmBounds,
                             double locationScore, String generator) {
         super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
         this.evalue = Math.log10(evalue);
@@ -65,19 +66,19 @@ public abstract class HmmerRawMatch extends RawMatch  {
         this.score = score;
     }
 
-    public long getHmmStart() {
+    public int getHmmStart() {
         return hmmStart;
     }
 
-    private void setHmmStart(long hmmStart) {
+    private void setHmmStart(int hmmStart) {
         this.hmmStart = hmmStart;
     }
 
-    public long getHmmEnd() {
+    public int getHmmEnd() {
         return hmmEnd;
     }
 
-    private void setHmmEnd(long hmmEnd) {
+    private void setHmmEnd(int hmmEnd) {
         this.hmmEnd = hmmEnd;
     }
 

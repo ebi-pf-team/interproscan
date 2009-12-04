@@ -26,9 +26,9 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
     protected Hmmer3RawMatch(String sequenceIdentifier, String model,
                              String signatureLibraryName, String signatureLibraryRelease,
-                             long locationStart, long locationEnd,
+                             int locationStart, int locationEnd,
                              double evalue, double score,
-                             long hmmStart, long hmmEnd, String hmmBounds,
+                             int hmmStart, int hmmEnd, String hmmBounds,
                              double locationScore,
                              int envelopeStart, int envelopeEnd,
                              double expectedAccuracy, double fullSequenceBias,

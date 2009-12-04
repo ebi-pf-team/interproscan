@@ -58,7 +58,7 @@ public class Protein implements Serializable {
     
     // TODO Consider whether this needs to be based upon CHUNKING as used in PRIDE, so a long protein sequence is stored
     // TODO in indexed VARCHAR columns, rather than using CLOBs that give very poor performance.
-    @Column(name="protein_sequence", length = 500000, updatable = false, nullable = false)     // Length based upon current longest protein in UniParc: 37777 residues.
+    @Column(name="protein_sequence", length = 1000000, updatable = false, nullable = false)     // Length based upon current longest protein in UniParc: 37777 residues.
     private String sequence;
 
     @Column(nullable = false, unique = true, updatable = false, length = 32)

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
+import javax.persistence.Column;
 
 /**
  * TODO: Add class description
@@ -11,18 +12,24 @@ import javax.persistence.Entity;
 @Entity
 public class PrintsRawMatch extends RawMatch {
 
+    @Column
     private double evalue;
+    @Column(length = 15)
     private String graphscan;
+    @Column
     private int motifCount;
+    @Column
     private double pvalue;
+    @Column
     private double score;
+    @Column
     private int motifNumber;
 
     protected PrintsRawMatch() { }    
 
     public PrintsRawMatch(String sequenceIdentifier, String model,
                           String signatureLibraryName, String signatureLibraryRelease,
-                          long locationStart, long locationEnd,
+                          int locationStart, int locationEnd,
                           double evalue, String graphscan,
                           int motifCount, int motifNumber, 
                           double pvalue, double score,
