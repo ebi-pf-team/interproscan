@@ -44,6 +44,7 @@ public class Hmmer3SearchMatchParserTest {
                 new RawMatchListener() {
                     public void afterDebug(Hmmer3RawMatch rawMatch) {
                         LOGGER.debug("\tcigar-alignment = "   + ((Gene3dHmmer3RawMatch)rawMatch).getCigarAlignment());
+                        
                     }
                 }
         );
