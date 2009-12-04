@@ -6,6 +6,8 @@ import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClan;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClanData;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamModel;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 
 import java.util.*;
 import java.io.Serializable;
@@ -48,8 +50,8 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @param proteinIdToRawMatchMap being a Map of protein IDs to a List of raw matches
      * @return a Map of proteinIds to a List of filtered matches.
      */
-    public Map<String, List<PfamHmmer3RawMatch>> process(Map<String, List<PfamHmmer3RawMatch>> proteinIdToRawMatchMap) {
-        Map<String, List<PfamHmmer3RawMatch>> proteinIdToFilteredMatchMap = new HashMap<String, List<PfamHmmer3RawMatch>>();
+    public Map<String, RawProtein<PfamHmmer3RawMatch>> process(Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawMatchMap) {
+        Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<PfamHmmer3RawMatch>>();
         final long startNanos = System.nanoTime();
         // Iterate over UniParc IDs in range and processBatch them
         SeedAlignmentDataRetriever.SeedAlignmentData seedAlignmentData = null;
@@ -61,10 +63,10 @@ public class PfamHMMER3PostProcessing implements Serializable {
             if (seedAlignmentData != null){
                 seedAlignments = seedAlignmentData.getSeedAlignments(proteinId);
             }
-            proteinIdToFilteredMatchMap.put (proteinId,  processProtein(proteinIdToRawMatchMap.get(proteinId), seedAlignments));
+            proteinIdToRawProteinMap.put (proteinId,  processProtein(proteinIdToRawMatchMap.get(proteinId), seedAlignments));
         }
         LOGGER.debug(new StringBuilder().append("Batch containing").append(proteinIdToRawMatchMap.size()).append(" proteins took ").append(((double) (System.nanoTime() - startNanos)) / 1.0e9d).append(" s to run.").toString());
-        return proteinIdToFilteredMatchMap;
+        return proteinIdToRawProteinMap;
     }
 
 
@@ -73,28 +75,28 @@ public class PfamHMMER3PostProcessing implements Serializable {
      *
      * Also includes additional code to ensure seed alignments are included as matches, regardless of
      * score.
-     * @param rawMatches being a List of the raw matches to filter
+     * @param rawProteinUnfiltered being a List of the raw matches to filter
      * @param seedAlignments being a Collection of SeedAlignment objects, to check for matches to
      * methods where this protein was part of the seed alignment.
      * @return a List of filtered matches.
      */
-     private List<PfamHmmer3RawMatch> processProtein(final List<PfamHmmer3RawMatch> rawMatches, final List<SeedAlignment> seedAlignments){
-        List<PfamHmmer3RawMatch> filteredMatches = new ArrayList<PfamHmmer3RawMatch>();
+     private RawProtein processProtein(final RawProtein<PfamHmmer3RawMatch> rawProteinUnfiltered, final List<SeedAlignment> seedAlignments){
+        RawProtein<PfamHmmer3RawMatch> filteredMatches = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
 
-        // First of all, place any rawMatches to methods for which this protein was a seed
+        // First of all, place any rawProteinUnfiltered to methods for which this protein was a seed
         // into the filteredMatches collection.
         final Set<PfamHmmer3RawMatch> seedMatches = new HashSet<PfamHmmer3RawMatch>();
 
         if (seedAlignments != null) {        // TODO This check can be removed, once the seed alignment stuff has been sorted.
             for (final SeedAlignment seedAlignment : seedAlignments){
-                for (final PfamHmmer3RawMatch candidateMatch : rawMatches){
+                for (final PfamHmmer3RawMatch candidateMatch : rawProteinUnfiltered.getMatches()){
                     if (! seedMatches.contains(candidateMatch)){
                         if (seedAlignment.getModelAccession().equals(candidateMatch.getModel())  &&
                                 seedAlignment.getAlignmentStart() <= candidateMatch.getLocationStart() &&
                                 seedAlignment.getAlignmentEnd() >= candidateMatch.getLocationEnd()){
                             // Found a match to a seed, where the coordinates fall within the seed alignment.
-                            // Add it directly to the filtered rawMatches...
-                            filteredMatches.add(candidateMatch);
+                            // Add it directly to the filtered rawProteinUnfiltered...
+                            filteredMatches.addMatch(candidateMatch);
                             seedMatches.add(candidateMatch);
                         }
                     }
@@ -102,16 +104,18 @@ public class PfamHMMER3PostProcessing implements Serializable {
             }
         }
 
-        // Then iterate over the non-seed raw rawMatches, sorted in order "best (lowest) evalue first"
-        for (final PfamHmmer3RawMatch candidateMatch : rawMatches){
+        // Then iterate over the non-seed raw rawProteinUnfiltered, sorted in order "best (lowest) evalue first"
+        for (final RawMatch rawMatch : rawProteinUnfiltered.getMatches()){
+                   final PfamHmmer3RawMatch candidateMatch = (PfamHmmer3RawMatch) rawMatch;
             if (! seedMatches.contains(candidateMatch)){
                 final PfamClan candidateMatchClan = clanData.getClanByModelAccession(candidateMatch.getModel());
 
                 boolean passes = true;   // Optimistic algorithm!
 
                 if (candidateMatchClan != null){
-                    // Iterate over the filtered rawMatches (so far) to check for passes
-                    for (final PfamHmmer3RawMatch passedMatch : filteredMatches){
+                    // Iterate over the filtered rawProteinUnfiltered (so far) to check for passes
+                    for (final RawMatch match : filteredMatches.getMatches()){           // TODO - RawProtein should be typed for Match type.
+                        final PfamHmmer3RawMatch passedMatch = (PfamHmmer3RawMatch) match;
                         final PfamClan passedMatchClan = clanData.getClanByModelAccession(passedMatch.getModel());
                         // Are both the candidate and the passedMatch in the same clan?
                         if (candidateMatchClan.equals(passedMatchClan)){
@@ -120,7 +124,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                             if (matchesOverlap (candidateMatch, passedMatch)){
                                 if (! matchesAreNested (candidateMatch, passedMatch)){
                                     passes = false;
-                                    break;  // out of loop over filtered rawMatches.
+                                    break;  // out of loop over filtered rawProteinUnfiltered.
                                 }
                             }
                         }
@@ -129,7 +133,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
                 if (passes){
                     // Add filtered match to collection
-                    filteredMatches.add(candidateMatch);
+                    filteredMatches.addMatch(candidateMatch);
                 }
             }
         }
