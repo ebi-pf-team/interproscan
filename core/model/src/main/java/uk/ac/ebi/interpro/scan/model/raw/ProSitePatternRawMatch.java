@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.Table;
 
 /**
  * TODO: Add class description
@@ -10,6 +11,7 @@ import javax.persistence.Column;
  * @version $Id$
  */
 @Entity
+@Table(name="prosite_pattern_raw_match")
 public class ProSitePatternRawMatch extends RawMatch {
 
     // TODO: Should we use enum for level?

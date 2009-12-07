@@ -21,6 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
@@ -34,6 +35,7 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
+@Table(name="blast_prodom_match")
 @XmlType(name="BlastProDomMatchType", propOrder={"signature", "locations"})
 public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation> {
 
@@ -49,6 +51,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
      * @author  Antony Quinn
      */
     @Entity
+    @Table(name="blast_prodom_location")
     @XmlType(name="BlastProDomLocationType")
     public static class BlastProDomLocation extends Location {
 

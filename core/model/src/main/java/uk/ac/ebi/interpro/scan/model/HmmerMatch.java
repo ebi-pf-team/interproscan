@@ -21,6 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -37,6 +38,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
  * @since   1.0
  */
 @Entity
+@Table(name="hmmer_match")
 @XmlType(name="HmmerMatchType", propOrder={"signature", "locations"})
 public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
 
@@ -111,6 +113,7 @@ public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
      * @author  Antony Quinn
      */
     @Entity
+    @Table(name="hmmer_location")
     @XmlType(name="HmmLocationType", propOrder={"start", "end"})
     public static class HmmerLocation extends Location {
 

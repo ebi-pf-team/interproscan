@@ -21,6 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -34,6 +35,7 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
+@Table(name="finger_prints_match")
 @XmlType(name="FingerPrintsMatchType", propOrder={"signature", "locations"})
 public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocation> {
 
@@ -107,6 +109,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
      * @author  Antony Quinn
      */
     @Entity
+    @Table(name="finger_prints_location")
     @XmlType(name="FingerPrintsLocationType")
     public static class FingerPrintsLocation extends Location {
 

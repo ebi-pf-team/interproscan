@@ -21,6 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
@@ -34,6 +35,7 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
+@Table(name="profile_scan_match")
 @XmlType(name="ProfileScanMatchType", propOrder={"signature", "locations"})
 public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation> {
 
@@ -49,6 +51,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
      * @author  Antony Quinn
      */
     @Entity
+    @Table(name="profile_scan_location")
     @XmlType(name="ProfileScanLocationType")
     public static class ProfileScanLocation extends Location {
 

@@ -5,6 +5,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -14,6 +15,7 @@ import java.io.Serializable;
  * @version $Id$
  */
 @Entity
+@Table(name="prodom_raw_match")
 public class ProDomRawMatch extends RawMatch implements Serializable {
 
     // TODO: No need for member DBs where algorithm is unique to them, eg. PRINTS, Panther
