@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * TODO: Add class description
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
  * @version $Id$
  */
 @Entity
+@Table(name="hamap_raw_match")
 public class HamapRawMatch extends ProfileScanRawMatch {
 
     protected HamapRawMatch() { }

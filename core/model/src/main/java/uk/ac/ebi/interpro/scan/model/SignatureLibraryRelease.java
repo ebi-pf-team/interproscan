@@ -36,6 +36,7 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
+@Table(name="signature_library_release")
 @XmlRootElement(name="signature-library-release")
 @XmlType(name="SignatureLibraryReleaseType")
 public class SignatureLibraryRelease implements Serializable {

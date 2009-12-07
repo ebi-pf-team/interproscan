@@ -38,7 +38,7 @@ import java.util.*;
  */
 
 @Entity
-@Table (name="match_") // TODO: Use "ProteinMatch" or "Matches" instead of "Hit" for table name
+@Inheritance (strategy=InheritanceType.TABLE_PER_CLASS)
 @XmlTransient
 public abstract class Match<T extends Location> implements Serializable {
 
@@ -46,7 +46,7 @@ public abstract class Match<T extends Location> implements Serializable {
     // TODO: See http://www.ebi.ac.uk/seqdb/confluence/x/DYAg#ND3.3StandardXMLformatforallcommondatatypes-SMART
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(cascade=CascadeType.REFRESH, optional = false)

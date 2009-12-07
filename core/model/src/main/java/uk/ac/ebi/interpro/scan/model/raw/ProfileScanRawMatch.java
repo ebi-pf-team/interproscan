@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.Table;
 
 /**
  * TODO: Add class description
@@ -10,6 +11,7 @@ import javax.persistence.Column;
  * @version $Id$
  */
 @Entity
+//@Table(name="profile_scan_raw_match")
 public abstract class ProfileScanRawMatch extends RawMatch {
 
     @Column

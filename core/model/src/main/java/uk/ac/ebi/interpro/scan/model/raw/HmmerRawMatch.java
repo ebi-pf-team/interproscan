@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
 /**
  * TODO: Add class description

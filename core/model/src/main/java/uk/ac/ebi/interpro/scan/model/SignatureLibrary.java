@@ -35,6 +35,7 @@ import java.io.Serializable;
  * @since   1.0
  */
 @Entity
+@Table(name="signature_library")
 @XmlType(name="SignatureLibraryType")
 public class SignatureLibrary implements Serializable {
 
