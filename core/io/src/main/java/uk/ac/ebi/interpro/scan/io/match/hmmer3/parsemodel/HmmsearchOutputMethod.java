@@ -27,8 +27,8 @@ public class HmmsearchOutputMethod implements Serializable {
         this.sequenceMatches.put (sequenceMatch.getSequenceIdentifier(), sequenceMatch);
     }
 
-    public void addDomainMatch (String modelId, DomainMatch domainMatch){
-        SequenceMatch parentSequenceMatch = this.sequenceMatches.get(modelId);
+    public void addDomainMatch (String sequenceId, DomainMatch domainMatch){
+        SequenceMatch parentSequenceMatch = this.sequenceMatches.get(sequenceId);
         if (parentSequenceMatch == null){
             throw new IllegalStateException ("Check for a logic error in the HMMER3hmmscanFullFormatParser - trying to add a domain match, but there is no corresponding sequence match.");
         }
