@@ -29,9 +29,9 @@ public class DomainMatch implements Serializable {
      */
     public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+[!?]\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+)$");
     //entered by Manjula
-    public static final Pattern DOMAIN_ALIGNMENT_LINE_PATTERN = Pattern.compile("^\\s+==\\s+domain\\s+(\\d+)\\.+");
-    
-    public static final Pattern ALIGNMENT_SEQUENCE_PATTERN = Pattern.compile("^\\s+(\\w+)\\s+(\\d+)\\s+([a-zA-Z-]+)\\s+(\\d+)$");
+    public static final Pattern DOMAIN_ALIGNMENT_LINE_PATTERN = Pattern.compile("^\\s+==\\s+domain\\s+(\\d+)\\s+.*$");
+        
+    public static final Pattern ALIGNMENT_SEQUENCE_PATTERN = Pattern.compile("^\\s+(\\w+)\\s+(\\d+)\\s+([-a-zA-Z]+)\\s+(\\d+)\\s*$");
 
    //entered by Manjula for Gene3D parser
     //private final int domainNumber;
@@ -78,8 +78,7 @@ public class DomainMatch implements Serializable {
         this.envFrom = Integer.parseInt(domainLineMatcher.group(11));
         this.envTo = Integer.parseInt(domainLineMatcher.group(12));
         this.acc = Double.parseDouble(domainLineMatcher.group(13));
-        // TODO: Parse alignment from HMMER3 output
-        this.alignment = "LDSGRSQ-QLALLLRNAT"; // TODO: Remove ASAP!!!!!!!!!
+        
     }
 
 

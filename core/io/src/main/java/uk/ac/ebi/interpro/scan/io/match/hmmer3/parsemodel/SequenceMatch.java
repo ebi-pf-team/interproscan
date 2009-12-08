@@ -21,14 +21,14 @@ public class SequenceMatch implements Serializable {
      * Group 3: Sequence Bias
      * Group 4: UPI
      */
-    public static final Pattern SEQUENCE_LINE_PATTERN = Pattern.compile("^\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\d+\\s+(\\S+).+$");
+    public static final Pattern SEQUENCE_LINE_PATTERN = Pattern.compile("^\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\d+\\s+(\\S+).*$");
 
 
     // The following four ints are to help with extracting data from the Pattern above - KEEP THEM IN SYNC!
     public static final int EVALUE_GROUP = 1;
     public static final int SCORE_GROUP = 2;
     public static final int BIAS_GROUP = 3;
-    public static final int UPI_GROUP = 4;
+    public static final int SEQUENCE_ID_GROUP = 4;
 
     private String sequenceIdentifier;
 
@@ -44,7 +44,8 @@ public class SequenceMatch implements Serializable {
         this.eValue = Double.parseDouble(domainLineMatcher.group(EVALUE_GROUP));
         this.score = Double.parseDouble(domainLineMatcher.group(SCORE_GROUP));
         this.bias = Double.parseDouble(domainLineMatcher.group(BIAS_GROUP));
-        this.sequenceIdentifier = domainLineMatcher.group(UPI_GROUP);
+        this.sequenceIdentifier = domainLineMatcher.group(SEQUENCE_ID_GROUP);
+
     }
 
     public String getSequenceIdentifier() {

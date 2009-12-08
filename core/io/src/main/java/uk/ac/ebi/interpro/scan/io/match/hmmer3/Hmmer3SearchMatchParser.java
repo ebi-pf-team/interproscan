@@ -101,7 +101,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
     
 
     // Group 1: Uniparc protein accession
-    private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^>>\\s+(\\S+).+$");
+    private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^>>\\s+(\\S+).*$");
 
     /**
      * This interface has a single method that
@@ -130,6 +130,8 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         FINISHED_SEARCHING_RECORD
     }
 
+
+
     public Set<RawProtein<T>> parse(InputStream is) throws IOException, ParseException {
 
         Map<String, RawProtein<T>> rawResults = new HashMap<String, RawProtein<T>>();
@@ -141,12 +143,14 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
             Map<String, DomainMatch> domains = new HashMap<String, DomainMatch>();
             StringBuilder alignSeq = new StringBuilder();
             DomainMatch currentDomain =null;
+
             ParsingStage stage = ParsingStage.LOOKING_FOR_METHOD_ACCESSION;
             Matcher domainAlignSequenceMatcher = null;
             int lineNumber = 0;
             while (reader.ready()){
                 lineNumber++;
                 String line = reader.readLine();
+                System.out.println(stage+">>>"+line);
                 if (line.startsWith(END_OF_RECORD)){
                     // Process a complete record - store all sequence / domain scores
                     // for the method.
@@ -193,11 +197,14 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 currentDomain=null;
                             }
                             else {
+
+
                                 Matcher sequenceMatchLineMatcher = SequenceMatch.SEQUENCE_LINE_PATTERN.matcher(line);
+                                System.out.println("matches?"+sequenceMatchLineMatcher.matches()+" "+SequenceMatch.SEQUENCE_LINE_PATTERN);
                                 if (sequenceMatchLineMatcher.matches()){
                                     // Found a sequence match line above the threshold.
                                     // Make a record of the UPI.
-//                                    String upi = sequenceMatchLineMatcher.group(SequenceMatch.UPI_GROUP);
+//                                    String upi = sequenceMatchLineMatcher.group(SequenceMatch.SEQUENCE_ID_GROUP);
                                     SequenceMatch sequenceMatch = new SequenceMatch(sequenceMatchLineMatcher);
                                     method.addSequenceMatch(sequenceMatch);
                                 }
@@ -214,38 +221,35 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                     currentSequenceIdentifier  = domainSectionHeaderMatcher.group(1);
                                 }
                                 else {
-                                    throw new ParseException("This line looks like a domain section header line, but I cannot parse out the methodAccession id.", null, line, lineNumber);
+                                    throw new ParseException("This line looks like a domain section header line, but I cannot parse out the sequence id.", null, line, lineNumber);
                                 }
                                 stage = ParsingStage.LOOKING_FOR_DOMAIN_DATA_LINE;
                             }
                             
-                            
-                            //to handle domain alignment
-                            if ( line.startsWith(DOMAIN_ALIGNMENT_SECTION_START)){
-                                Matcher domainAlignmentMatcher = DomainMatch.DOMAIN_ALIGNMENT_LINE_PATTERN.matcher(line);
-                                if (domainAlignmentMatcher.matches()){
-                                    System.out.println("Parsing alignments...");
-                                    alignSeq.setLength(0);
-                                    String domainNumber = domainAlignmentMatcher.group(1);
-                                    currentDomain = domains.get(domainNumber); //get the current domain object.
+                            if (hmmer3ParserSupport.parseAlignments()) {
+                                //to handle domain alignment
+                                if ( line.startsWith(DOMAIN_ALIGNMENT_SECTION_START)){
+                                    Matcher domainAlignmentMatcher = DomainMatch.DOMAIN_ALIGNMENT_LINE_PATTERN.matcher(line);
+                                    if (domainAlignmentMatcher.matches()){
+                                        alignSeq.setLength(0);
+                                        String domainNumber = domainAlignmentMatcher.group(1);
+                                        currentDomain = domains.get(domainNumber); //get the current domain object.
+                                    } else {
+                                        throw new ParseException("Unable to parse domain alignment section line", null, line, lineNumber);
+                                    }
                                 }
-                            }
-                            // getting the actual alignment sequence string
+                                // getting the actual alignment sequence string
 
-                            if ( (currentDomain!=null) && (currentSequenceIdentifier!=null) && (line.trim().startsWith(currentSequenceIdentifier) )){
-                                Matcher alignmentSequencePattern = DomainMatch.ALIGNMENT_SEQUENCE_PATTERN.matcher(line);
-                                if(alignmentSequencePattern.matches()){
-                                    String seqId =  alignmentSequencePattern.group(1);
-                                    if (seqId.equals(currentSequenceIdentifier)) {
+                                if ( (currentDomain!=null) && (currentSequenceIdentifier!=null) && (line.trim().startsWith(currentSequenceIdentifier) )){
+                                    Matcher alignmentSequencePattern = DomainMatch.ALIGNMENT_SEQUENCE_PATTERN.matcher(line);
+                                    if(alignmentSequencePattern.matches() && alignmentSequencePattern.group(1).equals(currentSequenceIdentifier)){
                                         alignSeq.append(alignmentSequencePattern.group(3));
                                         currentDomain.setAlignment(alignSeq.toString());
-                                        //TODO
-                                        //Make sure removed after test
-                                        System.out.println(currentSequenceIdentifier +" ***** " +  alignSeq.toString());
+                                    } else {
+                                        throw new ParseException("Unable to parse alignment", null, line, lineNumber);
                                     }
                                 }
                             }
-
 
                             break;
 
@@ -254,9 +258,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                             // Look for a domain data line.
                             Matcher domainDataLineMatcher = DomainMatch.DOMAIN_LINE_PATTERN.matcher(line);
                             if (line.contains(START_OF_DOMAIN_ALIGNMENT_SECTION)){
-                                stage = (hmmer3ParserSupport.parseAlignments())
-                                        ? ParsingStage.PARSING_DOMAIN_ALIGNMENTS
-                                        : ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
+                                stage = ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
                             }
                             else if (domainDataLineMatcher.matches()){
                                 DomainMatch domainMatch = new DomainMatch(domainDataLineMatcher);
