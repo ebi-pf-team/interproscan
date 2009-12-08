@@ -17,6 +17,8 @@ public class HmmsearchOutputMethod implements Serializable {
 
     private final String methodAccession;
 
+    private int methodAccessionLength;
+
     private final Map<String, SequenceMatch> sequenceMatches = new HashMap<String, SequenceMatch>();
 
     public HmmsearchOutputMethod(String methodAccession){
@@ -39,7 +41,16 @@ public class HmmsearchOutputMethod implements Serializable {
         return methodAccession;
     }
 
+
+
     public Map<String, SequenceMatch> getSequenceMatches() {
         return sequenceMatches;
+    }
+     public int getMethodAccessionLength() {
+        return methodAccessionLength;
+    }
+
+    public void setMethodAccessionLength(int methodAccessionLength) {
+        this.methodAccessionLength = methodAccessionLength;
     }
 }
