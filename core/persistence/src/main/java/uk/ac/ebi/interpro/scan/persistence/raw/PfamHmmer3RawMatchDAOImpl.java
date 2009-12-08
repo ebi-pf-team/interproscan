@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import javax.persistence.Query;
 import java.util.*;
 
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -25,6 +26,7 @@ public class PfamHmmer3RawMatchDAOImpl extends GenericDAOImpl<PfamHmmer3RawMatch
         super(PfamHmmer3RawMatch.class);
     }
 
+    @Transactional(readOnly = true)
     public PfamHmmer3RawMatch getPfamMatchesByModel(String methodAc) {
         // Pfam p = null;
         Query query = entityManager.createQuery("select p from PfamHmmer3RawMatch p  where p.model = :methodAc");
@@ -46,6 +48,7 @@ public class PfamHmmer3RawMatchDAOImpl extends GenericDAOImpl<PfamHmmer3RawMatch
      * PfamHmmer3RawMatch objects for the protein IDs in the range
      * specified (Database default String ordering)
      */
+    @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public Map<String, RawProtein> getRawMatchesForProteinIdsInRange(String bottomId, String topId, String signatureDatabaseRelease) {
         Map<String, RawProtein> proteinIdToMatchMap = new HashMap<String, RawProtein>();
