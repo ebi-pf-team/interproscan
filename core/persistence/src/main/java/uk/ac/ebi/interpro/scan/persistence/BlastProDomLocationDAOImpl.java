@@ -25,11 +25,12 @@ public class BlastProDomLocationDAOImpl extends GenericDAOImpl<BlastProDomMatch.
         super(BlastProDomMatch.BlastProDomLocation.class);
     }
 
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
     public List<BlastProDomMatch.BlastProDomLocation> getBlastProDomHitLocationByScore(Double score) {
-            Query query = entityManager.createQuery("select bpl from BlastProDomLocation bpl where bpl.score >=" + score.doubleValue());
-        //query.setParameter("bottom", slice.getBottom());
-        //query.setParameter("top", slice.getTop());
-        return (List<BlastProDomMatch.BlastProDomLocation>) query.getResultList();
+        Query query = entityManager.createQuery("select bpl from BlastProDomLocation bpl where bpl.score >= :score");
+        query.setParameter("score", score);
+        return query.getResultList();
     }
     
 }
