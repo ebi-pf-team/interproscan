@@ -32,6 +32,8 @@ public class SequenceMatch implements Serializable {
 
     private String sequenceIdentifier;
 
+    private int sequenceIdentifierLength;
+
     private double eValue;
 
     private double score;
@@ -70,5 +72,13 @@ public class SequenceMatch implements Serializable {
 
     public List<DomainMatch> getDomainMatches() {
         return domainMatches;
+    }
+
+    public int getSequenceIdentifierLength() {
+        return sequenceIdentifierLength;
+    }
+
+    public void setSequenceIdentifierLength(int sequenceIdentifierLength) {
+        this.sequenceIdentifierLength = sequenceIdentifierLength;
     }
 }
