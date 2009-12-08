@@ -12,7 +12,7 @@ import org.junit.Ignore;
 import javax.annotation.Resource;
 import java.io.InputStream;
 import java.io.IOException;
-import java.util.Set;
+import java.util.*;
 
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.model.raw.*;
@@ -31,22 +31,39 @@ public class Hmmer3SearchMatchParserTest {
     private static final Logger LOGGER = Logger.getLogger(Hmmer3SearchMatchParserTest.class);
 
     // Pfam
-    @Resource private Hmmer3SearchMatchParser pfamParser;
+    @Resource private Hmmer3SearchMatchParser<Hmmer3RawMatch> pfamParser;
     @Resource private org.springframework.core.io.Resource pfamFile;
 
     // Gene3D
-    @Resource private Hmmer3SearchMatchParser gene3dParser;
+    @Resource private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
     @Resource private org.springframework.core.io.Resource gene3dFile;
+
+    private String[] expectedAlignments=
+            {
+                    "HP0834:24M2I9M1D9M1D2M2D10M7I42M7D16M5D12M1I24M",
+                    "HP0834:29M1I17M1D2M2D10M9I5M1I22M2D13M2D1M3D17M3D12M1I1M4I23M",
+                    "NT01CJ0385:24M2I9M1D9M3D26M7I14M1D15M6D16M4D7M1D4M1I22M",
+                    "NT01CJ0385:29M1D17M1D14M9I5M1I18M2D17M2D1M3D17M3I39M"
+            };
+
+
 
     @Test
     public void testGene3DParser() throws ParseException, IOException {
+        final Set<String> found=new HashSet<String>();
+
+
         parse(gene3dParser, gene3dFile.getInputStream(),
-                new RawMatchListener() {
-                    public void afterDebug(Hmmer3RawMatch rawMatch) {
-                        LOGGER.debug("\tcigar-alignment = "   + ((Gene3dHmmer3RawMatch)rawMatch).getCigarAlignment());                        
+                new RawMatchListener<Gene3dHmmer3RawMatch>() {
+                    public void afterDebug(Gene3dHmmer3RawMatch rawMatch) {
+                        LOGGER.debug("\tcigar-alignment = "   + rawMatch.getCigarAlignment());
+                        found.add(rawMatch.getSequenceIdentifier()+":"+rawMatch.getCigarAlignment());
                     }
                 }
         );
+
+        Set<String> expected=new HashSet<String>(Arrays.asList(expectedAlignments));
+        assertTrue("Expected alignments not found",expected.equals(found));
     }
 
     @Test
@@ -55,20 +72,20 @@ public class Hmmer3SearchMatchParserTest {
         parse(pfamParser, pfamFile.getInputStream(), null);
     }
 
-    private void parse(Hmmer3SearchMatchParser<Hmmer3RawMatch> parser, InputStream is, RawMatchListener listener) throws ParseException, IOException {
+    private <X extends Hmmer3RawMatch> void parse(Hmmer3SearchMatchParser<X> parser, InputStream is, RawMatchListener<X> listener) throws ParseException, IOException {
         try{
-            Set<RawProtein<Hmmer3RawMatch>> proteins = parser.parse(is);
+            Set<RawProtein<X>> proteins = parser.parse(is);
             assertTrue("Must be at least one protein in collection", proteins.size() > 0);
-            for (RawProtein<Hmmer3RawMatch> protein : proteins){
+            for (RawProtein<X> protein : proteins){
                 LOGGER.debug("Protein ID: " + protein.getProteinIdentifier());
-                for (RawMatch rawMatch : protein.getMatches()){
-                    Hmmer3RawMatch hmmer3RawMatch = (Hmmer3RawMatch) rawMatch;
-                    LOGGER.debug("\tmodel = " + hmmer3RawMatch.getModel());
-                    LOGGER.debug("\tstart = " + hmmer3RawMatch.getLocationStart());
-                    LOGGER.debug("\tend = "   + hmmer3RawMatch.getLocationEnd());
+                for (X rawMatch : protein.getMatches()){
+
+                    LOGGER.debug("\tmodel = " + rawMatch.getModel());
+                    LOGGER.debug("\tstart = " + rawMatch.getLocationStart());
+                    LOGGER.debug("\tend = "   + rawMatch.getLocationEnd());
                     // Call-back handler here for member DB-specific testing
                     if (listener != null)   {
-                        listener.afterDebug(hmmer3RawMatch);
+                        listener.afterDebug(rawMatch);
                     }
                 }
             }
@@ -79,8 +96,8 @@ public class Hmmer3SearchMatchParserTest {
     }
 
     // Call-back handler for specific member DB testing
-    private interface RawMatchListener {
-        public void afterDebug(Hmmer3RawMatch rawMatch);
+    private interface RawMatchListener<X extends Hmmer3RawMatch> {
+        public void afterDebug(X rawMatch);
     }
 
 }

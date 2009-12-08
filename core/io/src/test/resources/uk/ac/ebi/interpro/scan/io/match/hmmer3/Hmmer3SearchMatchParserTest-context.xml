@@ -51,5 +51,9 @@
     <bean id="gene3dFile" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="data/hmmer3/hmmsearch/2hxsA00.out"/>
     </bean>
+
+    <bean id="gene3dAlignment" class="java.lang.String"><constructor-arg value="29M1I17M1D2M2D10M9I5M1I22M2D13M2D1M3D17M3D12M1I1M4I23M"/></bean>
+
+
     
 </beans>
