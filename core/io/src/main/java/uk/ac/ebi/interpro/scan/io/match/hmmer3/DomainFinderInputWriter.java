@@ -24,17 +24,18 @@ public class DomainFinderInputWriter {
 
     private File outputFile = null;
 
-    public DomainFinderInputWriter(File outputFile) {
-        if (outputFile!=null) {
-            this.outputFile = outputFile;
-        }
+    public DomainFinderInputWriter() {
+
+            this.outputFile = new File("C:\\Manjula\\input_for_df3.txt");
+            this.outputFile.delete();  //to clear out contents written previously.
+     
     }
 
     public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
-        BufferedWriter bw;
+        BufferedWriter bw = null;
         if (method!=null) {
             try {
-                bw = new BufferedWriter(new FileWriter(outputFile));
+                bw = new BufferedWriter(new FileWriter(outputFile, true));
                 //StringBuilder sb = null;
                 SequenceMatch sm = method.getSequenceMatches().get(seqId);
                 if (sm!=null) {
@@ -62,9 +63,18 @@ public class DomainFinderInputWriter {
 
             }catch(IOException ioe) {
                 System.out.println("File Writing error for Domain Finder" + ioe.getMessage() );
+            } finally {
+                if (bw!=null){
+                    try {
+                        bw.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
             }
 
         }
+
 
         
         
