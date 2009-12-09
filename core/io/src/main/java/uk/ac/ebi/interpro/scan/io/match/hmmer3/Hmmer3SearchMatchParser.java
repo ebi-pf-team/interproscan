@@ -98,7 +98,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
     private static final String START_OF_DOMAIN_ALIGNMENT_SECTION = "Alignments for each domain";
 
     //Output File to write Gene3D parser output in ssf format suitable for Domain Finder input
-    File ssfFile = new File("C:\\Manjula\\input_for_DF.txt");
+    //File ssfFile = new File("C:\\Manjula\\input_for_DF.txt");
 
     // Group 1: Uniparc protein accession
     private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^>>\\s+(\\S+).*$");
@@ -144,7 +144,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
             StringBuilder alignSeq = new StringBuilder();
             DomainMatch currentDomain =null;
             //generate ssf file for Domain Finder
-            DomainFinderInputWriter dfiw = new DomainFinderInputWriter(ssfFile);
+            DomainFinderInputWriter dfiw = new DomainFinderInputWriter();
             ParsingStage stage = ParsingStage.LOOKING_FOR_METHOD_ACCESSION;
             //Matcher domainAlignSequenceMatcher = null;
             int lineNumber = 0;
