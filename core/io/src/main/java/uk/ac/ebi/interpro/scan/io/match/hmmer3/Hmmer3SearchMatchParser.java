@@ -249,10 +249,17 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                     if(alignmentSequencePattern.matches() && alignmentSequencePattern.group(1).equals(currentSequenceIdentifier)){
                                         alignSeq.append(alignmentSequencePattern.group(3));
                                         currentDomain.setAlignment(alignSeq.toString());
+
                                     } else {
                                         throw new ParseException("Unable to parse alignment", null, line, lineNumber);
                                     }
+
+                                  //entered by Manjula for segment processing
+                                        currentDomain = this.setDomainSegments(currentDomain);
+                                        dfiw.writeMethodToFile(method,currentSequenceIdentifier,currentDomain);
+                                        //domainDataLineMatcher.group(1));
                                 }
+
                             }
 
                             break;
@@ -270,7 +277,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 
                                 //before start of next sequence match store the method in ssf file
                                 //send the parsed domain details to ssf file generation
-                                  dfiw.writeMethodToFile(method,currentSequenceIdentifier,domainDataLineMatcher.group(1));
+                                  //dfiw.writeMethodToFile(method,currentSequenceIdentifier,domainDataLineMatcher.group(1));
                                   domains.put(domainDataLineMatcher.group(1),domainMatch);
                             }
                             break;
@@ -292,6 +299,81 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
             }
         }
         return new HashSet<RawProtein<T>> (rawResults.values());
+    }
+
+    public DomainMatch setDomainSegments(DomainMatch inDomain) {
+        DomainMatch dm;
+        String alignSequence = inDomain.getAlignment();
+        int upperCaseSegmentLength=0;
+        int lowerCaseSegmentLength=0;
+        int startOfMatch=0,endOfMatch=0,startOfGap=0,endOfGap=0;
+        int segmentCounter=1;
+        int aliFrom = inDomain.getAliFrom();
+        StringBuilder sb = new StringBuilder();
+
+               for (int i=0; i<alignSequence.length(); i++) {
+
+                   char c = alignSequence.charAt(i);
+
+                    if(Character.isUpperCase(c)) {
+
+                        if (i==alignSequence.length()-1) {  //if the sequence ends with match
+                            endOfMatch = i;
+                             sb.append((startOfMatch+ aliFrom) +":"+(endOfMatch+aliFrom) + ":");
+                        }
+
+                        if(lowerCaseSegmentLength>0) {
+                            endOfGap=lowerCaseSegmentLength;
+                            //System.out.println("New gap found with boundaries " + startOfGap + " : " + endOfGap);
+                            if (lowerCaseSegmentLength >= 30) {
+                             //System.out.println("New segment found!");
+                             segmentCounter++;
+                            }
+                            lowerCaseSegmentLength=0;
+                        }
+
+                        if(upperCaseSegmentLength==0) {
+                            //System.out.println("New Match starts at " + i);
+                            startOfMatch=i;
+                        }
+
+                        upperCaseSegmentLength++;
+
+
+
+                    }else if(Character.isLowerCase(c)) {
+
+                        if (i==alignSequence.length()-1) {
+                            endOfGap = i;
+                            //System.out.println("New gap found with boundaries " + startOfGap + " : " + endOfGap);
+                        }
+
+                        if(upperCaseSegmentLength > 0 && lowerCaseSegmentLength >=30 ) {
+                            endOfMatch=upperCaseSegmentLength; //store the latest upper cased segment boundary point.
+                            sb.append((startOfMatch+aliFrom) +":"+(endOfMatch+aliFrom) + ":");
+                            upperCaseSegmentLength = 0; //reset for next upper cased segment;
+                        }
+                        if(lowerCaseSegmentLength==0) {
+                            startOfGap=i;
+                        }
+
+                        lowerCaseSegmentLength++;
+                    }
+
+               }
+
+               inDomain.setNumberOfSegments(segmentCounter);
+               if(segmentCounter > 1){
+                  inDomain.setSegmentBoundry(sb.toString().substring(0,sb.toString().length()-1));
+               } else {
+                   inDomain.setSegmentBoundry(inDomain.getAliFrom() +":" + inDomain.getAliTo());
+               }
+               //System.out.println("Given alignment String has " + segmentCounter + " segments!" );
+               //System.out.println("Segment boundaries " + sb.toString().substring(0,sb.toString().length()-1));
+              dm = inDomain;
+              return dm;
+
+
     }
 
 }

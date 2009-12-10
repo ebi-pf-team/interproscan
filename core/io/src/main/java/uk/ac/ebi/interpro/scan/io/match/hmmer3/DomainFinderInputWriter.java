@@ -31,18 +31,20 @@ public class DomainFinderInputWriter {
      
     }
 
-    public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
+    //public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
+    public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, DomainMatch dm) {
         BufferedWriter bw = null;
         if (method!=null) {
             try {
                 bw = new BufferedWriter(new FileWriter(outputFile, true));
                 //StringBuilder sb = null;
-                SequenceMatch sm = method.getSequenceMatches().get(seqId);
-                if (sm!=null) {
-                    DomainMatch dm = sm.getDomainMatches().get((Integer.parseInt(domainNum))-1); //domain number subtracted with once since in a list first element is 0
+                //SequenceMatch sm = method.getSequenceMatches().get(seqId);
+               // if (sm!=null) {
+                    //DomainMatch dm = sm.getDomainMatches().get((Integer.parseInt(domainNum))-1); //domain number subtracted with once since in a list first element is 0
                     if (dm!=null) {
                        StringBuilder sb = new StringBuilder();
-                        sb.append(sm.getSequenceIdentifier()+"\t");
+                        //sb.append(sm.getSequenceIdentifier()+"\t");
+                        sb.append(seqId+"\t");
                         sb.append(method.getMethodAccession() +"\t1000\t");
                         sb.append(method.getMethodAccessionLength()+ "\t" );
                         sb.append(dm.getAliFrom()+"\t" );
@@ -51,14 +53,16 @@ public class DomainFinderInputWriter {
                         sb.append(dm.getHmmto() + "\t");
                         sb.append(dm.getIEvalue()+ "\t");
                         sb.append(dm.getScore() + "\t");
-                        sb.append(dm.getScore() + "\t1\t");
-                        sb.append(dm.getAliFrom() + ":");
-                        sb.append(dm.getAliTo());
+                        sb.append(dm.getScore() + "\t");
+                        sb.append(dm.getNumberOfSegments() +"\t");
+                        //sb.append(dm.getAliFrom() + ":");
+                        //sb.append(dm.getAliTo());
+                        sb.append(dm.getSegmentBoundry());
                         sb.append("\n");
                         System.out.println(sb.toString());
                         bw.write(sb.toString());
                     }
-                }
+                //}
 
 
             }catch(IOException ioe) {
