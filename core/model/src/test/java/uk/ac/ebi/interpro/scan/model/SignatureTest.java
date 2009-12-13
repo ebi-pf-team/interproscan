@@ -24,6 +24,8 @@ import org.junit.Ignore;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.xml.sax.SAXException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -45,7 +47,63 @@ public class SignatureTest extends AbstractTest<Signature> {
     // TODO: Add Xrefs and Entry to Signature
     // TODO: Add Model MD5?
 
-    @Test public void testBuilder()   {
+    private static final Log LOGGER = LogFactory.getLog(SignatureTest.class);
+
+    @Test
+    public void testXmlWhitespace() throws IOException, SAXException {
+
+        // Can use \n or XML escape character (&#10;) for new line
+        String expectedXml =
+                "<signature ac='PF00001' xmlns='http://www.ebi.ac.uk/schema/interpro/scan/model'>\n" +
+                "    <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), " +
+                "members of the opsin family, which have been considered to be typical members " +
+                "of the rhodopsin superfamily. " +
+                "&#10;&#10;" +
+                "They share several motifs, mainly the seven transmembrane helices, " +
+                "GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, " +
+                "such as 11-cis-retinal. " +
+                "\n\n" +
+                "The function of most opsins other than the photoisomerases is split into two steps: " +
+                "light absorption and G-protein activation. Photoisomerases, on the other hand, are " +
+                "not coupled to G-proteins - they are thought to generate and supply the chromophore " +
+                "that is used by visual opsins [pubmed:15774036]</abstract>\n" +
+                "</signature>";
+
+        Signature actual = unmarshal(expectedXml);
+        
+        Signature expected = new Signature
+                .Builder("PF00001")
+                .abstractText(
+                "This family contains, amongst other G-protein-coupled receptors (GPCRs), " +
+                "members of the opsin family, which have been considered to be typical members " +
+                "of the rhodopsin superfamily. " +
+                "\n\n" +
+                "They share several motifs, mainly the seven transmembrane helices, " +
+                "GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, " +
+                "such as 11-cis-retinal. " +
+                "\n\n" +
+                "The function of most opsins other than the photoisomerases is split into two steps: " +
+                "light absorption and G-protein activation. Photoisomerases, on the other hand, are " +
+                "not coupled to G-proteins - they are thought to generate and supply the chromophore " +
+                "that is used by visual opsins [pubmed:15774036]")
+                .build();
+
+        assertEquals(expected, actual);
+
+        if (LOGGER.isDebugEnabled())    {
+            LOGGER.debug(actual);
+        }
+
+        String actualXml = marshal(actual);
+        assertXmlEquals("Whitespace test", expectedXml, actualXml);
+
+        if (LOGGER.isDebugEnabled())    {
+            LOGGER.debug(actualXml);
+        }
+
+    }
+
+    @Test public void testBuilder()   {                       
         final String AC       = "SIG001";
         final String NAME     = "test";
         final String TYPE     = "domain";
@@ -60,7 +118,7 @@ public class SignatureTest extends AbstractTest<Signature> {
                 .name(NAME)
                 .type(TYPE)
                 .description(NAME)
-                .abstractText(NAME)
+                .abstractText(ABSTRACT)
                 .signatureLibraryRelease(release)
                 .models(models)
                 .build();

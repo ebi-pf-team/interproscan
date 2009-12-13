@@ -46,7 +46,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
  */
 abstract class AbstractTest<T> {
 
-    private static final Log logger = LogFactory.getLog(AbstractTest.class);
+    private static final Log LOGGER = LogFactory.getLog(AbstractTest.class);
 
     private static final Long LONG_ZERO = 0L;
 
@@ -99,7 +99,7 @@ abstract class AbstractTest<T> {
             T actualObject = retriever.getObjectByPrimaryKey(dao, pk);
             assertEquals(key, expectedObject, actualObject);
             // Delete
-            logger.debug("Deleting: " + actualObject);
+            LOGGER.debug("Deleting: " + actualObject);
             dao.delete(actualObject);
             assertEquals(key, 0, dao.retrieveAll().size());
         }
@@ -121,31 +121,35 @@ abstract class AbstractTest<T> {
             // Get expected object and XML
             T expectedObject   = objectXmlMap.get(key).getObject();
             String expectedXml = objectXmlMap.get(key).getXml();
-            logger.debug(key + " (expected object XML):\n" + marshal(expectedObject));
+            LOGGER.debug(key + " (expected object XML):\n" + marshal(expectedObject));
             // Convert XML to object
             T actualObject = unmarshal(expectedXml);
-            logger.debug(actualObject);
+            LOGGER.debug(actualObject);
             assertEquals(key, expectedObject, actualObject);
             // ... and back again
             String actualXml = marshal(actualObject);
-            logger.debug(key + " (actual object XML):\n" + actualXml);
-            Diff diff = new Diff(expectedXml, actualXml);
-            // Order of attributes and elements is not important
-            diff.overrideElementQualifier(new RecursiveElementNameAndAttributeQualifier());
-            String message = key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml;
-            assertTrue(message, diff.similar());
+            LOGGER.debug(key + " (actual object XML):\n" + actualXml);
+            assertXmlEquals(key, expectedXml, actualXml);
             // Validate against XML schema
             validate(actualXml);
         }
     }
 
-    private String marshal(T object) throws IOException  {
+    protected void assertXmlEquals(String key, String expectedXml, String actualXml) throws IOException, SAXException {
+        Diff diff = new Diff(expectedXml, actualXml);
+        // Order of attributes and elements is not important
+        diff.overrideElementQualifier(new RecursiveElementNameAndAttributeQualifier());
+        String message = key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml;
+        assertTrue(message, diff.similar());
+    }
+
+    protected String marshal(T object) throws IOException  {
         Writer writer = new StringWriter();
         marshaller.marshal(object, new StreamResult(writer));
         return writer.toString();
     }
 
-    private T unmarshal(String xml) throws IOException  {
+    protected T unmarshal(String xml) throws IOException  {
         // There's no guarantee that this cast is correct, but it's test code so let's not clutter the compiler output
         @SuppressWarnings("unchecked") T result = (T) unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
         return result;
