@@ -1,8 +1,5 @@
 package uk.ac.ebi.interpro.scan.io.match.domainfinder;
 
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmsearchOutputMethod;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 
 import java.io.File;
@@ -29,44 +26,51 @@ public class DomainFinderInputWriter {
     public DomainFinderInputWriter() {
 
             this.outputFile = new File("C:\\Manjula\\input_for_df3.txt");
-            this.outputFile.delete();  //to clear out contents written previously.
+            //this.outputFile.delete();  //to clear out contents written previously.
      
     }
 
     //public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
-    public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, DomainMatch dm) {
+    public void writeMatchToFile(Gene3dHmmer3RawMatch rawMatch, BufferedWriter bw) throws IOException {
+        //BufferedWriter bw = null;
+        if (rawMatch!=null) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(rawMatch.getSequenceIdentifier()).append("\t");
+            sb.append(rawMatch.getModel()).append("\t");
+            sb.append("1000\t"); //seqIdentifier length
+            sb.append("178"+ "\t" );  //model length
+            sb.append(rawMatch.getLocationStart()).append("\t");
+            sb.append(rawMatch.getLocationEnd()).append("\t");
+            sb.append(rawMatch.getHmmStart()).append("\t");
+            sb.append(rawMatch.getHmmEnd()).append("\t");
+            sb.append(rawMatch.getDomainIeValue()).append("\t");
+            sb.append(rawMatch.getScore()).append("\t");
+            sb.append(rawMatch.getScore()).append("\t");
+            String s = rawMatch.getCigarAlignment();
+            String[] segments = this.getSegmentAndBoundaries(s,rawMatch.getLocationStart()).split(",");
+            if (segments!=null && segments.length==2) {
+                sb.append(segments[0]).append("\t"); //number of segments
+                sb.append(segments[1]); // segment boundary
+            }
+
+            sb.append("\n");
+            //System.out.println(sb.toString());
+            bw.write(sb.toString());
+
+
+
+        }
+        
+    }
+    public void writeGene3dRawMatchToSsfFile(List<Gene3dHmmer3RawMatch> matches) {
         BufferedWriter bw = null;
-        if (method!=null) {
+        if (matches!=null) {
             try {
-                bw = new BufferedWriter(new FileWriter(outputFile, true));
-                //StringBuilder sb = null;
-                //SequenceMatch sm = method.getSequenceMatches().get(seqId);
-               // if (sm!=null) {
-                    //DomainMatch dm = sm.getDomainMatches().get((Integer.parseInt(domainNum))-1); //domain number subtracted with once since in a list first element is 0
-                    if (dm!=null) {
-                       StringBuilder sb = new StringBuilder();
-                        //sb.append(sm.getSequenceIdentifier()+"\t");
-                        sb.append(seqId+"\t");
-                        sb.append(method.getMethodAccession() +"\t1000\t");
-                        sb.append(method.getMethodAccessionLength()+ "\t" );
-                        sb.append(dm.getAliFrom()+"\t" );
-                        sb.append(dm.getAliTo() + "\t");
-                        sb.append(dm.getHmmfrom() + "\t");
-                        sb.append(dm.getHmmto() + "\t");
-                        sb.append(dm.getIEvalue()+ "\t");
-                        sb.append(dm.getScore() + "\t");
-                        sb.append(dm.getScore() + "\t");
-                        //sb.append(dm.getNumberOfSegments() +"\t");
-                        //sb.append(dm.getAliFrom() + ":");
-                        //sb.append(dm.getAliTo());
-                        //sb.append(dm.getSegmentBoundry());
-                        sb.append("\n");
-                        System.out.println(sb.toString());
-                        bw.write(sb.toString());
-                    }
-                //}
-
-
+              bw = new BufferedWriter(new FileWriter(outputFile));
+               for (Gene3dHmmer3RawMatch m : matches) {
+                      this.writeMatchToFile(m,bw);
+               }
             }catch(IOException ioe) {
                 System.out.println("File Writing error for Domain Finder" + ioe.getMessage() );
             } finally {
@@ -77,16 +81,65 @@ public class DomainFinderInputWriter {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                 }
-            }
-
         }
-
-
-        
-        
+        }
     }
-    public void writeGene3dRawMatchToSsfFile(List<Gene3dHmmer3RawMatch> matches) {
+
+    public String getSegmentAndBoundaries(String cigarAlignment, int aliFrom) {
+
+        int residueLength=aliFrom;
+        int startOfMatch=0,endOfMatch=0;
+        int segmentCounter=1;
+        int insertCounter=0;
+        int residueCounter;
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sb1 = new StringBuilder();
 
 
+
+        for (int i=0; i<cigarAlignment.length(); i++) {
+
+            char c = cigarAlignment.charAt(i);
+
+             if(Character.isUpperCase(c)) {
+                 residueCounter=Integer.parseInt(sb1.toString());
+                 sb1.append(c);
+                 //System.out.println(sb1.toString());
+                 sb1.setLength(0);
+                 residueLength+=residueCounter;
+                 //System.out.println("residue length ::: " + residueLength);
+                 switch(c) {
+                     case 'M':
+                          endOfMatch = residueLength;
+                          insertCounter=0;
+                          if(startOfMatch==0)
+                             startOfMatch =residueLength-residueCounter;  //to have a good start of match always
+                          break;
+
+                     case 'I':
+                           insertCounter+=residueCounter;  //this is to handle two insert segment followed by each other
+                           if (insertCounter >=30 && endOfMatch > startOfMatch ) {
+                               sb.append(startOfMatch).append(":").append(endOfMatch - 1).append(":");
+                               startOfMatch=residueLength;
+                               segmentCounter++;
+                           }
+                           break;
+
+                     case 'D':
+                         residueLength-=residueCounter;
+                         break;
+                 }
+             } else {
+                 sb1.append(c);
+             } //end of if
+
+        } //end of for
+        if( endOfMatch > startOfMatch )
+            sb.append(startOfMatch).append(":").append(endOfMatch - 1).append(":");  //not to missout any trailing segment
+
+        String s = segmentCounter + "," +  sb.toString().substring(0,sb.toString().length()-1);
+        //System.out.println("Given alignment String has " + segmentCounter + " segments!" );
+        //System.out.println("Segment boundaries " + sb.toString().substring(0,sb.toString().length()-1));
+        return s;
     }
 }

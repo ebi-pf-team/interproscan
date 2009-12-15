@@ -38,7 +38,7 @@ public class Hmmer3SearchMatchParserTest {
     // Gene3D
     @Resource private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
     @Resource private org.springframework.core.io.Resource gene3dFile;
-     DomainFinderInputWriter dfiw = new DomainFinderInputWriter();
+
 
     private String[] expectedAlignments=
             {
@@ -65,7 +65,8 @@ public class Hmmer3SearchMatchParserTest {
                     }
                 }
         );
-        
+         DomainFinderInputWriter dfiw = new DomainFinderInputWriter();
+        dfiw.writeGene3dRawMatchToSsfFile(rawMatches);
 
         Set<String> expected=new HashSet<String>(Arrays.asList(expectedAlignments));
         assertTrue("Expected alignments not found",expected.equals(found));
