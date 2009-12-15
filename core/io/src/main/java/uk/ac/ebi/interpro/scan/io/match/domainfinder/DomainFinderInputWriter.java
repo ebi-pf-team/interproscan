@@ -44,9 +44,9 @@ public class DomainFinderInputWriter {
             sb.append(rawMatch.getLocationEnd()).append("\t");
             sb.append(rawMatch.getHmmStart()).append("\t");
             sb.append(rawMatch.getHmmEnd()).append("\t");
-            sb.append(rawMatch.getDomainIeValue()).append("\t");
-            sb.append(rawMatch.getScore()).append("\t");
-            sb.append(rawMatch.getScore()).append("\t");
+            sb.append(Math.pow(10,rawMatch.getDomainIeValue())).append("\t");
+            sb.append(rawMatch.getLocationScore()).append("\t");
+            sb.append(rawMatch.getLocationScore()).append("\t");
             String s = rawMatch.getCigarAlignment();
             String[] segments = this.getSegmentAndBoundaries(s,rawMatch.getLocationStart()).split(",");
             if (segments!=null && segments.length==2) {
