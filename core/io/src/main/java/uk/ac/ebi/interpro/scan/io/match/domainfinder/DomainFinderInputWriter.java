@@ -1,13 +1,15 @@
-package uk.ac.ebi.interpro.scan.io.match.hmmer3;
+package uk.ac.ebi.interpro.scan.io.match.domainfinder;
 
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmsearchOutputMethod;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
+import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -54,10 +56,10 @@ public class DomainFinderInputWriter {
                         sb.append(dm.getIEvalue()+ "\t");
                         sb.append(dm.getScore() + "\t");
                         sb.append(dm.getScore() + "\t");
-                        sb.append(dm.getNumberOfSegments() +"\t");
+                        //sb.append(dm.getNumberOfSegments() +"\t");
                         //sb.append(dm.getAliFrom() + ":");
                         //sb.append(dm.getAliTo());
-                        sb.append(dm.getSegmentBoundry());
+                        //sb.append(dm.getSegmentBoundry());
                         sb.append("\n");
                         System.out.println(sb.toString());
                         bw.write(sb.toString());
@@ -82,5 +84,9 @@ public class DomainFinderInputWriter {
 
         
         
+    }
+    public void writeGene3dRawMatchToSsfFile(List<Gene3dHmmer3RawMatch> matches) {
+
+
     }
 }

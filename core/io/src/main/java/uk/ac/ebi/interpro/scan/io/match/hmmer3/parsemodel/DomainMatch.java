@@ -60,12 +60,6 @@ public class DomainMatch implements Serializable {
 
     private final double acc;
 
-    private int numberOfSegments;
-
-    private String segmentBoundry;
-
-
-
     private String alignment;
 
     public DomainMatch(Matcher domainLineMatcher) {
@@ -141,19 +135,5 @@ public class DomainMatch implements Serializable {
         this.alignment = alignment;
     }
 
-    public int getNumberOfSegments() {
-        return numberOfSegments;
-    }
-
-    public void setNumberOfSegments(int numberOfSegments) {
-        this.numberOfSegments = numberOfSegments;
-    }
-
-    public String getSegmentBoundry() {
-        return segmentBoundry;
-    }
-
-    public void setSegmentBoundry(String segmentBoundry) {
-        this.segmentBoundry = segmentBoundry;
-    }
+    
 }
