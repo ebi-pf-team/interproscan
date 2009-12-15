@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.*;
 
 import uk.ac.ebi.interpro.scan.io.ParseException;
+import uk.ac.ebi.interpro.scan.io.match.domainfinder.DomainFinderInputWriter;
 import uk.ac.ebi.interpro.scan.model.raw.*;
 
 /**
@@ -37,6 +38,7 @@ public class Hmmer3SearchMatchParserTest {
     // Gene3D
     @Resource private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
     @Resource private org.springframework.core.io.Resource gene3dFile;
+     DomainFinderInputWriter dfiw = new DomainFinderInputWriter();
 
     private String[] expectedAlignments=
             {
@@ -51,16 +53,19 @@ public class Hmmer3SearchMatchParserTest {
     @Test
     public void testGene3DParser() throws ParseException, IOException {
         final Set<String> found=new HashSet<String>();
+        final List<Gene3dHmmer3RawMatch> rawMatches = new ArrayList<Gene3dHmmer3RawMatch>();
 
 
         parse(gene3dParser, gene3dFile.getInputStream(),
                 new RawMatchListener<Gene3dHmmer3RawMatch>() {
                     public void afterDebug(Gene3dHmmer3RawMatch rawMatch) {
+                        rawMatches.add(rawMatch);
                         LOGGER.debug("\tcigar-alignment = "   + rawMatch.getCigarAlignment());
                         found.add(rawMatch.getSequenceIdentifier()+":"+rawMatch.getCigarAlignment());
                     }
                 }
         );
+        
 
         Set<String> expected=new HashSet<String>(Arrays.asList(expectedAlignments));
         assertTrue("Expected alignments not found",expected.equals(found));
