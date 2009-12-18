@@ -7,6 +7,8 @@ import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import java.util.Map;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * TODO: Description
@@ -41,6 +43,22 @@ public interface Hmmer3ParserSupport<T extends RawMatch> extends Serializable {
      */
 
     boolean parseAlignments();
+
+    /**
+     * Based upon a match to the Pattern retrieved by the getModelIdentLinePattern method,
+     * returns the ID / accession of the method.
+     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @return the ID or accession of the method.
+     */
+    String getMethodIdentification(Matcher modelIdentLinePatternMatcher);
+
+    /**
+     * Returns the model accession length, or null if this value is not available.
+     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @return the model accession length, or null if this value is not available.
+     */
+    Integer getMethodAccessionLength(Matcher modelIdentLinePatternMatcher);
+
     /**
      * To be flexible with different hmmer3 search output file, this method gets either accession or query
      *  accordingly
@@ -66,4 +84,11 @@ public interface Hmmer3ParserSupport<T extends RawMatch> extends Serializable {
 
 
     HmmKey getHmmKey();
+
+    /**
+     * As the regular expressions required to parse the 'ID' or 'Accession' lines appear
+     * to differ from one member database to another, factored out here.
+     * @return a Pattern object to parse the ID / accession line.
+     */
+    Pattern getModelIdentLinePattern();
 }
