@@ -3,10 +3,12 @@ package uk.ac.ebi.interpro.scan.management.model;
 import org.apache.log4j.Logger;
 
 import javax.swing.event.EventListenerList;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
+import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 
 /**
  * Abstract class for executing a Step.
@@ -15,31 +17,49 @@ import uk.ac.ebi.interpro.scan.persistence.DAOManager;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
+@Entity
+@Table (name="step_execution")
+@Inheritance (strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn (discriminatorType = DiscriminatorType.STRING)
 public abstract class StepExecution<I extends StepInstance> implements Serializable {
 
     protected static final Logger LOGGER = Logger.getLogger(StepExecution.class);
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private String id;
 
+    @ManyToOne (targetEntity = StepInstance.class, cascade = {}, optional = false)
     protected I stepInstance;
 
+    @Column (nullable=false)
     private StepExecutionState state = StepExecutionState.NEW_STEP_EXECUTION;
 
+    @Column (nullable=true, name="time_created")
     private Date createdTime;
 
+    @Column (nullable=true, name="time_started_running")
     private Date startedRunningTime;
 
+    @Column (nullable=true, name="time_submitted")
     private Date submittedTime;
 
+    @Column (nullable=true, name="time_completed")
     private Date completedTime;
 
+    @Column (nullable=true, name="proportion_completed")
     private Double proportionCompleted;
 
-    protected StepExecution(UUID id, I stepInstance) {
+    protected StepExecution(I stepInstance) {
         this.stepInstance = stepInstance;
         this.stepInstance.addStepExecution(this);
-        this.id = id.toString();
         createdTime = new Date();
+    }
+
+    /**
+     * Don't use! Only here because required by JPA.
+     */
+    protected StepExecution() {
     }
 
     public void setStepInstance(I stepInstance) {
@@ -104,12 +124,13 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
      */
     public abstract void execute(DAOManager daoManager);
 
-    public void submit(){
+    public void submit(StepExecutionDAO stepExecutionDAO){
         if (state != StepExecutionState.NEW_STEP_EXECUTION){
             throw new IllegalStateException ("Attempting to submit a StepExecution to a queue, which is not in state 'NEW_STEP_EXECUTION'.");
         }
         state = StepExecutionState.STEP_EXECUTION_SUBMITTED;
         submittedTime = new Date();
+        stepExecutionDAO.update(this);
     }
 
     public void setToRun(){
@@ -153,7 +174,12 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        if (id != null){
+            return id.hashCode();
+        }
+        else {
+            return super.hashCode();
+        }
     }
 
     @Override

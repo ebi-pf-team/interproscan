@@ -1,8 +1,9 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
+
+import javax.persistence.*;
+import java.util.*;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
@@ -14,6 +15,10 @@ import java.text.DecimalFormat;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
+@Entity
+@Table (name="step_instance")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn (discriminatorType = DiscriminatorType.STRING)
 public abstract class StepInstance<S extends Step, E extends StepExecution> implements Serializable {
 
     private static final String PROTEIN_BOTTOM_HOLDER = "\\[PROTSTART\\]";
@@ -24,18 +29,39 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
 
     private static final String MODEL_TOP_HOLDER = "\\[MODEND\\]";
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private String id;
 
+    /**
+     * Relationship has to be re-created on loading.
+     * (The Step is defined in XML, not in the database.)
+     */
+    @Transient
     private S step;
 
+    /**
+     * For the purpose of persistance, this is the id of the Step that this
+     * StepInstance is associated with.  Note that the Step is not persisted,
+     * so this reference allows the Step / StepInstance / StepExecution structure
+     * to be recreated.
+     */
+    @Column (nullable = false, name="step_id")
+    private String stepId;
+
+    @Column(nullable=true, name = "bottom_protein")
     private Long bottomProtein;
 
+    @Column(nullable=true, name="top_protein")
     private Long topProtein;
 
+    @Column(nullable=true, name="bottom_model")
     private Long bottomModel;
 
+    @Column(nullable=true, name="top_model")
     private Long topModel;
 
+    @ManyToMany (fetch = FetchType.EAGER, cascade = {})
     private List<StepInstance> dependencies = new ArrayList<StepInstance>();
 
     /**
@@ -43,18 +69,24 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
      * Set to transient so they don't all get shoved over the
      * wire when submitting new StepExecutions to the messaging system.
      */
-    private transient List<E> executions = new ArrayList<E>();
+    @OneToMany (targetEntity = StepExecution.class, fetch = FetchType.EAGER, mappedBy = "stepInstance", cascade = {})
+    private Set<E> executions = new HashSet<E>();
 
-    public StepInstance(UUID id, S step) {
-        this.id = id.toString();
-        this.step = step;
+    public StepInstance(S step) {
+        this (step, null, null);
     }
 
-    public StepInstance(UUID id, S step, long bottomProteinId, long topProteinId) {
-        this.id = id.toString();
-        this.step = step;
+    public StepInstance(S step, Long bottomProteinId, Long topProteinId) {
+        this.step = step;            // This is not persisted.
+        this.stepId = step.getId();  // This is persisted.
         this.bottomProtein = bottomProteinId;
         this.topProtein = topProteinId;
+    }
+
+    /**
+     * Don't use this! Only here because required by JPA.
+     */
+    protected StepInstance() {
     }
 
     public void setBottomProtein(Long bottomProtein) {
@@ -167,7 +199,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
         return false;
     }
 
-    public List<E> getExecutions() {
+    public Set<E> getExecutions() {
         return executions;
     }
 
@@ -206,5 +238,12 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
         fileNameTemplate = fileNameTemplate.replaceAll(MODEL_BOTTOM_HOLDER, TWELVE_DIGIT_INTEGER.format(bottomModelId));
         fileNameTemplate = fileNameTemplate.replaceAll(MODEL_TOP_HOLDER, TWELVE_DIGIT_INTEGER.format(topModelId));
         return fileNameTemplate;
+    }
+
+    public void setStep(S step) {
+        if (! stepId.equals (step.getId())){
+            throw new IllegalArgumentException ("Unexpected Step being set on this StepInstance - ID is incorrect.");
+        }
+        this.step = step;
     }
 }
