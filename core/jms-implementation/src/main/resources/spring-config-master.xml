@@ -26,6 +26,8 @@
         <property name="loader" ref="loader"/>
         <property name="daoManager" ref="daoManager"/>
         <property name="pfamHMMfilePath" value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
     </bean>
 
     <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
@@ -35,7 +37,9 @@
         <property name="workerJobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
     </bean>
 
-    <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl"/>
+    <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl">
+        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+    </bean>
 
     <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile">
         <constructor-arg ref="testFastaFile"/>

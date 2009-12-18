@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.*;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStepExecution;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3StepInstance;
@@ -13,6 +14,8 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMME
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep;
+import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
+import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
@@ -46,8 +49,8 @@ public class InterProScanMaster implements Master {
 
     private List<Job> jobs;
 
-    private volatile Map<String, StepInstance> stepInstances = new HashMap<String, StepInstance>();
-
+//    private volatile Map<String, StepInstance> stepInstances = new HashMap<String, StepInstance>();
+//
     private volatile Map<String, StepExecution> stepExecutions = new HashMap<String, StepExecution>();
 
     private String managementRequestTopicName;
@@ -55,6 +58,12 @@ public class InterProScanMaster implements Master {
     private LoadFastaFile loader;
 
     private DAOManager daoManager;
+
+    private StepInstanceDAO stepInstanceDAO;
+
+    private StepExecutionDAO stepExecutionDAO;
+
+
 
     private String pfamHMMfilePath;
 
@@ -110,6 +119,16 @@ public class InterProScanMaster implements Master {
         this.responseMonitor = responseMonitor;
     }
 
+    @Required
+    public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
+        this.stepInstanceDAO = stepInstanceDAO;
+    }
+
+    @Required
+    public void setStepExecutionDAO(StepExecutionDAO stepExecutionDAO) {
+        this.stepExecutionDAO = stepExecutionDAO;
+    }
+
     public List<Job> getJobs() {
         return jobs;
     }
@@ -145,14 +164,17 @@ public class InterProScanMaster implements Master {
             buildStepInstancesTheStupidWay();
             System.out.println("Returned from building step instances method.");
             while(true){
-//                sendMessage(jobSubmissionQueueName, "Message number " + i);  // Send a message every second or so.
-                for (StepInstance stepInstance : stepInstances.values()){
-                    if (stepInstance.canBeSubmitted()){
-                        StepExecution stepExecution = stepInstance.createStepExecution();
-                        stepExecutions.put(stepExecution.getId(), stepExecution);
-                        // TODO - for the moment, just sending to the default job submission queue.
-                        System.out.println("Submitting "+ stepExecution.getStepInstance().getStep().getStepDescription());
-                        sendMessage(stepExecution);
+                for (Job job : jobs){
+                    for (Step step : job.getSteps()){
+                        LOGGER.debug("In InterProScanMaster.start().  About to retrieve step instances from the database.");
+                        for (StepInstance stepInstance : stepInstanceDAO.retrieveInstances(step)){
+                            if (stepInstance.canBeSubmitted()){
+                                StepExecution stepExecution = stepInstance.createStepExecution();
+                                stepExecutionDAO.insert(stepExecution);
+                                stepExecutions.put(stepExecution.getId(), stepExecution);
+                                sendMessage(stepExecution);
+                            }
+                        }
                     }
                 }
                 Thread.sleep(2000);
@@ -164,7 +186,11 @@ public class InterProScanMaster implements Master {
         } catch (InterruptedException e) {
             LOGGER.error ("InterruptedException", e);
             System.exit(1);
+        } catch (Exception e){
+            LOGGER.error ("Exception", e);
+            System.exit(1);
         }
+
         finally {
             if (sessionHandler != null){
                 try {
@@ -211,7 +237,7 @@ public class InterProScanMaster implements Master {
 
 
         final long sliceSize = 500l;
-
+        try{
         // Then retrieve the first 99.
         for (long bottomProteinId = 1; bottomProteinId <= 10000l; bottomProteinId += sliceSize){
             final long topProteinId = bottomProteinId + sliceSize;
@@ -223,17 +249,15 @@ public class InterProScanMaster implements Master {
             // Create the fastafilestep
             for (Step step : job.getSteps()){
                 if (step instanceof WriteFastaFileStep){
-                    List<Protein> proteins = daoManager.getProteinDAO().getProteinsBetweenIds(bottomProteinId, topProteinId);
+
 
                     System.out.println("Creating WriteFastaFileStepInstance for range "+ bottomProteinId + " - " + topProteinId);
                     fastaStepInstance = new WriteFastaFileStepInstance(
-                            UUID.randomUUID(),
                             (WriteFastaFileStep)step,
-                            proteins,
                             bottomProteinId,
                             topProteinId
                     );
-                    stepInstances.put(fastaStepInstance.getId(), fastaStepInstance);
+                    stepInstanceDAO.insert(fastaStepInstance);
                 }
             }
             // Create the RunHmmer3Step
@@ -241,13 +265,12 @@ public class InterProScanMaster implements Master {
                 if (step instanceof RunHmmer3Step){
                     System.out.println("Creating RunHmmer3StepInstance for range "+ bottomProteinId + " - " + topProteinId);
                     hmmer3StepInstance = new RunHmmer3StepInstance(
-                            UUID.randomUUID(),
                             (RunHmmer3Step)step,
                             bottomProteinId,
                             topProteinId
                     );
                     hmmer3StepInstance.addDependentStepInstance(fastaStepInstance);
-                    stepInstances.put(hmmer3StepInstance.getId(), hmmer3StepInstance);
+                    stepInstanceDAO.insert(hmmer3StepInstance);
                 }
             }
 
@@ -256,13 +279,12 @@ public class InterProScanMaster implements Master {
                 if (step instanceof ParseHMMER3OutputStep){
                     System.out.println("Creating ParseHMMER3OutputStepInstance for range "+ bottomProteinId + " - " + topProteinId);
                     hmmer3ParserStepInstance = new ParseHMMER3OutputStepInstance(
-                            UUID.randomUUID(),
                             (ParseHMMER3OutputStep)step,
                             bottomProteinId,
                             topProteinId
                     );
                     hmmer3ParserStepInstance.addDependentStepInstance(hmmer3StepInstance);
-                    stepInstances.put(hmmer3ParserStepInstance.getId(), hmmer3ParserStepInstance);
+                    stepInstanceDAO.insert(hmmer3ParserStepInstance);
                 }
             }
 
@@ -271,17 +293,21 @@ public class InterProScanMaster implements Master {
                 if (step instanceof Pfam_A_PostProcessingStep){
                     System.out.println("Creating Pfam_A_PostProcessingStepInstance for range "+ bottomProteinId + " - " + topProteinId);
                     ppStepInstance = new Pfam_A_PostProcessingStepInstance(
-                            UUID.randomUUID(),
                             (Pfam_A_PostProcessingStep)step,
                             bottomProteinId,
                             topProteinId
                     );
                     ppStepInstance.addDependentStepInstance(hmmer3ParserStepInstance);
-                    stepInstances.put(ppStepInstance.getId(), ppStepInstance);
+                    stepInstanceDAO.insert(ppStepInstance);
                 }
             }
         }
-        System.out.println("Built Collection of stepInstances");
+        }
+        catch (Exception e){
+            LOGGER.error("Exception thrown when attempting to create StepInstances.", e);
+            System.exit(1);
+        }
+        LOGGER.debug("Persisted stepInstances");
     }
 
     /**
@@ -290,18 +316,9 @@ public class InterProScanMaster implements Master {
      * @throws JMSException in the event of a failure sending the message to the JMS Broker.
      */
     private void sendMessage(StepExecution stepExecution) throws JMSException {
-        stepExecution.submit();
+        stepExecution.submit(stepExecutionDAO);
         ObjectMessage message = sessionHandler.createObjectMessage(stepExecution);
         message.setBooleanProperty("parallel", stepExecution.getStepInstance().getStep().isParallel());
-        if (message.getObject() == null){
-            System.out.println("message.getObject() is null.  Throwing IllegalStateException.");
-            throw new IllegalStateException ("The object message is empty:" + message.toString());
-        }
-        StepExecution retrievedStepExec = (StepExecution) message.getObject();
-        if (! retrievedStepExec.equals(stepExecution)){
-            System.out.println("message.getObject not equals stepExecution.  Throwing IllegalStateException.");
-            throw new IllegalStateException("The StepExecution object in the message is not equal to the StepExecution object placed into the message.");
-        }
         producer.send(message);
     }
 }

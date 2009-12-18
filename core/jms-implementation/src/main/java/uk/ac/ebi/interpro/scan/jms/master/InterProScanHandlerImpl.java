@@ -1,16 +1,14 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStepExecution;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 
 import javax.jms.Message;
 import javax.jms.TextMessage;
 import javax.jms.ObjectMessage;
 import javax.jms.JMSException;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Test implementation of a ResponseHandler.  Just spits out the response to System.out.
@@ -23,6 +21,14 @@ public class InterProScanHandlerImpl implements ResponseHandler{
 
 
     private volatile Map<String, StepExecution> stepExecutions;
+
+    private StepExecutionDAO stepExecutionDAO;
+
+    @Required
+    public void setStepExecutionDAO(StepExecutionDAO stepExecutionDAO) {
+        this.stepExecutionDAO = stepExecutionDAO;
+    }
+
     /**
      * Recieves a Message and does whatever is needed.
      *
@@ -40,12 +46,12 @@ public class InterProScanHandlerImpl implements ResponseHandler{
                 Object messageContents = objectMessage.getObject();
                 if (messageContents instanceof StepExecution){
                     StepExecution freshStepExecution = (StepExecution) messageContents;
-                    // Some StepExecution responses require further action
+                    // Some StepExecution responses may require further action
                     // (e.g. data persistence) before continuing, so deal with that here.
+                    // HOPEFULLY NOT THOUGH!
                     processStepExecution(freshStepExecution);
 
-                    StepExecution dirtyStepExecution = stepExecutions.get(freshStepExecution.getId());
-                    dirtyStepExecution.refresh(freshStepExecution);
+                    stepExecutionDAO.refreshStepExecution(freshStepExecution);
                 }
             }
             else {
