@@ -124,10 +124,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
      */
     @Transactional
     public void update(T modifiedInstance) {
-        if (! entityManager.contains(modifiedInstance)){
-            modifiedInstance = entityManager.merge(modifiedInstance);
-        }
-        entityManager.persist(modifiedInstance);
+        entityManager.merge(modifiedInstance);
     }
 
     /** Retrieve an object that was previously persisted to the database using
