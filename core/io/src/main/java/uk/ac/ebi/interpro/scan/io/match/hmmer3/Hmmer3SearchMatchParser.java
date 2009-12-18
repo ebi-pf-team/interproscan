@@ -78,12 +78,6 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
     private static final String END_OF_RECORD = "//";
 
     /**
-     * Group 1: Model accession.
-     */
-    //private static final Pattern MODEL_ACCESSION_LINE_PATTERN = Pattern.compile ("^[^:]*:\\s+(\\w+).*$" );
-    private static final Pattern MODEL_ACCESSION_LINE_PATTERN = Pattern.compile ("^[^:]*:\\s+(\\w+)\\s+\\[M=(\\d+)\\].*$" );
-
-    /**
      * DON'T GET RID OF THIS!  If HMMER3 is working properly, this is used to
      * correctly parse the file.  At the moment, beta 3 contains a bug, so the inclusion
      * threshold line is useless.  The code below has a line commented out which can
@@ -170,11 +164,10 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                             //if (line.startsWith(MODEL_ACCESSION_LINE)){
                             if(line.startsWith( hmmer3ParserSupport.getHmmKey().getPrefix())) {
                                 stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
-                                Matcher queryLineMatcher = MODEL_ACCESSION_LINE_PATTERN.matcher(line);
-                                if (queryLineMatcher.matches()){
-                                    //System.out.println(queryLineMatcher.group(1) + " ::: " + queryLineMatcher.group(2));
-                                    method = new HmmsearchOutputMethod(queryLineMatcher.group(1));
-                                    method.setMethodAccessionLength(Integer.parseInt(queryLineMatcher.group(2)));
+                                Matcher modelIdentLinePatternMatcher = hmmer3ParserSupport.getModelIdentLinePattern().matcher(line);
+                                if (modelIdentLinePatternMatcher.matches()){
+                                    method = new HmmsearchOutputMethod(hmmer3ParserSupport.getMethodIdentification(modelIdentLinePatternMatcher));
+                                    method.setMethodAccessionLength(hmmer3ParserSupport.getMethodAccessionLength(modelIdentLinePatternMatcher));
                                 }
                                 else {
                                     throw new ParseException("Found a line starting with " + hmmer3ParserSupport.getHmmKey().getPrefix() + " but cannot parse it with the MODEL_ACCESSION_LINE regex.",null, line, lineNumber);
@@ -253,10 +246,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                     } else {
                                         throw new ParseException("Unable to parse alignment", null, line, lineNumber);
                                     }
-
-                                  
                                 }
-
                             }
 
                             break;
@@ -279,10 +269,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                             }
                             break;
 
-
                     }
-
-
                 }
             }
             if (method != null){
@@ -297,6 +284,4 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         }
         return new HashSet<RawProtein<T>> (rawResults.values());
     }
-
-   
 }

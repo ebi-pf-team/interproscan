@@ -10,6 +10,8 @@ import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 
 import java.util.Map;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -47,6 +49,42 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
     @Required
     public void setGaValuesRetriever(GaValuesRetriever gaValuesRetriever) {
         this.gaValuesRetriever = gaValuesRetriever;
+    }
+
+    /**
+     * Based upon a match to the Pattern retrieved by the getModelIdentLinePattern method,
+     * returns the ID / accession of the method.
+     *
+     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @return the ID or accession of the method.
+     */
+    @Override
+    public String getMethodIdentification(Matcher modelIdentLinePatternMatcher) {
+        return modelIdentLinePatternMatcher.group(1);
+    }
+
+    /**
+     * Returns the model accession length, or null if this value is not available.
+     *
+     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @return the model accession length, or null if this value is not available.
+     */
+    @Override
+    public Integer getMethodAccessionLength(Matcher modelIdentLinePatternMatcher) {
+        return null;
+    }
+
+    private static final Pattern MODEL_ACCESSION_LINE_PATTERN = Pattern.compile ("^[^:]*:\\s+(\\w+).*$" );
+
+    /**
+     * As the regular expressions required to parse the 'ID' or 'Accession' lines appear
+     * to differ from one member database to another, factored out here.
+     *
+     * @return a Pattern object to parse the ID / accession line.
+     */
+    @Override
+    public Pattern getModelIdentLinePattern() {
+        return MODEL_ACCESSION_LINE_PATTERN;
     }
 
     public void addMatch(HmmsearchOutputMethod methodMatches, Map<String, RawProtein<PfamHmmer3RawMatch>> rawResults) throws IOException {
