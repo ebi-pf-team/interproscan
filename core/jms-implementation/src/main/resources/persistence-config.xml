@@ -71,4 +71,8 @@
 
     <bean id="pfamFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
 
+    <bean id="stepInstanceDAO" class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl" />
+
+    <bean id="stepExecutionDAO" class="uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAOImpl" />
+
 </beans>

@@ -31,13 +31,13 @@
     <!-- STEP 1 -->
     <bean id="step_pfam_A_write_fasta_file"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep">
         <property name="job"                                ref="job_pfam_A"/>
-        <!-- This step has no depdencies, so will be scheduled first for its associated job. -->
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"                    value="Create fasta file."/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
         <property name="id"                                 value="step_pfam_A_write_fasta_file"/>
         <property name="retries"                            value="0"/>
         <property name="fastaFilePathTemplate"              value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
-        <property name="parallel"                           value="true"/>
+        <property name="parallel"                           value="false"/>
     </bean>
 
     <!-- STEP 2 -->
