@@ -1,10 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.model.Model;
-import uk.ac.ebi.interpro.scan.model.transactiontracking.RawTransactionSlice;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
-
-import java.util.List;
+import uk.ac.ebi.interpro.scan.model.Model;
 
 /**
  * Developed using IntelliJ IDEA.
