@@ -16,22 +16,21 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
-import static junit.framework.TestCase.*;
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Xref;
-import uk.ac.ebi.interpro.scan.model.transactiontracking.RawTransactionSlice;
-import uk.ac.ebi.interpro.scan.model.transactiontracking.TransactionSlice;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
+
+import static junit.framework.TestCase.*;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -207,8 +206,6 @@ public class ProteinDAOTest {
             }
         }
         assertEquals("The difference between the highest and lowest primary key values is not as expected.", (proteinSequences.length - 1), maxPrimaryKey - minPrimaryKey);
-        // Build a TransactionSlice including the protein ID range of the proteins just entered.
-        // Now try to retrieve the proteins
         List<Protein> retrievedProteins = dao.getProteinsBetweenIds(minPrimaryKey, maxPrimaryKey);
         assertEquals("The wrong number of proteins were returned from the database.", proteinSequences.length, retrievedProteins.size());
 
