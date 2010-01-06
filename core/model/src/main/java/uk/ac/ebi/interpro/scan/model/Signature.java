@@ -19,6 +19,8 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -40,6 +42,9 @@ import java.util.*;
 @XmlType(name="SignatureType")
 public class Signature implements Serializable {
 
+    @Transient
+    private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
+
     // TODO: IMPACT XML: Handle Pfam Clans, FingerPrints Hierachiesm SMART thresholds ...etc [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
 
     // TODO: Add xrefs (inc. GO terms) and InterPro entry [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
@@ -58,13 +63,25 @@ public class Signature implements Serializable {
     @Column (name="name")
     private String name;
 
-    @Column (name="description", length = 4000)
+    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @JoinTable (name="signature_description_chunk")
+    @IndexColumn(name="chunk_index")
+    @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    private List<String> descriptionChunks;
+
+    @Transient
     private String description;
 
     @Column (name="type")
     private String type;
 
-    @Column (name="abstract_text", length = 20000)
+    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @JoinTable (name="signature_abstract_chunk")
+    @IndexColumn(name="chunk_index")
+    @Column (name="abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    private List<String> abstractChunks;
+
+    @Transient
     private String abstractText;
 
     @ManyToOne // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
@@ -209,11 +226,15 @@ public class Signature implements Serializable {
      */
     @XmlAttribute(name="desc")
     public String getDescription() {
+        if (description == null){
+            description = CHUNKER.concatenate(descriptionChunks);
+        }
         return description;
     }
 
     private void setDescription(String description) {
         this.description = description;
+        descriptionChunks = CHUNKER.chunkIntoList(description);
     }
 
     /**
@@ -240,11 +261,15 @@ public class Signature implements Serializable {
      */
     @XmlElement(name="abstract")
     public String getAbstract() {
+        if (abstractText == null){
+            abstractText = CHUNKER.concatenate(abstractChunks);
+        }
         return abstractText;
     }
 
     private void setAbstract(String text) {
         this.abstractText = text;
+        abstractChunks = CHUNKER.chunkIntoList(abstractText);
     }
 
     @XmlTransient
@@ -355,8 +380,8 @@ public class Signature implements Serializable {
                 .append(accession, s.accession)
                 .append(name, s.name)
                 .append(type, s.type)
-                .append(description, s.description)
-                .append(abstractText, s.abstractText)
+                .append(getDescription(), s.getDescription())
+                .append(getAbstract(), s.getAbstract())
                 .append(signatureLibraryRelease, s.signatureLibraryRelease)
                 .append(models, s.models)
                 .isEquals();
@@ -367,13 +392,18 @@ public class Signature implements Serializable {
                 .append(accession)
                 .append(name)
                 .append(type)
-                .append(description)
-                .append(abstractText)
+                .append(getDescription())
+                .append(getAbstract())
                 .append(signatureLibraryRelease)
                 .append(models)
                 .toHashCode();
     }
 
+    /**
+     * TODO - this will not work, giving a null value for description
+     * or the abstract if the instance is retrieved from the database.
+     * @return String representation of this object.
+     */
     @Override public String toString()  {
         return ToStringBuilder.reflectionToString(this);
     }

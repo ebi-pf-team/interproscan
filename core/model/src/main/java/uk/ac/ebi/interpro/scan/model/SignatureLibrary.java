@@ -19,6 +19,8 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Signature library, for example Pfam or PRINTS.
@@ -38,6 +41,9 @@ import java.io.Serializable;
 @Table(name="signature_library")
 @XmlType(name="SignatureLibraryType")
 public class SignatureLibrary implements Serializable {
+
+    @Transient
+    private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
 
     // select upper(dbshort)||'("'||dbcode||'", "'||dbshort||'", "'||dbname||'"),'
     // from interpro.cv_database order by dbshort;
@@ -52,7 +58,13 @@ public class SignatureLibrary implements Serializable {
     @Column(name="name", length=255)
     private String name;
 
-    @Column(name="description", length=4000)
+    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @JoinTable (name="sig_lib_description_chunk")
+    @IndexColumn(name="chunk_index")
+    @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    private List<String> descriptionChunks;
+
+    @Transient
     private String description;
     
 
@@ -82,11 +94,15 @@ public class SignatureLibrary implements Serializable {
 
     @XmlAttribute
     public String getDescription() {
+        if (description == null){
+            description = CHUNKER.concatenate(descriptionChunks);
+        }
         return description;
     }
 
     private void setDescription(String description) {
         this.description = description;
+        descriptionChunks = CHUNKER.chunkIntoList(description);
     }
 
     /**
@@ -112,17 +128,22 @@ public class SignatureLibrary implements Serializable {
         final SignatureLibrary s = (SignatureLibrary) o;
         return new EqualsBuilder()
                 .append(name, s.name)
-                .append(description, s.description)
+                .append(getDescription(), s.getDescription())
                 .isEquals();
     }
 
     @Override public int hashCode() {
         return new HashCodeBuilder(19, 43)
                 .append(name)
-                .append(description)
+                .append(getDescription())
                 .toHashCode();
     }
 
+    /**
+     * TODO might will not work for the chunked description.
+     * Needs to use the getter method instead.
+     * @return String representation of this.
+     */
     @Override public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
