@@ -19,6 +19,8 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -26,10 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.io.Serializable;
 
@@ -47,19 +46,29 @@ import java.io.Serializable;
 @XmlType(name="ProteinType", propOrder={"sequence", "crossReferences", "matches"})
 public class Protein implements Serializable {
 
+    @Transient
+    private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
+
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
     // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>
 
+    @Transient
     private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-Z]+$");
+
+    @Transient
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
+
+    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @JoinTable (name="protein_sequence_chunk")
+    @IndexColumn(name="chunk_index")
+    @Column (name="sequence_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    private List<String> sequenceChunks;
     
-    // TODO Consider whether this needs to be based upon CHUNKING as used in PRIDE, so a long protein sequence is stored
-    // TODO in indexed VARCHAR columns, rather than using CLOBs that give very poor performance.
-    @Column(name="protein_sequence", length = 1000000, updatable = false, nullable = false)     // Length based upon current longest protein in UniParc: 37777 residues.
+    @Transient
     private String sequence;
 
     @Column(nullable = false, unique = true, updatable = false, length = 32)
@@ -165,6 +174,9 @@ public class Protein implements Serializable {
 
     @XmlElement
     public String getSequence() {
+        if (sequence == null){
+            sequence = CHUNKER.concatenate(sequenceChunks);
+        }
         return sequence;
     }
 
@@ -182,6 +194,7 @@ public class Protein implements Serializable {
             throw new IllegalArgumentException("'sequence' is not an amino acid sequence [" + sequence + "]");
         }
         this.sequence = sequence;
+        this.sequenceChunks = CHUNKER.chunkIntoList(sequence);
     }
 
     /**

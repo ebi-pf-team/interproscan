@@ -19,12 +19,16 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Model, for example SuperFamily 0035188 (part of signature SSF53098)
@@ -38,6 +42,9 @@ import java.io.Serializable;
 @XmlType(name="ModelType")
 public class Model implements Serializable {
 
+    @Transient
+    private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
+
     /**
      * id as unique identifier of the Model record (e.g. for JPA persistence)
      */
@@ -50,12 +57,35 @@ public class Model implements Serializable {
 
     @Column(length = 100)
     private String name;
-    
-    @Column(length = 50000)
+
+    @CollectionOfElements (fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @JoinTable (name="model_description_chunk")
+    @IndexColumn (name="chunk_index")
+    @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    private List<String> descriptionChunks;
+
+    @Transient
     private String description;
 
     @ManyToOne (optional = true)
     private Signature signature;
+
+    /**
+     * TODO - Mucking about with Hibernate specific annotation - mapping
+     * the pieces of the definition to a CollectionOfElements.
+     *
+     * This field holds the contents of the model file for this particular Model.  The
+     * length of this is indeterminate, so stored in a LOB field.
+     */
+//    @Column (nullable = true, length=100000)
+    @CollectionOfElements (fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @JoinTable (name="model_definition_chunk")
+    @IndexColumn (name="chunk_index")
+    @Column (name="definition_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    private List<String> definitionChunks;
+
+    @Transient
+    private String definition;
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -142,6 +172,19 @@ public class Model implements Serializable {
         this.name = name;
     }
 
+    @XmlTransient
+    public String getDefinition() {
+        if (definition == null){
+            definition = CHUNKER.concatenate(definitionChunks);
+        }
+        return definition;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
+        definitionChunks = CHUNKER.chunkIntoList(definition);
+    }
+
     /**
      * Returns model description, for example "7 transmembrane receptor (rhodopsin family)".
      *
@@ -149,11 +192,15 @@ public class Model implements Serializable {
      */
     @XmlAttribute(name="desc")
     public String getDescription() {
+        if (description == null){
+            description = CHUNKER.concatenate(descriptionChunks);
+        }
         return description;
     }
 
     private void setDescription(String description) {
         this.description = description;
+        descriptionChunks = CHUNKER.chunkIntoList(description);
     }
 
     @XmlTransient
@@ -171,7 +218,7 @@ public class Model implements Serializable {
      *
      * @return Key to use in, for example, HashMap.
      */
-    @Transient    
+    @Transient
     @XmlTransient
     public String getKey() {
         // TODO: Use name, accession or MD5 as model key?
@@ -187,7 +234,7 @@ public class Model implements Serializable {
         return new EqualsBuilder()
                 .append(accession, m.accession)
                 .append(name, m.name)
-                .append(description, m.description)
+                .append(getDescription(), m.getDescription())
                 .isEquals();
     }
 
@@ -195,7 +242,7 @@ public class Model implements Serializable {
         return new HashCodeBuilder(19, 41)
                 .append(accession)
                 .append(name)
-                .append(description)                
+                .append(getDescription())
                 .toHashCode();
     }
 
@@ -203,7 +250,7 @@ public class Model implements Serializable {
         return new ToStringBuilder(this)
                 .append("accession", accession)
                 .append("name", name)
-                .append("description", description)
+                .append("description", getDescription())
                 .append("signature-ac", (signature == null ? null : signature.getAccession()))
                 .toString();
     }
