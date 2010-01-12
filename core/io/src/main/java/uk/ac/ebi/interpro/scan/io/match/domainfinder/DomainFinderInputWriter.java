@@ -21,13 +21,17 @@ import java.util.List;
  */
 public class DomainFinderInputWriter {
 
-    private File outputFile = null;
+    private final File outputFile;
 
     public DomainFinderInputWriter() {
 
             this.outputFile = new File("C:\\Manjula\\input_for_df3.txt");
             //this.outputFile.delete();  //to clear out contents written previously.
      
+    }
+
+    public DomainFinderInputWriter(File file) {
+        this.outputFile = file;
     }
 
     //public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
