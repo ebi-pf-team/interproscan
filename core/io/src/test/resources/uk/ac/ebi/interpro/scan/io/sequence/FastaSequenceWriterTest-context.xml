@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <bean id="writer" class="uk.ac.ebi.interpro.scan.io.sequence.FastaSequenceWriter">
+        <!-- ID is nullable -->
+        <constructor-arg type="boolean" value="true"/>
+        <!-- width          -->
+        <constructor-arg type="int" value="60"/>
+        <!-- Add xrefs      -->
+        <constructor-arg type="boolean" value="true"/>
+    </bean>
+
+    <bean id="defaultWriter" class="uk.ac.ebi.interpro.scan.io.sequence.FastaSequenceWriter"/>
+
+    <bean id="file" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg value="target/test.fasta"/>
+    </bean>
+
+    <bean id="defaultFile" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg value="target/default.fasta"/>
+    </bean>
+
+    <bean id="dummyFile" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg value="target/dummy.fasta"/>
+    </bean>
+
+    <bean id="badPath" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg value="bad/bad.fasta"/>
+    </bean>
+
+</beans>
