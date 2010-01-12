@@ -12,10 +12,12 @@ import org.junit.Ignore;
 import javax.annotation.Resource;
 import java.io.InputStream;
 import java.io.IOException;
+//import java.io.File;
 import java.util.*;
 
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.domainfinder.DomainFinderInputWriter;
+import uk.ac.ebi.interpro.scan.io.match.domainfinder.DomainFinderOutputParser;
 import uk.ac.ebi.interpro.scan.model.raw.*;
 
 /**
@@ -38,6 +40,7 @@ public class Hmmer3SearchMatchParserTest {
     // Gene3D
     @Resource private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
     @Resource private org.springframework.core.io.Resource gene3dFile;
+    @Resource private org.springframework.core.io.Resource domainFinderOutputFile;
 
 
     private String[] expectedAlignments=
@@ -67,6 +70,8 @@ public class Hmmer3SearchMatchParserTest {
         );
          DomainFinderInputWriter dfiw = new DomainFinderInputWriter();
         dfiw.writeGene3dRawMatchToSsfFile(rawMatches);
+        DomainFinderOutputParser dmop = new DomainFinderOutputParser(domainFinderOutputFile.getFile());
+        
 
         Set<String> expected=new HashSet<String>(Arrays.asList(expectedAlignments));
         assertTrue("Expected alignments not found",expected.equals(found));
