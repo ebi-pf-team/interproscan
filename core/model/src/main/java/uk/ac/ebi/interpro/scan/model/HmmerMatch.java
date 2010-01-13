@@ -62,6 +62,8 @@ public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
      * @param signature being the Signature to Match to.
      * @param rawMatch being the RawMatch representation of the Match.
      */
+    // TODO: Should be other way around: add (static factory?) method to PfamHmmer3RawMatch to create HmmerMatch
+    // TODO: Otherwise need to add constructors here for every type of Hmmer3RawMatch
     public HmmerMatch(Signature signature, PfamHmmer3RawMatch rawMatch){
         super(signature, Collections.singleton(new HmmerMatch.HmmerLocation(rawMatch)));
         setScore(rawMatch.getScore());
@@ -151,6 +153,7 @@ public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
         /**
          * Constructor that builds a HmmerMatch object from a
          * PfamHmmer3RawMatch object.
+         *
          * @param pfamRawMatchObject being the Raw representation of the Match.
          */
         public HmmerLocation(PfamHmmer3RawMatch pfamRawMatchObject){
@@ -210,7 +213,11 @@ public class HmmerMatch extends Match<HmmerMatch.HmmerLocation> {
             this.score = score;
         }
 
-        /** HMMER output notation for model match */
+        /**
+         * HMMER output notation for model match
+         *
+         * @author  Antony Quinn
+         */
         public static enum HmmBounds {
 
             COMPLETE("[]", "Complete"),

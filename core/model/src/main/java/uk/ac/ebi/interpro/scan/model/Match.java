@@ -158,6 +158,8 @@ public abstract class Match<T extends Location> implements Serializable {
     // TODO: Now we're using abstract classes instead of interfaces, can we get rid of the following?
     /**
      *  Ensure sub-classes of Match are represented correctly in XML.
+     *
+     * @author  Antony Quinn
      */
     @XmlTransient
     static final class MatchAdapter extends XmlAdapter<MatchesType, Set<Match>> {

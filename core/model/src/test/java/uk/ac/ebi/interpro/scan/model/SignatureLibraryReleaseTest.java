@@ -23,9 +23,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
 import org.xml.sax.SAXException;
 
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.io.Writer;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
 
 /**
  * Test cases for {@link SignatureLibraryRelease}
@@ -70,5 +81,33 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
 //    @Test public void testJpa() {
 //        super.testJpaXmlObjects();
 //    }
+
+    public static void main(String[] args) throws IOException {
+        //http://www.bioinf.manchester.ac.uk/dbbrowser/xmlprints/PR00460.xml
+        if (args.length < 1)    {
+            System.err.println("Usage: SignatureLibraryReleaseTest <signatures-xml-file>");
+        }
+        String signaturesFile = args[0];
+        org.springframework.core.io.Resource resource;
+        if (signaturesFile.startsWith("http"))  {
+            resource = new UrlResource(signaturesFile);
+        }
+        else    {
+            resource = new FileSystemResource(signaturesFile);
+        }
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("uk/ac/ebi/interpro/scan/model/oxm-context.xml");
+        // Unmarshall
+        Unmarshaller unmarshaller = (Unmarshaller)ctx.getBean("unmarshaller");
+        SignatureLibraryRelease slr = 
+                (SignatureLibraryRelease) unmarshaller.unmarshal(new StreamSource(resource.getInputStream()));
+        // Marshall
+        // Marshaller marshaller     = (Marshaller)ctx.getBean("marshaller");
+        //Writer writer = new StringWriter();
+        //marshaller.marshal(slr, new StreamResult(writer));
+        // Print
+        System.out.println("Received:");
+        System.out.println(slr.toString());
+        //System.out.println(writer.toString());
+    }
 
 }

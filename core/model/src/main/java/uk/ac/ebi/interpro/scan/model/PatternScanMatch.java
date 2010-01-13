@@ -87,6 +87,8 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
         /**
          * ProSite cut-off level
          * (see <a href="http://www.expasy.ch/prosite/prosuser.html#convent37">PROSITE User Manual</a>)
+         *
+         * @author Antony Quinn
          */
         public static enum Level {
 

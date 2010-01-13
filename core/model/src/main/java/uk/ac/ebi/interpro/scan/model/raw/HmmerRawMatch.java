@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 /**
- * TODO: Add class description
+ * <a href="http://hmmer.janelia.org/">HMMER</a> raw match.
  *
  * @author  Antony Quinn
  * @author  Manjula Primma

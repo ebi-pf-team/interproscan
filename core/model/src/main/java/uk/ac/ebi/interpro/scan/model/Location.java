@@ -136,6 +136,8 @@ public abstract class Location implements Serializable {
 
     /**
      *  Ensure sub-classes of AbstractLocation are represented correctly in XML.
+     *
+     * @author  Antony Quinn
      */
     @XmlTransient
     static final class LocationAdapter extends XmlAdapter<LocationsType, Set<? extends Location>> {
