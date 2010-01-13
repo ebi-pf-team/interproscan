@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.Source;
 import javax.annotation.Resource;
 import java.io.*;
 import java.util.Map;
@@ -150,8 +151,12 @@ abstract class AbstractTest<T> {
     }
 
     protected T unmarshal(String xml) throws IOException  {
+        return unmarshal(new StreamSource(new StringReader(xml)));
+    }
+
+    protected T unmarshal(Source source) throws IOException  {
         // There's no guarantee that this cast is correct, but it's test code so let's not clutter the compiler output
-        @SuppressWarnings("unchecked") T result = (T) unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
+        @SuppressWarnings("unchecked") T result = (T) unmarshaller.unmarshal(source);
         return result;
     }
 

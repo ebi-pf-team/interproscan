@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 /**
- * TODO: Add class description
+ * <a href="http://www.bioinf.manchester.ac.uk/dbbrowser/PRINTS/">PRINTS</a> raw match.
  *
  * @author  Antony Quinn
  * @version $Id$

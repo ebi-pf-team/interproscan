@@ -104,6 +104,8 @@ public class Model implements Serializable {
 
     /**
      * Builder pattern (see Josh Bloch "Effective Java" 2nd edition)
+     *
+     * @author  Antony Quinn
      */
     @XmlTransient
     public static class Builder {

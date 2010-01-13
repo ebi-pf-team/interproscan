@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * TODO: Add class description
+ * <a href="http://www.expasy.ch/sprot/hamap/">HAMAP</a> raw match.
  *
  * @author  Antony Quinn
  * @version $Id$

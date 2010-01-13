@@ -8,60 +8,34 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * TODO: Add class description
- * TODO: Design for "abstract" (Bloch)
- * raw.* classes will be used in batch processing, so we may or may not use Hibernate
- * model.* will be mainly used in CRUD operations, so Hibernate is OK
+ * Represents "raw matches": the output from command line applications such as HMMER or pfscan
+ * before post-processing.
  *
  * @author  Antony Quinn
  * @version $Id$
  */
-//@IdClass(uk.ac.ebi.interpro.scan.model.raw.RawMatchKey.class)
 @Entity
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-//@DiscriminatorColumn(name="METHOD_AC",discriminatorType=DiscriminatorType.STRING)
 public abstract class RawMatch implements Serializable {
 
-    //Primary key representation for RawMatch
-    /*@ManyToOne
-    @JoinColumns({
-        @JoinColumn(name="sequenceIdentifier",
-            referencedColumnName="UPI"),
-        @JoinColumn(name="model",
-            referencedColumnName="METHOD_AC"),
-         @JoinColumn(name="signatureLibraryRelease",
-            referencedColumnName="RELNO_MAJOR"),
-            @JoinColumn(name="locationStart",
-            referencedColumnName="SEQ_START"),
-            @JoinColumn(name="generator",
-            referencedColumnName="ALGORITHM")
-    }) */
-    
+    // TODO: Design for "abstract" (Bloch)
     // TODO: Don't need any foreign keys -- just index fields we will search on
+    
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
-//    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String sequenceIdentifier;  // eg. MD5
     
-    //@Column(name="METHOD_AC",nullable = false, unique = true, updatable = false, length = 50)
     private String model;   // eg. "PF00001"
 
-   //@Column(name="MEMBER_DBNAME")
-   private String signatureLibraryName; //for ex: PFAM, or GENE3D
+    private String signatureLibraryName; //for ex: PFAM, or GENE3D
 
-    // TODO: Get signatureLibraryRelease from Spring Batch JobParameter?
-    //@Column (name="DBVERSION",nullable = false, updatable = false, length = 10)
     private String signatureLibraryRelease;// eg. "23.0"
 
-    //@Column (name="ALGORITHM")
     private String generator;  // eg. "HMMER 2.3.1"
 
-    //@Column (name="SEQ_START")
     private int locationStart;
 
-   // @Column (name="SEQ_END")
     private int locationEnd;
 
     protected RawMatch() { }

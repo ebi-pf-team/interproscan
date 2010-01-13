@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import javax.persistence.Entity;
 
 /**
- * TODO: Add class description
+ * <a href="http://hmmer.janelia.org/">HMMER 3</a> raw match.
  *
  * @author  Antony Quinn
  * @version $Id$

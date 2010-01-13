@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * TODO: Add class description
+ * <a href="http://pfam.sanger.ac.uk/">Pfam</a> raw match.
  *
  * @author  Antony Quinn
  * @version $Id$

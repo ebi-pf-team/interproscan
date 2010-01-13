@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * TODO: Add class description
+ * <a href="http://prodom.prabi.fr/">ProDom</a> raw match.
  *
  * @author  Antony Quinn
  * @version $Id$

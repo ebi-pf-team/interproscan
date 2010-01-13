@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 /**
- * TODO: Add class description
+ * <a href="http://myhits.isb-sib.ch/cgi-bin/motif_scan">ProfileScan</a> raw match.
  *
  * @author  Antony Quinn
  * @version $Id$

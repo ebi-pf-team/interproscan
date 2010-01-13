@@ -8,10 +8,12 @@ import java.util.regex.Pattern;
  * {@inheritDoc}
  *
  * <p>This implementation encodes alignments using the
- * <a href="http://may2005.archive.ensembl.org/Docs/wiki/html/EnsemblDocs/CigarFormat.html">CIGAR format</a>
+ * <a href="http://www.ensembl.org/Help/Results?_referer=;result=glossary_13">CIGAR format</a>, a simple
+ * type of data compression based on
+ * <a href="http://en.wikipedia.org/wiki/Run-length_encoding">run-length encoding</a>.
  *
  * <p>CIGAR alignments can be found at SIB's ProSite DAS server, for example:
- * <a href="http://proserver.vital-it.ch/das/prositealign/alignment?query=PS50808">PS50808</a>
+ * <a href="http://proserver.vital-it.ch/das/prositealign/alignment?query=PS50808">PS50808</a>.
  *
  * @author  Antony Quinn
  * @version $Id$
@@ -73,6 +75,8 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
 
     /**
      * Provides information about the CIGAR-formatted alignment
+     *
+     * @author  Antony Quinn
      */
     public final static class Parser implements AlignmentEncoder.Parser {
 

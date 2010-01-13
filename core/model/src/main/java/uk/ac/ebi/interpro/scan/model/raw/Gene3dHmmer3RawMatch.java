@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 /**
- * TODO: Add class description
+ * <a href="http://gene3d.biochem.ucl.ac.uk/Gene3D/">Gene3D</a> raw match.
  *
  * @author  Antony Quinn
  * @version $Id$

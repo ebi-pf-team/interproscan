@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 /**
- * TODO: Add class description
+ * <a href="http://www.expasy.ch/prosite/">PROSITE</a> Pattern raw match.
  *
  * @author  Antony Quinn
  * @version $Id$
