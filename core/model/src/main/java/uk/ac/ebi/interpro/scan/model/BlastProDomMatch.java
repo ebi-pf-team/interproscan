@@ -36,7 +36,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name="blast_prodom_match")
-@XmlType(name="BlastProDomMatchType", propOrder={"signature", "locations"})
+@XmlType(name="BlastProDomMatchType")
 public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation> {
 
     protected BlastProDomMatch() {}

@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
 
 /**
  * <a href="http://hmmer.janelia.org/">HMMER</a> raw match.
@@ -12,8 +11,7 @@ import javax.persistence.MappedSuperclass;
  * @version $Id$
  */
 @Entity
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class HmmerRawMatch extends RawMatch  {
+abstract class HmmerRawMatch extends RawMatch  {
 
     // TODO: evalue and score can be calculated -- do we need to store? Needs testing
     @Column(name="EVALUE",nullable = false, updatable = false)

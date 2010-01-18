@@ -23,6 +23,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
@@ -39,7 +40,7 @@ import java.util.*;
 
 @Entity
 @Inheritance (strategy=InheritanceType.TABLE_PER_CLASS)
-@XmlTransient
+@XmlType(name="MatchType", propOrder={"signature", "locations"})
 public abstract class Match<T extends Location> implements Serializable {
 
     // TODO: IMPACT XML: Add evidence, e.g. "HMMER 2.3.2 (Oct 2003)" [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
@@ -166,14 +167,18 @@ public abstract class Match<T extends Location> implements Serializable {
 
         /** Map Java to XML type */
         @Override public MatchesType marshal(Set<Match> matches) {
-            Set<HmmerMatch> hmmerMatches = new LinkedHashSet<HmmerMatch>();
+            Set<Hmmer2Match> hmmer2Matches = new LinkedHashSet<Hmmer2Match>();
+            Set<Hmmer3Match> hmmer3Matches = new LinkedHashSet<Hmmer3Match>();
             Set<FingerPrintsMatch> fingerPrintsMatches = new LinkedHashSet<FingerPrintsMatch>();
             Set<BlastProDomMatch> proDomMatches      = new LinkedHashSet<BlastProDomMatch>();
             Set<PatternScanMatch> patternScanMatches = new LinkedHashSet<PatternScanMatch>();
             Set<ProfileScanMatch> profileScanMatches = new LinkedHashSet<ProfileScanMatch>();
             for (Match m : matches) {
-                if (m instanceof HmmerMatch) {
-                    hmmerMatches.add((HmmerMatch)m);
+                if (m instanceof Hmmer2Match) {
+                    hmmer2Matches.add((Hmmer2Match)m);
+                }
+                else if (m instanceof Hmmer3Match) {
+                    hmmer3Matches.add((Hmmer3Match)m);
                 }
                 else if (m instanceof FingerPrintsMatch) {
                     fingerPrintsMatches.add((FingerPrintsMatch)m);
@@ -191,14 +196,15 @@ public abstract class Match<T extends Location> implements Serializable {
                     throw new IllegalArgumentException("Unrecognised Match class: " + m);
                 }
             }
-            return new MatchesType(hmmerMatches, fingerPrintsMatches, proDomMatches,
-                                           patternScanMatches, profileScanMatches);
+            return new MatchesType(hmmer2Matches, hmmer3Matches, fingerPrintsMatches, proDomMatches,
+                    patternScanMatches, profileScanMatches);
         }
 
         /** Map XML type to Java */
         @Override public Set<Match> unmarshal(MatchesType matchTypes) {
             Set<Match> matches = new HashSet<Match>();
-            matches.addAll(matchTypes.getHmmMatches());
+            matches.addAll(matchTypes.getHmmer2Matches());
+            matches.addAll(matchTypes.getHmmer3Matches());
             matches.addAll(matchTypes.getFingerPrintsMatches());
             matches.addAll(matchTypes.getProDomMatches());
             matches.addAll(matchTypes.getPatternScanMatches());
@@ -213,8 +219,11 @@ public abstract class Match<T extends Location> implements Serializable {
      */
     private final static class MatchesType {
 
-        @XmlElement(name = "hmm-match")
-        private final Set<HmmerMatch> hmmerMatches;
+        @XmlElement(name = "hmmer2-match")
+        private final Set<Hmmer2Match> hmmer2Matches;
+
+        @XmlElement(name = "hmmer3-match")
+        private final Set<Hmmer3Match> hmmer3Matches;        
 
         @XmlElement(name = "fingerprints-match")
         private final Set<FingerPrintsMatch> fingerPrintsMatches;
@@ -229,28 +238,35 @@ public abstract class Match<T extends Location> implements Serializable {
         private final Set<ProfileScanMatch> profileScanMatches;
 
         private MatchesType() {
-            hmmerMatches = null;
+            hmmer2Matches       = null;
+            hmmer3Matches       = null;
             fingerPrintsMatches = null;
             proDomMatches       = null;
             patternScanMatches  = null;
             profileScanMatches  = null;
         }
 
-        public MatchesType(Set<HmmerMatch> hmmerMatches,
-                                   Set<FingerPrintsMatch> fingerPrintsMatches,
-                                   Set<BlastProDomMatch> proDomMatches,
-                                   Set<PatternScanMatch> patternScanMatches,
-                                   Set<ProfileScanMatch> profileScanMatches) {
-            this.hmmerMatches = hmmerMatches;
+        public MatchesType(Set<Hmmer2Match> hmmer2Matches,
+                           Set<Hmmer3Match> hmmer3Matches,
+                           Set<FingerPrintsMatch> fingerPrintsMatches,
+                           Set<BlastProDomMatch> proDomMatches,
+                           Set<PatternScanMatch> patternScanMatches,
+                           Set<ProfileScanMatch> profileScanMatches) {
+            this.hmmer2Matches       = hmmer2Matches;
+            this.hmmer3Matches       = hmmer3Matches;
             this.fingerPrintsMatches = fingerPrintsMatches;
             this.proDomMatches       = proDomMatches;
             this.patternScanMatches  = patternScanMatches;
             this.profileScanMatches  = profileScanMatches;
         }
 
-        public Set<HmmerMatch> getHmmMatches() {
-            return (hmmerMatches == null ? Collections.<HmmerMatch>emptySet() : hmmerMatches);
+        public Set<Hmmer2Match> getHmmer2Matches() {
+            return (hmmer2Matches == null ? Collections.<Hmmer2Match>emptySet() : hmmer2Matches);
         }
+
+        public Set<Hmmer3Match> getHmmer3Matches() {
+            return (hmmer3Matches == null ? Collections.<Hmmer3Match>emptySet() : hmmer3Matches);
+        }        
 
         public Set<FingerPrintsMatch> getFingerPrintsMatches() {
             return (fingerPrintsMatches == null ? Collections.<FingerPrintsMatch>emptySet() : fingerPrintsMatches);

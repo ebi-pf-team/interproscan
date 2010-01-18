@@ -20,29 +20,43 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Entity;
-import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.Set;
 
 /**
- * ProfileScan filtered match.
+ * HMMER2 match.
  *
  * @author  Antony Quinn
  * @version $Id$
  * @since   1.0
  */
 @Entity
-@Table(name="profile_scan_match")
-@XmlType(name="ProfileScanMatchType")
-public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation> {
+@Table(name="hmmer2_match")
+@XmlType(name="Hmmer2MatchType")
+public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
 
-    protected ProfileScanMatch() {}
+    protected Hmmer2Match() {}
 
-    public ProfileScanMatch(Signature signature, Set<ProfileScanLocation> locations) {
-        super(signature, locations);
+    public Hmmer2Match(Signature signature, double score, double evalue, Set<Hmmer2Match.Hmmer2Location> locations) {
+        super(signature, score, evalue, locations);
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Hmmer2Match))
+            return false;
+        final Hmmer2Match m = (Hmmer2Match) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(39, 49)
+                .appendSuper(super.hashCode())
+                .toHashCode();
     }
 
     /**
@@ -51,57 +65,35 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
      * @author  Antony Quinn
      */
     @Entity
-    @Table(name="profile_scan_location")
-    @XmlType(name="ProfileScanLocationType")
-    public static class ProfileScanLocation extends Location {
-
-        @Column(nullable = false)
-        private double score;
+    @Table(name="hmmer2_location")
+    @XmlType(name="Hmmer2LocationType")//, propOrder={"start", "end"})
+    public static class Hmmer2Location extends HmmerLocation {
 
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
-        protected ProfileScanLocation() {}
+        protected Hmmer2Location() {}
 
-        public ProfileScanLocation(int start, int end, double score) {
-            super(start, end);
-            setScore(score);
-        }
-
-        @XmlAttribute(required=true)
-        public double getScore() {
-            return score;
-        }
-
-        private void setScore(double score) {
-            this.score = score;
-        }
-
-        // TODO: Figure out which class to use
-        //@ManyToOne(targetEntity = ProfileScanMatch.class)
-        @XmlTransient
-        @Override public Match getMatch() {
-            return super.getMatch();
+        public Hmmer2Location(int start, int end, double score, double evalue,
+                             int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
+            super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
         }
 
         @Override public boolean equals(Object o) {
             if (this == o)
                 return true;
-            if (!(o instanceof ProfileScanLocation))
+            if (!(o instanceof HmmerLocation))
                 return false;
-            final ProfileScanLocation f = (ProfileScanLocation) o;
+            final HmmerLocation h = (HmmerLocation) o;
             return new EqualsBuilder()
                     .appendSuper(super.equals(o))
-                    .append(score, f.score)
                     .isEquals();
         }
 
         @Override public int hashCode() {
-            return new HashCodeBuilder(19, 81)
+            return new HashCodeBuilder(39, 53)
                     .appendSuper(super.hashCode())
-                    .append(score)
                     .toHashCode();
         }
-
     }
 }

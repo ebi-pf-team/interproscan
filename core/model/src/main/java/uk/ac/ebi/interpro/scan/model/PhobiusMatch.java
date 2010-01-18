@@ -19,7 +19,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name="phobius_match")
-@XmlType(name="PhobiusMatchType", propOrder={"signature", "locations"})
+@XmlType(name="PhobiusMatchType")
 public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
 
     protected PhobiusMatch() {}
@@ -53,7 +53,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
      */
     @Entity
     @Table(name="phobius_location")
-    @XmlType(name="PhobiusLocationType", propOrder={"start", "end"})
+    @XmlType(name="PhobiusLocationType")
     public static class PhobiusLocation extends Location {
 
         protected PhobiusLocation() {}

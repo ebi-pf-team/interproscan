@@ -119,11 +119,11 @@ public class ProteinTest extends AbstractTest<Protein> {
         copy.addCrossReference((Xref)SerializationUtils.clone(xref));
         assertEquals(original, copy);
         // Try with locations
-        Set<HmmerMatch.HmmerLocation> locations = new HashSet<HmmerMatch.HmmerLocation>();
-        locations.add(new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
-        Match match = original.addMatch(new HmmerMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
+        Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
         assertFalse("Original and copy should not be equal", original.equals(copy));
-        copy.addMatch((HmmerMatch)SerializationUtils.clone(match));
+        copy.addMatch((Hmmer2Match)SerializationUtils.clone(match));
         assertEquals(original, copy);
     }
 
@@ -137,10 +137,10 @@ public class ProteinTest extends AbstractTest<Protein> {
     @Test public void testEqualsAddLocation() {
         Protein original = new Protein(GOOD);
         Protein copy     = (Protein)SerializationUtils.clone(original);
-        HmmerMatch.HmmerLocation location       = new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE);
-        Set<HmmerMatch.HmmerLocation> locations = new HashSet<HmmerMatch.HmmerLocation>(Arrays.asList(location));
-        HmmerMatch match     = new HmmerMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations);
-        HmmerMatch matchCopy = (HmmerMatch)SerializationUtils.clone(match);
+        Hmmer2Match.Hmmer2Location location = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE);
+        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>(Arrays.asList(location));
+        Hmmer2Match match     = new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations);
+        Hmmer2Match matchCopy = (Hmmer2Match)SerializationUtils.clone(match);
         original.addMatch(match);
         copy.addMatch(matchCopy);
         // Locations look OK, but get warning about Locations type -- generics problem?
@@ -153,8 +153,8 @@ public class ProteinTest extends AbstractTest<Protein> {
         Set<Match> matchesOriginal = original.getMatches();
         Set<Match> matchesCopy     = copy.getMatches();
         // TODO: Whether we remove addLocation and removeLocation or not, we still need to solve generics warning here:
-        Set<HmmerMatch.HmmerLocation> locationsOriginal = matchesOriginal.iterator().next().getLocations();
-        Set<HmmerMatch.HmmerLocation> locationsCopy     = matchesCopy.iterator().next().getLocations();
+        Set<HmmerLocation> locationsOriginal = matchesOriginal.iterator().next().getLocations();
+        Set<HmmerLocation> locationsCopy     = matchesCopy.iterator().next().getLocations();
         assertEquals("Locations should be equal", locationsOriginal, locationsCopy);
         assertEquals("Location hashcodes should be equal", locationsOriginal.hashCode(), locationsCopy.hashCode());
         assertTrue("Original locations should contain locations copy element", locationsOriginal.contains(locationsCopy.iterator().next()));
@@ -179,9 +179,9 @@ public class ProteinTest extends AbstractTest<Protein> {
 
     @Test public void testRemoveMatch()    {
         Protein protein = new Protein(GOOD);
-        Set<HmmerMatch.HmmerLocation> locations = new HashSet<HmmerMatch.HmmerLocation>();
-        locations.add(new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
-        Match match = protein.addMatch(new HmmerMatch(new Signature("PF00155"), 0.035, 4.3e-61, locations));
+        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
+        Match match = protein.addMatch(new Hmmer2Match(new Signature("PF00155"), 0.035, 4.3e-61, locations));
         assertEquals("Protein should have one match", 1, protein.getMatches().size());
         protein.removeMatch(match);
         assertEquals("Protein should have no matches", 0, protein.getMatches().size());

@@ -72,74 +72,20 @@
 
     <!-- HMM databases -->
 
-    <bean id="gene3dObject" class="uk.ac.ebi.interpro.scan.model.Protein">
-        <constructor-arg value="MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG"/>
-        <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch">
-                    <constructor-arg>
-                        <bean class="uk.ac.ebi.interpro.scan.model.Signature">
-                            <constructor-arg value="G3DSA:2.40.50.140"/>                <!-- Accession -->
-                            <constructor-arg value="Nucleic acid-binding proteins"/>    <!-- Name -->
-                        </bean>
-                    </constructor-arg>
-                    <constructor-arg value="-8.9"/>   <!--Score-->
-                    <constructor-arg value="0.28"/>   <!--E-value-->
-                    <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch.HmmerLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation">
-                                <constructor-arg value="74"/>      <!--Start-->
-                                <constructor-arg value="93"/>      <!--End-->
-                                <constructor-arg value="-8.9"/>    <!--Score-->
-                                <constructor-arg value="0.28"/>    <!--E-value-->
-                                <constructor-arg value="63"/>      <!--HMM start-->
-                                <constructor-arg value="82"/>      <!--HMM end-->
-                                <constructor-arg value="INCOMPLETE"
-                                                 type="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation$HmmBounds"/>
-                            </bean>
-                        </util:set>
-                     </constructor-arg>
-                </bean>
-            </util:set>
-        </constructor-arg>
-        <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
-                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
-                    <constructor-arg value="A0A314"/>
-                </bean>
-            </util:set>
-        </constructor-arg>
-        <!--
-            hmmpfam – search one or more sequences against HMM database
-            HMMER 2.3.2 (Oct 2003)
-            Copyright (C) 1992–2003 HHMI/Washington University School of Medicine
-            Freely distributed under the GNU General Public License (GPL)
-            – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
-            HMM file:                 1o7iB00.hmm
-            Sequence file:            A0A314.fasta
-            – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
-
-            Query sequence: sp|A0A314|RR12_COFAR
-            Accession:      [none]
-            Description:    30S ribosomal protein S12, chloroplastic OS=Coffea arabica GN=rps12–A PE=3 SV=1
-
-            Scores for sequence family classification (score includes all domains):
-            Model    Description                                    Score    E–value  N
-            –––––––– –––––––––––                                    –––––    ––––––– –––
-            1o7iB00                                                  –8.9       0.28   1
-
-            Parsed for domains:
-            Model    Domain  seq–f seq–t    hmm–f hmm–t      score  E–value
-            –––––––– ––––––– ––––– –––––    ––––– –––––      –––––  –––––––
-            1o7iB00    1/1      74    93 ..    63    82 ..    –8.9     0.28
-
-            Alignments of top–scoring domains:
-            1o7iB00: domain 1 of 1, from 74 to 93: score –8.9, E = 0.28
-                               *–>leegdvvriknayvkefngr<–*
-                                  l+e +vv +++++vk   g+
-              sp|A0A314|    74    LQEHSVVLVRGGRVKDLPGV    93
-        -->
-    </bean>
+    <lang:groovy id="gene3dObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                Protein p = new Protein("MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG");
+                p.addCrossReference(new Xref("A0A314"));
+                Signature signature = new Signature("G3DSA:2.40.50.140", "Nucleic acid-binding proteins");                
+                Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
+                locations.add(new Hmmer3Match.Hmmer3Location(74, 93, -8.9, 0.28, 63, 82, HmmBounds.INCOMPLETE, 73, 94));
+                p.addMatch(new Hmmer3Match(signature, -8.9, 0.28, locations));
+                return p;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
     <bean id="gene3dXml" class="java.lang.String">
         <constructor-arg>
             <value>
@@ -148,35 +94,61 @@
                 <sequence>MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
                 <xref id="A0A314"/>
                 <matches>
-                    <hmm-match score="-8.9" evalue="0.28">
+                    <hmmer3-match score="-8.9" evalue="0.28">
                         <signature ac="G3DSA:2.40.50.140" name="Nucleic acid-binding proteins" />
                         <locations>
-                            <hmm-location start="74" end="93" score="-8.9" evalue="0.28" hmm-start="63" hmm-end="82" hmm-bounds="INCOMPLETE" />
+                            <hmmer3-location start="74" end="93" env-start="73" env-end="94" score="-8.9" evalue="0.28"
+                                    hmm-start="63" hmm-end="82" hmm-bounds="INCOMPLETE" />
                         </locations>
-                    </hmm-match>
+                    </hmmer3-match>
                 </matches>
             </protein>
             ]]>
             </value>
         </constructor-arg>
     </bean>
+    <!--
+        hmmpfam – search one or more sequences against HMM database
+        HMMER 2.3.2 (Oct 2003)
+        Copyright (C) 1992–2003 HHMI/Washington University School of Medicine
+        Freely distributed under the GNU General Public License (GPL)
+        – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
+        HMM file:                 1o7iB00.hmm
+        Sequence file:            A0A314.fasta
+        – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
 
-    <!-- TODO: OK if pass locations to constructor, but not if use match.addLocation(). Why? Weird stuff going on with generics? -->
+        Query sequence: sp|A0A314|RR12_COFAR
+        Accession:      [none]
+        Description:    30S ribosomal protein S12, chloroplastic OS=Coffea arabica GN=rps12–A PE=3 SV=1
+
+        Scores for sequence family classification (score includes all domains):
+        Model    Description                                    Score    E–value  N
+        –––––––– –––––––––––                                    –––––    ––––––– –––
+        1o7iB00                                                  –8.9       0.28   1
+
+        Parsed for domains:
+        Model    Domain  seq–f seq–t    hmm–f hmm–t      score  E–value
+        –––––––– ––––––– ––––– –––––    ––––– –––––      –––––  –––––––
+        1o7iB00    1/1      74    93 ..    63    82 ..    –8.9     0.28
+
+        Alignments of top–scoring domains:
+        1o7iB00: domain 1 of 1, from 74 to 93: score –8.9, E = 0.28
+                           *–>leegdvvriknayvkefngr<–*
+                              l+e +vv +++++vk   g+
+          sp|A0A314|    74    LQEHSVVLVRGGRVKDLPGV    93
+    -->
+
     <lang:groovy id="pfamObject">
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
                 Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI");
+                Signature signature = new Signature("PF02310", "B12-binding");
                 p.addCrossReference(new Xref("A0A000_9ACTO"));
-                Set<HmmerMatch.HmmerLocation> locations = new HashSet<HmmerMatch.HmmerLocation>();
-                locations.add(new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
-                HmmerMatch m =
-                    p.addMatch(new HmmerMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
-                // FilteredHmmMatch m =
-                //    p.addFilteredMatch(new FilteredHmmMatch(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9));
-                // m.addLocation(new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
-                // Using named parameters also works in Groovy:
-                // m.addLocation(new HmmerMatch.HmmerLocation(start:3, end:107, score:3.0, evalue:3.7e-9, hmmStart:1, hmmEnd:104, hmmBounds:HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE));
+                Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
+                locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE, 2, 108));
+                p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
+                // Named parameters also works in Groovy: new Hmmer3Match.HmmerLocation(start:3, end:107 ...etc
                 return p;
             ]]>
         </lang:inline-script>
@@ -189,12 +161,13 @@
                 <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
                 <xref id="A0A000_9ACTO"/>
                 <matches>
-                    <hmm-match score="0.035" evalue="3.7E-9">
+                    <hmmer3-match score="0.035" evalue="3.7E-9">
                         <signature ac="PF02310" name="B12-binding" />
                         <locations>
-                            <hmm-location start="3" end="107" score="3.0" evalue="3.7E-9" hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
+                            <hmmer3-location start="3" end="107" env-start="2" env-end="108" score="3.0" evalue="3.7E-9"
+                                             hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
                         </locations>
-                    </hmm-match>
+                    </hmmer3-match>
                 </matches>
             </protein>
             ]]>
@@ -205,8 +178,8 @@
     <bean id="smartObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Hmmer2Match">
+                <bean class="uk.ac.ebi.interpro.scan.model.Hmmer2Match">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="SM00323"/>  <!-- Accession -->
@@ -216,8 +189,8 @@
                     <constructor-arg value="543.4"   /> <!--Score-->
                     <constructor-arg value="2.7e-164"/> <!--E-value-->
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch.HmmerLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.Hmmer2Match.HmmerLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location">
                                 <constructor-arg value="512" />        <!--Start-->
                                 <constructor-arg value="857" />        <!--End-->
                                 <constructor-arg value="543.4" />      <!--Score-->
@@ -225,7 +198,7 @@
                                 <constructor-arg value="1" />          <!--HMM start-->
                                 <constructor-arg value="390" />        <!--HMM end-->
                                 <constructor-arg value="COMPLETE"
-                                                 type="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation$HmmBounds"/>
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmBounds"/>
                             </bean>
                         </util:set>
                      </constructor-arg>
@@ -278,12 +251,12 @@
                 <sequence>MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
                 <xref id="GAP2_CAEEL"/>
                 <matches>
-                    <hmm-match score="543.4" evalue="2.7E-164">
+                    <hmmer2-match score="543.4" evalue="2.7E-164">
                         <signature ac="SM00323" name="RasGAP_2"/>
                         <locations>
-                            <hmm-location start="512" end="857" score="543.4" evalue="2.7E-164" hmm-start="1" hmm-end="390" hmm-bounds="COMPLETE"/>
+                            <hmmer2-location start="512" end="857" score="543.4" evalue="2.7E-164" hmm-start="1" hmm-end="390" hmm-bounds="COMPLETE"/>
                         </locations>
-                    </hmm-match>
+                    </hmmer2-match>
                 </matches>
             </protein>
             ]]>
@@ -294,8 +267,8 @@
     <bean id="superfamilyObject" class="uk.ac.ebi.interpro.scan.model.Protein">
         <constructor-arg value="MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD"/>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch">
-                <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.Hmmer2Match">
+                <bean class="uk.ac.ebi.interpro.scan.model.Hmmer2Match">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
                             <constructor-arg value="SSF53098"/>             <!-- Accession -->
@@ -305,8 +278,8 @@
                     <constructor-arg value="93.8"/>     <!--Score-->
                     <constructor-arg value="2.4e-32"/>  <!--E-value-->
                     <constructor-arg>
-                        <util:set value-type="uk.ac.ebi.interpro.scan.model.HmmerMatch.HmmerLocation">
-                            <bean class="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation">
+                        <util:set value-type="uk.ac.ebi.interpro.scan.model.Hmmer2Match.HmmerLocation">
+                            <bean class="uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location">
                                 <constructor-arg value="1"/>        <!--Start-->
                                 <constructor-arg value="237"/>      <!--End-->
                                 <constructor-arg value="93.8"/>     <!--Score-->
@@ -314,7 +287,7 @@
                                 <constructor-arg value="1"/>        <!--HMM start-->
                                 <constructor-arg value="262"/>      <!--HMM end-->
                                 <constructor-arg value="N_TERMINAL_COMPLETE"
-                                                 type="uk.ac.ebi.interpro.scan.model.HmmerMatch$HmmerLocation$HmmBounds"/>
+                                                 type="uk.ac.ebi.interpro.scan.model.HmmBounds"/>
                             </bean>
                         </util:set>
                      </constructor-arg>
@@ -367,12 +340,12 @@
                 <sequence>MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                 <xref id="A6Q974"/>
                 <matches>
-                    <hmm-match score="93.8" evalue="2.4E-32">
+                    <hmmer2-match score="93.8" evalue="2.4E-32">
                         <signature ac="SSF53098" name="Ribonuclease H-like"/>
                         <locations>
-                            <hmm-location start="1" end="237" score="93.8" evalue="2.4E-32" hmm-start="1" hmm-end="262" hmm-bounds="N_TERMINAL_COMPLETE"/>
+                            <hmmer2-location start="1" end="237" score="93.8" evalue="2.4E-32" hmm-start="1" hmm-end="262" hmm-bounds="N_TERMINAL_COMPLETE"/>
                         </locations>
-                    </hmm-match>
+                    </hmmer2-match>
                 </matches>
             </protein>
             ]]>

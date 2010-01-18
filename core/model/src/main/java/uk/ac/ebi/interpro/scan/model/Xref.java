@@ -23,6 +23,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 /**
@@ -33,6 +34,7 @@ import java.io.Serializable;
  * @version $Id$
  */
 @Entity
+@XmlType(name="XrefType")
 public class Xref implements Serializable {
 
     @Id

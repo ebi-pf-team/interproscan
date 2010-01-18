@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
  * @version $Id$
  * @since   1.0
  */
+@XmlTransient
 public class ChunkerSingleton implements Chunker{
 
     private static ChunkerSingleton ourInstance = new ChunkerSingleton();
