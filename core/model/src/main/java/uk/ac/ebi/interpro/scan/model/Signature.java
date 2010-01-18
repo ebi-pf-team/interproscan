@@ -75,6 +75,10 @@ public class Signature implements Serializable {
     @Column (name="type")
     private String type;
 
+    private Date created;
+    private Date updated;
+    private String md5;
+
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     @JoinTable (name="signature_abstract_chunk")
     @IndexColumn(name="chunk_index")
@@ -108,6 +112,7 @@ public class Signature implements Serializable {
         setName(name);
     }
 
+    // TODO: Add created, updated and md5 here?
     public Signature(String accession,
                      String name,
                      String type,                     
@@ -136,6 +141,9 @@ public class Signature implements Serializable {
         private String name;
         private String description;
         private String type;
+        private Date created;
+        private Date updated;
+        private String md5;
         private String abstractText;
         private SignatureLibraryRelease signatureLibraryRelease;
         Set<Model> models;
@@ -174,6 +182,21 @@ public class Signature implements Serializable {
 
         public Builder type(String type) {
             this.type = type;
+            return this;
+        }
+
+        public Builder created(Date created) {
+            this.created = created;
+            return this;
+        }
+
+        public Builder updated(Date updated) {
+            this.updated = updated;
+            return this;
+        }
+
+        public Builder md5(String md5) {
+            this.md5 = md5;
             return this;
         }
 
@@ -272,6 +295,30 @@ public class Signature implements Serializable {
     private void setAbstract(String text) {
         this.abstractText = text;
         abstractChunks = CHUNKER.chunkIntoList(abstractText);
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    private void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    private void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    public String getMd5() {
+        return md5;
+    }
+
+    private void setMd5(String md5) {
+        this.md5 = md5;
     }
 
     @XmlTransient
@@ -382,6 +429,9 @@ public class Signature implements Serializable {
                 .append(accession, s.accession)
                 .append(name, s.name)
                 .append(type, s.type)
+                .append(created, s.created)
+                .append(updated, s.updated)
+                .append(md5, s.md5)
                 .append(getDescription(), s.getDescription())
                 .append(getAbstract(), s.getAbstract())
                 .append(signatureLibraryRelease, s.signatureLibraryRelease)
@@ -394,6 +444,9 @@ public class Signature implements Serializable {
                 .append(accession)
                 .append(name)
                 .append(type)
+                .append(created)
+                .append(updated)
+                .append(md5)
                 .append(getDescription())
                 .append(getAbstract())
                 .append(signatureLibraryRelease)

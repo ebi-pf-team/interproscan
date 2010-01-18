@@ -36,7 +36,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name="finger_prints_match")
-@XmlType(name="FingerPrintsMatchType", propOrder={"signature", "locations"})
+@XmlType(name="FingerPrintsMatchType")
 public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocation> {
 
     @Column

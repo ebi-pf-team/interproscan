@@ -17,8 +17,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import org.junit.Test;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
 import org.apache.commons.lang.SerializationUtils;
 import junit.framework.TestCase;
 
@@ -27,31 +25,33 @@ import java.util.HashSet;
 import java.util.Arrays;
 
 /**
- * Tests cases for {@link HmmerMatch}.
+ * Tests cases for {@link Hmmer2Match}.
  *
  * @author  Antony Quinn
  * @version $Id$
  * @since   1.0
  */
-public class HmmerMatchTest extends TestCase {
+public class Hmmer2MatchTest extends TestCase {
 
     /**
      * Tests the equals() method works as expected
      */
-    @Test public void testEquals() {
-        HmmerMatch original = new HmmerMatch(
+    @Test
+    public void testMatchEquals() {
+        Hmmer2Match original = new Hmmer2Match(
                 new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9,
-                new HashSet<HmmerMatch.HmmerLocation>(Arrays.asList(
-                        new HmmerMatch.HmmerLocation(3, 107, 3.0, 3.7e-9, 1, 104, HmmerMatch.HmmerLocation.HmmBounds.N_TERMINAL_COMPLETE)
+                new HashSet<Hmmer2Match.Hmmer2Location>(Arrays.asList(
+                        new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE)
                 ))
         );
-        HmmerMatch copy = (HmmerMatch)SerializationUtils.clone(original);
+        Hmmer2Match copy = (Hmmer2Match)SerializationUtils.clone(original);
         assertEquals("Original should equal itself", original, original);
         assertEquals("Original and copy should be equal", original, copy);
         assertFalse("Original and copy should not be equal", 
                 original.equals(
-                        new HmmerMatch(new Signature("1", "A"), 1, 2,
-                        (Set<HmmerMatch.HmmerLocation>)SerializationUtils.clone(new HashSet<HmmerMatch.HmmerLocation>(original.getLocations())))
+                        new Hmmer2Match(new Signature("1", "A"), 1, 2,
+                                (Set<Hmmer2Match.Hmmer2Location>)SerializationUtils.clone(
+                                        new HashSet<Hmmer2Match.Hmmer2Location>(original.getLocations())))
                 ));
         // Test sets
         Set<Match> originalSet = new HashSet<Match>();
@@ -60,6 +60,22 @@ public class HmmerMatchTest extends TestCase {
         copySet.add(copy);
         assertEquals("Original set should equal itself", originalSet, originalSet);
         assertEquals("Original and copy sets should be equal", originalSet, copySet);
+    }
+
+    /**
+     * Tests the equals() method works as expected
+     */
+    @Test
+    public void testLocationEquals() {
+        HmmerLocation original = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE);
+        HmmerLocation copy = (HmmerLocation)SerializationUtils.clone(original);
+        // Original should equal itself
+        assertEquals(original, original);
+        // Original and copy should be equal
+        assertEquals(original, copy);
+        // Original and copy should not be equal
+        copy = new Hmmer2Match.Hmmer2Location(1, 2, 3, 4, 5, 6, HmmBounds.COMPLETE);
+        assertFalse("Original and copy should not be equal", original.equals(copy));
     }
 
 }

@@ -286,6 +286,7 @@ public class Protein implements Serializable {
      * @author  Phil Jones
      * @author  Antony Quinn
      */
+    @XmlTransient
     private static class Md5Helper {
 
         private static final Pattern MD5_PATTERN = Pattern.compile("^[A-Fa-f0-9]{32}$");

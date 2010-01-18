@@ -1,0 +1,70 @@
+/*
+ * Copyright 2009-2010 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package uk.ac.ebi.interpro.scan.model;
+
+import javax.xml.bind.annotation.XmlType;
+
+/**
+ * HMMER output notation for model match
+ *
+ * @author  Antony Quinn
+ * @version $Id$
+ */
+@XmlType(name="HmmBoundsType")
+public enum HmmBounds {
+
+    COMPLETE("[]", "Complete"),
+    N_TERMINAL_COMPLETE("[.", "N-terminal complete"),
+    C_TERMINAL_COMPLETE(".]", "C-terminal complete"),
+    INCOMPLETE("..", "Incomplete");
+
+    private final String symbol;
+    private final String description;
+
+    HmmBounds(String symbol, String description) {
+        this.symbol = symbol;
+        this.description = description;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override public String toString() {
+        return symbol;
+    }
+
+    /**
+     * Returns enum corresponding to symbol, for example "[."
+     *
+     * @param   symbol  HmmBounds symbol, for example "[." or ".."
+     * @return  Enum corresponding to symbol, for example "[."
+     */
+    public static HmmBounds parseSymbol(String symbol)  {
+        for (HmmBounds hb : HmmBounds.values()) {
+            if (symbol.equals(hb.getSymbol()))   {
+                return hb;
+            }
+        }
+        throw new IllegalArgumentException("Unrecognised symbol: " + symbol);
+    }
+
+}

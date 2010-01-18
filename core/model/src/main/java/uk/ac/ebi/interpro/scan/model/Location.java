@@ -24,6 +24,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
 import java.util.Collections;
@@ -41,7 +42,7 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlTransient
+@XmlType(name="LocationType", propOrder={"start", "end"})
 public abstract class Location implements Serializable {
 
     @Id
@@ -144,14 +145,18 @@ public abstract class Location implements Serializable {
 
         /** Map Java to XML type */
         @Override public LocationsType marshal(Set<? extends Location> locations) {
-            Set<HmmerMatch.HmmerLocation> hmmerLocations = new LinkedHashSet<HmmerMatch.HmmerLocation>();
+            Set<Hmmer2Match.Hmmer2Location> hmmer2Locations                = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
+            Set<Hmmer3Match.Hmmer3Location> hmmer3Locations                = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
             Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations = new LinkedHashSet<FingerPrintsMatch.FingerPrintsLocation>();
             Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations = new LinkedHashSet<BlastProDomMatch.BlastProDomLocation>();
             Set<PatternScanMatch.PatternScanLocation> patternScanLocations = new LinkedHashSet<PatternScanMatch.PatternScanLocation>();
             Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations = new LinkedHashSet<ProfileScanMatch.ProfileScanLocation>();
             for (Location l : locations) {
-                if (l instanceof HmmerMatch.HmmerLocation) {
-                    hmmerLocations.add((HmmerMatch.HmmerLocation)l);
+                if (l instanceof Hmmer2Match.Hmmer2Location) {
+                    hmmer2Locations.add((Hmmer2Match.Hmmer2Location)l);
+                }
+                else if (l instanceof Hmmer3Match.Hmmer3Location) {
+                    hmmer3Locations.add((Hmmer3Match.Hmmer3Location)l);
                 }
                 else if (l instanceof FingerPrintsMatch.FingerPrintsLocation) {
                     fingerPrintsLocations.add((FingerPrintsMatch.FingerPrintsLocation)l);
@@ -169,14 +174,15 @@ public abstract class Location implements Serializable {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }                
             }
-            return new LocationsType(hmmerLocations, fingerPrintsLocations, blastProDomLocations,
+            return new LocationsType(hmmer2Locations, hmmer3Locations, fingerPrintsLocations, blastProDomLocations,
                                      patternScanLocations, profileScanLocations);
         }
 
         /** Map XML type to Java */
         @Override public Set<Location> unmarshal(LocationsType locationsType) {
             Set<Location> locations = new LinkedHashSet<Location>();
-            locations.addAll(locationsType.getHmmLocations());
+            locations.addAll(locationsType.getHmmer2Locations());
+            locations.addAll(locationsType.getHmmer3Locations());
             locations.addAll(locationsType.getFingerPrintsLocations());
             locations.addAll(locationsType.getBlastProDomLocations());
             locations.addAll(locationsType.getPatternScanLocations());
@@ -191,9 +197,12 @@ public abstract class Location implements Serializable {
      */
     private final static class LocationsType {
 
-        @XmlElement(name = "hmm-location")
-        private final Set<HmmerMatch.HmmerLocation> hmmerLocations;
+        @XmlElement(name = "hmmer2-location")
+        private final Set<Hmmer2Match.Hmmer2Location> hmmer2Locations;
 
+        @XmlElement(name = "hmmer3-location")
+        private final Set<Hmmer3Match.Hmmer3Location> hmmer3Locations;        
+        
         @XmlElement(name = "fingerprints-location")
         private final Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations;
 
@@ -207,27 +216,34 @@ public abstract class Location implements Serializable {
         private final Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations;
 
         private LocationsType() {
-            hmmerLocations = null;
+            hmmer2Locations       = null;
+            hmmer3Locations       = null;
             fingerPrintsLocations = null;
             blastProDomLocations  = null;
             patternScanLocations  = null;
             profileScanLocations  = null;
         }
 
-        public LocationsType(Set<HmmerMatch.HmmerLocation> hmmerLocations,
+        public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
+                             Set<Hmmer3Match.Hmmer3Location> hmmer3Locations,
                              Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations,
                              Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations,
                              Set<PatternScanMatch.PatternScanLocation> patternScanLocations,
                              Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations) {
-            this.hmmerLocations = hmmerLocations;
+            this.hmmer2Locations        = hmmer2Locations;
+            this.hmmer3Locations        = hmmer3Locations;
             this.fingerPrintsLocations  = fingerPrintsLocations;
             this.blastProDomLocations   = blastProDomLocations;
             this.patternScanLocations   = patternScanLocations;
             this.profileScanLocations   = profileScanLocations;            
         }
 
-        public Set<HmmerMatch.HmmerLocation> getHmmLocations() {
-            return (hmmerLocations == null ? Collections.<HmmerMatch.HmmerLocation>emptySet() : hmmerLocations);
+        public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {
+            return (hmmer2Locations == null ? Collections.<Hmmer2Match.Hmmer2Location>emptySet() : hmmer2Locations);
+        }
+
+        public Set<Hmmer3Match.Hmmer3Location> getHmmer3Locations() {
+            return (hmmer3Locations == null ? Collections.<Hmmer3Match.Hmmer3Location>emptySet() : hmmer3Locations);
         }
         
         public Set<FingerPrintsMatch.FingerPrintsLocation> getFingerPrintsLocations() {

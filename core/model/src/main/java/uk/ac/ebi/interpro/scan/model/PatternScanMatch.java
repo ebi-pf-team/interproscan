@@ -36,7 +36,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name="pattern_scan_match")
-@XmlType(name="PatternScanMatchType", propOrder={"signature", "locations"})
+@XmlType(name="PatternScanMatchType")
 public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation> {
 
     protected PatternScanMatch() {}
@@ -90,6 +90,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
          *
          * @author Antony Quinn
          */
+        @XmlType(name="LevelType")
         public static enum Level {
 
             STRONG(0, "!"),
