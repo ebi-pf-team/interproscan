@@ -147,19 +147,6 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
             for (Hmmer3Match m : matches)   {
                 protein.addMatch(m);
             }
-//            for (PfamHmmer3RawMatch rawMatchObject : rawProtein.getMatches()){
-//                Signature signature = signatureAccessionToSignatureMap.get(rawMatchObject.getModel());
-//                // Throw an Exception if either the Protein or the Signature are not in the databse.
-//                // TODO - This may not be the correct course of action!!  Consider further.
-//                if (signature == null){
-//                    throw new IllegalStateException ("Attempting to store a match to a Pfam Signature that is not in the database. Model / Signature accession " + rawMatchObject.getModel());
-//                }
-//                // Now link the Signature and Protein with a HmmerMatch object.
-//                //Hmmer3Match match = new Hmmer3Match(signature, rawMatchObject);
-//                //Hmmer3RawMatch.getMatches(rawProtein.getMatches());
-//                //protein.addMatch(match);  // This also joins the match to the protein.
-//            }
-
             entityManager.persist(protein);
         }
     }
