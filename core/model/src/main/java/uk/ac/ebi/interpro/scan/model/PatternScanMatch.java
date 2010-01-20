@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Entity;
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
@@ -58,6 +59,9 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
         @Column(nullable = false)
         private Level level;
 
+        @ManyToOne
+        private PatternScanMatch match;        
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -77,11 +81,13 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
             this.level = level;
         }
 
-        // TODO: Figure out which class to use
-        //@ManyToOne(targetEntity = PatternScanMatch.class)
         @XmlTransient
-        @Override public Match getMatch() {
-            return super.getMatch();
+        @Override public PatternScanMatch getMatch() {
+            return match;
+        }
+
+        @Override void setMatch(Match match) {
+            this.match = (PatternScanMatch)match;
         }
 
         /**

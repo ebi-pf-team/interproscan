@@ -88,19 +88,28 @@ abstract class AbstractTest<T> {
     }
 
     protected void testJpaXmlObjects(ObjectRetriever<T> retriever){
+        boolean isDebugEnabled = LOGGER.isDebugEnabled();
         initJpa();
         for (String key : objectXmlMap.keySet()) {
             // Get expected object
             T expectedObject   = objectXmlMap.get(key).getObject();
             // Persist
+            if (isDebugEnabled) {
+                LOGGER.debug("Inserting: " + expectedObject);
+            }
             dao.insert(expectedObject);
             assertEquals(key, 1, dao.retrieveAll().size());
             // Retrieve
             Long pk = retriever.getPrimaryKey(expectedObject);
+            if (isDebugEnabled) {
+                LOGGER.debug("Retrieving: " + pk);
+            }
             T actualObject = retriever.getObjectByPrimaryKey(dao, pk);
             assertEquals(key, expectedObject, actualObject);
             // Delete
-            LOGGER.debug("Deleting: " + actualObject);
+            if (isDebugEnabled) {
+                LOGGER.debug("Deleting: " + actualObject);
+            }
             dao.delete(actualObject);
             assertEquals(key, 0, dao.retrieveAll().size());
         }

@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -122,6 +123,9 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         @Column (nullable = false)
         private int motifNumber;
 
+        @ManyToOne
+        private FingerPrintsMatch match;
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -161,11 +165,13 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
             this.motifNumber = motifNumber;
         }
 
-        // TODO: Figure out which class to use (FingerPrintsMatch replaced by RawFingerPrintsMatch and FingerPrintsMatch)
-        //@ManyToOne(targetEntity = FingerPrintsMatch.class)
         @XmlTransient
-        @Override public Match getMatch() {
-            return super.getMatch();
+        @Override public FingerPrintsMatch getMatch() {
+            return match;
+        }
+
+        @Override void setMatch(Match match) {
+            this.match = (FingerPrintsMatch)match;
         }
 
         @Override public boolean equals(Object o) {

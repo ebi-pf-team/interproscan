@@ -7,6 +7,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import java.io.Serializable;
 
+import uk.ac.ebi.interpro.scan.model.Signature;
+
 /**
  * Represents "raw matches": the output from command line applications such as HMMER or pfscan
  * before post-processing.
@@ -142,6 +144,25 @@ public abstract class RawMatch implements Serializable {
 
     @Override public String toString()  {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * Listener for raw match to filtered match conversions.
+     *
+     * @author  Antony Quinn
+     */
+    public interface Listener {
+
+        /**
+         * Returns signature instance corresponding to model accession, and signature library name and release version.
+         *
+         * @param modelAccession            {@see uk.ac.ebi.interpro.scan.model.Model#getAccession()}
+         * @param signatureLibraryName      {@see uk.ac.ebi.interpro.scan.model.SignatureLibrary#getName()}
+         * @param signatureLibraryRelease   {@see uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
+         * @return Signature instance corresponding to model accession, and signature library name and release version
+         */
+        public Signature getSignature(String modelAccession, String signatureLibraryName, String signatureLibraryRelease);        
+
     }
 
 }

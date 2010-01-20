@@ -128,48 +128,6 @@ public class ProteinTest extends AbstractTest<Protein> {
     }
 
     /**
-     * Tests the equals() method works as expected using protein.match.addLocation()
-     * As of 14 August this does not work. There may be an issue with generics.
-     * See FilteredHmmMatchTest for tests -- it works in that context but for some reason not via Protein. Why??
-     * Seems to be to do with Set: equals() works OK, but perhaps hashCode() does not behave as expected?
-     */
-    @Ignore
-    @Test public void testEqualsAddLocation() {
-        Protein original = new Protein(GOOD);
-        Protein copy     = (Protein)SerializationUtils.clone(original);
-        Hmmer2Match.Hmmer2Location location = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE);
-        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>(Arrays.asList(location));
-        Hmmer2Match match     = new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations);
-        Hmmer2Match matchCopy = (Hmmer2Match)SerializationUtils.clone(match);
-        original.addMatch(match);
-        copy.addMatch(matchCopy);
-        // Locations look OK, but get warning about Locations type -- generics problem?
-        // TODO: We can't do the following -- need to change declaration of Location class
-        // TODO: to Location<T extends Match>? But how would we know in eg. HmmerLocation that Match class is
-        // TODO: HmmerMatch or RawHmmMatch? Would need to parameterise HmmerLocation and other sub-classes of Location
-        // Trouble is a protein can have different types of filtered match...
-        //Set<HmmerMatch> matchesOriginal = original.getFilteredMatches();
-        //Set<HmmerMatch> matchesCopy     = copy.getFilteredMatches();
-        Set<Match> matchesOriginal = original.getMatches();
-        Set<Match> matchesCopy     = copy.getMatches();
-        // TODO: Whether we remove addLocation and removeLocation or not, we still need to solve generics warning here:
-        Set<HmmerLocation> locationsOriginal = matchesOriginal.iterator().next().getLocations();
-        Set<HmmerLocation> locationsCopy     = matchesCopy.iterator().next().getLocations();
-        assertEquals("Locations should be equal", locationsOriginal, locationsCopy);
-        assertEquals("Location hashcodes should be equal", locationsOriginal.hashCode(), locationsCopy.hashCode());
-        assertTrue("Original locations should contain locations copy element", locationsOriginal.contains(locationsCopy.iterator().next()));
-        // Matches not OK
-        assertEquals("Matches hashcodes should be equal", matchesOriginal.hashCode(), matchesCopy.hashCode());
-        assertEquals("Original matches should be equal", matchesOriginal, matchesOriginal);
-        // TODO: Following fails -- did manual eyeball and found no differences!
-        assertEquals("Original and matches copy should be equal", matchesOriginal, matchesCopy);        
-        assertTrue("Original matches should contain original matches element", matchesOriginal.contains(matchesCopy.iterator().next()));
-        assertTrue("Original matches should contain matches copy element", matchesOriginal.contains(matchesCopy.iterator().next()));
-        assertEquals("Original and copy should be equal", original, copy);
-    }
-
-
-    /**
      * Tests that MD5 checksum can be calculated for the protein sequence
      */
     @Test public void testGetMd5()   {
@@ -202,9 +160,9 @@ public class ProteinTest extends AbstractTest<Protein> {
         super.testXmlRoundTrip();
     }
 
-    // TODO: Re-enable when JPA works OK (does not read Match.Location -- everything else OK)
+    // TODO: Re-enable when JPA works OK
     @Test
-    @Ignore ("Fails due to problems with the structure and JPA-annotation of Match and Location.")
+    @Ignore ("Fails due to problems with retrievel of match data")
     public void testJpa() {
         super.testJpaXmlObjects(new ObjectRetriever<Protein>(){
             public Protein getObjectByPrimaryKey(GenericDAO<Protein, Long> dao, Long primaryKey) {

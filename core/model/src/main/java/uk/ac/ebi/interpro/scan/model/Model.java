@@ -182,7 +182,7 @@ public class Model implements Serializable {
         return definition;
     }
 
-    public void setDefinition(String definition) {
+    private void setDefinition(String definition) {
         this.definition = definition;
         definitionChunks = CHUNKER.chunkIntoList(definition);
     }

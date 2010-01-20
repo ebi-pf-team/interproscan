@@ -1,8 +1,8 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
-import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
+import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 
 import javax.persistence.Entity;
 import java.util.*;
@@ -109,11 +109,24 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
 
     // TODO: Generalise this to RawMatch
-    public static Collection<Hmmer2Match> getHmmerMatches(Collection<Hmmer3RawMatch> rawMatches)  {
-        Collection<Hmmer2Match> matches = new HashSet<Hmmer2Match>();
+    public static Collection<Hmmer3Match> getMatches(Collection<? extends Hmmer3RawMatch> rawMatches,
+                                                     Listener rawMatchListener)  {
+        Collection<Hmmer3Match> matches = new HashSet<Hmmer3Match>();
+        // Get a list of unique model IDs
+        String signatureLibraryName = null, signatureLibraryRelease = null;
         Map<String, Set<Hmmer3RawMatch>> matchesByModel = new HashMap<String, Set<Hmmer3RawMatch>>();
-        // Assign raw matches to protein
         for (Hmmer3RawMatch m : rawMatches)   {
+            // Get signature library name and release
+            if (signatureLibraryName == null) {
+                signatureLibraryName    = m.getSignatureLibraryName();
+                signatureLibraryRelease = m.getSignatureLibraryRelease();
+            }
+            else if (!signatureLibraryName.equals(m.getSignatureLibraryName()) ||
+                     !signatureLibraryRelease.equals(m.getSignatureLibraryRelease())) {
+                throw new IllegalArgumentException ("Filtered matches are from different signature library versions " +
+                                                    "(more than one library version found)");
+            }
+            // Get unique list of model IDs
             String modelId = m.getModel();
             if (matchesByModel.containsKey(modelId))    {
                 matchesByModel.get(modelId).add(m);
@@ -124,35 +137,39 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                 matchesByModel.put(modelId, set);
             }
         }
-
+        // Find the location(s) for each match and create a Match instance
         for (String key : matchesByModel.keySet())  {
-            Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
-            double score = 0, evalue = 0;
-            for (Hmmer3RawMatch rm : matchesByModel.get(key))   {
-                // Score and evalue should be the same (repeated for each location)
-                score  = rm.getScore();
-                evalue = rm.getEvalue();
-                locations.add(getHmmer2Location(rm));
-            }
-            // TODO: Look up correct signature accession based on model ID, library release ...etc
-            Signature signature = new Signature(key);
-            matches.add(new Hmmer2Match(signature, score, evalue, locations));
+            Signature signature = rawMatchListener.getSignature(key, signatureLibraryName, signatureLibraryRelease);
+            matches.add(getMatch(signature, key, matchesByModel));
         }
         // Next step would be to link this with protein...
         return matches;
 
     }
 
-    // TODO: Add HMMER3 stuff to HmmerLocation
-    public static Hmmer2Match.Hmmer2Location getHmmer2Location(Hmmer3RawMatch m){
-        return new Hmmer2Match.Hmmer2Location(
+    private static Hmmer3Match getMatch(Signature signature, String modelId, Map<String, Set<Hmmer3RawMatch>> matchesByModel){
+        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
+        double score = 0, evalue = 0;
+        for (Hmmer3RawMatch m : matchesByModel.get(modelId))   {
+            // Score and evalue should be the same (repeated for each location)
+            score  = m.getScore();
+            evalue = m.getEvalue();
+            locations.add(getLocation(m));
+        }
+        return new Hmmer3Match(signature, score, evalue, locations);
+    }
+
+    private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m){
+        return new Hmmer3Match.Hmmer3Location(
                 m.getLocationStart(),
                 m.getLocationEnd(),
                 m.getLocationScore(),
                 m.getDomainIeValue(),
                 m.getHmmStart(),
                 m.getHmmEnd(),
-                HmmBounds.parseSymbol(m.getHmmBounds())
+                HmmBounds.parseSymbol(m.getHmmBounds()),
+                m.getEnvelopeStart(),
+                m.getEnvelopeEnd()
         );
     }
     

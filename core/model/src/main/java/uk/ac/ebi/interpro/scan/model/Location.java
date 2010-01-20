@@ -55,9 +55,6 @@ public abstract class Location implements Serializable {
     @Column (name="location_end")       // 'end' is reserved word in SQL.
     private int end;
     
-    @ManyToOne
-    private Match match;
-
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -69,7 +66,6 @@ public abstract class Location implements Serializable {
     }    
 
     /**
-     * Needs to be public for JPA as defined in the interface.
      * @return the persistence unique identifier for this object.
      */
     @XmlTransient
@@ -78,10 +74,9 @@ public abstract class Location implements Serializable {
     }
 
     /**
-     * Needs to be public for JPA as defined in the interface.
      * @param id being the persistence unique identifier for this object.
      */
-    public void setId(Long id) {
+    private void setId(Long id) {
     }
 
     /**
@@ -94,14 +89,10 @@ public abstract class Location implements Serializable {
     }
 
     /**
-     *  Was private for Hibernate (see http://www.javalobby.org/java/forums/t49288.html)
-     *  Now public for JPA (as defined in the interface).
-     *
-     * Required by JPA. The start coordinate of this Location.
-     * @param start being the start coordinate of this Location
+     *  Start coordinate of this Location.
+     * @param start Start coordinate of this Location
       */
-    // TODO: Make setters private again!
-    public void setStart(int start) {
+    private void setStart(int start) {
         this.start = start;
     }
 
@@ -114,26 +105,19 @@ public abstract class Location implements Serializable {
         return end;
     }
 
-    // Originally private for Hibernate (see http://www.javalobby.org/java/forums/t49288.html)
-    // Now public for JPA as needs to be defined in the interface.
     /**
-     * Required by JPA.  The end coordinate of this Location.
-     * @param end being the end coordinate of this Location.
+     * End coordinate of this Location.
+     *
+     * @param end End coordinate of this Location.
      */
-    public void setEnd(int end) {
+    private void setEnd(int end) {
         this.end = end;
     }
 
     @XmlTransient
-    public Match getMatch()    {
-        return match;
-    }
+    public abstract Match getMatch();
 
-    // Must be package-private so can use from Match.addLocation() and Match.removeLocation()
-    // (better as package-private but not possible to specify in interface)
-    void setMatch(Match match){
-        this.match = match;
-    }
+    abstract <T extends Match> void setMatch(T match);
 
     /**
      *  Ensure sub-classes of AbstractLocation are represented correctly in XML.

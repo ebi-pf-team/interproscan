@@ -5,6 +5,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.Set;
@@ -56,6 +57,9 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
     @XmlType(name="PhobiusLocationType")
     public static class PhobiusLocation extends Location {
 
+        @ManyToOne
+        private PhobiusMatch match;
+
         protected PhobiusLocation() {}
 
         public PhobiusLocation(int start, int end){
@@ -63,16 +67,23 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
         }
 
         @XmlTransient
-        @Override public Match getMatch() {
-            return super.getMatch();
+        @Override public PhobiusMatch getMatch() {
+            return match;
         }
+
+        // TODO: Following does not work (despite messing about with generics):
+        //@Override void setMatch(PhobiusMatch match) {
+        //    this.match = match;
+        //}
+        @Override void setMatch(Match match) {
+            this.match = (PhobiusMatch)match;
+        } 
 
         @Override public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (!(o instanceof PhobiusLocation))
                 return false;
-            final PhobiusLocation h = (PhobiusLocation) o;
             return new EqualsBuilder()
                     .appendSuper(super.equals(o))
                     .isEquals();

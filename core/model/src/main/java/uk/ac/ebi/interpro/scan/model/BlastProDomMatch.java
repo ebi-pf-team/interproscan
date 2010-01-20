@@ -19,9 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.Column;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
@@ -58,6 +56,9 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         @Column(nullable = false)
         private double score;
 
+        @ManyToOne
+        private BlastProDomMatch match;
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -77,11 +78,13 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
             this.score = score;
         }
 
-        // TODO: Figure out which class to use
-        //@ManyToOne(targetEntity = BlastProDomMatch.class)
         @XmlTransient
-        @Override public Match getMatch() {
-            return super.getMatch();
+        @Override public BlastProDomMatch getMatch() {
+            return match;
+        }
+
+        @Override void setMatch(Match match) {
+            this.match = (BlastProDomMatch)match;
         }
 
         @Override public boolean equals(Object o) {
@@ -104,4 +107,5 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         }
 
     }
+
 }
