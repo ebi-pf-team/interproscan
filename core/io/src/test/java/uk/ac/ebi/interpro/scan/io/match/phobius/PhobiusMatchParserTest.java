@@ -36,6 +36,8 @@ public class PhobiusMatchParserTest extends TestCase {
         for (PhobiusProtein protein : results){
             assertTrue("The protein should be one or both of TM and SP.", protein.isSP() || protein.isTM());
             // Now test that those two methods work properly!
+            // Determine that all the included proteins contain
+            // valid features only.
             boolean isSignal = false;
             boolean isTM = false;
 //            System.out.println(protein.toString());
