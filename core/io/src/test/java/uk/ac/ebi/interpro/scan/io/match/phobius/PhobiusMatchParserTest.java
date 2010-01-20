@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.phobius;
 
 import junit.framework.TestCase;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusFeature;
@@ -18,6 +19,8 @@ import java.util.Set;
  * @since 1.0
  */
 public class PhobiusMatchParserTest extends TestCase {
+
+    private static final Logger LOGGER = Logger.getLogger(PhobiusMatchParserTest.class);
 
     private static final String TEST_FILE_PATH = "data/phobius/10k.phobius.out";
 
@@ -56,12 +59,13 @@ public class PhobiusMatchParserTest extends TestCase {
     }
 
     private void logMemUsage(String prefix){
-        System.gc();System.gc();System.gc();System.gc();
-        System.gc();System.gc();System.gc();System.gc();
-        System.gc();System.gc();System.gc();System.gc();
-        System.gc();System.gc();System.gc();System.gc();
-        System.gc();System.gc();System.gc();System.gc();
-        System.out.println(prefix + (Runtime.getRuntime().totalMemory() -
-            Runtime.getRuntime().freeMemory()) / (1024*1024) + " MB.");
+        if (LOGGER.isDebugEnabled()){
+            System.gc();System.gc();System.gc();System.gc();
+            System.gc();System.gc();System.gc();System.gc();
+            System.gc();System.gc();System.gc();System.gc();
+            System.gc();System.gc();System.gc();System.gc();
+            System.gc();System.gc();System.gc();System.gc();
+            LOGGER.debug(prefix + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024) + " MB.");
+        }
     }
 }
