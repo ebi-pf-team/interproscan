@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Entity;
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
@@ -58,6 +59,9 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         @Column(nullable = false)
         private double score;
 
+        @ManyToOne
+        private ProfileScanMatch match;
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -77,12 +81,14 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
             this.score = score;
         }
 
-        // TODO: Figure out which class to use
-        //@ManyToOne(targetEntity = ProfileScanMatch.class)
         @XmlTransient
-        @Override public Match getMatch() {
-            return super.getMatch();
+        @Override public ProfileScanMatch getMatch() {
+            return match;
         }
+
+        @Override void setMatch(Match match) {
+            this.match = (ProfileScanMatch)match;
+        } 
 
         @Override public boolean equals(Object o) {
             if (this == o)

@@ -18,12 +18,14 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.Set;
+import java.io.Serializable;
 
 /**
  * HMMER match.
@@ -35,7 +37,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
 @XmlType(name="HmmerMatchType")
-abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> {
+abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements Serializable {
 
     @Column (nullable = false)
     private double evalue;
@@ -89,5 +91,9 @@ abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> {
                 .append(score)
                 .toHashCode();
     }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }    
 
 }

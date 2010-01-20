@@ -18,12 +18,17 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Set;
+import java.io.Serializable;
 
 /**
  * HMMER3 match.
@@ -34,7 +39,7 @@ import java.util.Set;
 @Entity
 @Table(name="hmmer3_match")
 @XmlType(name="Hmmer3MatchType")
-public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> {
+public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implements Serializable {
 
     protected Hmmer3Match() {}
 
@@ -51,9 +56,13 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> {
     }
 
     @Override public int hashCode() {
-        return new HashCodeBuilder(39, 59)
-                .appendSuper(super.hashCode())
-                .toHashCode();
+            return new HashCodeBuilder(39, 59)
+                    .appendSuper(super.hashCode())
+                    .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
 
     /**
@@ -66,8 +75,14 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> {
     @XmlType(name="Hmmer3LocationType")
     public static class Hmmer3Location extends HmmerLocation {
 
+        @Column(nullable = false)
         private int envelopeStart;
+        
+        @Column (nullable = false)
         private int envelopeEnd;
+
+        @ManyToOne
+        private Hmmer3Match match;        
        
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -99,6 +114,15 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> {
         private void setEnvelopeEnd(int envelopeEnd) {
             this.envelopeEnd = envelopeEnd;
         }
+        
+        @XmlTransient
+        @Override public Hmmer3Match getMatch() {
+            return match;
+        }
+
+        @Override void setMatch(Match match) {
+            this.match = (Hmmer3Match)match;
+        }
 
         @Override public boolean equals(Object o) {
             if (this == o) return true;
@@ -118,5 +142,10 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> {
                     .append(envelopeEnd)
                     .toHashCode();
         }
+        
+        @Override public String toString()  {
+            return ToStringBuilder.reflectionToString(this);
+        }
+
     }
 }

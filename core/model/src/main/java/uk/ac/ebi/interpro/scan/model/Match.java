@@ -71,7 +71,7 @@ public abstract class Match<T extends Location> implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -80,7 +80,7 @@ public abstract class Match<T extends Location> implements Serializable {
         return protein;
     }
 
-    public void setProtein(Protein protein) {
+    void setProtein(Protein protein) {
         this.protein = protein;
 
     }
@@ -90,7 +90,7 @@ public abstract class Match<T extends Location> implements Serializable {
         return signature;
     }
 
-    public void setSignature(Signature signature) {
+    private void setSignature(Signature signature) {
         this.signature = signature;
     }
 
@@ -103,7 +103,6 @@ public abstract class Match<T extends Location> implements Serializable {
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
-    // Doh - changed to public for JPA annotations.
     private void setLocations(Set<T> locations) {
         if (locations.isEmpty())    {
             throw new IllegalArgumentException("There must be at least one location for the match");

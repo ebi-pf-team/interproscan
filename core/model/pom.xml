@@ -319,6 +319,7 @@
             <properties>
                 <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
                 <test.connection.url>jdbc:hsqldb:mem:mem:testmodel</test.connection.url>
+                <!--<test.connection.url>jdbc:hsqldb:hsql://localhost/i5</test.connection.url>-->
                 <test.username>sa</test.username>
                 <test.password></test.password>
                 <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>

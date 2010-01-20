@@ -18,6 +18,7 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -114,13 +115,6 @@ abstract class HmmerLocation extends Location {
         this.score = score;
     }
 
-    // TODO: Figure out which class to use (HmmerMatch replaced by RawHmmMatch and HmmerMatch)
-    //@ManyToOne(targetEntity = HmmerMatch.class)
-    @XmlTransient
-    @Override public Match getMatch() {
-        return super.getMatch();
-    }
-
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -147,4 +141,9 @@ abstract class HmmerLocation extends Location {
                 .append(evalue)
                 .toHashCode();
     }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
+    
 }
