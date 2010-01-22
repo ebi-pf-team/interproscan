@@ -41,6 +41,7 @@ public class Hmmer3SearchMatchParserTest {
     @Resource private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
     @Resource private org.springframework.core.io.Resource gene3dFile;
     @Resource private org.springframework.core.io.Resource domainFinderOutputFile;
+    @Resource private org.springframework.core.io.Resource domainFinderInputFile;
 
 
     private String[] expectedAlignments=
@@ -68,8 +69,9 @@ public class Hmmer3SearchMatchParserTest {
                     }
                 }
         );
-         DomainFinderInputWriter dfiw = new DomainFinderInputWriter();
+         DomainFinderInputWriter dfiw = new DomainFinderInputWriter(domainFinderInputFile.getFile());
         dfiw.writeGene3dRawMatchToSsfFile(rawMatches);
+        
         DomainFinderOutputParser dmop = new DomainFinderOutputParser(domainFinderOutputFile.getFile());
         
 

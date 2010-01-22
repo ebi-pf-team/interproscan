@@ -3,8 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-     <bean id="domainFinderInputFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/hmmer3/hmmsearch/df3_input.txt"/>
+     <bean id="domainFinderInputFileTest" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/hmmer3/hmmsearch/df3_input_test.txt"/>
     </bean>
 
 </beans>
