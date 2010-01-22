@@ -4,6 +4,7 @@ import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 
 import java.io.*;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,9 +26,9 @@ public class DomainFinderOutputParser {
     }
 
     //public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
-    public void storeDF3OutputToMatch(String[] df3FileLine) {
+    public void storeDF3OutputToMatch(String[] df3FileLine, List matches) {
         Gene3dHmmer3RawMatch m;
-        List<Gene3dHmmer3RawMatch> matches=null;
+        //List<Gene3dHmmer3RawMatch> matches=null;
 
         if (df3FileLine!=null && df3FileLine.length > 5) {
             //TODO store DF3 file output into post-processed Gene3D match collection
@@ -49,7 +50,8 @@ public class DomainFinderOutputParser {
                                             "unknown string","Domain Finder 3.0");
             System.out.println("Printing Gene3dRawMatch from DF3 output file ....." + m.toString());
             try {
-              matches.add(m);
+                matches.add(m);
+
             }catch(NullPointerException e) {
               e.printStackTrace();
             }
@@ -59,15 +61,15 @@ public class DomainFinderOutputParser {
     public void readGene3dMatchFromDF3OutputFile() {
 
         BufferedReader br = null;
+        List<Gene3dHmmer3RawMatch> matches= new ArrayList<Gene3dHmmer3RawMatch>();
         if (this.inputFile!=null) {
             try {
               br = new BufferedReader(new FileReader(inputFile));
               String line;
               while (( line = br.readLine()) != null){
-                  
                   String[] tokens = line.split("\\t");
                   if(tokens!=null) {
-                      this.storeDF3OutputToMatch(tokens);//store the tokens into list of Gene3DMatches
+                      this.storeDF3OutputToMatch(tokens,matches);//store the tokens into list of Gene3DMatches
                   }
               }// end of while reading file lines
 
