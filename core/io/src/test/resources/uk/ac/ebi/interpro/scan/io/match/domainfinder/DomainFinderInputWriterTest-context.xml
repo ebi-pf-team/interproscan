@@ -3,6 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="gene3dFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/hmmer3/hmmsearch/2hxsA00.out"/>
+    </bean>
+   
      <bean id="domainFinderInputFileTest" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="data/hmmer3/hmmsearch/df3_input_test.txt"/>
     </bean>
