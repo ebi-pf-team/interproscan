@@ -26,7 +26,7 @@ public class DomainFinderOutputParser {
     }
 
     //public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
-    public void storeDF3OutputToMatch(String[] df3FileLine, List matches) {
+    public void storeDF3OutputToMatch(String[] df3FileLine, List<Gene3dHmmer3RawMatch> matches) {
         Gene3dHmmer3RawMatch m;
         //List<Gene3dHmmer3RawMatch> matches=null;
 
