@@ -39,10 +39,10 @@ import java.io.Serializable;
 @XmlType(name="HmmerMatchType")
 abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements Serializable {
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private double evalue;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private double score;
 
     protected HmmerMatch() {}

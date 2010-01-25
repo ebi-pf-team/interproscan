@@ -71,9 +71,6 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
     @XmlType(name="Hmmer2LocationType")//, propOrder={"start", "end"})
     public static class Hmmer2Location extends HmmerLocation {
 
-        @ManyToOne
-        private Hmmer2Match match;        
-
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -82,15 +79,6 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         public Hmmer2Location(int start, int end, double score, double evalue,
                              int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
             super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
-        }
-
-        @XmlTransient
-        @Override public Hmmer2Match getMatch() {
-            return match;
-        }
-
-        @Override void setMatch(Match match) {
-            this.match = (Hmmer2Match)match;
         }
 
         @Override public boolean equals(Object o) {

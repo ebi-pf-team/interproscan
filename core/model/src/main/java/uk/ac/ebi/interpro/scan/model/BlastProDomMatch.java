@@ -56,9 +56,6 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         @Column(nullable = false)
         private double score;
 
-        @ManyToOne
-        private BlastProDomMatch match;
-
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -76,15 +73,6 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
 
         private void setScore(double score) {
             this.score = score;
-        }
-
-        @XmlTransient
-        @Override public BlastProDomMatch getMatch() {
-            return match;
-        }
-
-        @Override void setMatch(Match match) {
-            this.match = (BlastProDomMatch)match;
         }
 
         @Override public boolean equals(Object o) {

@@ -46,12 +46,11 @@ public class Hmmer3MatchTest extends TestCase {
         Hmmer3Match copy = (Hmmer3Match)SerializationUtils.clone(original);
         assertEquals("Original should equal itself", original, original);
         assertEquals("Original and copy should be equal", original, copy);
-        assertFalse("Original and copy should not be equal",
-                original.equals(
-                        new Hmmer3Match(new Signature("1", "A"), 1, 2, 
-                                (Set<Hmmer3Match.Hmmer3Location>)SerializationUtils.clone(
-                                        new HashSet<Hmmer3Match.Hmmer3Location>(original.getLocations())))
-                ));
+        @SuppressWarnings("unchecked") Set<Hmmer3Match.Hmmer3Location> locationsCopy =
+                (Set<Hmmer3Match.Hmmer3Location>) SerializationUtils.
+                        clone(new HashSet<Hmmer3Match.Hmmer3Location>(original.getLocations()));
+        Hmmer3Match badCopy = new Hmmer3Match(new Signature("1", "A"), 1, 2, locationsCopy);
+        assertFalse("Original and copy should not be equal", original.equals(badCopy));
         // Test sets
         Set<Match> originalSet = new HashSet<Match>();
         Set<Match> copySet     = new HashSet<Match>();
@@ -66,13 +65,11 @@ public class Hmmer3MatchTest extends TestCase {
      */
     @Test
     public void testLocationEquals() {
-        HmmerLocation original = new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2);
+        HmmerLocation original = 
+                new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2);
         HmmerLocation copy = (HmmerLocation)SerializationUtils.clone(original);
-        // Original should equal itself
-        assertEquals(original, original);
-        // Original and copy should be equal
-        assertEquals(original, copy);
-        // Original and copy should not be equal
+        assertEquals("Original should equal itself", original, original);
+        assertEquals("Original and copy should be equal", original, copy);
         copy = new Hmmer3Match.Hmmer3Location(1, 2, 3, 4, 5, 6, HmmBounds.COMPLETE, 7, 8);
         assertFalse("Original and copy should not be equal", original.equals(copy));
     }

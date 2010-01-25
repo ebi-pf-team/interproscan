@@ -59,9 +59,6 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
         @Column(nullable = false)
         private Level level;
 
-        @ManyToOne
-        private PatternScanMatch match;        
-
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -79,15 +76,6 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
 
         private void setLevel(Level level) {
             this.level = level;
-        }
-
-        @XmlTransient
-        @Override public PatternScanMatch getMatch() {
-            return match;
-        }
-
-        @Override void setMatch(Match match) {
-            this.match = (PatternScanMatch)match;
         }
 
         /**

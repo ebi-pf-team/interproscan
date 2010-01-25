@@ -101,6 +101,53 @@ public class Protein implements Serializable {
         setCrossReferences(crossReferences);
     }
 
+    /**
+     * Builder pattern (see Josh Bloch "Effective Java" 2nd edition)
+     *
+     * @author  Antony Quinn
+     */
+    @XmlTransient
+    public static class Builder {
+
+        // Required parameters
+        private final String sequence;
+
+        // Optional parameters
+        private Set<Match> matches        = new HashSet<Match>();
+        private Set<Xref> crossReferences = new HashSet<Xref>();
+
+        public Builder(String sequence) {
+            this.sequence = sequence;
+        }
+
+        public Protein build() {
+            Protein protein = new Protein(sequence);
+            if (!matches.isEmpty())    {
+                for (Match m : matches) {
+                    protein.addMatch(m);
+                }
+            }
+            if (!crossReferences.isEmpty())    {
+                for (Xref x : crossReferences) {
+                    protein.addCrossReference(x);
+                }
+            }
+            return protein;
+        }
+
+        public Builder crossReference(Xref xref) {
+            this.crossReferences.add(xref);
+            return this;
+        }
+
+        public Builder match(Match match) {
+            this.matches.add(match);
+            return this;
+        }
+
+    }
+
+
     private void setSequenceAndMd5(String sequence)    {
         setSequence(sequence);
         setMd5(Md5Helper.calculateMd5(sequence));

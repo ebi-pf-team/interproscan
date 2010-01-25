@@ -103,33 +103,13 @@ public abstract class Match<T extends Location> implements Serializable {
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
-    private void setLocations(Set<T> locations) {
+    protected void setLocations(final Set<T> locations) {
         if (locations.isEmpty())    {
             throw new IllegalArgumentException("There must be at least one location for the match");
         }
-        for (T t : locations)    {
-            addLocation(t);
+        for (T location : locations)    {
+            this.locations.add(location);
         }
-    }
-
-    private T addLocation(T location) {
-        if (location == null) {
-            throw new IllegalArgumentException("'Location' is null");
-        }
-        if (location.getMatch() != null) {
-            // This cast is correct because in sub-classes, for example HmmerMatch, we only allow a single
-            // location type, for example HmmerLocation, so the type we remove is the same type we added.
-            @SuppressWarnings("unchecked") Match<T> match = location.getMatch();
-            match.removeLocation(location);
-        }
-        location.setMatch(this);
-        locations.add(location);
-        return location;
-    }
-
-    private void removeLocation(T location)   {
-        locations.remove(location);
-        location.setMatch(null);
     }
 
     @Override public boolean equals(Object o) {

@@ -34,16 +34,13 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
             return true;
         if (!(o instanceof PhobiusMatch))
             return false;
-        final PhobiusMatch m = (PhobiusMatch) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
                 .isEquals();
     }
 
     @Override public int hashCode() {
-        // TODO - Check these numbers are different to all other
-        // classes (currently the same as HmmerMatch).
-        return new HashCodeBuilder(19, 49)
+        return new HashCodeBuilder(29, 49)
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
@@ -57,27 +54,11 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
     @XmlType(name="PhobiusLocationType")
     public static class PhobiusLocation extends Location {
 
-        @ManyToOne
-        private PhobiusMatch match;
-
         protected PhobiusLocation() {}
 
         public PhobiusLocation(int start, int end){
             super(start, end);
         }
-
-        @XmlTransient
-        @Override public PhobiusMatch getMatch() {
-            return match;
-        }
-
-        // TODO: Following does not work (despite messing about with generics):
-        //@Override void setMatch(PhobiusMatch match) {
-        //    this.match = match;
-        //}
-        @Override void setMatch(Match match) {
-            this.match = (PhobiusMatch)match;
-        } 
 
         @Override public boolean equals(Object o) {
             if (this == o)
@@ -90,9 +71,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
         }
 
         @Override public int hashCode() {
-            // TODO - Check these numbers are different to all other
-            // classes (currently the same as HmmerMatch.HmmerLocation).
-            return new HashCodeBuilder(19, 53)
+            return new HashCodeBuilder(29, 53)
                     .appendSuper(super.hashCode())
                     .toHashCode();
         }

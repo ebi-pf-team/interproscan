@@ -36,7 +36,7 @@ public class PhobiusMatchTest extends TestCase {
     /**
      * Tests the equals() method works as expected
      */
-    @Test public void testEquals() {
+    @Test public void testMatchEquals() {
         PhobiusMatch original = new PhobiusMatch(
                 new Signature("SIGNAL", "Signal Peptide"),
 
@@ -63,6 +63,18 @@ public class PhobiusMatchTest extends TestCase {
         copySet.add(copy);
         assertEquals("Original set should equal itself", originalSet, originalSet);
         assertEquals("Original and copy sets should be equal", originalSet, copySet);
+    }
+
+    /**
+     * Tests the equals() method works as expected
+     */
+    @Test
+    public void testLocationEquals() {
+        PhobiusMatch.PhobiusLocation original = new PhobiusMatch.PhobiusLocation(3, 107);
+        PhobiusMatch.PhobiusLocation copy = (PhobiusMatch.PhobiusLocation) SerializationUtils.clone(original);
+        assertEquals("Original should equal itself", original, original);
+        assertEquals("Original and copy should be equal", original, copy);
+        assertFalse("Original and copy should not be equal", original.equals(new PhobiusMatch.PhobiusLocation(1, 2)));
     }
 
 }

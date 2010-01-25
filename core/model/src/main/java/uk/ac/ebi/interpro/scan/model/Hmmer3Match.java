@@ -78,12 +78,9 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         @Column(nullable = false)
         private int envelopeStart;
         
-        @Column (nullable = false)
+        @Column(nullable = false)
         private int envelopeEnd;
 
-        @ManyToOne
-        private Hmmer3Match match;        
-       
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -113,15 +110,6 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
 
         private void setEnvelopeEnd(int envelopeEnd) {
             this.envelopeEnd = envelopeEnd;
-        }
-        
-        @XmlTransient
-        @Override public Hmmer3Match getMatch() {
-            return match;
-        }
-
-        @Override void setMatch(Match match) {
-            this.match = (Hmmer3Match)match;
         }
 
         @Override public boolean equals(Object o) {
