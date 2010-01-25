@@ -17,6 +17,16 @@ public class DomainFinderOutputParser {
 
      private File inputFile = null;
 
+    //DUMMY values for certain arguments, since they are not available for raw matches at this
+    // stage of parsing DF3 output.
+     private static final int DUMMY_ENVELOPE_START =100;
+    private static final int DUMMY_ENVELOPE_END =100;
+    private static final double DUMMY_EXPECTED_ACCURACY=0.0;
+    private static final double DUMMY_FULL_SEQUENCE_BIAS=0.9;
+    private static final double DUMMY_DOMAIN_CEVALUE=0.1; //domainCEvalue
+    private static final double DUMMY_DOMAIN_IEVALUE=0.2; //domainIEvalue
+    private static final double DUMMY_DOMAIN_BIAS=0.3; //domainBias
+
     public DomainFinderOutputParser(File inFile) {
 
             this.inputFile = inFile;
@@ -25,11 +35,12 @@ public class DomainFinderOutputParser {
 
     }
 
-    //public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
-    public void storeDF3OutputToMatch(String[] df3FileLine, List<Gene3dHmmer3RawMatch> matches) {
+    public List<Gene3dHmmer3RawMatch> storeDF3OutputToMatch(String[] df3FileLine, List<Gene3dHmmer3RawMatch> matches) {
         Gene3dHmmer3RawMatch m;
         //List<Gene3dHmmer3RawMatch> matches=null;
-
+         //First 5 fields in the DF3 output file has important field for
+        //raw/post-processed matches. Hence the condition > 5
+        //this can be changed later depending on the requirements
         if (df3FileLine!=null && df3FileLine.length > 5) {
             //TODO store DF3 file output into post-processed Gene3D match collection
             m = new Gene3dHmmer3RawMatch(df3FileLine[0],df3FileLine[1],"Gene3D","3.3",Integer.parseInt(df3FileLine[4]),//locationtart
@@ -40,13 +51,13 @@ public class DomainFinderOutputParser {
                                           Integer.parseInt(df3FileLine[7]),  //hmmend
                                                   "hmm bounds",
                                           Double.parseDouble(df3FileLine[9]),   //locationScore
-                                            100, //envelope start
-                                            100, //envelope end
-                                             0.0, //expected Accuracy
-                                              0.9, // full sequence bias
-                                             0.1, //domainCEvalue
-                                            0.2, //domainIEvalue
-                                            0.3, //domainBias
+                                            DUMMY_ENVELOPE_START, //envelope start     
+                                            DUMMY_ENVELOPE_END, //envelope end
+                                            DUMMY_EXPECTED_ACCURACY, //expected Accuracy
+                                            DUMMY_FULL_SEQUENCE_BIAS, // full sequence bias
+                                            DUMMY_DOMAIN_CEVALUE, //domainCEvalue
+                                            DUMMY_DOMAIN_IEVALUE, //domainIEvalue
+                                            DUMMY_DOMAIN_BIAS, //domainBias
                                             "unknown string","Domain Finder 3.0");
             System.out.println("Printing Gene3dRawMatch from DF3 output file ....." + m.toString());
             try {
@@ -57,11 +68,14 @@ public class DomainFinderOutputParser {
             }
         }
 
+        return matches;
+
     }
     public void readGene3dMatchFromDF3OutputFile() {
 
         BufferedReader br = null;
         List<Gene3dHmmer3RawMatch> matches= new ArrayList<Gene3dHmmer3RawMatch>();
+        List<Gene3dHmmer3RawMatch> retmatches;
         if (this.inputFile!=null) {
             try {
               br = new BufferedReader(new FileReader(inputFile));
@@ -69,7 +83,7 @@ public class DomainFinderOutputParser {
               while (( line = br.readLine()) != null){
                   String[] tokens = line.split("\\t");
                   if(tokens!=null) {
-                      this.storeDF3OutputToMatch(tokens,matches);//store the tokens into list of Gene3DMatches
+                      retmatches = this.storeDF3OutputToMatch(tokens,matches);//store the tokens into list of Gene3DMatches
                   }
               }// end of while reading file lines
 
