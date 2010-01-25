@@ -20,9 +20,9 @@ import java.util.regex.Pattern;
  */
 public final class CigarAlignmentEncoder implements AlignmentEncoder {
 
-    private static final char MATCH_CHAR   = 'M';
-    private static final char INSERT_CHAR  = 'I';
-    private static final char DELETE_CHAR  = 'D';
+    public static final char MATCH_CHAR   = 'M';
+    public static final char INSERT_CHAR  = 'I';
+    public static final char DELETE_CHAR  = 'D';
 
     private static final String MATCH_STR   = Character.toString(MATCH_CHAR);
     private static final String INSERT_STR  = Character.toString(INSERT_CHAR);

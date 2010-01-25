@@ -40,13 +40,13 @@ import java.util.Set;
 @XmlType(name="FingerPrintsMatchType")
 public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocation> {
 
-    @Column
+    @Column(nullable = false)
     private double evalue;
 
-    @Column (length=15)
+    @Column (nullable = false, length=15)
     private String graphscan;
 
-    @Column
+    @Column(nullable = false)
     private int motifCount;
 
     protected FingerPrintsMatch() {}
@@ -123,9 +123,6 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         @Column (nullable = false)
         private int motifNumber;
 
-        @ManyToOne
-        private FingerPrintsMatch match;
-
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -163,15 +160,6 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
 
         private void setMotifNumber(int motifNumber) {
             this.motifNumber = motifNumber;
-        }
-
-        @XmlTransient
-        @Override public FingerPrintsMatch getMatch() {
-            return match;
-        }
-
-        @Override void setMatch(Match match) {
-            this.match = (FingerPrintsMatch)match;
         }
 
         @Override public boolean equals(Object o) {

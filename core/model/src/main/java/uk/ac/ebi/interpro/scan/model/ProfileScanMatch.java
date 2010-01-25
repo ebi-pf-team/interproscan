@@ -59,9 +59,6 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         @Column(nullable = false)
         private double score;
 
-        @ManyToOne
-        private ProfileScanMatch match;
-
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -80,15 +77,6 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         private void setScore(double score) {
             this.score = score;
         }
-
-        @XmlTransient
-        @Override public ProfileScanMatch getMatch() {
-            return match;
-        }
-
-        @Override void setMatch(Match match) {
-            this.match = (ProfileScanMatch)match;
-        } 
 
         @Override public boolean equals(Object o) {
             if (this == o)

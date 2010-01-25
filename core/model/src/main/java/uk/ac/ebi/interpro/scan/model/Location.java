@@ -49,10 +49,10 @@ public abstract class Location implements Serializable {
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name="location_start")    // to match end - 'end' is reserved word in SQL.
+    @Column(name="loc_start", nullable = false)    // to match end - 'end' is reserved word in SQL.
     private int start;
 
-    @Column (name="location_end")       // 'end' is reserved word in SQL.
+    @Column (name="loc_end", nullable = false)       // 'end' is reserved word in SQL.
     private int end;
     
     /**
@@ -113,11 +113,6 @@ public abstract class Location implements Serializable {
     private void setEnd(int end) {
         this.end = end;
     }
-
-    @XmlTransient
-    public abstract Match getMatch();
-
-    abstract <T extends Match> void setMatch(T match);
 
     /**
      *  Ensure sub-classes of AbstractLocation are represented correctly in XML.
