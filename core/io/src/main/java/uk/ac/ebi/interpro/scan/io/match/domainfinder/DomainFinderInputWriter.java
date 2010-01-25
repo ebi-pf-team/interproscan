@@ -21,29 +21,27 @@ import java.util.List;
  */
 public class DomainFinderInputWriter {
 
-    private final File outputFile;
+    private File outputFile = null;
 
-    public DomainFinderInputWriter() {
-
-            this.outputFile = new File("C:\\Manjula\\input_for_df3.txt");
-            //this.outputFile.delete();  //to clear out contents written previously.
+    public DomainFinderInputWriter(File ssfFileName) {
+         if (ssfFileName!=null) {
+           this.outputFile = ssfFileName;
+         } else {
+             System.out.println("DomainFinderInputWriter is not given with inputfilename!!!");
+         }
      
-    }
-
-    public DomainFinderInputWriter(File file) {
-        this.outputFile = file;
     }
 
     //public void writeMethodToFile(HmmsearchOutputMethod method, String seqId, String domainNum) {
     public void writeMatchToFile(Gene3dHmmer3RawMatch rawMatch, BufferedWriter bw) throws IOException {
-        //BufferedWriter bw = null;
+
         if (rawMatch!=null) {
 
             StringBuilder sb = new StringBuilder();
             sb.append(rawMatch.getSequenceIdentifier()).append("\t");
             sb.append(rawMatch.getModel()).append("\t");
-            sb.append("1000\t"); //seqIdentifier length
-            sb.append("178"+ "\t" );  //model length
+            sb.append("1000\t"); //seqIdentifier length  //TODO: length of input sequence, that matches the hmm model.
+            sb.append("178"+ "\t" );  //model length  //TODO : length of input hmm model
             sb.append(rawMatch.getLocationStart()).append("\t");
             sb.append(rawMatch.getLocationEnd()).append("\t");
             sb.append(rawMatch.getHmmStart()).append("\t");
@@ -88,6 +86,23 @@ public class DomainFinderInputWriter {
         }
         }
     }
+
+
+    //documentation for segment calcuation in cigaraligment format and from hmmsearch file.
+    /*
+    * The algorithm for splitting a domain into segments is this:
+
+    *(1) Get the string of the sequence as aligned to the model (i.e. 'AIHNMPGRAAGDMAFRTGAamassdrvtitlrgvgghgamphfardpmsaagsiivalqtivareidaqqsavitvgsvqagetfnvipetvvmklsvralnadvrallaqriealakgqaqsfgieadvqydygYPVLV'
+
+    *(2) Step through the sequence residue-by-residue
+
+    *(3) If a lower case letter is reached open a gap; if an upper case letter is reached close a gap. '.'s and '-'s are ignored (i.e. they don't open or close gaps and are ignored when calculating the gap length).
+
+    *(4) At the point of closing a gap, if the gap was >= 30 residues then the sequence is split into two segments around it. So the end of the first segment is the last residue before the gap opens, while the beginning of the second is the first after the gap closes.
+
+    *(5) Continue on down the sequence ...
+
+     */
 
     public String getSegmentAndBoundaries(String cigarAlignment, int aliFrom) {
 
