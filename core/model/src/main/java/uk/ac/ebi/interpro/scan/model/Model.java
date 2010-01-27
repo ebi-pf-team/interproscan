@@ -96,6 +96,13 @@ public class Model implements Serializable {
         setAccession(accession);
     }
 
+    public Model(String accession, String name, String description){
+        setAccession(accession);
+        setName(name);
+        setDescription(description);
+    }
+
+
     public Model(String accession, String name, String description, String definition) {
         setAccession(accession);
         setName(name);
