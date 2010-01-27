@@ -96,10 +96,11 @@ public class Model implements Serializable {
         setAccession(accession);
     }
 
-    public Model(String accession, String name, String description) {
+    public Model(String accession, String name, String description, String definition) {
         setAccession(accession);
         setName(name);
         setDescription(description);
+        setDefinition(definition);
     }
 
     /**
@@ -117,13 +118,14 @@ public class Model implements Serializable {
         private String name;
         private String description;
         private Signature signature;
+        private String definition;
 
         public Builder(String accession) {
             this.accession = accession;
         }
 
         public Model build() {
-            Model model = new Model(accession, name, description);
+            Model model = new Model(accession, name, description, definition);
             model.setSignature(signature);
             return model;
         }
@@ -140,6 +142,11 @@ public class Model implements Serializable {
 
         public Builder signature(Signature signature) {
             this.signature = signature;
+            return this;
+        }
+
+        public Builder definition(String definition) {
+            this.definition = definition;
             return this;
         }
 
