@@ -61,6 +61,7 @@ public class Hmmer3ModelLoader implements Serializable {
         BufferedReader reader = null;
         try{
             String accession = null, name = null, description = null;
+            StringBuffer modelBuf = new StringBuffer();
 
             reader = new BufferedReader (new FileReader(hmmFilePath));
             int lineNumber = 0;
@@ -70,6 +71,11 @@ public class Hmmer3ModelLoader implements Serializable {
                     LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
                 }
                 String line = reader.readLine();
+
+                // Load the model line by line into a temporary buffer.
+                // TODO - won't break anything, but needs some work.  Need to grab the hmm file header first!
+                modelBuf.append(line);
+                modelBuf.append('\n');
                 // Speed things up a LOT - there are lots of lines we are not
                 // interested in parsing, so just check the first char of each line
                 if (line.length() > 0){
@@ -78,7 +84,7 @@ public class Hmmer3ModelLoader implements Serializable {
                             // Looks like an end of record marker - just to check:
                             if (END_OF_RECORD.equals(line.trim())){
                                 if (accession != null){
-                                    release.addSignature(createSignature(accession, name, description, release));
+                                    release.addSignature(createSignature(accession, name, description, release, modelBuf));
                                 }
                                 accession = null;
                                 name = null;
@@ -106,7 +112,7 @@ public class Hmmer3ModelLoader implements Serializable {
             // Dont forget the last one, just in case that final end of record
             // marker is missing!
             if (accession != null){
-                release.addSignature(createSignature(accession, name, description, release));
+                release.addSignature(createSignature(accession, name, description, release, modelBuf));
             }
         }
         finally {
@@ -126,8 +132,9 @@ public class Hmmer3ModelLoader implements Serializable {
                 : null;
     }
 
-    protected Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release){
-        Model model = new Model(accession, name, description);
+    protected Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release, StringBuffer modelBuf){
+        Model model = new Model(accession, name, description, modelBuf.toString());
+        modelBuf.delete(0, modelBuf.length());
         return new Signature(accession, name, null, description, null, release, Collections.singleton(model));
     }
 }
