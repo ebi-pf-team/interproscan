@@ -35,8 +35,8 @@ public class Pfam_A_PostProcessingStepInstance extends StepInstance<Pfam_A_PostP
      * @param bottomProteinId being the lowest inclusive protein ID to include
      * @param topProteinId being the highest inclusive protein ID to include.
      */
-    public Pfam_A_PostProcessingStepInstance(Pfam_A_PostProcessingStep step, long bottomProteinId, long topProteinId) {
-        super(step, bottomProteinId, topProteinId);
+    public Pfam_A_PostProcessingStepInstance(Pfam_A_PostProcessingStep step, long bottomProteinId, long topProteinId, Long bottomModelId, Long topModelId) {
+        super(step, bottomProteinId, topProteinId, bottomModelId, topModelId);
     }
 
     @Override

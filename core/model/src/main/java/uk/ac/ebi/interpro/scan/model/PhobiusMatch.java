@@ -27,6 +27,11 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
 
     public PhobiusMatch(Signature signature, Set<PhobiusLocation> locations) {
         super(signature, locations);
+        // TODO - Add runtime check that the Signature being matched
+        // has been constructed from the Phobius enum.
+        if (! PhobiusFeatureType.isValidSignature(signature)){
+            throw new IllegalArgumentException ("The Signature object being used for this PhobiusMatch does not appear to be a valid Phobius signature.");
+        }
     }
 
     @Override public boolean equals(Object o) {

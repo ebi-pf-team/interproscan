@@ -41,10 +41,10 @@ public class RunHmmer3StepInstance extends StepInstance<RunHmmer3Step, RunHmmer3
         return fastaFilePathName;
     }
 
-    public RunHmmer3StepInstance(RunHmmer3Step step, long bottomProteinId, long topProteinId) {
-        super(step, bottomProteinId, topProteinId);
-        this.fastaFilePathName = this.filterFileNameProteinBounds(this.getStep().getFastaFilePathNameTemplate(), bottomProteinId, topProteinId);
-        this.hmmerOutputFileName = this.filterFileNameProteinBounds(this.getStep().getHmmerOutputFilePathTemplate(), bottomProteinId, topProteinId);
+    public RunHmmer3StepInstance(RunHmmer3Step step, long bottomProteinId, long topProteinId, Long bottomModelId, Long topModelId) {
+        super(step, bottomProteinId, topProteinId, bottomModelId, topModelId);
+        this.fastaFilePathName = this.filterFileNameProteinBounds(this.getStep().getFastaFilePathNameTemplate(), bottomProteinId, topProteinId, bottomModelId, topModelId);
+        this.hmmerOutputFileName = this.filterFileNameProteinBounds(this.getStep().getHmmerOutputFilePathTemplate(), bottomProteinId, topProteinId, bottomModelId, topModelId);
     }
 
     @Override

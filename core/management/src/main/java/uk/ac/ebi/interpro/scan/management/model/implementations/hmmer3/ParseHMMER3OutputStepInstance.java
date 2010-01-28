@@ -31,9 +31,9 @@ public class ParseHMMER3OutputStepInstance extends StepInstance<ParseHMMER3Outpu
         return hmmerOutputFilePath;
     }
 
-    public ParseHMMER3OutputStepInstance(ParseHMMER3OutputStep step, long bottomProteinId, long topProteinId) {
-        super(step, bottomProteinId, topProteinId);
-        this.hmmerOutputFilePath = this.filterFileNameProteinBounds(this.getStep().getHmmerOutputFilePathTemplate(), bottomProteinId, topProteinId);
+    public ParseHMMER3OutputStepInstance(ParseHMMER3OutputStep step, long bottomProteinId, long topProteinId, Long bottomModelId, Long topModelId) {
+        super(step, bottomProteinId, topProteinId, bottomModelId, topModelId);
+        this.hmmerOutputFilePath = this.filterFileNameProteinBounds(this.getStep().getHmmerOutputFilePathTemplate(), bottomProteinId, topProteinId, bottomModelId, topModelId);
     }
 
     @Override

@@ -255,7 +255,7 @@ public class InterProScanMaster implements Master {
                     fastaStepInstance = new WriteFastaFileStepInstance(
                             (WriteFastaFileStep)step,
                             bottomProteinId,
-                            topProteinId
+                            topProteinId, null, null
                     );
                     stepInstanceDAO.insert(fastaStepInstance);
                 }
@@ -267,7 +267,7 @@ public class InterProScanMaster implements Master {
                     hmmer3StepInstance = new RunHmmer3StepInstance(
                             (RunHmmer3Step)step,
                             bottomProteinId,
-                            topProteinId
+                            topProteinId, null, null
                     );
                     hmmer3StepInstance.addDependentStepInstance(fastaStepInstance);
                     stepInstanceDAO.insert(hmmer3StepInstance);
@@ -281,7 +281,7 @@ public class InterProScanMaster implements Master {
                     hmmer3ParserStepInstance = new ParseHMMER3OutputStepInstance(
                             (ParseHMMER3OutputStep)step,
                             bottomProteinId,
-                            topProteinId
+                            topProteinId, null, null
                     );
                     hmmer3ParserStepInstance.addDependentStepInstance(hmmer3StepInstance);
                     stepInstanceDAO.insert(hmmer3ParserStepInstance);
@@ -295,7 +295,7 @@ public class InterProScanMaster implements Master {
                     ppStepInstance = new Pfam_A_PostProcessingStepInstance(
                             (Pfam_A_PostProcessingStep)step,
                             bottomProteinId,
-                            topProteinId
+                            topProteinId, null, null
                     );
                     ppStepInstance.addDependentStepInstance(hmmer3ParserStepInstance);
                     stepInstanceDAO.insert(ppStepInstance);

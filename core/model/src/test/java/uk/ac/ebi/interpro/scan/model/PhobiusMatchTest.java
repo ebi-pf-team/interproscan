@@ -38,7 +38,7 @@ public class PhobiusMatchTest extends TestCase {
      */
     @Test public void testMatchEquals() {
         PhobiusMatch original = new PhobiusMatch(
-                new Signature("SIGNAL", "Signal Peptide"),
+                new Signature("SIGNAL_PEPTIDE_N_REGION", "Signal peptide N-region"),
 
                 new HashSet<PhobiusMatch.PhobiusLocation>(Arrays.asList(
                         new PhobiusMatch.PhobiusLocation(3, 107)
@@ -50,7 +50,7 @@ public class PhobiusMatchTest extends TestCase {
         assertFalse("Original and copy should not be equal",
                 original.equals(
                         new PhobiusMatch(
-                new Signature("DOMAIN", "NON CYTOPLASMIC"),
+                new Signature("NON_CYTOPLASMIC_DOMAIN", "Non cytoplasmic domain"),
 
                 new HashSet<PhobiusMatch.PhobiusLocation>(Arrays.asList(
                         new PhobiusMatch.PhobiusLocation(3, 107)
