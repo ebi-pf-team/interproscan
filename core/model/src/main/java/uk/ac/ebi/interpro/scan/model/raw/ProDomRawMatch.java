@@ -27,9 +27,8 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
 
     public ProDomRawMatch(String sequenceIdentifier, String model,
                           String signatureLibraryName, String signatureLibraryRelease,
-                          int locationStart, int locationEnd,
-                          double score, String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
+                          int locationStart, int locationEnd, double score) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
         this.score = score;
     }
 

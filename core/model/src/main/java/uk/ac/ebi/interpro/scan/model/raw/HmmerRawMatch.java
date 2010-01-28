@@ -1,7 +1,13 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Entity;
 import javax.persistence.Column;
+
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 
 /**
  * <a href="http://hmmer.janelia.org/">HMMER</a> raw match.
@@ -12,6 +18,8 @@ import javax.persistence.Column;
  */
 @Entity
 abstract class HmmerRawMatch extends RawMatch  {
+
+    // TODO: No need for "generator" we can add this in each concrete class
 
     // TODO: evalue and score can be calculated -- do we need to store? Needs testing
     @Column(name="EVALUE",nullable = false, updatable = false)
@@ -39,22 +47,22 @@ abstract class HmmerRawMatch extends RawMatch  {
                             int locationStart, int locationEnd,
                             double evalue, double score,
                             int hmmStart, int hmmEnd, String hmmBounds,
-                            double locationScore, String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
-        this.evalue = Math.log10(evalue);
-        this.score = score;
-        this.hmmStart = hmmStart;
-        this.hmmEnd = hmmEnd;
-        this.hmmBounds = hmmBounds;
-        this.locationScore = locationScore;
+                            double locationScore) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
+        setEvalue(evalue);
+        setScore(score);
+        setHmmStart(hmmStart);
+        setHmmEnd(hmmEnd);
+        setHmmBounds(hmmBounds);
+        setLocationScore(locationScore);
     }
 
     public double getEvalue() {
-        return evalue;
+        return PersistenceConversion.get(evalue);
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = evalue;
+        this.evalue = PersistenceConversion.set(evalue);
     }
 
     public double getScore() {
@@ -95,6 +103,39 @@ abstract class HmmerRawMatch extends RawMatch  {
 
     private void setLocationScore(double locationScore) {
         this.locationScore = locationScore;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof HmmerRawMatch))
+            return false;
+        final HmmerRawMatch m = (HmmerRawMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(evalue, m.evalue)
+                .append(score, m.score)
+                .append(hmmStart, m.hmmStart)
+                .append(hmmEnd, m.hmmEnd)
+                .append(hmmBounds, m.hmmBounds)
+                .append(locationScore, m.locationScore)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(53, 55)
+                .appendSuper(super.hashCode())
+                .append(evalue)
+                .append(score)
+                .append(hmmStart)
+                .append(hmmEnd)
+                .append(hmmBounds)
+                .append(locationScore)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

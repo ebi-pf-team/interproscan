@@ -18,11 +18,11 @@ public final class RawProteinTest extends TestCase {
         final String PROTEIN_ID = "1";  // We'll use primary key to identify protein
         RawProtein protein = new RawProtein(PROTEIN_ID);
         // Add matches
-        protein.addMatch(new ProDomRawMatch(PROTEIN_ID, "PD001061", "ProDom", "2006.01", 9, 150, 763, "BlastProDom"));
-        protein.addMatch(new ProDomRawMatch(PROTEIN_ID, "PD001061", "ProDom", "2006.01", 151, 245, 469, "BlastProDom"));
+        protein.addMatch(new ProDomRawMatch(PROTEIN_ID, "PD001061", "ProDom", "2006.01", 9, 150, 763));
+        protein.addMatch(new ProDomRawMatch(PROTEIN_ID, "PD001061", "ProDom", "2006.01", 151, 245, 469));
         protein.addMatch(
                 new PfamHmmer3RawMatch(PROTEIN_ID, "PF02310", "Pfam", "24.0", 3, 107, 3.7E-9, 0.035, 1, 104, "[]", 3.0,
-                        0, 0, 0, 0, 0, 0, 0, "HMMER 2.3.2")
+                        0, 0, 0, 0, 0, 0, 0)
         );
         // Test
         assertEquals(PROTEIN_ID, protein.getProteinIdentifier());

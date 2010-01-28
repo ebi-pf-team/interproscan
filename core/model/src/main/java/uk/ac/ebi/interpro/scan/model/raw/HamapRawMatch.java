@@ -17,8 +17,8 @@ public class HamapRawMatch extends ProfileScanRawMatch {
 
     public HamapRawMatch(String sequenceIdentifier, String model,
                          String signatureLibraryName, String signatureLibraryRelease,
-                         int locationStart, int locationEnd,
-                         double score, String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, score, generator);
+                         int locationStart, int locationEnd, double score) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease,
+              locationStart, locationEnd, score);
     }
 }

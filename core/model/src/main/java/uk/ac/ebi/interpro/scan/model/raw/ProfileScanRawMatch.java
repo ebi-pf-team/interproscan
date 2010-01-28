@@ -22,8 +22,8 @@ public abstract class ProfileScanRawMatch extends RawMatch {
     protected ProfileScanRawMatch(String sequenceIdentifier, String model,
                                   String signatureLibraryName, String signatureLibraryRelease,
                                   int locationStart, int locationEnd,
-                                  double score, String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
+                                  double score) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
         this.score = score;
     }
 

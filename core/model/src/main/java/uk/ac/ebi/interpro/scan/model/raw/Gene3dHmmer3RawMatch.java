@@ -1,5 +1,9 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import javax.persistence.Entity;
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -28,8 +32,10 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
                                 int envelopeStart, int envelopeEnd,
                                 double expectedAccuracy, double fullSequenceBias,
                                 double domainCeValue, double domainIeValue, double domainBias,
-                                String cigarAlignment, String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias, generator);
+                                String cigarAlignment) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd,
+              evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
+              fullSequenceBias, domainCeValue, domainIeValue, domainBias);
         this.cigarAlignment = cigarAlignment;
     }
 
@@ -39,6 +45,29 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
 
     private void setCigarAlignment(String cigarAlignment) {
         this.cigarAlignment = cigarAlignment;
-    }    
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Gene3dHmmer3RawMatch))
+            return false;
+        final Gene3dHmmer3RawMatch m = (Gene3dHmmer3RawMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(cigarAlignment, m.cigarAlignment)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(53, 61)
+                .appendSuper(super.hashCode())
+                .append(cigarAlignment)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }

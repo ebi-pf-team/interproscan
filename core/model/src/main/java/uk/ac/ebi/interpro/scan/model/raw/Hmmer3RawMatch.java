@@ -3,9 +3,14 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 
 import javax.persistence.Entity;
 import java.util.*;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * <a href="http://hmmer.janelia.org/">HMMER 3</a> raw match.
@@ -37,16 +42,16 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                              double locationScore,
                              int envelopeStart, int envelopeEnd,
                              double expectedAccuracy, double fullSequenceBias,
-                             double domainCeValue, double domainIeValue, double domainBias,
-                             String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, generator);
-        this.envelopeStart = envelopeStart;
-        this.envelopeEnd = envelopeEnd;
-        this.expectedAccuracy = expectedAccuracy;
-        this.fullSequenceBias = fullSequenceBias;
-        this.domainCeValue = Math.log10(domainCeValue);
-        this.domainIeValue = Math.log10(domainIeValue);
-        this.domainBias = domainBias;
+                             double domainCeValue, double domainIeValue, double domainBias) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd,
+              evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore);
+        setEnvelopeStart(envelopeStart);
+        setEnvelopeEnd(envelopeEnd);
+        setExpectedAccuracy(expectedAccuracy);
+        setFullSequenceBias(fullSequenceBias);
+        setDomainCeValue(domainCeValue);
+        setDomainIeValue(domainIeValue);
+        setDomainBias(domainBias);
     }
 
     public int getEnvelopeStart() {
@@ -82,19 +87,19 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
     }
 
     public double getDomainCeValue() {
-        return domainCeValue;
+        return PersistenceConversion.get(domainCeValue);
     }
 
     private void setDomainCeValue(double domainCeValue) {
-        this.domainCeValue = domainCeValue;
+        this.domainCeValue = PersistenceConversion.set(domainCeValue);
     }
 
     public double getDomainIeValue() {
-        return domainIeValue;
+        return PersistenceConversion.get(domainIeValue);
     }
 
     private void setDomainIeValue(double domainIeValue) {
-        this.domainIeValue = domainIeValue;
+        this.domainIeValue = PersistenceConversion.set(domainIeValue);
     }
 
     public double getDomainBias() {
@@ -105,8 +110,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         this.domainBias = domainBias;
     }
 
-// TODO: Add hashCode(), equals() ...etc
-
+    // TODO: Add hashCode(), equals() ...etc
 
     // TODO: Generalise this to RawMatch
     public static Collection<Hmmer3Match> getMatches(Collection<? extends Hmmer3RawMatch> rawMatches,
@@ -171,6 +175,41 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                 m.getEnvelopeStart(),
                 m.getEnvelopeEnd()
         );
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Hmmer3RawMatch))
+            return false;
+        final Hmmer3RawMatch m = (Hmmer3RawMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(envelopeStart, m.envelopeStart)
+                .append(envelopeEnd, envelopeEnd)
+                .append(expectedAccuracy, m.expectedAccuracy)
+                .append(fullSequenceBias, m.fullSequenceBias)
+                .append(domainCeValue, m.domainCeValue)
+                .append(domainIeValue, m.domainIeValue)
+                .append(domainBias, m.domainBias)
+                .isEquals();
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder(53, 59)
+                .appendSuper(super.hashCode())
+                .append(envelopeStart)
+                .append(envelopeEnd)
+                .append(expectedAccuracy)
+                .append(fullSequenceBias)
+                .append(domainCeValue)
+                .append(domainIeValue)
+                .append(domainBias)
+                .toHashCode();
+    }
+
+    @Override public String toString()  {
+        return ToStringBuilder.reflectionToString(this);
     }
     
 }

@@ -22,9 +22,8 @@ public class ProSitePatternRawMatch extends RawMatch {
 
     public ProSitePatternRawMatch(String sequenceIdentifier, String model,
                                   String signatureLibraryName, String signatureLibraryRelease,
-                                  int locationStart, int locationEnd,
-                                  String level, String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
+                                  int locationStart, int locationEnd, String level) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
         this.level = level;
     }
 
