@@ -34,9 +34,8 @@ public class PrintsRawMatch extends RawMatch {
                           int locationStart, int locationEnd,
                           double evalue, String graphscan,
                           int motifCount, int motifNumber, 
-                          double pvalue, double score,
-                          String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, generator);
+                          double pvalue, double score) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
         this.evalue = evalue;
         this.graphscan = graphscan;
         this.motifCount = motifCount;

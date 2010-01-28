@@ -25,8 +25,8 @@ public class PfamHmmer3RawMatch extends Hmmer3RawMatch {
                               double locationScore,
                               int envelopeStart, int envelopeEnd,
                               double expectedAccuracy, double fullSequenceBias,
-                              double domainCeValue, double domainIeValue, double domainBias,
-                              String generator) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias, generator);
+                              double domainCeValue, double domainIeValue, double domainBias) {
+        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd,
+              evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias);
     }
 }

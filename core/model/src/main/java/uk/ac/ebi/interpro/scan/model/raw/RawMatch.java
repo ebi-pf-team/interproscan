@@ -26,32 +26,24 @@ public abstract class RawMatch implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Long id;
-    private String sequenceIdentifier;  // eg. MD5
-    
-    private String model;   // eg. "PF00001"
-
-    private String signatureLibraryName; //for ex: PFAM, or GENE3D
-
-    private String signatureLibraryRelease;// eg. "23.0"
-
-    private String generator;  // eg. "HMMER 2.3.1"
-
+    private String sequenceIdentifier;      // eg. MD5
+    private String model;                   // eg. PF00001
+    private String signatureLibraryName;    // eg. PFAM
+    private String signatureLibraryRelease; // eg. 23.0
     private int locationStart;
-
     private int locationEnd;
 
     protected RawMatch() { }
 
     protected RawMatch(String sequenceIdentifier, String model,
                        String signatureLibraryName, String signatureLibraryRelease,
-                       int locationStart, int locationEnd, String generator) {
+                       int locationStart, int locationEnd) {
         this.sequenceIdentifier     = sequenceIdentifier;
         this.model                  = model;
         this.signatureLibraryName   = signatureLibraryName;
         this.signatureLibraryRelease = signatureLibraryRelease;
         this.locationStart          = locationStart;
         this.locationEnd            = locationEnd;
-        this.generator              = generator;
     }
 
     public Long getId() {
@@ -89,14 +81,6 @@ public abstract class RawMatch implements Serializable {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    public String getGenerator() {
-        return generator;
-    }
-
-    private void setGenerator(String generator) {
-        this.generator = generator;
-    }
-
     public int getLocationStart() {
         return locationStart;
     }
@@ -123,7 +107,6 @@ public abstract class RawMatch implements Serializable {
                 .append(sequenceIdentifier, m.sequenceIdentifier)
                 .append(signatureLibraryName, m.signatureLibraryName)
                 .append(signatureLibraryRelease, m.signatureLibraryRelease)
-                .append(generator, m.generator)
                 .append(model, m.model)
                 .append(locationStart, m.locationStart)
                 .append(locationEnd, m.locationEnd)
@@ -131,11 +114,10 @@ public abstract class RawMatch implements Serializable {
     }
 
     @Override public int hashCode() {
-        return new HashCodeBuilder(21, 51)
+        return new HashCodeBuilder(53, 51)
                 .append(sequenceIdentifier)
                 .append(signatureLibraryName)
                 .append(signatureLibraryRelease)
-                .append(generator)
                 .append(model)
                 .append(locationStart)
                 .append(locationEnd)
