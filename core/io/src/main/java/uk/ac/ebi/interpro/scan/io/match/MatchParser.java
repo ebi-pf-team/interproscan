@@ -16,6 +16,12 @@ import uk.ac.ebi.interpro.scan.io.ParseException;
  * @version $Id$
  * @since   1.0
  */
-public interface MatchParser extends Serializable {
-    public <T extends RawMatch> Set<RawProtein<T>> parse(InputStream is) throws IOException, ParseException;
+public interface MatchParser<T extends RawMatch> extends Serializable {
+
+    public String getSignatureLibraryName();
+
+    public String getSignatureLibraryRelease();
+    
+    public Set<RawProtein<T>> parse(InputStream is) throws IOException, ParseException;
+
 }

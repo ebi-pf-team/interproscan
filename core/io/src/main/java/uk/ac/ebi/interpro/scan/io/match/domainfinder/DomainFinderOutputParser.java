@@ -58,8 +58,8 @@ public class DomainFinderOutputParser {
                                             DUMMY_DOMAIN_CEVALUE, //domainCEvalue
                                             DUMMY_DOMAIN_IEVALUE, //domainIEvalue
                                             DUMMY_DOMAIN_BIAS, //domainBias
-                                            "unknown string","Domain Finder 3.0");
-            System.out.println("Printing Gene3dRawMatch from DF3 output file ....." + m.toString());
+                                            "unknown string");
+            //System.out.println("Printing Gene3dRawMatch from DF3 output file ....." + m.toString());
             try {
                 matches.add(m);
 

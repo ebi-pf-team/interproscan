@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmsearchOutputMethod;
+import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -107,6 +107,27 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
      */
     private Hmmer3ParserSupport<T> hmmer3ParserSupport;
 
+    private final String signatureLibraryName;
+    private final String signatureLibraryRelease;
+
+    private Hmmer3SearchMatchParser()   {
+        signatureLibraryName = null;
+        signatureLibraryRelease = null;
+    }
+
+    public Hmmer3SearchMatchParser(String signatureLibraryName, String signatureLibraryRelease) {
+        this.signatureLibraryName = signatureLibraryName;
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
+    public String getSignatureLibraryName() {
+        return signatureLibraryName;
+    }
+
+    public String getSignatureLibraryRelease() {
+        return signatureLibraryRelease;
+    }
+
     @Required
     public void setParserSupport(Hmmer3ParserSupport<T> hmmer3ParserSupport) {
         this.hmmer3ParserSupport = hmmer3ParserSupport;
@@ -124,15 +145,13 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         FINISHED_SEARCHING_RECORD
     }
 
-
-
     public Set<RawProtein<T>> parse(InputStream is) throws IOException, ParseException {
 
         Map<String, RawProtein<T>> rawResults = new HashMap<String, RawProtein<T>>();
         BufferedReader reader = null;
         try{
             reader = new BufferedReader(new InputStreamReader(is));
-            HmmsearchOutputMethod method = null;
+            HmmSearchRecord method = null;
             String currentSequenceIdentifier = null;
             Map<String, DomainMatch> domains = new HashMap<String, DomainMatch>();
             StringBuilder alignSeq = new StringBuilder();
@@ -166,8 +185,8 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
                                 Matcher modelIdentLinePatternMatcher = hmmer3ParserSupport.getModelIdentLinePattern().matcher(line);
                                 if (modelIdentLinePatternMatcher.matches()){
-                                    method = new HmmsearchOutputMethod(hmmer3ParserSupport.getMethodIdentification(modelIdentLinePatternMatcher));
-                                    method.setMethodAccessionLength(hmmer3ParserSupport.getMethodAccessionLength(modelIdentLinePatternMatcher));
+                                    method = new HmmSearchRecord(hmmer3ParserSupport.getModelId(modelIdentLinePatternMatcher));
+                                    method.setModelLength(hmmer3ParserSupport.getModelLength(modelIdentLinePatternMatcher));
                                 }
                                 else {
                                     throw new ParseException("Found a line starting with " + hmmer3ParserSupport.getHmmKey().getPrefix() + " but cannot parse it with the MODEL_ACCESSION_LINE regex.",null, line, lineNumber);

@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer3;
 
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmsearchOutputMethod;
+import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 
@@ -31,7 +31,7 @@ public interface Hmmer3ParserSupport<T extends RawMatch> extends Serializable {
      * that the raw results should be added to.
      * @throws java.io.IOException in the event of an IO problem.
      */
-    void addMatch(HmmsearchOutputMethod methodMatches, Map<String, RawProtein<T>> rawResults)
+    void addMatch(HmmSearchRecord methodMatches, Map<String, RawProtein<T>> rawResults)
             throws IOException;
 
     /**
@@ -45,26 +45,26 @@ public interface Hmmer3ParserSupport<T extends RawMatch> extends Serializable {
     boolean parseAlignments();
 
     /**
-     * Based upon a match to the Pattern retrieved by the getModelIdentLinePattern method,
-     * returns the ID / accession of the method.
-     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * Returns the model ID or model accession.
+     * 
+     * @param modelIdentLinePatternMatcher  Matcher to the Pattern retrieved by the getModelIdentLinePattern method
      * @return the ID or accession of the method.
      */
-    String getMethodIdentification(Matcher modelIdentLinePatternMatcher);
+    String getModelId(Matcher modelIdentLinePatternMatcher);
 
     /**
-     * Returns the model accession length, or null if this value is not available.
+     * Returns the model length, or null if this value is not available.
+     *
      * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
      * @return the model accession length, or null if this value is not available.
      */
-    Integer getMethodAccessionLength(Matcher modelIdentLinePatternMatcher);
+    Integer getModelLength(Matcher modelIdentLinePatternMatcher);
 
     /**
      * To be flexible with different hmmer3 search output file, this method gets either accession or query
      *  accordingly
      *
      */
-
     enum HmmKey {
 
         ACCESSION("Accession:"), NAME("Query:");

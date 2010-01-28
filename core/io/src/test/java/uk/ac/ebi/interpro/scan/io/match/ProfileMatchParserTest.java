@@ -11,7 +11,7 @@ import java.io.IOException;
  * @author  Manjula Thimma
  * @version $Id$
  * @since   1.0
- * @see     ProfileMatchParser
+ * @see     ProSiteProfileMatchParser
  */
 public class ProfileMatchParserTest extends TestCase {
 
@@ -21,7 +21,7 @@ public class ProfileMatchParserTest extends TestCase {
     public void testParseProfile() throws IOException {
         /*
         InputStream is = getClass().getClassLoader().getResourceAsStream("prosite/prosite_output.txt");
-        MatchParser io = new ProfileMatchParser();
+        MatchParser io = new ProSiteProfileMatchParser();
         Set<SequenceIdentifier> sequenceIds = io.parse(is);
         */
     }
@@ -31,7 +31,7 @@ public class ProfileMatchParserTest extends TestCase {
     public void testParseProfileHamap() throws IOException {
         /*
         InputStream is = getClass().getClassLoader().getResourceAsStream("prosite/hamap_output.txt");
-        MatchParser io = new ProfileMatchParser();
+        MatchParser io = new ProSiteProfileMatchParser();
         Set<SequenceIdentifier> sequenceIds = io.parse(is);
         */
     }

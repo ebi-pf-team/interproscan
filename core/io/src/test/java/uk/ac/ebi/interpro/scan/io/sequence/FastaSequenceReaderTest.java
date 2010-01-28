@@ -75,11 +75,9 @@ public class FastaSequenceReaderTest {
         final Map<String, Protein> proteins = new HashMap<String, Protein>();
         SequenceReader reader = new FastaSequenceReader(
                 new SequenceReader.Listener() {
-                    @Override public void mapRecord(SequenceRecord record) {
-                        // TODO: Should be able to do this in one line
-                        Protein protein = new Protein(record.getSequence());
-                        protein.addCrossReference(new Xref(record.getId()));
-                        proteins.put(protein.getMd5(), protein); // Use MD5 as key
+                    @Override public void mapRecord(SequenceRecord r) {
+                        Protein p = new Protein.Builder(r.getSequence()).crossReference(new Xref(r.getId())).build();
+                        proteins.put(p.getMd5(), p); // Use MD5 as key
                     }
                 }
         );
