@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer3;
 
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmsearchOutputMethod;
+import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever;
@@ -59,7 +59,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
      * @return the ID or accession of the method.
      */
     @Override
-    public String getMethodIdentification(Matcher modelIdentLinePatternMatcher) {
+    public String getModelId(Matcher modelIdentLinePatternMatcher) {
         return modelIdentLinePatternMatcher.group(1);
     }
 
@@ -70,7 +70,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
      * @return the model accession length, or null if this value is not available.
      */
     @Override
-    public Integer getMethodAccessionLength(Matcher modelIdentLinePatternMatcher) {
+    public Integer getModelLength(Matcher modelIdentLinePatternMatcher) {
         return null;
     }
 
@@ -87,15 +87,15 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
         return MODEL_ACCESSION_LINE_PATTERN;
     }
 
-    public void addMatch(HmmsearchOutputMethod methodMatches, Map<String, RawProtein<PfamHmmer3RawMatch>> rawResults) throws IOException {
+    public void addMatch(HmmSearchRecord methodMatches, Map<String, RawProtein<PfamHmmer3RawMatch>> rawResults) throws IOException {
         try{
             for (SequenceMatch sequenceMatch : methodMatches.getSequenceMatches().values()){
                 for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()){
 
                     // Find out if the sequence match / domain match pass the GA cutoff.
-                    if ((sequenceMatch.getScore() >=  gaValuesRetriever.getSequenceGAForAccession(methodMatches.getMethodAccession()))
+                    if ((sequenceMatch.getScore() >=  gaValuesRetriever.getSequenceGAForAccession(methodMatches.getModelAccession()))
                             &&
-                            (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getMethodAccession()))){
+                            (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getModelAccession()))){
 
                         // Good sequence / domain match, so add to the rawResults.
 
@@ -109,7 +109,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
 
                         final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
                                 sequenceMatch.getSequenceIdentifier(),
-                                methodMatches.getMethodAccession(),
+                                methodMatches.getModelAccession(),
                                 signatureLibraryName,
                                 signatureLibraryRelease,
                                 domainMatch.getAliFrom(),
@@ -126,8 +126,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
                                 sequenceMatch.getBias(),
                                 domainMatch.getCEvalue(),
                                 domainMatch.getIEvalue(),
-                                domainMatch.getBias(),
-                                null
+                                domainMatch.getBias()
                         );
                         sequenceIdentifier.addMatch(match);
                     } // End of testing if pass GA cutoff.
