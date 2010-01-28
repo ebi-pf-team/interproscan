@@ -72,6 +72,9 @@ public class Signature implements Serializable {
     @Transient
     private String description;
 
+    /**
+     * Member database specific category for the Signature
+     */
     @Column (name="type")
     private String type;
 

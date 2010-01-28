@@ -15,11 +15,11 @@ import java.io.Serializable;
 @DiscriminatorValue("write_fasta_file")
 public class WriteFastaFileStepInstance extends StepInstance<WriteFastaFileStep, WriteFastaFileStepExecution> implements Serializable {
 
-    public WriteFastaFileStepInstance(WriteFastaFileStep step, long bottomProteinId, long topProteinId) {
-        super(step, bottomProteinId, topProteinId);
+    public WriteFastaFileStepInstance(WriteFastaFileStep step, long bottomProteinId, long topProteinId, Long bottomModelId, Long topModelId) {
+        super(step, bottomProteinId, topProteinId, bottomModelId, topModelId);
         this.fastaFilePathName = filterFileNameProteinBounds(
                 this.getStep().getFastaFilePathTemplate(),
-                bottomProteinId, topProteinId
+                bottomProteinId, topProteinId, bottomModelId, topModelId
         );
     }
 

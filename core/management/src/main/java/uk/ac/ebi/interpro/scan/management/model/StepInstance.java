@@ -1,7 +1,5 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
-import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
-
 import javax.persistence.*;
 import java.util.*;
 import java.io.Serializable;
@@ -72,15 +70,17 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
     @OneToMany (targetEntity = StepExecution.class, fetch = FetchType.EAGER, mappedBy = "stepInstance", cascade = {})
     private Set<E> executions = new HashSet<E>();
 
-    public StepInstance(S step) {
-        this (step, null, null);
-    }
+//    public StepInstance(S step) {
+//        this (step, null, null, null, null);
+//    }
 
-    public StepInstance(S step, Long bottomProteinId, Long topProteinId) {
-        this.step = step;            // This is not persisted.
+    public StepInstance(S step, Long bottomProteinId, Long topProteinId, Long bottomModelId, Long topModelId) {
+        this.step = step;            // This is NOT persisted.
         this.stepId = step.getId();  // This is persisted.
         this.bottomProtein = bottomProteinId;
         this.topProtein = topProteinId;
+        this.bottomModel = bottomModelId;
+        this.topModel = topModelId;
     }
 
     /**
@@ -89,21 +89,21 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
     protected StepInstance() {
     }
 
-    public void setBottomProtein(Long bottomProtein) {
-        this.bottomProtein = bottomProtein;
-    }
-
-    public void setTopProtein(Long topProtein) {
-        this.topProtein = topProtein;
-    }
-
-    public void setBottomModel(Long bottomModel) {
-        this.bottomModel = bottomModel;
-    }
-
-    public void setTopModel(Long topModel) {
-        this.topModel = topModel;
-    }
+//    public void setBottomProtein(Long bottomProtein) {
+//        this.bottomProtein = bottomProtein;
+//    }
+//
+//    public void setTopProtein(Long topProtein) {
+//        this.topProtein = topProtein;
+//    }
+//
+//    public void setBottomModel(Long bottomModel) {
+//        this.bottomModel = bottomModel;
+//    }
+//
+//    public void setTopModel(Long topModel) {
+//        this.topModel = topModel;
+//    }
 
     public void addDependentStepInstance(StepInstance dependentStepInstance){
         this.dependencies.add (dependentStepInstance);
@@ -228,16 +228,18 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
      */
     public static final NumberFormat TWELVE_DIGIT_INTEGER = new DecimalFormat("000000000000");
 
-    public String filterFileNameProteinBounds (String fileNameTemplate, long bottomProteinId, long topProteinId){
-        fileNameTemplate = fileNameTemplate.replaceAll(PROTEIN_BOTTOM_HOLDER, TWELVE_DIGIT_INTEGER.format(bottomProteinId));
-        fileNameTemplate = fileNameTemplate.replaceAll(PROTEIN_TOP_HOLDER, TWELVE_DIGIT_INTEGER.format(topProteinId));
+    public String filterFileNameProteinBounds (String fileNameTemplate, Long bottomProteinId, Long topProteinId, Long bottomModelId, Long topModelId){
+        fileNameTemplate = filter(fileNameTemplate, PROTEIN_BOTTOM_HOLDER, bottomProteinId);
+        fileNameTemplate = filter(fileNameTemplate, PROTEIN_TOP_HOLDER, topProteinId);
+        fileNameTemplate = filter(fileNameTemplate, MODEL_BOTTOM_HOLDER, bottomModelId);
+        fileNameTemplate = filter(fileNameTemplate, MODEL_TOP_HOLDER, topModelId);
         return fileNameTemplate;
     }
 
-    public String filterFileNameModelBounds (String fileNameTemplate, long bottomModelId, long topModelId){
-        fileNameTemplate = fileNameTemplate.replaceAll(MODEL_BOTTOM_HOLDER, TWELVE_DIGIT_INTEGER.format(bottomModelId));
-        fileNameTemplate = fileNameTemplate.replaceAll(MODEL_TOP_HOLDER, TWELVE_DIGIT_INTEGER.format(topModelId));
-        return fileNameTemplate;
+    private String filter(String template, String pattern, Long value){
+        return (value == null)
+                ? template
+                : template.replaceAll(pattern, TWELVE_DIGIT_INTEGER.format(value));
     }
 
     public void setStep(S step) {
