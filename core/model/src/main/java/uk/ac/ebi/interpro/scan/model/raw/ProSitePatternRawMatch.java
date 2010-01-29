@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Table(name="prosite_pattern_raw_match")
 public class ProSitePatternRawMatch extends RawMatch {
 
-    // TODO: Should we use enum for level?
+    // TODO: Should we use enum for level? See PatternScanMatch.Level
     @Column (name="pro_site_level")
     private String level;
 

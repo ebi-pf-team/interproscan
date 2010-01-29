@@ -110,8 +110,6 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         this.domainBias = domainBias;
     }
 
-    // TODO: Add hashCode(), equals() ...etc
-
     // TODO: Generalise this to RawMatch
     public static Collection<Hmmer3Match> getMatches(Collection<? extends Hmmer3RawMatch> rawMatches,
                                                      Listener rawMatchListener)  {

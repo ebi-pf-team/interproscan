@@ -350,17 +350,6 @@ public class Signature implements Serializable {
         }
     }
 
-    /**
-     * Returns key to use in, for example, HashMap.
-     *
-     * @return Key to use in, for example, HashMap.
-     */
-    @XmlTransient
-    public String getKey() {
-        // TODO: Use name or accession as signature key?
-        return getAccession();
-    }
-
     public Model addModel(Model model) throws IllegalArgumentException {
         if (model == null) {
             throw new IllegalArgumentException("'Model' must not be null");
@@ -458,8 +447,8 @@ public class Signature implements Serializable {
     }
 
     /**
-     * TODO - this will not work, giving a null value for description
-     * or the abstract if the instance is retrieved from the database.
+     * TODO - this will not work, giving a null value for description or the abstract if the instance is retrieved from the database.
+     * 
      * @return String representation of this object.
      */
     @Override public String toString()  {

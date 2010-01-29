@@ -140,8 +140,8 @@ public class SignatureLibrary implements Serializable {
     }
 
     /**
-     * TODO might will not work for the chunked description.
-     * Needs to use the getter method instead.
+     * TODO might will not work for the chunked description - Needs to use the getter method instead.
+     * 
      * @return String representation of this.
      */
     @Override public String toString() {

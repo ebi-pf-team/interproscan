@@ -18,8 +18,6 @@ import java.io.Serializable;
 @Table(name="prodom_raw_match")
 public class ProDomRawMatch extends RawMatch implements Serializable {
 
-    // TODO: No need for member DBs where algorithm is unique to them, eg. PRINTS, Panther
-
     @Column
     private double score;   // location.score
 
