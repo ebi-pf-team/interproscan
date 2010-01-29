@@ -188,8 +188,6 @@ public class Protein implements Serializable {
         }
     }
 
-    // TODO: Make add and remove private?
-
     /**
      * Adds and returns filtered match to sequence
      *
@@ -349,17 +347,6 @@ public class Protein implements Serializable {
             catch (NoSuchAlgorithmException e) {
                 throw new IllegalStateException ("Cannot find MD5 algorithm", e);
             }
-        }
-
-        // TODO: Do we need isMd5()?
-        /**
-         * Returns true if string is an MD5 digest in hexadecimal format.
-         *
-         * @param  candidate Strint to test
-         * @return true if string is an MD5 digest in hexadecimal format.
-         */
-        static boolean isMd5(String candidate) {
-            return candidate != null && MD5_PATTERN.matcher(candidate).matches();
         }
         
         static String calculateMd5(String sequence)   {

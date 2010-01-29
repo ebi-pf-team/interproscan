@@ -43,9 +43,6 @@ import java.util.*;
 @XmlType(name="MatchType", propOrder={"signature", "locations"})
 public abstract class Match<T extends Location> implements Serializable {
 
-    // TODO: IMPACT XML: Add evidence, e.g. "HMMER 2.3.2 (Oct 2003)" [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
-    // TODO: See http://www.ebi.ac.uk/seqdb/confluence/x/DYAg#ND3.3StandardXMLformatforallcommondatatypes-SMART
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -93,8 +90,6 @@ public abstract class Match<T extends Location> implements Serializable {
     private void setSignature(Signature signature) {
         this.signature = signature;
     }
-
-    // TODO: Simplify by forcing locations to be passed into constructor?
 
     @Transient    
     @XmlJavaTypeAdapter(Location.LocationAdapter.class)

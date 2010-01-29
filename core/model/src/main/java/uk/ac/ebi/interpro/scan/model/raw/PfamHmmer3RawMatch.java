@@ -13,8 +13,6 @@ import javax.persistence.Table;
 @Table(name="pfam_hmmer3_raw_match")
 public class PfamHmmer3RawMatch extends Hmmer3RawMatch {
 
-    // TODO: Consider Builder to make more readable
-
     protected PfamHmmer3RawMatch() { }    
 
     public PfamHmmer3RawMatch(String sequenceIdentifier, String model,

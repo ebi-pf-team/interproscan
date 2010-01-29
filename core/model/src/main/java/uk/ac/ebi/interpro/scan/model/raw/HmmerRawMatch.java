@@ -19,9 +19,6 @@ import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 @Entity
 abstract class HmmerRawMatch extends RawMatch  {
 
-    // TODO: No need for "generator" we can add this in each concrete class
-
-    // TODO: evalue and score can be calculated -- do we need to store? Needs testing
     @Column(name="EVALUE",nullable = false, updatable = false)
     private double evalue;
     
