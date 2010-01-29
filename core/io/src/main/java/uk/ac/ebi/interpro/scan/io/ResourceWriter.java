@@ -15,4 +15,6 @@ public interface ResourceWriter<T> {
 
     public void write(Resource resource, Collection<T> records) throws IOException;
 
+    public void write(Resource resource, Collection<T> records, boolean canOverwrite) throws IOException;
+
 }

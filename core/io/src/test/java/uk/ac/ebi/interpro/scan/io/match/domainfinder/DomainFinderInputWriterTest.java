@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.junit.Test;
+import org.junit.Ignore;
 
 
 import javax.annotation.Resource;
@@ -28,6 +29,7 @@ public class DomainFinderInputWriterTest {
     private org.springframework.core.io.Resource domainFinderInputFileTest;
 
     @Test
+    @Ignore
     public void testGene3DParser() throws ParseException, IOException {
         final String PROTEIN_ID = "1";
         RawProtein<Gene3dHmmer3RawMatch> protein = new RawProtein<Gene3dHmmer3RawMatch>(PROTEIN_ID);

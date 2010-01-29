@@ -76,8 +76,8 @@ public final class DomainFinderRecord {
     private final Integer sequenceEnd;
     private final Integer modelStart;
     private final Integer modelEnd;
-    private final Double domainIevalue;
-    private final Double domainScore;
+    private final Double evalue;
+    private final Double score;
     private final Double reverseScore;
     private final Integer matchedSequenceCount;
     private final String segmentBoundaries;
@@ -93,8 +93,8 @@ public final class DomainFinderRecord {
         this.sequenceEnd    = null;
         this.modelStart     = null;
         this.modelEnd       = null;
-        this.domainIevalue  = null;
-        this.domainScore    = null;
+        this.evalue         = null;
+        this.score          = null;
         this.reverseScore   = null;
         this.matchedSequenceCount = null;
         this.segmentBoundaries = null;
@@ -103,15 +103,8 @@ public final class DomainFinderRecord {
     public DomainFinderRecord(String sequenceId, String modelId,
                               Integer sequenceStart, Integer sequenceEnd,
                               Integer modelStart, Integer modelEnd,
-                              Double domainIevalue, Double domainScore, String cigarAlignment) {
-        Integer matchedSequenceCount = null;
-        String segmentBoundaries     = null;
-        // TODO: Sort out MT code (use record instead of String split)
-        String[] segments = getSegmentAndBoundaries(cigarAlignment, sequenceStart).split(",");
-        if (segments!=null && segments.length==2) {
-            matchedSequenceCount = Integer.parseInt(segments[0]);
-            segmentBoundaries     = segments[1];
-        }
+                              Double evalue, Double score, String cigarAlignment) {
+        SegmentRecord segmentRecord = getSegmentAndBoundaries(cigarAlignment, sequenceStart);
         this.sequenceId          = sequenceId;
         this.modelId             = modelId;
         this.sequenceLength      = DEFAULT_SEQUENCE_LENGTH;
@@ -122,19 +115,19 @@ public final class DomainFinderRecord {
         this.sequenceEnd         = sequenceEnd;
         this.modelStart          = modelStart;
         this.modelEnd            = modelEnd;
-        this.domainIevalue       = domainIevalue;
-        this.domainScore         = domainScore;
+        this.evalue              = evalue;
+        this.score               = score;
         this.reverseScore        = DEFAULT_REVERSE_SCORE;
-        this.matchedSequenceCount = matchedSequenceCount;
-        this.segmentBoundaries   = segmentBoundaries;
+        this.matchedSequenceCount = segmentRecord.getMatchedSequenceCount();
+        this.segmentBoundaries   = segmentRecord.getSegmentBoundaries();
     }
 
-    private DomainFinderRecord(String sequenceId, String modelId,
+    DomainFinderRecord(String sequenceId, String modelId,
                               Integer sequenceLength, Integer modelLength,
                               Integer alignmentLength, Integer matchedResidueCount,
                               Integer sequenceStart, Integer sequenceEnd,
                               Integer modelStart, Integer modelEnd,
-                              Double domainIevalue, Double domainScore, Double reverseScore,
+                              Double evalue, Double score, Double reverseScore,
                               Integer matchedSequenceCount, String segmentBoundaries) {
         this.sequenceId          = sequenceId;
         this.modelId             = modelId;
@@ -146,16 +139,15 @@ public final class DomainFinderRecord {
         this.sequenceEnd         = sequenceEnd;
         this.modelStart          = modelStart;
         this.modelEnd            = modelEnd;
-        this.domainIevalue       = domainIevalue;
-        this.domainScore         = domainScore;
+        this.evalue              = evalue;
+        this.score               = score;
         this.reverseScore        = reverseScore;
         this.matchedSequenceCount = matchedSequenceCount;
         this.segmentBoundaries   = segmentBoundaries;
     }
 
     public static DomainFinderRecord valueOf(String line) {
-        // TODO: Avoid regex split() -- use CharArray (see CigarAlignment) -- or Scanner?
-        String[] columns = line.split(COLUMN_SEP);
+        String[] columns        = line.split(COLUMN_SEP);
         String sequenceId       = columns[SEQUENCE_ID_POS];
         String modelId          = columns[MODEL_ID_POS];
         Integer sequenceLength  = Integer.parseInt(columns[SEQUENCE_LENGTH_POS]);
@@ -192,8 +184,8 @@ public final class DomainFinderRecord {
         columns[SEQUENCE_END_POS]       = String.valueOf(record.sequenceEnd);
         columns[MODEL_START_POS]        = String.valueOf(record.modelStart);
         columns[MODEL_END_POS]          = String.valueOf(record.modelEnd);
-        columns[EVALUE_POS]             = String.valueOf(record.domainIevalue);
-        columns[SCORE_POS]              = String.valueOf(record.domainScore);
+        columns[EVALUE_POS]             = String.valueOf(record.evalue);
+        columns[SCORE_POS]              = String.valueOf(record.score);
         columns[REVERSE_SCORE_POS]      = String.valueOf(record.reverseScore);
         columns[MATCHED_SEQUENCE_COUNT_POS] = String.valueOf(record.matchedSequenceCount);
         columns[SEGMENT_BOUNDARIES_POS] = String.valueOf(record.segmentBoundaries);        
@@ -211,6 +203,7 @@ public final class DomainFinderRecord {
         if (rawMatch == null)  {
             throw new NullPointerException("RawMatch object is null");
         }
+        // TODO: Which evalue and score should we use?
         return new DomainFinderRecord(rawMatch.getSequenceIdentifier(), rawMatch.getModel(),
                               rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
                               rawMatch.getHmmStart(), rawMatch.getHmmEnd(),
@@ -232,9 +225,9 @@ public final class DomainFinderRecord {
     *    while the beginning of the second is the first after the gap closes.
     *(5) Continue on down the sequence ...
      */
-    public static String getSegmentAndBoundaries(String cigarAlignment, int aliFrom) {
+    public static SegmentRecord getSegmentAndBoundaries(String cigarAlignment, int sequenceStart) {
 
-        int residueLength = aliFrom;
+        int residueLength = sequenceStart;
         int startOfMatch = 0, endOfMatch = 0;
         int segmentCounter = 1;
         int insertCounter = 0;
@@ -278,13 +271,11 @@ public final class DomainFinderRecord {
              }
 
         } //end of for
-
         if( endOfMatch > startOfMatch ) {
             sb.append(startOfMatch).append(":").append(endOfMatch - 1).append(":");  //not to missout any trailing segment
         }
-
-        String s = segmentCounter + "," +  sb.toString().substring(0,sb.toString().length()-1);
-        return s;
+        String segmentBoundaries = sb.toString().substring(0, sb.toString().length() - 1);
+        return new SegmentRecord(segmentCounter, segmentBoundaries);
     }
 
     @Override public boolean equals(Object o) {
@@ -304,14 +295,14 @@ public final class DomainFinderRecord {
                 .append(sequenceEnd, r.sequenceEnd)
                 .append(modelStart, r.modelStart)
                 .append(modelEnd, r.modelEnd)
-                .append(domainScore, r.domainScore)
+                .append(score, r.score)
                 .append(reverseScore, r.reverseScore)
                 .append(matchedSequenceCount, r.matchedSequenceCount)
                 .append(segmentBoundaries, r.segmentBoundaries)
                 .isEquals()
                 && 
                 // Allow for some imprecision in evalues
-                PersistenceConversion.equals(domainIevalue, r.domainIevalue);
+                PersistenceConversion.equals(evalue, r.evalue);
     }
 
     @Override public int hashCode() {
@@ -326,8 +317,8 @@ public final class DomainFinderRecord {
                 .append(sequenceEnd)
                 .append(modelStart)
                 .append(modelEnd)
-                .append(domainIevalue)
-                .append(domainScore)
+                .append(evalue)
+                .append(score)
                 .append(reverseScore)
                 .append(matchedSequenceCount)
                 .append(segmentBoundaries)
@@ -337,6 +328,51 @@ public final class DomainFinderRecord {
  
     @Override public String toString()  {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static final class SegmentRecord   {
+
+        private final Integer matchedSequenceCount;
+        private final String segmentBoundaries;
+
+        public SegmentRecord(Integer matchedSequenceCount, String segmentBoundaries) {
+            this.matchedSequenceCount = matchedSequenceCount;
+            this.segmentBoundaries    = segmentBoundaries;
+        }
+
+        public Integer getMatchedSequenceCount() {
+            return matchedSequenceCount;
+        }
+
+        public String getSegmentBoundaries() {
+            return segmentBoundaries;
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (!(o instanceof SegmentRecord))
+                return false;
+            final SegmentRecord r = (SegmentRecord) o;
+            return new EqualsBuilder()
+                    .append(matchedSequenceCount, r.matchedSequenceCount)
+                    .append(segmentBoundaries, r.segmentBoundaries)
+                    .isEquals();
+        }
+
+        @Override public int hashCode() {
+            return new HashCodeBuilder(19, 99)
+                    .append(matchedSequenceCount)
+                    .append(segmentBoundaries)
+                    .toHashCode();
+        }
+
+
+        @Override public String toString()  {
+            return ToStringBuilder.reflectionToString(this);
+        }
+
+        
     }
 
 }
