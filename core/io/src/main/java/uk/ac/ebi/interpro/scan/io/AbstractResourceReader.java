@@ -2,9 +2,7 @@ package uk.ac.ebi.interpro.scan.io;
 
 import org.springframework.core.io.Resource;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Collections;
+import java.util.*;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,7 +25,7 @@ abstract class AbstractResourceReader<T> implements ResourceReader<T> {
         if (!resource.isReadable())  {
             throw new IllegalStateException(resource.getFilename() + " is not readable");
         }
-        final Collection<T> records = new HashSet<T>();
+        final List<T> records = new ArrayList<T>();
         BufferedReader reader = null;
         try{
             reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
@@ -40,7 +38,7 @@ abstract class AbstractResourceReader<T> implements ResourceReader<T> {
                 reader.close();
             }
         }
-        return Collections.unmodifiableCollection(records);
+        return Collections.unmodifiableList(records);
     }
     
     protected abstract T createRecord(String line);

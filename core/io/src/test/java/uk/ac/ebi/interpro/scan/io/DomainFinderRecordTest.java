@@ -35,7 +35,7 @@ public class DomainFinderRecordTest {
     // >> HP0834
     //    #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
     //  ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
-    //    1 !   41.5   0.0   1.7e-11   8.6e-10       8     171 ..      10     167 ..       3     171 .. 0.83
+    //    1 !   41.5   0.0   1.7e-11   8.6e-10       8     171 ..      10     167 ..       3     171 .. 0.83    
     private static final String MODEL_ID    = "2hxsA00";    
     private static final String SEQ_ID      = "HP0834";
     private static final double SEQ_EVALUE  = 2.6e-21;
@@ -81,7 +81,8 @@ public class DomainFinderRecordTest {
 
     @Test
     public void testSegmentAndBoundaries() {
-        String expected = MATCHED_SEQ_COUNT + "," + SEGMENT_BOUNDARIES;
+        DomainFinderRecord.SegmentRecord expected = 
+                new DomainFinderRecord.SegmentRecord(MATCHED_SEQ_COUNT, SEGMENT_BOUNDARIES);
         assertEquals(expected, DomainFinderRecord.getSegmentAndBoundaries(ALIGNMENT, SEQ_START));
     }
 

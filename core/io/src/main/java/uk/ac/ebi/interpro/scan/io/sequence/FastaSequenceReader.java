@@ -18,8 +18,6 @@ import uk.ac.ebi.interpro.scan.io.sequence.SequenceRecord;
  */
 public final class FastaSequenceReader implements SequenceReader {
 
-    // TODO: Move this to IO module
-
     // NOTE: Use Java NIO if profiling identifies I/O as bottleneck
     // NOTE: [http://java.sun.com/docs/books/tutorial/essential/io/file.html]    
 
