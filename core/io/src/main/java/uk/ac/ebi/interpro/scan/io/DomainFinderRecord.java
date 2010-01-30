@@ -146,6 +146,66 @@ public final class DomainFinderRecord {
         this.segmentBoundaries   = segmentBoundaries;
     }
 
+    public String getSequenceId() {
+        return sequenceId;
+    }
+
+    public String getModelId() {
+        return modelId;
+    }
+
+    public Integer getSequenceLength() {
+        return sequenceLength;
+    }
+
+    public Integer getModelLength() {
+        return modelLength;
+    }
+
+    public Integer getAlignmentLength() {
+        return alignmentLength;
+    }
+
+    public Integer getMatchedResidueCount() {
+        return matchedResidueCount;
+    }
+
+    public Integer getSequenceStart() {
+        return sequenceStart;
+    }
+
+    public Integer getSequenceEnd() {
+        return sequenceEnd;
+    }
+
+    public Integer getModelStart() {
+        return modelStart;
+    }
+
+    public Integer getModelEnd() {
+        return modelEnd;
+    }
+
+    public Double getEvalue() {
+        return evalue;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public Double getReverseScore() {
+        return reverseScore;
+    }
+
+    public Integer getMatchedSequenceCount() {
+        return matchedSequenceCount;
+    }
+
+    public String getSegmentBoundaries() {
+        return segmentBoundaries;
+    }
+
     public static DomainFinderRecord valueOf(String line) {
         String[] columns        = line.split(COLUMN_SEP);
         String sequenceId       = columns[SEQUENCE_ID_POS];
