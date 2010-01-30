@@ -60,10 +60,10 @@ public class ParseHMMER3OutputStepExecution extends StepExecution<ParseHMMER3Out
                 throw new IllegalStateException ("The DAOManager is present, but does not contain a RawMatchDAO.");
             }
             is = new FileInputStream(this.getStepInstance().getHmmerOutputFilePath());
-            Hmmer3SearchMatchParser parser = this.getStepInstance().getStep().getParser();
+            Hmmer3SearchMatchParser<Hmmer3RawMatch> parser = this.getStepInstance().getStep().getParser();
             Set<RawProtein<Hmmer3RawMatch>> parsedResults = parser.parse(is);
 
-            daoManager.getRawMatchDAO().insertRawSequenceIdentifiers(parsedResults);
+            daoManager.getRawMatchDAO().insertProteinMatches(parsedResults);
             this.completeSuccessfully();
         } catch (Exception e) {
             this.fail();
