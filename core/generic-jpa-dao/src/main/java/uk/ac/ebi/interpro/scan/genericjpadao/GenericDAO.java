@@ -21,16 +21,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Developed using IntelliJ IDEA.
- * User: pjones
- * Date: 02-Jul-2009
- * Time: 11:17:23
+ * Generic data access object (DAO) that can be used with any model class, providing basic CRUD methods.
+ *
+ * T is the model type (e.g. Protein, Model, Signature etc.)
+ * PK is the type of the primary key (normally {@link java.lang.Long})
+ *
+ * Based on the pattern described in
+ * <a href ="http://www.ibm.com/developerworks/java/library/j-genericdao.html">Don't repeat the DAO!</a>
+ * by Per Mellqvist (per@mellqvist.name) in IBM Developer Works Technical Library, 12 May 2006.
  *
  * @author Phil Jones, EMBL-EBI
- *
- * Based upon the pattern described in
- * http://www.ibm.com/developerworks/java/library/j-genericdao.html
- * by Per Mellqvist (per@mellqvist.name), System architect, Freelance
+ * @author Antony Quinn
  */
 public interface GenericDAO <T, PK extends Serializable> {
 
