@@ -3,48 +3,36 @@ package uk.ac.ebi.interpro.scan.persistence.raw;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Set;
+import java.util.HashSet;
 
 /**
- * Performs the job of inserting raw matches contained in a RawProtein object into the database.
+ * Data access object methods for {@link RawMatch}es.
  *
- * Created by IntelliJ IDEA.
- * User: pjones
- * Date: Nov 30, 2009
- * Time: 5:29:35 PM
+ * @author  Phil Jones
+ * @author  Antony Quinn
+ * @version $Id$
  */
-public class RawMatchDAOImpl implements RawMatchDAO{
+public class RawMatchDAOImpl <T extends RawMatch>
+        extends GenericDAOImpl<T, Long>
+        implements RawMatchDAO<T> {
 
-    protected EntityManager entityManager;
-
-    @PersistenceContext
-    protected void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public RawMatchDAOImpl(Class<T> modelClass) {
+        super(modelClass);
     }
 
-    protected RawMatchDAOImpl() {
-
-    }
-
-    /**
-     * DAO method that inserts RawMatches contained within a RawProtein object.
-     * Note that the RawProtein object is NOT persisted.
-     *
-     * @param parsedResults being a Set of RawProtein objects.  These objects
-     *                      contain a Collection of RawMatch objects to be persisted.
-     */
     @Transactional
-    public <T extends RawMatch> void insertRawSequenceIdentifiers(Set<RawProtein<T>> parsedResults) {
-        for (RawProtein<T> rawProtein : parsedResults){
-            for (T newRawMatch : rawProtein.getMatches()){
-                if (entityManager.contains(newRawMatch)){
-                    throw new IllegalArgumentException ("EntityManager.insert has been called on a RawMatch " + newRawMatch + " that has already been persisted.");
-                }
-                entityManager.persist(newRawMatch);
-            }
+    @Override public void insertProteinMatches(Set<RawProtein<T>> rawProteins) {
+        for (RawProtein<T> rawProtein : rawProteins){
+            insert(new HashSet<T>(rawProtein.getMatches()));
         }
     }
+
+    @Transactional(readOnly=true)
+    @Override public T getMatchesByModel(String modelId) {
+        return readSpecific(modelId);
+    }
+
 }

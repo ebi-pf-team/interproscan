@@ -3,24 +3,34 @@ package uk.ac.ebi.interpro.scan.persistence.raw;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import java.util.Set;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pjones
- * Date: Nov 30, 2009
- * Time: 5:28:56 PM
+ * Data access object methods for {@link RawMatch}es.
+ *
+ * @author  Phil Jones
+ * @author  Antony Quinn
+ * @version $Id$
  */
-public interface RawMatchDAO{
-
+public interface RawMatchDAO<T extends RawMatch> 
+        extends GenericDAO<T, Long> {
 
     /**
-     * DAO method that inserts RawMatches contained within a RawProtein object.
-     * Note that this object is NOT persisted.
-     * @param parsedResults being a Set of RawProtein objects.  These objects
-     * contain a Collection of RawMatch objects to be persisted.
+     * Inserts {@link RawMatch}es contained within a {@link RawProtein} object.
+     * Note: {@link RawProtein} is NOT persisted.
+     *
+     * @param rawProteins Contains collection of {@link RawMatch} to be persisted.
      */
     @Transactional
-    public <T extends RawMatch> void insertRawSequenceIdentifiers(Set<RawProtein<T>> parsedResults);
+    public void insertProteinMatches(Set<RawProtein<T>> rawProteins);
+
+    /**
+     * Retrieves matches using {@link uk.ac.ebi.interpro.scan.model.Model} IDs.
+     * 
+     * @param  modelId Corresponds to {@link uk.ac.ebi.interpro.scan.model.Model#getAccession()}
+     * @return Matches
+     */
+    public T getMatchesByModel (String modelId);
+    
 }

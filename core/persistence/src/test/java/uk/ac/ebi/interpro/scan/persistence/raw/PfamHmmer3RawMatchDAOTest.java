@@ -7,23 +7,17 @@ import org.junit.Test;
 
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-//import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-/*import static junit.framework.Assert.fail;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier;  */
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
-//import java.util.Set;
 
 /**
  * Units tests for {@link PfamHmmer3RawMatchDAO}
@@ -34,10 +28,7 @@ import java.util.Collection;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class PfamHmmer3RawMatchDAOTest {
-    /**
-     * Logger for Junit logging. Log messages will be associated with the ProteinPersistenceTest class.
-     *
-     */
+
     private final String UPI       = "UPI00015AC919";
     private final String MODEL     = "PF04041";
     private final String dbname     = "PFAM";

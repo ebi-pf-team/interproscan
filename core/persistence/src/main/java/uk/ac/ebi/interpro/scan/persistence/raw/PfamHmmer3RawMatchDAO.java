@@ -2,24 +2,18 @@ package uk.ac.ebi.interpro.scan.persistence.raw;
 
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
-
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Collection;
 
 /**
  * DAO methods for PfamHmmer3RawMatchDAO objects.
  *
  * @author  Manjula Thimma
- * @author Phil Jones
+ * @author  Phil Jones
+ * @author  Antony Quinn
  * @version $Id$
  */
-public interface PfamHmmer3RawMatchDAO extends GenericDAO<PfamHmmer3RawMatch, Long> {
-
-    public PfamHmmer3RawMatch getPfamMatchesByModel (String methodAc);
+public interface PfamHmmer3RawMatchDAO
+        extends RawMatchDAO<PfamHmmer3RawMatch> {
 
     /**
      * Returns a Map of sequence identifiers to a List of
@@ -34,6 +28,6 @@ public interface PfamHmmer3RawMatchDAO extends GenericDAO<PfamHmmer3RawMatch, Lo
      * PfamHmmer3RawMatch objects for the protein IDs in the range
      * specified (Database default String ordering)
      */
-    public <T extends RawMatch> Map<String, RawProtein<T>> getRawMatchesForProteinIdsInRange  (String bottomId, String topId, String signatureDatabaseRelease);
+    public Map<String, RawProtein<PfamHmmer3RawMatch>> getRawMatchesForProteinIdsInRange  (String bottomId, String topId, String signatureDatabaseRelease);
 
 }
