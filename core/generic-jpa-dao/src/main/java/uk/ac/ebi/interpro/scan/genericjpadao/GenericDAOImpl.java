@@ -32,24 +32,20 @@ import java.util.Set;
  * Provides the basic CRUD methods.
  * 
  * T is the model type (e.g. Protein, Model, Signature etc.)
- * PK is the type of the primary key (normally / always Long)
+ * PK is the type of the primary key (normally {@link java.lang.Long})
  *
- * User: pjones
- * Date: 02-Jul-2009
- * Time: 11:20:29
+ * Based on the pattern described in
+ * <a href ="http://www.ibm.com/developerworks/java/library/j-genericdao.html">Don't repeat the DAO!</a>
+ * by Per Mellqvist (per@mellqvist.name) in IBM Developer Works Technical Library, 12 May 2006.
  *
- * @author Phil Jones, EMBL-EBI
+ * @author  Phil Jones, EMBL-EBI
+ * @author  Antony Quinn
  */
 
 public class GenericDAOImpl<T, PK extends Serializable>
         implements GenericDAO<T, PK> {
 
     protected EntityManager entityManager;
-
-    @PersistenceContext
-    protected void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 
     /**
      * The Class of the concrete object.
@@ -80,6 +76,11 @@ public class GenericDAOImpl<T, PK extends Serializable>
         this.modelClass = modelClass;
         this.unqualifiedModelClassName = modelClass.getSimpleName();
     }
+
+    @PersistenceContext
+    protected void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }    
 
     /**
      * Insert a new Model instance.
@@ -133,7 +134,6 @@ public class GenericDAOImpl<T, PK extends Serializable>
      * @return a single instance of the object with the specified primary key,
      * or null if it does not exist.
      */
-    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public T read(PK id) {
         String queryString = String.format("select o from %s o where o.id = :id", unqualifiedModelClassName);
@@ -145,14 +145,13 @@ public class GenericDAOImpl<T, PK extends Serializable>
         // matching object, which seems like overkill.  Modified to return
         // null if there is no matching object.
 
-        List<T> results = query.getResultList();
+        @SuppressWarnings("unchecked") List<T> results = query.getResultList();
         if (results.size() == 0){
             return null;
         }
         else return results.get(0);
     }
 
-     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public T readSpecific(String id) {
         String queryString = String.format("select o from %s o where o.model = :id", unqualifiedModelClassName);
@@ -164,7 +163,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
         // matching object, which seems like overkill.  Modified to return
         // null if there is no matching object.
 
-        List<T> results = query.getResultList();
+        @SuppressWarnings("unchecked") List<T> results = query.getResultList();
         if (results.size() == 0){
             return null;
         }
@@ -202,7 +201,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
         // matching object, which seems like overkill.  Modified to return
         // null if there is no matching object.
 
-        List<T> results = query.getResultList();
+        @SuppressWarnings("unchecked") List<T> results = query.getResultList();
         if (results.size() == 0){
             return null;
         }
@@ -237,12 +236,12 @@ public class GenericDAOImpl<T, PK extends Serializable>
      * Returns a List of all the instances of T in the database.
      * @return a List of all the instances of T in the database.
      */
-    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     public List<T> retrieveAll() {
         String queryString = String.format("select o from %s o", unqualifiedModelClassName);
         Query query = this.entityManager.createQuery(queryString);
-        return (List<T>) query.getResultList();
+        @SuppressWarnings("unchecked") List<T> results = query.getResultList();
+        return results;
     }
 
     /**
