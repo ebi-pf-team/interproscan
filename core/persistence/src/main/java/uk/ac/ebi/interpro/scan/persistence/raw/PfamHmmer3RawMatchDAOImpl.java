@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.persistence.raw;
 
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -14,25 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
  * DAO implementation for PfamHmmer3RawMatchDAO objects.
  *
  * @author  Manjula Thimma
+ * @author  Phil Jones
+ * @author  Antony Quinn
  * @version $Id$
  */
-public class PfamHmmer3RawMatchDAOImpl extends GenericDAOImpl<PfamHmmer3RawMatch, Long> implements PfamHmmer3RawMatchDAO {
+public class PfamHmmer3RawMatchDAOImpl
+        extends RawMatchDAOImpl<PfamHmmer3RawMatch> 
+        implements PfamHmmer3RawMatchDAO {
 
-    /**
-     * Calls the GenericDAOImpl constructor passing in Protein.class as
-     * argument, so that this DAO is set up to handle the correct class of model.
-     */
-    public PfamHmmer3RawMatchDAOImpl(){
+    public PfamHmmer3RawMatchDAOImpl() {
         super(PfamHmmer3RawMatch.class);
-    }
-
-    @Transactional(readOnly = true)
-    public PfamHmmer3RawMatch getPfamMatchesByModel(String methodAc) {
-        // Pfam p = null;
-        Query query = entityManager.createQuery("select p from PfamHmmer3RawMatch p  where p.model = :methodAc");
-        query.setParameter("methodAc", methodAc);
-        return (PfamHmmer3RawMatch) query.getSingleResult();
-        //return p;
     }
 
     /**
@@ -49,22 +39,29 @@ public class PfamHmmer3RawMatchDAOImpl extends GenericDAOImpl<PfamHmmer3RawMatch
      * specified (Database default String ordering)
      */
     @Transactional(readOnly = true)
-    @SuppressWarnings("unchecked")
-    public Map<String, RawProtein> getRawMatchesForProteinIdsInRange(String bottomId, String topId, String signatureDatabaseRelease) {
-        Map<String, RawProtein> proteinIdToMatchMap = new HashMap<String, RawProtein>();
-        Query query = entityManager.createQuery("select p from PfamHmmer3RawMatch p  where p.sequenceIdentifier >= :bottom and p.sequenceIdentifier <= :top and p.signatureLibraryRelease = :sigLibRelease");
-        query.setParameter("bottom", bottomId);
-        query.setParameter("top", topId);
-        query.setParameter("sigLibRelease", signatureDatabaseRelease);
-        List<PfamHmmer3RawMatch> resultList = query.getResultList();
-        for (PfamHmmer3RawMatch match : resultList){
-            RawProtein rawProtein = proteinIdToMatchMap.get(match.getSequenceIdentifier());
+    public Map<String, RawProtein<PfamHmmer3RawMatch>> getRawMatchesForProteinIdsInRange(
+            String bottomId, String topId, String signatureDatabaseRelease) {
+        Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToMatchMap =
+                new HashMap<String, RawProtein<PfamHmmer3RawMatch>>();
+        Query query = entityManager
+                .createQuery("select p from PfamHmmer3RawMatch p  " +
+                             "where p.sequenceIdentifier >= :bottom " +
+                             "and   p.sequenceIdentifier <= :top " +
+                             "and   p.signatureLibraryRelease = :sigLibRelease")
+                .setParameter("bottom", bottomId)
+                .setParameter("top", topId)
+                .setParameter("sigLibRelease", signatureDatabaseRelease);
+        @SuppressWarnings("unchecked") List<PfamHmmer3RawMatch> resultList = query.getResultList();
+        for (PfamHmmer3RawMatch match : resultList) {
+            String id = match.getSequenceIdentifier();
+            RawProtein<PfamHmmer3RawMatch> rawProtein = proteinIdToMatchMap.get(id);
             if (rawProtein == null){
-                rawProtein = new RawProtein(match.getSequenceIdentifier());
-                proteinIdToMatchMap.put(match.getSequenceIdentifier(), rawProtein);
+                rawProtein = new RawProtein<PfamHmmer3RawMatch>(id);
+                proteinIdToMatchMap.put(id, rawProtein);
             }
             rawProtein.addMatch(match);
         }
         return proteinIdToMatchMap;
     }
+
 }
