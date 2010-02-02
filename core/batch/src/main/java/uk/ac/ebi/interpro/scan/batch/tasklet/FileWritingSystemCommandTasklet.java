@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-import uk.ac.ebi.interpro.scan.batch.cli.CommandLineConversation;
+import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 
 /**
  * Runs system commands and writes stdout to given file.
@@ -87,15 +87,19 @@ public class FileWritingSystemCommandTasklet
 
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         List<String> commandList = new ArrayList<String>(Arrays.asList(fullCommand.split(COMMAND_SEP)));
-        LOGGER.info("Running: " + fullCommand);
-        Integer exitCode = commandLineConversation.runCommand(false, commandList);
-        if (exitCode.equals(EXIT_CODE_SUCCESS)) {
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Running: " + fullCommand);
+        }
+        int exitCode = commandLineConversation.runCommand(false, commandList);
+        if (exitCode == EXIT_CODE_SUCCESS) {
             // Write to file            
             String path = removePrefixes(outputResource.getFile().getPath());
             BufferedWriter writer = new BufferedWriter(new FileWriter(path));
             writer.write(commandLineConversation.getOutput());
             writer.close();
-            LOGGER.info("Wrote results to: " + path);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Wrote results to: " + path);
+            }
             return RepeatStatus.FINISHED;
         }
         throw new IOException("Exit code '" + exitCode + "' executing '" + fullCommand + "': " +
