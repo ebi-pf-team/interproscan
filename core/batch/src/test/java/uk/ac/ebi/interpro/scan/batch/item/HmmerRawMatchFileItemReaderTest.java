@@ -11,7 +11,7 @@ import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-import uk.ac.ebi.interpro.scan.model.raw.HmmRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
 
 /**
  * Tests reading of HMMER output using {@link FlatFileItemReader}.
@@ -25,7 +25,7 @@ import uk.ac.ebi.interpro.scan.model.raw.HmmRawMatch;
 public final class HmmerRawMatchFileItemReaderTest {
     
     @Autowired
-    private FlatFileItemReader<HmmRawMatch> reader;
+    private FlatFileItemReader<Hmmer3RawMatch> reader;
 
     @Before
     public final void setUp()  {
@@ -46,7 +46,7 @@ public final class HmmerRawMatchFileItemReaderTest {
     public final void testRead() throws Exception {
         final double delta = 0; // max delta between expected and actual for which both numbers are still considered equal
         int count = 0;
-        HmmRawMatch match;
+        Hmmer3RawMatch match;
         while ((match = reader.read()) != null)    {
             count++;
             assertNotNull(match);
@@ -55,17 +55,17 @@ public final class HmmerRawMatchFileItemReaderTest {
                 case 1:
                     assertEquals("9d380adca504b0b1a2654975c340af78", match.getSequenceIdentifier());
                     assertEquals("PF02310", match.getModel());
-                    assertEquals(3.7E-9, match.getLocationEvalue(), delta);
+                    assertEquals(3.7E-9, match.getDomainIeValue(), delta);
                     break;
                 case 2:
                     assertEquals("1adb07a14aa81b3033f2d33059670f2d", match.getSequenceIdentifier());
                     assertEquals("PF00058", match.getModel());
-                    assertEquals(4.9E-13, match.getLocationEvalue(), delta);
+                    assertEquals(4.9E-13, match.getDomainIeValue(), delta);
                     break;
                 case 3:
                     assertEquals("1adb07a14aa81b3033f2d33059670f2d", match.getSequenceIdentifier());
                     assertEquals("PF00058", match.getModel());
-                    assertEquals(1.3E-16, match.getLocationEvalue(), delta);
+                    assertEquals(1.3E-16, match.getDomainIeValue(), delta);
                     break;                
             }
         }

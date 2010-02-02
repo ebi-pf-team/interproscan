@@ -10,7 +10,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.XrefSequenceIdentifier;
+import uk.ac.ebi.interpro.scan.model.Xref;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -24,6 +24,8 @@ import java.util.regex.Matcher;
  * @since   1.0
  */
 public class FastaFileItemReader implements ResourceAwareItemReaderItemStream<Protein>, InitializingBean {
+
+    // TODO: Will this class be used often or at all? If not we should remove it (what's the use case?)
    
     // TODO: Document design (see also http://forum.springsource.org/showthread.php?t=73034)
 
@@ -139,7 +141,7 @@ public class FastaFileItemReader implements ResourceAwareItemReaderItemStream<Pr
         }
         // Return protien
         Protein protein = new Protein(sequence);
-        protein.addCrossReference(new XrefSequenceIdentifier(id));
+        protein.addCrossReference(new Xref(id));
         return protein;
     }
 
