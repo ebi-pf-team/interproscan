@@ -67,7 +67,7 @@ public class Signature implements Serializable {
     @JoinTable (name="signature_description_chunk")
     @IndexColumn(name="chunk_index")
     @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
-    private List<String> descriptionChunks;
+    private List<String> descriptionChunks = Collections.emptyList();
 
     @Transient
     private String description;
@@ -86,7 +86,7 @@ public class Signature implements Serializable {
     @JoinTable (name="signature_abstract_chunk")
     @IndexColumn(name="chunk_index")
     @Column (name="abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
-    private List<String> abstractChunks;
+    private List<String> abstractChunks = Collections.emptyList();
 
     @Transient
     private String abstractText;

@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * Model, for example SuperFamily 0035188 (part of signature SSF53098)
@@ -62,7 +63,7 @@ public class Model implements Serializable {
     @JoinTable (name="model_description_chunk")
     @IndexColumn (name="chunk_index")
     @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
-    private List<String> descriptionChunks;
+    private List<String> descriptionChunks = Collections.emptyList();
 
     @Transient
     private String description;
@@ -82,7 +83,7 @@ public class Model implements Serializable {
     @JoinTable (name="model_definition_chunk")
     @IndexColumn (name="chunk_index")
     @Column (name="definition_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
-    private List<String> definitionChunks;
+    private List<String> definitionChunks = Collections.emptyList();
 
     @Transient
     private String definition;
@@ -251,6 +252,7 @@ public class Model implements Serializable {
                 .append(accession, m.accession)
                 .append(name, m.name)
                 .append(getDescription(), m.getDescription())
+                .append(getDefinition(), m.getDefinition())
                 .isEquals();
     }
 
@@ -259,6 +261,7 @@ public class Model implements Serializable {
                 .append(accession)
                 .append(name)
                 .append(getDescription())
+                .append(getDefinition())
                 .toHashCode();
     }
 
@@ -267,6 +270,7 @@ public class Model implements Serializable {
                 .append("accession", accession)
                 .append("name", name)
                 .append("description", getDescription())
+                .append("definition", getDefinition())
                 .append("signature-ac", (signature == null ? null : signature.getAccession()))
                 .toString();
     }
