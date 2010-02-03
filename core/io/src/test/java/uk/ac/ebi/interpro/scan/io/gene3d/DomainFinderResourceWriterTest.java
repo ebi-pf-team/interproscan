@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.io;
+package uk.ac.ebi.interpro.scan.io.gene3d;
 
 import junitx.framework.FileAssert;
 import org.junit.runner.RunWith;
@@ -10,8 +10,11 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Collection;
 
+import uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderRecord;
+import uk.ac.ebi.interpro.scan.io.ResourceWriter;
+
 /**
- * Tests {@link DomainFinderResourceWriter}.
+ * Tests {@link uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderResourceWriter}.
  *
  * @author  Antony Quinn
  * @version $Id$

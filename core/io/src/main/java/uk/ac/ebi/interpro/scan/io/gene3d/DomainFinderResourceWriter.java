@@ -1,4 +1,6 @@
-package uk.ac.ebi.interpro.scan.io;
+package uk.ac.ebi.interpro.scan.io.gene3d;
+
+import uk.ac.ebi.interpro.scan.io.AbstractResourceWriter;
 
 /**
  * Writes DomainFinder3 output.

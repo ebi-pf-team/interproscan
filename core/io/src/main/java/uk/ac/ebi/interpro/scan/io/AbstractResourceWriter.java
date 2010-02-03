@@ -11,30 +11,24 @@ import java.util.Collection;
  * @author  Antony Quinn
  * @version $Id$
  */
-abstract class AbstractResourceWriter<T> implements ResourceWriter<T> {
+public abstract class AbstractResourceWriter<T> implements ResourceWriter<T> {
 
     @Override public void write(Resource resource, Collection<T> records) throws IOException {
-        write(resource, records, true);
+        write(resource, records, false);
     }
 
-    @Override public void write(Resource resource, Collection<T> records, boolean canOverwrite)
+    @Override public void write(Resource resource, Collection<T> records, boolean append)
             throws IOException  {
         if (resource == null) {
             throw new NullPointerException("Resource is null");
-        }
-        if (!canOverwrite && resource.exists())  {
-            throw new IllegalStateException(resource.getFilename() + " already exists and cannot be overwritten");
         }
         // Bizarre Javadoc for createNewFile:
         // <code>true</code> if the named file does not exist and was successfully created;
         // <code>false</code> if the named file already exists
         boolean exists = !resource.getFile().createNewFile();
-        if (!canOverwrite && exists) {
-            throw new IllegalStateException(resource.getFilename() + " already exists and cannot be overwritten");
-        }
         BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(resource.getFile()));
+            writer = new BufferedWriter(new FileWriter(resource.getFile(), append));
             for (T record : records)    {
                 writer.write(createLine(record));
                 writer.newLine();

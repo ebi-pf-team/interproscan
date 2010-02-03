@@ -4,10 +4,4 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="reader" class="uk.ac.ebi.interpro.scan.io.DomainFinderResourceReader"/>
-
-    <bean id="file" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/hmmer3/hmmsearch/2hxsA00.ssf"/>
-    </bean>
-
  </beans>

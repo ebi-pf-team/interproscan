@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.io;
+package uk.ac.ebi.interpro.scan.io.gene3d;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -8,9 +8,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderRecord;
 
 /**
- * Tests {@link uk.ac.ebi.interpro.scan.io.DomainFinderRecord}.
+ * Tests {@link uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderRecord}.
  *
  * @author  Antony Quinn
  * @version $Id$

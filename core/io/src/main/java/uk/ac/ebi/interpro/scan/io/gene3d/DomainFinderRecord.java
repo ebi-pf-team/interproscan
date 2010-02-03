@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.io;
+package uk.ac.ebi.interpro.scan.io.gene3d;
 
 import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
