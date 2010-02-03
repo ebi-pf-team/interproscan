@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
  * @author  Antony Quinn
  * @version $Id$
  */
-abstract class AbstractResourceReader<T> implements ResourceReader<T> {
+public abstract class AbstractResourceReader<T> implements ResourceReader<T> {
 
     @Override public Collection<T> read(Resource resource) throws IOException {
         if (resource == null) {
@@ -30,7 +30,10 @@ abstract class AbstractResourceReader<T> implements ResourceReader<T> {
         try{
             reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
             while (reader.ready()) {
-                records.add(createRecord(reader.readLine()));
+                T record = createRecord(reader.readLine());
+                if (record != null) {
+                    records.add(record);
+                }
             }
         }
         finally {

@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.business.cli;
+package uk.ac.ebi.interpro.scan.io.cli;
 
 import org.apache.log4j.Logger;
 

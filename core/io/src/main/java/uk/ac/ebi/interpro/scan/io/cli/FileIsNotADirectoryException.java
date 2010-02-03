@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.business.cli;
+package uk.ac.ebi.interpro.scan.io.cli;
 
 /**
  * Exception to inform calling code that the path provided is not a directory.

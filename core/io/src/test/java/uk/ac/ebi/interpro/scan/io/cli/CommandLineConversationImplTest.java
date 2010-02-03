@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.business.cli;
+package uk.ac.ebi.interpro.scan.io.cli;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
