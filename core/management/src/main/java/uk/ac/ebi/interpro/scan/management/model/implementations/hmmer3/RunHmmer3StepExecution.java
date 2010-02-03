@@ -1,14 +1,13 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.business.cli.CommandLineConversation;
-import uk.ac.ebi.interpro.scan.business.cli.CommandLineConversationImpl;
+import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
+import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
 import java.io.Serializable;
-import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
 
