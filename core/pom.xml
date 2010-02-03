@@ -1,17 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
+
     <packaging>pom</packaging>
+
     <name>InterProScan</name>
-    <version>1.0.0</version>
+    <version>1.0-SNAPSHOT</version>
     <url>http://www.ebi.ac.uk/interpro/</url>
+
     <organization>
         <name>European Bioinformatics Institute</name>
         <url>http://www.ebi.ac.uk/</url>
     </organization>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -19,9 +24,16 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+        <connection>http://interproscan.googlecode.com/svn/</connection>
+        <url>http://interproscan.googlecode.com/svn/</url>
+    </scm>
+
 	<properties>
         <spring.version>2.5.6</spring.version>
 	</properties>
+
     <modules>
 		<module>generic-jpa-dao</module>
         <module>model</module>
@@ -30,9 +42,9 @@
         <module>business</module>
         <module>management</module>
         <module>jms-implementation</module>
-        <!--<module>batch-proactive</module>-->
-        <!--<module>batch</module>-->
+        <!--<module>service</module>-->
     </modules>
+
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
     <dependencies>
         <dependency>
@@ -42,6 +54,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <!-- Use Java 6 language features -->
@@ -53,6 +66,24 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <!-- JavaDocs (generate: mvn javadoc:javadoc, package: mvn javadoc:jar) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <overview />
+                </configuration>
+            </plugin>
+            <!-- Create JAR of source files (source:jar, source:test-jar) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <!--configuration>
+                    <finalName>filename-of-generated-jar-file</finalName>
+                    <attach>false</attach>
+                    </configuration-->
+            </plugin>            
         </plugins>
     </build>
+
 </project>
