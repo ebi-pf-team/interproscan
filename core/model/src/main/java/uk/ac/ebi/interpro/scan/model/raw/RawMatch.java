@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 /**
  * Represents "raw matches": the output from command line applications such as HMMER or pfscan
@@ -28,7 +29,9 @@ public abstract class RawMatch implements Serializable {
     private Long id;
     private String sequenceIdentifier;      // eg. MD5
     private String model;                   // eg. PF00001
-    private String signatureLibraryName;    // eg. PFAM
+
+    @Enumerated(javax.persistence.EnumType.STRING)
+    private SignatureLibrary signatureLibrary;    // eg. PFAM
     private String signatureLibraryRelease; // eg. 23.0
     private int locationStart;
     private int locationEnd;
@@ -36,11 +39,11 @@ public abstract class RawMatch implements Serializable {
     protected RawMatch() { }
 
     protected RawMatch(String sequenceIdentifier, String model,
-                       String signatureLibraryName, String signatureLibraryRelease,
+                       SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                        int locationStart, int locationEnd) {
         this.sequenceIdentifier     = sequenceIdentifier;
         this.model                  = model;
-        this.signatureLibraryName   = signatureLibraryName;
+        this.signatureLibrary = signatureLibrary;
         this.signatureLibraryRelease = signatureLibraryRelease;
         this.locationStart          = locationStart;
         this.locationEnd            = locationEnd;
@@ -65,12 +68,12 @@ public abstract class RawMatch implements Serializable {
     private void setModel(String model) {
         this.model = model;
     }
-     public String getSignatureLibraryName() {
-        return signatureLibraryName;
+     public SignatureLibrary getSignatureLibrary() {
+        return signatureLibrary;
     }
 
-    private void setSignatureLibraryName(String signatureLibraryName) {
-        this.signatureLibraryName = signatureLibraryName;
+    private void setSignatureLibrary(SignatureLibrary signatureLibrary) {
+        this.signatureLibrary = signatureLibrary;
     }
 
     public String getSignatureLibraryRelease() {
@@ -105,7 +108,7 @@ public abstract class RawMatch implements Serializable {
         final RawMatch m = (RawMatch) o;
         return new EqualsBuilder()
                 .append(sequenceIdentifier, m.sequenceIdentifier)
-                .append(signatureLibraryName, m.signatureLibraryName)
+                .append(signatureLibrary, m.signatureLibrary)
                 .append(signatureLibraryRelease, m.signatureLibraryRelease)
                 .append(model, m.model)
                 .append(locationStart, m.locationStart)
@@ -116,7 +119,7 @@ public abstract class RawMatch implements Serializable {
     @Override public int hashCode() {
         return new HashCodeBuilder(53, 51)
                 .append(sequenceIdentifier)
-                .append(signatureLibraryName)
+                .append(signatureLibrary)
                 .append(signatureLibraryRelease)
                 .append(model)
                 .append(locationStart)
@@ -139,11 +142,11 @@ public abstract class RawMatch implements Serializable {
          * Returns signature instance corresponding to model accession, and signature library name and release version.
          *
          * @param modelAccession            {@see uk.ac.ebi.interpro.scan.model.Model#getAccession()}
-         * @param signatureLibraryName      {@see uk.ac.ebi.interpro.scan.model.SignatureLibrary#getName()}
+         * @param signatureLibrary          {@see uk.ac.ebi.interpro.scan.model.SignatureLibrary}
          * @param signatureLibraryRelease   {@see uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
          * @return Signature instance corresponding to model accession, and signature library name and release version
          */
-        public Signature getSignature(String modelAccession, String signatureLibraryName, String signatureLibraryRelease);        
+        public Signature getSignature(String modelAccession, SignatureLibrary signatureLibrary, String signatureLibraryRelease);
 
     }
 

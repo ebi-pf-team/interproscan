@@ -211,7 +211,7 @@ abstract class AbstractTest<T> {
 //                        // Find corresponding "set" method
 //                        for (Method mm : expectedCopy.getClass().getMethods())   {
 //                            if (mm.getName().startsWith("set")) {
-//                                if (m.getName().substring(3).equals(mm.getName().substring(3))) {
+//                                if (m.getName().substring(3).equivalent(mm.getName().substring(3))) {
 //                                    // Call "set<Method.Name>(null)"
 //                                }
 //                            }

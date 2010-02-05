@@ -7,6 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.Entity;
 
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 /**
  * <a href="http://hmmer.janelia.org/">HMMER 2</a> raw match.
@@ -22,12 +23,12 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
     protected Hmmer2RawMatch() { }    
 
     protected Hmmer2RawMatch(String sequenceIdentifier, String model,
-                             String signatureLibraryName, String signatureLibraryRelease,
+                             SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                              int locationStart, int locationEnd,
                              double evalue, double score,
                              int hmmStart, int hmmEnd, String hmmBounds,
                              double locationEvalue, double locationScore) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd,
+        super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd,
               evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore);
         setLocationEvalue(locationEvalue);
     }

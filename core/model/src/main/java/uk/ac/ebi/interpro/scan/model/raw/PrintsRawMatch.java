@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+
 import javax.persistence.Entity;
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -27,15 +29,16 @@ public class PrintsRawMatch extends RawMatch {
     @Column
     private int motifNumber;
 
-    protected PrintsRawMatch() { }    
+    protected PrintsRawMatch() { }
 
+    /* TODO - Use setters instead of assigning directly? */
     public PrintsRawMatch(String sequenceIdentifier, String model,
-                          String signatureLibraryName, String signatureLibraryRelease,
+                          String signatureLibraryRelease,
                           int locationStart, int locationEnd,
                           double evalue, String graphscan,
-                          int motifCount, int motifNumber, 
+                          int motifCount, int motifNumber,
                           double pvalue, double score) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
+        super(sequenceIdentifier, model, SignatureLibrary.PRINTS, signatureLibraryRelease, locationStart, locationEnd);
         this.evalue = evalue;
         this.graphscan = graphscan;
         this.motifCount = motifCount;
@@ -45,11 +48,11 @@ public class PrintsRawMatch extends RawMatch {
     }
 
     public double getEvalue() {
-        return evalue;
+        return evalue;          /* TODO Use PersistenceConversion? */
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = evalue;
+        this.evalue = evalue;   /* TODO Use PersistenceConversion? */
     }
 
     public String getGraphscan() {

@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -16,9 +18,9 @@ public class HamapRawMatch extends ProfileScanRawMatch {
     protected HamapRawMatch() { }
 
     public HamapRawMatch(String sequenceIdentifier, String model,
-                         String signatureLibraryName, String signatureLibraryRelease,
+                         String signatureLibraryRelease,
                          int locationStart, int locationEnd, double score) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease,
+        super(sequenceIdentifier, model, SignatureLibrary.HAMAP, signatureLibraryRelease,
               locationStart, locationEnd, score);
     }
 }

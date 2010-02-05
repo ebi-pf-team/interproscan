@@ -109,7 +109,7 @@ public class SignatureTest extends AbstractTest<Signature> {
         final String TYPE     = "domain";
         final String DESC     = NAME;
         final String ABSTRACT = NAME;
-        SignatureLibraryRelease release = new SignatureLibraryRelease(new SignatureLibrary("TST"), "1.0");
+        SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PHOBIUS, "1.0");
         Set<Model> models = new HashSet<Model>();
         models.add(new Model("MOD001"));
         models.add(new Model("MOD002"));

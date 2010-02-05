@@ -34,7 +34,7 @@ import java.util.Set;
 public class PhobiusMatchTest extends TestCase {
 
     /**
-     * Tests the equals() method works as expected
+     * Tests the equivalent() method works as expected
      */
     @Test public void testMatchEquals() {
         PhobiusMatch original = new PhobiusMatch(
@@ -66,7 +66,7 @@ public class PhobiusMatchTest extends TestCase {
     }
 
     /**
-     * Tests the equals() method works as expected
+     * Tests the equivalent() method works as expected
      */
     @Test
     public void testLocationEquals() {

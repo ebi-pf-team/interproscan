@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+
 import javax.persistence.Entity;
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -8,6 +10,7 @@ import javax.persistence.Table;
  * <a href="http://myhits.isb-sib.ch/cgi-bin/motif_scan">ProfileScan</a> raw match.
  *
  * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
  */
 @Entity
@@ -19,11 +22,12 @@ public abstract class ProfileScanRawMatch extends RawMatch {
 
     protected ProfileScanRawMatch() { }
 
+    /* TODO - Perhaps don't need to pass in SignatureLIbrary?  Just set to SignatureLibrary.PROSITE_PROFILES ? */
     protected ProfileScanRawMatch(String sequenceIdentifier, String model,
-                                  String signatureLibraryName, String signatureLibraryRelease,
+                                  SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                                   int locationStart, int locationEnd,
                                   double score) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
+        super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd);
         this.score = score;
     }
 

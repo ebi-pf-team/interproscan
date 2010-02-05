@@ -50,7 +50,7 @@ import java.net.MalformedURLException;
 public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRelease> {
 
     @Test public void testRemoveSignature()   {
-        SignatureLibraryRelease sdr = new SignatureLibraryRelease(new SignatureLibrary("Pfam"), "23.0");
+        SignatureLibraryRelease sdr = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23.0");
         Signature s1 = sdr.addSignature(new Signature("PF00001"));
         Signature s2 = sdr.addSignature(new Signature("PF00002"));
         // Should be OK

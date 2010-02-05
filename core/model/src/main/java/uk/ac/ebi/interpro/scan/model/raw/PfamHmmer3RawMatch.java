@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -16,7 +18,7 @@ public class PfamHmmer3RawMatch extends Hmmer3RawMatch {
     protected PfamHmmer3RawMatch() { }    
 
     public PfamHmmer3RawMatch(String sequenceIdentifier, String model,
-                              String signatureLibraryName, String signatureLibraryRelease,
+                              SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                               int locationStart, int locationEnd,
                               double evalue, double score,
                               int hmmStart, int hmmEnd, String hmmBounds,
@@ -24,7 +26,7 @@ public class PfamHmmer3RawMatch extends Hmmer3RawMatch {
                               int envelopeStart, int envelopeEnd,
                               double expectedAccuracy, double fullSequenceBias,
                               double domainCeValue, double domainIeValue, double domainBias) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd,
+        super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd,
               evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias);
     }
 }

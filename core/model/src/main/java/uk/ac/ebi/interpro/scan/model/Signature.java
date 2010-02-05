@@ -97,7 +97,7 @@ public class Signature implements Serializable {
     // TODO: Decide whether to use Map or Set (see ChEBI team)
     // TODO: Use ConcurrentHashMap if need concurrent modification of signatures
     // TODO: Use Hashtable if want to disallow duplicate values
-    @OneToMany (mappedBy = "signature", cascade = CascadeType.ALL)
+    @OneToMany (mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapKey (name= "accession")
     private Map<String, Model> models = new HashMap<String, Model>();
 
