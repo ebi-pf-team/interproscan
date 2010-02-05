@@ -42,9 +42,17 @@ abstract class HmmerLocation extends Location {
     @Column (nullable = false, name="hmm_end")
     private int hmmEnd;
 
-    @Column (nullable = false, name="hmm_bounds")
-    @Enumerated(javax.persistence.EnumType.STRING)
-    private HmmBounds hmmBounds;
+//    @Column (nullable = false, name="hmm_bounds")
+//    @Enumerated(javax.persistence.EnumType.STRING)
+//    private HmmBounds hmmBounds;
+
+    /**
+     * Storing the hmmBounds just as the symbol representation,
+     * rather than the eval, so [], [. etc. can be stored
+     * in the database.
+     */
+    @Column (nullable = false, name="hmm_bounds", length = 2)
+    private String hmmBounds;
 
     @Column (nullable = false, name="evalue")
     private double evalue;
@@ -88,11 +96,11 @@ abstract class HmmerLocation extends Location {
 
     @XmlAttribute(name="hmm-bounds", required=true)
     public HmmBounds getHmmBounds() {
-        return hmmBounds;
+        return HmmBounds.parseSymbol(hmmBounds);
     }
 
     private void setHmmBounds(HmmBounds hmmBounds) {
-        this.hmmBounds = hmmBounds;
+        this.hmmBounds = hmmBounds.getSymbol();
     }
 
     @XmlAttribute(required=true)
