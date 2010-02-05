@@ -10,7 +10,7 @@ import java.math.MathContext;
  * @author  Phil Jones
  * @version $Id$
  */
-public class PersistenceConversion {
+public final class PersistenceConversion {
 
     private static final double ACCEPTABLE_RATIO_DIFFERENCE = 1E-10d;
 
