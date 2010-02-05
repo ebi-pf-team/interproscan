@@ -37,8 +37,8 @@
     <modules>
 		<module>generic-jpa-dao</module>
         <module>model</module>
-		<module>persistence</module>
         <module>io</module>
+        <module>persistence</module>
         <module>business</module>
         <module>management</module>
         <module>jms-implementation</module>
