@@ -65,14 +65,14 @@ public class SeedAlignmentPersister implements Serializable {
         this.modelTextFile = modelTextFile;
     }
 
-    public void load() throws SQLException, IOException, ParseException {
+    public void load() throws SQLException, IOException {
         loadNewSeedAlignments();
         mapUniProtToMD5();
         LOGGER.error("Successful completion of Pfam "+ releaseNumber + " seed alignment loading.\nThis includes:\n1. Truncation of old data.\n2. Loading of seed alignment data from " + pfamASeedFile.getFile().getAbsolutePath() + " file.\n3. Updating of UniParc cross references.\n4. Analyze table to re-create indices.");
     }
 
 
-    private void loadNewSeedAlignments() throws IOException, ParseException, SQLException {
+    private void loadNewSeedAlignments() throws IOException, SQLException {
 
         BufferedReader reader = null;
         try{
