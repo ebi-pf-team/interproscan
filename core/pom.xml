@@ -42,7 +42,7 @@
         <module>business</module>
         <module>management</module>
         <module>jms-implementation</module>
-        <!--<module>service</module>-->
+        <module>cli</module>
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
