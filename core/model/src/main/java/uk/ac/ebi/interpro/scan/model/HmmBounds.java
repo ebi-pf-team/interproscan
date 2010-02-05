@@ -17,11 +17,14 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * HMMER output notation for model match
  *
  * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
  */
 @XmlType(name="HmmBoundsType")
@@ -31,6 +34,15 @@ public enum HmmBounds {
     N_TERMINAL_COMPLETE("[.", "N-terminal complete"),
     C_TERMINAL_COMPLETE(".]", "C-terminal complete"),
     INCOMPLETE("..", "Incomplete");
+
+    private static final Map<String, HmmBounds> SYMBOL_TO_ENUM = new HashMap<String, HmmBounds>(HmmBounds.values().length);
+
+    static{
+        for (HmmBounds bounds : HmmBounds.values()){
+            SYMBOL_TO_ENUM.put(bounds.getSymbol(), bounds);
+        }
+    }
+
 
     private final String symbol;
     private final String description;
@@ -59,12 +71,11 @@ public enum HmmBounds {
      * @return  Enum corresponding to symbol, for example "[."
      */
     public static HmmBounds parseSymbol(String symbol)  {
-        for (HmmBounds hb : HmmBounds.values()) {
-            if (symbol.equals(hb.getSymbol()))   {
-                return hb;
-            }
+        HmmBounds bound = SYMBOL_TO_ENUM.get(symbol);
+        if (bound == null){
+            throw new IllegalArgumentException("Unrecognised symbol: " + symbol);
         }
-        throw new IllegalArgumentException("Unrecognised symbol: " + symbol);
+        return bound;
     }
 
 }
