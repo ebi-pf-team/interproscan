@@ -7,7 +7,7 @@ package uk.ac.ebi.interpro.scan.io.cli;
  * @version $Id: FileIsNotADirectoryException.java 19 2009-07-16 14:39:29Z aquinn.ebi $
  * @since   1.0
  */
-public class FileIsNotADirectoryException extends Throwable {
+public class FileIsNotADirectoryException extends Exception {
 
     /**
      * Constructor that requires an explanatory message.

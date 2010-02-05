@@ -37,7 +37,7 @@ public class Hmmer3SearchMatchParserTest {
     @Resource private org.springframework.core.io.Resource gene3dFile;
 
     @Test
-    public void testGene3DParser() throws ParseException, IOException {
+    public void testGene3DParser() throws IOException {
         final Set<String> expected = new HashSet<String>(Arrays.asList(
                 "HP0834:24M2I9M1D9M1D2M2D10M7I42M7D16M5D12M1I24M",
                 "HP0834:29M1I17M1D2M2D10M9I5M1I22M2D13M2D1M3D17M3D12M1I1M4I23M",
@@ -56,13 +56,13 @@ public class Hmmer3SearchMatchParserTest {
 
     @Test
     @Ignore("Currently need to have an entire hmm library in the classpath, so this needs to be switched on manually.  Note that the location / name of the hmm linbrary and the hmm results file should be set in the test context.xml file src/test/resources/uk/ac/ebi/interpro/scan/io/match/data.hmmer23.hmmer3/Hmmer3SearchMatchParserTest-context.xml")
-    public void testPfamParser() throws ParseException, IOException {
+    public void testPfamParser() throws IOException {
         parse(pfamParser, pfamFile.getInputStream());
     }
 
     private <T extends Hmmer3RawMatch> Set<RawProtein<T>> parse(Hmmer3SearchMatchParser<T> parser,
                                                                 InputStream is) 
-            throws ParseException, IOException {
+            throws IOException {
         Set<RawProtein<T>> proteins = null;
         try {
             proteins = parser.parse(is);

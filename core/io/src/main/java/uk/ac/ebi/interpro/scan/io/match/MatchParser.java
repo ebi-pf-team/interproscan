@@ -23,6 +23,6 @@ public interface MatchParser<T extends RawMatch> extends Serializable {
 
     public String getSignatureLibraryRelease();
     
-    public Set<RawProtein<T>> parse(InputStream is) throws IOException, ParseException;
+    public Set<RawProtein<T>> parse(InputStream is) throws IOException;
 
 }

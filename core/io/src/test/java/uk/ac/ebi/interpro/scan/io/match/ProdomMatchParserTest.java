@@ -22,7 +22,7 @@ import java.util.Set;
 public class ProdomMatchParserTest extends TestCase {
 
     @Test
-    public void testParse() throws IOException, ParseException {
+    public void testParse() throws IOException {
         InputStream is = getClass().getClassLoader().getResourceAsStream("data/prodom/prodom_output.txt");
         MatchParser<ProDomRawMatch> parser = new ProDomMatchParser(SignatureLibrary.PRODOM, "3.0");
         Set<RawProtein<ProDomRawMatch>> proteins = parser.parse(is);

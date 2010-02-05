@@ -64,7 +64,7 @@ public class GaValuesRetriever implements Serializable{
      * @throws java.io.IOException in the event of a problem reading the file or cleaning up afterwards.
      * @throws uk.ac.ebi.interpro.scan.io.ParseException if an Exception is thrown during parsing.
      */
-    public GaValuesRetriever(String modelFileAbsolutePath) throws IOException, ParseException{
+    public GaValuesRetriever(String modelFileAbsolutePath) throws IOException {
         this.modelFileAbsolutePath = modelFileAbsolutePath;
 
     }
@@ -196,17 +196,17 @@ public class GaValuesRetriever implements Serializable{
         }
     }
 
-    public double getSequenceGAForAccession(String modelAccession) throws IOException, ParseException{
+    public double getSequenceGAForAccession(String modelAccession) throws IOException {
         lazyInitialise();
         return ACC_TO_SEQUENCE_GA.get(modelAccession);
     }
 
-    public double getDomainGAForAccession(String modelAccession) throws IOException, ParseException{
+    public double getDomainGAForAccession(String modelAccession) throws IOException {
         lazyInitialise();
         return ACC_TO_DOMAIN_GA.get(modelAccession);
     }
 
-    private void lazyInitialise() throws IOException, ParseException{
+    private void lazyInitialise() throws IOException {
         if (! initialised){
             // Check to see if the mapping has been dumped to a map file - if it has, load it from there for speed.
             File mapFile = createMapFileObject(modelFileAbsolutePath);
