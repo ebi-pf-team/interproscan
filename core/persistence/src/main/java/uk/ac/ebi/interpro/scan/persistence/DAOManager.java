@@ -27,15 +27,11 @@ public class DAOManager {
 
     private GenericDAO<Model, Long> modelDAO;
 
-    private GenericDAO<SignatureLibrary, Long> SignatureLibraryDAO;
-
     private GenericDAO<SignatureLibraryRelease, Long> SignatureLibraryReleaseDAO;
 
     private BlastProDomLocationDAO blastProdomLocationDAO;
 
     private PfamHmmer3RawMatchDAO pfamRawMatchDAO;
-
-    private RawMatchDAO rawMatchDAO;
 
     private PfamFilteredMatchDAO pfamFilteredMatchDAO;
 
@@ -67,15 +63,6 @@ public class DAOManager {
         this.modelDAO = modelDAO;
     }
 
-    public GenericDAO<SignatureLibrary, Long> getSignatureLibraryDAO() {
-        return SignatureLibraryDAO;
-    }
-
-    @Required
-    public void setSignatureLibraryDAO(GenericDAO<SignatureLibrary, Long> signatureLibraryDAO) {
-        SignatureLibraryDAO = signatureLibraryDAO;
-    }
-
     public GenericDAO<SignatureLibraryRelease, Long> getSignatureLibraryReleaseDAO() {
         return SignatureLibraryReleaseDAO;
     }
@@ -101,15 +88,6 @@ public class DAOManager {
     @Required
     public void setPfamRawMatchDAO(PfamHmmer3RawMatchDAO pfamRawMatchDAO) {
         this.pfamRawMatchDAO = pfamRawMatchDAO;
-    }
-
-    public RawMatchDAO getRawMatchDAO() {
-        return rawMatchDAO;
-    }
-
-    @Required
-    public void setRawMatchDAO(RawMatchDAO rawMatchDAO) {
-        this.rawMatchDAO = rawMatchDAO;
     }
 
     public PfamFilteredMatchDAO getPfamFilteredMatchDAO() {

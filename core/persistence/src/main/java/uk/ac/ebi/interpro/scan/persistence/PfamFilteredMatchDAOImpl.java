@@ -4,6 +4,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
@@ -56,7 +57,7 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
                 "select s from Signature s " +
                         "where s.accession in (:modelId) " +
                         "and s.signatureLibraryRelease.version = :signatureLibraryVersion " +
-                        "and s.signatureLibraryRelease.library.name = :signatureLibraryName");
+                        "and s.signatureLibraryRelease.library = :signatureLibraryName");
 
 
 
@@ -66,7 +67,7 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
 
         // Iterate over the matches in the Collection of RawProtein objects
         // to complete building the queries for the appropriate Signatures and Proteins.
-        String signatureLibraryName = null;
+        SignatureLibrary signatureLibraryName = null;
         String signatureLibraryVersion = null;
         List<String> modelAccessions = new ArrayList<String>();
         List<Long> proteinIds = new ArrayList<Long>();
@@ -74,10 +75,10 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
         for (RawProtein<PfamHmmer3RawMatch> rawProtein : rawProteins){
             for (PfamHmmer3RawMatch match : rawProtein.getMatches()){
                 if (signatureLibraryName == null){
-                    signatureLibraryName = match.getSignatureLibraryName();
+                    signatureLibraryName = match.getSignatureLibrary();
                     signatureLibraryVersion = match.getSignatureLibraryRelease();
                 }
-                else if (! signatureLibraryName.equals(match.getSignatureLibraryName()) ||
+                else if (! signatureLibraryName.equals(match.getSignatureLibrary()) ||
                         ! signatureLibraryVersion.equals(match.getSignatureLibraryRelease())){
                     throw new IllegalArgumentException ("Filtered matches are from different signature library versions (more than one library version found)");
                 }
@@ -132,7 +133,7 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
             Collection<Hmmer3Match> matches = Hmmer3RawMatch.getMatches(rawProtein.getMatches(),
                     new RawMatch.Listener() {
                         @Override public Signature getSignature(String modelAccession,
-                                                                String signatureLibraryName,
+                                                                SignatureLibrary signatureLibrary,
                                                                 String signatureLibraryRelease) {
                             Signature signature = signatures.get(modelAccession);
                             if (signature == null){
@@ -158,9 +159,9 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
      * @param signatureQuery being the query to retrieve the Signatures.
      * @return a Map of signature accessions to Signature objects.
      */
-    @SuppressWarnings("unchecked")
+
     private Map<String, Signature> getSignatureAccessionToSignatureMap (Query signatureQuery){
-        List<Signature> signatures = signatureQuery.getResultList();
+        @SuppressWarnings("unchecked") List<Signature> signatures = signatureQuery.getResultList();
         if (LOGGER.isDebugEnabled()){
             LOGGER.debug("Number of signatures retrieved: " + signatures.size());
             LOGGER.debug("Signatures retrieved from database: " + signatures);
@@ -179,9 +180,9 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
      * @param proteinQuery being the query to retrieve the Proteins
      * @return a Map of protein IDs to Protein objects.
      */
-    @SuppressWarnings("unchecked")
+
     private Map<String, Protein> getProteinIdToProteinMap (Query proteinQuery){
-        List<Protein> proteins = proteinQuery.getResultList();
+        @SuppressWarnings("unchecked") List<Protein> proteins = proteinQuery.getResultList();
         if (LOGGER.isDebugEnabled()){
             LOGGER.error("Number of proteins retrieved: " + proteins.size());
             LOGGER.error("Proteins retrieved from database: " + proteins);

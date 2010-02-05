@@ -4,7 +4,6 @@ import static junit.framework.Assert.assertEquals;
 
 import org.junit.runner.RunWith;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -59,7 +58,7 @@ public class RawMatchDAOTest {
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
         RawProtein<Gene3dHmmer3RawMatch> p = new RawProtein<Gene3dHmmer3RawMatch>(SEQ_ID);        
         Gene3dHmmer3RawMatch match =
-              new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "Gene3D", "3.0.0",
+              new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "3.0.0",
                                        SEQ_START, SEQ_END, SEQ_EVALUE, SEQ_SCORE,
                                        MODEL_START, MODEL_END, HMM_BOUNDS, DOMAIN_SCORE,
                                        ENV_START, ENV_END, EXPECTED_ACCURACY, SEQ_BIAS,
