@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * <a href="http://prodom.prabi.fr/">ProDom</a> raw match.
  *
  * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
  */
 @Entity
@@ -21,12 +23,14 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
     @Column
     private double score;   // location.score
 
-    protected ProDomRawMatch() { }    
+    protected ProDomRawMatch() { }
 
+    /* TODO - This is a ProDom match, so why pass in the SignatureLibrary object?  Should just be SignatureLibrary.PRODOM ?
+    * Or want more flexibility?*/
     public ProDomRawMatch(String sequenceIdentifier, String model,
-                          String signatureLibraryName, String signatureLibraryRelease,
+                          String signatureLibraryRelease,
                           int locationStart, int locationEnd, double score) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
+        super(sequenceIdentifier, model, SignatureLibrary.PRODOM, signatureLibraryRelease, locationStart, locationEnd);
         this.score = score;
     }
 

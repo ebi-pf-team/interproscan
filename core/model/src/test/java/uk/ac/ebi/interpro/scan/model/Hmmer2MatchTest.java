@@ -34,7 +34,7 @@ import java.util.Arrays;
 public class Hmmer2MatchTest extends TestCase {
 
     /**
-     * Tests the equals() method works as expected
+     * Tests the equivalent() method works as expected
      */
     @Test
     public void testMatchEquals() {
@@ -62,7 +62,7 @@ public class Hmmer2MatchTest extends TestCase {
     }
 
     /**
-     * Tests the equals() method works as expected
+     * Tests the equivalent() method works as expected
      */
     @Test
     public void testLocationEquals() {

@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Column;
 
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 /**
  * <a href="http://hmmer.janelia.org/">HMMER</a> raw match.
@@ -19,33 +20,33 @@ import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 @Entity
 abstract class HmmerRawMatch extends RawMatch  {
 
-    @Column(name="EVALUE",nullable = false, updatable = false)
+    @Column(name="EVALUE",  nullable = false, updatable = false)
     private double evalue;
     
-    @Column(name="SCORE",nullable = false, updatable = false)
+    @Column(name="SCORE", nullable = false, updatable = false)
     private double score;
 
-    @Column(name="HMM_START")
+    @Column(name="HMM_START", nullable = false, updatable = false)
     private int hmmStart;
 
-    @Column(name="HMM_END")
+    @Column(name="HMM_END", nullable = false, updatable = false)
     private int hmmEnd;
 
     @Column(name="HMM_BOUNDS", length = 2)
     private String hmmBounds;
 
-    @Column(name="SEQ_SCORE")
+    @Column(name="SEQ_SCORE", nullable = false, updatable = false)
     private double locationScore;
 
     protected HmmerRawMatch() { }
     
     protected HmmerRawMatch(String sequenceIdentifier, String model,
-                            String signatureLibraryName, String signatureLibraryRelease,
+                            SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                             int locationStart, int locationEnd,
                             double evalue, double score,
                             int hmmStart, int hmmEnd, String hmmBounds,
                             double locationScore) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd);
+        super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd);
         setEvalue(evalue);
         setScore(score);
         setHmmStart(hmmStart);

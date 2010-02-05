@@ -33,7 +33,7 @@ import java.util.Set;
 public class Hmmer3MatchTest extends TestCase {
 
     /**
-     * Tests the equals() method works as expected
+     * Tests the equivalent() method works as expected
      */
     @Test
     public void testMatchEquals() {
@@ -61,7 +61,7 @@ public class Hmmer3MatchTest extends TestCase {
     }
 
     /**
-     * Tests the equals() method works as expected
+     * Tests the equivalent() method works as expected
      */
     @Test
     public void testLocationEquals() {

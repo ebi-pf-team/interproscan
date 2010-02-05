@@ -60,11 +60,11 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
 
     @XmlAttribute(required=true)
     public double getEvalue() {
-        return evalue;
+        return PersistenceConversion.get(evalue);
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = evalue;
+        this.evalue = PersistenceConversion.set(evalue);
     }
 
     @XmlAttribute(required=true)
@@ -93,8 +93,9 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         final FingerPrintsMatch m = (FingerPrintsMatch) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(evalue, m.evalue)
-                .isEquals();
+                .isEquals()
+                &&
+                PersistenceConversion.equivalent(evalue, m.evalue);
     }
 
     @Override public int hashCode() {

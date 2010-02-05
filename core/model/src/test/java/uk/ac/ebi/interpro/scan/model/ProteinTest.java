@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Arrays;
 
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
@@ -103,7 +102,7 @@ public class ProteinTest extends AbstractTest<Protein> {
     }
 
     /**
-     * Tests the equals() method works as expected
+     * Tests the equivalent() method works as expected
      */
     @Test public void testEquals() {
         Protein original = new Protein(GOOD);

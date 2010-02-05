@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
     protected Gene3dHmmer3RawMatch() { }
 
     public Gene3dHmmer3RawMatch(String sequenceIdentifier, String model,
-                                String signatureLibraryName, String signatureLibraryRelease,
+                                String signatureLibraryRelease,
                                 int locationStart, int locationEnd,
                                 double evalue, double score,
                                 int hmmStart, int hmmEnd, String hmmBounds,
@@ -33,7 +34,7 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
                                 double expectedAccuracy, double fullSequenceBias,
                                 double domainCeValue, double domainIeValue, double domainBias,
                                 String cigarAlignment) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd,
+        super(sequenceIdentifier, model, SignatureLibrary.GENE3D, signatureLibraryRelease, locationStart, locationEnd,
               evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
               fullSequenceBias, domainCeValue, domainIeValue, domainBias);
         this.cigarAlignment = cigarAlignment;

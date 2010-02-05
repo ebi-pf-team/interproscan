@@ -45,7 +45,7 @@ public class SignatureLibraryRelease implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @Enumerated(javax.persistence.EnumType.STRING)
     private SignatureLibrary library;
 
     @Column (length = 255)
@@ -77,7 +77,7 @@ public class SignatureLibraryRelease implements Serializable {
     }
 
     @XmlAttribute(required=true)
-    @XmlJavaTypeAdapter(SignatureLibrary.SignatureLibraryAdapter.class)
+//    @XmlJavaTypeAdapter(SignatureLibrary.SignatureLibraryAdapter.class)
     public SignatureLibrary getLibrary() {
         return library;
     }

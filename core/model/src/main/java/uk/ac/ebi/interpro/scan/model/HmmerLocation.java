@@ -20,10 +20,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
@@ -39,19 +36,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name="HmmerLocationType", propOrder={"score", "evalue", "hmmStart", "hmmEnd", "hmmBounds"})
 abstract class HmmerLocation extends Location {
 
-    @Column(nullable = false)
+    @Column(nullable = false, name="hmm_start")
     private int hmmStart;
 
-    @Column (nullable = false)
+    @Column (nullable = false, name="hmm_end")
     private int hmmEnd;
 
-    @Column (nullable = false)
+    @Column (nullable = false, name="hmm_bounds")
+    @Enumerated(javax.persistence.EnumType.STRING)
     private HmmBounds hmmBounds;
 
-    @Column (nullable = false)
+    @Column (nullable = false, name="evalue")
     private double evalue;
 
-    @Column (nullable = false)
+    @Column (nullable = false, name="score")
     private double score;
 
     /**
@@ -99,11 +97,11 @@ abstract class HmmerLocation extends Location {
 
     @XmlAttribute(required=true)
     public double getEvalue() {
-        return evalue;
+        return PersistenceConversion.get(evalue);
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = evalue;
+        this.evalue = PersistenceConversion.set(evalue);
     }
 
     @XmlAttribute(required=true)
@@ -127,8 +125,9 @@ abstract class HmmerLocation extends Location {
                 .append(hmmEnd, h.hmmEnd)
                 .append(hmmBounds, h.hmmBounds)
                 .append(score, h.score)
-                .append(evalue, h.evalue)
-                .isEquals();
+                .isEquals()
+                &&
+                PersistenceConversion.equivalent(evalue, h.evalue);
     }
 
     @Override public int hashCode() {

@@ -1,11 +1,10 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.HmmBounds;
-import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.*;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -16,26 +15,38 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * <a href="http://hmmer.janelia.org/">HMMER 3</a> raw match.
  *
  * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
  */
 @Entity
+@Table (name = "hmmer3_raw_match")
 public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
+    @Column(nullable = false, name="envelope_start")
     private int envelopeStart;
+
+    @Column(nullable = false, name="envelope_end")
     private int envelopeEnd;
-    
+
+    @Column(nullable=false, name="expected_accuracy")
     private double expectedAccuracy;
 
+    @Column(nullable=false, name="full_sequence_bias")
     private double fullSequenceBias;
 
+    @Column(nullable=false, name="domain_c_evalue")
     private double domainCeValue;
+
+    @Column(nullable=false, name="domain_i_evalue")
     private double domainIeValue;
+
+    @Column(nullable=false, name="domain_bias")
     private double domainBias;
 
     protected Hmmer3RawMatch() { }
 
     protected Hmmer3RawMatch(String sequenceIdentifier, String model,
-                             String signatureLibraryName, String signatureLibraryRelease,
+                             SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                              int locationStart, int locationEnd,
                              double evalue, double score,
                              int hmmStart, int hmmEnd, String hmmBounds,
@@ -43,7 +54,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                              int envelopeStart, int envelopeEnd,
                              double expectedAccuracy, double fullSequenceBias,
                              double domainCeValue, double domainIeValue, double domainBias) {
-        super(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease, locationStart, locationEnd,
+        super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd,
               evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore);
         setEnvelopeStart(envelopeStart);
         setEnvelopeEnd(envelopeEnd);
@@ -115,15 +126,16 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                                                      Listener rawMatchListener)  {
         Collection<Hmmer3Match> matches = new HashSet<Hmmer3Match>();
         // Get a list of unique model IDs
-        String signatureLibraryName = null, signatureLibraryRelease = null;
+        SignatureLibrary signatureLibrary = null;
+        String signatureLibraryRelease = null;
         Map<String, Set<Hmmer3RawMatch>> matchesByModel = new HashMap<String, Set<Hmmer3RawMatch>>();
         for (Hmmer3RawMatch m : rawMatches)   {
             // Get signature library name and release
-            if (signatureLibraryName == null) {
-                signatureLibraryName    = m.getSignatureLibraryName();
+            if (signatureLibrary == null) {
+                signatureLibrary    = m.getSignatureLibrary();
                 signatureLibraryRelease = m.getSignatureLibraryRelease();
             }
-            else if (!signatureLibraryName.equals(m.getSignatureLibraryName()) ||
+            else if (!signatureLibrary.equals(m.getSignatureLibrary()) ||
                      !signatureLibraryRelease.equals(m.getSignatureLibraryRelease())) {
                 throw new IllegalArgumentException ("Filtered matches are from different signature library versions " +
                                                     "(more than one library version found)");
@@ -141,7 +153,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         }
         // Find the location(s) for each match and create a Match instance
         for (String key : matchesByModel.keySet())  {
-            Signature signature = rawMatchListener.getSignature(key, signatureLibraryName, signatureLibraryRelease);
+            Signature signature = rawMatchListener.getSignature(key, signatureLibrary, signatureLibraryRelease);
             matches.add(getMatch(signature, key, matchesByModel));
         }
         // Next step would be to link this with protein...

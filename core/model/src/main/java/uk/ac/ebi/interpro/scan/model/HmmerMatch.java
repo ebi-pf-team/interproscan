@@ -55,11 +55,11 @@ abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements S
 
     @XmlAttribute(required=true)
     public double getEvalue() {
-        return evalue;
+        return PersistenceConversion.get(evalue);
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = evalue;
+        this.evalue = PersistenceConversion.set(evalue);
     }
 
     private void setScore(double score) {
@@ -79,9 +79,9 @@ abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements S
         final HmmerMatch m = (HmmerMatch) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(evalue, m.evalue)
                 .append(score, m.score)
-                .isEquals();
+                .isEquals() &&
+                PersistenceConversion.equivalent(evalue, m.evalue);
     }
 
     @Override public int hashCode() {

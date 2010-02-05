@@ -75,10 +75,10 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
     @XmlType(name="Hmmer3LocationType")
     public static class Hmmer3Location extends HmmerLocation {
 
-        @Column(nullable = false)
+        @Column(name="envelope_start", nullable = false)
         private int envelopeStart;
         
-        @Column(nullable = false)
+        @Column(name="envelope_end", nullable = false)
         private int envelopeEnd;
 
         /**
