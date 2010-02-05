@@ -22,9 +22,7 @@
         <constructor-arg>
             <bean class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
                 <constructor-arg>
-                    <bean class="uk.ac.ebi.interpro.scan.model.SignatureLibrary">
-                        <constructor-arg value="Pfam"/>
-                    </bean>
+                    <util:constant static-field="uk.ac.ebi.interpro.scan.model.SignatureLibrary.PFAM"/>
                 </constructor-arg>
                 <constructor-arg value="23.0"/>
             </bean>

@@ -33,7 +33,6 @@
         <class>uk.ac.ebi.interpro.scan.model.Model</class>
         <class>uk.ac.ebi.interpro.scan.model.Xref</class>
         <class>uk.ac.ebi.interpro.scan.model.Signature</class>
-        <class>uk.ac.ebi.interpro.scan.model.SignatureLibrary</class>
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
         <properties>

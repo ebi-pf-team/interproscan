@@ -13,6 +13,8 @@ import javax.persistence.PersistenceException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -31,7 +33,7 @@ public class PfamHmmer3RawMatchDAOTest {
 
     private final String UPI       = "UPI00015AC919";
     private final String MODEL     = "PF04041";
-    private final String dbname     = "PFAM";
+    private final SignatureLibrary signatureLibrary = SignatureLibrary.PFAM;
     private final String dbVersion     = "24.0";
     private final String hmmBounds = "[]";
     private final String alignment="";
@@ -75,7 +77,7 @@ public class PfamHmmer3RawMatchDAOTest {
     @Test
     public void storeAndRetrieveProtein(){
         emptyPfamTable();
-        PfamHmmer3RawMatch p = new PfamHmmer3RawMatch(UPI, MODEL, dbname, dbVersion, start, end,
+        PfamHmmer3RawMatch p = new PfamHmmer3RawMatch(UPI, MODEL, signatureLibrary, dbVersion, start, end,
                 3.7E-9, 0.035, 1, 104, "[]", 3.0, 0, 0, 0, 0, 0, 0, 0);
         assertNotNull("The PfamDAOImpl object should be not-null.", dao);
         dao.insert(p);
@@ -125,7 +127,7 @@ public class PfamHmmer3RawMatchDAOTest {
             proteinId = "UPIblachabla";
         }
 
-        return new PfamHmmer3RawMatch(proteinId,"PF04041","PFAM",dbVersion, (int)(Math.random() * 20), (int)(Math.random() * 100 + 20),
+        return new PfamHmmer3RawMatch(proteinId,"PF04041",SignatureLibrary.PFAM, dbVersion, (int)(Math.random() * 20), (int)(Math.random() * 100 + 20),
                 3.7E-9, 0.035, 1, 104, "[]", 3.0, 0, 0, 0, 0, 0, 0, 0);
     }
 
