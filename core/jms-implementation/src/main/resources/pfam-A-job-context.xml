@@ -4,9 +4,12 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <!-- TODO
 
@@ -87,7 +90,7 @@
         <property name="postProcessor"                      ref="pfam_A_post_processor"/>
         <property name="parallel"                           value="false"/>
         <property name="signatureLibraryRelease"            value="24.0"/>
-        <property name="signatureLibraryName"               value="Pfam"/>
+        <property name="signatureLibrary"                   value="PFAM"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
@@ -108,7 +111,7 @@
     <bean id="parserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
         <property name="gaValuesRetriever"                  ref="gaValuesRetriever"/>
         <property name="signatureLibraryRelease"            value="24.0"/>
-        <property name="signatureLibraryName"               value="Pfam"/>
+        <property name="signatureLibrary"                   value="PFAM"/>
     </bean>
 
     <bean id="gaValuesRetriever" class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">

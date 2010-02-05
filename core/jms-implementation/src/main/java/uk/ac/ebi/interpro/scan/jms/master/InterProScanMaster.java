@@ -213,14 +213,8 @@ public class InterProScanMaster implements Master {
 
         // Load the models into the database.
 
-        // Build a SignatureLibrary object.
-        SignatureLibrary sigLibrary = new SignatureLibrary("Pfam", "Pfam database signatures.");
-        LOGGER.debug("Storing SignatureLibrary...");
-        // Store it.
-        daoManager.getSignatureLibraryDAO().insert(sigLibrary);
-        LOGGER.debug("Storing SignatureLibrary...DONE");
-        // Now parse and retrieve the signatures.
-        Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(sigLibrary, "24.0");
+        // Parse and retrieve the signatures.
+        Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(SignatureLibrary.PFAM, "24.0");
         SignatureLibraryRelease release = null;
         try{
             release = modelLoader.parse(pfamHMMfilePath);
