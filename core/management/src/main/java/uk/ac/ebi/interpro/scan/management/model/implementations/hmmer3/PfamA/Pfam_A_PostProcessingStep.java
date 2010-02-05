@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import java.io.Serializable;
 
@@ -16,13 +17,13 @@ public class Pfam_A_PostProcessingStep extends Step<Pfam_A_PostProcessingStepIns
 
     private PfamHMMER3PostProcessing postProcessor;
 
-    private String signatureLibraryName;
+    private SignatureLibrary signatureLibrary;
 
     private String signatureLibraryRelease;
 
     @Required
-    public void setSignatureLibraryName(String signatureLibraryName) {
-        this.signatureLibraryName = signatureLibraryName;
+    public void setSignatureLibrary(SignatureLibrary signatureLibrary) {
+        this.signatureLibrary = signatureLibrary;
     }
 
     @Required
@@ -39,8 +40,8 @@ public class Pfam_A_PostProcessingStep extends Step<Pfam_A_PostProcessingStepIns
         this.postProcessor = postProcessor;
     }
 
-    public String getSignatureLibraryName() {
-        return signatureLibraryName;
+    public SignatureLibrary getSignatureLibrary() {
+        return signatureLibrary;
     }
 
     public String getSignatureLibraryRelease() {
