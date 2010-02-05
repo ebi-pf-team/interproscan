@@ -146,7 +146,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         FINISHED_SEARCHING_RECORD
     }
 
-    public Set<RawProtein<T>> parse(InputStream is) throws IOException, ParseException {
+    public Set<RawProtein<T>> parse(InputStream is) throws IOException {
 
         Map<String, RawProtein<T>> rawResults = new HashMap<String, RawProtein<T>>();
         BufferedReader reader = null;

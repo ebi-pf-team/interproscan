@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.io.cli;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.List;
 
@@ -46,6 +47,8 @@ public interface CommandLineConversation extends Serializable {
      * @throws InterruptedException If the thread is interrupted while waiting for the command to return.
      */
     int runCommand(boolean mergeOutputAndError, String... commands) throws IOException, InterruptedException;
+    
+    InputStream runCommand(String command) throws IOException;
 
     /**
      * Allows the environment to be set, overriding any environment variables that

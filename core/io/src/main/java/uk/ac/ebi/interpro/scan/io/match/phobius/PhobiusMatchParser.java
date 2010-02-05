@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
  * @since 1.0
  */
 public class PhobiusMatchParser {
-    public  Set<PhobiusProtein> parse(InputStream is, String fileName) throws IOException, ParseException {
+    public  Set<PhobiusProtein> parse(InputStream is, String fileName) throws IOException {
         Set<PhobiusProtein> proteinsWithMatches = new HashSet<PhobiusProtein>();
         BufferedReader reader = null;
         try{

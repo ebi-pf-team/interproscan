@@ -29,7 +29,7 @@ public class PhobiusMatchParserTest extends TestCase {
      * Parses a (largish) file and outputs memory usage at the end of the parse.
      */
     @Test
-    public void testParserEfficiency() throws IOException, ParseException {
+    public void testParserEfficiency() throws IOException {
         logMemUsage("Before parse: ");
         InputStream is = PhobiusMatchParserTest.class.getClassLoader().getResourceAsStream(TEST_FILE_PATH);
         PhobiusMatchParser parser = new PhobiusMatchParser();

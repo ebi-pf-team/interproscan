@@ -9,7 +9,7 @@ package uk.ac.ebi.interpro.scan.io;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ParseException extends Exception {
+public class ParseException extends RuntimeException {
 
     private String fileName;
     private String line;

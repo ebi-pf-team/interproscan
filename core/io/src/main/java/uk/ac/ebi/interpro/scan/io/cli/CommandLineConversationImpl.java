@@ -20,138 +20,19 @@ import java.util.Arrays;
  * @version $Id: CommandLineConversationImpl.java 112 2009-08-12 13:49:39Z aquinn.ebi $
  * @since   1.0
  */
-public class CommandLineConversationImpl implements CommandLineConversation{
+public class CommandLineConversationImpl implements CommandLineConversation {
 
-    /**
-     * Logger for Junit logging. Log messages will be associated with the SessionImpl class.
-     */
     private static volatile Logger LOGGER = Logger.getLogger(CommandLineConversationImpl.class);
 
     private String output;
-
     private String error;
-
     private volatile File outputFileHandle;
-
     private volatile File errorFileHandle;
-
     private Integer exitStatus;
-
     private Map<String, String> environment;
-
     private boolean overrideAllEnvironment;
-
     private File workingDirectory;
-
     private volatile IOException exceptionThrownByGobbler;
-
-    /**
-     * Inner class that reads in the output / error streams from the process.
-     * This is required because otherwise the stream buffers in the underlying OS
-     * may / will fill causing the process to hang.
-     *
-     * These readers operate in a separate thread, ensuring that the buffers
-     * for error / output are emptied in a timely manner.
-     */
-
-
-    class StreamGobbler extends Thread {
-        InputStream inputStream;
-        StringBuffer stringBuffer = new StringBuffer();
-        private File gobblerFileHandle;
-
-        StreamGobbler(InputStream inputStream) {
-            this(inputStream, null);
-        }
-
-        StreamGobbler(InputStream inputStream, File outputFileHandle) {
-            this.inputStream = inputStream;
-            if (outputFileHandle != null){
-                this.gobblerFileHandle = outputFileHandle;
-            }
-        }
-
-        /**
-         * Run method than consumes any ouput from the external process as it is produced.
-         */
-        public void run(){
-            if (gobblerFileHandle == null){
-                outputToString();
-            }
-            else {
-                outputToFile();
-            }
-        }
-
-
-
-        private void outputToString(){
-            BufferedReader bufferedReader = null;
-            try {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ( (line = bufferedReader.readLine()) != null){
-                    stringBuffer
-                            .append(line)
-                            .append('\n');
-                }
-            }
-            catch (IOException ioe) {
-                LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
-                exceptionThrownByGobbler = ioe;
-            }
-            finally{
-                if (bufferedReader != null){
-                    try {
-                        bufferedReader.close();
-                    } catch (IOException ioe) {
-                        LOGGER.error("IOException thrown when attempting to close BufferedReader from external process.", ioe);
-                        exceptionThrownByGobbler = ioe;
-                    }
-                }
-            }
-        }
-
-        private void outputToFile() {
-            BufferedReader bufferedReader = null;
-            BufferedWriter writer = null;
-            try {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                writer = new BufferedWriter(new FileWriter(gobblerFileHandle, true));
-                String line;
-                while ( (line = bufferedReader.readLine()) != null){
-                    writer.write(line);
-                    writer.write('\n');
-                }
-            }
-            catch (IOException ioe) {
-                LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
-                exceptionThrownByGobbler = ioe;
-            }
-            finally{
-                try{
-                    if (writer != null){
-                        writer.close();
-                    }
-                    if (bufferedReader != null){
-                        bufferedReader.close();
-                    }
-                }
-                catch (IOException ioe) {
-                    LOGGER.error("IOException thrown when attempting to close BufferedReader from external process.", ioe);
-                    exceptionThrownByGobbler = ioe;
-                }
-            }
-        }
-
-        /**
-         * Accessor to retrieve the ouput from the process as a String.
-         * @return the ouput from the process as a String.
-         */
-        public String getStreamContent(){
-            return stringBuffer.toString();
-        }
-    }
 
     /**
      * Runs a command on the command line synchronously.
@@ -164,8 +45,8 @@ public class CommandLineConversationImpl implements CommandLineConversation{
      * @return the return code from the command after it has completed.
      * @throws java.io.IOException propagated from the RunTime.execute method.
      */
-    //@Override
-    public int runCommand(boolean mergeErrorIntoOutput, String... commands) throws IOException, InterruptedException {
+    @Override public int runCommand(boolean mergeErrorIntoOutput, String... commands)
+            throws IOException, InterruptedException {
         return runCommand(mergeErrorIntoOutput, new ArrayList<String>(Arrays.asList(commands)));
     }
 
@@ -181,8 +62,8 @@ public class CommandLineConversationImpl implements CommandLineConversation{
      * @return the return code from the command after it has completed.
      * @throws java.io.IOException propagated from the RunTime.execute method.
      */
-    //@Override
-    public int runCommand(boolean mergeErrorIntoOutput, List<String> commands) throws IOException, InterruptedException {
+    @Override public int runCommand(boolean mergeErrorIntoOutput, List<String> commands)
+            throws IOException, InterruptedException {
 
         ProcessBuilder pb = new ProcessBuilder(commands);
 
@@ -241,6 +122,29 @@ public class CommandLineConversationImpl implements CommandLineConversation{
     }
 
     /**
+     * Runs command and returns result as an {@link InputStream}.
+     * 
+     * @param   command             Command to run, for example "head -n 100 /tmp/example.txt"
+     * @return  Command output
+     * @throws  IOException if could not run command
+     * @throws  IllegalStateException if could not run command, or if command returns a failure flag
+     */
+    @Override public InputStream runCommand(String command) throws IOException {
+        int exitStatus;
+        try {
+            exitStatus = runCommand(false, Arrays.asList(command.split(" ")));
+        }
+        catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
+        if (exitStatus != 0) {
+            throw new IllegalStateException (getErrorMessage());
+        }
+        // Not an ideal way to get an input stream...
+        return new ByteArrayInputStream(getOutput().getBytes("UTF-8"));
+    }
+
+    /**
      * Allows the environment to be set, overriding any environment variables that
      * are included, or clearing <b>all</b> environment variables and setting only those
      * specified
@@ -248,8 +152,7 @@ public class CommandLineConversationImpl implements CommandLineConversation{
      * @param environmentVariables being a Map of environment variable name to value.
      * @param overrideAll          if all preexisting environment variables should be cleared first.
      */
-    //@Override
-    public void setEnvironment(Map<String, String> environmentVariables, boolean overrideAll) {
+    @Override public void setEnvironment(Map<String, String> environmentVariables, boolean overrideAll) {
         this.environment = environmentVariables;
         this.overrideAllEnvironment = overrideAll;
     }
@@ -261,7 +164,8 @@ public class CommandLineConversationImpl implements CommandLineConversation{
      *
      * @param filePath the path of the file to which output should be redirected.
      */
-    public void setOutputPathToFile(String filePath, boolean overwriteIfExists, boolean append) throws IOException {
+    @Override public void setOutputPathToFile(String filePath, boolean overwriteIfExists, boolean append)
+            throws IOException {
         outputFileHandle = createfileHandle(filePath, overwriteIfExists, append);
     }
 
@@ -271,10 +175,52 @@ public class CommandLineConversationImpl implements CommandLineConversation{
      *
      * @param filePath the path of the file to which error output should be redirected.
      */
-    public void setErrorPathToFile(String filePath, boolean overwriteIfExists, boolean append) throws IOException{
+    @Override public void setErrorPathToFile(String filePath, boolean overwriteIfExists, boolean append)
+            throws IOException{
         errorFileHandle = createfileHandle (filePath, overwriteIfExists, append);
     }
 
+    /**
+     * Sets the working directory for subsequent commands.
+     *
+     * @param directoryPath being a valid path to a working directory
+     * @throws FileNotFoundException if the directory path given does not exist.
+     * @throws FileIsNotADirectoryException if the path exists, but does not resolve to a directory.
+     */
+    @Override public void setWorkingDirectory(String directoryPath)
+            throws FileNotFoundException, FileIsNotADirectoryException {
+        File file = new File (directoryPath);
+        if (! file.exists()){
+            throw new FileNotFoundException("Directory " + directoryPath + " does not exist.");
+        }
+        if (! file.isDirectory()){
+            throw new FileIsNotADirectoryException("Directory " + directoryPath + " exists, " +
+                    "but inputStream not a directory.");
+        }
+        workingDirectory = file;
+    }
+
+    /**
+     * @return The output from the command, or null if no output was produced or no command has been run.
+     */
+    @Override public String getOutput() {
+        return output;
+    }
+
+    /**
+     * @return The error message from the command, or null if no error message was generated or no command has been run.
+     */
+    @Override public String getErrorMessage() {
+        return error;
+    }
+
+    /**
+     * @return The exit status from the last command run, or null if no command has been run yet.
+     */
+    @Override public Integer getExitStatus() {
+        return exitStatus;
+    }
+    
     private File createfileHandle(String filePath, boolean overwriteIfExists, boolean append) throws IOException{
         File sinkFile = new File(filePath);
         if (sinkFile.exists()){
@@ -283,7 +229,8 @@ public class CommandLineConversationImpl implements CommandLineConversation{
             }
             if (overwriteIfExists){
                 if (! sinkFile.delete()){
-                    throw new IOException("The filePath " + filePath + " already contains a file that cannot be deleted.");
+                    throw new IOException("The filePath " + filePath +
+                            " already contains a file that cannot be deleted.");
                 }
                 if (! sinkFile.createNewFile()){
                     throw new IOException("Unable to create a new file " + filePath + " to route to.");
@@ -295,7 +242,8 @@ public class CommandLineConversationImpl implements CommandLineConversation{
                 }
             }
             else {
-                throw new IOException ("There is already a file located at " + filePath + ".  The calling code has set overwriteIfExists to false, so this file will not be deleted.");
+                throw new IOException ("There is already a file located at " + filePath + ". " +
+                        "The calling code has set overwriteIfExists to false, so this file will not be deleted.");
             }
         }
         else if (! sinkFile.createNewFile()){
@@ -304,47 +252,112 @@ public class CommandLineConversationImpl implements CommandLineConversation{
         return sinkFile;
     }
 
-
     /**
-     * Sets the working directory for subsequent commands.
+     * Inner class that reads in the output / error streams from the process.
+     * This is required because otherwise the stream buffers in the underlying OS
+     * may / will fill causing the process to hang.
      *
-     * @param directoryPath being a valid path to a working directory
-     * @throws FileNotFoundException if the directory path given does not exist.
-     * @throws FileIsNotADirectoryException if the path exists, but does not resolve to a directory.
+     * These readers operate in a separate thread, ensuring that the buffers
+     * for error / output are emptied in a timely manner.
      */
-    //@Override
-    public void setWorkingDirectory(String directoryPath) throws FileNotFoundException, FileIsNotADirectoryException {
-        File file = new File (directoryPath);
-        if (! file.exists()){
-            throw new FileNotFoundException("An attempt has been made to set the working directory to " + directoryPath + ".  This directory does not exist.");
+    class StreamGobbler extends Thread {
+        InputStream inputStream;
+        StringBuffer stringBuffer = new StringBuffer();
+        private File gobblerFileHandle;
+
+        StreamGobbler(InputStream inputStream) {
+            this(inputStream, null);
         }
-        if (! file.isDirectory()){
-            throw new FileIsNotADirectoryException("An attempt has been made to set the working directory to " + directoryPath + ".  This path exists, but inputStream not a directory.");
+
+        StreamGobbler(InputStream inputStream, File outputFileHandle) {
+            this.inputStream = inputStream;
+            if (outputFileHandle != null){
+                this.gobblerFileHandle = outputFileHandle;
+            }
         }
-        workingDirectory = file;
+
+        /**
+         * Run method than consumes any ouput from the external process as it is produced.
+         */
+        public void run(){
+            if (gobblerFileHandle == null){
+                outputToString();
+            }
+            else {
+                outputToFile();
+            }
+        }
+
+
+
+        private void outputToString(){
+            BufferedReader bufferedReader = null;
+            try {
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ( (line = bufferedReader.readLine()) != null){
+                    stringBuffer
+                            .append(line)
+                            .append('\n');
+                }
+            }
+            catch (IOException ioe) {
+                LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
+                exceptionThrownByGobbler = ioe;
+            }
+            finally{
+                if (bufferedReader != null){
+                    try {
+                        bufferedReader.close();
+                    } catch (IOException ioe) {
+                        LOGGER.error("IOException thrown when attempting to close " +
+                                "BufferedReader from external process.", ioe);
+                        exceptionThrownByGobbler = ioe;
+                    }
+                }
+            }
+        }
+
+        private void outputToFile() {
+            BufferedReader bufferedReader = null;
+            BufferedWriter writer = null;
+            try {
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                writer = new BufferedWriter(new FileWriter(gobblerFileHandle, true));
+                String line;
+                while ( (line = bufferedReader.readLine()) != null){
+                    writer.write(line);
+                    writer.write('\n');
+                }
+            }
+            catch (IOException ioe) {
+                LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
+                exceptionThrownByGobbler = ioe;
+            }
+            finally{
+                try{
+                    if (writer != null){
+                        writer.close();
+                    }
+                    if (bufferedReader != null){
+                        bufferedReader.close();
+                    }
+                }
+                catch (IOException ioe) {
+                    LOGGER.error("IOException thrown when attempting to close " +
+                            "BufferedReader from external process.", ioe);
+                    exceptionThrownByGobbler = ioe;
+                }
+            }
+        }
+
+        /**
+         * Accessor to retrieve the ouput from the process as a String.
+         * @return the ouput from the process as a String.
+         */
+        public String getStreamContent(){
+            return stringBuffer.toString();
+        }
     }
 
-    /**
-     * @return The output from the command, or null if no output was produced or no command has been run.
-     */
-    //@Override
-    public String getOutput() {
-        return output;
-    }
-
-    /**
-     * @return The error message from the command, or null if no error message was generated or no command has been run.
-     */
-    //@Override
-    public String getErrorMessage() {
-        return error;
-    }
-
-    /**
-     * @return The exit status from the last command run, or null if no command has been run yet.
-     */
-    //@Override
-    public Integer getExitStatus() {
-        return exitStatus;
-    }
 }
