@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel;
 
+import uk.ac.ebi.interpro.scan.model.PhobiusFeatureType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +20,20 @@ public class PhobiusProtein {
     private List<PhobiusFeature> features = new ArrayList<PhobiusFeature>();
 
     private boolean isSP = false,
-                    isTM = false;
+            isTM = false;
 
     public PhobiusProtein(String proteinIdentifier) {
         this.proteinIdentifier = proteinIdentifier;
     }
 
     public void addFeature (PhobiusFeature feature){
-        final boolean signalFeature = PhobiusFeature.SIGNAL.equals(feature.getName());
-        isSP = isSP || signalFeature;
-        isTM = isTM || PhobiusFeature.TRANSMEM.equals(feature.getName());
-        if (! signalFeature){  // Signal features not stored - can be derived from N, H, C regions.
+        if (feature.getFeatureType() != null){ // Not all FT lines yield features to be stored.
+            final boolean signalFeature =
+                    PhobiusFeatureType.SIGNAL_PEPTIDE_C_REGION == feature.getFeatureType() ||
+                            PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == feature.getFeatureType() ||
+                            PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == feature.getFeatureType();
+            isSP = isSP || signalFeature;
+            isTM = isTM || PhobiusFeatureType.TRANSMEMBRANE == feature.getFeatureType();
             features.add (feature);
         }
     }

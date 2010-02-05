@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.io.match;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.io.ParseException;
@@ -23,7 +24,7 @@ public class ProdomMatchParserTest extends TestCase {
     @Test
     public void testParse() throws IOException, ParseException {
         InputStream is = getClass().getClassLoader().getResourceAsStream("data/prodom/prodom_output.txt");
-        MatchParser<ProDomRawMatch> parser = new ProDomMatchParser("ProDom", "3.0");
+        MatchParser<ProDomRawMatch> parser = new ProDomMatchParser(SignatureLibrary.PRODOM, "3.0");
         Set<RawProtein<ProDomRawMatch>> proteins = parser.parse(is);
         assertNotNull(proteins);
     }

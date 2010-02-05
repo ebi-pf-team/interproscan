@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.io.match;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 
 /**
@@ -35,11 +37,11 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
             "^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+//\\s+pd_(.+?);.+?;\\s+(\\d+)\\s+(\\d+)\\s+//\\s+S=(((\\b[0-9]+)?\\.)?\\b[0-9]+([eE][-+]?[0-9]+)?\\b)\\s+E=(((\\b[0-9]+)?\\.)?\\b[0-9]+([eE][-+]?[0-9]+)?\\b)\\s+//\\s+\\((\\d+)\\)\\s+.+?Length = \\d+$"
     );
 
-    public ProDomMatchParser(String signatureLibraryName, String signatureLibraryRelease) {
-        super(signatureLibraryName, signatureLibraryRelease);
+    public ProDomMatchParser(SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
+        super(signatureLibrary, signatureLibraryRelease);
     }
 
-    @Override protected ProDomRawMatch createMatch(String signatureLibraryName,
+    @Override protected ProDomRawMatch createMatch(SignatureLibrary signatureLibrary,
                                                    String signatureLibraryRelease,
                                                    String line) {
         Matcher matcher = PRODOM_LINE_PATTERN.matcher(line);
@@ -47,7 +49,6 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
             //throw new IllegalStateException("Unrecognised line: " + line);
             return null;
         }
-        final String generator      = "ProDom";
         String sequenceIdentifier   = matcher.group(1);
         int sequenceStart           = Integer.parseInt(matcher.group(2));
         int sequenceEnd             = Integer.parseInt(matcher.group(3));
@@ -57,7 +58,7 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
         double score                = Double.parseDouble(matcher.group(7));
         double evalue               = Double.parseDouble(matcher.group(11));
         int unknown                 = Integer.parseInt(matcher.group(15));
-        return new ProDomRawMatch(sequenceIdentifier, model, signatureLibraryName, signatureLibraryRelease,
+        return new ProDomRawMatch(sequenceIdentifier, model, signatureLibraryRelease,
                                   sequenceStart, sequenceEnd, score);
     }
 

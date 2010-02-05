@@ -6,6 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusFeature;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
+import uk.ac.ebi.interpro.scan.model.PhobiusFeatureType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,12 +46,12 @@ public class PhobiusMatchParserTest extends TestCase {
             boolean isTM = false;
 //            System.out.println(protein.toString());
             for (PhobiusFeature feature : protein.getFeatures()){
-                if (PhobiusFeature.C_REGION.equals(feature.getQualifier())
-                        || PhobiusFeature.H_REGION.equals(feature.getQualifier())
-                        || PhobiusFeature.N_REGION.equals(feature.getQualifier())){
+                if (PhobiusFeatureType.SIGNAL_PEPTIDE_C_REGION == feature.getFeatureType() ||
+                    PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == feature.getFeatureType() ||
+                    PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == feature.getFeatureType()){
                     isSignal = true;
                 }
-                if (PhobiusFeature.TRANSMEM.equals(feature.getName())){
+                if (PhobiusFeatureType.TRANSMEMBRANE == feature.getFeatureType()){
                     isTM = true;
                 }
             }
