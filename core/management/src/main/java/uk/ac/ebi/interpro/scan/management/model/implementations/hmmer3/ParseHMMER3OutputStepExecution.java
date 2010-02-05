@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
@@ -48,7 +50,8 @@ public class ParseHMMER3OutputStepExecution extends StepExecution<ParseHMMER3Out
      */
     @Override
     public void execute(DAOManager daoManager) {
-
+        final StepInstance stepInstance = this.getStepInstance();
+        LOGGER.debug("Running Parser HMMER3 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
         this.setToRun();
         InputStream is = null;
         try{
@@ -56,14 +59,14 @@ public class ParseHMMER3OutputStepExecution extends StepExecution<ParseHMMER3Out
             if (daoManager == null){
                 throw new IllegalStateException ("The Hmmer3 Output Parser cannot run without a DAOManager.");
             }
-            if (daoManager.getRawMatchDAO() == null){
-                throw new IllegalStateException ("The DAOManager is present, but does not contain a RawMatchDAO.");
-            }
+//            if (daoManager.getPfamRawMatchDAO() == null){
+//                throw new IllegalStateException ("The DAOManager is present, but does not contain a RawMatchDAO.");
+//            }
             is = new FileInputStream(this.getStepInstance().getHmmerOutputFilePath());
-            Hmmer3SearchMatchParser<Hmmer3RawMatch> parser = this.getStepInstance().getStep().getParser();
-            Set<RawProtein<Hmmer3RawMatch>> parsedResults = parser.parse(is);
+            Hmmer3SearchMatchParser<PfamHmmer3RawMatch> parser = this.getStepInstance().getStep().getParser();
+            Set<RawProtein<PfamHmmer3RawMatch>> parsedResults = parser.parse(is);
 
-            daoManager.getRawMatchDAO().insertProteinMatches(parsedResults);
+            daoManager.getPfamRawMatchDAO().insertProteinMatches(parsedResults);
             this.completeSuccessfully();
         } catch (Exception e) {
             this.fail();

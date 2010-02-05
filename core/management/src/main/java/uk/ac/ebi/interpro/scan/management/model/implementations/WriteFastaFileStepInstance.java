@@ -1,14 +1,10 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.Protein;
 
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import java.util.UUID;
-import java.util.List;
 import java.io.Serializable;
 
 @Entity
@@ -18,8 +14,7 @@ public class WriteFastaFileStepInstance extends StepInstance<WriteFastaFileStep,
     public WriteFastaFileStepInstance(WriteFastaFileStep step, long bottomProteinId, long topProteinId, Long bottomModelId, Long topModelId) {
         super(step, bottomProteinId, topProteinId, bottomModelId, topModelId);
         this.fastaFilePathName = filterFileNameProteinBounds(
-                this.getStep().getFastaFilePathTemplate(),
-                bottomProteinId, topProteinId, bottomModelId, topModelId
+                this.getStep().getFastaFilePathTemplate()
         );
     }
 

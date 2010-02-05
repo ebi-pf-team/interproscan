@@ -32,7 +32,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
     @ManyToOne (targetEntity = StepInstance.class, cascade = {}, optional = false)
     protected I stepInstance;
 
-    @Column (nullable=false)
+    @Enumerated(javax.persistence.EnumType.STRING)
     private StepExecutionState state = StepExecutionState.NEW_STEP_EXECUTION;
 
     @Column (nullable=true, name="time_created")

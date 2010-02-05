@@ -60,7 +60,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
     private Long topModel;
 
     @ManyToMany (fetch = FetchType.EAGER, cascade = {})
-    private List<StepInstance> dependencies = new ArrayList<StepInstance>();
+    private List<StepInstance> dependsUpon = new ArrayList<StepInstance>();
 
     /**
      * List of all the executions of this StepInstance.
@@ -106,7 +106,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
 //    }
 
     public void addDependentStepInstance(StepInstance dependentStepInstance){
-        this.dependencies.add (dependentStepInstance);
+        this.dependsUpon.add (dependentStepInstance);
     }
 
     public void addStepExecution(E stepExecution){
@@ -166,7 +166,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
     }
 
     public List<StepInstance> stepInstanceDependsUpon() {
-        return dependencies;
+        return dependsUpon;
     }
 
     /**
@@ -186,8 +186,8 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
                 ||
             (StepExecutionState.STEP_EXECUTION_FAILED == getState() && this.getExecutions().size() < this.getStep().getRetries())){
             // Then check that all the dependencies have been completed successfully.
-            if (dependencies != null){
-                for (StepInstance dependency : dependencies){
+            if (dependsUpon != null){
+                for (StepInstance dependency : dependsUpon){
                     if (dependency.getState() != StepExecutionState.STEP_EXECUTION_SUCCESSFUL){
                         return false;
                     }
@@ -228,11 +228,11 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
      */
     public static final NumberFormat TWELVE_DIGIT_INTEGER = new DecimalFormat("000000000000");
 
-    public String filterFileNameProteinBounds (String fileNameTemplate, Long bottomProteinId, Long topProteinId, Long bottomModelId, Long topModelId){
-        fileNameTemplate = filter(fileNameTemplate, PROTEIN_BOTTOM_HOLDER, bottomProteinId);
-        fileNameTemplate = filter(fileNameTemplate, PROTEIN_TOP_HOLDER, topProteinId);
-        fileNameTemplate = filter(fileNameTemplate, MODEL_BOTTOM_HOLDER, bottomModelId);
-        fileNameTemplate = filter(fileNameTemplate, MODEL_TOP_HOLDER, topModelId);
+    public String filterFileNameProteinBounds(String fileNameTemplate){
+        fileNameTemplate = filter(fileNameTemplate, PROTEIN_BOTTOM_HOLDER, this.bottomProtein);
+        fileNameTemplate = filter(fileNameTemplate, PROTEIN_TOP_HOLDER, this.topProtein);
+        fileNameTemplate = filter(fileNameTemplate, MODEL_BOTTOM_HOLDER, this.bottomModel);
+        fileNameTemplate = filter(fileNameTemplate, MODEL_TOP_HOLDER, this.topModel);
         return fileNameTemplate;
     }
 

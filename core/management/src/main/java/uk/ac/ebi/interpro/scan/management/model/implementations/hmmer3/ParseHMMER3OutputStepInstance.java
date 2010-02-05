@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Column;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,7 +32,7 @@ public class ParseHMMER3OutputStepInstance extends StepInstance<ParseHMMER3Outpu
 
     public ParseHMMER3OutputStepInstance(ParseHMMER3OutputStep step, long bottomProteinId, long topProteinId, Long bottomModelId, Long topModelId) {
         super(step, bottomProteinId, topProteinId, bottomModelId, topModelId);
-        this.hmmerOutputFilePath = this.filterFileNameProteinBounds(this.getStep().getHmmerOutputFilePathTemplate(), bottomProteinId, topProteinId, bottomModelId, topModelId);
+        this.hmmerOutputFilePath = this.filterFileNameProteinBounds(this.getStep().getHmmerOutputFilePathTemplate());
     }
 
     @Override

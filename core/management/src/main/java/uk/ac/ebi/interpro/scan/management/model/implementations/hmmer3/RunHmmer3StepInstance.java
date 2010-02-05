@@ -3,9 +3,6 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import java.io.Serializable;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
@@ -43,8 +40,8 @@ public class RunHmmer3StepInstance extends StepInstance<RunHmmer3Step, RunHmmer3
 
     public RunHmmer3StepInstance(RunHmmer3Step step, long bottomProteinId, long topProteinId, Long bottomModelId, Long topModelId) {
         super(step, bottomProteinId, topProteinId, bottomModelId, topModelId);
-        this.fastaFilePathName = this.filterFileNameProteinBounds(this.getStep().getFastaFilePathNameTemplate(), bottomProteinId, topProteinId, bottomModelId, topModelId);
-        this.hmmerOutputFileName = this.filterFileNameProteinBounds(this.getStep().getHmmerOutputFilePathTemplate(), bottomProteinId, topProteinId, bottomModelId, topModelId);
+        this.fastaFilePathName = this.filterFileNameProteinBounds(this.getStep().getFastaFilePathNameTemplate());
+        this.hmmerOutputFileName = this.filterFileNameProteinBounds(this.getStep().getHmmerOutputFilePathTemplate());
     }
 
     @Override
