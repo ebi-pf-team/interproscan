@@ -1,18 +1,10 @@
 package uk.ac.ebi.interpro.scan.io.match;
 
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import org.apache.log4j.Logger;
 
 /**
  * ProSite Profiles match parser.
@@ -38,11 +30,11 @@ public class ProSiteProfileMatchParser extends AbstractLineMatchParser<ProSitePr
             "^(\\S+)\\tps_scan\\|v[.0-9]+\\t(\\S+)\\t(\\d+)\\t(\\d+)\\t([.0-9]+)\\t\\.\\t\\.\\t(.+)"
     );
 
-    public ProSiteProfileMatchParser(String signatureLibraryName, String signatureLibraryRelease) {
-        super(signatureLibraryName, signatureLibraryRelease);
+    public ProSiteProfileMatchParser(SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
+        super(signatureLibrary, signatureLibraryRelease);
     }
 
-    @Override protected ProSiteProfileRawMatch createMatch(String signatureLibraryName,
+    @Override protected ProSiteProfileRawMatch createMatch(SignatureLibrary signatureLibrary,
                                                            String signatureLibraryRelease,
                                                            String line) {
         Matcher matcher = PROFILE_PATTERN.matcher(line);
@@ -58,7 +50,7 @@ public class ProSiteProfileMatchParser extends AbstractLineMatchParser<ProSitePr
         double score = Double.parseDouble(matcher.group(5));
         String psDesc = matcher.group(6);
         return new ProSiteProfileRawMatch(accession, method_ac,
-                signatureLibraryName, signatureLibraryRelease, seqStart, seqStop, score);
+                signatureLibraryRelease, seqStart, seqStop, score);
     }
 
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Set;
 
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.io.ParseException;
@@ -18,7 +19,7 @@ import uk.ac.ebi.interpro.scan.io.ParseException;
  */
 public interface MatchParser<T extends RawMatch> extends Serializable {
 
-    public String getSignatureLibraryName();
+    public SignatureLibrary getSignatureLibrary();
 
     public String getSignatureLibraryRelease();
     

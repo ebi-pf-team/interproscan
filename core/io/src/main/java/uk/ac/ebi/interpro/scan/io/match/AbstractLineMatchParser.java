@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match;
 
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -17,25 +18,26 @@ import java.io.InputStreamReader;
  * for example, ProDom and Phobius results.
  *
  * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
  */
 abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParser<T> {
 
-    private final String signatureLibraryName;
+    private final SignatureLibrary signatureLibrary;
     private final String signatureLibraryRelease;
 
     private AbstractLineMatchParser() {
-        this.signatureLibraryName    = null;
+        this.signatureLibrary = null;
         this.signatureLibraryRelease = null;
     }
 
-    protected AbstractLineMatchParser(String signatureLibraryName, String signatureLibraryRelease) {
-        this.signatureLibraryName    = signatureLibraryName;
+    protected AbstractLineMatchParser(SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
+        this.signatureLibrary = signatureLibrary;
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    @Override public String getSignatureLibraryName() {
-        return signatureLibraryName;
+    @Override public SignatureLibrary getSignatureLibrary() {
+        return signatureLibrary;
     }
 
     @Override public String getSignatureLibraryRelease() {
@@ -51,7 +53,7 @@ abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParse
         try{
             reader = new BufferedReader(new InputStreamReader(is));
             while (reader.ready()) {
-                T match = createMatch(signatureLibraryName, signatureLibraryRelease, reader.readLine());
+                T match = createMatch(signatureLibrary, signatureLibraryRelease, reader.readLine());
                 if (match != null)  {
                     String id = match.getSequenceIdentifier();
                     RawProtein<T> protein;
@@ -77,12 +79,11 @@ abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParse
     /**
      * Returns {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters.
      *
-     * @param signatureLibraryName      Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibrary#getName()}
-     * @param signatureLibraryRelease   Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
-     * @param line                      Line read from input file.
-     * @return {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters
+     * @param signatureLibrary
+     *@param signatureLibraryRelease   Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
+     * @param line                      Line read from input file.   @return {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters
      */
-    protected abstract T createMatch(String signatureLibraryName,
+    protected abstract T createMatch(SignatureLibrary signatureLibrary,
                                      String signatureLibraryRelease,
                                      String line);
 

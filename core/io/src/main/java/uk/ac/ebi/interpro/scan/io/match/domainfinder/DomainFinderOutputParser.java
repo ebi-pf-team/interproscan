@@ -43,7 +43,7 @@ public class DomainFinderOutputParser {
         //this can be changed later depending on the requirements
         if (df3FileLine!=null && df3FileLine.length > 5) {
             //TODO store DF3 file output into post-processed Gene3D match collection
-            m = new Gene3dHmmer3RawMatch(df3FileLine[0],df3FileLine[1],"Gene3D","3.3",Integer.parseInt(df3FileLine[4]),//locationtart
+            m = new Gene3dHmmer3RawMatch(df3FileLine[0],df3FileLine[1], "3.3",Integer.parseInt(df3FileLine[4]),//locationtart
                                           Integer.parseInt(df3FileLine[5]),   //locationend
                                           Double.parseDouble(df3FileLine[8]),//evalue
                                           Double.parseDouble(df3FileLine[9]),   //score

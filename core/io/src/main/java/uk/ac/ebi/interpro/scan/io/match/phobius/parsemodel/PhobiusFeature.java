@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel;
 
+import uk.ac.ebi.interpro.scan.model.PhobiusFeatureType;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,20 +27,26 @@ public class PhobiusFeature {
 
     private int stop;
 
-    private String name;
-
-    private String qualifier;
+    private PhobiusFeatureType featureType;
 
     public static final Pattern FT_LINE_PATTERN = Pattern.compile ("^FT\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s*(.*)$");
 
     public PhobiusFeature(Matcher ftLineMatcher) {
+
         this.start = Integer.parseInt(ftLineMatcher.group(2));
         this.stop = Integer.parseInt(ftLineMatcher.group(3));
-        this.name = ftLineMatcher.group(1);
-        String group4 = ftLineMatcher.group(4);
-        if (group4 != null && group4.trim().length() > 0){
-            this.qualifier = group4;
-        }
+        final String type = ftLineMatcher.group(1);
+        final String group4 = ftLineMatcher.group(4);
+        final String qualifier =
+                (group4 != null && group4.trim().length() > 0)
+                        ? group4
+                        : null;
+        this.featureType = PhobiusFeatureType.getFeatureTypeByTypeAndQualifier(type, qualifier);
+
+    }
+
+    public PhobiusFeatureType getFeatureType() {
+        return featureType;
     }
 
     public int getStart() {
@@ -49,19 +57,10 @@ public class PhobiusFeature {
         return stop;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getQualifier() {
-        return qualifier;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append('\n').append(name).append(", ");
-        sb.append(qualifier).append(' ');
+        sb.append('\n').append(featureType).append(", ");
         sb.append(start);
         sb.append(" - ").append(stop);
         return sb.toString();

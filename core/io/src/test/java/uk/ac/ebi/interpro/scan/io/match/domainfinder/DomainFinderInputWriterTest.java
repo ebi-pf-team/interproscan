@@ -34,7 +34,7 @@ public class DomainFinderInputWriterTest {
         final String PROTEIN_ID = "1";
         RawProtein<Gene3dHmmer3RawMatch> protein = new RawProtein<Gene3dHmmer3RawMatch>(PROTEIN_ID);
         // Add matches
-        protein.addMatch(new Gene3dHmmer3RawMatch(PROTEIN_ID, "2hxsA00", "Gene3D", "3.0.0", 1, 2, 3.7E-9, 0.035,
+        protein.addMatch(new Gene3dHmmer3RawMatch(PROTEIN_ID, "2hxsA00", "3.0.0", 1, 2, 3.7E-9, 0.035,
                 1, 2, "[]", 3.0, 1, 2, 0, 0, 0, 0, 0, "24M2I9M1D9M1D2M2D10M7I42M7D16M5D12M1I24M"));
         DomainFinderInputWriter dfiw = new DomainFinderInputWriter(domainFinderInputFileTest.getFile());
         dfiw.writeGene3dRawMatchToSsfFile(new ArrayList<Gene3dHmmer3RawMatch>(protein.getMatches()));

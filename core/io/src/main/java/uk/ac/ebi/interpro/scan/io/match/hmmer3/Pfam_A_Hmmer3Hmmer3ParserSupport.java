@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever;
 import uk.ac.ebi.interpro.scan.io.ParseException;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 
@@ -30,15 +31,15 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<PfamHmmer3RawMatch> {
 
-    private String signatureLibraryName;
+    private SignatureLibrary signatureLibrary;
 
     private String signatureLibraryRelease;
 
     private GaValuesRetriever gaValuesRetriever;
 
     @Required
-    public void setSignatureLibraryName(String signatureLibraryName) {
-        this.signatureLibraryName = signatureLibraryName;
+    public void setSignatureLibrary(SignatureLibrary signatureLibrary) {
+        this.signatureLibrary = signatureLibrary;
     }
 
     @Required
@@ -110,7 +111,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
                         final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
                                 sequenceMatch.getSequenceIdentifier(),
                                 methodMatches.getModelAccession(),
-                                signatureLibraryName,
+                                signatureLibrary,
                                 signatureLibraryRelease,
                                 domainMatch.getAliFrom(),
                                 domainMatch.getAliTo(),

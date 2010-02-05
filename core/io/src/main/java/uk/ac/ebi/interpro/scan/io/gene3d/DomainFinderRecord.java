@@ -362,7 +362,7 @@ public final class DomainFinderRecord {
                 .isEquals()
                 && 
                 // Allow for some imprecision in evalues
-                PersistenceConversion.equals(evalue, r.evalue);
+                PersistenceConversion.equivalent(evalue, r.evalue);
     }
 
     @Override public int hashCode() {

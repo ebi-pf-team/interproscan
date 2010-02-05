@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
 
@@ -23,7 +24,7 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
     private static final Pattern MODEL_ACCESSION_LINE_PATTERN
             = Pattern.compile ("^[^:]*:\\s+(\\w+)\\s+\\[M=(\\d+)\\].*$" );
 
-    private String signatureLibraryName;
+    private SignatureLibrary signatureLibrary;
     private String signatureLibraryRelease;
 
     @Override public HmmKey getHmmKey() {
@@ -42,8 +43,8 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
     }
 
     @Required
-    public void setSignatureLibraryName(String signatureLibraryName) {
-        this.signatureLibraryName = signatureLibraryName;
+    public void setSignatureLibrary(uk.ac.ebi.interpro.scan.model.SignatureLibrary signatureLibrary) {
+        this.signatureLibrary = signatureLibrary;
     }
 
     @Required
@@ -77,7 +78,7 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
                     rawResults.put(id, protein);
                 }
                 // Add match
-                final T match = createMatch(signatureLibraryName, signatureLibraryRelease,
+                final T match = createMatch(signatureLibrary, signatureLibraryRelease,
                                             hmmSearchRecord, sequenceMatch, domainMatch);
                 protein.addMatch(match);
             }
@@ -87,14 +88,13 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
     /**
      * Returns {@link uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch} instance using values from parameters.
      *
-     * @param signatureLibraryName      Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibrary#getName()}
-     * @param signatureLibraryRelease   Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
+     * @param signatureLibrary
+     *@param signatureLibraryRelease   Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
      * @param hmmSearchRecord           Single record in the hmmsearch output
      * @param sequenceMatch             Sequence match
-     * @param domainMatch               Domain match
-     * @return {@link uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch} instance using values from parameters
+     * @param domainMatch               Domain match     @return {@link uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch} instance using values from parameters
      */    
-    protected abstract T createMatch(String signatureLibraryName,
+    protected abstract T createMatch(SignatureLibrary signatureLibrary,
                                      String signatureLibraryRelease,
                                      final HmmSearchRecord hmmSearchRecord,
                                      final SequenceMatch sequenceMatch,

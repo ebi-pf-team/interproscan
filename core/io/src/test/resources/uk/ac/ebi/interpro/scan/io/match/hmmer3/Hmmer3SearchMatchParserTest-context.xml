@@ -23,8 +23,8 @@
                         <!--</constructor-arg>-->
                     </bean>
                 </property>
-                <property name="signatureLibraryRelease" value="Pfam-A"/>
-                <property name="signatureLibraryName"    value="24.0"/>
+                <property name="signatureLibraryRelease" value="24.0"/>
+                <property name="signatureLibrary"    value="PFAM"/>
             </bean>
         </property>
     </bean>
@@ -39,8 +39,8 @@
     <bean id="gene3dParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
         <property name="parserSupport">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Gene3DHmmer3ParserSupport">
-                <property name="signatureLibraryRelease" value="Gene3D"/>
-                <property name="signatureLibraryName"    value="3.3.0"/>
+                <property name="signatureLibraryRelease" value="3.3.0"/>
+                <property name="signatureLibrary"    value="GENE3D"/>
                 <property name="alignmentEncoder">
                     <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
                 </property>

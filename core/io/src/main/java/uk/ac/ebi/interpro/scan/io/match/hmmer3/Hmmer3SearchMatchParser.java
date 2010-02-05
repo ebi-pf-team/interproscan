@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -107,21 +108,21 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
      */
     private Hmmer3ParserSupport<T> hmmer3ParserSupport;
 
-    private final String signatureLibraryName;
+    private final SignatureLibrary signatureLibrary;
     private final String signatureLibraryRelease;
 
     private Hmmer3SearchMatchParser()   {
-        signatureLibraryName = null;
+        signatureLibrary = null;
         signatureLibraryRelease = null;
     }
 
-    public Hmmer3SearchMatchParser(String signatureLibraryName, String signatureLibraryRelease) {
-        this.signatureLibraryName = signatureLibraryName;
+    public Hmmer3SearchMatchParser(SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
+        this.signatureLibrary = signatureLibrary;
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    public String getSignatureLibraryName() {
-        return signatureLibraryName;
+    public SignatureLibrary getSignatureLibrary() {
+        return signatureLibrary;
     }
 
     public String getSignatureLibraryRelease() {

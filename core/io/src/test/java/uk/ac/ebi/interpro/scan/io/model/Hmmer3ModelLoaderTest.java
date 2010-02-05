@@ -23,10 +23,9 @@ public class Hmmer3ModelLoaderTest {
     @Test
     public void testParse() throws IOException{
         URL url = Hmmer3ModelLoaderTest.class.getClassLoader().getResource("data/hmmer3/library/pfam-small.hmm");
-        SignatureLibrary library = new SignatureLibrary("Pfam-A", "Pfam A");
-        Hmmer3ModelLoader loader = new Hmmer3ModelLoader(library, "24.0");
+        Hmmer3ModelLoader loader = new Hmmer3ModelLoader(SignatureLibrary.PFAM, "24.0");
         SignatureLibraryRelease release = loader.parse(url.getPath());
-        assertEquals(library, release.getLibrary());
+        assertEquals(SignatureLibrary.PFAM, release.getLibrary());
         assertNotNull(release.getSignatures());
         assertEquals(21, release.getSignatures().size());
         for (Signature signature : release.getSignatures()){
