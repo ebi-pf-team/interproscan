@@ -31,19 +31,10 @@
         <class>uk.ac.ebi.interpro.scan.model.Model</class>
         <class>uk.ac.ebi.interpro.scan.model.Xref</class>
         <class>uk.ac.ebi.interpro.scan.model.Signature</class>
-        <class>uk.ac.ebi.interpro.scan.model.SignatureLibrary</class>
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
         <class>uk.ac.ebi.interpro.scan.management.model.StepExecution</class>
         <class>uk.ac.ebi.interpro.scan.management.model.StepInstance</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStepInstance</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStepExecution</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3StepInstance</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3StepExecution</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStepInstance</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStepExecution</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStepInstance</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStepExecution</class>
 
         <properties>
             <property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />

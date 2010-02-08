@@ -66,7 +66,7 @@
     </bean>
 
     <!-- STEP 3 -->
-    <bean id="step_pfam_A_parse_HMMER3_output"              class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStep">
+    <bean id="step_pfam_A_parse_HMMER3_output"              class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.ParsePfam_A_HMMER3OutputStep">
         <property name="job"                                ref="job_pfam_A"/>
         <property name="dependsUpon"                        ref="step_pfam_A_run_HMMER3"/>
         <property name="stepDescription"                    value="Parse the output from HMMER3"/>

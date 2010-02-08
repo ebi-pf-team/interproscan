@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
@@ -229,13 +230,14 @@ public class InterProScanWorker implements Worker {
                         System.out.println("Message was a non-null ObjectMessage");
                         ObjectMessage stepExecutionMessage = (ObjectMessage) message;
                         System.out.println("stepExecutionMessage.toString() = " + stepExecutionMessage);
-                        final StepExecution stepExec = (StepExecution) stepExecutionMessage.getObject();
-                        currentStepExecution = stepExec;
+                        final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
+                        currentStepExecution = stepExecution;
                         System.out.println("Got currentStepExecution, which is...");
-                        if (stepExec != null){
+                        if (stepExecution != null){
                             System.out.println("Not null!");
-                            stepExec.execute(daoManager);
-                            ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExec);
+                            Step step = stepExecution.getStepInstance().getStep();
+                            step.execute(daoManager, stepExecution);
+                            ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
                             messageProducer.send(responseMessage);
                             stepExecutionMessage.acknowledge();
                         }
