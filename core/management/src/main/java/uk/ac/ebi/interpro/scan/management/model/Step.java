@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import java.io.Serializable;
-import java.util.UUID;
 import java.util.List;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
 
 /**
  * Instances of this class describe / provide a template

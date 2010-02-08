@@ -1,21 +1,17 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
-
-import java.util.List;
-import java.util.UUID;
-import java.io.File;
-import java.io.Serializable;
-
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
+import uk.ac.ebi.interpro.scan.management.model.Step;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import javax.persistence.Transient;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * This Step write Fasta files for the range of proteins requested.

@@ -2,14 +2,9 @@ package uk.ac.ebi.interpro.scan.management.model;
 
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.Serializable;
-
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 /**
  * This class describes a Job, which is constructed from N steps.

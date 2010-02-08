@@ -1,16 +1,15 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import javax.persistence.Query;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 /**
  * DAO for StepInstance objects.  Used to retrieve
