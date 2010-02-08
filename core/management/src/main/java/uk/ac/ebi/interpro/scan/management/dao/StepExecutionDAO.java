@@ -4,10 +4,11 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pjones
- * Date: Dec 7, 2009
- * Time: 9:34:41 PM
+ * Interface for data access of StepExecutions. 
+ *
+ * @author Phil Jones
+ * @version $Id$
+ * @since 1.0-SNAPSHOT
  */
 public interface StepExecutionDAO extends GenericDAO<StepExecution, String> {
 

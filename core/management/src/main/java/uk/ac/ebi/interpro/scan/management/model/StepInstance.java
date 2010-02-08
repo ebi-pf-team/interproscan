@@ -7,7 +7,22 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 /**
- * TODO: Description
+ * A StepInstance is built from a Step (template) for (optionally)
+ * specific ranges of protein IDs and / or specific ranges of
+ * model IDs.  Instances of this class therefore represent a
+ * specific piece of work that needs to be performed.
+ *
+ * Attempts to execute a StepInstance are represented as
+ * StepExecution objects. The Step defines whether or not the
+ * StepInstance can be re-run in the event of failure (how many
+ * times it can be re-run.)  In the event of failure, and re-runs
+ * being > 0, there may be multiple StepExecutions associated
+ * with a single StepInstance.
+ *
+ * All things being equals, this class should be FINAL, but can't
+ * be because of JPA.  (So don't subclass!)
+ *
+ * @see StepExecution
  *
  * @author Phil Jones
  * @version $Id$
@@ -15,9 +30,7 @@ import java.text.DecimalFormat;
  */
 @Entity
 @Table (name="step_instance")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn (discriminatorType = DiscriminatorType.STRING)
-public abstract class StepInstance<S extends Step, E extends StepExecution> implements Serializable {
+public class StepInstance<S extends Step> implements Serializable {
 
     private static final String PROTEIN_BOTTOM_HOLDER = "\\[PROTSTART\\]";
 
@@ -68,11 +81,8 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
      * wire when submitting new StepExecutions to the messaging system.
      */
     @OneToMany (targetEntity = StepExecution.class, fetch = FetchType.EAGER, mappedBy = "stepInstance", cascade = {})
-    private Set<E> executions = new HashSet<E>();
+    private Set<StepExecution> executions = new HashSet<StepExecution>();
 
-//    public StepInstance(S step) {
-//        this (step, null, null, null, null);
-//    }
 
     public StepInstance(S step, Long bottomProteinId, Long topProteinId, Long bottomModelId, Long topModelId) {
         this.step = step;            // This is NOT persisted.
@@ -84,34 +94,18 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
     }
 
     /**
-     * Don't use this! Only here because required by JPA.
+     * Don't use this! Only here because required by JPA for persistence.
      */
     protected StepInstance() {
     }
-
-//    public void setBottomProtein(Long bottomProtein) {
-//        this.bottomProtein = bottomProtein;
-//    }
-//
-//    public void setTopProtein(Long topProtein) {
-//        this.topProtein = topProtein;
-//    }
-//
-//    public void setBottomModel(Long bottomModel) {
-//        this.bottomModel = bottomModel;
-//    }
-//
-//    public void setTopModel(Long topModel) {
-//        this.topModel = topModel;
-//    }
 
     public void addDependentStepInstance(StepInstance dependentStepInstance){
         this.dependsUpon.add (dependentStepInstance);
     }
 
-    public void addStepExecution(E stepExecution){
+    public void addStepExecution(StepExecution stepExecution){
         // Sanity check
-        for (E previousExecutions : executions){
+        for (StepExecution previousExecutions : executions){
             if (previousExecutions.getState() != StepExecutionState.STEP_EXECUTION_FAILED){
                 throw new IllegalStateException ("Attempting to add a new StepExecution to step " + this + " when there is an existing (NON-STEP_EXECUTION_FAILED) step execution.");
             }
@@ -127,7 +121,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
         if (executions.size() == 0){
             return StepExecutionState.NEW_STEP_INSTANCE;
         }
-        for (E exec : executions){
+        for (StepExecution exec : executions){
             switch (exec.getState()){
                 case NEW_STEP_EXECUTION:
                 case STEP_EXECUTION_SUBMITTED:
@@ -199,7 +193,7 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
         return false;
     }
 
-    public Set<E> getExecutions() {
+    public Set<StepExecution> getExecutions() {
         return executions;
     }
 
@@ -220,7 +214,10 @@ public abstract class StepInstance<S extends Step, E extends StepExecution> impl
         return id.hashCode();
     }
 
-    public abstract E createStepExecution();
+    public StepExecution createStepExecution(){
+        return new StepExecution(this);
+    }
+
 
     /**
      * The format used for file names based upon integers

@@ -12,15 +12,23 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 /**
- * TODO: Description
+ * This class describes a Job, which is constructed from N steps.
+ * Jobs and Steps are templates for analyses.  To actually run
+ * analyses against specific proteins (and perhaps specific models)
+ * StepInstances are instantiated.  These instances are then
+ * run as StepExecutions.  If a StepExecution fails, and the
+ * Step is configured to be repeatable, then another attempt
+ * to run the instance will be made.
+ *
+ * NOTE: Instances of Jobs and Steps are defined in Spring XML.  They
+ * are NOT persisted to the database - only StepInstances and StepExecutions
+ * are persisted.
  *
  * @author Phil Jones
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
 public class Job implements Serializable {
-
-    private Long id;
 
     private String description;
 
@@ -34,10 +42,6 @@ public class Job implements Serializable {
     public Job() {
     }
 
-
-    public Long getId() {
-        return id;
-    }
 
     public String getDescription() {
         return description;
