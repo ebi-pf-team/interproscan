@@ -1,8 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.broker.platforms;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Required;
+
+import java.io.IOException;
 
 /**
  * Runs worker JVMs on an LSF cluster.

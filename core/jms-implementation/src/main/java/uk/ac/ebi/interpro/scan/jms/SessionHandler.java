@@ -2,8 +2,6 @@ package uk.ac.ebi.interpro.scan.jms;
 
 import org.hornetq.core.config.TransportConfiguration;
 import org.hornetq.integration.transports.netty.NettyConnectorFactory;
-import static org.hornetq.integration.transports.netty.TransportConstants.HOST_PROP_NAME;
-import static org.hornetq.integration.transports.netty.TransportConstants.PORT_PROP_NAME;
 import org.hornetq.jms.HornetQDestination;
 import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -13,6 +11,9 @@ import java.io.Serializable;
 import java.lang.IllegalStateException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.hornetq.integration.transports.netty.TransportConstants.HOST_PROP_NAME;
+import static org.hornetq.integration.transports.netty.TransportConstants.PORT_PROP_NAME;
 
 /**
  * Simple bean holding information about queues and the JMS Broker.

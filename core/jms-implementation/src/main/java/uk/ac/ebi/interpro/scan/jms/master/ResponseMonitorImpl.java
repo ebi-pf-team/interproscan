@@ -1,12 +1,12 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import org.springframework.beans.factory.annotation.Required;
 
-import javax.jms.MessageConsumer;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import java.util.Map;
 
 /**

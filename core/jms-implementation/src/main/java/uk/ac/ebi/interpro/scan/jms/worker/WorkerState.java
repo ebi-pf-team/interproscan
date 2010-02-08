@@ -1,11 +1,10 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 
 import java.io.Serializable;
 import java.util.UUID;
-
-import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 
 /**
  * The WorkerState class is used to transmit the state of

@@ -4,8 +4,8 @@ import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
-import java.net.UnknownHostException;
 import java.lang.IllegalStateException;
+import java.net.UnknownHostException;
 
 /**
  * TODO: Add description of class.

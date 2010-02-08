@@ -1,13 +1,13 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
-import javax.jms.Message;
-import javax.jms.TextMessage;
-import javax.jms.ObjectMessage;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
 import java.util.Map;
 
 /**
