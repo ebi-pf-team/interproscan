@@ -1,12 +1,9 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-
-import javax.persistence.Query;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.apache.log4j.Logger;
 
 /**
  * Allows StepExecutions to be refreshed in the database, following execution. 

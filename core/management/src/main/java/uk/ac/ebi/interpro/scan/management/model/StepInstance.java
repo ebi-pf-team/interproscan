@@ -1,10 +1,13 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
 import javax.persistence.*;
-import java.util.*;
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A StepInstance is built from a Step (template) for (optionally)

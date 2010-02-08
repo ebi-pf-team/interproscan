@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import java.util.List;
 

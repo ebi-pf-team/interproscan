@@ -1,14 +1,11 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 
-import javax.swing.event.EventListenerList;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
-
-import uk.ac.ebi.interpro.scan.persistence.DAOManager;
-import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
+import java.util.Date;
 
 /**
  * Abstract class for executing a StepInstance.
