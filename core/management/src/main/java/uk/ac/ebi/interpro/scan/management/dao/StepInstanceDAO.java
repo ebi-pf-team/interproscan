@@ -8,10 +8,12 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pjones
- * Date: Dec 8, 2009
- * Time: 10:21:41 AM
+ * Interface for DAO for StepInstance objects.  Used to retrieve
+ * StepInstances that may be run.
+ *
+ * @author Phil Jones
+ * @version $Id$
+ * @since 1.0-SNAPSHOT
  */
 public interface StepInstanceDAO extends GenericDAO<StepInstance, String> {
 

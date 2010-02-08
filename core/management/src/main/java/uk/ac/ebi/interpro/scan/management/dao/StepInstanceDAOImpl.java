@@ -13,10 +13,12 @@ import java.util.Arrays;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pjones
- * Date: Dec 8, 2009
- * Time: 11:10:39 AM
+ * DAO for StepInstance objects.  Used to retrieve
+ * StepInstances that may be run.
+ *
+ * @author Phil Jones
+ * @version $Id$
+ * @since 1.0-SNAPSHOT
  */
 public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> implements StepInstanceDAO{
     /**
@@ -36,6 +38,9 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
      * Retrieve the StepInstances from the database for a particular Step.
      * Populate these into the Collection of step instances in the Step.
      * Return the updated step.
+     *
+     * TODO - could be optimised - for example probably only want StepInstances that are candidates
+     * TODO - to be run, could easily include this in the JQL rather than filtering the objects returned.
      *
      * @param step to be updated with StepInstance objects from the database.
      * @param optionalStates if none provided, then <b>all</b> StepInstances are returned.

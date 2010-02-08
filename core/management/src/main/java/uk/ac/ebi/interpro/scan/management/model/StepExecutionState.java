@@ -3,7 +3,13 @@ package uk.ac.ebi.interpro.scan.management.model;
 import java.io.Serializable;
 
 /**
- * TODO: Description
+ * This enum captures all of the possible states that a
+ * StepInstance or a StepExecution may be in.
+ * (Valid transitions between StepExecutionStates
+ * are constrained in StepExecution.)
+ *
+ * @see StepInstance
+ * @see StepExecution
  *
  * @author Phil Jones
  * @version $Id$
@@ -47,6 +53,8 @@ public enum StepExecutionState implements Serializable {
     /**
      * The StepExecution has failed.  Try again.
      */
-    STEP_EXECUTION_FAILED;
+    STEP_EXECUTION_FAILED
+
+    ;
 
 }

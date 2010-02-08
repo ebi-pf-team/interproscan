@@ -11,7 +11,18 @@ import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 
 /**
- * Abstract class for executing a Step.
+ * Abstract class for executing a StepInstance.
+ *
+ * This class has two functions - firstly to control StepExecution
+ * and allow the Master to determine if a StepInstance is currently
+ * running, has failed or has been completed.
+ *
+ * Secondly it stores auditing information about the execution in the
+ * database, allowing (for example) a user to determine the cost
+ * of specific pieces of processing.
+ *
+ * All things being equals, this class should be FINAL, but can't 
+ * be because of JPA.  (So don't subclass!)
  *
  * @author Phil Jones
  * @version $Id$
@@ -19,9 +30,7 @@ import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
  */
 @Entity
 @Table (name="step_execution")
-@Inheritance (strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn (discriminatorType = DiscriminatorType.STRING)
-public abstract class StepExecution<I extends StepInstance> implements Serializable {
+public class StepExecution implements Serializable {
 
     protected static final Logger LOGGER = Logger.getLogger(StepExecution.class);
 
@@ -30,7 +39,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
     private String id;
 
     @ManyToOne (targetEntity = StepInstance.class, cascade = {}, optional = false)
-    protected I stepInstance;
+    protected StepInstance stepInstance;
 
     @Enumerated(javax.persistence.EnumType.STRING)
     private StepExecutionState state = StepExecutionState.NEW_STEP_EXECUTION;
@@ -50,7 +59,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
     @Column (nullable=true, name="proportion_completed")
     private Double proportionCompleted;
 
-    protected StepExecution(I stepInstance) {
+    protected StepExecution(StepInstance stepInstance) {
         this.stepInstance = stepInstance;
         this.stepInstance.addStepExecution(this);
         createdTime = new Date();
@@ -62,7 +71,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
     protected StepExecution() {
     }
 
-    public void setStepInstance(I stepInstance) {
+    public void setStepInstance(StepInstance stepInstance) {
         this.stepInstance = stepInstance;
     }
 
@@ -74,7 +83,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
         return id;
     }
 
-    public I getStepInstance() {
+    public StepInstance getStepInstance() {
         return stepInstance;
     }
 
@@ -120,9 +129,8 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
      *
      * Note that the implementation DOES have access to the protected stepInstance,
      * and from their to the protected Step, to allow it to access parameters for execution.
-     * @param daoManager
      */
-    public abstract void execute(DAOManager daoManager);
+//    public abstract void execute(DAOManager daoManager);
 
     public void submit(StepExecutionDAO stepExecutionDAO){
         if (state != StepExecutionState.NEW_STEP_EXECUTION){
@@ -144,7 +152,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
     /**
      * Called by the execute() method implementation to indicate successful completion.
      */
-    protected void completeSuccessfully(){
+    public void completeSuccessfully(){
         if (state == StepExecutionState.STEP_EXECUTION_FAILED){
             throw new IllegalStateException("Try to set the state of this StepExecution to 'STEP_EXECUTION_SUCCESSFUL', however has previously been set to 'FAILED'.");
         }
@@ -155,7 +163,7 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
     /**
      * Called by the execute() method implementation to indicate a failure of execution.
      */
-    protected void fail(){
+    public void fail(){
         state = StepExecutionState.STEP_EXECUTION_FAILED;
         completedTime = new Date();
     }
@@ -200,11 +208,13 @@ public abstract class StepExecution<I extends StepInstance> implements Serializa
      * Updates the state of this StepExecution based upon the state
      * of the freshStepExecution that has been returned from the
      * worker process.
-     * @param freshStepExecution
+     * @param freshStepExecution being the StepExecution that has been serialized back to the Master.
      */
     public void refresh(StepExecution freshStepExecution) {
-        assert (this.getId().equals(freshStepExecution.getId()));
-        assert (this != freshStepExecution);
+        if (! this.getId().equals(freshStepExecution.getId())){
+            throw new IllegalArgumentException ("Coding error - calling StepExecution.refresh (freshStepExecution) with a StepExecution object with the wrong id.");
+        }
+        assert (this != freshStepExecution);  // Doesn't break anything if it is the same instance - but makes no sense, so just assertion.
         this.completedTime = freshStepExecution.completedTime;
         this.createdTime = freshStepExecution.createdTime;
         this.proportionCompleted = freshStepExecution.proportionCompleted;

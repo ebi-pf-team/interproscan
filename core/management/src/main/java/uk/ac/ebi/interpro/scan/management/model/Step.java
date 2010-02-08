@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -17,14 +18,27 @@ import java.text.DecimalFormat;
  * Steps are always part of a Job, where a Job may comprise
  * one or more steps.
  *
+ * To actually run
+ * analyses against specific proteins (and perhaps specific models)
+ * StepInstances are instantiated.  These instances are then
+ * run as StepExecutions.  If a StepExecution fails, and the
+ * Step is configured to be repeatable, then another attempt
+ * to run the instance will be made.
+ *
+ * NOTE: Instances of Jobs and Steps are defined in Spring XML.  They
+ * are NOT persisted to the database - only StepInstances and StepExecutions
+ * are persisted.
+ *
  * This class is abstract - it is expected that this will be
  * subclassed to allow additional parameters to be injected
+ * and to implement the execute method.
  *
  * @author Phil Jones
+ * @author David Binns
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public abstract class Step<I extends StepInstance, E extends StepExecution> implements Serializable {
+public abstract class Step implements Serializable {
 
     protected String id;
 
@@ -33,7 +47,6 @@ public abstract class Step<I extends StepInstance, E extends StepExecution> impl
     protected String stepDescription;
 
     protected boolean parallel;
-
 
 
     /**
@@ -70,7 +83,7 @@ public abstract class Step<I extends StepInstance, E extends StepExecution> impl
     /**
      * List of instances of this Step.
      */
-    protected List<I> stepInstances;
+    protected transient List<StepInstance> stepInstances;
 
     public String getId() {
         return id;
@@ -156,6 +169,23 @@ public abstract class Step<I extends StepInstance, E extends StepExecution> impl
     public void setRetries(int retries) {
         this.retries = retries;
     }
+
+    /**
+     * This method is called to execute the action that the StepExecution must perform.
+     * This method should typically perform its activity in a try / catch / finally block
+     * that sets the state of the step execution appropriately.
+     *
+     * Note that the implementation DOES have access to the protected stepInstance,
+     * and from their to the protected Step, to allow it to access parameters for execution.
+     *
+     * (For example, constructing file names based upon lower and upper protein IDs or
+     * model IDs).
+     *
+     * TODO - Possibly generify so things other than 'DAOManager' can be passed in.
+     * @param daoManager    for DAO processes.
+     * @param stepExecution record of execution
+     */
+    public abstract void execute(DAOManager daoManager, StepExecution stepExecution);
 
     @Override
     public boolean equals(Object o) {

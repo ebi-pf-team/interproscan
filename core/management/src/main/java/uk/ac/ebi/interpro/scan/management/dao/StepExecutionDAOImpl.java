@@ -9,10 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.apache.log4j.Logger;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pjones
- * Date: Dec 8, 2009
- * Time: 9:38:20 AM
+ * Allows StepExecutions to be refreshed in the database, following execution. 
+ *
+ * @author Phil Jones
+ * @version $Id$
+ * @since 1.0-SNAPSHOT
  */
 public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> implements StepExecutionDAO {
 
