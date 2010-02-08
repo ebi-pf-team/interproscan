@@ -1,16 +1,18 @@
 package uk.ac.ebi.interpro.scan.jms.monitor;
 
-import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
-import uk.ac.ebi.interpro.scan.jms.worker.WorkerMonitor;
-import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-
-import javax.swing.*;
-import javax.jms.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.jms.worker.WorkerMonitor;
+import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
+
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This StringWorker does the job of retrieving the worker state

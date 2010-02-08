@@ -1,15 +1,14 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.JobDataMap;
+import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
-
-import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 
 /**
  * MessageJob is the class for executing jobs submitted by the Quartz scheduler

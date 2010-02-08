@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
@@ -7,8 +8,6 @@ import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import javax.jms.*;
 import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Test class - destination client that should run on one of the LSF nodes

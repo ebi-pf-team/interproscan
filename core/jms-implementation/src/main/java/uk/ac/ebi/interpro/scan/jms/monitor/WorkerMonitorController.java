@@ -1,19 +1,18 @@
 package uk.ac.ebi.interpro.scan.jms.monitor;
 
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.table.TableColumn;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
-import java.util.UUID;
-import java.util.List;
-import java.util.ArrayList;
+import javax.swing.table.TableColumn;
 import java.awt.*;
-
-import org.springframework.beans.factory.annotation.Required;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Controller class for the Worker Monitor Swing Application

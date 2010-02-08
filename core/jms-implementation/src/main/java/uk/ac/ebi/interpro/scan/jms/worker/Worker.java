@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import java.util.UUID;

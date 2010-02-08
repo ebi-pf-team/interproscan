@@ -1,15 +1,13 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 
 import javax.jms.JMSException;
-
-import org.springframework.beans.factory.annotation.Required;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.Date;
 
 /**

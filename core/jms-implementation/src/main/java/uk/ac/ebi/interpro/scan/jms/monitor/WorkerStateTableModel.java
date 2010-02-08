@@ -1,13 +1,12 @@
 package uk.ac.ebi.interpro.scan.jms.monitor;
 
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
-import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 
-import javax.swing.table.TableModel;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Table Model that defines the contents of the display table.

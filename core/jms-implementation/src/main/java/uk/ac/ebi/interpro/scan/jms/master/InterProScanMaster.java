@@ -1,26 +1,31 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.springframework.beans.factory.annotation.Required;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
+import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.management.model.*;
+import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
+import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
+import uk.ac.ebi.interpro.scan.management.model.Job;
+import uk.ac.ebi.interpro.scan.management.model.Step;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.ParsePfam_A_HMMER3OutputStep;
-import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep;
-import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
-import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
+import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
-import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
-import java.util.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Pretending to be the InterProScan master application.

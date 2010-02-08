@@ -2,12 +2,10 @@ package uk.ac.ebi.interpro.scan.jms.broker;
 
 
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.jms.broker.platforms.WorkerRunner;
 
 import javax.jms.*;
-
-import uk.ac.ebi.interpro.scan.jms.broker.platforms.WorkerRunner;
-import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-
 import java.io.Serializable;
 import java.lang.IllegalStateException;
 
