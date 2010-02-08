@@ -6,21 +6,13 @@ import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.*;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
-import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStepExecution;
-import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.ParsePfam_A_HMMER3OutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step;
-import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3StepInstance;
-import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStep;
-import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseHMMER3OutputStepInstance;
-import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
-import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
-import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 
@@ -235,10 +227,10 @@ public class InterProScanMaster implements Master {
         // Then retrieve the first 99.
         for (long bottomProteinId = 1; bottomProteinId <= 10000l; bottomProteinId += sliceSize){
             final long topProteinId = bottomProteinId + sliceSize;
-            WriteFastaFileStepInstance fastaStepInstance = null;
-            RunHmmer3StepInstance hmmer3StepInstance = null;
-            ParseHMMER3OutputStepInstance hmmer3ParserStepInstance = null;
-            Pfam_A_PostProcessingStepInstance ppStepInstance = null;
+            StepInstance fastaStepInstance = null;
+            StepInstance hmmer3StepInstance = null;
+            StepInstance hmmer3ParserStepInstance = null;
+            StepInstance ppStepInstance = null;
 
             // Create the fastafilestep
             for (Step step : job.getSteps()){
@@ -246,8 +238,8 @@ public class InterProScanMaster implements Master {
 
 
                     System.out.println("Creating WriteFastaFileStepInstance for range "+ bottomProteinId + " - " + topProteinId);
-                    fastaStepInstance = new WriteFastaFileStepInstance(
-                            (WriteFastaFileStep)step,
+                    fastaStepInstance = new StepInstance(
+                            step,
                             bottomProteinId,
                             topProteinId, null, null
                     );
@@ -258,8 +250,8 @@ public class InterProScanMaster implements Master {
             for (Step step : job.getSteps()){
                 if (step instanceof RunHmmer3Step){
                     System.out.println("Creating RunHmmer3StepInstance for range "+ bottomProteinId + " - " + topProteinId);
-                    hmmer3StepInstance = new RunHmmer3StepInstance(
-                            (RunHmmer3Step)step,
+                    hmmer3StepInstance = new StepInstance(
+                            step,
                             bottomProteinId,
                             topProteinId, null, null
                     );
@@ -270,10 +262,10 @@ public class InterProScanMaster implements Master {
 
             // Create the ParseHmmer3Output step
             for (Step step : job.getSteps()){
-                if (step instanceof ParseHMMER3OutputStep){
+                if (step instanceof ParsePfam_A_HMMER3OutputStep){
                     System.out.println("Creating ParseHMMER3OutputStepInstance for range "+ bottomProteinId + " - " + topProteinId);
-                    hmmer3ParserStepInstance = new ParseHMMER3OutputStepInstance(
-                            (ParseHMMER3OutputStep)step,
+                    hmmer3ParserStepInstance = new StepInstance(
+                            step,
                             bottomProteinId,
                             topProteinId, null, null
                     );
@@ -286,8 +278,8 @@ public class InterProScanMaster implements Master {
             for (Step step : job.getSteps()){
                 if (step instanceof Pfam_A_PostProcessingStep){
                     System.out.println("Creating Pfam_A_PostProcessingStepInstance for range "+ bottomProteinId + " - " + topProteinId);
-                    ppStepInstance = new Pfam_A_PostProcessingStepInstance(
-                            (Pfam_A_PostProcessingStep)step,
+                    ppStepInstance = new StepInstance(
+                            step,
                             bottomProteinId,
                             topProteinId, null, null
                     );
