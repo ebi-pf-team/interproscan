@@ -17,6 +17,8 @@
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
 import static junit.framework.TestCase.*;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,6 +46,7 @@ public class GenericDAOTest {
      */
     private static final Long Long_0 = 0l;
     private static final Long Long_1 = 1l;
+    private static final Long Long_3 = 3l;
 
     private static final String INITIAL_VALUE = "INITIAL_VALUE";
     private static final String MODIFIED_VALUE = "MODIFIED_VALUE";
@@ -52,9 +55,9 @@ public class GenericDAOTest {
 
 
     @Resource (name= "genericDAO")
-    private GenericDAO<ModelObject, Long> dao;
+    private ModelObjectDAO dao;
 
-    public void setDao(GenericDAO<ModelObject, Long> dao) {
+    public void setDao(ModelObjectDAO dao) {
         this.dao = dao;
     }
 
@@ -133,6 +136,54 @@ public class GenericDAOTest {
         for (ModelObject retrieved : retrievedObjects){
             assertNotNull("The List of retrieved objects should not contain any null objects", retrieved);
         }
+    }
+
+    /**
+     * Attempts to insert three objects independently, wrapped in an outer transaction.
+     * The third insert will fail (breaks not-null constraint) which should cause
+     * then entire transaction to roll back.
+     *
+     * Tested in the following query.
+     */
+    @Test
+    public void testNestedTransactionRollback(){
+        emptyTable();
+        assertEquals("The number of stored objects is not as expected", Long_0, dao.count());
+        boolean exceptionThrown = false;
+        try{
+            dao.nestedTransaction(true);
+        }
+        catch (Exception e){    // This should be thrown
+            e.printStackTrace();//TODO remove
+            exceptionThrown = true;
+        }
+        assertTrue("An Exception should have been thrown by the nestedTransaction method, which attempts to insert a null value in a non-null column.", exceptionThrown);
+        // Now check that there are no objects in the database.
+        assertEquals("There should be no objects in the database following a rollback.", Long_0, dao.count());
+    }
+
+    /**
+     * Attempts to insert three objects independently, wrapped in an outer transaction.
+     * The third insert will fail (breaks not-null constraint) which should cause
+     * then entire transaction to roll back.
+     *
+     * Tested in the following query.
+     */
+    @Test
+    public void testNestedTransactionCommit(){
+        emptyTable();
+        assertEquals("The number of stored objects is not as expected", Long_0, dao.count());
+        boolean exceptionThrown = false;
+        try{
+            dao.nestedTransaction(false);
+        }
+        catch (Exception e){    // This should NOT be thrown
+            e.printStackTrace();//TODO remove
+            exceptionThrown = true;
+        }
+        assertFalse("An Exception should not have been thrown by the nestedTransaction method.", exceptionThrown);
+        // Now check that there are 3 objects in the database.
+        assertEquals("There should be 3 objects in the database following a commit.", Long_3, dao.count());
     }
 
     /**

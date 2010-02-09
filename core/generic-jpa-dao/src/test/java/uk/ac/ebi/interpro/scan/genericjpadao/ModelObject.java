@@ -32,7 +32,7 @@ public class ModelObject {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column (name = "test_field_one")
+    @Column (name = "test_field_one", nullable=false)
     private String testFieldOne;
 
     @OneToMany (mappedBy = "modelObject", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
