@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -89,6 +91,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
      * has been passed in, for sub-classes that check for the pre-existence of the object
      * in the database.
      */
+    // TODO: change the propagation. Deliberately broken by David
     @Transactional
     public T insert(T newInstance) {
         if (entityManager.contains(newInstance)){

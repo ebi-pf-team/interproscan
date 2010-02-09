@@ -16,14 +16,16 @@
     <!-- JPA Transaction Setup -->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <property name="validateExistingTransaction" value="true"/>
+        <property name="globalRollbackOnParticipationFailure" value="true"/>
+        <property name="nestedTransactionAllowed" value="true"/>
+
     </bean>
 
     <tx:annotation-driven/>
 
     <!-- DAO Beans -->
     <bean id="genericDAO"
-          class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.genericjpadao.ModelObject"/>
-    </bean>
+          class="uk.ac.ebi.interpro.scan.genericjpadao.ModelObjectDAOImpl"/>
 
 </beans>
