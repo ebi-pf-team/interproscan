@@ -52,9 +52,16 @@ public abstract class Step implements Serializable {
     protected int retries;
 
     /**
+     * TODO - Make into a Collection.
      * Step which must be completed prior to this one.
      */
-    protected Step dependsUpon;
+    protected List<Step> dependsUpon;
+
+    /**
+     * If not-null, this Step is run via Quartz using the cronSchedule
+     * specified.  (Used for example to monitor new protein on UniParc.)
+     */
+    protected String cronSchedule;
 
     /**
      * Whenever new proteins are added to the database,
@@ -107,11 +114,11 @@ public abstract class Step implements Serializable {
         job.addStep(this);
     }
 
-    public Step getDependsUpon() {
+    public List<Step> getDependsUpon() {
         return dependsUpon;
     }
 
-    public void setDependsUpon(Step dependsUpon) {
+    public void setDependsUpon(List<Step> dependsUpon) {
         this.dependsUpon = dependsUpon;
     }
 

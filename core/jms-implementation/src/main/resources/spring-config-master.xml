@@ -7,7 +7,7 @@
 
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
-    <import resource="pfam-A-job-context.xml"/>
+    <import resource="spring-config-jobs.xml"/>
 
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
@@ -15,11 +15,7 @@
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
         <property name="responseMonitor" ref="responseMonitor"/>
         <property name="managementRequestTopicName" value="jms.topic.${worker.manager.topic}"/>
-        <property name="jobs">
-            <list>
-                <ref bean="job_pfam_A"/>
-            </list>
-        </property>
+        <property name="jobs" ref="jobs"/>
 
         <!-- The following properties are just for the 'hacked' demonstration. (Loading proteins
         and Pfam models prior to running the analysis. -->

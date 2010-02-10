@@ -11,15 +11,22 @@
     <!-- All the common Spring config, found in src/main/resources/ -->
     <import resource="../../../../../../../../spring-persistence-config.xml"/>
     <!-- Test stuff - move to a different spring-config.xml file. -->
-    <bean id="loadFastaFileTest" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileTest"/>
+    <bean id="loadFastaFileTest" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileTest">
+    </bean>
 
     <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile">
-        <constructor-arg ref="testFastaFile"/>
-        <property name="transactionProteinCount" value="250"/>
+        <property name="proteinLoader" ref="proteinLoader"/>
+    </bean>
+
+    <bean id="fastaFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="testdata/5k.fasta" />
+    </bean>
+
+    <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
+        <property name="transactionProteinCount" value="200"/>
+        <property name="proteinLoadListener" ref="proteinLoadListener"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <bean id="testFastaFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="testdata/5k.fasta" />
-    </bean>
+    <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.NoopProteinLoadListener"/>
 </beans>

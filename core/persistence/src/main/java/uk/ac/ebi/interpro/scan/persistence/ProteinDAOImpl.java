@@ -95,6 +95,25 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         assert proteinList.size() == 1;
         return proteinList.iterator().next();
     }
+
+    /**
+     * Insert a List of new Model instances.
+     *
+     * @param newInstances being a List of instances to persist.
+     * @return the Collection of persisted instances.
+     *         This MAY NOT contain the same objects as
+     *         have been passed in, for sub-classes that check for the pre-existence of the object
+     *         in the database.
+     */
+    @Override
+    @Transactional
+    public Set<Protein> insert(Set<Protein> newInstances) {
+        final PersistedProteins persistedProteins = insertNewProteins(newInstances);
+        Set<Protein> allProteins = new HashSet<Protein>(persistedProteins.getNewProteins());
+        allProteins.addAll(persistedProteins.getPreExistingProteins());
+        return allProteins;
+    }
+
     /**
      * Inserts new Proteins.
      * If there are Protein objects with the same MD5 / sequence in the database,
@@ -106,10 +125,10 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      * @return a new List<Protein> containing all of the inserted / updated Protein objects.
      * (Allows the caller to retrieve the primary keys for the proteins).
      */
-    @Transactional
+//    @Transactional
     @SuppressWarnings("unchecked")
-    public Set<Protein> insert(Set<Protein> newProteins) {
-        final Set<Protein> persistentProteins = new HashSet<Protein>(newProteins.size());
+    public PersistedProteins insertNewProteins(Set<Protein> newProteins) {
+        PersistedProteins persistentProteins = new PersistedProteins();
         if (newProteins.size() > 0){
             // Create a List of MD5s (just as Strings) to query the database with
             final List<String> newMd5s = new ArrayList<String>(newProteins.size());
@@ -146,16 +165,18 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
                     if (updateRequired){
                         entityManager.persist(existingProtein);
                     }
-                    persistentProteins.add(existingProtein);
+                    persistentProteins.addPreExistingProtein(existingProtein);
                 }
                 // PROTEIN IS NEW - save it.
                 else {
                     entityManager.persist(candidate);
-                    persistentProteins.add(candidate);
+                    persistentProteins.addNewProtein(candidate);
                 }
             }
         }
         // Finally return all the persisted Protein objects (new or existing)
         return persistentProteins;
     }
+
+
 }

@@ -33,7 +33,7 @@ import java.util.Set;
  */
 @Entity
 @Table (name="step_instance")
-public class StepInstance<S extends Step> implements Serializable {
+public class StepInstance implements Serializable {
 
     private static final String PROTEIN_BOTTOM_HOLDER = "\\[PROTSTART\\]";
 
@@ -52,7 +52,7 @@ public class StepInstance<S extends Step> implements Serializable {
      * (The Step is defined in XML, not in the database.)
      */
     @Transient
-    private S step;
+    private Step step;
 
     /**
      * For the purpose of persistance, this is the id of the Step that this
@@ -87,7 +87,7 @@ public class StepInstance<S extends Step> implements Serializable {
     private Set<StepExecution> executions = new HashSet<StepExecution>();
 
 
-    public StepInstance(S step, Long bottomProteinId, Long topProteinId, Long bottomModelId, Long topModelId) {
+    public StepInstance(Step step, Long bottomProteinId, Long topProteinId, Long bottomModelId, Long topModelId) {
         this.step = step;            // This is NOT persisted.
         this.stepId = step.getId();  // This is persisted.
         this.bottomProtein = bottomProteinId;
@@ -142,7 +142,7 @@ public class StepInstance<S extends Step> implements Serializable {
         return id;
     }
 
-    public S getStep() {
+    public Step getStep() {
         return step;
     }
 
@@ -242,10 +242,35 @@ public class StepInstance<S extends Step> implements Serializable {
                 : template.replaceAll(pattern, TWELVE_DIGIT_INTEGER.format(value));
     }
 
-    public void setStep(S step) {
+    public void setStep(Step step) {
         if (! stepId.equals (step.getId())){
             throw new IllegalArgumentException ("Unexpected Step being set on this StepInstance - ID is incorrect.");
         }
         this.step = step;
     }
+
+    /**
+     * Simple method to indicate if this StepInstance has protein bounds.
+     * @return true if this StepInstance has protein bounds.
+     */
+    public boolean hasProteinBounds(){
+        return this.getBottomProtein() != null && this.getTopProtein() != null;
+    }
+
+
+    /**
+     * Returns true if the protein bounds of this StepInstance overlap
+     * with the protein bounds of the StepInstance passed in
+     * @param that being the StepInstance to compare with.
+     * @return true if the protein bounds of this StepInstance overlap
+     * with the protein bounds of the StepInstance passed in
+     */
+    public boolean proteinBoundsOverlap(StepInstance that){
+        return
+                this.hasProteinBounds() && that.hasProteinBounds()
+                && !
+                ((this.getBottomProtein() > that.getTopProtein()) ||
+                (that.getBottomProtein() > this.getTopProtein()));
+    }
+
 }

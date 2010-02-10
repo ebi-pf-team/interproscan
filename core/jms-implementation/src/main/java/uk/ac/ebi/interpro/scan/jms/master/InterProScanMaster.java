@@ -2,15 +2,13 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
-import uk.ac.ebi.interpro.scan.management.model.Job;
-import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.*;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.ParsePfam_A_HMMER3OutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep;
@@ -44,7 +42,7 @@ public class InterProScanMaster implements Master {
 
     private ResponseMonitor responseMonitor;
 
-    private List<Job> jobs;
+    private Jobs jobs;
 
 //    private volatile Map<String, StepInstance> stepInstances = new HashMap<String, StepInstance>();
 //
@@ -66,9 +64,16 @@ public class InterProScanMaster implements Master {
 
     private MessageProducer producer;
 
+    private Resource fastaFile;
+
     @Required
     public void setLoader(LoadFastaFile loader) {
         this.loader = loader;
+    }
+
+    @Required
+    public void setFastaFile(Resource fastaFile) {
+        this.fastaFile = fastaFile;
     }
 
     /**
@@ -126,12 +131,12 @@ public class InterProScanMaster implements Master {
         this.stepExecutionDAO = stepExecutionDAO;
     }
 
-    public List<Job> getJobs() {
+    public Jobs getJobs() {
         return jobs;
     }
 
     @Required
-    public void setJobs(List<Job> jobs) {
+    public void setJobs(Jobs jobs) {
         this.jobs = jobs;
     }
 
@@ -161,7 +166,7 @@ public class InterProScanMaster implements Master {
             buildStepInstancesTheStupidWay();
             System.out.println("Returned from building step instances method.");
             while(true){
-                for (Job job : jobs){
+                for (Job job : jobs.getJobList()){
                     for (Step step : job.getSteps()){
                         LOGGER.debug("In InterProScanMaster.start().  About to retrieve step instances from the database.");
                         for (StepInstance stepInstance : stepInstanceDAO.retrieveInstances(step)){
@@ -204,9 +209,9 @@ public class InterProScanMaster implements Master {
         // TODO - can be run for the demonstration - the mechanism to build a real set of
         // TODO - steps, following the addition of new proteins has yet to be written.
 
-        Job job = jobs.iterator().next();
+        Job job = jobs.getJobList().iterator().next();
         // Load some proteins into the database.
-        loader.loadSequences();
+        loader.loadSequences(fastaFile);
 
         // Load the models into the database.
 

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- TODO
+
+     In this implementation, have extended Step for specific types of Step.
+
+     This keeps the XML file quite simple, not too many beans referencing each other.
+
+     Otherwise, could define as separate interface for the specifics of each step
+     type (favouring
+
+
+         TODO -->
+
+    <import resource="persistence-config.xml"/>
+    <import resource="spring-config-jobs.xml"/>
+
+    <!-- ######################## JOB: job-load-from-fasta ############################  -->
+    <bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"                        value="Load proteins from a fasta file and create required JobInstance objects"/>
+    </bean>
+
+
+    <!-- STEP 1 -->
+    <bean id="stepLoadFromFasta"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <property name="job"                                ref="jobLoadFromFasta"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription"                    value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins"  value="false"/>
+        <property name="id"                                 value="step-load-from-fasta"/>
+        <property name="retries"                            value="0"/>
+        <property name="parallel"                           value="false"/>
+        <property name="fastaFileLoader"                    ref="fastaFileLoader"/>
+        <property name="fastaFile"                          value="/path/to/fasta/file.fasta"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: job-load-from-fasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="fastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile">
+        <property name="proteinLoader" ref="proteinLoader"/>
+    </bean>
+
+    <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
+        <property name="transactionProteinCount" value="1000"/>
+        <property name="proteinLoadListener" ref="proteinLoadListener"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="jobs" ref="jobs"/>
+    </bean>
+
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
