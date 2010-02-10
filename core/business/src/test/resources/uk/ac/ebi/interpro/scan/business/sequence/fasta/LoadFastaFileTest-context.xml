@@ -11,8 +11,6 @@
     <!-- All the common Spring config, found in src/main/resources/ -->
     <import resource="../../../../../../../../spring-persistence-config.xml"/>
     <!-- Test stuff - move to a different spring-config.xml file. -->
-    <bean id="loadFastaFileTest" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileTest">
-    </bean>
 
     <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile">
         <property name="proteinLoader" ref="proteinLoader"/>
