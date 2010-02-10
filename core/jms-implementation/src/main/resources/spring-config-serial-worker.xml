@@ -8,6 +8,7 @@
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
     <import resource="persistence-config.xml"/>
+    <import resource="spring-config-jobs.xml"/>
 
     <bean id="workerManager" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanMonitor">
         <property name="workerManagerTopicName" value="jms.topic.${worker.manager.topic}"/>
@@ -30,5 +31,7 @@
         <property name="workerManager" ref="workerManager" />
         <property name="daoManager" ref="daoManager" />
     </bean>
+
+    
 
 </beans>

@@ -1,7 +1,11 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.business.sequence.AbstractProteinLoader;
+import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
+import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,15 +18,17 @@ import java.io.IOException;
  * Date: 14-Nov-2009
  * Time: 09:27:14
  */
-public class LoadFastaFile extends AbstractProteinLoader {
+public class LoadFastaFile{
 
-    private Resource fastaFile;
+    private ProteinLoader proteinLoader;
 
-    public LoadFastaFile(Resource fastaFile){
-        this.fastaFile = fastaFile;
+    @Required
+    public void setProteinLoader(ProteinLoader proteinLoader) {
+        this.proteinLoader = proteinLoader;
     }
 
-    public void loadSequences() {
+    @Transactional
+    public void loadSequences(Resource fastaFile) {
         BufferedReader reader = null;
         try{
             reader = new BufferedReader(new FileReader(fastaFile.getFile()));
@@ -35,7 +41,7 @@ public class LoadFastaFile extends AbstractProteinLoader {
                         // Found ID line.
                         // Store previous record, if it exists.
                         if (currentId != null){
-                            store (currentSequence.toString(), currentId);
+                            proteinLoader.store (currentSequence.toString(), currentId);
                             currentSequence.delete(0, currentSequence.length());
                         }
                         currentId = line.substring(1).trim();
@@ -48,8 +54,8 @@ public class LoadFastaFile extends AbstractProteinLoader {
             }
             // Store the final record (if there were any at all!)
             if (currentId != null){
-                store (currentSequence.toString(), currentId);
-                persist();
+                proteinLoader.store (currentSequence.toString(), currentId);
+                proteinLoader.persist();
             }
         }
         catch (FileNotFoundException e) {
