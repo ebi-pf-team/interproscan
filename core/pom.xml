@@ -5,17 +5,59 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
-
     <name>InterProScan</name>
-    <version>1.0-SNAPSHOT</version>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
     <organization>
         <name>European Bioinformatics Institute</name>
         <url>http://www.ebi.ac.uk/</url>
     </organization>
+
+    <repositories>
+
+        <repository>
+            <id>google-code-interproscan</id>
+            <name>google-code-interproscan</name>
+            <layout>default</layout>
+            <url>http://interproscan.googlecode.com/svn/repository/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>apache-maven-snapshots</id>
+            <name>Apache snapshot repository</name>
+            <url>http://svn.apache.org/maven-snapshot-repository/</url>
+            <layout>default</layout>
+        </repository>
+
+        <repository>
+            <id>spring-releases</id>
+            <name>Spring Maven RELEASE Repository</name>
+            <url>http://s3.amazonaws.com/maven.springframework.org/release</url>
+        </repository>
+
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>interval:10080</updatePolicy>
+            </releases>
+            <id>jboss.release</id>
+
+            <name>JBoss releases</name>
+            <url>http://repository.jboss.org/maven2</url>
+        </repository>
+        
+    </repositories>
 
     <licenses>
         <license>
@@ -31,7 +73,19 @@
     </scm>
 
 	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Dependency versions -->
         <spring.version>2.5.6</spring.version>
+        <spring.oxm.version>1.5.7</spring.oxm.version>
+        <jpa.persistence.api.version>1.0</jpa.persistence.api.version>
+        <hibernate.entity.manager.version>3.4.0.GA</hibernate.entity.manager.version>
+        <cglib.version>2.2</cglib.version>
+        <groovy.version>1.6.3</groovy.version>
+        <hornetq.version>2.0.0.BETA5</hornetq.version>
+        <hsqldb.version>1.8.0.10</hsqldb.version>
+        <mysql.version>5.1.10</mysql.version>
+        <oracle.ojdbc.version>11.1.0.7.0</oracle.ojdbc.version>
 	</properties>
 
     <modules>
@@ -47,11 +101,34 @@
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
     <dependencies>
+        <!-- Test scope only -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <!-- Note - cannot go beyond version 4.4 as incompatible with spring-test.
+            (Will be fixed in spring 3)-->
             <version>4.4</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
         </dependency>
     </dependencies>
 
