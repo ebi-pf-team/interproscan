@@ -90,7 +90,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     @Transactional
     @Override
     public Protein insert(Protein newInstance) {
-        Set<Protein> proteinList = insert(Collections.singleton(newInstance));
+        Collection<Protein> proteinList = insert(Collections.singleton(newInstance));
         assert proteinList != null;
         assert proteinList.size() == 1;
         return proteinList.iterator().next();
@@ -107,9 +107,9 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      */
     @Override
     @Transactional
-    public Set<Protein> insert(Set<Protein> newInstances) {
+    public Collection<Protein> insert(Collection<Protein> newInstances) {
         final PersistedProteins persistedProteins = insertNewProteins(newInstances);
-        Set<Protein> allProteins = new HashSet<Protein>(persistedProteins.getNewProteins());
+        Collection<Protein> allProteins = new ArrayList<Protein>(persistedProteins.getNewProteins());
         allProteins.addAll(persistedProteins.getPreExistingProteins());
         return allProteins;
     }
@@ -127,7 +127,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      */
 //    @Transactional
     @SuppressWarnings("unchecked")
-    public PersistedProteins insertNewProteins(Set<Protein> newProteins) {
+    public PersistedProteins insertNewProteins(Collection<Protein> newProteins) {
         PersistedProteins persistentProteins = new PersistedProteins();
         if (newProteins.size() > 0){
             // Create a List of MD5s (just as Strings) to query the database with

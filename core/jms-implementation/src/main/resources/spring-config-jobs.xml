@@ -7,14 +7,59 @@
 
     <!-- Import common beans -->
     <import resource="pfam-A-job-context.xml"/>
+    <!--<import resource="job-load-from-fasta-spring.xml"/>-->
+    <import resource="persistence-config.xml"/>
 
 
     <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
         <property name="jobList">
             <list>
                 <ref bean="job_pfam_A"/>
+                <ref bean="jobLoadFromFasta"/>
             </list>
         </property>
+    </bean>
+
+
+    <!--<import resource="spring-config-jobs.xml"/>-->
+
+    <!-- ######################## JOB: job-load-from-fasta ############################  -->
+    <bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"                        value="Load proteins from a fasta file and create required JobInstance objects"/>
+    </bean>
+
+
+    <!-- STEP 1 -->
+    <bean id="stepLoadFromFasta"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <property name="job"                                ref="jobLoadFromFasta"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription"                    value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins"  value="false"/>
+        <property name="retries"                            value="0"/>
+        <property name="parallel"                           value="false"/>
+        <property name="fastaFileLoader"                    ref="fastaFileLoader"/>
+        <property name="fastaFile"                          ref="fastaFile"/>
+    </bean>
+
+    <bean id="fastaFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="5k.fasta" />
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: job-load-from-fasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="fastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
+        <property name="proteinLoader" ref="proteinLoader"/>
+    </bean>
+
+    <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
+        <property name="transactionProteinCount" value="1000"/>
+        <property name="proteinLoadListener" ref="proteinLoadListener"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="jobs" ref="jobs"/>
     </bean>
 
 </beans>

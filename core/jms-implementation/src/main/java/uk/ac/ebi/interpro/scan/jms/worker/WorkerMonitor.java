@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.Jobs;
 
 /**
  * The WorkerManager monitors the WorkerManagerTopic, used to monitor
@@ -49,4 +50,10 @@ public interface WorkerMonitor extends Runnable{
      * @param worker being the Worker being monitored.
      */
     void setWorker (Worker worker);
+
+    /**
+     * Required to allow Steps to be retrieved.
+     */
+    @Required
+    void setJobs(Jobs jobs);
 }

@@ -37,10 +37,11 @@
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"                    value="Create fasta file."/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-        <property name="id"                                 value="step_pfam_A_write_fasta_file"/>
         <property name="retries"                            value="0"/>
         <property name="fastaFilePathTemplate"              value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
         <property name="parallel"                           value="false"/>
+        <property name="maxProteins"                        value="500"/>
+        <property name="proteinDAO"                         ref="proteinDAO"/>
     </bean>
 
     <!-- STEP 2 -->
@@ -59,10 +60,10 @@
         </property>
         <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
         <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
-        <property name="id"                                 value="step_pfam_A_run_HMMER3"/>
         <property name="retries"                            value="0"/>
         <property name="fastaFilePathNameTemplate"          value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
         <property name="parallel"                           value="true"/>
+        <property name="maxProteins"                        value="500"/>
     </bean>
 
     <!-- STEP 3 -->
@@ -71,12 +72,13 @@
         <property name="dependsUpon"                        ref="step_pfam_A_run_HMMER3"/>
         <property name="stepDescription"                    value="Parse the output from HMMER3"/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-        <property name="id"                                 value="step_pfam_A_parse_HMMER3_output"/>
         <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
         <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
         <property name="retries"                            value="0"/>
         <property name="parser"                             ref="hmmer3SearchParser"/>
         <property name="parallel"                           value="false"/>
+        <property name="maxProteins"                        value="500"/>
+        <property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>
     </bean>
 
     <!-- STEP 4 -->
@@ -85,12 +87,14 @@
         <property name="dependsUpon"                        ref="step_pfam_A_parse_HMMER3_output"/>
         <property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>
         <property name="createStepInstancesForNewProteins"  value="true"/>
-        <property name="id"                                 value="step_pfam_A_post_processing"/>
         <property name="retries"                            value="0"/>
         <property name="postProcessor"                      ref="pfam_A_post_processor"/>
         <property name="parallel"                           value="false"/>
         <property name="signatureLibraryRelease"            value="24.0"/>
         <property name="signatureLibrary"                   value="PFAM"/>
+        <property name="maxProteins"                        value="500"/>
+        <property name="rawMatchDAO"                        ref="pfamRawMatchDAO"/>
+        <property name="filteredMatchDAO"                   ref="pfamFilteredMatchDAO"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 

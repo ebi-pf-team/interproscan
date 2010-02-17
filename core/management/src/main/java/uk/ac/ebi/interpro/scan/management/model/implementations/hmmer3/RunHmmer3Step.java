@@ -7,9 +7,7 @@ import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class RunHmmer3Step extends Step implements Serializable {
+public class RunHmmer3Step extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(RunHmmer3Step.class);
 
@@ -89,11 +87,10 @@ public class RunHmmer3Step extends Step implements Serializable {
      * Note that the implementation DOES have access to the protected stepInstance,
      * and from their to the protected Step, to allow it to access parameters for execution.
      *
-     * @param daoManager    for DAO processes.
      * @param stepExecution record of execution
      */
     @Override
-    public void execute(DAOManager daoManager, StepExecution stepExecution) {
+    public void execute(StepExecution stepExecution) {
         stepExecution.setToRun();
         final StepInstance stepInstance = stepExecution.getStepInstance();
         final String fastaFilePathName = stepInstance.filterFileNameProteinBounds(this.getFastaFilePathNameTemplate());

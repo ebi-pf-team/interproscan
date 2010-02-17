@@ -1,79 +1,23 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
-import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.Serializable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: phil
- * Date: 14-Nov-2009
- * Time: 09:27:14
+ * TODO Description of class...
+ *
+ * @author Phil Jones
+ * @version $Id$
+ * @since 1.0
  */
-public class LoadFastaFile{
-
-    private ProteinLoader proteinLoader;
-
+public interface LoadFastaFile extends Serializable {
     @Required
-    public void setProteinLoader(ProteinLoader proteinLoader) {
-        this.proteinLoader = proteinLoader;
-    }
+    void setProteinLoader(ProteinLoader proteinLoader);
 
     @Transactional
-    public void loadSequences(Resource fastaFile) {
-        BufferedReader reader = null;
-        try{
-            reader = new BufferedReader(new FileReader(fastaFile.getFile()));
-            String currentId = null;
-            final StringBuffer currentSequence = new StringBuffer();
-            while (reader.ready()){
-                String line = reader.readLine();
-                if (line.length() > 0){
-                    if ('>' == line.charAt(0)){
-                        // Found ID line.
-                        // Store previous record, if it exists.
-                        if (currentId != null){
-                            proteinLoader.store (currentSequence.toString(), currentId);
-                            currentSequence.delete(0, currentSequence.length());
-                        }
-                        currentId = line.substring(1).trim();
-                    }
-                    else {
-                        // must be a sequence line.
-                        currentSequence.append (line.trim());
-                    }
-                }
-            }
-            // Store the final record (if there were any at all!)
-            if (currentId != null){
-                proteinLoader.store (currentSequence.toString(), currentId);
-                proteinLoader.persist();
-            }
-        }
-        catch (FileNotFoundException e) {
-            throw new IllegalStateException ("Could not locate fasta file.", e);
-        }
-        catch (IOException e) {
-            throw new IllegalStateException ("Could not read file.", e);
-        }  finally{
-            if (reader != null){
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    throw new IllegalStateException ("Unable to close reader to fasta file.", e);
-                }
-            }
-        }
-    }
-
-
-
+    void loadSequences(Resource fastaFile);
 }

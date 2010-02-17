@@ -1,13 +1,13 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.MapKeyManyToMany;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A StepInstance is built from a Step (template) for (optionally)
@@ -48,11 +48,11 @@ public class StepInstance implements Serializable {
     private String id;
 
     /**
-     * Relationship has to be re-created on loading.
+     * Relationship is lazy-loaded
      * (The Step is defined in XML, not in the database.)
      */
     @Transient
-    private Step step;
+    private transient Step step;
 
     /**
      * For the purpose of persistance, this is the id of the Step that this
@@ -78,6 +78,10 @@ public class StepInstance implements Serializable {
     @ManyToMany (fetch = FetchType.EAGER, cascade = {})
     private List<StepInstance> dependsUpon = new ArrayList<StepInstance>();
 
+    @CollectionOfElements(targetElement = String.class, fetch = FetchType.EAGER)
+    @MapKeyManyToMany(targetEntity = String.class)
+    private Map<String, String> stepParameters;
+
     /**
      * List of all the executions of this StepInstance.
      * Set to transient so they don't all get shoved over the
@@ -94,6 +98,21 @@ public class StepInstance implements Serializable {
         this.topProtein = topProteinId;
         this.bottomModel = bottomModelId;
         this.topModel = topModelId;
+    }
+
+    public void addStepParameter(String key, String value) {
+        if (this.stepParameters == null){
+            stepParameters = new HashMap<String, String>();
+        }
+        stepParameters.put(key, value);
+    }
+
+    /**
+     * Retrieve arbitrary step parameters.
+     * @return Map of parameters (key, value pairs in a Map).
+     */
+    public Map<String, String> getStepParameters() {
+        return stepParameters;
     }
 
     /**
@@ -142,7 +161,13 @@ public class StepInstance implements Serializable {
         return id;
     }
 
-    public Step getStep() {
+    public Step getStep(Jobs jobs) {
+        assert jobs != null;
+        assert stepId != null;
+        if (step == null){
+            step = jobs.getStepById(stepId);
+        }
+        assert step != null;
         return step;
     }
 
@@ -175,13 +200,14 @@ public class StepInstance implements Serializable {
      * 2. All of the dependencies of this stepInstance (StepInstances that must have
      * successfully completed prior to this StepInstance) have completed.
      * @return true if this StepInstance can be submitted.
+     * @param jobs
      */
-    public boolean canBeSubmitted(){
+    public boolean canBeSubmitted(Jobs jobs){
         // First, check if the state of this StepInstance allows it to be run...
         // (Not submitted or previously failed, and number of retries not exceeded)
         if (StepExecutionState.NEW_STEP_INSTANCE == getState()
                 ||
-            (StepExecutionState.STEP_EXECUTION_FAILED == getState() && this.getExecutions().size() < this.getStep().getRetries())){
+            (StepExecutionState.STEP_EXECUTION_FAILED == getState() && this.getExecutions().size() < this.getStep(jobs).getRetries())){
             // Then check that all the dependencies have been completed successfully.
             if (dependsUpon != null){
                 for (StepInstance dependency : dependsUpon){
@@ -200,22 +226,6 @@ public class StepInstance implements Serializable {
         return executions;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof StepInstance)) return false;
-
-        StepInstance that = (StepInstance) o;
-
-        if (!id.equals(that.id)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
 
     public StepExecution createStepExecution(){
         return new StepExecution(this);
@@ -242,13 +252,6 @@ public class StepInstance implements Serializable {
                 : template.replaceAll(pattern, TWELVE_DIGIT_INTEGER.format(value));
     }
 
-    public void setStep(Step step) {
-        if (! stepId.equals (step.getId())){
-            throw new IllegalArgumentException ("Unexpected Step being set on this StepInstance - ID is incorrect.");
-        }
-        this.step = step;
-    }
-
     /**
      * Simple method to indicate if this StepInstance has protein bounds.
      * @return true if this StepInstance has protein bounds.
@@ -273,4 +276,19 @@ public class StepInstance implements Serializable {
                 (that.getBottomProtein() > this.getTopProtein()));
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("StepInstance");
+        sb.append("{id='").append(id).append('\'');
+        sb.append(", step=").append(step);
+        sb.append(", stepId='").append(stepId).append('\'');
+        sb.append(", bottomProtein=").append(bottomProtein);
+        sb.append(", topProtein=").append(topProtein);
+        sb.append(", bottomModel=").append(bottomModel);
+        sb.append(", topModel=").append(topModel);
+        sb.append(", dependsUpon=").append(dependsUpon);
+        sb.append('}');
+        return sb.toString();
+    }
 }

@@ -2,9 +2,9 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 import javax.jms.*;
 import java.util.UUID;
@@ -43,7 +43,7 @@ public class InterProScanWorker implements Worker {
 
     private String jmsMessageSelector;
 
-    private DAOManager daoManager;
+    private Jobs jobs;
 
     /**
      * Sets the timeout on the Worker.  This should be set reasonably low (a few seconds perhaps)
@@ -74,6 +74,11 @@ public class InterProScanWorker implements Worker {
         this.jobRequestQueueName = jobRequestQueueName;
     }
 
+    @Required
+    public void setJobs(Jobs jobs) {
+        this.jobs = jobs;
+    }
+
     /**
      * Sets the name of the JMS queue to which the Worker returns the results of a job.
      * @param jobResponseQueueName  the name of the JMS queue to which the Worker returns the results of a job.
@@ -92,16 +97,6 @@ public class InterProScanWorker implements Worker {
     @Required
     public void setMainSessionHandler(SessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
-    }
-
-    /**
-     * Optional DAOManager - it is likely this will only
-     * be injected into the Serial worker.
-     * @param daoManager optional handle on the DAO objects
-     * for database access.
-     */
-    public void setDaoManager(DAOManager daoManager) {
-        this.daoManager = daoManager;
     }
 
     /**
@@ -234,8 +229,8 @@ public class InterProScanWorker implements Worker {
                         System.out.println("Got currentStepExecution, which is...");
                         if (stepExecution != null){
                             System.out.println("Not null!");
-                            Step step = stepExecution.getStepInstance().getStep();
-                            step.execute(daoManager, stepExecution);
+                            Step step = stepExecution.getStepInstance().getStep(jobs);
+                            step.execute(stepExecution);
                             ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
                             messageProducer.send(responseMessage);
                             stepExecutionMessage.acknowledge();

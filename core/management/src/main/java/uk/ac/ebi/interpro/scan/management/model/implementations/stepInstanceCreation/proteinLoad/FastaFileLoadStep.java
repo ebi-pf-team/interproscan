@@ -1,12 +1,11 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
 /**
  * Loads a Fasta file into the database, creating new protein instance
@@ -18,6 +17,8 @@ import uk.ac.ebi.interpro.scan.persistence.DAOManager;
  * @since 1.0
  */
 public class FastaFileLoadStep extends Step {
+
+    Logger LOGGER = Logger.getLogger(FastaFileLoadStep.class);
 
     private LoadFastaFile fastaFileLoader;
 
@@ -44,15 +45,16 @@ public class FastaFileLoadStep extends Step {
      * (For example, constructing file names based upon lower and upper protein IDs or
      * model IDs).
      * <p/>
-     * TODO - Possibly generify so things other than 'DAOManager' can be passed in.
      *
-     * @param daoManager    for DAO processes.
      * @param stepExecution record of execution
      */
     @Override
-    public void execute(DAOManager daoManager, StepExecution stepExecution) {
+    public void execute(StepExecution stepExecution) {
+        LOGGER.debug("Entered execute() method of FastaFileLoadStep");
         stepExecution.setToRun();
         try{
+            LOGGER.debug("LoadFastaFile object: " + fastaFileLoader);
+            LOGGER.debug("Resource object (fasta file): " + fastaFile);
             fastaFileLoader.loadSequences(fastaFile);
             stepExecution.completeSuccessfully();
         }

@@ -9,9 +9,9 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.persistence.DAOManager;
+import uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -22,7 +22,7 @@ import java.util.Map;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class Pfam_A_PostProcessingStep extends Step implements Serializable {
+public class Pfam_A_PostProcessingStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(Pfam_A_PostProcessingStep.class);
 
@@ -31,6 +31,10 @@ public class Pfam_A_PostProcessingStep extends Step implements Serializable {
     private SignatureLibrary signatureLibrary;
 
     private String signatureLibraryRelease;
+
+    private PfamHmmer3RawMatchDAO rawMatchDAO;
+
+    private PfamFilteredMatchDAO filteredMatchDAO;
 
     @Required
     public void setSignatureLibrary(SignatureLibrary signatureLibrary) {
@@ -59,6 +63,16 @@ public class Pfam_A_PostProcessingStep extends Step implements Serializable {
         return signatureLibraryRelease;
     }
 
+    @Required
+    public void setRawMatchDAO(PfamHmmer3RawMatchDAO rawMatchDAO) {
+        this.rawMatchDAO = rawMatchDAO;
+    }
+
+    @Required
+    public void setFilteredMatchDAO(PfamFilteredMatchDAO filteredMatchDAO) {
+        this.filteredMatchDAO = filteredMatchDAO;
+    }
+
     /**
      * This method is called to execute the action that the StepExecution must perform.
      * This method should typically perform its activity in a try / catch / finally block
@@ -67,20 +81,16 @@ public class Pfam_A_PostProcessingStep extends Step implements Serializable {
      * Note that the implementation DOES have access to the protected stepInstance,
      * and from their to the protected Step, to allow it to access parameters for execution.
      *
-     * @param daoManager    for DAO processes.
      * @param stepExecution record of execution
      */
     @Override
-    public void execute(DAOManager daoManager, StepExecution stepExecution) {
+    public void execute(StepExecution stepExecution) {
         stepExecution.setToRun();
         final StepInstance stepInstance = stepExecution.getStepInstance();
         try{
             Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
-            if (daoManager == null){
-                throw new IllegalArgumentException ("This StepExecution must have a valid DAOManager object passed in.");
-            }
             // Retrieve raw results for protein range.
-            Map<String, RawProtein<PfamHmmer3RawMatch>> rawMatches = daoManager.getPfamRawMatchDAO().getRawMatchesForProteinIdsInRange(
+            Map<String, RawProtein<PfamHmmer3RawMatch>> rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
                     Long.toString(stepInstance.getBottomProtein()),
                     Long.toString(stepInstance.getTopProtein()),
                     getSignatureLibraryRelease()
@@ -95,7 +105,7 @@ public class Pfam_A_PostProcessingStep extends Step implements Serializable {
                 LOGGER.debug("Count of filtered matches: " + countMatches(filteredMatches));
             }
             LOGGER.debug("About to store filtered matches...");
-            daoManager.getPfamFilteredMatchDAO().persistFilteredMatches(filteredMatches.values());
+            filteredMatchDAO.persistFilteredMatches(filteredMatches.values());
             LOGGER.debug("About to store filtered matches...DONE");
             stepExecution.completeSuccessfully();
         } catch (Exception e) {

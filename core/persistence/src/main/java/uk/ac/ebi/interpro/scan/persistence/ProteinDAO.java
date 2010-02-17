@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,7 +69,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * @return a new List<Protein> containing all of the inserted / updated Protein objects.
      * (Allows the caller to retrieve the primary keys for the proteins).
      */
-    public PersistedProteins insertNewProteins(Set<Protein> newProteins);
+    public PersistedProteins insertNewProteins(Collection<Protein> newProteins);
 
     /**
      * Instances of this class are returned from the insert method above.

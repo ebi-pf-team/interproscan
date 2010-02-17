@@ -19,11 +19,10 @@
 
         <!-- The following properties are just for the 'hacked' demonstration. (Loading proteins
         and Pfam models prior to running the analysis. -->
-        <property name="loader" ref="loader"/>
-        <property name="daoManager" ref="daoManager"/>
         <property name="pfamHMMfilePath" value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+        <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
     </bean>
 
     <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
@@ -35,16 +34,6 @@
 
     <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl">
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
-    </bean>
-
-    <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile">
-        <constructor-arg ref="testFastaFile"/>
-        <property name="transactionProteinCount" value="250"/>
-        <property name="proteinDAO" ref="proteinDAO"/>
-    </bean>
-
-    <bean id="testFastaFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="5k.fasta" />
     </bean>
 </beans>
 
