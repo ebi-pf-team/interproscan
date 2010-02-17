@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Xref;
@@ -19,6 +20,8 @@ import java.io.Serializable;
  * Time: 14:04:59
  */
 public class ProteinLoader implements Serializable {
+
+    Logger LOGGER = Logger.getLogger(ProteinLoader.class);
 
     private ProteinDAO proteinDAO;
 
@@ -90,6 +93,7 @@ public class ProteinLoader implements Serializable {
     public void persist(){
         persistBatch();
         // Create StepInstances here...
+        LOGGER.debug("About to call ProteinLoadListener.createStepInstances()");
         proteinLoadListener.createStepInstances(bottomProteinId, topProteinId);
         bottomProteinId = null;
         topProteinId = null;

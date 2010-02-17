@@ -7,10 +7,9 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.persistence.DAOManager;
+import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class WriteFastaFileStep extends Step implements Serializable {
+public class WriteFastaFileStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(WriteFastaFileStep.class);
 
@@ -29,6 +28,8 @@ public class WriteFastaFileStep extends Step implements Serializable {
     private final WriteFastaFile fastaFile = new WriteFastaFile();
 
     private String fastaFilePathTemplate;
+
+    private ProteinDAO proteinDAO;
 
     @Required
     public void setFastaFilePathTemplate(String fastaFilePathTemplate) {
@@ -39,6 +40,11 @@ public class WriteFastaFileStep extends Step implements Serializable {
         return fastaFilePathTemplate;
     }
 
+    @Required
+    public void setProteinDAO(ProteinDAO proteinDAO) {
+        this.proteinDAO = proteinDAO;
+    }
+
     /**
      * This method is called to execute the action that the StepExecution must perform.
      * This method should typically perform its activity in a try / catch / finally block
@@ -47,18 +53,17 @@ public class WriteFastaFileStep extends Step implements Serializable {
      * Note that the implementation DOES have access to the protected stepInstance,
      * and from their to the protected Step, to allow it to access parameters for execution.
      *
-     * @param daoManager    for DAO processes.
      * @param stepExecution record of execution
      */
     @Override
-    public void execute(DAOManager daoManager, StepExecution stepExecution) {
+    public void execute(StepExecution stepExecution) {
         stepExecution.setToRun();
         try{
             String fastaFilePathName = stepExecution.getStepInstance().filterFileNameProteinBounds(
                     this.getFastaFilePathTemplate()
             );
             StepInstance stepInstance = stepExecution.getStepInstance();
-            List<Protein> proteins = daoManager.getProteinDAO().getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             fastaFile.writeFastaFile(proteins, fastaFilePathName);
             stepExecution.completeSuccessfully();
         } catch (Exception e) {

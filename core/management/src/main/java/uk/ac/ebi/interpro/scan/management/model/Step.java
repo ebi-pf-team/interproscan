@@ -1,9 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.persistence.DAOManager;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -35,7 +34,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public abstract class Step implements Serializable {
+public abstract class Step implements BeanNameAware {
 
     protected String id;
 
@@ -93,15 +92,8 @@ public abstract class Step implements Serializable {
         return id;
     }
 
-    /**
-     * Must be set in configuration to unique value.
-     * Note that if this is changed between one run of the master node and another,
-     * the step instances / executions will no longer be associated with this step.
-     * @param id being any unique String.
-     */
-    @Required
-    public void setId(String id) {
-        this.id = id;
+    public void setBeanName(String s) {
+        this.id = s;
     }
 
     public Job getJob() {
@@ -186,10 +178,9 @@ public abstract class Step implements Serializable {
      * model IDs).
      *
      * TODO - Possibly generify so things other than 'DAOManager' can be passed in.
-     * @param daoManager    for DAO processes.
      * @param stepExecution record of execution
      */
-    public abstract void execute(DAOManager daoManager, StepExecution stepExecution);
+    public abstract void execute(StepExecution stepExecution);
 
     @Override
     public boolean equals(Object o) {
@@ -208,5 +199,20 @@ public abstract class Step implements Serializable {
         return id.hashCode();
     }
 
-
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Step");
+        sb.append("{id='").append(id).append('\'');
+        sb.append(", stepDescription='").append(stepDescription).append('\'');
+        sb.append(", parallel=").append(parallel);
+        sb.append(", retries=").append(retries);
+        sb.append(", cronSchedule='").append(cronSchedule).append('\'');
+        sb.append(", createStepInstancesForNewProteins=").append(createStepInstancesForNewProteins);
+        sb.append(", maxProteins=").append(maxProteins);
+        sb.append(", maxModels=").append(maxModels);
+        sb.append(", stepInstances=").append(stepInstances);
+        sb.append('}');
+        return sb.toString();
+    }
 }

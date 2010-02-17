@@ -17,6 +17,7 @@
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +54,7 @@ public interface GenericDAO <T, PK extends Serializable> {
      * have been passed in, for sub-classes that check for the pre-existence of the object
      * in the database.
      */
-    Set<T> insert(Set<T> newInstances);
+    Collection<T> insert(Collection<T> newInstances);
     /**
      * Update the instance into the database
      *

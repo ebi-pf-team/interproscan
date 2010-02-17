@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.Serializable;
@@ -23,7 +24,9 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class Job implements Serializable {
+public class Job implements Serializable, BeanNameAware {
+
+    private String id;
 
     private String description;
 
@@ -58,5 +61,24 @@ public class Job implements Serializable {
 
     void addStep(Step step) {
         steps.add(step);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setBeanName(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Job");
+        sb.append("{id='").append(id).append('\'');
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", steps=").append(steps);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
@@ -25,6 +26,8 @@ public class InterProScanMonitor implements WorkerMonitor {
     private SessionHandler sessionHandler;
 
     private volatile Worker worker;
+
+    private Jobs jobs;
 
     /**
      * Sets a SessionHandler for the manager thread.
@@ -69,6 +72,11 @@ public class InterProScanMonitor implements WorkerMonitor {
     @Override
     public void setWorker(Worker worker) {
         this.worker = worker;
+    }
+
+
+    public void setJobs(Jobs jobs) {
+        this.jobs = jobs;
     }
 
     /**
@@ -116,7 +124,7 @@ public class InterProScanMonitor implements WorkerMonitor {
                     else {
                         workerState.setStepExecutionState(stepExecution.getState());
                         workerState.setJobId(stepExecution.getId());
-                        workerState.setJobDescription(stepExecution.getStepInstance().getStep().getStepDescription());
+                        workerState.setJobDescription(stepExecution.getStepInstance().getStep(jobs).getStepDescription());
                     }
                     ObjectMessage responseObject = sessionHandler.createObjectMessage(workerState);
 

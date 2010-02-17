@@ -7,11 +7,13 @@
 
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
+    <import resource="spring-config-jobs.xml"/>
 
     <bean id="workerManager" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanMonitor">
         <property name="workerManagerTopicName" value="jms.topic.${worker.manager.topic}"/>
         <property name="workerManagerResponseQueueName" value="jms.queue.${worker.manager.response.queue}"/>
         <property name="sessionHandler" ref="sessionHandler"/>
+        <property name="jobs" ref="jobs"/>
     </bean>           
 
     <bean id="parallelWorker" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker">
@@ -25,6 +27,7 @@
         <property name="jobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
         <property name="mainSessionHandler" ref="sessionHandler"/>
         <property name="workerManager" ref="workerManager" />
+        <property name="jobs" ref="jobs"/>
     </bean>
 
 </beans>

@@ -52,10 +52,7 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
         Query query = entityManager.createQuery("select i from StepInstance i where i.stepId = :stepId");
         query.setParameter("stepId", step.getId());
         List<StepInstance> stepInstances = query.getResultList();
-        for (StepInstance instance : stepInstances){
-            // Re-attach the StepInstance to its parent Step.
-            instance.setStep(step);
-        }
+
         // Note that StepExecutions are EAGERLY fetched - required for the filtering step below.
         if (optionalStates != null && optionalStates.length > 0){
             // Filter on state.

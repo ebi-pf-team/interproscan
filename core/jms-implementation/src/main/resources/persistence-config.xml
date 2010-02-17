@@ -24,16 +24,6 @@
     <tx:annotation-driven/>
     <!--<tx:annotation-driven mode="aspectj"/>-->
 
-    <bean id="daoManager" class="uk.ac.ebi.interpro.scan.persistence.DAOManager">
-        <property name="blastProdomLocationDAO" ref="blastProdomLocationDAO"/>
-        <property name="signatureDAO" ref="signatureDAO"/>
-        <property name="pfamRawMatchDAO" ref="pfamRawMatchDAO"/>
-        <property name="modelDAO" ref="modelDAO"/>
-        <property name="proteinDAO" ref="proteinDAO"/>
-        <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
-        <property name="pfamFilteredMatchDAO" ref="pfamFilteredMatchDAO"/>
-    </bean>
-
     <!-- DAO Beans -->
     <bean id="proteinDAO"
           class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>

@@ -1,11 +1,9 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
-import org.junit.runner.RunWith;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 
@@ -21,21 +19,23 @@ public class LoadFastaFileTest {
 
     private LoadFastaFile loader;
 
-    private ProteinDAO proteinDAO;
-
     private org.springframework.core.io.Resource fastaFile;
+
+    private ProteinDAO proteinDAO;
 
     @javax.annotation.Resource (name="loader")
     public void setLoader(LoadFastaFile loader) {
         this.loader = loader;
     }
-    @javax.annotation.Resource (name="proteinDAO")
-    public void setProteinDAO(ProteinDAO proteinDAO) {
-        this.proteinDAO = proteinDAO;
-    }
+
     @javax.annotation.Resource (name="fastaFile")
     public void setFastaFile(org.springframework.core.io.Resource fastaFile) {
         this.fastaFile = fastaFile;
+    }
+
+    @javax.annotation.Resource (name="proteinDAO")
+    public void setProteinDAO(ProteinDAO proteinDAO) {
+        this.proteinDAO = proteinDAO;
     }
 
     @Test

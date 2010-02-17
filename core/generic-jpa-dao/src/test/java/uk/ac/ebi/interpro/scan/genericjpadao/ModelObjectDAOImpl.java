@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

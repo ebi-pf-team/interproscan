@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
@@ -19,6 +20,8 @@ import java.util.*;
  * @since 1.0
  */
 public class StepCreationProteinLoadListener implements ProteinLoadListener {
+
+    Logger LOGGER = Logger.getLogger(StepCreationProteinLoadListener.class);
 
 
     private StepInstanceDAO stepInstanceDAO;
@@ -46,13 +49,14 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
      */
     @Override
     public void createStepInstances(Long bottomProteinId, Long topProteinId) {
+        try{
         if (bottomProteinId == null || topProteinId == null){
             return;
         }
         if (topProteinId < bottomProteinId){
             throw new IllegalArgumentException ("The bounds make no sense - the top bound (" + topProteinId + ") is lower than the bottom bound (" + bottomProteinId + ").  Programming error?");
         }
-        final Map<Step, Set<StepInstance>> stepToStepInstances = new HashMap<Step, Set<StepInstance>>();
+        final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
 
         // Instantiate the StepInstances - no dependencies yet.
         for (Job job : jobs.getJobList()){
@@ -66,10 +70,10 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
         // Add the dependencies to the StepInstances.
         for (Step step : stepToStepInstances.keySet()){
             for (StepInstance stepInstance : stepToStepInstances.get(step)){
-                final List<Step> dependsUpon = stepInstance.getStep().getDependsUpon();
+                final List<Step> dependsUpon = stepInstance.getStep(jobs).getDependsUpon();
                 if (dependsUpon != null){
                     for (Step stepRequired : dependsUpon){
-                        Set<StepInstance> candidateStepInstances = stepToStepInstances.get(stepRequired);
+                        List<StepInstance> candidateStepInstances = stepToStepInstances.get(stepRequired);
                         if (candidateStepInstances != null){
                             for (StepInstance candidate : candidateStepInstances){
                                 if (stepInstance.proteinBoundsOverlap(candidate)){
@@ -83,6 +87,11 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
             // Persist the StepInstances that now have their dependencies added.
             stepInstanceDAO.insert(stepToStepInstances.get(step));
         }
+        }
+        catch (Exception e){
+            LOGGER.error("Exception thrown in createStepInstances() method: ", e);
+            throw new IllegalStateException ("Caught and logged Exception, re-thrown so things work properly.", e);
+        }
     }
 
     /**
@@ -92,8 +101,8 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
      * @param topProteinId
      * @return
      */
-    Set<StepInstance> createStepInstances(Step step, Long bottomProteinId, Long topProteinId){
-        final Set<StepInstance> stepInstances = new HashSet<StepInstance>();
+    List<StepInstance> createStepInstances(Step step, Long bottomProteinId, Long topProteinId){
+        final List<StepInstance> stepInstances = new ArrayList<StepInstance>();
         final long sliceSize = (step.getMaxProteins() == null)
                 ? topProteinId - bottomProteinId + 1
                 : step.getMaxProteins();
