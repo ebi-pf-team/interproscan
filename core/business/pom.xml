@@ -1,13 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <artifactId>interproscan</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-business</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
     <packaging>jar</packaging>
     <name>InterProScan Business Logic</name>
-    <version>1.0-SNAPSHOT</version>
     <description>InterProScan Business Logic</description>
+
     <url>http://www.ebi.ac.uk/interpro/</url>
     <licenses>
         <license>
@@ -21,28 +31,12 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-    <properties>
-        <spring.version>2.5.6</spring.version>
-        <spring.oxm.version>1.5.7</spring.oxm.version>
-    </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>uk.ac.ebi.interpro.scan</groupId>
-            <artifactId>interproscan-io</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-persistence</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
@@ -53,31 +47,16 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <!-- Note: cannot go beyond version 4.4 as incompatible with spring-test. Will be fixed in Spring 3.0 -->
-            <version>4.4</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>3.4.0.GA</version>
+            <version>${hibernate.entity.manager.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.2</version>
+            <version>${hsqldb.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -108,35 +87,6 @@
                 <filtering>false</filtering>
             </testResource>
         </testResources>
-
-        <plugins>
-            <!-- Use Java 5 language features -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            <!-- JavaDocs (generate: mvn javadoc:javadoc, package: mvn javadoc:jar) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <overview />
-                </configuration>
-            </plugin>
-            <!-- Create JAR of source files (source:jar, source:test-jar) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <!--configuration>
-                    <finalName>filename-of-generated-jar-file</finalName>
-                    <attach>false</attach>
-                    </configuration-->
-            </plugin>
-        </plugins>
     </build>
     <profiles>
         <profile>
