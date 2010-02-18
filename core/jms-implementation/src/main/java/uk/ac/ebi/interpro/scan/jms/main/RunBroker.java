@@ -16,7 +16,7 @@ public class RunBroker {
     public static void main(String[] args) {
         AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String []{"spring-config-broker.xml"});
         ctx.registerShutdownHook();
-        OnionBroker broker = (OnionBroker) ctx.getBean("broker");
+        OnionBroker broker = (OnionBroker) ctx.getBean(args[0]);
         broker.start();
         ctx.close();
     }
