@@ -11,13 +11,6 @@
 
     <!-- Starts up parallel workers.  Used by the queueJumper bean, which starts up
     a new parallel worker each time a parallel TaskExecution is run. -->
-    <!--<bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LSFWorkerRunner">-->
-        <!--<property name="command"-->
-                  <!--value="/homes/maslen/work/apache-maven-2.2.1/bin/mvn -e -P runParallelWorker -f /ebi/sp/pro1/interpro/programmers/pjones/projects/i5_new/jms-implementation/pom.xml exec:java"/>-->
-        <!--<property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk"/>-->
-        <!--<property name="lsfEmailNotification" value="${lsf.notification.emailaddress}"/>-->
-        <!--<property name="lsfQueueName" value="production"/>-->
-    <!--</bean>-->
     <bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.SubmissionWorkerRunner">
         <property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk"/>
         <property name="submissionJobFile" value="lsf_parallel.sh"/>
@@ -25,24 +18,11 @@
     </bean>
 
     <!-- Starts up a serial worker.  Used by the broker bean to start up a single multi-use worker. -->
-    <!--<bean id="serialWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LSFWorkerRunner">-->
-        <!--<property name="command"-->
-                  <!--value='/net/nas10b/vol1/homes/maslen/work/apache-maven-2.2.1/bin/mvn -e -P runSerialWorker -f /net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/pom.xml exec:java -DXmx=2048m'/>-->
-        <!--<property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk"/>-->
-        <!--<property name="lsfEmailNotification" value="${lsf.notification.emailaddress}"/>-->
-        <!--<property name="lsfQueueName" value="production"/>-->
-        <!--<property name="memoryUsageMB" value="2048"/>-->
-        <!--<property name="outFilePath"-->
-                  <!--value="/net/nas10b/vol1/homes/pjones/projects/i5_new/jms-implementation/temp-serial-worker.out"/>-->
-    <!--</bean>-->
-
     <bean id="serialWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.SubmissionWorkerRunner">
         <property name="optionalPrefix" value="ssh -x ${unix.username}@ebi-001.ebi.ac.uk"/>
         <property name="submissionJobFile" ref="lsfSerialFile"/>
         <property name="submissionType" value="lsf"/>
     </bean>
-
-
 
     <!-- Starts up a serial worker using the Sun Grid Engine.  Used by the broker bean to start up a single multi-use worker.
          The shellPath is optional and defaults to the Bourne shell /bin/sh if not set.-->
@@ -105,7 +85,6 @@
     <bean id="lsfParallelFile" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="lsf_parallel.sh" />
     </bean>
-
 
 </beans>
         
