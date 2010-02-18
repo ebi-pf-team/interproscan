@@ -9,6 +9,8 @@ import java.util.Map;
 
 
 /**
+ * Runs worker JVMs on LSF, SGE or PBS clusters, depending on the submissionType parameter passed.
+ * 
  * User: maslen
  * Date: 18-Feb-2010
  * Time: 14:43:32
