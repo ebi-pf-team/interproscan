@@ -59,7 +59,8 @@ public class Protein implements Serializable {
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="PROT_IDGEN")
+    @TableGenerator(name="PROT_IDGEN", table="KEYGEN", pkColumnValue="protein", initialValue = 0, allocationSize = 100)
     protected Long id;
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
@@ -67,6 +68,10 @@ public class Protein implements Serializable {
     @IndexColumn(name="chunk_index")
     @Column (name="sequence_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> sequenceChunks;
+
+    @Column(nullable = false, updatable = false, length = Chunker.CHUNK_SIZE, name="sequence_first_chunk")
+    @XmlTransient
+    private String sequenceFirstChunk;
     
     @Transient
     private String sequence;
@@ -220,7 +225,7 @@ public class Protein implements Serializable {
     @XmlElement
     public String getSequence() {
         if (sequence == null){
-            sequence = CHUNKER.concatenate(sequenceChunks);
+            sequence = CHUNKER.concatenate(sequenceFirstChunk, sequenceChunks);
         }
         return sequence;
     }
@@ -239,7 +244,9 @@ public class Protein implements Serializable {
             throw new IllegalArgumentException("'sequence' is not an amino acid sequence [" + sequence + "]");
         }
         this.sequence = sequence;
-        this.sequenceChunks = CHUNKER.chunkIntoList(sequence);
+        List<String> chunks = CHUNKER.chunkIntoList(sequence);
+        this.sequenceFirstChunk = CHUNKER.firstChunk(chunks);
+        this.sequenceChunks = CHUNKER.latterChunks(chunks);
     }
 
     /**

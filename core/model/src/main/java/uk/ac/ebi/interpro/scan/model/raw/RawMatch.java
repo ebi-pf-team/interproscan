@@ -25,7 +25,8 @@ public abstract class RawMatch implements Serializable {
     // TODO: Don't need any foreign keys -- just index fields we will search on
     
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="RAW_MATCH_IDGEN")
+    @TableGenerator(name="RAW_MATCH_IDGEN", table="KEYGEN", pkColumnValue="match", initialValue = 0, allocationSize = 100)
     private Long id;
     private String sequenceIdentifier;      // eg. MD5
     private String model;                   // eg. PF00001

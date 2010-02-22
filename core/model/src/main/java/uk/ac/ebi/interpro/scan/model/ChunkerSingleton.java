@@ -29,18 +29,24 @@ public class ChunkerSingleton implements Chunker{
     }
 
     /**
-     * Concatenates a List of String into a single long
+     * Concatenates a single String and a List of String into a single long
      * String.
+     * @param start first part of the String
      * @param chunks being the List<String> to concatenate
-     * @return the concatenated String, or null if the.
+     * @return the concatenated String.
      */
-    public String concatenate(List<String> chunks) {
-        if (chunks == null){
-            return null;
+    public String concatenate (String start, List<String> chunks) {
+        StringBuffer buf ;
+        if (start == null){
+            buf = new StringBuffer();
         }
-        StringBuffer buf = new StringBuffer();
-        for (String chunk : chunks){
-            buf.append(chunk);
+        else {
+            buf = new StringBuffer(start);
+        }
+        if (chunks != null){
+            for (String chunk : chunks){
+                buf.append(chunk);
+            }
         }
         return (buf.length() == 0) ? null : buf.toString();
     }
@@ -70,6 +76,44 @@ public class ChunkerSingleton implements Chunker{
             }
         }
         return chunks;
+    }
+
+    /**
+     * Takes a List<String> and returns the first
+     * element, or null if not present.
+     *
+     * @param chunks from which first will be returned
+     * @return the first
+     *         element, or null if not present.
+     */
+    @Override
+    public String firstChunk(List<String> chunks) {
+        if (chunks == null || chunks.size() == 0){
+            return null;
+        }
+        return chunks.get(0);
+    }
+
+    /**
+     * Takes a List<String> and returns all but the
+     * first element in a new List<String>.
+     * <p/>
+     * Checks that the argument is not null and contains
+     * more than one element, otherwise returns null.
+     *
+     * @param chunks to split.
+     * @return a List<String> and returns all but the
+     *         first element in a new List<String>.
+     *         <p/>
+     *         Checks that the argument is not null and contains
+     *         more than one element, otherwise returns null.
+     */
+    @Override
+    public List<String> latterChunks(List<String> chunks) {
+        if (chunks == null || chunks.size() < 2){
+            return null;
+        }
+        return chunks.subList(1, chunks.size());
     }
 
 }

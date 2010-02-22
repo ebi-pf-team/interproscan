@@ -38,7 +38,8 @@ import java.io.Serializable;
 public class Xref implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="XREF_IDGEN")
+    @TableGenerator(name="XREF_IDGEN", table="KEYGEN", pkColumnValue="xref", initialValue = 0, allocationSize = 50)
     protected Long id;
 
     // TODO consider column name again...  (not urgent as does not affect functionality)
@@ -64,6 +65,8 @@ public class Xref implements Serializable {
     public Xref(String identifier){
         this.identifier = identifier;
     }
+
+    // TODO Really need to be able to optionally store database name here.
 
     /**
      * Returns the unique identifier for this Entity.

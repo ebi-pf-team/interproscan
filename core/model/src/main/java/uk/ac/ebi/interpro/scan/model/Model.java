@@ -50,7 +50,8 @@ public class Model implements Serializable {
      * id as unique identifier of the Model record (e.g. for JPA persistence)
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="MOD_IDGEN")
+    @TableGenerator(name="MOD_IDGEN", table="KEYGEN", pkColumnValue="model", initialValue = 0, allocationSize = 50)
     private Long id;
 
     @Column(length = 50, nullable = false)
@@ -64,6 +65,10 @@ public class Model implements Serializable {
     @IndexColumn (name="chunk_index")
     @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> descriptionChunks = Collections.emptyList();
+
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name="description_first_chunk")
+    @XmlTransient
+    private String descriptionFirstChunk;
 
     @Transient
     private String description;
@@ -84,6 +89,10 @@ public class Model implements Serializable {
     @IndexColumn (name="chunk_index")
     @Column (name="definition_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> definitionChunks = Collections.emptyList();
+
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name="definition_first_chunk")
+    @XmlTransient
+    private String definitionFirstChunk;
 
     @Transient
     private String definition;
@@ -192,14 +201,16 @@ public class Model implements Serializable {
     @XmlTransient
     public String getDefinition() {
         if (definition == null){
-            definition = CHUNKER.concatenate(definitionChunks);
+            definition = CHUNKER.concatenate(definitionFirstChunk, definitionChunks);
         }
         return definition;
     }
 
     private void setDefinition(String definition) {
         this.definition = definition;
-        definitionChunks = CHUNKER.chunkIntoList(definition);
+        List<String> chunks = CHUNKER.chunkIntoList(definition);
+        definitionFirstChunk = CHUNKER.firstChunk(chunks);
+        definitionChunks = CHUNKER.latterChunks(chunks);
     }
 
     /**
@@ -210,14 +221,16 @@ public class Model implements Serializable {
     @XmlAttribute(name="desc")
     public String getDescription() {
         if (description == null){
-            description = CHUNKER.concatenate(descriptionChunks);
+            description = CHUNKER.concatenate(descriptionFirstChunk, descriptionChunks);
         }
         return description;
     }
 
     private void setDescription(String description) {
         this.description = description;
-        descriptionChunks = CHUNKER.chunkIntoList(description);
+        List<String> chunks = CHUNKER.chunkIntoList(description);
+        descriptionFirstChunk = CHUNKER.firstChunk(chunks);
+        descriptionChunks = CHUNKER.latterChunks(chunks);
     }
 
     @XmlTransient

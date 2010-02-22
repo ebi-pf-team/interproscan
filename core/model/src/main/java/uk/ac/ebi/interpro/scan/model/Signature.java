@@ -54,7 +54,8 @@ public class Signature implements Serializable {
      * Used as unique identifier of the record, e.g. for JPA persistence.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="SIG_LIB_IDGEN")
+    @TableGenerator(name="SIG_LIB_IDGEN", table="KEYGEN", pkColumnValue="signature", initialValue = 0, allocationSize = 50)
     private Long id;
 
     @Column (name="accession", nullable = false)
@@ -68,6 +69,10 @@ public class Signature implements Serializable {
     @IndexColumn(name="chunk_index")
     @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> descriptionChunks = Collections.emptyList();
+
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name="description_first_chunk")
+    @XmlTransient
+    private String descriptionFirstChunk;
 
     @Transient
     private String description;
@@ -87,6 +92,10 @@ public class Signature implements Serializable {
     @IndexColumn(name="chunk_index")
     @Column (name="abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> abstractChunks = Collections.emptyList();
+
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name="abstract_first_chunk")
+    @XmlTransient
+    private String abstractFirstChunk;
 
     @Transient
     private String abstractText;
@@ -255,14 +264,16 @@ public class Signature implements Serializable {
     @XmlAttribute(name="desc")
     public String getDescription() {
         if (description == null){
-            description = CHUNKER.concatenate(descriptionChunks);
+            description = CHUNKER.concatenate(descriptionFirstChunk, descriptionChunks);
         }
         return description;
     }
 
     private void setDescription(String description) {
         this.description = description;
-        descriptionChunks = CHUNKER.chunkIntoList(description);
+        List<String> chunks = CHUNKER.chunkIntoList(description);
+        descriptionFirstChunk = CHUNKER.firstChunk(chunks);
+        descriptionChunks = CHUNKER.latterChunks(chunks);
     }
 
     /**
@@ -290,14 +301,16 @@ public class Signature implements Serializable {
     @XmlElement(name="abstract")
     public String getAbstract() {
         if (abstractText == null){
-            abstractText = CHUNKER.concatenate(abstractChunks);
+            abstractText = CHUNKER.concatenate(abstractFirstChunk, abstractChunks);
         }
         return abstractText;
     }
 
     private void setAbstract(String text) {
         this.abstractText = text;
-        abstractChunks = CHUNKER.chunkIntoList(abstractText);
+        List<String> chunks = CHUNKER.chunkIntoList(abstractText);
+        abstractFirstChunk = CHUNKER.firstChunk(chunks);
+        abstractChunks = CHUNKER.latterChunks(chunks);
     }
 
     public Date getCreated() {

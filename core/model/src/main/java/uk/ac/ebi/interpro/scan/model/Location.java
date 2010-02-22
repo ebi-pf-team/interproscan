@@ -46,7 +46,8 @@ import java.util.Set;
 public abstract class Location implements Serializable {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="LOCN_IDGEN")
+    @TableGenerator(name="LOCN_IDGEN", table="KEYGEN", pkColumnValue="location", initialValue = 0, allocationSize = 50)
     private Long id;
 
     @Column(name="loc_start", nullable = false)    // to match end - 'end' is reserved word in SQL.
