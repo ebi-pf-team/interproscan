@@ -3,10 +3,12 @@ package uk.ac.ebi.interpro.scan.io.cli;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.util.Map;
-import java.util.List;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Instances of this class can be instantiated to build a generic 'commmand line conversation'.
@@ -165,7 +167,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
      * @param filePath the path of the file to which output should be redirected.
      */
     @Override public void setOutputPathToFile(String filePath, boolean overwriteIfExists, boolean append)
-            throws IOException {
+            throws IOException, InterruptedException {
         outputFileHandle = createfileHandle(filePath, overwriteIfExists, append);
     }
 
@@ -176,7 +178,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
      * @param filePath the path of the file to which error output should be redirected.
      */
     @Override public void setErrorPathToFile(String filePath, boolean overwriteIfExists, boolean append)
-            throws IOException{
+            throws IOException, InterruptedException {
         errorFileHandle = createfileHandle (filePath, overwriteIfExists, append);
     }
 
@@ -221,7 +223,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         return exitStatus;
     }
     
-    private File createfileHandle(String filePath, boolean overwriteIfExists, boolean append) throws IOException{
+    private File createfileHandle(String filePath, boolean overwriteIfExists, boolean append) throws IOException, InterruptedException {
         File sinkFile = new File(filePath);
         if (sinkFile.exists()){
             if (! sinkFile.isFile()){
@@ -232,9 +234,10 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                     throw new IOException("The filePath " + filePath +
                             " already contains a file that cannot be deleted.");
                 }
-                if (! sinkFile.createNewFile()){
-                    throw new IOException("Unable to create a new file " + filePath + " to route to.");
-                }
+//                Thread.sleep (5000);
+//                if (! sinkFile.createNewFile()){
+//                    throw new IOException("Unable to create a new file " + filePath + " to route to.");
+//                }
             }
             else if (append){
                 if (! sinkFile.canWrite() ){
@@ -246,9 +249,10 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                         "The calling code has set overwriteIfExists to false, so this file will not be deleted.");
             }
         }
-        else if (! sinkFile.createNewFile()){
-            throw new IOException("Unable to create a new file " + filePath);
-        }
+//        else if (! sinkFile.createNewFile()){
+//            throw new IOException("Unable to create a new file " + filePath);
+//        }
+//        Thread.sleep (5000); // Give NFS a chance to catch up before proceeding.
         return sinkFile;
     }
 
@@ -267,6 +271,8 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
         StreamGobbler(InputStream inputStream) {
             this(inputStream, null);
+            // These stream gobblers really need to run to keep up with the external process.
+            this.setPriority(Thread.MAX_PRIORITY);
         }
 
         StreamGobbler(InputStream inputStream, File outputFileHandle) {
@@ -318,17 +324,28 @@ public class CommandLineConversationImpl implements CommandLineConversation {
             }
         }
 
+        /**
+         * Uses java.nio for maximum speed / efficiency.
+         */
         private void outputToFile() {
-            BufferedReader bufferedReader = null;
-            BufferedWriter writer = null;
+            final int BUFFER_SIZE = 4096;
+
+            FileChannel destinationChannel = null;
             try {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                writer = new BufferedWriter(new FileWriter(gobblerFileHandle, true));
-                String line;
-                while ( (line = bufferedReader.readLine()) != null){
-                    writer.write(line);
-                    writer.write('\n');
-                }
+                destinationChannel = new FileOutputStream(gobblerFileHandle).getChannel();
+                ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+				byte[] bufferArray = buffer.array(); //get the backing byte array
+                while (true) {
+					buffer.clear(); // Prepare buffer for use, sets position to 0 and limit at capacity
+					int lim = inputStream.read(bufferArray);
+					if (lim == -1)
+						break; // No more bytes to transfer
+					buffer.flip(); //prepare for write, set position to 0
+					buffer.limit(lim); //set the limit to what was read in from the stream
+                    while (buffer.hasRemaining()){
+					    destinationChannel.write(buffer);
+                    }
+				}
             }
             catch (IOException ioe) {
                 LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
@@ -336,12 +353,10 @@ public class CommandLineConversationImpl implements CommandLineConversation {
             }
             finally{
                 try{
-                    if (writer != null){
-                        writer.close();
+                    if (destinationChannel != null){
+                        destinationChannel.close();
                     }
-                    if (bufferedReader != null){
-                        bufferedReader.close();
-                    }
+                    inputStream.close();
                 }
                 catch (IOException ioe) {
                     LOGGER.error("IOException thrown when attempting to close " +

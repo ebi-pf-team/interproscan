@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.model;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -55,6 +56,7 @@ public class Hmmer3ModelLoader implements Serializable {
         this.releaseVersion = releaseVersion;
     }
 
+    @Transactional
     public SignatureLibraryRelease parse(String hmmFilePath) throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
@@ -66,7 +68,7 @@ public class Hmmer3ModelLoader implements Serializable {
             reader = new BufferedReader (new FileReader(hmmFilePath));
             int lineNumber = 0;
             while (reader.ready()){
-                if (lineNumber++ % 500 == 0){
+                if (LOGGER.isDebugEnabled() && lineNumber++ % 10000 == 0){
                     LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
                     LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
                 }
