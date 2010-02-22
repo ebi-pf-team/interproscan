@@ -24,6 +24,7 @@ public class SubmissionWorkerRunner implements WorkerRunner{
 
     //Optional parameter so user can set shell to one of their own choosing.
     //Default for both SGE and LSF is Bourne shell (/bin/sh).
+    //Default for PBS is to use the user's login shell on the execution host.
     private String shellPath;
 
     //This is a required parameter and currently can have the values 'sge', 'lsf' or 'pbs'.
@@ -86,7 +87,7 @@ public class SubmissionWorkerRunner implements WorkerRunner{
             m.put("sge", "qsub");
             m.put("sge_sh", "-S");
             m.put("pbs", "qsub");
-            m.put("pbs_sh", "???");
+            m.put("pbs_sh", "-S");
             m.put("lsf", "bsub");
             m.put("lsf_sh", "-L");
             m.put("lsf_exec", "<");
