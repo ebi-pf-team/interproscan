@@ -17,7 +17,4 @@
 # Output file
 #PBS -o ${absolute.output.path}/${pbs.output.file}
 #
-echo ${maven.executable}
-echo ${jms-implementation.pom.path}
-echo ${pbs.memory.setting}
 ${maven.executable} -e -P runSerialWorker -f ${jms-implementation.pom.path} exec:java ${pbs.memory.setting}
