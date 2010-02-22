@@ -398,7 +398,28 @@
                 <broker.host.name>localhost</broker.host.name>
                 <broker.port.number>5445</broker.port.number>
                 <unix.username>mumdad</unix.username>
-                <lsf.notification.emailaddress>pjones@ebi.ac.uk</lsf.notification.emailaddress>
+                <!-- LSF settings -->
+                <lsf.submission.hostname>ebi-001.ebi.ac.uk</lsf.submission.hostname>
+                <lsf.queue.submission>production</lsf.queue.submission>
+                <lsf.output.file>lsf-serial-worker.out</lsf.output.file>
+                <lsf.memory.setting>-DXmx=2048m</lsf.memory.setting>                
+                <!-- SGE settings -->
+                <sge.submission.hostname>sge001.ebi.ac.uk</sge.submission.hostname>
+                <sge.output.file>sge-serial-worker.out</sge.output.file>
+                <sge.memory.setting>-DXmx=2048m</sge.memory.setting>
+                <sge.mail.settings>aes</sge.mail.settings>
+                <!-- PBS settings -->
+                <pbs.submission.hostname>pbs001.ebi.ac.uk</pbs.submission.hostname>
+                <pbs.queue.submission>dque</pbs.queue.submission>
+                <pbs.output.file>pbs-serial-worker.out</pbs.output.file>
+                <pbs.memory.setting>-DXmx=2048m</pbs.memory.setting>
+                <pbs.mail.settings>ae</pbs.mail.settings>
+                <!-- General settings -->
+                <notification.emailaddress>maslen@ebi.ac.uk</notification.emailaddress>
+                <maven.executable>/net/nas10b/vol1/homes/maslen/work/apache-maven-2.2.1/bin/mvn</maven.executable>
+                <jms-implementation.pom.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/pom.xml</jms-implementation.pom.path>
+                <absolute.output.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation</absolute.output.path>
+                
 
                 <!-- You can rename the queues to anything you like-->
                 <job.submission.queue>job_submission_queue</job.submission.queue>

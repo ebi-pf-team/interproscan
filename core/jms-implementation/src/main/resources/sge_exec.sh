@@ -9,9 +9,9 @@
 #$ -m aes
 #
 # Email address
-#$ -M maslen@ebi.ac.uk
+#$ -M ${notification.emailaddress}
 #
 # Output file
-#$ -o /net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/temp-serial-worker.out
+#$ -o ${absolute.output.path}/${sge.output.file}
 #
-/net/nas10b/vol1/homes/maslen/work/apache-maven-2.2.1/bin/mvn -e -P runSerialWorker -f /net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/pom.xml exec:java -DXmx=2048m
+${maven.executable} -e -P runSerialWorker -f ${jms-implementation.pom.path} exec:java ${sge.memory.setting}
