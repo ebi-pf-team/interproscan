@@ -51,7 +51,6 @@ public abstract class Step implements BeanNameAware {
     protected int retries;
 
     /**
-     * TODO - Make into a Collection.
      * Step which must be completed prior to this one.
      */
     protected List<Step> dependsUpon;
@@ -167,20 +166,12 @@ public abstract class Step implements BeanNameAware {
     }
 
     /**
-     * This method is called to execute the action that the StepExecution must perform.
-     * This method should typically perform its activity in a try / catch / finally block
-     * that sets the state of the step execution appropriately.
+     * This method is called to execute the action that the StepInstance must perform.
      *
-     * Note that the implementation DOES have access to the protected stepInstance,
-     * and from their to the protected Step, to allow it to access parameters for execution.
-     *
-     * (For example, constructing file names based upon lower and upper protein IDs or
-     * model IDs).
-     *
-     * TODO - Possibly generify so things other than 'DAOManager' can be passed in.
-     * @param stepExecution record of execution
+     * @param stepInstance containing the parameters for executing.
+     * @throws Exception could be anything thrown by the execute method.
      */
-    public abstract void execute(StepExecution stepExecution);
+    public abstract void execute(StepInstance stepInstance) throws Exception;
 
     @Override
     public boolean equals(Object o) {

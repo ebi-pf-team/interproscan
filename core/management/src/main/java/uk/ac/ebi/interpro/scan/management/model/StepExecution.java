@@ -32,8 +32,9 @@ public class StepExecution implements Serializable {
     protected static final Logger LOGGER = Logger.getLogger(StepExecution.class);
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="STEP_EXE_IDGEN")
+    @TableGenerator(name="STEP_EXE_IDGEN", table="KEYGEN", pkColumnValue="step_execution", initialValue = 0, allocationSize = 50)
+    private Long id;
 
     @ManyToOne (targetEntity = StepInstance.class, cascade = {}, optional = false)
     protected StepInstance stepInstance;
@@ -76,7 +77,7 @@ public class StepExecution implements Serializable {
         this.state = state;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 

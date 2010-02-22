@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class StepCreationProteinLoadListener implements ProteinLoadListener {
 
-    Logger LOGGER = Logger.getLogger(StepCreationProteinLoadListener.class);
+    private static final Logger LOGGER = Logger.getLogger(StepCreationProteinLoadListener.class);
 
 
     private StepInstanceDAO stepInstanceDAO;

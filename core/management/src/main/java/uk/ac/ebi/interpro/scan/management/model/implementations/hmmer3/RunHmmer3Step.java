@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,55 +80,53 @@ public class RunHmmer3Step extends Step {
 
 
     /**
-     * This method is called to execute the action that the StepExecution must perform.
-     * This method should typically perform its activity in a try / catch / finally block
-     * that sets the state of the step execution appropriately.
-     * <p/>
-     * Note that the implementation DOES have access to the protected stepInstance,
-     * and from their to the protected Step, to allow it to access parameters for execution.
+     * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepExecution record of execution
+     * @param stepInstance containing the parameters for executing.
      */
     @Override
-    public void execute(StepExecution stepExecution) {
-        stepExecution.setToRun();
-        final StepInstance stepInstance = stepExecution.getStepInstance();
+    public void execute(StepInstance stepInstance) throws Exception {
+        LOGGER.debug("About to run HMMER binary... some output should follow.");
+
         final String fastaFilePathName = stepInstance.filterFileNameProteinBounds(this.getFastaFilePathNameTemplate());
         final String hmmerOutputFileName = stepInstance.filterFileNameProteinBounds(this.getHmmerOutputFilePathTemplate());
-        try{
-            Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
-            List<String> command = new ArrayList<String>();
+        List<String> command = new ArrayList<String>();
 
-            command.add(this.getFullPathToBinary());
-            command.addAll(this.getBinarySwitches());
-            command.add(this.getFullPathToHmmFile());
-            command.add(fastaFilePathName);
+        command.add(this.getFullPathToBinary());
+        command.addAll(this.getBinarySwitches());
+        command.add(this.getFullPathToHmmFile());
+        command.add(fastaFilePathName);
 
-            CommandLineConversation clc = new CommandLineConversationImpl();
-            clc.setOutputPathToFile(hmmerOutputFileName, false, false);
-            LOGGER.debug("About to run HMMER binary... some output should follow.");
-            int exitStatus = clc.runCommand(false, command);
-            if (exitStatus == 0){
-                LOGGER.debug("HMMER analysis completed successfully for fasta file " + fastaFilePathName);
-                stepExecution.completeSuccessfully();
+        CommandLineConversation clc = new CommandLineConversationImpl();
+        clc.setWorkingDirectory(hmmerOutputFileName.substring(0, hmmerOutputFileName.lastIndexOf('/')));
+        clc.setOutputPathToFile(hmmerOutputFileName, false, false);
+        int exitStatus = clc.runCommand(false, command);
+        if (exitStatus == 0){
+            LOGGER.debug("hmmscan completed successfully!");
+            // Delete the fasta file - no longer required
+            // TODO - need to make sure that this fasta file is not being used by any other process.
+            File file = new File(fastaFilePathName);
+
+            if (! file.delete()){
+                LOGGER.warn("Unable to delete fasta file "+ fastaFilePathName + " after running Hmmer.");
             }
-            else {
-                StringBuffer failureMessage = new StringBuffer();
-                failureMessage.append ("Command line failed with exit code: ")
-                        .append (exitStatus)
-                        .append ("\nCommand: ");
-                for (String element : command){
-                    failureMessage.append (element).append(' ');
-                }
-                failureMessage.append ("\nError output from binary:\n");
-                failureMessage.append (clc.getErrorMessage());
-                LOGGER.error(failureMessage);
-                throw new Exception (failureMessage.toString());
+            else if (LOGGER.isDebugEnabled()){
+                LOGGER.debug("fasta file "+ fastaFilePathName + " deleted.");
             }
-        } catch (Exception e) {
-            stepExecution.fail();
-            e.printStackTrace();
-            LOGGER.error ("Exception thrown during RunHmmer3Step.", e);
+        }
+        else {
+            StringBuffer failureMessage = new StringBuffer();
+            failureMessage.append ("Command line failed with exit code: ")
+                    .append (exitStatus)
+                    .append ("\nCommand: ");
+            for (String element : command){
+                failureMessage.append (element).append(' ');
+            }
+            failureMessage.append ("\nError output from binary:\n");
+            failureMessage.append (clc.getErrorMessage());
+            LOGGER.error(failureMessage);
+            // TODO Look for a more specific Exception to throw here...
+            throw new Exception (failureMessage.toString());
         }
     }
 }

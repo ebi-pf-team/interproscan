@@ -14,7 +14,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
  */
 public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> implements StepExecutionDAO {
 
-    Logger LOGGER = Logger.getLogger(StepExecutionDAOImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(StepExecutionDAOImpl.class);
     /**
      * Sets the class of the model that the DOA instance handles.
      * Note that this has been set up to use constructor injection
@@ -39,7 +39,9 @@ public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> 
     @Transactional
     public void refreshStepExecution(StepExecution freshStepExecution) {
 
-        LOGGER.debug("Refreshing StepExecution with ID " + freshStepExecution.getId());
+        if (LOGGER.isDebugEnabled()){
+            LOGGER.debug("Refreshing StepExecution with ID " + freshStepExecution.getId());
+        }
         // Retrieve dirty step execution from the database.
         StepExecution dirtyStepExec = entityManager.find(StepExecution.class, freshStepExecution.getId());
         if (dirtyStepExec == null){

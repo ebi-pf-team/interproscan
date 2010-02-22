@@ -4,12 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
 import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import javax.persistence.Transient;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -46,30 +46,18 @@ public class WriteFastaFileStep extends Step {
     }
 
     /**
-     * This method is called to execute the action that the StepExecution must perform.
-     * This method should typically perform its activity in a try / catch / finally block
-     * that sets the state of the step execution appropriately.
-     * <p/>
-     * Note that the implementation DOES have access to the protected stepInstance,
-     * and from their to the protected Step, to allow it to access parameters for execution.
+     * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepExecution record of execution
+     * @param stepInstance containing the parameters for executing.
      */
     @Override
-    public void execute(StepExecution stepExecution) {
-        stepExecution.setToRun();
-        try{
-            String fastaFilePathName = stepExecution.getStepInstance().filterFileNameProteinBounds(
-                    this.getFastaFilePathTemplate()
-            );
-            StepInstance stepInstance = stepExecution.getStepInstance();
-            List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            fastaFile.writeFastaFile(proteins, fastaFilePathName);
-            stepExecution.completeSuccessfully();
-        } catch (Exception e) {
-            stepExecution.fail();
-            LOGGER.error ("Exception thrown when attempting to write out a Fasta file to path " , e);
-        }
+    public void execute(StepInstance stepInstance) throws IOException, WriteFastaFile.FastaFileWritingException, InterruptedException {
+        String fastaFilePathName = stepInstance.filterFileNameProteinBounds(
+                this.getFastaFilePathTemplate()
+        );
+        List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        fastaFile.writeFastaFile(proteins, fastaFilePathName);
+        Thread.sleep(2000); // Have a snooze to allow NFS to catch up.
     }
 }
 

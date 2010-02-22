@@ -20,9 +20,7 @@ public interface StepInstanceDAO extends GenericDAO<StepInstance, String> {
     /**
      * Retrieve the StepInstances from the database for a particular Step.
      * @param step for which to retrieve StepInstance objects from the database.
-     * @param optionalStates if none provided, then all StepInstances are returned.
-     * If one or more provided, then limited to StepInstances in the specified state.
      * @return the List of StepInstance objects.
      */
-    List<StepInstance> retrieveInstances (Step step, StepExecutionState... optionalStates);
+    List<StepInstance> retrieveUnfinishedStepInstances(Step step);
 }
