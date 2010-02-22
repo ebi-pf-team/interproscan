@@ -6,6 +6,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
+import java.io.IOException;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,10 +41,10 @@ public class LoadFastaFileTest {
     }
 
     @Test
-    public void testLoader(){
+    public void testLoader() throws IOException {
         System.out.println("Loader:" + loader);
         System.out.println("FastaFile: " + fastaFile);
-        loader.loadSequences(fastaFile);
+        loader.loadSequences(fastaFile.getInputStream());
         System.out.println("Proteins loaded: " + proteinDAO.count());
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
 
+import java.io.InputStream;
 import java.io.Serializable;
 
 /**
@@ -19,5 +20,5 @@ public interface LoadFastaFile extends Serializable {
     void setProteinLoader(ProteinLoader proteinLoader);
 
     @Transactional
-    void loadSequences(Resource fastaFile);
+    void loadSequences(InputStream fastaFileInputStream);
 }

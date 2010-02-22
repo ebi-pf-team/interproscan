@@ -11,7 +11,6 @@ import java.io.Serializable;
 
 /**
  * This abstract class knows how to store protein sequences and cross references
- * TODO Change to composition from inheritance - no need to make this abstract.
  *
  * This must be a system-wide Singleton - achieved by ONLY injecting into the
  * SerialWorker JVM, from Spring.
@@ -21,11 +20,11 @@ import java.io.Serializable;
  */
 public class ProteinLoader implements Serializable {
 
-    Logger LOGGER = Logger.getLogger(ProteinLoader.class);
+    private static final Logger LOGGER = Logger.getLogger(ProteinLoader.class);
 
     private ProteinDAO proteinDAO;
 
-    private int transactionProteinCount;
+    private int proteinInsertBatchSize;
 
     private Set<Protein> proteinsAwaitingPersistence;
 
@@ -48,9 +47,9 @@ public class ProteinLoader implements Serializable {
     }
 
     @Required
-    public void setTransactionProteinCount(int transactionProteinCount) {
-        this.transactionProteinCount = transactionProteinCount;
-        proteinsAwaitingPersistence = new HashSet<Protein>(transactionProteinCount);
+    public void setProteinInsertBatchSize(int proteinInsertBatchSize) {
+        this.proteinInsertBatchSize = proteinInsertBatchSize;
+        proteinsAwaitingPersistence = new HashSet<Protein>(proteinInsertBatchSize);
     }
 
     @Required
@@ -75,15 +74,14 @@ public class ProteinLoader implements Serializable {
             }
             proteinsAwaitingPersistence.add (protein);
         }
-        if (proteinsAwaitingPersistence.size() == transactionProteinCount){
+        if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize){
             persistBatch();
         }
     }
 
     private void persistBatch(){
-        ProteinDAO.PersistedProteins persistedProteins = null;
         if (proteinsAwaitingPersistence.size() > 0){
-            persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
+            final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
             proteinsAwaitingPersistence.clear();
@@ -98,8 +96,6 @@ public class ProteinLoader implements Serializable {
         bottomProteinId = null;
         topProteinId = null;
     }
-
-
 
 
 }

@@ -2,14 +2,10 @@ package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +15,7 @@ import java.io.IOException;
  */
 public class LoadFastaFileImpl implements LoadFastaFile {
 
-    Logger LOGGER = Logger.getLogger(LoadFastaFileImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(LoadFastaFileImpl.class);
 
     private ProteinLoader proteinLoader;
 
@@ -31,12 +27,12 @@ public class LoadFastaFileImpl implements LoadFastaFile {
 
     @Override
     @Transactional
-    public void loadSequences(Resource fastaFile) {
+    public void loadSequences(InputStream fastaFileInputStream) {
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         BufferedReader reader = null;
         boolean first = true;
         try{
-            reader = new BufferedReader(new FileReader(fastaFile.getFile()));
+            reader = new BufferedReader(new InputStreamReader(fastaFileInputStream));
             String currentId = null;
             final StringBuffer currentSequence = new StringBuffer();
             while (reader.ready()){
@@ -69,17 +65,14 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                 proteinLoader.persist();
             }
         }
-        catch (FileNotFoundException e) {
-            throw new IllegalStateException ("Could not locate fasta file.", e);
-        }
         catch (IOException e) {
-            throw new IllegalStateException ("Could not read file.", e);
+            throw new IllegalStateException ("Could not read the fastaFileInputStream. ", e);
         }  finally{
             if (reader != null){
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    throw new IllegalStateException ("Unable to close reader to fasta file.", e);
+                    throw new IllegalStateException ("Unable to close reader the fasta file input stream ", e);
                 }
             }
         }
