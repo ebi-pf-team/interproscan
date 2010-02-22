@@ -2,8 +2,9 @@ package uk.ac.ebi.interpro.scan.jms.broker;
 
 
 import org.hornetq.core.config.impl.FileConfiguration;
-import org.hornetq.core.server.HornetQ;
 import org.hornetq.core.server.HornetQServer;
+import org.hornetq.core.server.HornetQServers;
+import org.hornetq.core.server.impl.HornetQServerImpl;
 import org.hornetq.jms.server.JMSServerManager;
 import org.hornetq.jms.server.impl.JMSServerManagerImpl;
 import org.springframework.beans.factory.annotation.Required;
@@ -45,7 +46,7 @@ public class OnionBroker {
             configuration.setConfigurationUrl(connectionConfigurationXml);
             configuration.start();
 
-            HornetQServer server = HornetQ.newHornetQServer(configuration);
+            HornetQServer server = HornetQServers.newHornetQServer(configuration);
             JMSServerManager jmsServerManager = new JMSServerManagerImpl(server, jmsConfigurationXml);
             //if you want to use JNDI, simple inject a context here or don't call this method and make sure the JNDI parameters are set.
             jmsServerManager.setContext(null);

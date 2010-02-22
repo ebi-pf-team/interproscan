@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
@@ -19,8 +20,10 @@ import java.util.Map;
  */
 public class InterProScanHandlerImpl implements ResponseHandler{
 
+    private static final Logger LOGGER = Logger.getLogger(InterProScanHandlerImpl.class);
 
-    private volatile Map<String, StepExecution> stepExecutions;
+
+    private volatile Map<Long, StepExecution> stepExecutions;
 
     private StepExecutionDAO stepExecutionDAO;
 
@@ -39,34 +42,25 @@ public class InterProScanHandlerImpl implements ResponseHandler{
         try{
             if (message instanceof TextMessage){
                 TextMessage textMessage = (TextMessage) message;
-                System.out.println("Text Message Received: " + textMessage.getText());
+                LOGGER.info("Text Message Received: " + textMessage.getText());
             }
             else if (message instanceof ObjectMessage){
                 ObjectMessage objectMessage = (ObjectMessage) message;
                 Object messageContents = objectMessage.getObject();
                 if (messageContents instanceof StepExecution){
                     StepExecution freshStepExecution = (StepExecution) messageContents;
-                    // Some StepExecution responses may require further action
-                    // (e.g. data persistence) before continuing, so deal with that here.
-                    // HOPEFULLY NOT THOUGH!
-                    processStepExecution(freshStepExecution);
-
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
                 }
             }
             else {
+                LOGGER.error ("Received message that I don't know how to handle.");
                 throw new IllegalArgumentException("Don't know how to handle the message: " + message.toString());
             }
-            // TODO - Handle other kinds of response???
         } catch (JMSException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void processStepExecution(StepExecution freshStepExecution) {
-        // Currently no-op - hopefully it will stay that way.
-    }
 
     /**
      * Sets a reference to the stepExecutions so that they can be
@@ -75,7 +69,7 @@ public class InterProScanHandlerImpl implements ResponseHandler{
      * @param stepExecutions that have been completed on remote nodes.
      */
     @Override
-    public void setStepExecutionMap(Map<String, StepExecution> stepExecutions) {
+    public void setStepExecutionMap(Map<Long, StepExecution> stepExecutions) {
         this.stepExecutions = stepExecutions;
     }
 }

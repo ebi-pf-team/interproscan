@@ -13,7 +13,7 @@
     a new parallel worker each time a parallel TaskExecution is run. -->
     <bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.SubmissionWorkerRunner">
         <property name="optionalPrefix" value="ssh -x ${unix.username}@${lsf.submission.hostname}"/>
-        <property name="submissionJobFile" value="lsf_parallel.sh"/>
+        <property name="submissionJobFile" ref="lsfParallelFile"/>
         <property name="submissionType" value="lsf"/>
     </bean>
 
@@ -45,7 +45,7 @@
     <!-- Starts up a serial worker on a local machine (defined in spring-config-servers.xml).  Used by the lanBroker bean to start up a single multi-use worker. -->
     <bean id="lanWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.broker.platforms.LANWorkerRunner">
         <property name="command"
-                  value='/homes/pjones/program_files/apache-maven-2.2.1/bin/mvn -e -P runSerialWorker -f /ebi/sp/pro1/interpro/programmers/pjones/projects/i5_new/jms-implementation/pom.xml exec:java'/>
+                  value='${maven.home} -e -P runSerialWorker -f ${basedir}/pom.xml exec:java -DXmx=${serial.worker.xmx}m'/>
         <property name="accessPrefix" value="ssh -x ${unix.username}"/>
         <property name="lanServerListing" ref="serverNames"/>
     </bean>
@@ -60,6 +60,7 @@
 
         <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
+        <property name="serialWorkerRunner" ref="lanWorkerRunner"/>
     </bean>
 
     <bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">
@@ -106,5 +107,25 @@
         <constructor-arg value="lsf_parallel.sh" />
     </bean>
 
+    <bean id="startSpareParallelWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="parallelWorkerRunner"/>
+        <property name="targetMethod" value="startupNewWorker"/>
+    </bean>
+
+    <bean id="startSpareParallelWorker" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>
+        <!-- 1 seconds -->
+        <property name="startDelay" value="60000"/>
+        <!-- repeat every minute -->
+        <property name="repeatInterval" value="60000"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="startSpareParallelWorker"/>
+            </list>
+        </property>
+    </bean>
 </beans>
         

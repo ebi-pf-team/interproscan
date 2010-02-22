@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.jms;
 
-import org.hornetq.core.config.TransportConfiguration;
+import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.integration.transports.netty.NettyConnectorFactory;
-import org.hornetq.jms.HornetQDestination;
 import org.hornetq.jms.client.HornetQConnectionFactory;
+import org.hornetq.jms.client.HornetQDestination;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.jms.*;
@@ -83,8 +83,12 @@ public class SessionHandler {
     }
 
     public void close() throws JMSException {
-        session.close();
-        connection.close();
+        try{
+            session.close();
+        }
+        finally {
+            connection.close();
+        }
     }
 
     public TextMessage createTextMessage (String message) throws JMSException {

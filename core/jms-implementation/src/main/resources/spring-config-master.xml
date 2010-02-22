@@ -35,5 +35,26 @@
     <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl">
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
     </bean>
+
+    <bean id="proteinLoadQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="master"/>
+        <property name="targetMethod" value="createProteinLoadJob"/>
+    </bean>
+
+    <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="proteinLoadQuartzJob"/>
+        <!-- 1 seconds -->
+        <property name="startDelay" value="0"/>
+        <!-- repeat every 10 minutes -->
+        <property name="repeatInterval" value="600000"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="proteinLoadTrigger"/>
+            </list>
+        </property>
+    </bean>
 </beans>
 

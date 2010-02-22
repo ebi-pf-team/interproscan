@@ -10,12 +10,15 @@
     <!--<import resource="job-load-from-fasta-spring.xml"/>-->
     <import resource="persistence-config.xml"/>
 
+    <import resource="spring-config-uapro-db-access.xml"/>
+
 
     <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
         <property name="jobList">
             <list>
                 <ref bean="job_pfam_A"/>
                 <ref bean="jobLoadFromFasta"/>
+                <ref bean="jobLoadFromUniParc"/>
             </list>
         </property>
     </bean>
@@ -38,13 +41,27 @@
         <property name="retries"                            value="0"/>
         <property name="parallel"                           value="false"/>
         <property name="fastaFileLoader"                    ref="fastaFileLoader"/>
-        <property name="fastaFile"                          ref="fastaFile"/>
     </bean>
 
-    <bean id="fastaFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="5k.fasta" />
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromFasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## JOB: jobLoadFromUniParc ############################  -->
+    <bean id="jobLoadFromUniParc" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"                        value="Load proteins from UniParc and create required JobInstance objects"/>
     </bean>
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: job-load-from-fasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- STEP 1 -->
+    <bean id="stepLoadFromUniParc"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.UniparcProteinLoadStep">
+        <property name="job"                                ref="jobLoadFromUniParc"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription"                    value="Load proteins from UniParc and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins"  value="false"/>
+        <property name="retries"                            value="0"/>
+        <property name="parallel"                           value="false"/>
+        <property name="uniparcLoader"                    ref="uniparcLoader"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="fastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
@@ -52,7 +69,7 @@
     </bean>
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
-        <property name="transactionProteinCount" value="1000"/>
+        <property name="proteinInsertBatchSize" value="1000"/>
         <property name="proteinLoadListener" ref="proteinLoadListener"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
@@ -60,6 +77,18 @@
     <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="jobs" ref="jobs"/>
+    </bean>
+
+
+    <bean id="uniparcLoader" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
+        <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
+        <property name="rowCallbackHandlerTemplate" ref="rowCallbackHandlerTemplate"/>
+        <property name="maximumProteins" value="100000"/>
+        <property name="xrefDao" ref="xrefDAO"/>
+    </bean>
+
+    <bean id="rowCallbackHandlerTemplate" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.UniParcDBRowCallbackHandler">
+        <property name="proteinLoader" ref="proteinLoader"/>
     </bean>
 
 </beans>

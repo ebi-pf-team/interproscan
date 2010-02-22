@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.jms;
 
-import org.hornetq.core.config.TransportConfiguration;
+import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.integration.transports.netty.NettyConnectorFactory;
-import org.hornetq.jms.HornetQDestination;
 import org.hornetq.jms.client.HornetQConnectionFactory;
+import org.hornetq.jms.client.HornetQDestination;
 
 import javax.jms.*;
 import java.io.Serializable;

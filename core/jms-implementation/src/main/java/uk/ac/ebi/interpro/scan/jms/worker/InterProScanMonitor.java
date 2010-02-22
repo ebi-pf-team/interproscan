@@ -110,7 +110,7 @@ public class InterProScanMonitor implements WorkerMonitor {
                             System.currentTimeMillis() - startTimeMillis,
                             java.net.InetAddress.getLocalHost().getHostName(),
                             worker.getWorkerUniqueIdentification(),
-                            worker.isSingleUseOnly()
+                            worker.isStopWhenIdle()
                     );
                     workerState.setJobId("Unique Job ID as passed from the broker in the JMS header. (TODO)");
                     workerState.setProportionComplete(worker.getProportionOfWorkDone());
@@ -123,7 +123,7 @@ public class InterProScanMonitor implements WorkerMonitor {
                     }
                     else {
                         workerState.setStepExecutionState(stepExecution.getState());
-                        workerState.setJobId(stepExecution.getId());
+                        workerState.setJobId(stepExecution.getId().toString());
                         workerState.setJobDescription(stepExecution.getStepInstance().getStep(jobs).getStepDescription());
                     }
                     ObjectMessage responseObject = sessionHandler.createObjectMessage(workerState);

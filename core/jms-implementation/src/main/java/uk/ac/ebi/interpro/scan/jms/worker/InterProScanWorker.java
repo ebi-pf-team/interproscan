@@ -1,10 +1,12 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import javax.jms.*;
 import java.util.UUID;
@@ -19,6 +21,8 @@ import java.util.UUID;
  */
 public class InterProScanWorker implements Worker {
 
+    private static final Logger LOGGER = Logger.getLogger(InterProScanWorker.class);
+
     private SessionHandler sessionHandler;
 
     private String jobRequestQueueName;
@@ -31,7 +35,7 @@ public class InterProScanWorker implements Worker {
 
     private long receiveTimeout;
 
-    private boolean singleUseOnly;
+    private boolean stopWhenIdle;
 
     private Double workDone;
 
@@ -43,7 +47,10 @@ public class InterProScanWorker implements Worker {
 
     private String jmsMessageSelector;
 
+    private boolean isSerialWorker;
+
     private Jobs jobs;
+    public static final String NEW_SERIAL_WORKER_REQUEST = "new-serial-worker-request";
 
     /**
      * Sets the timeout on the Worker.  This should be set reasonably low (a few seconds perhaps)
@@ -57,12 +64,17 @@ public class InterProScanWorker implements Worker {
     }
 
     /**
-     * @param singleUseOnly if true, the Worker accepts and processes one job, then closes down.  If false, the
+     * @param stopWhenIdle if true, the Worker accepts and processes one job, then closes down.  If false, the
      * worker continues to take jobs from the queue until it is explicity shut down.
      */
     @Required
-    public void setSingleUseOnly(boolean singleUseOnly) {
-        this.singleUseOnly = singleUseOnly;
+    public void setStopWhenIdle(boolean stopWhenIdle) {
+        this.stopWhenIdle = stopWhenIdle;
+    }
+
+    @Required
+    public void setSerialWorker(boolean serialWorker) {
+        isSerialWorker = serialWorker;
     }
 
     /**
@@ -159,8 +171,8 @@ public class InterProScanWorker implements Worker {
      *         job message.
      */
     @Override
-    public boolean isSingleUseOnly() {
-        return singleUseOnly;
+    public boolean isStopWhenIdle() {
+        return stopWhenIdle;
     }
 
     /**
@@ -201,12 +213,11 @@ public class InterProScanWorker implements Worker {
                 workerManager.setWorker(this);
                 Thread managerThread = new Thread(workerManager);
                 managerThread.setDaemon(true);
-                managerThread.setPriority(Thread.MAX_PRIORITY);
                 managerThread.start();
             }
 
             sessionHandler.init();
-            MessageConsumer messageConsumer = null;
+            MessageConsumer messageConsumer;
             if (jmsMessageSelector == null){
                 messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
             }
@@ -215,42 +226,92 @@ public class InterProScanWorker implements Worker {
             }
 
             MessageProducer messageProducer = sessionHandler.getMessageProducer(jobResponseQueueName);
-            while (running){
-                System.out.println("About to invoke receive()");
+            while (running && noMemoryLeak()){
                 Message message = messageConsumer.receive(receiveTimeout);
                 if (message != null){
-                    System.out.println("Message was not null");
                     if (message instanceof ObjectMessage){
-                        System.out.println("Message was a non-null ObjectMessage");
                         ObjectMessage stepExecutionMessage = (ObjectMessage) message;
-                        System.out.println("stepExecutionMessage.toString() = " + stepExecutionMessage);
                         final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
                         currentStepExecution = stepExecution;
-                        System.out.println("Got currentStepExecution, which is...");
                         if (stepExecution != null){
-                            System.out.println("Not null!");
-                            Step step = stepExecution.getStepInstance().getStep(jobs);
-                            step.execute(stepExecution);
+                            LOGGER.debug("Message received of queue - attempting to execute");
+                            stepExecution.setToRun();
+                            try{
+                                final StepInstance stepInstance = stepExecution.getStepInstance();
+                                final Step step = stepInstance.getStep(jobs);
+                                LOGGER.debug("Step ID: "+ step.getId());
+                                LOGGER.debug("Step instance: " + stepInstance);
+                                LOGGER.debug("Step execution id: " + stepExecution.getId());
+                                step.execute(stepInstance);
+                                stepExecution.completeSuccessfully();
+                                LOGGER.debug ("SUCCESSFUL run of Step.execute() method for StepExecution ID: " + stepExecution.getId());
+                            }
+                            catch (Exception e){
+                                stepExecution.fail();
+                                LOGGER.error ("Exception thrown by Step.execute() method for StepExecution ID: " + stepExecution.getId(), e );
+                            }
                             ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
                             messageProducer.send(responseMessage);
                             stepExecutionMessage.acknowledge();
                         }
+                        else {
+                            LOGGER.debug("Waited for message, but nothing received.");
+                        }
                     }
                 }
-                if (singleUseOnly){
-                    break;
+                else {
+                    LOGGER.debug("No message received.");
+                    if (stopWhenIdle){
+                        break;
+                    }
                 }
+                LOGGER.debug("...waiting for another message.");
             }
+            if (isSerialWorker){
+                // Signal to the Master that a new
+                // SerialWorker is required.
+                LOGGER.debug("Going to close down now... requesting new Serial Worker is started.");
+                TextMessage newMasterMessage = sessionHandler.createTextMessage(NEW_SERIAL_WORKER_REQUEST);
+                messageProducer.send(newMasterMessage);
+            }
+            LOGGER.debug("...exiting");
         }
         catch (JMSException e) {
-            e.printStackTrace();
+            LOGGER.error("JMSException thrown by worker.  Exiting.", e);
         }
         finally{
             try {
                 sessionHandler.close();
             } catch (JMSException e) {
-                e.printStackTrace();
+                LOGGER.error("JMSException when attempting to close session / connection to JMS broker.", e);
             }
         }
+    }
+
+    /**
+     * Returns true if after calling System.gc, there is no
+     * evidence of a memory leak.
+     *
+     * Conservative - looks for used memory being no more
+     * than 1/3 of Xmx.
+     * @return true if all is OK.
+     */
+    private boolean noMemoryLeak() {
+
+        System.gc();System.gc();System.gc();System.gc();
+        System.gc();System.gc();System.gc();System.gc();
+        System.gc();System.gc();System.gc();System.gc();
+        System.gc();System.gc();System.gc();System.gc();
+
+        final long Xmx = Runtime.getRuntime().maxMemory();
+        final long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        final boolean ok = Xmx / used > 3;
+        if (LOGGER.isDebugEnabled()){
+            LOGGER.debug ("Finished StepExecution - Checking for memory leak.");
+            LOGGER.debug ("Used memory: " + used / (1024 * 1024 * 1024) + " GB");
+            LOGGER.debug ("Xmx: " + Xmx / (1024 * 1024 * 1024) + " GB");
+            LOGGER.debug ((ok) ? "OK" : "Leaking.");
+        }
+        return ok;
     }
 }
