@@ -82,7 +82,7 @@
         <hibernate.entity.manager.version>3.4.0.GA</hibernate.entity.manager.version>
         <cglib.version>2.2</cglib.version>
         <groovy.version>1.6.3</groovy.version>
-        <hornetq.version>2.0.0.BETA5</hornetq.version>
+        <hornetq.version>2.0.0.GA</hornetq.version>
         <hsqldb.version>1.8.0.10</hsqldb.version>
         <mysql.version>5.1.10</mysql.version>
         <oracle.ojdbc.version>11.1.0.7.0</oracle.ojdbc.version>

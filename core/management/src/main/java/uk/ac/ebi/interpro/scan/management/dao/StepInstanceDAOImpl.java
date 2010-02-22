@@ -34,37 +34,33 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
     }
 
     /**
-     * Retrieve the StepInstances from the database for a particular Step.
-     * Populate these into the Collection of step instances in the Step.
-     * Return the updated step.
+     * Retrieve the StepInstances from the database for a particular Step
+     * that <b>MAY BE</b> candidates to be run.
      *
-     * TODO - could be optimised - for example probably only want StepInstances that are candidates
-     * TODO - to be run, could easily include this in the JQL rather than filtering the objects returned.
+     * <b>NOTE: This returns all StepInstance objects that have not been
+     * successfully run.  It does NOT filter out those that are
+     * currently running - the calling code MUST call StepInstance.canBeSubmitted(Jobs jobs)
+     * before creating a new StepExecution for the StepInstance.<b>
      *
-     * @param step to be updated with StepInstance objects from the database.
-     * @param optionalStates if none provided, then <b>all</b> StepInstances are returned.
-     * If one or more provided, then limited to StepInstances in the specified state.
-     * @return the updated Step.
+     * @param step for which StepInstance objects should be obtained from the database.
+     * @return a List of StepInstance objects that have not successfully completed yet.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
-    public List<StepInstance> retrieveInstances(Step step, StepExecutionState... optionalStates) {
-        Query query = entityManager.createQuery("select i from StepInstance i where i.stepId = :stepId");
-        query.setParameter("stepId", step.getId());
-        List<StepInstance> stepInstances = query.getResultList();
+    public List<StepInstance> retrieveUnfinishedStepInstances(Step step) {
+        Query query = entityManager.createQuery(
+                        "select distinct i " +
+                        "from StepInstance i " +
+                        "where i.stepId = :stepId " +
+                        "and i not in (" +
+                                "select j " +
+                                "from StepInstance j " +
+                                "inner join j.executions e " +
+                                "where e.state = :successful " +
+                                "and j.stepId = :stepId) order by i.id desc");
 
-        // Note that StepExecutions are EAGERLY fetched - required for the filtering step below.
-        if (optionalStates != null && optionalStates.length > 0){
-            // Filter on state.
-            List<StepExecutionState> stateList = Arrays.asList(optionalStates);
-            List<StepInstance> filteredStepInstances = new ArrayList<StepInstance>();
-            for (StepInstance candidate : stepInstances){
-                 if (stateList.contains(candidate.getState())){
-                     filteredStepInstances.add (candidate);
-                 }
-            }
-            return filteredStepInstances;
-        }
-        return stepInstances;
+        query.setParameter("stepId", step.getId());
+        query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
+        return query.getResultList();
     }
 }

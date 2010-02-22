@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
@@ -74,45 +73,24 @@ public class Pfam_A_PostProcessingStep extends Step {
     }
 
     /**
-     * This method is called to execute the action that the StepExecution must perform.
-     * This method should typically perform its activity in a try / catch / finally block
-     * that sets the state of the step execution appropriately.
-     * <p/>
-     * Note that the implementation DOES have access to the protected stepInstance,
-     * and from their to the protected Step, to allow it to access parameters for execution.
+     * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepExecution record of execution
+     * @param stepInstance containing the parameters for executing.
+     * @throws Exception could be anything thrown by the execute method.
      */
     @Override
-    public void execute(StepExecution stepExecution) {
-        stepExecution.setToRun();
-        final StepInstance stepInstance = stepExecution.getStepInstance();
-        try{
-            Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
-            // Retrieve raw results for protein range.
-            Map<String, RawProtein<PfamHmmer3RawMatch>> rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
-                    Long.toString(stepInstance.getBottomProtein()),
-                    Long.toString(stepInstance.getTopProtein()),
-                    getSignatureLibraryRelease()
-            );
+    public void execute(StepInstance stepInstance) throws InterruptedException {
+        Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
+        // Retrieve raw results for protein range.
+        Map<String, RawProtein<PfamHmmer3RawMatch>> rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
+                Long.toString(stepInstance.getBottomProtein()),
+                Long.toString(stepInstance.getTopProtein()),
+                getSignatureLibraryRelease()
+        );
 
-            if (LOGGER.isDebugEnabled()){
-                LOGGER.debug("Count of unfiltered matches: " + countMatches(rawMatches));
-            }
-            // Post process
-            Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = getPostProcessor().process(rawMatches);
-            if (LOGGER.isDebugEnabled()){
-                LOGGER.debug("Count of filtered matches: " + countMatches(filteredMatches));
-            }
-            LOGGER.debug("About to store filtered matches...");
-            filteredMatchDAO.persistFilteredMatches(filteredMatches.values());
-            LOGGER.debug("About to store filtered matches...DONE");
-            stepExecution.completeSuccessfully();
-        } catch (Exception e) {
-            stepExecution.fail();
-            // TODO - Complete explanation.
-            LOGGER.error ("Exception thrown:" , e);
-        }
+        // Post process
+        Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = getPostProcessor().process(rawMatches);
+        filteredMatchDAO.persistFilteredMatches(filteredMatches.values());
     }
 
     private int countMatches(Map<String, RawProtein<PfamHmmer3RawMatch>> matches) {

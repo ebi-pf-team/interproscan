@@ -2,10 +2,14 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCre
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * Loads a Fasta file into the database, creating new protein instance
@@ -18,48 +22,48 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
  */
 public class FastaFileLoadStep extends Step {
 
-    Logger LOGGER = Logger.getLogger(FastaFileLoadStep.class);
+    public static final String FASTA_FILE_PATH_KEY = "FASTA_FILE_PATH";
+
+    private static final Logger LOGGER = Logger.getLogger(FastaFileLoadStep.class);
 
     private LoadFastaFile fastaFileLoader;
-
-    private Resource fastaFile;
 
     @Required
     public void setFastaFileLoader(LoadFastaFile fastaFileLoader) {
         this.fastaFileLoader = fastaFileLoader;
     }
 
-    @Required
-    public void setFastaFile(Resource fastaFile) {
-        this.fastaFile = fastaFile;
-    }
-
     /**
-     * This method is called to execute the action that the StepExecution must perform.
-     * This method should typically perform its activity in a try / catch / finally block
-     * that sets the state of the step execution appropriately.
-     * <p/>
-     * Note that the implementation DOES have access to the protected stepInstance,
-     * and from their to the protected Step, to allow it to access parameters for execution.
-     * <p/>
-     * (For example, constructing file names based upon lower and upper protein IDs or
-     * model IDs).
-     * <p/>
+     * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepExecution record of execution
+     * @param stepInstance containing the parameters for executing.
      */
     @Override
-    public void execute(StepExecution stepExecution) {
+    public void execute(StepInstance stepInstance) throws FileNotFoundException {
         LOGGER.debug("Entered execute() method of FastaFileLoadStep");
-        stepExecution.setToRun();
-        try{
-            LOGGER.debug("LoadFastaFile object: " + fastaFileLoader);
-            LOGGER.debug("Resource object (fasta file): " + fastaFile);
-            fastaFileLoader.loadSequences(fastaFile);
-            stepExecution.completeSuccessfully();
+        LOGGER.debug("LoadFastaFile object: " + fastaFileLoader);
+        final String providedPath = stepInstance.getStepParameters().get(FASTA_FILE_PATH_KEY);
+        LOGGER.debug("Fasta file path from step parameters; " + providedPath);
+
+        // Try resolving the fasta file as an absolute file path
+        InputStream fastaFileInputStream;
+        File file = new File (providedPath);
+        if (file.exists()){
+            if (file.canRead()) {
+                fastaFileInputStream = new FileInputStream(file);
+            }
+            else {
+                throw new IllegalArgumentException ("The fasta file " + providedPath + " is visible but cannot be read.  Please check file permissions.");
+            }
         }
-        catch (Exception e){
-            stepExecution.fail();
+        else {
+            // Absolute file path did not resolve, so try using the class loader.
+            fastaFileInputStream = FastaFileLoadStep.class.getClassLoader().getResourceAsStream(providedPath);
         }
+        if (fastaFileInputStream == null){
+            throw new IllegalArgumentException ("Cannot find the fasta file located at " + providedPath);
+        }
+
+        fastaFileLoader.loadSequences(fastaFileInputStream);
     }
 }

@@ -44,8 +44,9 @@ public class StepInstance implements Serializable {
     private static final String MODEL_TOP_HOLDER = "\\[MODEND\\]";
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="STEP_INS_IDGEN")
+    @TableGenerator(name="STEP_INS_IDGEN", table="KEYGEN", pkColumnValue="step_instance", initialValue = 0, allocationSize = 50)
+    private Long id;
 
     /**
      * Relationship is lazy-loaded
@@ -157,7 +158,7 @@ public class StepInstance implements Serializable {
         return StepExecutionState.STEP_EXECUTION_FAILED;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -281,13 +282,12 @@ public class StepInstance implements Serializable {
         final StringBuilder sb = new StringBuilder();
         sb.append("StepInstance");
         sb.append("{id='").append(id).append('\'');
-        sb.append(", step=").append(step);
         sb.append(", stepId='").append(stepId).append('\'');
         sb.append(", bottomProtein=").append(bottomProtein);
         sb.append(", topProtein=").append(topProtein);
-        sb.append(", bottomModel=").append(bottomModel);
-        sb.append(", topModel=").append(topModel);
-        sb.append(", dependsUpon=").append(dependsUpon);
+//        sb.append(", bottomModel=").append(bottomModel);
+//        sb.append(", topModel=").append(topModel);
+//        sb.append(", dependsUpon=").append(dependsUpon);
         sb.append('}');
         return sb.toString();
     }

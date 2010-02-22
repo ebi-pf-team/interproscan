@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class Jobs {
 
-    Logger LOGGER = Logger.getLogger(Jobs.class);
+    private static final Logger LOGGER = Logger.getLogger(Jobs.class);
 
     private Map<String, Job> jobMap;
 

@@ -4,12 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,32 +66,23 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
     }
 
     /**
-     * This method is called to execute the action that the StepExecution must perform.
-     * This method should typically perform its activity in a try / catch / finally block
-     * that sets the state of the step execution appropriately.
-     * <p/>
-     * Note that the implementation DOES have access to the protected stepInstance,
-     * and from their to the protected Step, to allow it to access parameters for execution.
+     * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepExecution record of execution
+     * @param stepInstance containing the parameters for executing.
      */
     @Override
-    public void execute(StepExecution stepExecution) {
-        final StepInstance stepInstance = stepExecution.getStepInstance();
+    public void execute(StepInstance stepInstance) throws InterruptedException, IOException {
         LOGGER.debug("Running Parser HMMER3 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
-        stepExecution.setToRun();
         InputStream is = null;
         try{
-            Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
+            Thread.sleep(10000);  // Have a snooze to allow NFS to catch up.
             final String hmmerOutputFilePath = stepInstance.filterFileNameProteinBounds(this.getHmmerOutputFilePathTemplate());
             is = new FileInputStream(hmmerOutputFilePath);
             final Hmmer3SearchMatchParser<PfamHmmer3RawMatch> parser = this.getParser();
             final Set<RawProtein<PfamHmmer3RawMatch>> parsedResults = parser.parse(is);
             pfamRawMatchDAO.insertProteinMatches(parsedResults);
-            stepExecution.completeSuccessfully();
-        } catch (Exception e) {
-            stepExecution.fail();
-            LOGGER.error("Doh.  Hmmer output parsing failed.", e);
+            File file = new File(hmmerOutputFilePath);
+            file.delete();
         }
         finally {
             if (is != null){
