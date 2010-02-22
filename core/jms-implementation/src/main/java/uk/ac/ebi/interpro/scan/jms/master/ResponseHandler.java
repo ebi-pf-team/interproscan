@@ -27,5 +27,5 @@ public interface ResponseHandler {
      * updated from the response to the Master.
      * @param stepExecutions that have been completed on remote nodes.
      */
-    void setStepExecutionMap(Map<String, StepExecution> stepExecutions);
+    void setStepExecutionMap(Map<Long, StepExecution> stepExecutions);
 }

@@ -1,9 +1,11 @@
 package uk.ac.ebi.interpro.scan.jms.broker;
 
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.jms.broker.platforms.WorkerRunner;
+import uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker;
 
 import javax.jms.*;
 import java.io.Serializable;
@@ -20,9 +22,13 @@ import java.lang.IllegalStateException;
  */
 public class QueueJumper implements Runnable{
 
+    private static final Logger LOGGER = Logger.getLogger(QueueJumper.class);
+
     private int workersStarted = 0;
 
     private WorkerRunner parallelWorkerRunner;
+
+    private WorkerRunner serialWorkerRunner;
 
     private SessionHandler sessionHandler;
 
@@ -52,6 +58,11 @@ public class QueueJumper implements Runnable{
     @Required
     public void setWorkerJobRequestQueueName(String workerJobRequestQueueName) {
         this.workerJobRequestQueueName = workerJobRequestQueueName;
+    }
+
+    @Required
+    public void setSerialWorkerRunner(WorkerRunner serialWorkerRunner) {
+        this.serialWorkerRunner = serialWorkerRunner;
     }
 
     /**
@@ -98,40 +109,26 @@ public class QueueJumper implements Runnable{
             MessageProducer producer = sessionHandler.getMessageProducer(workerJobRequestQueueName);
 
             while (running){
-                System.out.println("Waiting for message on submission queue...");
+                LOGGER.debug("Waiting for message on submission queue...");
                 Message message = messageConsumer.receive();
-                Message outgoingMessage = null;
-
-
                 if (message != null){
                     if (message instanceof ObjectMessage){
                         final Serializable serializedObject = ((ObjectMessage) message).getObject();
                         if (serializedObject != null){
-                            outgoingMessage = sessionHandler.createObjectMessage(serializedObject);
+                            LOGGER.debug("Forwarding message and creating parallel worker");
+                            producer.send(sessionHandler.createObjectMessage(serializedObject));
+                            parallelWorkerRunner.startupNewWorker();
                         }
                     }
                     else if (message instanceof TextMessage){
                         final String text = ((TextMessage) message).getText();
-                        if (text != null){
-                            outgoingMessage = sessionHandler.createTextMessage(text);
+                        if (InterProScanWorker.NEW_SERIAL_WORKER_REQUEST.equals(text)){
+                            LOGGER.debug("Received request to create new SerialWorker.");
+                            serialWorkerRunner.startupNewWorker();
                         }
                     }
+                    message.acknowledge();
                 }
-
-
-                System.out.println("Message recieved on submission queue - routing to worker request queue.");
-                if (((++workersStarted) % 5) == 0){
-                    // Start up an extra worker every now and then...
-                    System.out.println("Starting up an extra worker...");
-                    parallelWorkerRunner.startupNewWorker();
-                }
-
-                parallelWorkerRunner.startupNewWorker();
-                if (outgoingMessage == null){
-                    throw new IllegalStateException("The QueueJumper was unable to forward the incoming message.");
-                }
-                producer.send(outgoingMessage);
-                message.acknowledge();
             }
 
         }

@@ -55,5 +55,5 @@ public interface ResponseMonitor extends Runnable{
      * in the database.
      * @param stepExecutions
      */
-    void setStepExecutionMap(Map<String, StepExecution> stepExecutions);
+    void setStepExecutionMap(Map<Long, StepExecution> stepExecutions);
 }

@@ -93,7 +93,7 @@ public class ResponseMonitorImpl implements ResponseMonitor{
      * @param stepExecutions
      */
     @Override
-    public void setStepExecutionMap(Map<String, StepExecution> stepExecutions) {
+    public void setStepExecutionMap(Map<Long, StepExecution> stepExecutions) {
         this.handler.setStepExecutionMap(stepExecutions);
     }
 

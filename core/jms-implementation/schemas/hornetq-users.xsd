@@ -6,7 +6,7 @@
    elementFormDefault="qualified"
    attributeFormDefault="unqualified"
    version="1.0">
-   
+
    <xsd:element name="configuration">
    	<xsd:complexType>
    		<xsd:sequence>

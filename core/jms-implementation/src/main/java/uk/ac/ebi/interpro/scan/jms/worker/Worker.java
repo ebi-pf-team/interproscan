@@ -66,7 +66,7 @@ public interface Worker {
      * worker continues to take jobs from the queue until it is explicity shut down.
      */
     @Required
-    void setSingleUseOnly(boolean singleUseOnly);
+    void setStopWhenIdle(boolean singleUseOnly);
 
     /**
      * Start the Worker running.
@@ -100,7 +100,7 @@ public interface Worker {
      * @return true if this Worker is configured to only service a single
      * job message.
      */
-    boolean isSingleUseOnly();
+    boolean isStopWhenIdle();
 
     /**
      * This method should return:

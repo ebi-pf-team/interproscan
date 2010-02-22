@@ -20,7 +20,7 @@
     <bean id="serialWorker" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker">
         <!-- The serial worker processes one job after another and should
         be closed down explicitly. -->
-        <property name="singleUseOnly" value="false"/>
+        <property name="stopWhenIdle" value="false"/>
         <!-- This single serial worker listens on the job submission queue
          for serial jobs, which do not get pushed on to the parellel workers queue.
          -->
@@ -31,6 +31,7 @@
         <property name="mainSessionHandler" ref="sessionHandler"/>
         <property name="workerManager" ref="workerManager" />
         <property name="jobs" ref="jobs"/>
+        <property name="serialWorker" value="true"/>
     </bean>
 
     

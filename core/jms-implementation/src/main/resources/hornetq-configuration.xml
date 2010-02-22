@@ -20,8 +20,8 @@
         <connector name="netty-connector">
             <factory-class>org.hornetq.integration.transports.netty.NettyConnectorFactory</factory-class>
             <!--param key="hornetq.remoting.netty.host"  value="phildell.windows.ebi.ac.uk" type="String"/-->
-            <param key="hornetq.remoting.netty.host"  value="${broker.host.name}" type="String"/>
-            <param key="hornetq.remoting.netty.port" value="${broker.port.number}" type="Integer"/>
+            <param key="host"  value="${broker.host.name}"/>
+            <param key="port" value="${broker.port.number}"/>
         </connector>
 
     </connectors>
@@ -30,33 +30,13 @@
         <acceptor name="netty-acceptor">
             <factory-class>org.hornetq.integration.transports.netty.NettyAcceptorFactory</factory-class>
             <!--param key="hornetq.remoting.netty.host"  value="phildell.windows.ebi.ac.uk" type="String"/-->
-            <param key="hornetq.remoting.netty.host"  value="${broker.host.name}" type="String"/>
-            <param key="hornetq.remoting.netty.port"  value="${broker.port.number}" type="Integer"/>
+            <param key="host"  value="${broker.host.name}"/>
+            <param key="port"  value="${broker.port.number}"/>
         </acceptor>
     </acceptors>
 
     <security-settings>
-        <security-setting match="jms.queue.${job.submission.queue}">
-            <permission type="manage" roles="guest"/>
-            <permission type="send" roles="guest"/>
-            <permission type="consume" roles="guest"/>
-        </security-setting>
-        <security-setting match="jms.queue.${worker.job.request.queue}">
-            <permission type="manage" roles="guest"/>
-            <permission type="send" roles="guest"/>
-            <permission type="consume" roles="guest"/>
-        </security-setting>
-        <security-setting match="jms.queue.${worker.job.response.queue}">
-            <permission type="manage" roles="guest"/>
-            <permission type="send" roles="guest"/>
-            <permission type="consume" roles="guest"/>
-        </security-setting>
-        <security-setting match="jms.topic.${worker.manager.topic}">
-            <permission type="manage" roles="guest"/>
-            <permission type="send" roles="guest"/>
-            <permission type="consume" roles="guest"/>
-        </security-setting>
-        <security-setting match="jms.queue.${worker.manager.response.queue}">
+        <security-setting match="jms.queue.#">
             <permission type="manage" roles="guest"/>
             <permission type="send" roles="guest"/>
             <permission type="consume" roles="guest"/>

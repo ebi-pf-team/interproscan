@@ -39,7 +39,7 @@ public class InterProScanMaster implements Master {
 
 //    private volatile Map<String, StepInstance> stepInstances = new HashMap<String, StepInstance>();
 //
-    private volatile Map<String, StepExecution> stepExecutions = new HashMap<String, StepExecution>();
+    private volatile Map<Long, StepExecution> stepExecutions = new HashMap<Long, StepExecution>();
 
     private String managementRequestTopicName;
 
@@ -142,12 +142,11 @@ public class InterProScanMaster implements Master {
             sessionHandler.init();
 
             producer = sessionHandler.getMessageProducer(jobSubmissionQueueName);
-            buildStepInstancesTheStupidWay();
+            loadPfamModels();
             while(true){
                 for (Job job : jobs.getJobList()){
                     for (Step step : job.getSteps()){
-                        LOGGER.debug("In InterProScanMaster.start().  About to retrieve step instances from the database.");
-                        for (StepInstance stepInstance : stepInstanceDAO.retrieveInstances(step)){
+                        for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
                             if (stepInstance.canBeSubmitted(jobs)){
                                 StepExecution stepExecution = stepInstance.createStepExecution();
                                 stepExecutionDAO.insert(stepExecution);
@@ -157,14 +156,10 @@ public class InterProScanMaster implements Master {
                         }
                     }
                 }
-                Thread.sleep(2000);
             }
 
         } catch (JMSException e) {
             LOGGER.error ("JMSException", e);
-            System.exit(1);
-        } catch (InterruptedException e) {
-            LOGGER.error ("InterruptedException", e);
             System.exit(1);
         } catch (Exception e){
             LOGGER.error ("Exception", e);
@@ -182,13 +177,12 @@ public class InterProScanMaster implements Master {
         }
     }
 
-    private void buildStepInstancesTheStupidWay() {
-        // TODO - Note that this method is just a HACK to create a structure of steps that
-        // TODO - can be run for the demonstration - the mechanism to build a real set of
-        // TODO - steps, following the addition of new proteins has yet to be written.
-        Job insertProteinJob = jobs.getJobById("jobLoadFromFasta");
+    /**
+     * Called by quartz to load some more proteins.
+     */
+    public void createProteinLoadJob(){
+        Job insertProteinJob = jobs.getJobById("jobLoadFromUniParc");
         for (Step step : insertProteinJob.getSteps()){
-            System.out.println("step being iterated by buildStepInstancesTheStupidWay.  = " + step);
             StepInstance stepInstance = new StepInstance(
                     step,
                     null,
@@ -196,10 +190,12 @@ public class InterProScanMaster implements Master {
                     null,
                     null
             );
-            stepInstance.addStepParameter("testKey", "testValue");
             stepInstanceDAO.insert(stepInstance);
         }
+    }
 
+
+    private void loadPfamModels() {
         // Load the models into the database.
 
         // Parse and retrieve the signatures.
@@ -212,8 +208,6 @@ public class InterProScanMaster implements Master {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             System.exit(1);
         }
-
-
 
         // And store the Models / Signatures to the database.
         LOGGER.debug("Storing SignatureLibraryRelease...");
@@ -234,5 +228,16 @@ public class InterProScanMaster implements Master {
         assert stepInstance != null;
         message.setBooleanProperty("parallel", stepInstance.getStep(jobs).isParallel());
         producer.send(message);
+    }
+
+    private int runningStepExecutions(){
+        int running = 0;
+        for (StepExecution exec : stepExecutions.values()){
+            if (exec.getState() == StepExecutionState.STEP_EXECUTION_SUBMITTED ||
+                    exec.getState() == StepExecutionState.STEP_EXECUTION_RUNNING){
+                running++;
+            }
+        }
+        return running;
     }
 }
