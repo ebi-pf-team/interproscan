@@ -42,7 +42,8 @@ import java.util.Set;
 public class SignatureLibraryRelease implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator="SIG_LIB_IDGEN")
+    @TableGenerator(name="SIG_LIB_IDGEN", table="KEYGEN", pkColumnValue="signature_library_release", initialValue = 0, allocationSize = 50)
     private Long id;
 
     @Enumerated(javax.persistence.EnumType.STRING)
