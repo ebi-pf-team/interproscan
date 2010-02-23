@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.jms.broker.platforms;
+package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
 /**
  * Interface to run a new worker JVM (i.e. remote worker).

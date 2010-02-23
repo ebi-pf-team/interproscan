@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.*;
@@ -49,7 +51,9 @@ public class InterProScanMaster implements Master {
 
     private GenericDAO signatureLibraryReleaseDAO;
 
+    private QueueJumper queueJumper;
 
+    private WorkerRunner serialWorkerRunner;
 
     private String pfamHMMfilePath;
 
@@ -75,6 +79,16 @@ public class InterProScanMaster implements Master {
     @Required
     public void setJobSubmissionQueueName(String jobSubmissionQueueName) {
         this.jobSubmissionQueueName = jobSubmissionQueueName;
+    }
+
+    @Required
+    public void setQueueJumper(QueueJumper queueJumper) {
+        this.queueJumper = queueJumper;
+    }
+
+    @Required
+    public void setSerialWorkerRunner(uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner serialWorkerRunner) {
+        this.serialWorkerRunner = serialWorkerRunner;
     }
 
     /**
@@ -138,11 +152,19 @@ public class InterProScanMaster implements Master {
             Thread responseMonitorThread = new Thread(responseMonitor);
             responseMonitor.setStepExecutionMap(stepExecutions);
             responseMonitorThread.start();
+
+            // Start up the Thread that monitors the taskSubmission queue.
+            Thread queueMonitorThread = new Thread (queueJumper);
+            queueMonitorThread.start();
+
+            // Start up the serial worker
+            serialWorkerRunner.startupNewWorker();
+
             // Initialise the sessionHandler for the master thread
             sessionHandler.init();
 
             producer = sessionHandler.getMessageProducer(jobSubmissionQueueName);
-            loadPfamModels();
+//            loadPfamModels();
             while(true){
                 for (Job job : jobs.getJobList()){
                     for (Step step : job.getSteps()){

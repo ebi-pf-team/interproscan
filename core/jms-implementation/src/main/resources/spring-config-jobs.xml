@@ -83,7 +83,7 @@
     <bean id="uniparcLoader" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
         <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
         <property name="rowCallbackHandlerTemplate" ref="rowCallbackHandlerTemplate"/>
-        <property name="maximumProteins" value="100000"/>
+        <property name="maximumProteins" value="20000"/>
         <property name="xrefDao" ref="xrefDAO"/>
     </bean>
 

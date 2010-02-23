@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.jms.broker.platforms;
+package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -49,11 +49,11 @@ public class LANWorkerRunner implements WorkerRunner {
         this.accessPrefix = accessPrefix;
     }
 
-    public void setLanServerListing(LANServerListing lanServerListing) {
+    public void setLanServerListing(uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerListing lanServerListing) {
         this.lanServerListing = lanServerListing;
     }
 
-    public void setLanServerSettings(LANServerSettings lanServerSettings) {
+    public void setLanServerSettings(uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerSettings lanServerSettings) {
         this.lanServerSettings = lanServerSettings;
     }
 
@@ -63,8 +63,8 @@ public class LANWorkerRunner implements WorkerRunner {
      */
     @Override
     public void startupNewWorker() {
-        List<LANServerSettings> lanServerSettingsList = lanServerListing.getListServerSettings();
-        for (LANServerSettings serverSettings : lanServerSettingsList) {
+        List<uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerSettings> lanServerSettingsList = lanServerListing.getListServerSettings();
+        for (uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerSettings serverSettings : lanServerSettingsList) {
             setLanServerSettings(serverSettings);
             for (int i = 0; i < lanServerSettings.getVmNumber(); i++) {
                 StringBuffer commandBuf = new StringBuffer();

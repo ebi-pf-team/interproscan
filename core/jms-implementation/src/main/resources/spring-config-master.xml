@@ -8,6 +8,126 @@
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
     <import resource="spring-config-jobs.xml"/>
+    <import resource="spring-config-servers.xml"/>
+
+    <!-- Starts up parallel workers.  Used by the queueJumper bean, which starts up
+    a new parallel worker each time a parallel TaskExecution is run. -->
+    <bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+        <property name="optionalPrefix" value="ssh -x ${unix.username}@${lsf.submission.hostname}"/>
+        <property name="submissionJobFile" ref="lsfParallelFile"/>
+        <property name="submissionType" value="lsf"/>
+    </bean>
+
+    <!-- Starts up a serial worker.  Used by the broker bean to start up a single multi-use worker. -->
+    <bean id="serialWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+        <property name="optionalPrefix" value="ssh -x ${unix.username}@${lsf.submission.hostname}"/>
+        <property name="submissionJobFile" ref="lsfSerialFile"/>
+        <property name="submissionType" value="lsf"/>
+    </bean>
+
+    <!-- Starts up a serial worker using the Sun Grid Engine.  Used by the broker bean to start up a single multi-use worker.
+         The shellPath is optional and defaults to the Bourne shell /bin/sh if not set.-->
+    <bean id="serialWorkerRunnerSGE" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+        <property name="optionalPrefix" value="ssh -x ${unix.username}@${sge.submission.hostname}"/>
+        <property name="shellPath" value = "/bin/bash"/>
+        <property name="submissionJobFile" ref="sgeExecutionFile"/>
+        <property name="submissionType" value="sge"/>
+    </bean>
+
+    <!-- Starts up a serial worker using the Portable Batch System.  Used by the broker bean to start up a single multi-use worker.
+         The shellPath is optional and defaults to the user's login shell if not set.-->
+    <bean id="serialWorkerRunnerPBS" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+        <property name="optionalPrefix" value="ssh -x ${unix.username}@${pbs.submission.hostname}"/>
+        <property name="shellPath" value = "/bin/bash"/>
+        <property name="submissionJobFile" ref="pbsExecutionFile"/>
+        <property name="submissionType" value="pbs"/>
+    </bean>
+
+    <!-- Starts up a serial worker on a local machine (defined in spring-config-servers.xml).  Used by the lanBroker bean to start up a single multi-use worker. -->
+    <bean id="lanWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANWorkerRunner">
+        <property name="command"
+                  value='${maven.home} -e -P runSerialWorker -f ${basedir}/pom.xml exec:java -DXmx=${serial.worker.xmx}m'/>
+        <property name="accessPrefix" value="ssh -x ${unix.username}"/>
+        <property name="lanServerListing" ref="serverNames"/>
+    </bean>
+
+    <bean id="queueJumper" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper">
+        <!-- This filter ensures that the QueueJumper only starts up new JVMs for
+        parallel tasks.  Serial tasks are filtered by a specific worker directly from
+        the workerJobRequestQueue. -->
+        <property name="jmsMessageSelector" value="parallel = TRUE"/>
+        <property name="connectionConfiguration" ref="sessionHandler"/>
+        <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
+
+        <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
+        <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
+        <property name="serialWorkerRunner" ref="lanWorkerRunner"/>
+    </bean>
+
+    <!--<bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
+        <!--<property name="serialWorkerRunner" ref="lanWorkerRunner"/>-->
+        <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
+        <!--<property name="queueJumper" ref="queueJumper"/>-->
+        <!--<property name="jmsConfigurationXml" value="hornetq-jms.xml"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="sgeBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
+        <!--<property name="serialWorkerRunner" ref="serialWorkerRunnerSGE"/>-->
+        <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
+        <!--<property name="queueJumper" ref="queueJumper"/>-->
+        <!--<property name="jmsConfigurationXml" value="hornetq-jms.xml"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="pbsBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
+        <!--<property name="serialWorkerRunner" ref="serialWorkerRunnerPBS"/>-->
+        <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
+        <!--<property name="queueJumper" ref="queueJumper"/>-->
+        <!--<property name="jmsConfigurationXml" value="hornetq-jms.xml"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="broker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
+        <!--<property name="serialWorkerRunner" ref="serialWorkerRunner"/>-->
+        <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
+        <!--<property name="queueJumper" ref="queueJumper"/>-->
+        <!--<property name="jmsConfigurationXml" value="hornetq-jms.xml"/>-->
+    <!--</bean>-->
+
+    <bean id="sgeExecutionFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="sge_exec.sh" />
+    </bean>
+
+    <bean id="pbsExecutionFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="pbs_exec.sh" />
+    </bean>
+
+    <bean id="lsfSerialFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="lsf_serial.sh" />
+    </bean>
+
+    <bean id="lsfParallelFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="lsf_parallel.sh" />
+    </bean>
+
+    <bean id="startSpareParallelWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="parallelWorkerRunner"/>
+        <property name="targetMethod" value="startupNewWorker"/>
+    </bean>
+
+    <bean id="startSpareParallelWorker" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>
+        <!-- 1 seconds -->
+        <property name="startDelay" value="60000"/>
+        <!-- repeat every minute -->
+        <property name="repeatInterval" value="60000"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="startSpareParallelWorker"/>
+            </list>
+        </property>
+    </bean>
 
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
@@ -23,6 +143,8 @@
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
+        <property name="serialWorkerRunner" ref="serialWorkerRunner"/>
+        <property name="queueJumper" ref="queueJumper"/>
     </bean>
 
     <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
@@ -46,7 +168,7 @@
         <!-- 1 seconds -->
         <property name="startDelay" value="0"/>
         <!-- repeat every 10 minutes -->
-        <property name="repeatInterval" value="600000"/>
+        <property name="repeatInterval" value="60000000"/>
     </bean>
 
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">

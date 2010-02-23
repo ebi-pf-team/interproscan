@@ -4,6 +4,7 @@ import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class WorkerStateTableModel implements TableModel {
      */
     public void setWorkerStates(List<WorkerState> workerStates) {
         this.workerStates = workerStates;
+        Collections.sort(this.workerStates);
     }
 
     /**

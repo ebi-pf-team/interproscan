@@ -40,7 +40,7 @@
         <property name="retries"                            value="0"/>
         <property name="fastaFilePathTemplate"              value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
         <property name="parallel"                           value="false"/>
-        <property name="maxProteins"                        value="5000"/>
+        <property name="maxProteins"                        value="2000"/>
         <property name="proteinDAO"                         ref="proteinDAO"/>
     </bean>
 
@@ -63,7 +63,7 @@
         <property name="retries"                            value="0"/>
         <property name="fastaFilePathNameTemplate"          value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
         <property name="parallel"                           value="true"/>
-        <property name="maxProteins"                        value="5000"/>
+        <property name="maxProteins"                        value="2000"/>
     </bean>
 
     <!-- STEP 3 -->
@@ -77,7 +77,7 @@
         <property name="retries"                            value="0"/>
         <property name="parser"                             ref="hmmer3SearchParser"/>
         <property name="parallel"                           value="false"/>
-        <property name="maxProteins"                        value="5000"/>
+        <property name="maxProteins"                        value="2000"/>
         <property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>
     </bean>
 
@@ -92,7 +92,7 @@
         <property name="parallel"                           value="false"/>
         <property name="signatureLibraryRelease"            value="24.0"/>
         <property name="signatureLibrary"                   value="PFAM"/>
-        <property name="maxProteins"                        value="5000"/>
+        <property name="maxProteins"                        value="2000"/>
         <property name="rawMatchDAO"                        ref="pfamRawMatchDAO"/>
         <property name="filteredMatchDAO"                   ref="pfamFilteredMatchDAO"/>
     </bean>
