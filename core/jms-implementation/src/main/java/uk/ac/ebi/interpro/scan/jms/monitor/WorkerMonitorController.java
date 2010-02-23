@@ -134,6 +134,7 @@ public class WorkerMonitorController {
     public void setStatus(List<WorkerState> workerStates) {
         stateTableModel.setWorkerStates(workerStates);
         workerDisplayTable.repaint();
+        workerDisplayTable.repaint();
 //        TableModel tableModel = new WorkerStateTableModel (workerStates);
 //        workerDisplayTable.setModel(tableModel);
 //        // Inject suitable renderers for the non-text columns.

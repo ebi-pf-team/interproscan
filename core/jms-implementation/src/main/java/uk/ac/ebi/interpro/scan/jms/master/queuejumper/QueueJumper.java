@@ -1,15 +1,14 @@
-package uk.ac.ebi.interpro.scan.jms.broker;
+package uk.ac.ebi.interpro.scan.jms.master.queuejumper;
 
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.jms.broker.platforms.WorkerRunner;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker;
 
 import javax.jms.*;
 import java.io.Serializable;
-import java.lang.IllegalStateException;
 
 /**
  * Runs on the broker in a separate thread, moving any
@@ -61,7 +60,7 @@ public class QueueJumper implements Runnable{
     }
 
     @Required
-    public void setSerialWorkerRunner(WorkerRunner serialWorkerRunner) {
+    public void setSerialWorkerRunner(uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner serialWorkerRunner) {
         this.serialWorkerRunner = serialWorkerRunner;
     }
 

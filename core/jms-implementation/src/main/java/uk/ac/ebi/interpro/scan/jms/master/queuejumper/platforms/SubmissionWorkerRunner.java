@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.jms.broker.platforms;
+package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
@@ -16,7 +16,7 @@ import java.util.Map;
  * Time: 14:43:32
  */
 
-public class SubmissionWorkerRunner implements WorkerRunner{
+public class SubmissionWorkerRunner implements WorkerRunner {
 
     private String optionalPrefix;
 

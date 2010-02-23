@@ -189,31 +189,6 @@
     <profiles>
 
         <profile>
-            <id>runBroker</id>
-            <build><plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.1</version>
-
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>java</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunBroker</mainClass>
-                        <arguments>
-                            <argument>broker</argument>
-                        </arguments>
-                    </configuration>
-                </plugin>
-            </plugins></build>
-        </profile>
-
-        <profile>
             <id>runMaster</id>
 
             <build><plugins>
@@ -405,7 +380,6 @@
                 <lsf.submission.hostname>ebi-001.ebi.ac.uk</lsf.submission.hostname>
                 <lsf.queue.submission>production</lsf.queue.submission>
                 <lsf.output.file>lsf-serial-worker.out</lsf.output.file>
-                <lsf.memory.setting>-DXmx=2048m</lsf.memory.setting>                
                 <!-- SGE settings -->
                 <sge.submission.hostname>sge001.ebi.ac.uk</sge.submission.hostname>
                 <sge.output.file>sge-serial-worker.out</sge.output.file>
@@ -422,14 +396,9 @@
                 <maven.executable>/net/nas10b/vol1/homes/maslen/work/apache-maven-2.2.1/bin/mvn</maven.executable>
                 <jms-implementation.pom.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/pom.xml</jms-implementation.pom.path>
                 <absolute.output.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation</absolute.output.path>
-                
 
-                <!-- LSF settings -->
-                <lsf.queue>production</lsf.queue>
                 <lsf.parallel.worker.memoryrequirement>8000</lsf.parallel.worker.memoryrequirement>
                 <lsf.serial.worker.memoryrequirement>31000</lsf.serial.worker.memoryrequirement>
-
-                <job.notification.emailaddress>pjones@ebi.ac.uk</job.notification.emailaddress>
 
                 <parallel.worker.xmx>2048</parallel.worker.xmx>
                 <serial.worker.xmx>28000</serial.worker.xmx>

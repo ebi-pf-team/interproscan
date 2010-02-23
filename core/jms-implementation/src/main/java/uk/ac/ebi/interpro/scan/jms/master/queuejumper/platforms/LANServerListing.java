@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.jms.broker.platforms;
+package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
 import org.springframework.beans.factory.annotation.Required;
 
