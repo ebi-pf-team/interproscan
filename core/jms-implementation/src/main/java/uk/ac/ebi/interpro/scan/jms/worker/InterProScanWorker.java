@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -23,7 +24,9 @@ public class InterProScanWorker implements Worker {
 
     private static final Logger LOGGER = Logger.getLogger(InterProScanWorker.class);
 
-    private SessionHandler sessionHandler;
+    private String jmsBrokerHostName;
+
+    private int jmsBrokerPort;
 
     private String jobRequestQueueName;
 
@@ -31,7 +34,7 @@ public class InterProScanWorker implements Worker {
 
     private volatile boolean running = true;
 
-    private WorkerMonitor workerManager;
+    private volatile WorkerMonitor workerManager;
 
     private long receiveTimeout;
 
@@ -39,7 +42,7 @@ public class InterProScanWorker implements Worker {
 
     private Double workDone;
 
-    private String workerStatus = "Running";
+    private volatile String workerStatus = "Running";
 
     private volatile StepExecution currentStepExecution;
 
@@ -100,15 +103,14 @@ public class InterProScanWorker implements Worker {
         this.jobResponseQueueName = jobResponseQueueName;
     }
 
-    /**
-     * Sets the SessionHandler.  This looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     * @param sessionHandler  looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     */
     @Required
-    public void setMainSessionHandler(SessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
+    public void setJmsBrokerHostName(String jmsBrokerHostName) {
+        this.jmsBrokerHostName = jmsBrokerHostName;
+    }
+
+    @Required
+    public void setJmsBrokerPort(int jmsBrokerPort) {
+        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     /**
@@ -205,6 +207,7 @@ public class InterProScanWorker implements Worker {
     }
 
     public void start(){
+        SessionHandler sessionHandler = null;
         try{
             if (workerManager != null){
                 // Worker manager has been injected.  Start in a high priority Thread.
@@ -212,11 +215,11 @@ public class InterProScanWorker implements Worker {
                 // block, while it waits for any messages to be broadcast.
                 workerManager.setWorker(this);
                 Thread managerThread = new Thread(workerManager);
-                managerThread.setDaemon(true);
+                managerThread.setDaemon(true);    // Make sure the manager thread end thread ends when the main thread ends.
                 managerThread.start();
             }
 
-            sessionHandler.init();
+            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
             MessageConsumer messageConsumer;
             if (jmsMessageSelector == null){
                 messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
@@ -227,35 +230,35 @@ public class InterProScanWorker implements Worker {
 
             MessageProducer messageProducer = sessionHandler.getMessageProducer(jobResponseQueueName);
             while (running && noMemoryLeak()){
+                LOGGER.debug("Waiting for a message...");
                 Message message = messageConsumer.receive(receiveTimeout);
                 if (message != null){
+                    LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+                    message.acknowledge();     // Acknowledge receipt of the message before doing anything else.
+                    // Acknowledgement does NOT indicate a successful outcome in this system - just successful
+                    // receipt of the message.
                     if (message instanceof ObjectMessage){
                         ObjectMessage stepExecutionMessage = (ObjectMessage) message;
                         final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
                         currentStepExecution = stepExecution;
                         if (stepExecution != null){
                             LOGGER.debug("Message received of queue - attempting to execute");
-                            stepExecution.setToRun();
+
                             try{
-                                final StepInstance stepInstance = stepExecution.getStepInstance();
-                                final Step step = stepInstance.getStep(jobs);
-                                LOGGER.debug("Step ID: "+ step.getId());
-                                LOGGER.debug("Step instance: " + stepInstance);
-                                LOGGER.debug("Step execution id: " + stepExecution.getId());
-                                step.execute(stepInstance);
-                                stepExecution.completeSuccessfully();
-                                LOGGER.debug ("SUCCESSFUL run of Step.execute() method for StepExecution ID: " + stepExecution.getId());
-                            }
-                            catch (Exception e){
+                                execute(stepExecution, messageProducer, sessionHandler);
+                            } catch (Exception e) {
+                                LOGGER.error ("Execution thrown when attempting to execute the StepExecution.  All database activity rolled back.");
+                                // Something went wrong in the execution - try to send back failure
+                                // message to the broker.  This in turn may fail if it is the JMS connection
+                                // that failed during the execution.
                                 stepExecution.fail();
-                                LOGGER.error ("Exception thrown by Step.execute() method for StepExecution ID: " + stepExecution.getId(), e );
+                                ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
+                                messageProducer.send(responseMessage);
+                                LOGGER.debug ("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
                             }
-                            ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
-                            messageProducer.send(responseMessage);
-                            stepExecutionMessage.acknowledge();
                         }
                         else {
-                            LOGGER.debug("Waited for message, but nothing received.");
+                            LOGGER.debug("Message received, but has not contents.");
                         }
                     }
                 }
@@ -281,11 +284,39 @@ public class InterProScanWorker implements Worker {
         }
         finally{
             try {
-                sessionHandler.close();
+                if (sessionHandler != null){
+                    sessionHandler.close();
+                }
             } catch (JMSException e) {
                 LOGGER.error("JMSException when attempting to close session / connection to JMS broker.", e);
             }
         }
+    }
+
+    /**
+     * Executing the StepInstance and responding to the JMS Broker
+     * if the execution is successful.
+     * @param stepExecution          The StepExecution to run.
+     * @param messageProducer        For building the reply to the Broker
+     * @param sessionHandler         to send the reply to the broker
+     */
+    @Transactional
+    private void execute(StepExecution stepExecution,
+                         MessageProducer messageProducer,
+                         SessionHandler sessionHandler) throws Exception{
+        stepExecution.setToRun();
+        final StepInstance stepInstance = stepExecution.getStepInstance();
+        final Step step = stepInstance.getStep(jobs);
+        LOGGER.debug("Step ID: "+ step.getId());
+        LOGGER.debug("Step instance: " + stepInstance);
+        LOGGER.debug("Step execution id: " + stepExecution.getId());
+        step.execute(stepInstance);
+        stepExecution.completeSuccessfully();
+        LOGGER.debug ("Successful run of Step.execute() method for StepExecution ID: " + stepExecution.getId());
+
+        ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
+        messageProducer.send(responseMessage);
+        LOGGER.debug("Followed by successful reply to the JMS Broker and acknowledgement of the message.");
     }
 
     /**

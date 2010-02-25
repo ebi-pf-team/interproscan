@@ -56,12 +56,13 @@
         parallel tasks.  Serial tasks are filtered by a specific worker directly from
         the workerJobRequestQueue. -->
         <property name="jmsMessageSelector" value="parallel = TRUE"/>
-        <property name="connectionConfiguration" ref="sessionHandler"/>
         <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
 
         <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
         <property name="serialWorkerRunner" ref="lanWorkerRunner"/>
+        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
+        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
     </bean>
 
     <!--<bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
@@ -108,30 +109,10 @@
         <constructor-arg value="lsf_parallel.sh" />
     </bean>
 
-    <bean id="startSpareParallelWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="parallelWorkerRunner"/>
-        <property name="targetMethod" value="startupNewWorker"/>
-    </bean>
-
-    <bean id="startSpareParallelWorker" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-        <property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>
-        <!-- 1 seconds -->
-        <property name="startDelay" value="60000"/>
-        <!-- repeat every minute -->
-        <property name="repeatInterval" value="60000"/>
-    </bean>
-
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="triggers">
-            <list>
-                <ref bean="startSpareParallelWorker"/>
-            </list>
-        </property>
-    </bean>
-
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
-        <property name="sessionHandler" ref="sessionHandler"/>
+        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
+        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
         <property name="responseMonitor" ref="responseMonitor"/>
         <property name="managementRequestTopicName" value="jms.topic.${worker.manager.topic}"/>
@@ -149,7 +130,8 @@
 
     <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
         <property name="monitorResponseTimeout" value="5000"/>
-        <property name="sessionHandler" ref="sessionHandler"/>
+        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
+        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
         <property name="handler" ref="responseHandler"/>
         <property name="workerJobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
     </bean>
@@ -157,6 +139,18 @@
     <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl">
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
     </bean>
+
+    <!-- Quartz Scheduler - contains list of Quartz jobs. -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="proteinLoadTrigger"/>
+                <!--<ref bean="startSpareParallelWorkerTrigger"/>-->
+            </list>
+        </property>
+    </bean>
+
+
 
     <bean id="proteinLoadQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="master"/>
@@ -168,15 +162,23 @@
         <!-- 1 seconds -->
         <property name="startDelay" value="0"/>
         <!-- repeat every 10 minutes -->
-        <property name="repeatInterval" value="60000000"/>
+        <property name="repeatInterval" value="600000"/>
     </bean>
 
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="triggers">
-            <list>
-                <ref bean="proteinLoadTrigger"/>
-            </list>
-        </property>
+
+
+    <!-- Quartz job to start spare parallel worker.  Currently turned off. -->
+    <bean id="startSpareParallelWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="parallelWorkerRunner"/>
+        <property name="targetMethod" value="startupNewWorker"/>
+    </bean>
+
+    <bean id="startSpareParallelWorkerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>
+        <!-- 1 seconds -->
+        <property name="startDelay" value="60000"/>
+        <!-- repeat every minute -->
+        <property name="repeatInterval" value="60000"/>
     </bean>
 </beans>
 

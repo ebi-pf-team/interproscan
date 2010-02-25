@@ -38,15 +38,6 @@ public interface Worker {
     void setJobResponseQueueName(String jobResponseQueueName);
 
     /**
-     * Sets the SessionHandler.  This looks after connecting to the
-      * Broker and allowing messages to be put on the queue / taken off the queue.
-      * @param sessionHandler  looks after connecting to the
-      * Broker and allowing messages to be put on the queue / taken off the queue.
-      */
-    @Required
-    void setMainSessionHandler(SessionHandler sessionHandler);
-
-    /**
      * OPTIONALLY a workerManager runnable may be injected.
      * If this is injected, it should be run in a high priority thread
      * (will block most of the time, so should not interfere with the
@@ -131,4 +122,10 @@ public interface Worker {
      * @param jmsMessageSelector optional JMS message selector.
      */
     void setJmsMessageSelector(String jmsMessageSelector);
+
+    @Required
+    void setJmsBrokerHostName(String jmsBrokerHostName);
+
+    @Required
+    void setJmsBrokerPort(int jmsBrokerPort);
 }

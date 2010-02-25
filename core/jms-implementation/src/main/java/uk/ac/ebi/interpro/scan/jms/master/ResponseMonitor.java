@@ -26,13 +26,18 @@ public interface ResponseMonitor extends Runnable{
     void setHandler(ResponseHandler handler);
 
     /**
-     * Sets the SessionHandler.  This looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     * @param sessionHandler  looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
+     * Host name of the JMS broker
+     * @param jmsBrokerHostName  Host name of the JMS broker
      */
     @Required
-    void setSessionHandler(SessionHandler sessionHandler);
+    void setJmsBrokerHostName(String jmsBrokerHostName);
+
+    /**
+     * Port number of the JMS broker.
+     * @param jmsBrokerPort Port number of the JMS broker.
+     */
+    @Required
+    void setJmsBrokerPort(int jmsBrokerPort);
 
     /**
      * Sets the name of the destinationResponseQueue.

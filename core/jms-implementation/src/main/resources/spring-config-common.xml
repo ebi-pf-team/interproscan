@@ -5,13 +5,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-    <!-- Values set from maven profile - IntelliJ is probably whinging about the brokerPort parameter. -->
-    <bean id="sessionHandler"
-          class="uk.ac.ebi.interpro.scan.jms.SessionHandler"
-          p:brokerHostUrl="${broker.host.name}"
-          p:brokerPort="${broker.port.number}"
-          scope="prototype"/>  <!-- Used in more than one thread, is NOT thread safe, so needs
-          prototype scope. Don't try to fix this - javax.jms.Session is NOT thread safe, so
-           the SessionHandler cannot be made thread safe.-->
+    <bean id="jmsBrokerHostName" class="java.lang.String" >
+        <constructor-arg value="${broker.host.name}"/>
+    </bean>
 
+    <bean id="jmsBrokerHostPort" class="java.lang.Integer">
+        <constructor-arg type="java.lang.String" value="${broker.port.number}"/>
+    </bean>
+    
 </beans>

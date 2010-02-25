@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper;
 
 /**
  * Interface for the Master application.
@@ -19,14 +20,6 @@ import uk.ac.ebi.interpro.scan.jms.SessionHandler;
  * @since 1.0
  */
 public interface Master{
-    /**
-     * Sets the SessionHandler.  This looks after connecting to the
-      * Broker and allowing messages to be put on the queue / taken off the queue.
-      * @param sessionHandler  looks after connecting to the
-      * Broker and allowing messages to be put on the queue / taken off the queue.
-      */
-     @Required
-     void setSessionHandler(SessionHandler sessionHandler);
 
     /**
      * Sets the job submission queue name.  This is the queue that new
@@ -59,4 +52,10 @@ public interface Master{
      * Starts the Master application.
      */
     void start();
+
+    @Required
+    void setQueueJumper(QueueJumper queueJumper);
+
+    @Required
+    void setSerialWorkerRunner(uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner serialWorkerRunner);
 }

@@ -33,7 +33,9 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
 
     private String workerManagerResponseQueueName;
 
-    private SessionHandler sessionHandler;
+    private String jmsBrokerHostName;
+
+    private int jmsBrokerPort;
 
     private UUID monitorID;
 
@@ -52,8 +54,13 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
     }
 
     @Required
-    public void setSessionHandler(SessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
+    public void setJmsBrokerHostName(String jmsBrokerHostName) {
+        this.jmsBrokerHostName = jmsBrokerHostName;
+    }
+
+    @Required
+    public void setJmsBrokerPort(int jmsBrokerPort) {
+        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     @Required
@@ -81,55 +88,62 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
     @Override
     protected Void doInBackground() throws Exception {
 
-        sessionHandler.init();
+        SessionHandler sessionHandler = null;
+        try{
+            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
 
+            MessageProducer requestStatusMessageProducer = sessionHandler.getMessageProducer(workerManagerTopicName);
 
-        MessageProducer requestStatusMessageProducer = sessionHandler.getMessageProducer(workerManagerTopicName);
+            // Work out a receive timeout - set to (fairly arbitrarily) one twentieth of the refresh interval.
+            // This should give the user a faily consistent experience.
+            final long recieveTimeout = (refreshInterval / 20L == 0) ? 1 : refreshInterval / 20L;
 
-        // Work out a receive timeout - set to (fairly arbitrarily) one twentieth of the refresh interval.
-        // This should give the user a faily consistent experience.
-        final long recieveTimeout = (refreshInterval / 20L == 0) ? 1 : refreshInterval / 20L;
+            // Keep going until the Worker thread is explicitly stopped.
+            while (! isCancelled()){
 
-        // Keep going until the Worker thread is explicitly stopped.
-        while (! isCancelled()){
-
-            // Unique identifier for THIS REQUEST.
+                // Unique identifier for THIS REQUEST.
 //            final String requestId = monitorID.toString() + '_' + UUID.randomUUID();
-            final String requestId = UUID.randomUUID().toString();
+                final String requestId = UUID.randomUUID().toString();
 
-            String selector = new StringBuilder()
-                    .append('(')
-                    .append(WorkerMonitor.REQUESTEE_PROPERTY)
-                    .append(" = '")
-                    .append(requestId)
-                    .append("')")
-                    .toString();
-            // The selector ensures that this monitor application instance only receives messages in response
-            // to its own monitor requests.
-            final MessageConsumer workerResponsemessageConsumer = sessionHandler.getMessageConsumer(workerManagerResponseQueueName, selector);
+                String selector = new StringBuilder()
+                        .append('(')
+                        .append(WorkerMonitor.REQUESTEE_PROPERTY)
+                        .append(" = '")
+                        .append(requestId)
+                        .append("')")
+                        .toString();
+                // The selector ensures that this monitor application instance only receives messages in response
+                // to its own monitor requests.
+                final MessageConsumer workerResponsemessageConsumer = sessionHandler.getMessageConsumer(workerManagerResponseQueueName, selector);
 
-            List<WorkerState> workerStates = new ArrayList<WorkerState>();
+                List<WorkerState> workerStates = new ArrayList<WorkerState>();
 
-            // Send the status request to the workerManagerTopic.
-            TextMessage statusRequestMessage =  sessionHandler.createTextMessage("status");
-            statusRequestMessage.setStringProperty(WorkerMonitor.REQUESTEE_PROPERTY, requestId);
-            requestStatusMessageProducer.send(statusRequestMessage);
+                // Send the status request to the workerManagerTopic.
+                TextMessage statusRequestMessage =  sessionHandler.createTextMessage("status");
+                statusRequestMessage.setStringProperty(WorkerMonitor.REQUESTEE_PROPERTY, requestId);
+                requestStatusMessageProducer.send(statusRequestMessage);
 
-            final long listenUntil = System.currentTimeMillis() + refreshInterval;
-            // Take results of the workerManagerResponseQueue for the period of the refreshInterval.
-            while (System.currentTimeMillis() < listenUntil){
-                // Take messages of the workerManagerResponseQueue
-                // and add the WorkerState to the Collection..
-                ObjectMessage responseMessage = (ObjectMessage) workerResponsemessageConsumer.receive(recieveTimeout);
-                if (responseMessage != null){
-                    workerStates.add ((WorkerState) responseMessage.getObject());
-                    responseMessage.acknowledge();
+                final long listenUntil = System.currentTimeMillis() + refreshInterval;
+                // Take results of the workerManagerResponseQueue for the period of the refreshInterval.
+                while (System.currentTimeMillis() < listenUntil){
+                    // Take messages of the workerManagerResponseQueue
+                    // and add the WorkerState to the Collection..
+                    ObjectMessage responseMessage = (ObjectMessage) workerResponsemessageConsumer.receive(recieveTimeout);
+                    if (responseMessage != null){
+                        workerStates.add ((WorkerState) responseMessage.getObject());
+                        responseMessage.acknowledge();
+                    }
                 }
+                // Stick out the current Collection of WorkerState objects to the GUI
+                // for display.
+                controller.setStatus(workerStates);
             }
-            // Stick out the current Collection of WorkerState objects to the GUI
-            // for display.
-            controller.setStatus(workerStates);
+            return null;
         }
-        return null;
+        finally {
+            if (sessionHandler != null){
+                sessionHandler.close();
+            }
+        }
     }
 }

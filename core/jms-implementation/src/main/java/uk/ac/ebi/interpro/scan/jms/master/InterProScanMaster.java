@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Pretending to be the InterProScan master application.
+ * The InterProScan master application.
  *
  * @author Phil Jones
  * @version $Id: TestMaster.java,v 1.4 2009/10/28 15:04:00 pjones Exp $
@@ -31,7 +31,9 @@ public class InterProScanMaster implements Master {
 
     private static final Logger LOGGER = Logger.getLogger(InterProScanMaster.class);
 
-    private SessionHandler sessionHandler;
+    private String jmsBrokerHostName;
+
+    private int jmsBrokerPort;
 
     private String jobSubmissionQueueName;
 
@@ -59,15 +61,14 @@ public class InterProScanMaster implements Master {
 
     private MessageProducer producer;
 
-    /**
-     * Sets the SessionHandler.  This looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     * @param sessionHandler  looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     */
     @Required
-    public void setSessionHandler(SessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
+    public void setJmsBrokerHostName(String jmsBrokerHostName) {
+        this.jmsBrokerHostName = jmsBrokerHostName;
+    }
+
+    @Required
+    public void setJmsBrokerPort(int jmsBrokerPort) {
+        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     /**
@@ -147,6 +148,7 @@ public class InterProScanMaster implements Master {
      * Run the Master Application.
      */
     public void start(){
+        SessionHandler sessionHandler = null;
         try {
             // Start the response monitor thread
             Thread responseMonitorThread = new Thread(responseMonitor);
@@ -161,7 +163,7 @@ public class InterProScanMaster implements Master {
             serialWorkerRunner.startupNewWorker();
 
             // Initialise the sessionHandler for the master thread
-            sessionHandler.init();
+            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
 
             producer = sessionHandler.getMessageProducer(jobSubmissionQueueName);
 //            loadPfamModels();
@@ -173,7 +175,7 @@ public class InterProScanMaster implements Master {
                                 StepExecution stepExecution = stepInstance.createStepExecution();
                                 stepExecutionDAO.insert(stepExecution);
                                 stepExecutions.put(stepExecution.getId(), stepExecution);
-                                sendMessage(stepExecution);
+                                sendMessage(stepExecution, sessionHandler);
                             }
                         }
                     }
@@ -193,7 +195,7 @@ public class InterProScanMaster implements Master {
                 try {
                     sessionHandler.close();
                 } catch (JMSException e) {
-                    e.printStackTrace();
+                    LOGGER.error ("JMSException thrown when attempting to close the SessionHandler.", e);
                 }
             }
         }
@@ -243,7 +245,7 @@ public class InterProScanMaster implements Master {
      * @param stepExecution being the StepExecution to send as a message
      * @throws JMSException in the event of a failure sending the message to the JMS Broker.
      */
-    private void sendMessage(StepExecution stepExecution) throws JMSException {
+    private void sendMessage(StepExecution stepExecution, SessionHandler sessionHandler) throws JMSException {
         stepExecution.submit(stepExecutionDAO);
         ObjectMessage message = sessionHandler.createObjectMessage(stepExecution);
         final StepInstance stepInstance = stepExecution.getStepInstance();
