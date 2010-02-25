@@ -83,6 +83,9 @@ public class StepInstance implements Serializable {
     @MapKeyManyToMany(targetEntity = String.class)
     private Map<String, String> stepParameters;
 
+    @Column(nullable=false, name="time_created")
+    private Date timeCreated;
+
     /**
      * List of all the executions of this StepInstance.
      * Set to transient so they don't all get shoved over the
@@ -99,6 +102,7 @@ public class StepInstance implements Serializable {
         this.topProtein = topProteinId;
         this.bottomModel = bottomModelId;
         this.topModel = topModelId;
+        timeCreated = new Date();
     }
 
     public void addStepParameter(String key, String value) {
@@ -191,6 +195,10 @@ public class StepInstance implements Serializable {
     public List<StepInstance> stepInstanceDependsUpon() {
         return dependsUpon;
     }
+                                   
+    public Date getTimeCreated() {
+        return timeCreated;
+    }
 
     /**
      * This method returns true if this StepInstance is a candidate to be submitted.
@@ -282,6 +290,7 @@ public class StepInstance implements Serializable {
         final StringBuilder sb = new StringBuilder();
         sb.append("StepInstance");
         sb.append("{id='").append(id).append('\'');
+        sb.append(", timeCreated='").append(timeCreated).append('\'');
         sb.append(", stepId='").append(stepId).append('\'');
         sb.append(", bottomProtein=").append(bottomProtein);
         sb.append(", topProtein=").append(topProtein);
