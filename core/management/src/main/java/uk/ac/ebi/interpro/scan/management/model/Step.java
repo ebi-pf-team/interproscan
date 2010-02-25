@@ -168,10 +168,15 @@ public abstract class Step implements BeanNameAware {
     /**
      * This method is called to execute the action that the StepInstance must perform.
      *
+     * If an error occurs that cannot be immediately recovered from, the implementation
+     * of this method MUST throw a suitable Exception, as the call
+     * to execute is performed within a transaction with the reply to the JMSBroker.
+     *
      * @param stepInstance containing the parameters for executing.
      * @throws Exception could be anything thrown by the execute method.
      */
     public abstract void execute(StepInstance stepInstance) throws Exception;
+
 
     @Override
     public boolean equals(Object o) {
