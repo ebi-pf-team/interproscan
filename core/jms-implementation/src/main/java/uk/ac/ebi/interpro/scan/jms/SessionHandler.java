@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms;
 
+import org.apache.log4j.Logger;
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.integration.transports.netty.NettyConnectorFactory;
 import org.hornetq.jms.client.HornetQConnectionFactory;
@@ -28,26 +29,12 @@ import static org.hornetq.integration.transports.netty.TransportConstants.PORT_P
  */
 public class SessionHandler {
 
+    private static final Logger LOGGER = Logger.getLogger(SessionHandler.class);
+
     private Connection connection;
     private Session session;
-    private String brokerHostUrl;
-    private int brokerPort;
 
-    @Required
-    public void setBrokerHostUrl(String brokerHostUrl) {
-        this.brokerHostUrl = brokerHostUrl;
-    }
-
-    @Required
-    public void setBrokerPort(int brokerPort) {
-        this.brokerPort = brokerPort;
-    }
-
-
-    public void init() throws JMSException {
-        if (connection != null || session != null){
-            throw new IllegalStateException("Possible programming error - SessionHandler.init() has been called more than once.");
-        }
+    public SessionHandler(String brokerHostUrl, int brokerPort) throws JMSException {
         Map<String, Object> connectionParams = new HashMap<String, Object>();
         connectionParams.put(HOST_PROP_NAME, brokerHostUrl);
         connectionParams.put(PORT_PROP_NAME, brokerPort);
@@ -58,10 +45,23 @@ public class SessionHandler {
         ConnectionFactory cf = new HornetQConnectionFactory(transportConfiguration);
 
         connection = cf.createConnection();
-        session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-        connection.start();
+        try{
+            session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+            connection.start();
+        }
+        catch (JMSException e){
+            LOGGER.error ("JMSException thrown when attempting to instantiate a SessionHandler.  Closing the Session and Connection.", e);
+            try{
+                if (session != null){
+                    session.close();
+                }
+            }
+            finally {
+                connection.close();
+            }
+            throw new IllegalStateException ("Unable to get a Connection to the JMS Broker.", e);
+        }
     }
-
 
     public MessageConsumer getMessageConsumer (String destinationName) throws JMSException {
         return getMessageConsumer(destinationName, null);
@@ -84,10 +84,14 @@ public class SessionHandler {
 
     public void close() throws JMSException {
         try{
-            session.close();
+            if (session != null){
+                session.close();
+            }
         }
         finally {
-            connection.close();
+            if (connection != null){
+                connection.close();
+            }
         }
     }
 
@@ -99,6 +103,20 @@ public class SessionHandler {
         ObjectMessage om = session.createObjectMessage();
         om.setObject(objectMessage);
         return om;
+    }
+
+    /**
+     * This is belt-and braces check that close() is being called.  Note that
+     * this should NOT be relied upon and close() should be called in a finally block
+     * of the code using this object.  (This is present just in case the try/finally block
+     * never gets run! - This object is being injected
+     *
+     * @throws Throwable the <code>Exception</code> raised by this method
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        close();
     }
 }
 

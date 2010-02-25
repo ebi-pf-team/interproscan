@@ -4,10 +4,7 @@ import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Table Model that defines the contents of the display table.
@@ -18,10 +15,11 @@ import java.util.Map;
  */
 public class WorkerStateTableModel implements TableModel {
 
-    List<WorkerState> workerStates;
+    private volatile List<WorkerState> workerStates;
 
     public WorkerStateTableModel(List<WorkerState> workerStates) {
         this.workerStates = workerStates;
+        Collections.sort(this.workerStates);
     }
 
     /**
@@ -113,7 +111,10 @@ public class WorkerStateTableModel implements TableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         // Get the right worker state for the row.
-        WorkerState state = workerStates.get(rowIndex);
+        if (rowIndex >= workerStates.size()){
+            return null;
+        }
+        WorkerState state =  workerStates.get(rowIndex);
 
         if (state == null){
             throw new IllegalStateException ("The List of WorkerStates includes a null value at row "+ rowIndex + " which should not be possible - coding error.");

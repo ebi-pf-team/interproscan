@@ -23,13 +23,18 @@ public class QueueJumper implements Runnable{
 
     private static final Logger LOGGER = Logger.getLogger(QueueJumper.class);
 
+
+    private String jmsBrokerHostName;
+
+    private int jmsBrokerPort;
+
     private int workersStarted = 0;
 
     private WorkerRunner parallelWorkerRunner;
 
     private WorkerRunner serialWorkerRunner;
 
-    private SessionHandler sessionHandler;
+
 
     private String jobSubmissionQueueName;
 
@@ -45,11 +50,6 @@ public class QueueJumper implements Runnable{
     }
 
     @Required
-    public void setConnectionConfiguration(SessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
-    }
-
-    @Required
     public void setJobSubmissionQueueName(String jobSubmissionQueueName) {
         this.jobSubmissionQueueName = jobSubmissionQueueName;
     }
@@ -62,6 +62,16 @@ public class QueueJumper implements Runnable{
     @Required
     public void setSerialWorkerRunner(uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner serialWorkerRunner) {
         this.serialWorkerRunner = serialWorkerRunner;
+    }
+
+    @Required
+    public void setJmsBrokerHostName(String jmsBrokerHostName) {
+        this.jmsBrokerHostName = jmsBrokerHostName;
+    }
+
+    @Required
+    public void setJmsBrokerPort(int jmsBrokerPort) {
+        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     /**
@@ -94,10 +104,10 @@ public class QueueJumper implements Runnable{
      * @see Thread#run()
      */
     public void run() {
-        System.out.println("In QueueJumper thread start method.");
-
+        LOGGER.debug("In QueueJumper thread start method.");
+        SessionHandler sessionHandler = null;
         try{
-            sessionHandler.init();
+            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
             MessageConsumer messageConsumer = null;
             if (jmsMessageSelector == null){
                 messageConsumer = sessionHandler.getMessageConsumer(jobSubmissionQueueName);
@@ -129,16 +139,17 @@ public class QueueJumper implements Runnable{
                     message.acknowledge();
                 }
             }
-
         }
         catch (JMSException e) {
-            e.printStackTrace();
+            LOGGER.error ("JMSException thrown by QueueJumper when forwarding / handling messages.", e);
         }
         finally{
             try {
-                sessionHandler.close();
+                if (sessionHandler != null){
+                    sessionHandler.close();
+                }
             } catch (JMSException e) {
-                e.printStackTrace();
+                LOGGER.error ("JMSException thrown when attempting to close Session / Connection to the JMS Broker.", e);
             }
         }
 

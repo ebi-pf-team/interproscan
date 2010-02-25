@@ -154,6 +154,10 @@ public class WorkerState implements Serializable, Comparable {
         if (!(o instanceof WorkerState)) return false;
 
         WorkerState that = (WorkerState) o;
+        // If its the same JVM, its the same worker.
+        if (this.getWorkerIdentification().equals (that.getWorkerIdentification())) {
+            return true;
+        }
 
         if (timeAliveMillis != that.timeAliveMillis) return false;
         if (exceptionThrown != null ? !exceptionThrown.equals(that.exceptionThrown) : that.exceptionThrown != null)

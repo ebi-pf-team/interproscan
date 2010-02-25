@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
@@ -19,18 +20,22 @@ import java.util.Map;
  */
 public class ResponseMonitorImpl implements ResponseMonitor{
 
+    private static final Logger LOGGER = Logger.getLogger(ResponseMonitorImpl.class);
+
     /**
      * Handles the response from the worker thread.
      */
     private ResponseHandler handler;
-
-    private SessionHandler sessionHandler;
 
     private String workerJobResponseQueueName;
 
     private volatile boolean running = true;
 
     private int monitorResponseTimeout;
+
+    private String jmsBrokerHostName;
+
+    private int jmsBrokerPort;
 
 
     /**
@@ -45,14 +50,23 @@ public class ResponseMonitorImpl implements ResponseMonitor{
     }
 
     /**
-     * Sets the SessionHandler.  This looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     * @param sessionHandler  looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
+     * Host name of the JMS broker
+     *
+     * @param jmsBrokerHostName Host name of the JMS broker
      */
-    @Required
-    public void setSessionHandler(SessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
+    @Override
+    public void setJmsBrokerHostName(String jmsBrokerHostName) {
+        this.jmsBrokerHostName = jmsBrokerHostName;
+    }
+
+    /**
+     * Port number of the JMS broker.
+     *
+     * @param jmsBrokerPort Port number of the JMS broker.
+     */
+    @Override
+    public void setJmsBrokerPort(int jmsBrokerPort) {
+        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     /**
@@ -105,8 +119,9 @@ public class ResponseMonitorImpl implements ResponseMonitor{
      */
     @Override
     public void run() {
+        SessionHandler sessionHandler = null;
         try{
-            sessionHandler.init();
+            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
             MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(workerJobResponseQueueName);
             while (running){
                 // Consume messages off the response queue and handle them.
@@ -117,13 +132,15 @@ public class ResponseMonitorImpl implements ResponseMonitor{
                 }
             }
         } catch (JMSException e) {
-            e.printStackTrace();
+            LOGGER.error ("JMSException thrown by ResponseMonitorImpl", e);
         }
         finally {
             try {
-                sessionHandler.close();
+                if (sessionHandler != null){
+                    sessionHandler.close();
+                }
             } catch (JMSException e) {
-                e.printStackTrace();
+                LOGGER.error ("JMSException thrown by ResponseMonitorImpl when attempting to close JMS Session & Connection.", e);
             }
         }
     }

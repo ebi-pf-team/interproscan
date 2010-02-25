@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
@@ -17,28 +19,30 @@ import java.net.UnknownHostException;
  */
 public class InterProScanMonitor implements WorkerMonitor {
 
+    private static final Logger LOGGER = Logger.getLogger(InterProScanMonitor.class);
+
     private long startTimeMillis = System.currentTimeMillis();
 
     private String workerManagerTopicName;
 
     private String workerManagerResponseQueueName;
 
-    private SessionHandler sessionHandler;
+    private String jmsBrokerHostName;
+
+    private int jmsBrokerPort;
 
     private volatile Worker worker;
 
     private Jobs jobs;
 
-    /**
-     * Sets a SessionHandler for the manager thread.
-     * This looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     *
-     * @param sessionHandler for the manager thread.
-     */
-    @Override
-    public void setSessionHandler(SessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
+    @Required
+    public void setJmsBrokerHostName(String jmsBrokerHostName) {
+        this.jmsBrokerHostName = jmsBrokerHostName;
+    }
+
+    @Required
+    public void setJmsBrokerPort(int jmsBrokerPort) {
+        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     /**
@@ -92,13 +96,13 @@ public class InterProScanMonitor implements WorkerMonitor {
         if (worker == null){
             throw new IllegalStateException("The Worker being managed by this WorkerMonitor must be set before running this thread.");
         }
+        SessionHandler sessionHandler = null;
         try{
-            sessionHandler.init();
+            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
             MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(workerManagerTopicName);
             MessageProducer messageProducer = sessionHandler.getMessageProducer(workerManagerResponseQueueName);
             // Responses to monitor requests shouldn't hang around in the queue too long and
             // don't need to be persisted in the queue database.
-//            messageProducer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
             messageProducer.setTimeToLive(20000);
             // Consume a single message off the response queue and handle it.
             // (or die if this does not occur in 20 seconds)
@@ -140,16 +144,18 @@ public class InterProScanMonitor implements WorkerMonitor {
                 }
             }
         } catch (JMSException e) {
-            e.printStackTrace();
+            LOGGER.error ("JMSException thrown by InterProScanMonitor", e);
         }
         catch (UnknownHostException uhe){
-            uhe.printStackTrace();
+            LOGGER.error ("UnknownHostException thrown by InterProScanMonitor", uhe);
         }
         finally {
             try {
-                sessionHandler.close();
+                if (sessionHandler != null){
+                    sessionHandler.close();
+                }
             } catch (JMSException e) {
-                e.printStackTrace();
+                LOGGER.error ("JMSException thrown by InterProScanMonitor when attempting to close Session / Connection.", e);
             }
         }
     }

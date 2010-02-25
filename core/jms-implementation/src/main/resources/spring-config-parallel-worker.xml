@@ -12,7 +12,8 @@
     <bean id="workerManager" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanMonitor">
         <property name="workerManagerTopicName" value="jms.topic.${worker.manager.topic}"/>
         <property name="workerManagerResponseQueueName" value="jms.queue.${worker.manager.response.queue}"/>
-        <property name="sessionHandler" ref="sessionHandler"/>
+        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
+        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
         <property name="jobs" ref="jobs"/>
     </bean>           
 
@@ -25,7 +26,8 @@
         <property name="receiveTimeoutMillis" value="50000"/>
         <property name="jobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
         <property name="jobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
-        <property name="mainSessionHandler" ref="sessionHandler"/>
+        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
+        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
         <property name="workerManager" ref="workerManager" />
         <property name="jobs" ref="jobs"/>
         <property name="serialWorker" value="false"/>

@@ -32,6 +32,7 @@ public class MessageJob implements Job{
         JobDataMap data = context.getJobDetail().getJobDataMap();
         String destination = data.getString(DESTINATION);
         String messageString = data.getString(MESSAGE_STRING);
+        // TODO - If this is ever used in anger, need to ensure the SessionHandler is closed afterwards.
         SessionHandler sessionHandler = (SessionHandler) data.get(SESSION_HANDLER);
         try {
             MessageProducer producer = sessionHandler.getMessageProducer(destination);

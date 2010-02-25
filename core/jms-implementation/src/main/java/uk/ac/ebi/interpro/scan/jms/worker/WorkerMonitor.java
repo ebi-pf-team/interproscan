@@ -16,15 +16,7 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
 public interface WorkerMonitor extends Runnable{
 
     public static final String REQUESTEE_PROPERTY = "requestee";
-    
-     /**
-     * Sets a SessionHandler for the manager thread.
-     * This looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     * @param sessionHandler for the manager thread.
-     */
-    @Required
-    void setSessionHandler(SessionHandler sessionHandler);
+
 
     /**
      * Sets the name of the worker manager topic.  This is a topic
@@ -33,6 +25,12 @@ public interface WorkerMonitor extends Runnable{
      */
     @Required
     void setWorkerManagerTopicName(String workerManagerTopicName);
+
+    @Required
+    public void setJmsBrokerHostName(String jmsBrokerHostName);
+
+    @Required
+    public void setJmsBrokerPort(int jmsBrokerPort);
 
     /**
      * Sets the name of the worker manager response queue.

@@ -2,10 +2,13 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 
 import javax.jms.JMSException;
 import java.util.Date;
@@ -19,7 +22,11 @@ import java.util.Date;
 
 public class TestMasterQuartz implements Master  {
 
-    private SessionHandler sessionHandler;
+    private static final Logger LOGGER = Logger.getLogger(TestMasterQuartz.class);
+
+    private String jmsBrokerHostName;
+
+    private int jmsBrokerPort;
 
     private String jobSubmissionQueueName;
 
@@ -31,17 +38,6 @@ public class TestMasterQuartz implements Master  {
     private SchedulerFactory sf = new StdSchedulerFactory();
 
     /**
-     * Sets the SessionHandler.  This looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     * @param sessionHandler  looks after connecting to the
-     * Broker and allowing messages to be put on the queue / taken off the queue.
-     */
-    @Required
-    public void setSessionHandler(SessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
-    }
-
-    /**
      * Sets the task submission queue name.  This is the queue that new
      * jobs are placed on to, prior to be pushed on to the requestQueue
      * from where they are taken by a worker node.
@@ -50,6 +46,16 @@ public class TestMasterQuartz implements Master  {
     @Required
     public void setJobSubmissionQueueName(String jobSubmissionQueueName) {
         this.jobSubmissionQueueName = jobSubmissionQueueName;
+    }
+
+    @Required
+    public void setJmsBrokerHostName(String jmsBrokerHostName) {
+        this.jmsBrokerHostName = jmsBrokerHostName;
+    }
+
+    @Required
+    public void setJmsBrokerPort(int jmsBrokerPort) {
+        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     /**
@@ -79,6 +85,7 @@ public class TestMasterQuartz implements Master  {
      * Run the Master Application.
      */
     public void start(){
+        SessionHandler sessionHandler = null;
         try {
             // Start the response monitor thread
             Thread responseMonitorThread = new Thread(responseMonitor);
@@ -87,7 +94,7 @@ public class TestMasterQuartz implements Master  {
             Log log = LogFactory.getLog(InterProScanMaster.class);
 
             // Initialise the sessionHandler for the master thread
-            sessionHandler.init();
+            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
 
             //Initialise the Scheduler with SchedulerFactory
             Scheduler sched = sf.getScheduler();
@@ -117,11 +124,11 @@ public class TestMasterQuartz implements Master  {
             }
             sched.shutdown(true);
         } catch (JMSException e) {
-            e.printStackTrace();
+            LOGGER.error ("JMSException thrown by TestMasterQuartz", e);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error ("InterruptedException thrown by TestMasterQuartz", e);
         } catch (SchedulerException e) {
-            e.printStackTrace();
+            LOGGER.error ("SchedulerException thrown by TestMasterQuartz", e);
         }
 
         finally {
@@ -129,9 +136,19 @@ public class TestMasterQuartz implements Master  {
                 try {
                     sessionHandler.close();
                 } catch (JMSException e) {
-                    e.printStackTrace();
+                    LOGGER.error ("JMSException thrown by TestMasterQuartz when attempting to close SessionHandler.", e);
                 }
             }
         }
+    }
+
+    @Override
+    public void setQueueJumper(QueueJumper queueJumper) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setSerialWorkerRunner(WorkerRunner serialWorkerRunner) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
