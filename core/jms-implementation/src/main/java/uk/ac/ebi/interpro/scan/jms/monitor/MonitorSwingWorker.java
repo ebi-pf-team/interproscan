@@ -1,14 +1,12 @@
 package uk.ac.ebi.interpro.scan.jms.monitor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerMonitor;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +31,14 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
 
     private String workerManagerResponseQueueName;
 
-    private String jmsBrokerHostName;
-
-    private int jmsBrokerPort;
-
     private UUID monitorID;
+
+    private ConnectionFactory connectionFactory;
+
+    @Required
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
 
     public void setController(WorkerMonitorController controller) {
         this.controller = controller;
@@ -51,16 +52,6 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
      */
     public void setRefreshInterval(long refreshInterval) {
         this.refreshInterval = refreshInterval;
-    }
-
-    @Required
-    public void setJmsBrokerHostName(String jmsBrokerHostName) {
-        this.jmsBrokerHostName = jmsBrokerHostName;
-    }
-
-    @Required
-    public void setJmsBrokerPort(int jmsBrokerPort) {
-        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     @Required
@@ -90,9 +81,10 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
 
         SessionHandler sessionHandler = null;
         try{
-            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
-
+            sessionHandler = new SessionHandler(connectionFactory);
+            sessionHandler.start();
             MessageProducer requestStatusMessageProducer = sessionHandler.getMessageProducer(workerManagerTopicName);
+
 
             // Work out a receive timeout - set to (fairly arbitrarily) one twentieth of the refresh interval.
             // This should give the user a faily consistent experience.

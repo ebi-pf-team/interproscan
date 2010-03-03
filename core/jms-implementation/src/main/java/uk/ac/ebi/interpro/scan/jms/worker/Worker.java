@@ -1,9 +1,11 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
+import javax.jms.ConnectionFactory;
 import java.util.UUID;
 
 /**
@@ -14,14 +16,6 @@ import java.util.UUID;
  * @since 1.0
  */
 public interface Worker {
-
-    /**
-     * Sets the timeout on the Worker.  This should be set reasonably low (a few seconds perhaps)
-     * Otherwise it will be difficult to close down the worker gracefully.
-     * @param timeout being the argument to MessageConsumer.receive(long timeout) method.
-     */
-    @Required
-    void setReceiveTimeoutMillis (long timeout);
 
     /**
      * Sets the name of the JMS queue from which the Worker takes a job to do.
@@ -36,28 +30,6 @@ public interface Worker {
       */
     @Required
     void setJobResponseQueueName(String jobResponseQueueName);
-
-    /**
-     * OPTIONALLY a workerManager runnable may be injected.
-     * If this is injected, it should be run in a high priority thread
-     * (will block most of the time, so should not interfere with the
-     * main activity).
-     *
-     * Implementation note: WorkerManager.setWorker(this) MUST be called
-     * before starting the Thread that the WorkerManager is running in.
-     *
-     * The worker manager than subscribes to the workerManagerResponseQueue
-     * @param workerManager
-     */
-    void setWorkerManager (WorkerMonitor workerManager);
-
-
-    /**
-     * @param singleUseOnly if true, the Worker accepts and processes one job, then closes down.  If false, the
-     * worker continues to take jobs from the queue until it is explicity shut down.
-     */
-    @Required
-    void setStopWhenIdle(boolean singleUseOnly);
 
     /**
      * Start the Worker running.
@@ -85,15 +57,6 @@ public interface Worker {
     String getStatusMessage();
 
     /**
-     * Returns true if this Worker is configured to only service a single
-     * job message and then close down.  Returns false if the worker is
-     * configured to run indefinitely (until it is explicitly shut down).
-     * @return true if this Worker is configured to only service a single
-     * job message.
-     */
-    boolean isStopWhenIdle();
-
-    /**
      * This method should return:
      * null, if the amount of work done is unknown
      * a value between 0 and 1 if the proportion of work done is known.
@@ -118,14 +81,17 @@ public interface Worker {
     StepExecution getCurrentStepExecution();
 
     /**
-     * Optional JMS message selector.
-     * @param jmsMessageSelector optional JMS message selector.
+     * Inject the JMS ConnectionFactory
+     * @param connectionFactory the JMS ConnectionFactory
      */
-    void setJmsMessageSelector(String jmsMessageSelector);
+    @Required
+    public void setConnectionFactory(ConnectionFactory connectionFactory);
 
     @Required
-    void setJmsBrokerHostName(String jmsBrokerHostName);
+    void setWorkerManagerTopicName(String workerManagerTopicName);
 
     @Required
-    void setJmsBrokerPort(int jmsBrokerPort);
+    void setWorkerManagerResponseQueueName(String workerManagerResponseQueueName);
+
+    void setMillisecondsToLive(Long millisecondsToLive);
 }

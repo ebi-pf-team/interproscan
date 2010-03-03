@@ -34,20 +34,10 @@ public class SessionHandler {
     private Connection connection;
     private Session session;
 
-    public SessionHandler(String brokerHostUrl, int brokerPort) throws JMSException {
-        Map<String, Object> connectionParams = new HashMap<String, Object>();
-        connectionParams.put(HOST_PROP_NAME, brokerHostUrl);
-        connectionParams.put(PORT_PROP_NAME, brokerPort);
-
-        TransportConfiguration transportConfiguration = new TransportConfiguration(NettyConnectorFactory.class.getName(),
-                connectionParams);
-
-        ConnectionFactory cf = new HornetQConnectionFactory(transportConfiguration);
-
+    public SessionHandler(ConnectionFactory cf) throws JMSException {
         connection = cf.createConnection();
         try{
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-            connection.start();
         }
         catch (JMSException e){
             LOGGER.error ("JMSException thrown when attempting to instantiate a SessionHandler.  Closing the Session and Connection.", e);
@@ -61,6 +51,10 @@ public class SessionHandler {
             }
             throw new IllegalStateException ("Unable to get a Connection to the JMS Broker.", e);
         }
+    }
+
+    public void start() throws JMSException{
+        connection.start();
     }
 
     public MessageConsumer getMessageConsumer (String destinationName) throws JMSException {
@@ -83,15 +77,8 @@ public class SessionHandler {
     }
 
     public void close() throws JMSException {
-        try{
-            if (session != null){
-                session.close();
-            }
-        }
-        finally {
-            if (connection != null){
-                connection.close();
-            }
+        if (connection != null){
+            connection.close();
         }
     }
 

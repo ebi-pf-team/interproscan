@@ -1,10 +1,12 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -33,11 +35,12 @@ public class ResponseMonitorImpl implements ResponseMonitor{
 
     private int monitorResponseTimeout;
 
-    private String jmsBrokerHostName;
+    private ConnectionFactory connectionFactory;
 
-    private int jmsBrokerPort;
-
-
+    @Required
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
     /**
      * Sets the ResponseHandler.  This is the implementation
      * that knows how to deal with responses on the destinationResponseQueue.
@@ -47,26 +50,6 @@ public class ResponseMonitorImpl implements ResponseMonitor{
     @Required
     public void setHandler(ResponseHandler handler) {
         this.handler = handler;
-    }
-
-    /**
-     * Host name of the JMS broker
-     *
-     * @param jmsBrokerHostName Host name of the JMS broker
-     */
-    @Override
-    public void setJmsBrokerHostName(String jmsBrokerHostName) {
-        this.jmsBrokerHostName = jmsBrokerHostName;
-    }
-
-    /**
-     * Port number of the JMS broker.
-     *
-     * @param jmsBrokerPort Port number of the JMS broker.
-     */
-    @Override
-    public void setJmsBrokerPort(int jmsBrokerPort) {
-        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     /**
@@ -121,10 +104,11 @@ public class ResponseMonitorImpl implements ResponseMonitor{
     public void run() {
         SessionHandler sessionHandler = null;
         try{
-            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
+            sessionHandler = new SessionHandler(connectionFactory);
             MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(workerJobResponseQueueName);
             while (running){
                 // Consume messages off the response queue and handle them.
+                sessionHandler.start();
                 Message message = messageConsumer.receive(monitorResponseTimeout);
                 if (message != null) {
                     handler.handleResponse(message);

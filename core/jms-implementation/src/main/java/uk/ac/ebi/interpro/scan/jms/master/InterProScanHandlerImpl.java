@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
+import uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
@@ -40,11 +42,7 @@ public class InterProScanHandlerImpl implements ResponseHandler{
     @Override
     public void handleResponse(Message message) {
         try{
-            if (message instanceof TextMessage){
-                TextMessage textMessage = (TextMessage) message;
-                LOGGER.info("Text Message Received: " + textMessage.getText());
-            }
-            else if (message instanceof ObjectMessage){
+            if (message instanceof ObjectMessage){
                 ObjectMessage objectMessage = (ObjectMessage) message;
                 Object messageContents = objectMessage.getObject();
                 if (messageContents instanceof StepExecution){

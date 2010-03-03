@@ -13,7 +13,7 @@
     <!--<aop:aspectj-autoproxy/>-->
     
     <!-- JPA Configuration -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean" />
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
     <!-- JPA Transaction Setup -->

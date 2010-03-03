@@ -10,6 +10,8 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import javax.jms.*;
+import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -24,21 +26,21 @@ public class InterProScanWorker implements Worker {
 
     private static final Logger LOGGER = Logger.getLogger(InterProScanWorker.class);
 
-    private String jmsBrokerHostName;
+    /**
+     * Testing concept of having a maximum life on a serial worker, which then expires and
+     * asks for a new one.  This might work well in the context of LSF for example.
+     *
+     * TODO - this should default to null and be injected.
+     */
+    private Long timeToLive = null;   // 10 minutes, for testing.
 
-    private int jmsBrokerPort;
+    private Long idleExpiryTime = null;
 
     private String jobRequestQueueName;
 
     private String jobResponseQueueName;
 
     private volatile boolean running = true;
-
-    private volatile WorkerMonitor workerManager;
-
-    private long receiveTimeout;
-
-    private boolean stopWhenIdle;
 
     private Double workDone;
 
@@ -48,36 +50,36 @@ public class InterProScanWorker implements Worker {
 
     private final UUID uniqueWorkerIdentification = UUID.randomUUID();
 
-    private String jmsMessageSelector;
-
-    private boolean isSerialWorker;
-
     private Jobs jobs;
-    public static final String NEW_SERIAL_WORKER_REQUEST = "new-serial-worker-request";
+
+    private ConnectionFactory connectionFactory;
+
+    private Long startTime;
+
+    private String workerManagerTopicName;
+
+    private String workerManagerResponseQueueName;
+
+    private Long lastActivityTime;
+
+    @Required
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
 
     /**
-     * Sets the timeout on the Worker.  This should be set reasonably low (a few seconds perhaps)
-     * Otherwise it will be difficult to close down the worker gracefully.
-     *
-     * @param timeout being the argument to MessageConsumer.receive(long timeout) method.
+     * Optional time in milliseconds for the server to live for.
+     * Note that this is the time until that last JMS job is accepted -
+     * currently running jobs will run to completion.
+     * @param millisecondsToLive time until that last JMS job is accepted.
      */
     @Override
-    public void setReceiveTimeoutMillis(long timeout) {
-        this.receiveTimeout = timeout;
+    public void setMillisecondsToLive(Long millisecondsToLive) {
+        this.timeToLive = millisecondsToLive;
     }
 
-    /**
-     * @param stopWhenIdle if true, the Worker accepts and processes one job, then closes down.  If false, the
-     * worker continues to take jobs from the queue until it is explicity shut down.
-     */
-    @Required
-    public void setStopWhenIdle(boolean stopWhenIdle) {
-        this.stopWhenIdle = stopWhenIdle;
-    }
-
-    @Required
-    public void setSerialWorker(boolean serialWorker) {
-        isSerialWorker = serialWorker;
+    public void setMillisecondsMaxIdleTime(Long maxIdleTime) {
+        this.idleExpiryTime = maxIdleTime;
     }
 
     /**
@@ -103,37 +105,16 @@ public class InterProScanWorker implements Worker {
         this.jobResponseQueueName = jobResponseQueueName;
     }
 
-    @Required
-    public void setJmsBrokerHostName(String jmsBrokerHostName) {
-        this.jmsBrokerHostName = jmsBrokerHostName;
-    }
-
-    @Required
-    public void setJmsBrokerPort(int jmsBrokerPort) {
-        this.jmsBrokerPort = jmsBrokerPort;
-    }
-
-    /**
-     * OPTIONALLY a workerManager runnable may be injected.
-     * If this is injected, it should be run in a high priority thread
-     * (will block most of the time, so should not interfere with the
-     * main activity).
-     * <p/>
-     * The worker manager than subscribes to the workerManagerResponseQueue
-     *
-     * @param workerManager
-     */
     @Override
-    public void setWorkerManager(WorkerMonitor workerManager) {
-        this.workerManager = workerManager;
+    @Required
+    public void setWorkerManagerTopicName(String workerManagerTopicName) {
+        this.workerManagerTopicName = workerManagerTopicName;
     }
 
-    /**
-     * Optional JMS message selector.
-     * @param jmsMessageSelector optional JMS message selector.
-     */
-    public void setJmsMessageSelector(String jmsMessageSelector) {
-        this.jmsMessageSelector = jmsMessageSelector;
+    @Override
+    @Required
+    public void setWorkerManagerResponseQueueName(String workerManagerResponseQueueName) {
+        this.workerManagerResponseQueueName = workerManagerResponseQueueName;
     }
 
     /**
@@ -165,19 +146,6 @@ public class InterProScanWorker implements Worker {
     }
 
     /**
-     * Returns true if this Worker is configured to only service a single
-     * job message and then close down.  Returns false if the worker is
-     * configured to run indefinitely (until it is explicitly shut down).
-     *
-     * @return true if this Worker is configured to only service a single
-     *         job message.
-     */
-    @Override
-    public boolean isStopWhenIdle() {
-        return stopWhenIdle;
-    }
-
-    /**
      * This method should return:
      * null, if the amount of work done is unknown
      * a value between 0 and 1 if the proportion of work done is known.
@@ -206,83 +174,50 @@ public class InterProScanWorker implements Worker {
         return currentStepExecution;
     }
 
+
     public void start(){
+        lastActivityTime = startTime = new Date().getTime();
         SessionHandler sessionHandler = null;
         try{
-            if (workerManager != null){
-                // Worker manager has been injected.  Start in a high priority Thread.
-                // This should be fine as it will configure itself and then
-                // block, while it waits for any messages to be broadcast.
-                workerManager.setWorker(this);
-                Thread managerThread = new Thread(workerManager);
-                managerThread.setDaemon(true);    // Make sure the manager thread end thread ends when the main thread ends.
-                managerThread.start();
-            }
-
-            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
-            MessageConsumer messageConsumer;
-            if (jmsMessageSelector == null){
-                messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
-            }
-            else {
-                messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName, jmsMessageSelector);
-            }
-
+            sessionHandler = new SessionHandler(connectionFactory);
+            MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
             MessageProducer messageProducer = sessionHandler.getMessageProducer(jobResponseQueueName);
-            while (running && noMemoryLeak()){
-                LOGGER.debug("Waiting for a message...");
-                Message message = messageConsumer.receive(receiveTimeout);
-                if (message != null){
-                    LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
-                    message.acknowledge();     // Acknowledge receipt of the message before doing anything else.
-                    // Acknowledgement does NOT indicate a successful outcome in this system - just successful
-                    // receipt of the message.
-                    if (message instanceof ObjectMessage){
-                        ObjectMessage stepExecutionMessage = (ObjectMessage) message;
-                        final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
-                        currentStepExecution = stepExecution;
-                        if (stepExecution != null){
-                            LOGGER.debug("Message received of queue - attempting to execute");
+            InterProScanWorkerListener listener = new InterProScanWorkerListener(messageProducer, sessionHandler);
+            messageConsumer.setMessageListener(listener);
 
-                            try{
-                                execute(stepExecution, messageProducer, sessionHandler);
-                            } catch (Exception e) {
-                                LOGGER.error ("Execution thrown when attempting to execute the StepExecution.  All database activity rolled back.");
-                                // Something went wrong in the execution - try to send back failure
-                                // message to the broker.  This in turn may fail if it is the JMS connection
-                                // that failed during the execution.
-                                stepExecution.fail();
-                                ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
-                                messageProducer.send(responseMessage);
-                                LOGGER.debug ("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
-                            }
-                        }
-                        else {
-                            LOGGER.debug("Message received, but has not contents.");
-                        }
-                    }
+            MessageConsumer monitorMessageConsumer = sessionHandler.getMessageConsumer(workerManagerTopicName);
+            MessageProducer monitorMessageProducer = sessionHandler.getMessageProducer(workerManagerResponseQueueName);
+            InterProScanMonitorListener monitorListener = new InterProScanMonitorListener(sessionHandler, monitorMessageProducer);
+            monitorMessageConsumer.setMessageListener(monitorListener);
+
+            sessionHandler.start();
+            while (running || listener.isBusy() || monitorListener.isBusy()){
+                Thread.sleep(2000);
+
+                final long now = new Date().getTime();
+                // Cleanly stop the server if it has exceeded it's "time to live".
+                if (timeToLive != null && now - startTime > timeToLive){
+                    running = false;
                 }
-                else {
-                    LOGGER.debug("No message received.");
-                    if (stopWhenIdle){
-                        break;
-                    }
+
+                // Cleanly stop the server if has been idle for longer than its 'idleExpiryTime'
+                if (running && idleExpiryTime != null && now - lastActivityTime > idleExpiryTime){
+                    running = false;
                 }
-                LOGGER.debug("...waiting for another message.");
+
+                // Cleanly stop the server if there is a risk of a memory leak.
+                if (running && possibleMemoryLeakDetected()){
+                    running = false;
+                }
             }
-            if (isSerialWorker){
-                // Signal to the Master that a new
-                // SerialWorker is required.
-                LOGGER.debug("Going to close down now... requesting new Serial Worker is started.");
-                TextMessage newMasterMessage = sessionHandler.createTextMessage(NEW_SERIAL_WORKER_REQUEST);
-                messageProducer.send(newMasterMessage);
-            }
-            LOGGER.debug("...exiting");
         }
         catch (JMSException e) {
             LOGGER.error("JMSException thrown by worker.  Exiting.", e);
         }
-        finally{
+        catch (InterruptedException e) {
+            LOGGER.error ("InterruptedException thrown in InterProScanWorker.", e);
+        } finally{
+            running = false;  //To ensure that the Monitor thread exits.
             try {
                 if (sessionHandler != null){
                     sessionHandler.close();
@@ -292,6 +227,139 @@ public class InterProScanWorker implements Worker {
             }
         }
     }
+
+    class InterProScanWorkerListener implements MessageListener{
+
+        private final MessageProducer messageProducer;
+
+        private final SessionHandler sessionHandler;
+
+
+        private boolean busy = false;
+
+        InterProScanWorkerListener(final MessageProducer messageProducer, final SessionHandler sessionHandler) {
+            this.messageProducer = messageProducer;
+            this.sessionHandler = sessionHandler;
+        }
+
+        @Override
+        public void onMessage(Message message) {
+            busy = true;
+            lastActivityTime = new Date().getTime();
+            try{
+                if (message != null){
+                    message.acknowledge();     // Acknowledge receipt of the message.
+                    LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+
+                    if (! (message instanceof ObjectMessage)){
+                        LOGGER.error ("Received a message of an unknown type (non-ObjectMessage)");
+                        return;
+                    }
+                    ObjectMessage stepExecutionMessage = (ObjectMessage) message;
+                    final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
+                    currentStepExecution = stepExecution;
+                    if (stepExecution == null){
+                        LOGGER.error ("An ObjectMessage was received but had no contents.");
+                        return;
+                    }
+                    LOGGER.debug("Message received of queue - attempting to execute");
+
+                    try{
+                        execute(stepExecution, messageProducer, sessionHandler);
+                    } catch (Exception e) {
+                        LOGGER.error ("Execution thrown when attempting to execute the StepExecution.  All database activity rolled back.");
+                        // Something went wrong in the execution - try to send back failure
+                        // message to the broker.  This in turn may fail if it is the JMS connection
+                        // that failed during the execution.
+                        stepExecution.fail();
+                        ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
+                        messageProducer.send(responseMessage);
+                        LOGGER.debug ("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
+                    }
+                }
+            }
+            catch (JMSException e) {
+                LOGGER.error ("JMSException thrown in MessageListener.", e);
+            }
+            finally{
+                busy = false;
+            }
+        }
+
+        public boolean isBusy() {
+            return busy;
+        }
+    }
+
+    class InterProScanMonitorListener implements MessageListener{
+
+        private SessionHandler sessionHandler;
+
+        private MessageProducer messageProducer;
+
+        private boolean busy = false;
+
+        InterProScanMonitorListener(SessionHandler sessionHandler, MessageProducer messageProducer) {
+            this.sessionHandler = sessionHandler;
+            this.messageProducer = messageProducer;
+        }
+
+        @Override
+        public void onMessage(Message message) {
+            busy = true;
+            try{
+                if (message instanceof TextMessage){
+                    TextMessage managementRequest = (TextMessage) message;
+                    managementRequest.acknowledge();
+                    // Just echo back the managementRequest with the name of the worker host to uk.ac.ebi.interpro.scan.jms the multicast topic.
+                    WorkerState workerState = new WorkerState(
+                            System.currentTimeMillis() - startTime,
+                            java.net.InetAddress.getLocalHost().getHostName(),
+                            getWorkerUniqueIdentification(),
+                            false
+                    );
+                    workerState.setJobId("Unique Job ID as passed from the broker in the JMS header. (TODO)");
+                    workerState.setProportionComplete(getProportionOfWorkDone());
+                    workerState.setWorkerStatus((isRunning()) ? "Running" : "Not Running");
+                    StepExecution stepExecution = getCurrentStepExecution();
+                    if (stepExecution == null){
+                        workerState.setStepExecutionState(null);
+                        workerState.setJobId("-");
+                        workerState.setJobDescription("-");
+                    }
+                    else {
+                        workerState.setStepExecutionState(stepExecution.getState());
+                        workerState.setJobId(stepExecution.getId().toString());
+                        workerState.setJobDescription(stepExecution.getStepInstance().getStep(jobs).getStepDescription());
+                    }
+                    ObjectMessage responseObject = sessionHandler.createObjectMessage(workerState);
+
+                    // Find out if there is a 'requestee' header, which should be added to the response message
+                    // so the management responses can be filtered out by the client that sent them.
+                    if (managementRequest.propertyExists(WorkerMonitor.REQUESTEE_PROPERTY)){
+                        responseObject.setStringProperty(WorkerMonitor.REQUESTEE_PROPERTY,
+                                managementRequest.getStringProperty(WorkerMonitor.REQUESTEE_PROPERTY));
+                    }
+
+                    messageProducer.send(responseObject);
+                }
+
+            } catch (JMSException e) {
+                LOGGER.error("JMSException thrown by InterProScanMonitorListener", e);
+            } catch (UnknownHostException e) {
+                LOGGER.error("UnknownHostException thrown by InterProScanMonitorListener", e);
+            }
+            finally {
+                busy = false;
+            }
+        }
+
+        public boolean isBusy() {
+            return busy;
+        }
+    }
+
+
 
     /**
      * Executing the StepInstance and responding to the JMS Broker
@@ -327,7 +395,7 @@ public class InterProScanWorker implements Worker {
      * than 1/3 of Xmx.
      * @return true if all is OK.
      */
-    private boolean noMemoryLeak() {
+    private boolean possibleMemoryLeakDetected() {
 
         System.gc();System.gc();System.gc();System.gc();
         System.gc();System.gc();System.gc();System.gc();
@@ -336,13 +404,13 @@ public class InterProScanWorker implements Worker {
 
         final long Xmx = Runtime.getRuntime().maxMemory();
         final long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        final boolean ok = Xmx / used > 3;
+        final boolean leaky = Xmx / used < 3;
         if (LOGGER.isDebugEnabled()){
             LOGGER.debug ("Finished StepExecution - Checking for memory leak.");
             LOGGER.debug ("Used memory: " + used / (1024 * 1024 * 1024) + " GB");
             LOGGER.debug ("Xmx: " + Xmx / (1024 * 1024 * 1024) + " GB");
-            LOGGER.debug ((ok) ? "OK" : "Leaking.");
+            LOGGER.debug ((leaky) ? "Leaking" : "OK.");
         }
-        return ok;
+        return leaky;
     }
 }

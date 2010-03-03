@@ -36,10 +36,6 @@ public class WriteFastaFileStep extends Step {
         this.fastaFilePathTemplate = fastaFilePathTemplate;
     }
 
-    public String getFastaFilePathTemplate() {
-        return fastaFilePathTemplate;
-    }
-
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
@@ -52,12 +48,10 @@ public class WriteFastaFileStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance) throws IOException, WriteFastaFile.FastaFileWritingException, InterruptedException {
-        String fastaFilePathName = stepInstance.filterFileNameProteinBounds(
-                this.getFastaFilePathTemplate()
-        );
+        String fastaFilePathName = stepInstance.filterFileNameProteinBounds(fastaFilePathTemplate);
         List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
         fastaFile.writeFastaFile(proteins, fastaFilePathName);
-        Thread.sleep(2000); // Have a snooze to allow NFS to catch up.
+        // Thread.sleep(2000);
     }
 }
 

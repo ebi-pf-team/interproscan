@@ -5,11 +5,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import java.util.Date;
 
@@ -24,10 +26,6 @@ public class TestMasterQuartz implements Master  {
 
     private static final Logger LOGGER = Logger.getLogger(TestMasterQuartz.class);
 
-    private String jmsBrokerHostName;
-
-    private int jmsBrokerPort;
-
     private String jobSubmissionQueueName;
 
     private ResponseMonitor responseMonitor;
@@ -36,6 +34,13 @@ public class TestMasterQuartz implements Master  {
 
     //Quartz SchedulerFactory
     private SchedulerFactory sf = new StdSchedulerFactory();
+
+    private ConnectionFactory connectionFactory;
+
+    @Required
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
 
     /**
      * Sets the task submission queue name.  This is the queue that new
@@ -46,16 +51,6 @@ public class TestMasterQuartz implements Master  {
     @Required
     public void setJobSubmissionQueueName(String jobSubmissionQueueName) {
         this.jobSubmissionQueueName = jobSubmissionQueueName;
-    }
-
-    @Required
-    public void setJmsBrokerHostName(String jmsBrokerHostName) {
-        this.jmsBrokerHostName = jmsBrokerHostName;
-    }
-
-    @Required
-    public void setJmsBrokerPort(int jmsBrokerPort) {
-        this.jmsBrokerPort = jmsBrokerPort;
     }
 
     /**
@@ -94,7 +89,7 @@ public class TestMasterQuartz implements Master  {
             Log log = LogFactory.getLog(InterProScanMaster.class);
 
             // Initialise the sessionHandler for the master thread
-            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
+            sessionHandler = new SessionHandler(connectionFactory);
 
             //Initialise the Scheduler with SchedulerFactory
             Scheduler sched = sf.getScheduler();
@@ -144,11 +139,6 @@ public class TestMasterQuartz implements Master  {
 
     @Override
     public void setQueueJumper(QueueJumper queueJumper) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setSerialWorkerRunner(WorkerRunner serialWorkerRunner) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

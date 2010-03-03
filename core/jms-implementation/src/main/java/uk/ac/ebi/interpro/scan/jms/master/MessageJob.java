@@ -36,6 +36,7 @@ public class MessageJob implements Job{
         SessionHandler sessionHandler = (SessionHandler) data.get(SESSION_HANDLER);
         try {
             MessageProducer producer = sessionHandler.getMessageProducer(destination);
+            sessionHandler.start();
             TextMessage message = sessionHandler.createTextMessage(messageString);
             producer.send(message);
             System.out.println("Sent message: " + message.getText());

@@ -38,8 +38,8 @@
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"                    value="Load proteins from a fasta file and create required JobInstance objects"/>
         <property name="createStepInstancesForNewProteins"  value="false"/>
-        <property name="retries"                            value="0"/>
-        <property name="parallel"                           value="false"/>
+        <property name="retries"                            value="2"/>
+        <property name="serialGroup"                        value="LOAD_PROTEINS"/>
         <property name="fastaFileLoader"                    ref="fastaFileLoader"/>
     </bean>
 
@@ -56,9 +56,9 @@
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"                    value="Load proteins from UniParc and create required JobInstance objects"/>
         <property name="createStepInstancesForNewProteins"  value="false"/>
-        <property name="retries"                            value="0"/>
-        <property name="parallel"                           value="false"/>
-        <property name="uniparcLoader"                    ref="uniparcLoader"/>
+        <property name="retries"                            value="2"/>
+        <property name="serialGroup"                        value="LOAD_PROTEINS"/>
+        <property name="uniparcLoader"                      ref="uniparcLoader"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
@@ -83,7 +83,7 @@
     <bean id="uniparcLoader" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
         <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
         <property name="rowCallbackHandlerTemplate" ref="rowCallbackHandlerTemplate"/>
-        <property name="maximumProteins" value="20000"/>
+        <property name="maximumProteins" value="200000"/>
         <property name="xrefDao" ref="xrefDAO"/>
     </bean>
 

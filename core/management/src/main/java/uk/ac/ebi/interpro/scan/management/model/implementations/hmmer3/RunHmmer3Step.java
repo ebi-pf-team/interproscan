@@ -103,16 +103,6 @@ public class RunHmmer3Step extends Step {
         int exitStatus = clc.runCommand(false, command);
         if (exitStatus == 0){
             LOGGER.debug("hmmscan completed successfully!");
-            // Delete the fasta file - no longer required
-            // TODO - need to make sure that this fasta file is not being used by any other process.
-            File file = new File(fastaFilePathName);
-
-            if (! file.delete()){
-                LOGGER.warn("Unable to delete fasta file "+ fastaFilePathName + " after running Hmmer.");
-            }
-            else if (LOGGER.isDebugEnabled()){
-                LOGGER.debug("fasta file "+ fastaFilePathName + " deleted.");
-            }
         }
         else {
             StringBuffer failureMessage = new StringBuffer();

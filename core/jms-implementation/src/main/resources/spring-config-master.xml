@@ -55,14 +55,11 @@
         <!-- This filter ensures that the QueueJumper only starts up new JVMs for
         parallel tasks.  Serial tasks are filtered by a specific worker directly from
         the workerJobRequestQueue. -->
-        <property name="jmsMessageSelector" value="parallel = TRUE"/>
         <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
 
         <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
-        <property name="serialWorkerRunner" ref="lanWorkerRunner"/>
-        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
-        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
     </bean>
 
     <!--<bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
@@ -111,8 +108,6 @@
 
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
-        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
-        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
         <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
         <property name="responseMonitor" ref="responseMonitor"/>
         <property name="managementRequestTopicName" value="jms.topic.${worker.manager.topic}"/>
@@ -124,14 +119,13 @@
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
-        <property name="serialWorkerRunner" ref="serialWorkerRunner"/>
         <property name="queueJumper" ref="queueJumper"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
     </bean>
 
     <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="monitorResponseTimeout" value="5000"/>
-        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
-        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
         <property name="handler" ref="responseHandler"/>
         <property name="workerJobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
     </bean>
@@ -145,7 +139,7 @@
         <property name="triggers">
             <list>
                 <ref bean="proteinLoadTrigger"/>
-                <!--<ref bean="startSpareParallelWorkerTrigger"/>-->
+                <ref bean="startSpareParallelWorkerTrigger"/>
             </list>
         </property>
     </bean>
@@ -159,10 +153,9 @@
 
     <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
-        <!-- 1 seconds -->
         <property name="startDelay" value="0"/>
-        <!-- repeat every 10 minutes -->
-        <property name="repeatInterval" value="600000"/>
+        <!-- repeat every 30 minutes -->
+        <property name="repeatInterval" value="1800000"/>
     </bean>
 
 
@@ -175,7 +168,6 @@
 
     <bean id="startSpareParallelWorkerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>
-        <!-- 1 seconds -->
         <property name="startDelay" value="60000"/>
         <!-- repeat every minute -->
         <property name="repeatInterval" value="60000"/>

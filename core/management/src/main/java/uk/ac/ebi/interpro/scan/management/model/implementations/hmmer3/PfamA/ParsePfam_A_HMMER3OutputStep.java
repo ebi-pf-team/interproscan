@@ -75,14 +75,12 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
         LOGGER.debug("Running Parser HMMER3 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
         InputStream is = null;
         try{
-            Thread.sleep(10000);  // Have a snooze to allow NFS to catch up.
+//            Thread.sleep(10000);  // Have a snooze to allow NFS to catch up.
             final String hmmerOutputFilePath = stepInstance.filterFileNameProteinBounds(this.getHmmerOutputFilePathTemplate());
             is = new FileInputStream(hmmerOutputFilePath);
             final Hmmer3SearchMatchParser<PfamHmmer3RawMatch> parser = this.getParser();
             final Set<RawProtein<PfamHmmer3RawMatch>> parsedResults = parser.parse(is);
             pfamRawMatchDAO.insertProteinMatches(parsedResults);
-            File file = new File(hmmerOutputFilePath);
-            file.delete();
         }
         finally {
             if (is != null){
