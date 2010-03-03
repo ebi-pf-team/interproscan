@@ -1,9 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
-import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.*;
 
 import java.util.List;
 
@@ -23,4 +21,15 @@ public interface StepInstanceDAO extends GenericDAO<StepInstance, String> {
      * @return the List of StepInstance objects.
      */
     List<StepInstance> retrieveUnfinishedStepInstances(Step step);
+
+    /**
+     * Returns true if the SerialGroup passed in as argument
+     * does not currently have a running instance. (submitted but not failed or completed)
+     * instance.
+     * @param stepInstance which is in the group to test for.
+     * @param jobs being the List of defined jobs.
+     * @return true if the SerialGroup passed in as argument
+     * does not currently have a running instance.
+     */
+    public boolean serialGroupCanRun(StepInstance stepInstance, Jobs jobs);
 }

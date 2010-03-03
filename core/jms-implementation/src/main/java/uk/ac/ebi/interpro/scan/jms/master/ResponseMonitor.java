@@ -1,9 +1,11 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
+import javax.jms.ConnectionFactory;
 import java.util.Map;
 
 /**
@@ -24,20 +26,6 @@ public interface ResponseMonitor extends Runnable{
      */
     @Required
     void setHandler(ResponseHandler handler);
-
-    /**
-     * Host name of the JMS broker
-     * @param jmsBrokerHostName  Host name of the JMS broker
-     */
-    @Required
-    void setJmsBrokerHostName(String jmsBrokerHostName);
-
-    /**
-     * Port number of the JMS broker.
-     * @param jmsBrokerPort Port number of the JMS broker.
-     */
-    @Required
-    void setJmsBrokerPort(int jmsBrokerPort);
 
     /**
      * Sets the name of the destinationResponseQueue.
@@ -61,4 +49,7 @@ public interface ResponseMonitor extends Runnable{
      * @param stepExecutions
      */
     void setStepExecutionMap(Map<Long, StepExecution> stepExecutions);
+
+    @Required
+    public void setConnectionFactory(ConnectionFactory connectionFactory);
 }

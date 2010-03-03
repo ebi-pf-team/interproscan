@@ -55,7 +55,4 @@ public interface Master{
 
     @Required
     void setQueueJumper(QueueJumper queueJumper);
-
-    @Required
-    void setSerialWorkerRunner(uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner serialWorkerRunner);
 }

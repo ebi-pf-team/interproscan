@@ -9,28 +9,16 @@
     <import resource="spring-config-common.xml"/>
     <import resource="spring-config-jobs.xml"/>
 
-    <bean id="workerManager" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanMonitor">
-        <property name="workerManagerTopicName" value="jms.topic.${worker.manager.topic}"/>
-        <property name="workerManagerResponseQueueName" value="jms.queue.${worker.manager.response.queue}"/>
-        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
-        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
-        <property name="jobs" ref="jobs"/>
-    </bean>           
 
     <bean id="parallelWorker" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker">
-        <!-- If set to true, then the worker
-        JVM starts up, processes at most 1 job and then closes down.
-        if false, the worker JVM will start up and process jobs until
-        explicitly closed down. -->
-        <property name="stopWhenIdle" value="true"/>
-        <property name="receiveTimeoutMillis" value="50000"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="jobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
         <property name="jobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
-        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
-        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
-        <property name="workerManager" ref="workerManager" />
         <property name="jobs" ref="jobs"/>
-        <property name="serialWorker" value="false"/>
+        <property name="millisecondsMaxIdleTime" value="120000"/>   <!-- Close after 2 minutes of being idle. -->
+        <property name="millisecondsToLive" value="7200000"/>       <!-- Maximum time to live 2 hours. -->
+        <property name="workerManagerTopicName" value="jms.topic.${worker.manager.topic}"/>
+        <property name="workerManagerResponseQueueName" value="jms.queue.${worker.manager.response.queue}"/>
     </bean>
 
 </beans>

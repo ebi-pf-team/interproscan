@@ -42,7 +42,7 @@ public abstract class Step implements BeanNameAware {
 
     protected String stepDescription;
 
-    protected boolean parallel;
+    protected SerialGroup serialGroup;
 
 
     /**
@@ -147,13 +147,12 @@ public abstract class Step implements BeanNameAware {
         this.stepDescription = stepDescription;
     }
 
-    public boolean isParallel() {
-        return parallel;
+    public SerialGroup getSerialGroup() {
+        return serialGroup;
     }
 
-    @Required
-    public void setParallel(boolean parallel) {
-        this.parallel = parallel;
+    public void setSerialGroup(SerialGroup serialGroup) {
+        this.serialGroup = serialGroup;
     }
 
     public int getRetries() {
@@ -201,7 +200,6 @@ public abstract class Step implements BeanNameAware {
         sb.append("Step");
         sb.append("{id='").append(id).append('\'');
         sb.append(", stepDescription='").append(stepDescription).append('\'');
-        sb.append(", parallel=").append(parallel);
         sb.append(", retries=").append(retries);
         sb.append(", cronSchedule='").append(cronSchedule).append('\'');
         sb.append(", createStepInstancesForNewProteins=").append(createStepInstancesForNewProteins);

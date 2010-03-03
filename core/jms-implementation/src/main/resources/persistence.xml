@@ -44,7 +44,7 @@
             <property name="hibernate.connection.username" value="${test.username}" />
             <property name="hibernate.connection.password" value="${test.password}" />
             <property name="hibernate.dialect"          value="${test.hibernate.dialect}" />
-            <property name="hibernate.hbm2ddl.auto"     value="${test.hibernate.hbm2ddl.auto}" />
+            <!--<property name="hibernate.hbm2ddl.auto"     value="${test.hibernate.hbm2ddl.auto}" />-->
             <property name="hibernate.default_schema" value="${test.hibernate.default_schema}" />
             <property name="hibernate.use_sql_comments" value="${test.hibernate.use_sql_comments}" />
             <property name="hibernate.jdbc.batch_size" value="${test.hibernate.jdbc.batch.size}" />

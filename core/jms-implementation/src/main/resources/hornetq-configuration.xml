@@ -15,6 +15,9 @@
     <journal-directory>${broker.journal.directory}</journal-directory>
     <large-messages-directory>${broker.large.messages.directory}</large-messages-directory>
     <paging-directory>${broker.paging.directory}</paging-directory>
+    <!-- Experimenting with 10 second timeout on the client ping.
+        (Defaults to five minutes, but the client should ping every 5 seconds.)-->
+    <connection-ttl-override>600000</connection-ttl-override>
 
     <connectors>
         <connector name="netty-connector">

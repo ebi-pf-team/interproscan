@@ -5,12 +5,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-    <bean id="jmsBrokerHostName" class="java.lang.String" >
-        <constructor-arg value="${broker.host.name}"/>
+
+    <bean id="connectionFactory" class="org.hornetq.jms.client.HornetQConnectionFactory">
+        <constructor-arg ref="transportConfiguration"/>
     </bean>
 
-    <bean id="jmsBrokerHostPort" class="java.lang.Integer">
-        <constructor-arg type="java.lang.String" value="${broker.port.number}"/>
+    <bean id="transportConfiguration" class="org.hornetq.api.core.TransportConfiguration">
+        <constructor-arg index="0" value="org.hornetq.integration.transports.netty.NettyConnectorFactory"/>
+        <constructor-arg index="1">
+            <map>
+                <entry key="host" value="${broker.host.name}"/>
+                <entry key="port" value="${broker.port.number}"/>
+            </map>
+        </constructor-arg>
     </bean>
-    
 </beans>

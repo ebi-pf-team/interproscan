@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
@@ -13,6 +15,7 @@ import uk.ac.ebi.interpro.scan.management.model.*;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
@@ -30,10 +33,6 @@ import java.util.Map;
 public class InterProScanMaster implements Master {
 
     private static final Logger LOGGER = Logger.getLogger(InterProScanMaster.class);
-
-    private String jmsBrokerHostName;
-
-    private int jmsBrokerPort;
 
     private String jobSubmissionQueueName;
 
@@ -55,20 +54,15 @@ public class InterProScanMaster implements Master {
 
     private QueueJumper queueJumper;
 
-    private WorkerRunner serialWorkerRunner;
-
     private String pfamHMMfilePath;
 
     private MessageProducer producer;
 
-    @Required
-    public void setJmsBrokerHostName(String jmsBrokerHostName) {
-        this.jmsBrokerHostName = jmsBrokerHostName;
-    }
+    private ConnectionFactory connectionFactory;
 
     @Required
-    public void setJmsBrokerPort(int jmsBrokerPort) {
-        this.jmsBrokerPort = jmsBrokerPort;
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
     /**
@@ -85,11 +79,6 @@ public class InterProScanMaster implements Master {
     @Required
     public void setQueueJumper(QueueJumper queueJumper) {
         this.queueJumper = queueJumper;
-    }
-
-    @Required
-    public void setSerialWorkerRunner(uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner serialWorkerRunner) {
-        this.serialWorkerRunner = serialWorkerRunner;
     }
 
     /**
@@ -159,19 +148,17 @@ public class InterProScanMaster implements Master {
             Thread queueMonitorThread = new Thread (queueJumper);
             queueMonitorThread.start();
 
-            // Start up the serial worker
-            serialWorkerRunner.startupNewWorker();
-
             // Initialise the sessionHandler for the master thread
-            sessionHandler = new SessionHandler(jmsBrokerHostName, jmsBrokerPort);
+            sessionHandler = new SessionHandler(connectionFactory);
 
             producer = sessionHandler.getMessageProducer(jobSubmissionQueueName);
+            sessionHandler.start();
 //            loadPfamModels();
             while(true){
                 for (Job job : jobs.getJobList()){
                     for (Step step : job.getSteps()){
                         for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
-                            if (stepInstance.canBeSubmitted(jobs)){
+                            if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
                                 StepExecution stepExecution = stepInstance.createStepExecution();
                                 stepExecutionDAO.insert(stepExecution);
                                 stepExecutions.put(stepExecution.getId(), stepExecution);
@@ -245,12 +232,12 @@ public class InterProScanMaster implements Master {
      * @param stepExecution being the StepExecution to send as a message
      * @throws JMSException in the event of a failure sending the message to the JMS Broker.
      */
+    @Transactional
     private void sendMessage(StepExecution stepExecution, SessionHandler sessionHandler) throws JMSException {
         stepExecution.submit(stepExecutionDAO);
         ObjectMessage message = sessionHandler.createObjectMessage(stepExecution);
         final StepInstance stepInstance = stepExecution.getStepInstance();
         assert stepInstance != null;
-        message.setBooleanProperty("parallel", stepInstance.getStep(jobs).isParallel());
         producer.send(message);
     }
 

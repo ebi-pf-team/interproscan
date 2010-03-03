@@ -71,6 +71,7 @@ public class WorkerMonitorController {
         swingWorker.setController(this);
         swingWorker.execute();
 
+
         // Create and display the GUI
         JFrame mainFrame = new JFrame("InterProScan 5 Worker Monitor");
         mainLayoutManager.setDoubleBuffered(true);

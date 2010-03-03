@@ -14,10 +14,9 @@
     </bean>
 
     <bean id="swingWorker" class="uk.ac.ebi.interpro.scan.jms.monitor.MonitorSwingWorker">
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="workerManagerTopicName" value="jms.topic.${worker.manager.topic}"/>
         <property name="workerManagerResponseQueueName" value="jms.queue.${worker.manager.response.queue}"/>
-        <property name="jmsBrokerHostName" ref="jmsBrokerHostName"/>
-        <property name="jmsBrokerPort" ref="jmsBrokerHostPort"/>
     </bean>
 
 </beans>
