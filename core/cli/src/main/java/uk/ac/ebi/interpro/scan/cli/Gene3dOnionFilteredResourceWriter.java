@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.io.AbstractResourceWriter;
 
 import java.util.Calendar;
+import java.io.IOException;
 
 /**
  * This implementation writes flat-files for import into Onion's IPRScan table.
@@ -13,6 +14,12 @@ import java.util.Calendar;
  * @version $Id$
  */
 public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Gene3dHmmer3RawMatch> {
+    
+    private Gene3dSupport support;
+
+    public void setSupport(Gene3dSupport support) {
+        this.support = support;
+    }
 
 //   analysis_type_id  NUMBER(2)       NOT NULL,
 //   upi               CHAR(13)	     NOT NULL,
@@ -29,7 +36,7 @@ public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Ge
 //   evalue	     FLOAT(126)	     NULL,
 //   status            CHAR(1)         NOT NULL,
 //   timestamp	     DATE	     NOT NULL
-    protected String createLine(Gene3dHmmer3RawMatch m) {
+    @Override protected String createLine(Gene3dHmmer3RawMatch m) {
         String analyisTypeId = "54"; // TODO: Inject
         String status        = "T";  // TODO: Inject
         Calendar calendar = Calendar.getInstance();
@@ -37,10 +44,17 @@ public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Ge
         String[] rel      = m.getSignatureLibraryRelease().split("\\.");
         String relNoMajor = rel[0];
         String relNoMinor = rel[1];
+        String signatureAc;
+        try {
+            signatureAc = support.findSignatureAccession(m.getModel());
+        }
+        catch (IOException e) {
+            throw new IllegalStateException("Could not find signature accession for " + m.getModel());
+        }
         String[] line = {
                 analyisTypeId,
                 m.getSequenceIdentifier(),
-                getSignatureId(m.getModel()),
+                signatureAc,
                 relNoMajor,
                 relNoMinor,
                 String.valueOf(m.getLocationStart()),
@@ -63,14 +77,6 @@ public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Ge
             }
         }
         return builder.toString();
-    }
-
-    // TODO: Needs to be done for real!!
-    private String getSignatureId(String modelId) {
-        if (modelId.equals("1qgrA00"))   {
-            return "G3DSA:1.10.3340.10";
-        }
-        return "G3DSA:1.25.10.10";  // 2o35A00
     }
 
 }

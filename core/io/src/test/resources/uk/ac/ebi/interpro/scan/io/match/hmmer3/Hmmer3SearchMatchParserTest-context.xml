@@ -40,7 +40,6 @@
         <property name="parserSupport">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Gene3DHmmer3ParserSupport">
                 <property name="signatureLibraryRelease" value="3.3.0"/>
-                <property name="signatureLibrary"    value="GENE3D"/>
                 <property name="alignmentEncoder">
                     <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
                 </property>

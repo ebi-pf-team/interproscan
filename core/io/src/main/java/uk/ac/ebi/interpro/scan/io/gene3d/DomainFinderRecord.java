@@ -272,7 +272,7 @@ public final class DomainFinderRecord {
 
     }
 
-    // TODO: Sort out MT code (IntelliJ complains that it's "too complex to analyze")
+    // TODO: Sort out Manjula code below -- IntelliJ complains that it's "too complex to analyze"
     /*
     * The algorithm for splitting a domain into segments is:
     *(1) Get the string of the sequence as aligned to the model, for example 'AIHNMPGMAFRTGAamasvalqtivareYPVLV'

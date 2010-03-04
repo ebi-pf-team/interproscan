@@ -21,7 +21,7 @@ package uk.ac.ebi.interpro.scan.business.binary;
  * @author  Antony Quinn
  * @version $Id$
  */
-public class SimpleBinaryRunner extends AbstractBinaryRunner {
+public final class SimpleBinaryRunner extends AbstractBinaryRunner {
 
     // TODO: Write unit tests    
 

@@ -25,10 +25,7 @@ import uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderResourceReader;
 import uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner;
 import uk.ac.ebi.interpro.scan.business.binary.BinaryRunner;
 
-import java.util.Set;
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.io.IOException;
 import java.io.File;
 
@@ -39,9 +36,9 @@ import java.io.File;
  * @author  Antony Quinn
  * @version $Id$
  */
-public class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3RawMatch> {
+public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3RawMatch> {
 
-    // TODO: Write unit tests    
+    private Resource tempDirectory = null;    
     
     BinaryRunner binaryRunner = new SimpleBinaryRunner();
 
@@ -115,41 +112,13 @@ public class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3RawMatch
 
         // Update raw matches with values from DomainFinder
         // TODO: Put this into DomainFinderRecord
-        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredRawProteins =
-                new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
+        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredRawProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
         for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
-            RawProtein<Gene3dHmmer3RawMatch> rp =
-                    new RawProtein<Gene3dHmmer3RawMatch>(p.getProteinIdentifier());
+            String id = p.getProteinIdentifier(); 
+            RawProtein<Gene3dHmmer3RawMatch> rp = new RawProtein<Gene3dHmmer3RawMatch>(id);
             for (Gene3dHmmer3RawMatch m : p.getMatches())   {
-                if (rp.getProteinIdentifier().equals(m.getSequenceIdentifier()))    {
-                    for (DomainFinderRecord r : results)    {
-                        if (m.getModel().equals(r.getModelId()))    {
-                            Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
-                                    m.getSequenceIdentifier(),
-                                    m.getModel(),
-                                    m.getSignatureLibraryRelease(),
-                                    m.getLocationStart(),                                                               
-                                    m.getLocationEnd(),
-                                    m.getEvalue(),  // TODO: Do we need to read this from DF3??
-                                    m.getScore(),
-                                    m.getHmmStart(),
-                                    m.getHmmEnd(),
-                                    m.getHmmBounds(),
-                                    m.getLocationScore(),
-                                    m.getEnvelopeStart(),
-                                    m.getEnvelopeEnd(),
-                                    m.getExpectedAccuracy(),
-                                    m.getFullSequenceBias(),
-                                    m.getDomainCeValue(),
-                                    m.getDomainIeValue(),
-                                    m.getDomainBias(),
-                                    m.getCigarAlignment());
-                            //rp.addMatch(match);
-                            if (!rp.getMatches().contains(match))   {
-                                rp.addMatch(match);
-                            }
-                        }
-                    }
+                if (id.equals(m.getSequenceIdentifier()))    {
+                    addRecord(rp, m, results);
                 }
             }
             if (!rp.getMatches().isEmpty()) {
@@ -161,10 +130,73 @@ public class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3RawMatch
 
      }
 
+    public void addRecord(final RawProtein<Gene3dHmmer3RawMatch> protein,
+                          final Gene3dHmmer3RawMatch m,
+                          final Collection<DomainFinderRecord> records)  {
+        for (DomainFinderRecord r : records)    {
+            // Parse location start and end
+            // TODO: Put this into DomainFinderRecord
+            String s = r.getSegmentBoundaries();
+            String[] segments = s.split(":");
+            int locationStart = Integer.valueOf(segments[0]);
+            int locationEnd   = Integer.valueOf(segments[segments.length - 1]);
+            if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
+                m.getModel().equals(r.getModelId()) && 
+                m.getLocationStart() == locationStart &&
+                m.getLocationEnd() == locationEnd)    {
+                Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
+                        m.getSequenceIdentifier(),
+                        m.getModel(),
+                        m.getSignatureLibraryRelease(),
+                        m.getLocationStart(),
+                        m.getLocationEnd(),
+                        m.getEvalue(),
+                        m.getScore(),
+                        m.getHmmStart(),
+                        m.getHmmEnd(),
+                        m.getHmmBounds(),
+                        m.getLocationScore(),
+                        m.getEnvelopeStart(),
+                        m.getEnvelopeEnd(),
+                        m.getExpectedAccuracy(),
+                        m.getFullSequenceBias(),
+                        m.getDomainCeValue(),
+                        m.getDomainIeValue(),
+                        m.getDomainBias(),
+                        m.getCigarAlignment());
+                if (!protein.getMatches().contains(match))   {
+                    protein.addMatch(match);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets temporary directory for intermediate files.
+     * Default is system temporary directory, for example "/tmp" on Unix
+     *
+     * @param tempDirectory Temporary directory for intermediate files.
+     */
+    public void setTempDirectory(Resource tempDirectory) {
+        if (!tempDirectory.exists()) {
+            throw new IllegalArgumentException("Directory does not exist: " + tempDirectory);
+        }
+        this.tempDirectory = tempDirectory;
+    }
+
     private Resource createTemporaryResource(String suffix)  {
         try {
-            return new FileSystemResource(File.createTempFile("ipr-", suffix));
-        } catch (IOException e) {
+            String prefix = "ipr-";
+            File file;
+            if (tempDirectory == null)  {
+                file = File.createTempFile(prefix, suffix);
+            }
+            else    {
+                file = File.createTempFile(prefix, suffix, tempDirectory.getFile());
+            }
+            return new FileSystemResource(file);
+        }
+        catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }

@@ -35,7 +35,6 @@ public class Gene3dOnionAnalysisResourceWriter extends AbstractResourceWriter<Ge
         String[] rel      = m.getSignatureLibraryRelease().split("\\.");
         String relNoMajor = rel[0];
         String relNoMinor = rel[1];
-        String accuracy = null; // TODO: Add and parse m.getAccuracy()
         String[] line = {
                 m.getSequenceIdentifier(),
                 m.getModel(),
@@ -53,7 +52,7 @@ public class Gene3dOnionAnalysisResourceWriter extends AbstractResourceWriter<Ge
                 String.valueOf(PersistenceConversion.set(m.getEvalue())),  
                 String.valueOf(PersistenceConversion.set(m.getDomainCeValue())),
                 String.valueOf(PersistenceConversion.set(m.getDomainIeValue())),
-                accuracy,
+                String.valueOf(m.getExpectedAccuracy()),
                 m.getCigarAlignment()
         };
         StringBuilder builder = new StringBuilder();

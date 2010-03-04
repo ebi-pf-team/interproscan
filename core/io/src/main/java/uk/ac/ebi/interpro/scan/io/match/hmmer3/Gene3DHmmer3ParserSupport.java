@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
 
@@ -23,8 +22,7 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
         this.alignmentEncoder = alignmentEncoder;
     }
 
-    @Override protected Gene3dHmmer3RawMatch createMatch(SignatureLibrary signatureLibrary,
-                                                         String signatureLibraryRelease,
+    @Override protected Gene3dHmmer3RawMatch createMatch(final String signatureLibraryRelease,
                                                          final HmmSearchRecord hmmSearchRecord,
                                                          final SequenceMatch sequenceMatch,
                                                          final DomainMatch domainMatch) {

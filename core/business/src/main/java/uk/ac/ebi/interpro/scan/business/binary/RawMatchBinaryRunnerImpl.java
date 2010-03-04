@@ -29,7 +29,7 @@ import java.io.IOException;
  * @author  Antony Quinn
  * @version $Id$
  */
-public class RawMatchBinaryRunnerImpl<T extends RawMatch>
+public final class RawMatchBinaryRunnerImpl<T extends RawMatch>
         extends AbstractBinaryRunner
         implements RawMatchBinaryRunner<T> {
 
