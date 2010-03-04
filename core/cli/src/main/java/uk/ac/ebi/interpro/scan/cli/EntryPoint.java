@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.context.ApplicationContext;
+import org.apache.log4j.Logger;
 
 /**
  * Entry point for command line interface.
@@ -17,6 +18,8 @@ import org.springframework.context.ApplicationContext;
  * @version $Id$
  */
 public class EntryPoint {
+
+    private static final Logger LOGGER = Logger.getLogger(EntryPoint.class);
 
     public static void main(String[] args) {
 
@@ -43,17 +46,19 @@ public class EntryPoint {
         else    {
             ctx = new FileSystemXmlApplicationContext(values.getSpringContext());
         }
-        Gene3dRunner runner = (Gene3dRunner) ctx.getBean("gene3dRunner");
 
         // Process
         try {
             Resource fastaFile = new FileSystemResource(values.getFastaFile());
             Resource hmmFile   = new FileSystemResource(values.getHmmFile());
             if (values.isOnionMode())   {
-                runner.doOnionMode(fastaFile, hmmFile, new FileSystemResource(values.getResultsDir()));
+                Gene3dOnionRunner runner = (Gene3dOnionRunner) ctx.getBean("gene3dOnionRunner");
+                runner.execute(fastaFile, hmmFile, new FileSystemResource(values.getResultsDir()));
+                LOGGER.debug("Done");
             }
             else    {
-                runner.doInterProScanMode(fastaFile, hmmFile);
+                Gene3dRunner runner = (Gene3dRunner) ctx.getBean("gene3dRunner");
+                runner.execute(fastaFile, hmmFile);
             }
         }
         catch (Exception e) {
@@ -72,7 +77,7 @@ public class EntryPoint {
         @Argument(required=true, index=1, metaVar="<hmm-file>", usage="HMM file")
         private String hmmFile;
 
-        @Option(name="-o", aliases={"--option"}, usage="Mode (one of: i5, onion)")
+        @Option(name="-m", aliases={"--mode"}, usage="Mode (one of: i5, onion)")
         private String mode = ONION_MODE;
 
         @Option(name="-r", aliases={"--resultsDir"}, usage="Directory to hold result files")

@@ -11,7 +11,6 @@ import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
-import uk.ac.ebi.interpro.scan.io.*;
 import uk.ac.ebi.interpro.scan.io.sequence.SequenceWriter;
 import uk.ac.ebi.interpro.scan.io.sequence.FastaSequenceReader;
 import uk.ac.ebi.interpro.scan.io.sequence.SequenceReader;
@@ -32,8 +31,6 @@ import java.io.*;
 public class Gene3dRunner {
 
     private SequenceWriter sequenceWriter;
-    private ResourceWriter<Gene3dHmmer3RawMatch> onionAnalysisWriter;
-    private ResourceWriter<Gene3dHmmer3RawMatch> onionResultsWriter;
     private ProteinDAO proteinDao;
     private SignatureDAO signatureDao;
     private RawMatchDAO<Gene3dHmmer3RawMatch> rawMatchDao;
@@ -42,41 +39,7 @@ public class Gene3dRunner {
     private RawMatchFilter<Gene3dHmmer3RawMatch> filter;
     private boolean deleteTemporaryFiles = true;
 
-    public void doOnionMode(Resource fastaFile, Resource hmmFile, Resource resultsDir) throws IOException {
-
-        // Run HMMER
-        final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = binaryRunner.process(fastaFile, hmmFile);
-
-        // Write TSV
-        Resource rawResource = new FileSystemResource(File.createTempFile("ipr-", ".raw", resultsDir.getFile()));
-        for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
-            onionAnalysisWriter.write(rawResource, p.getMatches(), true);
-        }
-
-        // Run DomainFinder
-        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = filter.filter(rawProteins);
-
-        // Write TSV
-        Resource filteredResource = new FileSystemResource(File.createTempFile("ipr-", ".fil", resultsDir.getFile()));
-        for (RawProtein<Gene3dHmmer3RawMatch> p : filteredProteins)    {
-            onionResultsWriter.write(filteredResource, p.getMatches(), true);
-        }
-
-        System.out.println("Raw matches:");
-        cat(rawResource.getInputStream(), System.out);
-        System.out.println("");
-
-        System.out.println("Filtered matches:");
-        if (filteredResource.exists())  {
-            cat(filteredResource.getInputStream(), System.out);
-        }
-        else    {
-            System.out.println("No results");
-        }
-
-    }
-
-    public void doInterProScanMode(Resource file, Resource hmmFile) throws IOException {
+    public void execute(Resource file, Resource hmmFile) throws IOException {
 
         // Parse FASTA file
         final Set<Protein> proteins = parseFasta(file);
@@ -147,14 +110,6 @@ public class Gene3dRunner {
         this.sequenceWriter = sequenceWriter;
     }
 
-    public void setOnionAnalysisWriter(ResourceWriter<Gene3dHmmer3RawMatch> onionAnalysisWriter) {
-        this.onionAnalysisWriter = onionAnalysisWriter;
-    }
-
-    public void setOnionResultsWriter(ResourceWriter<Gene3dHmmer3RawMatch> onionResultsWriter) {
-        this.onionResultsWriter = onionResultsWriter;
-    }
-
     public void setProteinDao(ProteinDAO proteinDao) {
         this.proteinDao = proteinDao;
     }
@@ -204,20 +159,5 @@ public class Gene3dRunner {
         marshaller.marshal(protein, new StreamResult(writer));
         return writer.toString();
     }
-
-    private void cat(InputStream in, PrintStream out) throws IOException {
-        BufferedReader reader = null;
-        try{
-            reader = new BufferedReader(new InputStreamReader(in));
-            while (reader.ready()) {
-                out.println(reader.readLine());
-            }
-        }
-        finally {
-            if (reader != null){
-                reader.close();
-            }
-        }
-    }    
 
 }

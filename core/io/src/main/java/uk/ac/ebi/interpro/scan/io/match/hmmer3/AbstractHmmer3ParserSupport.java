@@ -24,7 +24,6 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
     private static final Pattern MODEL_ACCESSION_LINE_PATTERN
             = Pattern.compile ("^[^:]*:\\s+(\\w+)\\s+\\[M=(\\d+)\\].*$" );
 
-    private SignatureLibrary signatureLibrary;
     private String signatureLibraryRelease;
 
     @Override public HmmKey getHmmKey() {
@@ -40,11 +39,6 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
      */
     @Override public Pattern getModelIdentLinePattern() {
         return MODEL_ACCESSION_LINE_PATTERN;
-    }
-
-    @Required
-    public void setSignatureLibrary(uk.ac.ebi.interpro.scan.model.SignatureLibrary signatureLibrary) {
-        this.signatureLibrary = signatureLibrary;
     }
 
     @Required
@@ -78,8 +72,7 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
                     rawResults.put(id, protein);
                 }
                 // Add match
-                final T match = createMatch(signatureLibrary, signatureLibraryRelease,
-                                            hmmSearchRecord, sequenceMatch, domainMatch);
+                final T match = createMatch(signatureLibraryRelease, hmmSearchRecord, sequenceMatch, domainMatch);
                 protein.addMatch(match);
             }
         }
@@ -88,14 +81,13 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
     /**
      * Returns {@link uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch} instance using values from parameters.
      *
-     * @param signatureLibrary
-     *@param signatureLibraryRelease   Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
+     * @param signatureLibraryRelease   Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
      * @param hmmSearchRecord           Single record in the hmmsearch output
      * @param sequenceMatch             Sequence match
-     * @param domainMatch               Domain match     @return {@link uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch} instance using values from parameters
+     * @param domainMatch               Domain match     
+     * @return Hmmer3RawMatch instance using values from parameters.
      */    
-    protected abstract T createMatch(SignatureLibrary signatureLibrary,
-                                     String signatureLibraryRelease,
+    protected abstract T createMatch(final String signatureLibraryRelease,
                                      final HmmSearchRecord hmmSearchRecord,
                                      final SequenceMatch sequenceMatch,
                                      final DomainMatch domainMatch);

@@ -11,11 +11,27 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * TODO: Add class description
- *
- * http://www.cathdb.info/wiki/data:cathdomainlist
- *
- * http://release.cathdb.info/v3.3.0/CathDomainList
+ * Represents a record in a
+ * <a href="http://www.cathdb.info/wiki/data:cathdomainlist">CATH List File (CLF)</a>.
+ * For example,
+ * <a href="http://release.cathdb.info/v3.3.0/CathDomainList">release 3.3.0</a>.
+ * 
+ * Format:
+ * <pre>
+ *   1 	CATH domain name (seven characters)
+ *   2 	Class number
+ *   3 	Architecture number
+ *   4 	Topology number
+ *   5 	Homologous superfamily number
+ *   6 	S35 sequence cluster number
+ *   7 	S60 sequence cluster number
+ *   8 	S95 sequence cluster number
+ *   9 	S100 sequence cluster number
+ *   10 	S100 sequence count number
+ *   11 	Domain length
+ *   12 	Structure resolution (Angstroms)
+ *   (999.000 for NMR structures and 1000.000 for obsolete PDB entries)
+ * </pre>
  *
  * @author  Antony Quinn
  * @version $Id$
@@ -58,13 +74,21 @@ public final class CathDomainListRecord {
         return homologousSuperfamilyNumber;
     }
 
+    public String getSignatureAccession() {
+        return createSignatureAccession(this);
+    }    
+
     public Signature toSignature() {
-        return new Signature(createSignatureAccession(this));
+        return new Signature(getSignatureAccession());
     }
 
     public static String createSignatureAccession(CathDomainListRecord record)    {
+        return createSignatureAccession("G3DSA:", record);
+    }
+
+    public static String createSignatureAccession(String prefix, CathDomainListRecord record)    {
         final String SEP = ".";
-        StringBuilder builder = new StringBuilder("G3DSA:")
+        StringBuilder builder = new StringBuilder(prefix)
                 .append(record.getClassNumber()).append(SEP)
                 .append(record.getArchitectureNumber()).append(SEP)
                 .append(record.getTopologyNumber()).append(SEP)
