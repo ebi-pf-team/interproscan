@@ -313,7 +313,7 @@ public class Protein implements Serializable {
         final Protein p = (Protein) o;
         return new EqualsBuilder()
                 .append(sequence, p.sequence)
-                .append(md5, p.md5)
+                .append(md5.toLowerCase(), p.md5.toLowerCase())
                 .append(matches, p.matches)
                 .append(crossReferences, p.crossReferences)
                 .isEquals();

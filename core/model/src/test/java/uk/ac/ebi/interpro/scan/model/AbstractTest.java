@@ -70,7 +70,10 @@ abstract class AbstractTest<T> {
         // Ignore comments and whitespace when comparing XML
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);
-    }
+        XMLUnit.setIgnoreAttributeOrder(true);
+        XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+        XMLUnit.setNormalizeWhitespace(true);
+    } 
 
     // TODO: Add method that tests non-XML objects (so can test with @XmlTransient data)
 
@@ -127,6 +130,11 @@ abstract class AbstractTest<T> {
      * @throws org.xml.sax.SAXException  if cannot parse expected or actual XML
      */
     protected void testXmlRoundTrip() throws IOException, SAXException {
+        XMLUnit.setIgnoreComments(true);
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setIgnoreAttributeOrder(true);
+        XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+        XMLUnit.setNormalizeWhitespace(true);        
         for (String key : objectXmlMap.keySet()) {
             // Get expected object and XML
             T expectedObject   = objectXmlMap.get(key).getObject();

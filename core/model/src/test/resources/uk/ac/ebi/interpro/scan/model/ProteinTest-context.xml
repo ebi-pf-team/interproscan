@@ -31,6 +31,12 @@
                 <constructor-arg ref="pfamXml"/>
             </bean>
         </entry>
+        <entry key="PIRSF">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="pirsfObject"/>
+                <constructor-arg ref="pirsfXml"/>
+            </bean>
+        </entry>
         <entry key="SMART">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
                 <constructor-arg ref="smartObject"/>
@@ -168,6 +174,55 @@
                                              hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
                         </locations>
                     </hmmer3-match>
+                </matches>
+            </protein>
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <lang:groovy id="pirsfObject">
+        <!--
+        Data from Onion:
+        
+            select upi, method_ac, seq_start, seq_end, hmm_start, hmm_end, hmm_bounds, score, seqscore, 
+                   to_char(power(10, evalue)), timestamp
+            from iprscan
+            where analysis_type_id = 17 and relno_minor = 71 and upi = 'UPI0001C4B400' and method_ac = 'PIRSF000743';
+
+            UPI0001C4B400	PIRSF000743	7	172	1	186	[]	294.5	294.5	6.3E-86	26-FEB-10 03.01.18
+        -->
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                Protein p = new Protein(
+                    "MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKA" +
+                    "RYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLN" +
+                    "YMTDLWKSQGRM");
+                p.addCrossReference(new Xref("UPI0001C4B400"));
+                Signature signature = new Signature("PIRSF000743", "RPO19");
+                Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
+                locations.add(new Hmmer2Match.Hmmer2Location(7, 172, 294.5, 6.3E-86, 1, 186, HmmBounds.COMPLETE));
+                p.addMatch(new Hmmer2Match(signature, 294.5, 6.3E-86, locations));
+                return p;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="pirsfXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+            <protein md5="58F1C327155B01E0EE4C95CE0067973C" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <sequence>MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKARYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLNYMTDLWKSQGRM</sequence>
+                <xref id="UPI0001C4B400"/>
+                <matches>
+                    <hmmer2-match score="294.5" evalue="6.3E-86">
+                        <signature ac="PIRSF000743" name="RPO19"/>
+                        <locations>
+                            <hmmer2-location start="7" end="172" score="294.5" evalue="6.3E-86" 
+                                             hmm-start="1" hmm-end="186" hmm-bounds="COMPLETE"/>
+                        </locations>
+                    </hmmer2-match>
                 </matches>
             </protein>
             ]]>
