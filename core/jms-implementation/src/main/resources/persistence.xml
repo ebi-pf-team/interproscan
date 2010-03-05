@@ -5,6 +5,35 @@
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
+        <!-- Interfaces -->
+        <class>uk.ac.ebi.interpro.scan.model.Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.Match</class>
+
+        <!-- Concrete Locations. -->
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
+
+        <!-- Concrete Matches -->
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.Protein</class>
+        <class>uk.ac.ebi.interpro.scan.model.Model</class>
+        <class>uk.ac.ebi.interpro.scan.model.Xref</class>
+        <class>uk.ac.ebi.interpro.scan.model.Signature</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
+
+        <class>uk.ac.ebi.interpro.scan.management.model.StepExecution</class>
+        <class>uk.ac.ebi.interpro.scan.management.model.StepInstance</class>
+
         <properties>
             <property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />
             <property name="hibernate.format_sql"       value="${test.hibernate.format_sql}" />
