@@ -13,7 +13,23 @@
     <!--<aop:aspectj-autoproxy/>-->
     
     <!-- JPA Configuration -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>
+    <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>-->
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="interproDataSource"/>
+    </bean>
+    
+    <bean id="interproDataSource" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+      <property name="targetDataSource"><ref local="dataSource"/></property>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${test.database.driver}" />
+        <property name="url" value="${test.connection.url}" />
+        <property name="username" value="${test.username}" />
+        <property name="password" value="${test.password}" />
+    </bean>
+    
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
     <!-- JPA Transaction Setup -->
