@@ -32,7 +32,7 @@ public class InterProScanWorker implements Worker {
      *
      * TODO - this should default to null and be injected.
      */
-    private Long timeToLive = null;   // 10 minutes, for testing.
+    private Long timeToLive = null;
 
     private Long idleExpiryTime = null;
 
@@ -182,7 +182,7 @@ public class InterProScanWorker implements Worker {
             sessionHandler = new SessionHandler(connectionFactory);
             MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
             MessageProducer messageProducer = sessionHandler.getMessageProducer(jobResponseQueueName);
-            InterProScanWorkerListener listener = new InterProScanWorkerListener(messageProducer, sessionHandler);
+            StepExecutionListener listener = new StepExecutionListener(messageProducer, sessionHandler);
             messageConsumer.setMessageListener(listener);
 
             MessageConsumer monitorMessageConsumer = sessionHandler.getMessageConsumer(workerManagerTopicName);
@@ -228,7 +228,7 @@ public class InterProScanWorker implements Worker {
         }
     }
 
-    class InterProScanWorkerListener implements MessageListener{
+    class StepExecutionListener implements MessageListener{
 
         private final MessageProducer messageProducer;
 
@@ -237,7 +237,7 @@ public class InterProScanWorker implements Worker {
 
         private boolean busy = false;
 
-        InterProScanWorkerListener(final MessageProducer messageProducer, final SessionHandler sessionHandler) {
+        StepExecutionListener(final MessageProducer messageProducer, final SessionHandler sessionHandler) {
             this.messageProducer = messageProducer;
             this.sessionHandler = sessionHandler;
         }
