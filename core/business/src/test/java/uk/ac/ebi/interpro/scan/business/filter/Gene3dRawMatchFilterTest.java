@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import org.junit.runner.RunWith;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
@@ -34,8 +35,10 @@ public final class Gene3dRawMatchFilterTest {
 
     @Resource
     private org.springframework.core.io.Resource filteredMatches;    
-    
+
+    // TODO: Use SSF output file instead of needing to run DomainFinder
     @Test
+    @Ignore("Change test so does not rely on DomainFinder (this could be re-enabled as an integration test)")
     public void testFilter() throws IOException {
 
         // Read raw matches
