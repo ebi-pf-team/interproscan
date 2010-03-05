@@ -51,17 +51,6 @@
         <property name="lanServerListing" ref="serverNames"/>
     </bean>
 
-    <bean id="queueJumper" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper">
-        <!-- This filter ensures that the QueueJumper only starts up new JVMs for
-        parallel tasks.  Serial tasks are filtered by a specific worker directly from
-        the workerJobRequestQueue. -->
-        <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
-
-        <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
-        <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
-        <property name="connectionFactory" ref="connectionFactory"/>
-    </bean>
-
     <!--<bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
         <!--<property name="serialWorkerRunner" ref="lanWorkerRunner"/>-->
         <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
@@ -108,9 +97,6 @@
 
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
-        <property name="jobSubmissionQueueName" value="jms.queue.${job.submission.queue}"/>
-        <property name="responseMonitor" ref="responseMonitor"/>
-        <property name="managementRequestTopicName" value="jms.topic.${worker.manager.topic}"/>
         <property name="jobs" ref="jobs"/>
 
         <!-- The following properties are just for the 'hacked' demonstration. (Loading proteins
@@ -119,19 +105,10 @@
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
-        <property name="queueJumper" ref="queueJumper"/>
         <property name="connectionFactory" ref="connectionFactory"/>
-    </bean>
-
-    <bean id="responseMonitor" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
-        <property name="connectionFactory" ref="connectionFactory"/>
-        <property name="monitorResponseTimeout" value="5000"/>
-        <property name="handler" ref="responseHandler"/>
         <property name="workerJobResponseQueueName" value="jms.queue.${worker.job.response.queue}"/>
-    </bean>
-
-    <bean id="responseHandler" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanHandlerImpl">
-        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+        <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
+        <property name="workerJobRequestQueueName" value="jms.queue.${worker.job.request.queue}"/>
     </bean>
 
     <!-- Quartz Scheduler - contains list of Quartz jobs. -->
@@ -155,12 +132,12 @@
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
         <property name="startDelay" value="0"/>
         <!-- repeat every 30 minutes -->
-        <property name="repeatInterval" value="1800000"/>
+        <property name="repeatInterval" value="180000"/>
     </bean>
 
 
 
-    <!-- Quartz job to start spare parallel worker.  Currently turned off. -->
+    <!-- Quartz job to start spare parallel worker.  Currently turned on. -->
     <bean id="startSpareParallelWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="parallelWorkerRunner"/>
         <property name="targetMethod" value="startupNewWorker"/>
