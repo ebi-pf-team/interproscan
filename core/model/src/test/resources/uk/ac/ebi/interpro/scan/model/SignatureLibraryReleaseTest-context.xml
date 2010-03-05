@@ -137,6 +137,55 @@
         </constructor-arg>
     </bean>
 
+    <lang:groovy id="pirsfObject">
+        <!--
+        Information from:
+        * http://pir.georgetown.edu/cgi-bin/ipcSF?id=PIRSF000743
+        * /ebi/production/interpro/data/members/pirsf/271/sf_hmm:
+            HMMER2.0  [2.2g]
+            NAME  RPO19
+            ACC   PIRSF000743
+            LENG  186
+            ALPH  Amino
+            RF    no
+            CS    no
+            MAP   yes
+            COM   hmmbuild SF000743.hmm SF000743.aln
+            COM   hmmcalibrate -cpu 2 SF000743.hmm
+            NSEQ  13
+            DATE  Fri Apr 20 19:06:31 2007
+        -->
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PIRSF, "271")
+                Signature signature = release.addSignature(
+                        new Signature.Builder("PIRSF000743")
+                                .name("RPO19")
+                                .type("family")
+                                .description("DNA-directed RNA polymerase, RPO19 subunit")
+                                .build())
+                signature.addModel(new Model("PIRSF000743"))
+                return release
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="pirsfXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <signature-library-release library="PIRSF" version="271" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                    <signature ac="PIRSF000743" name="RPO19" type="family" desc="DNA-directed RNA polymerase, RPO19 subunit">
+                        <models>
+                            <model ac="PIRSF000743" name="RPO19"/>
+                        </models>
+                    </signature>
+                </signature-library-release>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
     <lang:groovy id="smartObject">
         <lang:inline-script>
             <![CDATA[

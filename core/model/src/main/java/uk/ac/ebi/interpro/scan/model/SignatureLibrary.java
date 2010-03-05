@@ -36,6 +36,7 @@ public enum SignatureLibrary {
     PFAM_B              ("Pfam B",              "Description to be added"),
     SMART               ("SMART",               "Description to be added"),
     SUPERFAMILY         ("SUPERFAMILY",         "Description to be added"),
+    PIRSF               ("PIRSF",               "Family classification system at the Protein Information Resource"),
     PRINTS              ("PRINTS",              "Description to be added"),
     PRODOM              ("ProDom",              "Description to be added"),
     PROSITE_PATTERNS    ("ProSitePatterns",     "Description to be added"),
