@@ -1,9 +1,5 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper;
-
 /**
  * Interface for the Master application.
  *
@@ -22,28 +18,8 @@ import uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper;
 public interface Master{
 
     /**
-     * Sets the job submission queue name.  This is the queue that new
-     * jobs are placed on to, prior to be pushed on to the requestQueue
-     * from where they are taken by a worker node.
-     * @param jobSubmissionQueueName
-     */
-    @Required
-    void setJobSubmissionQueueName(String jobSubmissionQueueName);
-
-    /**
-     * Sets the name of the topic to which Worker management requests
-     * should be sent, for multicast to all of the Worker clients.
-     * @param managementRequestTopicName the name of the topic to which Worker management requests
-     * should be sent, for multicast to all of the Worker clients.
-     */
-    @Required
-    void setManagementRequestTopicName (String managementRequestTopicName);
-
-    /**
      * Starts the Master application.
      */
     void start();
 
-    @Required
-    void setQueueJumper(QueueJumper queueJumper);
 }

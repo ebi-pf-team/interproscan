@@ -1,13 +1,11 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.jms.master.queuejumper.QueueJumper;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
@@ -31,15 +29,7 @@ public class InterProScanMaster implements Master {
 
     private static final Logger LOGGER = Logger.getLogger(InterProScanMaster.class);
 
-    private String jobSubmissionQueueName;
-
     private Jobs jobs;
-
-//    private volatile Map<String, StepInstance> stepInstances = new HashMap<String, StepInstance>();
-//
-    private volatile Map<Long, StepExecution> stepExecutions = new HashMap<Long, StepExecution>();
-
-    private String managementRequestTopicName;
 
     private StepInstanceDAO stepInstanceDAO;
 
@@ -47,15 +37,25 @@ public class InterProScanMaster implements Master {
 
     private GenericDAO signatureLibraryReleaseDAO;
 
-    private QueueJumper queueJumper;
-
     private String pfamHMMfilePath;
-
-    private MessageProducer producer;
 
     private ConnectionFactory connectionFactory;
 
     private String workerJobResponseQueueName;
+
+    private String workerJobRequestQueueName;
+
+    private WorkerRunner parallelWorkerRunner;
+
+    @Required
+    public void setParallelWorkerRunner(WorkerRunner workerRunner) {
+        this.parallelWorkerRunner = workerRunner;
+    }
+
+    @Required
+    public void setWorkerJobRequestQueueName(String workerJobRequestQueueName) {
+        this.workerJobRequestQueueName = workerJobRequestQueueName;
+    }
 
     /**
      * Sets the name of the destinationResponseQueue.
@@ -71,33 +71,6 @@ public class InterProScanMaster implements Master {
         this.connectionFactory = connectionFactory;
     }
 
-    /**
-     * Sets the task submission queue name.  This is the queue that new
-     * jobs are placed on to, prior to be pushed on to the requestQueue
-     * from where they are taken by a worker node.
-     * @param jobSubmissionQueueName
-     */
-    @Required
-    public void setJobSubmissionQueueName(String jobSubmissionQueueName) {
-        this.jobSubmissionQueueName = jobSubmissionQueueName;
-    }
-
-    @Required
-    public void setQueueJumper(QueueJumper queueJumper) {
-        this.queueJumper = queueJumper;
-    }
-
-    /**
-     * Sets the name of the topic to which Worker management requests
-     * should be sent, for multicast to all of the Worker clients.
-     *
-     * @param managementRequestTopicName the name of the topic to which Worker management requests
-     *                                   should be sent, for multicast to all of the Worker clients.
-     */
-    @Override
-    public void setManagementRequestTopicName(String managementRequestTopicName) {
-        this.managementRequestTopicName = managementRequestTopicName;
-    }
 
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
@@ -134,45 +107,35 @@ public class InterProScanMaster implements Master {
     public void start(){
         SessionHandler sessionHandler = null;
         try {
-            // Start up the Thread that monitors the taskSubmission queue.
-            Thread queueMonitorThread = new Thread (queueJumper);
-            queueMonitorThread.start();
-
             // Initialise the sessionHandler for the master thread
             sessionHandler = new SessionHandler(connectionFactory);
 
-            producer = sessionHandler.getMessageProducer(jobSubmissionQueueName);
-
-            // Listen for completed jobs.
             MessageConsumer jobResponseMessageConsumer = sessionHandler.getMessageConsumer(workerJobResponseQueueName);
+            MessageProducer jobRequestMessageProducer = sessionHandler.getMessageProducer(workerJobRequestQueueName);
+
             ResponseMonitorImpl responseMonitor = new ResponseMonitorImpl(stepExecutionDAO);
             jobResponseMessageConsumer.setMessageListener(responseMonitor);
 
-
-
             sessionHandler.start();
 //            loadPfamModels();
-            while(true){
+            while(true){       // TODO should be while(running) to allow shutdown.
                 for (Job job : jobs.getJobList()){
                     for (Step step : job.getSteps()){
                         for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
                             if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
                                 StepExecution stepExecution = stepInstance.createStepExecution();
                                 stepExecutionDAO.insert(stepExecution);
-                                stepExecutions.put(stepExecution.getId(), stepExecution);
-                                sendMessage(stepExecution, sessionHandler);
+                                sendMessage(stepExecution, sessionHandler, jobRequestMessageProducer);
                             }
                         }
                     }
                 }
+                Thread.sleep (500);
             }
-
         } catch (JMSException e) {
-            LOGGER.error ("JMSException", e);
-            System.exit(1);
+            LOGGER.error ("JMSException thrown by Master", e);
         } catch (Exception e){
-            LOGGER.error ("Exception", e);
-            System.exit(1);
+            LOGGER.error ("Exception thrown by Master", e);
         }
 
         finally {
@@ -205,8 +168,6 @@ public class InterProScanMaster implements Master {
 
 
     private void loadPfamModels() {
-        // Load the models into the database.
-
         // Parse and retrieve the signatures.
         Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(SignatureLibrary.PFAM, "24.0");
         SignatureLibraryRelease release = null;
@@ -228,32 +189,18 @@ public class InterProScanMaster implements Master {
     /**
      * Just creates simple text messages to be sent to Worker nodes.
      * @param stepExecution being the StepExecution to send as a message
+     * @param sessionHandler used to create the ObjectMessage.
+     * @param producer being the MessageProducer upon which to send the message.
      * @throws JMSException in the event of a failure sending the message to the JMS Broker.
      */
     @Transactional
-    private void sendMessage(StepExecution stepExecution, SessionHandler sessionHandler) throws JMSException {
-        stepExecution.submit(stepExecutionDAO);
+    private void sendMessage(StepExecution stepExecution, SessionHandler sessionHandler, MessageProducer producer) throws JMSException {
+        stepExecution.submit(stepExecutionDAO);    // This method is transactional, so no problem with doing this here.
         ObjectMessage message = sessionHandler.createObjectMessage(stepExecution);
         final StepInstance stepInstance = stepExecution.getStepInstance();
         assert stepInstance != null;
-        if (stepInstance.getStep(jobs).getSerialGroup() == null){
-            producer.setPriority(4); 
-        }
-        else {
-            producer.setPriority(7);
-        }
+        producer.setPriority(stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 7);
         producer.send(message);
+        parallelWorkerRunner.startupNewWorker();
     }
-
-    private int runningStepExecutions(){
-        int running = 0;
-        for (StepExecution exec : stepExecutions.values()){
-            if (exec.getState() == StepExecutionState.STEP_EXECUTION_SUBMITTED ||
-                    exec.getState() == StepExecutionState.STEP_EXECUTION_RUNNING){
-                running++;
-            }
-        }
-        return running;
-    }
-
 }
