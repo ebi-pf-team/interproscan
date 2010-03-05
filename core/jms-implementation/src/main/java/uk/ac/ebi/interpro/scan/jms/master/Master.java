@@ -40,15 +40,6 @@ public interface Master{
     void setManagementRequestTopicName (String managementRequestTopicName);
 
     /**
-     * Sets the ResponseMonitor which will handle any responses from
-     * the Worker nodes.
-     * @param responseMonitor which will handle any responses from
-     * the Worker nodes.
-     */
-    @Required
-    public void setResponseMonitor(ResponseMonitor responseMonitor);
-
-    /**
      * Starts the Master application.
      */
     void start();

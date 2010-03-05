@@ -15,10 +15,7 @@ import uk.ac.ebi.interpro.scan.management.model.*;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
+import javax.jms.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +32,6 @@ public class InterProScanMaster implements Master {
     private static final Logger LOGGER = Logger.getLogger(InterProScanMaster.class);
 
     private String jobSubmissionQueueName;
-
-    private ResponseMonitor responseMonitor;
 
     private Jobs jobs;
 
@@ -59,6 +54,17 @@ public class InterProScanMaster implements Master {
     private MessageProducer producer;
 
     private ConnectionFactory connectionFactory;
+
+    private String workerJobResponseQueueName;
+
+    /**
+     * Sets the name of the destinationResponseQueue.
+     * @param workerJobResponseQueueName the name of the destinationResponseQueue.
+     */
+    @Required
+    public void setWorkerJobResponseQueueName(String workerJobResponseQueueName) {
+        this.workerJobResponseQueueName = workerJobResponseQueueName;
+    }
 
     @Required
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
@@ -91,17 +97,6 @@ public class InterProScanMaster implements Master {
     @Override
     public void setManagementRequestTopicName(String managementRequestTopicName) {
         this.managementRequestTopicName = managementRequestTopicName;
-    }
-
-    /**
-     * Sets the ResponseMonitor which will handle any responses from
-     * the Worker nodes.
-     * @param responseMonitor which will handle any responses from
-     * the Worker nodes.
-     */
-    @Required
-    public void setResponseMonitor(ResponseMonitor responseMonitor){
-        this.responseMonitor = responseMonitor;
     }
 
     @Required
@@ -139,11 +134,6 @@ public class InterProScanMaster implements Master {
     public void start(){
         SessionHandler sessionHandler = null;
         try {
-            // Start the response monitor thread
-            Thread responseMonitorThread = new Thread(responseMonitor);
-            responseMonitor.setStepExecutionMap(stepExecutions);
-            responseMonitorThread.start();
-
             // Start up the Thread that monitors the taskSubmission queue.
             Thread queueMonitorThread = new Thread (queueJumper);
             queueMonitorThread.start();
@@ -152,6 +142,14 @@ public class InterProScanMaster implements Master {
             sessionHandler = new SessionHandler(connectionFactory);
 
             producer = sessionHandler.getMessageProducer(jobSubmissionQueueName);
+
+            // Listen for completed jobs.
+            MessageConsumer jobResponseMessageConsumer = sessionHandler.getMessageConsumer(workerJobResponseQueueName);
+            ResponseMonitorImpl responseMonitor = new ResponseMonitorImpl(stepExecutionDAO);
+            jobResponseMessageConsumer.setMessageListener(responseMonitor);
+
+
+
             sessionHandler.start();
 //            loadPfamModels();
             while(true){
@@ -238,6 +236,12 @@ public class InterProScanMaster implements Master {
         ObjectMessage message = sessionHandler.createObjectMessage(stepExecution);
         final StepInstance stepInstance = stepExecution.getStepInstance();
         assert stepInstance != null;
+        if (stepInstance.getStep(jobs).getSerialGroup() == null){
+            producer.setPriority(4); 
+        }
+        else {
+            producer.setPriority(7);
+        }
         producer.send(message);
     }
 
@@ -251,4 +255,5 @@ public class InterProScanMaster implements Master {
         }
         return running;
     }
+
 }
