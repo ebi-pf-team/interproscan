@@ -123,14 +123,12 @@ public class InterProScanMaster implements Master {
                     for (Step step : job.getSteps()){
                         for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
                             if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
-                                StepExecution stepExecution = stepInstance.createStepExecution();
-                                stepExecutionDAO.insert(stepExecution);
-                                sendMessage(stepExecution, sessionHandler, jobRequestMessageProducer);
+                                sendMessage(stepInstance, sessionHandler, jobRequestMessageProducer);
                             }
                         }
                     }
                 }
-                Thread.sleep (500);
+                Thread.sleep (5000);  // Every 5 seconds, checks for any runnable StepInstances and runs them.
             }
         } catch (JMSException e) {
             LOGGER.error ("JMSException thrown by Master", e);
@@ -187,18 +185,19 @@ public class InterProScanMaster implements Master {
     }
 
     /**
-     * Just creates simple text messages to be sent to Worker nodes.
-     * @param stepExecution being the StepExecution to send as a message
+     * Creates simple text messages to be sent to Worker nodes.
+     * Does all of this in a transaction, hence in this separate method.
+     * @param stepInstance being the StepExecution to send as a message
      * @param sessionHandler used to create the ObjectMessage.
      * @param producer being the MessageProducer upon which to send the message.
      * @throws JMSException in the event of a failure sending the message to the JMS Broker.
      */
     @Transactional
-    private void sendMessage(StepExecution stepExecution, SessionHandler sessionHandler, MessageProducer producer) throws JMSException {
-        stepExecution.submit(stepExecutionDAO);    // This method is transactional, so no problem with doing this here.
+    private void sendMessage(StepInstance stepInstance, SessionHandler sessionHandler, MessageProducer producer) throws JMSException {
+        final StepExecution stepExecution = stepInstance.createStepExecution();
+        stepExecutionDAO.insert(stepExecution);
+        stepExecution.submit(stepExecutionDAO);
         ObjectMessage message = sessionHandler.createObjectMessage(stepExecution);
-        final StepInstance stepInstance = stepExecution.getStepInstance();
-        assert stepInstance != null;
         producer.setPriority(stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 7);
         producer.send(message);
         parallelWorkerRunner.startupNewWorker();
