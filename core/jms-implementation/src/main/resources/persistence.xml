@@ -4,67 +4,16 @@
     <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <!--<description>-->
-            <!--Test persistence-unit that uses an in-memory HSQLDB database.-->
-        <!--</description>-->
-
-        <!-- Interfaces -->
-        <class>uk.ac.ebi.interpro.scan.model.Location</class>
-        <class>uk.ac.ebi.interpro.scan.model.Match</class>
-
-        <!-- Concrete Locations. -->
-        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
-        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
-        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
-
-        <!-- Concrete Matches -->
-        <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch</class>
-
-        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match</class>
-        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match</class>
-
-        <class>uk.ac.ebi.interpro.scan.model.Protein</class>
-        <class>uk.ac.ebi.interpro.scan.model.Model</class>
-        <class>uk.ac.ebi.interpro.scan.model.Xref</class>
-        <class>uk.ac.ebi.interpro.scan.model.Signature</class>
-        <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
-
-        <class>uk.ac.ebi.interpro.scan.management.model.StepExecution</class>
-        <class>uk.ac.ebi.interpro.scan.management.model.StepInstance</class>
 
         <properties>
             <property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />
             <property name="hibernate.format_sql"       value="${test.hibernate.format_sql}" />
-            <!--<property name="hibernate.connection.driver_class" value="${test.database.driver}" />-->
-            <!--<property name="hibernate.connection.url"   value="${test.connection.url}" />-->
-            <!--<property name="hibernate.connection.username" value="${test.username}" />-->
-            <!--<property name="hibernate.connection.password" value="${test.password}" />-->
             <property name="hibernate.dialect"          value="${test.hibernate.dialect}" />
             <!--<property name="hibernate.hbm2ddl.auto"     value="update" />-->
             <property name="hibernate.default_schema" value="${test.hibernate.default_schema}" />
             <property name="hibernate.use_sql_comments" value="${test.hibernate.use_sql_comments}" />
             <property name="hibernate.jdbc.batch_size" value="${test.hibernate.jdbc.batch.size}" />
         </properties>
-
-
-        <!--<properties>-->
-            <!--<property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />-->
-            <!--<property name="hibernate.format_sql"       value="${test.hibernate.format_sql}" />-->
-            <!--<property name="hibernate.connection.driver_class" value="${test.database.driver}" />-->
-            <!--<property name="hibernate.connection.url"   value="${test.connection.url}" />-->
-            <!--<property name="hibernate.connection.username" value="${test.username}" />-->
-            <!--<property name="hibernate.connection.password" value="${test.password}" />-->
-            <!--<property name="hibernate.dialect"          value="${test.hibernate.dialect}" />-->
-            <!--&lt;!&ndash;<property name="hibernate.hbm2ddl.auto"     value="${test.hibernate.hbm2ddl.auto}" />&ndash;&gt;-->
-            <!--<property name="hibernate.default_schema" value="${test.hibernate.default_schema}" />-->
-            <!--<property name="hibernate.use_sql_comments" value="${test.hibernate.use_sql_comments}" />-->
-            <!--<property name="hibernate.jdbc.batch_size" value="${test.hibernate.jdbc.batch.size}" />-->
-        <!--</properties>-->
 
     </persistence-unit>
 
