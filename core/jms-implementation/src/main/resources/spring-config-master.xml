@@ -46,12 +46,12 @@
     <!-- Starts up a serial worker on a local machine (defined in spring-config-servers.xml).  Used by the lanBroker bean to start up a single multi-use worker. -->
     <bean id="lanWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANWorkerRunner">
         <property name="command"
-                  value='${maven.home} -e -P runSerialWorker -f ${basedir}/pom.xml exec:java -DXmx=${serial.worker.xmx}m'/>
+                  value='${maven.home} -e -P runParallelWorker -f ${basedir}/pom.xml exec:java ${parallel.worker.xmx}'/>
         <property name="accessPrefix" value="ssh -x ${unix.username}"/>
         <property name="lanServerListing" ref="serverNames"/>
     </bean>
 
-    <!--<bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
+    <!--<bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->            
         <!--<property name="serialWorkerRunner" ref="lanWorkerRunner"/>-->
         <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
         <!--<property name="queueJumper" ref="queueJumper"/>-->
