@@ -15,10 +15,6 @@
         <!--<consumer-window-size>0</consumer-window-size>-->
     </connection-factory>
 
-    <queue name="${job.submission.queue}">
-        <entry name="jms.queue.${job.submission.queue}"/>
-    </queue>
-
     <queue name="${worker.job.request.queue}">
         <entry name="jms.queue.${worker.job.request.queue}"/>
     </queue>
