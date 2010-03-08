@@ -76,10 +76,11 @@ public class Pfam_A_PostProcessingStep extends Step {
      * This method is called to execute the action that the StepInstance must perform.
      *
      * @param stepInstance containing the parameters for executing.
+     * @param temporaryFileDirectory
      * @throws Exception could be anything thrown by the execute method.
      */
     @Override
-    public void execute(StepInstance stepInstance) throws InterruptedException {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws InterruptedException {
         Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
         // Retrieve raw results for protein range.
         Map<String, RawProtein<PfamHmmer3RawMatch>> rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(

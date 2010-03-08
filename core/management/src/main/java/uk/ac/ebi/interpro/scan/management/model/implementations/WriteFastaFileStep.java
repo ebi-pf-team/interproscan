@@ -32,7 +32,7 @@ public class WriteFastaFileStep extends Step {
     private ProteinDAO proteinDAO;
 
     @Required
-    public void setFastaFilePathTemplate(String fastaFilePathTemplate) {
+    public void setFastaFileNameTemplate(String fastaFilePathTemplate) {
         this.fastaFilePathTemplate = fastaFilePathTemplate;
     }
 
@@ -45,10 +45,11 @@ public class WriteFastaFileStep extends Step {
      * This method is called to execute the action that the StepInstance must perform.
      *
      * @param stepInstance containing the parameters for executing.
+     * @param temporaryFileDirectory
      */
     @Override
-    public void execute(StepInstance stepInstance) throws IOException, WriteFastaFile.FastaFileWritingException, InterruptedException {
-        String fastaFilePathName = stepInstance.filterFileNameProteinBounds(fastaFilePathTemplate);
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws IOException, WriteFastaFile.FastaFileWritingException, InterruptedException {
+        String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
         List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
         fastaFile.writeFastaFile(proteins, fastaFilePathName);
         // Thread.sleep(2000);

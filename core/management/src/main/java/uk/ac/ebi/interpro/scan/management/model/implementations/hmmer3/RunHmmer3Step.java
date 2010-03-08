@@ -7,7 +7,6 @@ import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,21 +59,21 @@ public class RunHmmer3Step extends Step {
         this.fullPathToHmmFile = fullPathToHmmFile;
     }
 
-    public String getHmmerOutputFilePathTemplate() {
+    public String getHmmerOutputFileNameTemplate() {
         return hmmerOutputFilePathTemplate;
     }
 
     @Required
-    public void setHmmerOutputFilePathTemplate(String hmmerOutputFilePathTemplate) {
+    public void setHmmerOutputFileNameTemplate(String hmmerOutputFilePathTemplate) {
         this.hmmerOutputFilePathTemplate = hmmerOutputFilePathTemplate;
     }
 
-    public String getFastaFilePathNameTemplate() {
+    public String getFastaFileNameTemplate() {
         return fastaFilePathNameTemplate;
     }
 
     @Required
-    public void setFastaFilePathNameTemplate(String fastaFilePathNameTemplate) {
+    public void setFastaFileNameTemplate(String fastaFilePathNameTemplate) {
         this.fastaFilePathNameTemplate = fastaFilePathNameTemplate;
     }
 
@@ -83,13 +82,14 @@ public class RunHmmer3Step extends Step {
      * This method is called to execute the action that the StepInstance must perform.
      *
      * @param stepInstance containing the parameters for executing.
+     * @param temporaryFileDirectory
      */
     @Override
-    public void execute(StepInstance stepInstance) throws Exception {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws Exception {
         LOGGER.debug("About to run HMMER binary... some output should follow.");
 
-        final String fastaFilePathName = stepInstance.filterFileNameProteinBounds(this.getFastaFilePathNameTemplate());
-        final String hmmerOutputFileName = stepInstance.filterFileNameProteinBounds(this.getHmmerOutputFilePathTemplate());
+        final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
+        final String hmmerOutputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getHmmerOutputFileNameTemplate());
         List<String> command = new ArrayList<String>();
 
         command.add(this.getFullPathToBinary());

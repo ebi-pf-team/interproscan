@@ -21,7 +21,7 @@ public class DeleteFileStep extends Step {
     private String filePathTemplate;
 
     @Required
-    public void setFilePathTemplate(String filePathTemplate) {
+    public void setHmmerOutputFileNameTemplate(String filePathTemplate) {
         this.filePathTemplate = filePathTemplate;
     }
 
@@ -33,11 +33,12 @@ public class DeleteFileStep extends Step {
      * to execute is performed within a transaction with the reply to the JMSBroker.
      *
      * @param stepInstance containing the parameters for executing.
+     * @param temporaryFileDirectory
      * @throws Exception could be anything thrown by the execute method.
      */
     @Override
-    public void execute(StepInstance stepInstance) throws Exception {
-        final String filePathName = stepInstance.filterFileNameProteinBounds(filePathTemplate);
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws Exception {
+        final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, filePathTemplate);
         File file = new File(filePathName);
         if (! file.delete()){
             throw new IllegalStateException ("Unable to delete the file located at " + filePathName);

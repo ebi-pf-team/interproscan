@@ -247,12 +247,17 @@ public class StepInstance implements Serializable {
      */
     public static final NumberFormat TWELVE_DIGIT_INTEGER = new DecimalFormat("000000000000");
 
-    public String filterFileNameProteinBounds(String fileNameTemplate){
+    public String buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate){
         fileNameTemplate = filter(fileNameTemplate, PROTEIN_BOTTOM_HOLDER, this.bottomProtein);
         fileNameTemplate = filter(fileNameTemplate, PROTEIN_TOP_HOLDER, this.topProtein);
         fileNameTemplate = filter(fileNameTemplate, MODEL_BOTTOM_HOLDER, this.bottomModel);
         fileNameTemplate = filter(fileNameTemplate, MODEL_TOP_HOLDER, this.topModel);
-        return fileNameTemplate;
+
+        return new StringBuilder()
+                .append(temporaryFileDirectory)
+                .append('/')
+                .append(fileNameTemplate)
+                .toString();
     }
 
     private String filter(String template, String pattern, Long value){

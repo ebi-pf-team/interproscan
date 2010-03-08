@@ -10,8 +10,12 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import javax.jms.*;
+import java.io.File;
+import java.lang.IllegalStateException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -61,6 +65,8 @@ public class InterProScanWorker implements Worker {
     private String workerManagerResponseQueueName;
 
     private Long lastActivityTime;
+
+    private List<String> validatedDirectories = new ArrayList<String>();
 
     @Required
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
@@ -378,7 +384,7 @@ public class InterProScanWorker implements Worker {
         LOGGER.debug("Step ID: "+ step.getId());
         LOGGER.debug("Step instance: " + stepInstance);
         LOGGER.debug("Step execution id: " + stepExecution.getId());
-        step.execute(stepInstance);
+        step.execute(stepInstance, getValidWorkingDirectory(step));
         stepExecution.completeSuccessfully();
         LOGGER.debug ("Successful run of Step.execute() method for StepExecution ID: " + stepExecution.getId());
 
@@ -387,6 +393,36 @@ public class InterProScanWorker implements Worker {
         LOGGER.debug("Followed by successful reply to the JMS Broker and acknowledgement of the message.");
     }
 
+    /**
+     * Builds the path to the directory in which the work should be performed and checks that it
+     * exists and is writable.  (Also attempts to create this directory if it does not exist.)
+     * @param step being the step for which the directory should be returned
+     * @return the path of the working directory.
+     */
+    private String getValidWorkingDirectory(Step step){
+        final String directory = new StringBuilder()
+                        .append(jobs.getBaseDirectoryTemporaryFiles())
+                        .append('/')
+                        .append(step.getJob().getId())
+                        .toString();
+        // Check (just the once) that the working directory exists.
+        if (! validatedDirectories.contains(directory)){
+            final File file = new File (directory);
+            if (! file.exists()){
+                if (! file.mkdirs()){
+                    throw new IllegalStateException("Unable to create the working directory " + directory);
+                }
+            }
+            else if (! file.isDirectory()){
+                throw new IllegalStateException ("The path " + directory + " exists, but is not a directory.");
+            }
+            else if (! file.canWrite()){
+                throw new IllegalStateException ("Unable to write to the directory " + directory);
+            }
+            validatedDirectories.add(directory);
+        }
+        return directory;
+    }
     /**
      * Returns true if after calling System.gc, there is no
      * evidence of a memory leak.

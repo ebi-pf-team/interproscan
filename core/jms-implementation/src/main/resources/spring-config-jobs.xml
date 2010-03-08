@@ -21,6 +21,7 @@
                 <ref bean="jobLoadFromUniParc"/>
             </list>
         </property>
+        <property name="baseDirectoryTemporaryFiles" value="${base.directory.temp.files}"/>
     </bean>
 
 

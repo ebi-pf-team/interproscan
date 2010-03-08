@@ -9,7 +9,6 @@ import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,12 +50,12 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
         this.fullPathToHmmFile = fullPathToHmmFile;
     }
 
-    public String getHmmerOutputFilePathTemplate() {
+    public String getHmmerOutputFileNameTemplate() {
         return hmmerOutputFilePathTemplate;
     }
 
     @Required
-    public void setHmmerOutputFilePathTemplate(String hmmerOutputFilePathTemplate) {
+    public void setHmmerOutputFileNameTemplate(String hmmerOutputFilePathTemplate) {
         this.hmmerOutputFilePathTemplate = hmmerOutputFilePathTemplate;
     }
 
@@ -69,14 +68,15 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
      * This method is called to execute the action that the StepInstance must perform.
      *
      * @param stepInstance containing the parameters for executing.
+     * @param temporaryFileDirectory
      */
     @Override
-    public void execute(StepInstance stepInstance) throws InterruptedException, IOException {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws InterruptedException, IOException {
         LOGGER.debug("Running Parser HMMER3 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
         InputStream is = null;
         try{
 //            Thread.sleep(10000);  // Have a snooze to allow NFS to catch up.
-            final String hmmerOutputFilePath = stepInstance.filterFileNameProteinBounds(this.getHmmerOutputFilePathTemplate());
+            final String hmmerOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getHmmerOutputFileNameTemplate());
             is = new FileInputStream(hmmerOutputFilePath);
             final Hmmer3SearchMatchParser<PfamHmmer3RawMatch> parser = this.getParser();
             final Set<RawProtein<PfamHmmer3RawMatch>> parsedResults = parser.parse(is);

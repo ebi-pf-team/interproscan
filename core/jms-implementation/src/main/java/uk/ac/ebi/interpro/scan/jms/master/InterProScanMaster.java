@@ -15,8 +15,6 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import javax.jms.*;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The InterProScan master application.
