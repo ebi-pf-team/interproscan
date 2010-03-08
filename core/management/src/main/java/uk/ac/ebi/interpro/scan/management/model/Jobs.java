@@ -18,6 +18,8 @@ public class Jobs {
 
     private static final Logger LOGGER = Logger.getLogger(Jobs.class);
 
+    private String baseDirectoryTemporaryFiles;
+
     private Map<String, Job> jobMap;
 
     private Map<String, Step> stepMap;
@@ -35,6 +37,15 @@ public class Jobs {
         for (Job job : jobList){
             jobMap.put (job.getId(), job);
         }
+    }
+
+    public String getBaseDirectoryTemporaryFiles() {
+        return baseDirectoryTemporaryFiles;
+    }
+
+    @Required
+    public void setBaseDirectoryTemporaryFiles(String baseDirectoryTemporaryFiles) {
+        this.baseDirectoryTemporaryFiles = baseDirectoryTemporaryFiles;
     }
 
     public Job getJobById(String id) {

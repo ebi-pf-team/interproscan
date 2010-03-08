@@ -37,9 +37,10 @@ public class FastaFileLoadStep extends Step {
      * This method is called to execute the action that the StepInstance must perform.
      *
      * @param stepInstance containing the parameters for executing.
+     * @param temporaryFileDirectory
      */
     @Override
-    public void execute(StepInstance stepInstance) throws FileNotFoundException {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws FileNotFoundException {
         LOGGER.debug("Entered execute() method of FastaFileLoadStep");
         LOGGER.debug("LoadFastaFile object: " + fastaFileLoader);
         final String providedPath = stepInstance.getStepParameters().get(FASTA_FILE_PATH_KEY);

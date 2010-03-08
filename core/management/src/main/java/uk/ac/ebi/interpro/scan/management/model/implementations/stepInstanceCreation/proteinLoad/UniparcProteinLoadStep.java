@@ -27,8 +27,9 @@ public class UniparcProteinLoadStep extends Step {
      * This method is called to execute the action that the StepInstance must perform.
      *
      * @param stepInstance containing the parameters for executing.
+     * @param temporaryFileDirectory
      */
-    public void execute(StepInstance stepInstance) {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         uniparcLoader.loadNewSequences();
     }
 }

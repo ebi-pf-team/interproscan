@@ -43,7 +43,7 @@
           parent="abstract_pfam_A_step">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"                    value="Create fasta file."/>
-        <property name="fastaFilePathTemplate"              value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
+        <property name="fastaFileNameTemplate"              value="seq_[PROTSTART]_[PROTEND].fasta"/>
         <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
         <property name="proteinDAO"                         ref="proteinDAO"/>
     </bean>
@@ -63,15 +63,15 @@
             </list>
         </property>
         <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
-        <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
-        <property name="fastaFilePathNameTemplate"          value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
+        <property name="hmmerOutputFileNameTemplate"        value="hmmer_output_[PROTSTART]_[PROTEND]"/>
+        <property name="fastaFileNameTemplate"              value="seq_[PROTSTART]_[PROTEND].fasta"/>
     </bean>
 
     <bean id="step_pfam_A_delete_fasta_file"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstract_pfam_A_step">
         <property name="dependsUpon"                        ref="step_pfam_A_run_HMMER3"/>
-        <property name="filePathTemplate"                   value="/ebi/sp/pro1/interpro/programmers/pjones/test/seq_[PROTSTART]_[PROTEND].fasta"/>
+        <property name="hmmerOutputFileNameTemplate"        value="seq_[PROTSTART]_[PROTEND].fasta"/>
         <property name="stepDescription"                    value="Delete the fasta file following successful run of HMMER3"/>
     </bean>
 
@@ -81,7 +81,7 @@
           parent="abstract_pfam_A_step">
         <property name="dependsUpon"                        ref="step_pfam_A_run_HMMER3"/>
         <property name="stepDescription"                    value="Parse the output from HMMER3"/>
-        <property name="hmmerOutputFilePathTemplate"        value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
+        <property name="hmmerOutputFileNameTemplate"        value="hmmer_output_[PROTSTART]_[PROTEND]"/>
         <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
         <property name="parser"                             ref="hmmer3SearchParser"/>
         <property name="serialGroup"                           value="PARSE_HMMER_3"/>
@@ -93,7 +93,7 @@
           parent="abstract_pfam_A_step"  >
         <property name="dependsUpon"                        ref="step_pfam_A_parse_HMMER3_output"/>
         <property name="stepDescription"                    value="Delete the hmmer output file following successful parsing"/>
-        <property name="filePathTemplate"                   value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
+        <property name="hmmerOutputFileNameTemplate"                   value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
     </bean>
 
     <!-- STEP 4 -->
