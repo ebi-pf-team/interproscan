@@ -56,7 +56,7 @@ public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
             throw new IllegalArgumentException ("Ugh - found a UPI with no associated sequence!");
         }
         if (LOGGER.isDebugEnabled()){
-            if (counter++ % 200 == 0){
+            if (counter++ % 2000 == 0){
                 LOGGER.debug("Storing " + upi + " with sequence length "+ sequence.length());
             }
         }
