@@ -405,7 +405,6 @@
                 
 
                 <!-- You can rename the queues to anything you like-->
-                <job.submission.queue>job_submission_queue</job.submission.queue>
                 <worker.job.request.queue>worker_job_request_queue</worker.job.request.queue>
                 <worker.job.response.queue>worker_job_response_queue</worker.job.response.queue>
                 <worker.manager.topic>worker_manager_topic</worker.manager.topic>
