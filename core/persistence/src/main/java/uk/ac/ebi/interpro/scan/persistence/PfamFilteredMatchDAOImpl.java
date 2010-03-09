@@ -28,8 +28,6 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
 
     private static final Logger LOGGER = Logger.getLogger(PfamFilteredMatchDAOImpl.class);
 
-    private static final int MAXIMUM_IN_CLAUSE_SIZE = 100;
-
     /**
      * Sets the class of the model that the DOA instance handles.
      *
@@ -57,14 +55,6 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
             // and all of the appropriate Protein objects.
             final Map<String, Signature> signatureAccessionToSignatureMap = new HashMap<String, Signature>();
             final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>();
-
-
-
-
-
-
-
-
 
             // Iterate over the matches in the Collection of RawProtein objects
             // to complete building the queries for the appropriate Signatures and Proteins.
