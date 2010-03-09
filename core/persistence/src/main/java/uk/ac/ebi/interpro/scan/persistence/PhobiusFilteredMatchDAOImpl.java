@@ -99,10 +99,10 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
             boolean found = false;
             for (final Signature retrievedSignature : retrievedSignatures){
                 if (type.getName().equals(retrievedSignature.getName())
-                    &&
-                    type.getAccession().equals(retrievedSignature.getAccession())
-                    &&
-                    type.getDescription().equals(retrievedSignature.getDescription())){
+                        &&
+                        type.getAccession().equals(retrievedSignature.getAccession())
+                        &&
+                        type.getDescription().equals(retrievedSignature.getDescription())){
                     signatures.put(type, retrievedSignature);
                     found = true;
                     break;  // Found the correct signature, don't carry on looking.
@@ -148,25 +148,37 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
         return release;
     }
 
-        /**
+    /**
      * Helper method that converts a List of Protein objects retrieved from a JQL query
      * into a Map of protein IDs to Protein objects.
-     * @param phobiusProteins
-         * @return a Map of protein IDs to Protein objects.
+     * @param phobiusProteins being the Set of PhobiusProteins containing the IDs of the Protein objects
+     * required.
+     * @return a Map of protein IDs to Protein objects.
      */
 
     private Map<String, Protein> getProteinIdToProteinMap(Set<PhobiusProtein> phobiusProteins){
-        Query proteinQuery = entityManager.createQuery(
-            "select p from Protein p where p.id in (:proteinId)"
-        );
-        @SuppressWarnings("unchecked") List<Protein> proteins = proteinQuery.getResultList();
-        if (LOGGER.isDebugEnabled()){
-            LOGGER.error("Number of proteins retrieved: " + proteins.size());
-            LOGGER.error("Proteins retrieved from database: " + proteins);
+        final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(phobiusProteins.size());
+
+        final List<Long> proteinIds = new ArrayList<Long>(phobiusProteins.size());
+        for (PhobiusProtein phobProt : phobiusProteins){
+            String proteinIdAsString = phobProt.getProteinIdentifier();
+            proteinIds.add (new Long (proteinIdAsString));
         }
-        Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(proteins.size());
-        for (Protein protein : proteins){
-            proteinIdToProteinMap.put(protein.getId().toString(), protein);
+
+        for (int index = 0; index < proteinIds.size(); index += MAXIMUM_IN_CLAUSE_SIZE){
+            int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
+            if (endIndex > proteinIds.size()){
+                endIndex = proteinIds.size();
+            }
+            final List<Long> proteinIdSlice = proteinIds.subList(index, endIndex);
+            final Query proteinQuery = entityManager.createQuery(
+                    "select p from Protein p where p.id in (:proteinId)"
+            );
+            proteinQuery.setParameter("proteinId", proteinIdSlice);
+            @SuppressWarnings("unchecked") List<Protein> proteins = proteinQuery.getResultList();
+            for (Protein protein : proteins){
+                proteinIdToProteinMap.put(protein.getId().toString(), protein);
+            }
         }
         return proteinIdToProteinMap;
     }
