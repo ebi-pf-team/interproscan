@@ -28,9 +28,9 @@ public class RunHmmer3Step extends Step {
 
     private List<String> binarySwitches;
 
-    private String hmmerOutputFilePathTemplate;
+    private String hmmerOutputFileNameTemplate;
 
-    private String fastaFilePathNameTemplate;
+    private String fastaFileNameTemplate;
 
     public String getFullPathToBinary() {
         return fullPathToBinary;
@@ -60,21 +60,21 @@ public class RunHmmer3Step extends Step {
     }
 
     public String getHmmerOutputFileNameTemplate() {
-        return hmmerOutputFilePathTemplate;
+        return hmmerOutputFileNameTemplate;
     }
 
     @Required
     public void setHmmerOutputFileNameTemplate(String hmmerOutputFilePathTemplate) {
-        this.hmmerOutputFilePathTemplate = hmmerOutputFilePathTemplate;
+        this.hmmerOutputFileNameTemplate = hmmerOutputFilePathTemplate;
     }
 
     public String getFastaFileNameTemplate() {
-        return fastaFilePathNameTemplate;
+        return fastaFileNameTemplate;
     }
 
     @Required
     public void setFastaFileNameTemplate(String fastaFilePathNameTemplate) {
-        this.fastaFilePathNameTemplate = fastaFilePathNameTemplate;
+        this.fastaFileNameTemplate = fastaFilePathNameTemplate;
     }
 
 
@@ -99,7 +99,7 @@ public class RunHmmer3Step extends Step {
 
         CommandLineConversation clc = new CommandLineConversationImpl();
         clc.setWorkingDirectory(hmmerOutputFileName.substring(0, hmmerOutputFileName.lastIndexOf('/')));
-        clc.setOutputPathToFile(hmmerOutputFileName, false, false);
+        clc.setOutputPathToFile(hmmerOutputFileName, true, false);
         int exitStatus = clc.runCommand(false, command);
         if (exitStatus == 0){
             LOGGER.debug("hmmscan completed successfully!");

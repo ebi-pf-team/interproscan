@@ -18,13 +18,6 @@
         <property name="submissionType" value="lsf"/>
     </bean>
 
-    <!-- Starts up a serial worker.  Used by the broker bean to start up a single multi-use worker. -->
-    <bean id="serialWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-        <property name="optionalPrefix" value="ssh -x ${unix.username}@${lsf.submission.hostname}"/>
-        <property name="submissionJobFile" ref="lsfSerialFile"/>
-        <property name="submissionType" value="lsf"/>
-    </bean>
-
     <!-- Starts up a serial worker using the Sun Grid Engine.  Used by the broker bean to start up a single multi-use worker.
          The shellPath is optional and defaults to the Bourne shell /bin/sh if not set.-->
     <bean id="serialWorkerRunnerSGE" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
@@ -87,12 +80,8 @@
         <constructor-arg value="pbs_exec.sh" />
     </bean>
 
-    <bean id="lsfSerialFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="lsf_serial.sh" />
-    </bean>
-
     <bean id="lsfParallelFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="lsf_parallel.sh" />
+        <constructor-arg value="lsf_exec.sh" />
     </bean>
 
 

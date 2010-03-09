@@ -71,8 +71,8 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstract_pfam_A_step">
         <property name="dependsUpon"                        ref="step_pfam_A_run_HMMER3"/>
-        <property name="hmmerOutputFileNameTemplate"        value="seq_[PROTSTART]_[PROTEND].fasta"/>
         <property name="stepDescription"                    value="Delete the fasta file following successful run of HMMER3"/>
+        <property name="fileNameTemplate"                   value="seq_[PROTSTART]_[PROTEND].fasta"/>
     </bean>
 
     <!-- STEP 3 -->
@@ -84,7 +84,7 @@
         <property name="hmmerOutputFileNameTemplate"        value="hmmer_output_[PROTSTART]_[PROTEND]"/>
         <property name="fullPathToHmmFile"                  value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
         <property name="parser"                             ref="hmmer3SearchParser"/>
-        <property name="serialGroup"                           value="PARSE_HMMER_3"/>
+        <property name="serialGroup"                        value="PARSE_HMMER_3"/>
         <property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>
     </bean>
 
@@ -93,7 +93,7 @@
           parent="abstract_pfam_A_step"  >
         <property name="dependsUpon"                        ref="step_pfam_A_parse_HMMER3_output"/>
         <property name="stepDescription"                    value="Delete the hmmer output file following successful parsing"/>
-        <property name="hmmerOutputFileNameTemplate"                   value="/ebi/sp/pro1/interpro/programmers/pjones/test/hmmer_output_[PROTSTART]_[PROTEND]"/>
+        <property name="fileNameTemplate"                   value="hmmer_output_[PROTSTART]_[PROTEND]"/>
     </bean>
 
     <!-- STEP 4 -->
@@ -134,5 +134,10 @@
     <bean id="gaValuesRetriever" class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
         <constructor-arg                                    value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
     </bean>
+
+    <bean id="pfamRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl"/>
+
+    <bean id="pfamFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
+    
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

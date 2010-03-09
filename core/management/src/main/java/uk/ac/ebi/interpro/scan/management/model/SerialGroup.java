@@ -17,6 +17,7 @@ public enum SerialGroup {
     LOAD_PROTEINS,
     WRITE_FASTA_FILE,
     PARSE_HMMER_3,
+    PARSE_PHOBIUS,
     PFAM_A_POST_PROCESSING
     ;
 }
