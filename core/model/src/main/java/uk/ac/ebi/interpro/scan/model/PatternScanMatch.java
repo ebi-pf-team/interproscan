@@ -56,7 +56,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
     @XmlType(name="PatternScanLocationType")
     public static class PatternScanLocation extends Location {
 
-        @Column(nullable = false)
+        @Column(nullable = false, name="location_level")
         private Level level;
 
         /**

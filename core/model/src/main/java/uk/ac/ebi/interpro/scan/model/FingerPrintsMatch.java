@@ -121,7 +121,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         @Column (nullable = false)
         private double score;
 
-        @Column (nullable = false)
+        @Column (nullable = false, name = "motif_number")
         private int motifNumber;
 
         /**
