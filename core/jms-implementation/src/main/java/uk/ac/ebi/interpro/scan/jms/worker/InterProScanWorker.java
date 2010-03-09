@@ -273,7 +273,7 @@ public class InterProScanWorker implements Worker {
                     try{
                         execute(stepExecution, messageProducer, sessionHandler);
                     } catch (Exception e) {
-                        LOGGER.error ("Execution thrown when attempting to execute the StepExecution.  All database activity rolled back.");
+                        LOGGER.error ("Execution thrown when attempting to execute the StepExecution.  All database activity rolled back.", e);
                         // Something went wrong in the execution - try to send back failure
                         // message to the broker.  This in turn may fail if it is the JMS connection
                         // that failed during the execution.
