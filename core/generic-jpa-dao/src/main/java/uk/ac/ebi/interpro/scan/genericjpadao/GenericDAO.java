@@ -35,6 +35,7 @@ import java.util.Set;
  * @author Antony Quinn
  */
 public interface GenericDAO <T, PK extends Serializable> {
+    int MAXIMUM_IN_CLAUSE_SIZE = 100;
 
 
     /**
