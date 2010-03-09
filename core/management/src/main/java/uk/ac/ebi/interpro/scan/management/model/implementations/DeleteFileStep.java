@@ -18,11 +18,11 @@ public class DeleteFileStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteFileStep.class);
 
-    private String filePathTemplate;
+    private String fileNameTemplate;
 
     @Required
-    public void setHmmerOutputFileNameTemplate(String filePathTemplate) {
-        this.filePathTemplate = filePathTemplate;
+    public void setFileNameTemplate(String filePathTemplate) {
+        this.fileNameTemplate = filePathTemplate;
     }
 
     /**
@@ -38,9 +38,10 @@ public class DeleteFileStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws Exception {
-        final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, filePathTemplate);
+        final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileNameTemplate);
         File file = new File(filePathName);
         if (! file.delete()){
+            LOGGER.error("Unable to delete the file located at " + filePathName);
             throw new IllegalStateException ("Unable to delete the file located at " + filePathName);
         }
     }

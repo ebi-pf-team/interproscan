@@ -7,6 +7,7 @@
 
     <!-- Import common beans -->
     <import resource="pfam-A-job-context.xml"/>
+    <import resource="phobius-job-context.xml"/>
     <!--<import resource="job-load-from-fasta-spring.xml"/>-->
     <import resource="persistence-config.xml"/>
 
@@ -16,9 +17,12 @@
     <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
         <property name="jobList">
             <list>
-                <ref bean="job_pfam_A"/>
                 <ref bean="jobLoadFromFasta"/>
                 <ref bean="jobLoadFromUniParc"/>
+
+                <!-- Analyses -->
+                <ref bean="job_pfam_A"/>
+                <ref bean="job_phobius"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${base.directory.temp.files}"/>
@@ -84,7 +88,7 @@
     <bean id="uniparcLoader" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
         <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
         <property name="rowCallbackHandlerTemplate" ref="rowCallbackHandlerTemplate"/>
-        <property name="maximumProteins" value="400000"/>
+        <property name="maximumProteins" value="20000"/>
         <property name="xrefDao" ref="xrefDAO"/>
     </bean>
 
