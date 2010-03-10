@@ -15,7 +15,7 @@
         <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
         <property name="url" value="jdbc:oracle:thin:@gin.ebi.ac.uk:1571:UAPRO"/>
         <property name="username" value="interpro_webserver"/>
-        <property name="password" value="iwebserv"/>
+        <property name="password" value="******"/>
         <property name="testOnBorrow" value="true"/>
         <property name="validationQuery" value="select 1 from dual"/>
         <property name="maxIdle" value="2"/>
