@@ -3,8 +3,6 @@
     <!-- JPA Persistence unit for local testing in HSQLDB - current in-memory database, but may change. -->
     <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
 
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
         <!-- Interfaces -->
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
@@ -46,16 +44,6 @@
 
         <class>uk.ac.ebi.interpro.scan.management.model.StepExecution</class>
         <class>uk.ac.ebi.interpro.scan.management.model.StepInstance</class>
-
-        <properties>
-            <property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />
-            <property name="hibernate.format_sql"       value="${test.hibernate.format_sql}" />
-            <property name="hibernate.dialect"          value="${test.hibernate.dialect}" />
-            <!--<property name="hibernate.hbm2ddl.auto"     value="update" />-->
-            <property name="hibernate.default_schema" value="${test.hibernate.default_schema}" />
-            <property name="hibernate.use_sql_comments" value="${test.hibernate.use_sql_comments}" />
-            <property name="hibernate.jdbc.batch_size" value="${test.hibernate.jdbc.batch.size}" />
-        </properties>
 
     </persistence-unit>
 

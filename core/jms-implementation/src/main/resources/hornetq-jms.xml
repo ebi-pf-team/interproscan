@@ -15,20 +15,20 @@
         <!--<consumer-window-size>0</consumer-window-size>-->
     </connection-factory>
 
-    <queue name="${worker.job.request.queue}">
-        <entry name="jms.queue.${worker.job.request.queue}"/>
+    <queue name="${mvn.worker.job.request.queue}">
+        <entry name="jms.queue.${mvn.worker.job.request.queue}"/>
     </queue>
 
-    <queue name="${worker.job.response.queue}">
-        <entry name="jms.queue.${worker.job.response.queue}" />
+    <queue name="${mvn.worker.job.response.queue}">
+        <entry name="jms.queue.${mvn.worker.job.response.queue}" />
     </queue>
 
-    <topic name="${worker.manager.topic}">
-        <entry name="jms.topic.${worker.manager.topic}"/>
+    <topic name="${mvn.worker.manager.topic}">
+        <entry name="jms.topic.${mvn.worker.manager.topic}"/>
     </topic>
 
-    <queue name="${worker.manager.response.queue}">
-        <entry name="jms.queue.${worker.manager.response.queue}"/>
+    <queue name="${mvn.worker.manager.response.queue}">
+        <entry name="jms.queue.${mvn.worker.manager.response.queue}"/>
     </queue>
 
 

@@ -20,6 +20,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
@@ -59,9 +60,11 @@ public class Signature implements Serializable {
     private Long id;
 
     @Column (name="accession", nullable = false)
+    @Index (name = "signature_ac_idx")
     private String accession;
 
     @Column (name="name")
+    @Index (name="signature_name_idx")
     private String name;
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
@@ -81,10 +84,13 @@ public class Signature implements Serializable {
      * Member database specific category for the Signature
      */
     @Column (name="type")
+    @Index (name="signature_type_idx")
     private String type;
 
     private Date created;
     private Date updated;
+    
+    @Index (name="signature_md5_idx")
     private String md5;
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.

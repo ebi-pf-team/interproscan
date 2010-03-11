@@ -11,10 +11,10 @@
     <management-address>hornetq.management</management-address>
 
     <!-- Location of all of the JMS data. -->
-    <bindings-directory>${broker.bindings.directory}</bindings-directory>
-    <journal-directory>${broker.journal.directory}</journal-directory>
-    <large-messages-directory>${broker.large.messages.directory}</large-messages-directory>
-    <paging-directory>${broker.paging.directory}</paging-directory>
+    <bindings-directory>${mvn.broker.bindings.directory}</bindings-directory>
+    <journal-directory>${mvn.broker.journal.directory}</journal-directory>
+    <large-messages-directory>${mvn.broker.large.messages.directory}</large-messages-directory>
+    <paging-directory>${mvn.broker.paging.directory}</paging-directory>
     <!-- Experimenting with 10 second timeout on the client ping.
         (Defaults to five minutes, but the client should ping every 5 seconds.)-->
     <connection-ttl-override>600000</connection-ttl-override>
@@ -23,8 +23,8 @@
         <connector name="netty-connector">
             <factory-class>org.hornetq.integration.transports.netty.NettyConnectorFactory</factory-class>
             <!--param key="hornetq.remoting.netty.host"  value="phildell.windows.ebi.ac.uk" type="String"/-->
-            <param key="host"  value="${broker.host.name}"/>
-            <param key="port" value="${broker.port.number}"/>
+            <param key="host"  value="${mvn.broker.host.name}"/>
+            <param key="port" value="${mvn.broker.port.number}"/>
         </connector>
 
     </connectors>
@@ -33,8 +33,8 @@
         <acceptor name="netty-acceptor">
             <factory-class>org.hornetq.integration.transports.netty.NettyAcceptorFactory</factory-class>
             <!--param key="hornetq.remoting.netty.host"  value="phildell.windows.ebi.ac.uk" type="String"/-->
-            <param key="host"  value="${broker.host.name}"/>
-            <param key="port"  value="${broker.port.number}"/>
+            <param key="host"  value="${mvn.broker.host.name}"/>
+            <param key="port"  value="${mvn.broker.port.number}"/>
         </acceptor>
     </acceptors>
 

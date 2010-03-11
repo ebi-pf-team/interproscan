@@ -14,65 +14,65 @@
     <import resource="persistence-config.xml"/>
 
     <!-- ######################## JOB: job_phobius ############################  -->
-    <bean id="job_phobius" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobPhobius" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"                         value="Phobius analysis"/>
     </bean>
 
-    <bean id="abstract_phobius_step" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-         <property name="job"                                ref="job_phobius"/>
+    <bean id="abstractPhobiusStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+         <property name="job"                                ref="jobPhobius"/>
          <property name="maxProteins"                        value="5000"/>
          <property name="createStepInstancesForNewProteins"  value="true"/>
          <property name="retries"                            value="0"/>
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="step_phobius_write_fasta_file"
+    <bean id="stepPhobiusWriteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstract_phobius_step">
+          parent="abstractPhobiusStep">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"                    value="Create fasta file."/>
-        <property name="fastaFileNameTemplate"              value="seq_[PROTSTART]_[PROTEND].fasta"/>
+        <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
         <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
         <property name="proteinDAO"                         ref="proteinDAO"/>
     </bean>
 
     <!-- STEP 2 -->
-    <bean id="step_phobius_run_binary"
+    <bean id="stepPhobiusRunBinary"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.phobius.RunPhobiusBinaryStep"
-          parent="abstract_phobius_step">
-        <property name="dependsUpon"                        ref="step_phobius_write_fasta_file"/>
+          parent="abstractPhobiusStep">
+        <property name="dependsUpon"                        ref="stepPhobiusWriteFastaFile"/>
         <property name="stepDescription"                    value="Run HMMER 3 Binary for selected proteins"/>
-        <property name="fullPathToBinary"                   value="/ebi/production/interpro/binaries/64_bit_Linux/phobius/phobius.pl"/>
-        <property name="fastaFileNameTemplate"              value="seq_[PROTSTART]_[PROTEND].fasta"/>
-        <property name="phobiusOutputFileNameTemplate"      value="phobius_output_[PROTSTART]_[PROTEND]"/>
+        <property name="fullPathToBinary"                   value="${binary.phobius.pl.path}"/>
+        <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
+        <property name="phobiusOutputFileNameTemplate"      ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <bean id="step_phobius_delete_fasta_file"
+    <bean id="stepPhobiusDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstract_phobius_step">
-        <property name="dependsUpon"                        ref="step_phobius_run_binary"/>
-        <property name="fileNameTemplate"                   value="seq_[PROTSTART]_[PROTEND].fasta"/>
+          parent="abstractPhobiusStep">
+        <property name="dependsUpon"                        ref="stepPhobiusRunBinary"/>
+        <property name="fileNameTemplate"                   ref="fastaFileNameTemplate"/>
         <property name="stepDescription"                    value="Delete the fasta file following successful run of HMMER3"/>
     </bean>
 
     <!-- STEP 3 -->
-    <bean id="step_phobius_parse_store_output"
+    <bean id="stepPhobiusParseStoreOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.phobius.ParsePhobiusOutputStep"
-          parent="abstract_phobius_step">
-        <property name="dependsUpon"                        ref="step_phobius_run_binary"/>
+          parent="abstractPhobiusStep">
+        <property name="dependsUpon"                        ref="stepPhobiusRunBinary"/>
         <property name="stepDescription"                    value="Parse the output from Phobius"/>
         <property name="serialGroup"                        value="PARSE_PHOBIUS"/>
-        <property name="phobiusOutputFileNameTemplate"      value="phobius_output_[PROTSTART]_[PROTEND]"/>
+        <property name="phobiusOutputFileNameTemplate"      ref="rawAnalaysisOutputFileTemplate"/>
         <property name="phobiusMatchDAO"                    ref="phobiusMatchDAO"/>
         <property name="parser"                             ref="phobiusParser"/>
     </bean>
 
-    <bean id="step_phobius_delete_binary_output_file"
+    <bean id="stepPhobiusDeleteBinaryOutputFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstract_phobius_step"  >
-        <property name="dependsUpon"                        ref="step_phobius_parse_store_output"/>
+          parent="abstractPhobiusStep"  >
+        <property name="dependsUpon"                        ref="stepPhobiusParseStoreOutput"/>
         <property name="stepDescription"                    value="Delete the phobius output file following successful parsing"/>
-        <property name="fileNameTemplate"                   value="phobius_output_[PROTSTART]_[PROTEND]"/>
+        <property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: job_phobius  !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

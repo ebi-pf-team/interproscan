@@ -11,24 +11,35 @@
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
 
-        <!-- Locations. -->
+        <!-- Concrete Matches -->
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch</class>
+
+        <!-- Concrete Locations. -->
         <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
         <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch$PhobiusLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation</class>
 
         <!-- Raw Matches -->
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch</class>
 
-        <!-- Matches -->
-        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>        
-        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match</class>
-        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match</class>
-        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.Protein</class>
         <class>uk.ac.ebi.interpro.scan.model.Model</class>
         <class>uk.ac.ebi.interpro.scan.model.Xref</class>
@@ -36,14 +47,14 @@
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
         <properties>
-            <property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />
-            <property name="hibernate.format_sql"       value="${test.hibernate.format_sql}" />
-            <property name="hibernate.connection.driver_class" value="${test.database.driver}" />
-            <property name="hibernate.connection.url"   value="${test.connection.url}" />
-            <property name="hibernate.connection.username" value="${test.username}" />
-            <property name="hibernate.connection.password" value="${test.password}" />
-            <property name="hibernate.dialect"          value="${test.hibernate.dialect}" />
-            <property name="hibernate.hbm2ddl.auto"     value="${test.hibernate.hbm2ddl.auto}" />
+            <property name="hibernate.show_sql"         value="${mvn.hibernate.show_sql}" />
+            <property name="hibernate.format_sql"       value="${mvn.hibernate.format_sql}" />
+            <property name="hibernate.connection.driver_class" value="${mvn.i5.database.driver}" />
+            <property name="hibernate.connection.url"   value="${mvn.i5.database.connection.url}" />
+            <property name="hibernate.connection.username" value="${mvn.i5.database.username}" />
+            <property name="hibernate.connection.password" value="${mvn.i5.database.password}" />
+            <property name="hibernate.dialect"          value="${mvn.hibernate.dialect}" />
+            <property name="hibernate.hbm2ddl.auto"     value="${mvn.hibernate.hbm2ddl.auto}" />
         </properties>
 
     </persistence-unit>

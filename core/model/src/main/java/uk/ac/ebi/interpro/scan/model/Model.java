@@ -20,6 +20,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
@@ -55,9 +56,11 @@ public class Model implements Serializable {
     private Long id;
 
     @Column(length = 50, nullable = false)
+    @Index(name="model_ac_idx")
     private String accession;
 
     @Column(length = 100)
+    @Index(name="model_name_idx")
     private String name;
 
     @CollectionOfElements (fetch = FetchType.EAGER)     // Hibernate specific annotation.
