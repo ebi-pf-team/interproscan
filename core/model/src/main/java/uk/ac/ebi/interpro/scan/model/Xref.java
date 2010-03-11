@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -44,6 +45,7 @@ public class Xref implements Serializable {
 
     // TODO consider column name again...  (not urgent as does not affect functionality)
     @Column (name = "identifier", nullable = false, unique = false, updatable = false)
+    @Index (name="xref_identifier_idx")
     private String identifier;    
 
     /**

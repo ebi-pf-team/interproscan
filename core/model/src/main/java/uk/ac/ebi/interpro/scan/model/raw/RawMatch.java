@@ -7,6 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import java.io.Serializable;
 
+import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
@@ -28,12 +29,20 @@ public abstract class RawMatch implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE, generator="RAW_MATCH_IDGEN")
     @TableGenerator(name="RAW_MATCH_IDGEN", table="KEYGEN", pkColumnValue="match", initialValue = 0, allocationSize = 100)
     private Long id;
+
+    @Index(name="rawmatch_seq_id_idx")
     private String sequenceIdentifier;      // eg. MD5
+
+    @Index(name="rawmatch_model_idx")
     private String model;                   // eg. PF00001
 
+    @Index(name="rawmatch_lib_idx")
     @Enumerated(javax.persistence.EnumType.STRING)
     private SignatureLibrary signatureLibrary;    // eg. PFAM
+
+    @Index(name="rawmatch_release_idx")
     private String signatureLibraryRelease; // eg. 23.0
+    
     private int locationStart;
     private int locationEnd;
 

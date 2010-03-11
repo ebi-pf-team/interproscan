@@ -112,14 +112,14 @@
                 <logging.interpro.scan.business.file>target/parse.log</logging.interpro.scan.business.file>
                 <logging.interpro.scan.business.max.file.size>2097152</logging.interpro.scan.business.max.file.size>
 
-                <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
-                <test.connection.url>jdbc:hsqldb:mem:mem:testmodel</test.connection.url>
-                <test.username>sa</test.username>
-                <test.password></test.password>
-                <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
-                <test.hibernate.show_sql>true</test.hibernate.show_sql>
-                <test.hibernate.format_sql>true</test.hibernate.format_sql>
-                <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
+                <mvn.i5.database.driver>org.hsqldb.jdbcDriver</mvn.i5.database.driver>
+                <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
+                <mvn.i5.database.username>sa</mvn.i5.database.username>
+                <mvn.i5.database.password></mvn.i5.database.password>
+                <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
+                <mvn.hibernate.show_sql>true</mvn.hibernate.show_sql>
+                <mvn.hibernate.format_sql>true</mvn.hibernate.format_sql>
+                <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
             </properties>
         </profile>
     </profiles>

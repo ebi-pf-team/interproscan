@@ -34,14 +34,14 @@
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
         <properties>
-            <property name="hibernate.show_sql"         value="${test.hibernate.show_sql}" />
-            <property name="hibernate.format_sql"       value="${test.hibernate.format_sql}" />
-            <property name="hibernate.connection.driver_class" value="${test.database.driver}" />
-            <property name="hibernate.connection.url"   value="${test.connection.url}" />
-            <property name="hibernate.connection.username" value="${test.username}" />
-            <property name="hibernate.connection.password" value="${test.password}" />
-            <property name="hibernate.dialect"          value="${test.hibernate.dialect}" />
-            <property name="hibernate.hbm2ddl.auto"     value="${test.hibernate.hbm2ddl.auto}" />
+            <property name="hibernate.show_sql"         value="${mvn.hibernate.show_sql}" />
+            <property name="hibernate.format_sql"       value="${mvn.hibernate.format_sql}" />
+            <property name="hibernate.connection.driver_class" value="${mvn.i5.database.driver}" />
+            <property name="hibernate.connection.url"   value="${mvn.i5.database.connection.url}" />
+            <property name="hibernate.connection.username" value="${mvn.i5.database.username}" />
+            <property name="hibernate.connection.password" value="${mvn.i5.database.password}" />
+            <property name="hibernate.dialect"          value="${mvn.hibernate.dialect}" />
+            <property name="hibernate.hbm2ddl.auto"     value="${mvn.hibernate.hbm2ddl.auto}" />
         </properties>
 
     </persistence-unit>

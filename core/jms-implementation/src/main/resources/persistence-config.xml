@@ -17,6 +17,17 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="interproDataSource"/>
+        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence" />
+        <property name="jpaProperties">
+            <map>
+                <entry key="hibernate.show_sql" value="${hibernate.show_sql}"/>
+                <entry key="hibernate.format_sql" value="${hibernate.format_sql}"/>
+                <entry key="hibernate.dialect" value="${hibernate.dialect}"/>
+                <entry key="hibernate.default_schema" value="${hibernate.default_schema}"/>
+                <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
+                <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch.size}"/>
+            </map>
+        </property>
     </bean>
     
     <bean id="interproDataSource" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
@@ -24,10 +35,10 @@
     </bean>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${test.database.driver}" />
-        <property name="url" value="${test.connection.url}" />
-        <property name="username" value="${test.username}" />
-        <property name="password" value="${test.password}" />
+        <property name="driverClassName" value="${i5.database.driver}" />
+        <property name="url" value="${i5.database.connection.url}" />
+        <property name="username" value="${i5.database.username}" />
+        <property name="password" value="${i5.database.password}" />
     </bean>
     
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />

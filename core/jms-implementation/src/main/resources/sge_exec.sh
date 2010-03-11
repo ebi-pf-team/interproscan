@@ -9,9 +9,9 @@
 #$ -m aes
 #
 # Email address
-#$ -M ${notification.emailaddress}
+#$ -M ${mvn.notification.emailaddress}
 #
 # Output file
-#$ -o ${absolute.output.path}/${sge.output.file}
+#$ -o ${mvn.absolute.output.path}/${mvn.sge.output.file}
 #
-${maven.executable} -e -P runSerialWorker -f ${jms-implementation.pom.path} exec:java ${sge.memory.setting}
+${mvn.maven.executable} -e -P runSerialWorker -f ${mvn.jms-implementation.pom.path} exec:java ${mvn.sge.memory.setting}

@@ -357,58 +357,58 @@
 
             <properties>
 
-                <test.database.driver>org.hsqldb.jdbcDriver</test.database.driver>
-                <test.connection.url>jdbc:hsqldb:mem:mem:testmodel</test.connection.url>
-                <test.username>sa</test.username>
-                <test.password></test.password>
-                <test.hibernate.dialect>org.hibernate.dialect.HSQLDialect</test.hibernate.dialect>
-                <test.hibernate.show_sql>true</test.hibernate.show_sql>
-                <test.hibernate.format_sql>true</test.hibernate.format_sql>
-                <test.hibernate.hbm2ddl.auto>update</test.hibernate.hbm2ddl.auto>
-                <test.hibernate.default_schema>testmodel</test.hibernate.default_schema>
-                <test.hibernate.jdbc.batch.size>30</test.hibernate.jdbc.batch.size>
-                <test.hibernate.use_sql_comments>true</test.hibernate.use_sql_comments>
+                <mvn.i5.database.driver>org.hsqldb.jdbcDriver</mvn.i5.database.driver>
+                <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
+                <mvn.i5.database.username>sa</mvn.i5.database.username>
+                <mvn.i5.database.password></mvn.i5.database.password>
+                <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
+                <mvn.hibernate.show_sql>true</mvn.hibernate.show_sql>
+                <mvn.hibernate.format_sql>true</mvn.hibernate.format_sql>
+                <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
+                <mvn.hibernate.default_schema>testmodel</mvn.hibernate.default_schema>
+                <mvn.hibernate.jdbc.batch.size>30</mvn.hibernate.jdbc.batch.size>
+                <mvn.hibernate.use_sql_comments>true</mvn.hibernate.use_sql_comments>
 
-                <broker.bindings.directory>target/data/bindings</broker.bindings.directory>
-                <broker.journal.directory>target/data/journal</broker.journal.directory>
-                <broker.large.messages.directory>target/data/largemessages</broker.large.messages.directory>
-                <broker.paging.directory>target/data/paging</broker.paging.directory>
-                <broker.host.name>localhost</broker.host.name>
-                <broker.port.number>5445</broker.port.number>
-                <unix.username>mumdad</unix.username>
+                <mvn.broker.bindings.directory>target/data/bindings</mvn.broker.bindings.directory>
+                <mvn.broker.journal.directory>target/data/journal</mvn.broker.journal.directory>
+                <mvn.broker.large.messages.directory>target/data/largemessages</mvn.broker.large.messages.directory>
+                <mvn.broker.paging.directory>target/data/paging</mvn.broker.paging.directory>
+                <mvn.broker.host.name>localhost</mvn.broker.host.name>
+                <mvn.broker.port.number>5445</mvn.broker.port.number>
+                <mvn.unix.username>pjones</mvn.unix.username>
                 <!-- LSF settings -->
-                <lsf.submission.hostname>ebi-001.ebi.ac.uk</lsf.submission.hostname>
-                <lsf.queue.submission>production</lsf.queue.submission>
-                <lsf.output.file>lsf-serial-worker.out</lsf.output.file>
+                <mvn.lsf.submission.hostname>ebi-001.ebi.ac.uk</mvn.lsf.submission.hostname>
+                <mvn.lsf.queue.submission>production</mvn.lsf.queue.submission>
+                <mvn.lsf.output.file>lsf-serial-worker.out</mvn.lsf.output.file>
                 <!-- SGE settings -->
-                <sge.submission.hostname>sge001.ebi.ac.uk</sge.submission.hostname>
-                <sge.output.file>sge-serial-worker.out</sge.output.file>
-                <sge.memory.setting>-DXmx=2048m</sge.memory.setting>
-                <sge.mail.settings>aes</sge.mail.settings>
+                <mvn.sge.submission.hostname>sge001.ebi.ac.uk</mvn.sge.submission.hostname>
+                <mvn.sge.output.file>sge-serial-worker.out</mvn.sge.output.file>
+                <mvn.sge.memory.setting>-DXmx=2048m</mvn.sge.memory.setting>
+                <mvn.sge.mail.settings>aes</mvn.sge.mail.settings>
                 <!-- PBS settings -->
-                <pbs.submission.hostname>pbs001.ebi.ac.uk</pbs.submission.hostname>
-                <pbs.queue.submission>dque</pbs.queue.submission>
-                <pbs.output.file>pbs-serial-worker.out</pbs.output.file>
-                <pbs.memory.setting>-DXmx=2048m</pbs.memory.setting>
-                <pbs.mail.settings>ae</pbs.mail.settings>
+                <mvn.pbs.submission.hostname>pbs001.ebi.ac.uk</mvn.pbs.submission.hostname>
+                <mvn.pbs.queue.submission>dque</mvn.pbs.queue.submission>
+                <mvn.pbs.output.file>pbs-serial-worker.out</mvn.pbs.output.file>
+                <mvn.pbs.memory.setting>-DXmx=2048m</mvn.pbs.memory.setting>
+                <mvn.pbs.mail.settings>ae</mvn.pbs.mail.settings>
                 <!-- General settings -->
-                <notification.emailaddress>maslen@ebi.ac.uk</notification.emailaddress>
-                <maven.executable>/net/nas10b/vol1/homes/maslen/work/apache-maven-2.2.1/bin/mvn</maven.executable>
-                <jms-implementation.pom.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/pom.xml</jms-implementation.pom.path>
-                <absolute.output.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation</absolute.output.path>
+                <mvn.notification.emailaddress>maslen@ebi.ac.uk</mvn.notification.emailaddress>
+                <mvn.maven.executable>/net/nas10b/vol1/homes/maslen/work/apache-maven-2.2.1/bin/mvn</mvn.maven.executable>
+                <mvn.jms-implementation.pom.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/pom.xml</mvn.jms-implementation.pom.path>
+                <mvn.absolute.output.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation</mvn.absolute.output.path>
 
-                <lsf.parallel.worker.memoryrequirement>8000</lsf.parallel.worker.memoryrequirement>
-                <lsf.serial.worker.memoryrequirement>31000</lsf.serial.worker.memoryrequirement>
+                <mvn.lsf.parallel.worker.memoryrequirement>8000</mvn.lsf.parallel.worker.memoryrequirement>
+                <mvn.lsf.serial.worker.memoryrequirement>31000</mvn.lsf.serial.worker.memoryrequirement>
 
-                <parallel.worker.xmx>2048</parallel.worker.xmx>
-                <serial.worker.xmx>28000</serial.worker.xmx>
+                <mvn.parallel.worker.xmx>2048</mvn.parallel.worker.xmx>
+                <mvn.serial.worker.xmx>28000</mvn.serial.worker.xmx>
                 
 
                 <!-- You can rename the queues to anything you like-->
-                <worker.job.request.queue>worker_job_request_queue</worker.job.request.queue>
-                <worker.job.response.queue>worker_job_response_queue</worker.job.response.queue>
-                <worker.manager.topic>worker_manager_topic</worker.manager.topic>
-                <worker.manager.response.queue>worker_manager_response_queue</worker.manager.response.queue>
+                <mvn.worker.job.request.queue>worker_job_request_queue</mvn.worker.job.request.queue>
+                <mvn.worker.job.response.queue>worker_job_response_queue</mvn.worker.job.response.queue>
+                <mvn.worker.manager.topic>worker_manager_topic</mvn.worker.manager.topic>
+                <mvn.worker.manager.response.queue>worker_manager_response_queue</mvn.worker.manager.response.queue>
 
             </properties>
         </profile>

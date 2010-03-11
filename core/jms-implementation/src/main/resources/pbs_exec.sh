@@ -6,15 +6,15 @@
 #PBS -j oe
 #
 # Email settings
-#PBS -m ${pbs.mail.settings}
+#PBS -m ${mvn.pbs.mail.settings}
 #
 # Email address
-#PBS -M ${notification.emailaddress}
+#PBS -M ${mvn.notification.emailaddress}
 #
 # Queue job submitted to
-#PBS -q ${pbs.queue.submission}
+#PBS -q ${mvn.pbs.queue.submission}
 #
 # Output file
-#PBS -o ${absolute.output.path}/${pbs.output.file}
+#PBS -o ${mvn.absolute.output.path}/${mvn.pbs.output.file}
 #
-${maven.executable} -e -P runSerialWorker -f ${jms-implementation.pom.path} exec:java ${pbs.memory.setting}
+${mvn.maven.executable} -e -P runSerialWorker -f ${mvn.jms-implementation.pom.path} exec:java ${mvn.pbs.memory.setting}

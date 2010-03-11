@@ -21,11 +21,20 @@
                 <ref bean="jobLoadFromUniParc"/>
 
                 <!-- Analyses -->
-                <ref bean="job_pfam_A"/>
-                <ref bean="job_phobius"/>
+                <ref bean="jobPfamA"/>
+                <ref bean="jobPhobius"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${base.directory.temp.files}"/>
+    </bean>
+
+    <!-- String properties common to all jobs -->
+    <bean id="fastaFileNameTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].fasta"/>
+    </bean>
+
+    <bean id="rawAnalaysisOutputFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].raw.out"/>
     </bean>
 
 
