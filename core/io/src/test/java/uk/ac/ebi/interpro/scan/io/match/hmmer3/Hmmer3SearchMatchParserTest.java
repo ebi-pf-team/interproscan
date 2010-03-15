@@ -36,6 +36,8 @@ public class Hmmer3SearchMatchParserTest {
     @Resource private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
     @Resource private org.springframework.core.io.Resource gene3dFile;
 
+    @Resource private org.springframework.core.io.Resource emptyAlignmentLineFile;
+
     @Test
     public void testGene3DParser() throws IOException {
         final Set<String> expected = new HashSet<String>(Arrays.asList(
@@ -51,6 +53,25 @@ public class Hmmer3SearchMatchParserTest {
                 actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
             }
         }
+        assertTrue("Expected alignments not found", expected.equals(actual));
+    }
+
+    @Test
+    public void testEmptyAlignmentLine() throws IOException {
+
+        final Set<String> expected = new HashSet<String>(Arrays.asList(
+                "UPI0000005B9B:33M6I32M45I45M153D2M30I28M"                
+        ));
+
+        final Set<String> actual = new HashSet<String>();
+        Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, emptyAlignmentLineFile.getInputStream());
+        for (RawProtein<Gene3dHmmer3RawMatch> p : proteins)   {
+            for (Gene3dHmmer3RawMatch m : p.getMatches())   {
+                actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                System.out.println(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+            }
+        }
+
         assertTrue("Expected alignments not found", expected.equals(actual));
     }
 

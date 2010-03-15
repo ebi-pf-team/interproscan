@@ -33,7 +33,7 @@ public class DomainMatch implements Serializable {
 
     // TODO: This pattern won't work for UniProt FASTA files because assumes sequence ID contains numbers 
     // TODO: and letters only, but UniProt FASTA ID lines contain "|", for example "tr|Q9U4N3|Q9U4N3_TOXGO"
-    public static final Pattern ALIGNMENT_SEQUENCE_PATTERN = Pattern.compile("^\\s+(\\w+)\\s+(\\d+)\\s+([-a-zA-Z]+)\\s+(\\d+)\\s*$");
+    public static final Pattern ALIGNMENT_SEQUENCE_PATTERN = Pattern.compile("^\\s+(\\w+)\\s+(\\S+)\\s+([-a-zA-Z]+)\\s+(\\S+)\\s*$");
 
    //entered by Manjula for Gene3D parser
     //private final int domainNumber;

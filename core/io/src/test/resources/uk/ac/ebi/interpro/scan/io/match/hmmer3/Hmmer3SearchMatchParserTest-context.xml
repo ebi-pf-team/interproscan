@@ -50,5 +50,10 @@
     <bean id="gene3dFile" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="data/hmmer3/hmmsearch/2hxsA00.out"/>
     </bean>
+
+    <bean id="emptyAlignmentLineFile" class="org.springframework.core.io.ClassPathResource">
+           <constructor-arg value="data/hmmer3/hmmsearch/empty-alignment-line.txt"/>
+       </bean>
+        
     
 </beans>
