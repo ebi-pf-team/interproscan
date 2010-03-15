@@ -29,9 +29,10 @@ public class PhobiusProtein {
     public void addFeature (PhobiusFeature feature){
         if (feature.getFeatureType() != null){ // Not all FT lines yield features to be stored.
             final boolean signalFeature =
+                    PhobiusFeatureType.SIGNAL_PEPTIDE == feature.getFeatureType() ||
                     PhobiusFeatureType.SIGNAL_PEPTIDE_C_REGION == feature.getFeatureType() ||
-                            PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == feature.getFeatureType() ||
-                            PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == feature.getFeatureType();
+                    PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == feature.getFeatureType() ||
+                    PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == feature.getFeatureType();
             isSP = isSP || signalFeature;
             isTM = isTM || PhobiusFeatureType.TRANSMEMBRANE == feature.getFeatureType();
             features.add (feature);

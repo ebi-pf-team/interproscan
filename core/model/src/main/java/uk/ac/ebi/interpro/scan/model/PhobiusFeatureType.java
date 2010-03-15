@@ -13,6 +13,9 @@ import java.util.Map;
  */
 public enum PhobiusFeatureType {
 
+    SIGNAL_PEPTIDE("SIGNAL_PEPTIDE", "Signal Peptide", 
+                   "SIGNAL", null, "Signal peptide region"
+    ),
     CYTOPLASMIC_DOMAIN("CYTOPLASMIC_DOMAIN", "Cytoplasmic domain",
             "DOMAIN", "CYTOPLASMIC.",
             "Region of a membrane-bound protein predicted to be outside the membrane, in the cytoplasm."),
