@@ -144,10 +144,8 @@ public class PhobiusFilteredMatchDAOTest {
             String[] features = PHOBIUS_FEATURE_LINES[proteinIndex++];
 
             for (String feature : features){
+                featureCount++;
                 LOGGER.debug ("PHOBIUS: Adding feature from line: "+ feature);
-                if (! feature.contains("SIGNAL")){           // Signal features are not stored as they are redundant.
-                    featureCount++;
-                }
                 Matcher matcher = PhobiusFeature.FT_LINE_PATTERN.matcher(feature);
                 if (! matcher.matches()){
                     fail("The PhobiusFeature.FT_LINE_PATTERN regex should match: " + feature);
