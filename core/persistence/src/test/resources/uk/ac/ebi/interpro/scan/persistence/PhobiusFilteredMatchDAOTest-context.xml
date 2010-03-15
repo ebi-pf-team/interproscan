@@ -23,4 +23,6 @@
         <constructor-arg value="1.0"/>
     </bean>
 
+    <bean id="proteinDAO" class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
+
 </beans>
