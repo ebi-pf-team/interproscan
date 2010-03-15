@@ -1,6 +1,4 @@
-package uk.ac.ebi.interpro.scan.cli;
-
-import uk.ac.ebi.interpro.scan.io.ResourceReader;
+package uk.ac.ebi.interpro.scan.io.gene3d;
 
 import java.util.*;
 import java.io.IOException;
@@ -17,9 +15,10 @@ import org.springframework.core.io.Resource;
  */
 public final class Model2SfReader {
 
+    // TODO: Would be better to use extend a generic class like AbstractResourceReader
+
     private String prefix = "G3DSA:";
 
-    // TODO: Needs sorting out and putting in IO module
     public Map<String, String> read(Resource resource) throws IOException {
         if (resource == null) {
             throw new NullPointerException("Resource is null");

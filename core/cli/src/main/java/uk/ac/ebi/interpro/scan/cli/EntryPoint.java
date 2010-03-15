@@ -52,9 +52,17 @@ public class EntryPoint {
             Resource fastaFile = new FileSystemResource(values.getFastaFile());
             Resource hmmFile   = new FileSystemResource(values.getHmmFile());
             if (values.isOnionMode())   {
+                String resultsFile = values.getResultsFile();                
                 Gene3dOnionRunner runner = (Gene3dOnionRunner) ctx.getBean("gene3dOnionRunner");
-                runner.execute(fastaFile, hmmFile, new FileSystemResource(values.getResultsDir()));
-                LOGGER.debug("Done");
+                if (resultsFile == null)    {
+                    runner.execute(fastaFile, hmmFile, new FileSystemResource(values.getResultsDir()));
+                }
+                else    {
+                    runner.execute(resultsFile, fastaFile, hmmFile, new FileSystemResource(values.getResultsDir()));
+                }
+                if (LOGGER.isDebugEnabled())    {
+                    LOGGER.debug("Done");
+                }
             }
             else    {
                 Gene3dRunner runner = (Gene3dRunner) ctx.getBean("gene3dRunner");
@@ -83,6 +91,9 @@ public class EntryPoint {
         @Option(name="-r", aliases={"--resultsDir"}, usage="Directory to hold result files")
         private String resultsDir = "/tmp";
 
+        @Option(name="-f", aliases={"--resultsFile"}, usage="Results file name")
+        private String resultsFile = null;
+
         @Option(name="-c", aliases={"--springContext"}, usage="Spring application context")
         private String springContext = null;
 
@@ -104,6 +115,10 @@ public class EntryPoint {
 
         public String getSpringContext() {
             return springContext;
+        }
+
+        public String getResultsFile() {
+            return resultsFile;
         }
     }
 

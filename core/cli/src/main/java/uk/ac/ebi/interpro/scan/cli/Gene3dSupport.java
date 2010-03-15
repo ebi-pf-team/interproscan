@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.cli;
 
 import uk.ac.ebi.interpro.scan.io.gene3d.CathDomainListRecord;
+import uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
 
 import java.util.Map;

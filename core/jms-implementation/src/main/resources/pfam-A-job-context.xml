@@ -13,6 +13,7 @@
                            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <import resource="persistence-config.xml"/>
+    <import resource="spring-config-jobs.xml"/>
 
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="jobPfamA" class="uk.ac.ebi.interpro.scan.management.model.Job">
@@ -72,7 +73,7 @@
         <property name="stepDescription"                    value="Parse the output from HMMER3"/>
         <property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>
-        <property name="parser"                             ref="hmmer3SearchParser"/>
+        <property name="parser"                             ref="pfamAHmmer3SearchParser"/>
         <property name="serialGroup"                        value="PARSE_HMMER_3"/>
         <property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>
     </bean>
@@ -109,19 +110,19 @@
         <property name="pfamASeedFile"                      value="${Pfam-A.seed.path}"/>
         <property name="pfamCFile"                          value="${Pfam-C.path}"/>
     </bean>
-
-    <bean id="hmmer3SearchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
-        <property name="parserSupport"                      ref="parserSupport"/>
-    </bean>
-
-    <bean id="parserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
-        <property name="gaValuesRetriever"                  ref="gaValuesRetriever"/>
-        <property name="signatureLibraryRelease"            value="24.0"/>
-        <property name="signatureLibrary"                   value="PFAM"/>
-    </bean>
-
-    <bean id="gaValuesRetriever" class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
-        <constructor-arg                                    value="${Pfam-A.hmm.path}"/>
+    
+    <bean id="pfamAHmmer3SearchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
+        <property name="parserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+                <property name="gaValuesRetriever">
+                    <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
+                        <constructor-arg value="${Pfam-A.hmm.path}"/>
+                    </bean>
+                </property>
+                <property name="signatureLibraryRelease"            value="24.0"/>
+                <property name="signatureLibrary"                   value="PFAM"/>
+            </bean>
+        </property>
     </bean>
 
     <bean id="pfamRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl"/>

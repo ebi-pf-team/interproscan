@@ -3,8 +3,10 @@ package uk.ac.ebi.interpro.scan.jms.master;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
+import uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
@@ -12,9 +14,14 @@ import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.*;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.Model;
 
 import javax.jms.*;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * The InterProScan master application.
@@ -33,9 +40,10 @@ public class InterProScanMaster implements Master {
 
     private StepExecutionDAO stepExecutionDAO;
 
-    private GenericDAO signatureLibraryReleaseDAO;
+    private GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO;
 
     private String pfamHMMfilePath;
+    private Resource gene3dModel2SfFile;    
 
     private ConnectionFactory connectionFactory;
 
@@ -81,7 +89,7 @@ public class InterProScanMaster implements Master {
     }
 
     @Required
-    public void setSignatureLibraryReleaseDAO(GenericDAO signatureLibraryReleaseDAO) {
+    public void setSignatureLibraryReleaseDAO(GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO) {
         this.signatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
     }
 
@@ -97,6 +105,11 @@ public class InterProScanMaster implements Master {
     @Required
     public void setPfamHMMfilePath(String pfamHMMfilePath) {
         this.pfamHMMfilePath = pfamHMMfilePath;
+    }
+
+    @Required
+    public void setGene3dModel2SfFile(Resource gene3dModel2SfFile) {
+        this.gene3dModel2SfFile = gene3dModel2SfFile;
     }
 
     /**
@@ -162,6 +175,30 @@ public class InterProScanMaster implements Master {
         }
     }
 
+    private void loadGene3dModels() throws IOException {
+        // Read models
+        Model2SfReader reader = new Model2SfReader();
+        final Map<String, String> modelMap = reader.read(gene3dModel2SfFile);
+        // Create signatures
+        final Map<String, Signature> signatureMap = new HashMap<String, Signature>();
+        for (String modelAc : modelMap.keySet())  {
+            String signatureAc = modelMap.get(modelAc);
+            Signature signature;
+            if (signatureMap.containsKey(signatureAc))  {
+                signature = signatureMap.get(signatureAc);    
+            }
+            else    {
+                signature = new Signature(signatureAc);
+                signatureMap.put(signatureAc, signature);
+            }
+            signature.addModel(new Model(modelAc));
+        }
+        // Create and persist release
+        SignatureLibraryRelease release =
+                new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.0.0", 
+                        new HashSet<Signature>(signatureMap.values()));
+        signatureLibraryReleaseDAO.insert(release);
+    }
 
     private void loadPfamModels() {
         // Parse and retrieve the signatures.
