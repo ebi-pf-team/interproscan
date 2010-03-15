@@ -113,6 +113,5 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
             }
             return topProteinId;
         }
-
     }
 }

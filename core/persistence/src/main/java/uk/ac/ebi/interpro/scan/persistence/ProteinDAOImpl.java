@@ -63,6 +63,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
      *         primary key is not present in the database.
      */
+    @Transactional(readOnly = true)
     public Protein getProteinAndMatchesById(Long id) {
         Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.matches where p.id = :id");
         query.setParameter("id", id);
@@ -125,7 +126,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      * @return a new List<Protein> containing all of the inserted / updated Protein objects.
      * (Allows the caller to retrieve the primary keys for the proteins).
      */
-//    @Transactional
+    @Transactional
     @SuppressWarnings("unchecked")
     public PersistedProteins insertNewProteins(Collection<Protein> newProteins) {
         PersistedProteins persistentProteins = new PersistedProteins();
