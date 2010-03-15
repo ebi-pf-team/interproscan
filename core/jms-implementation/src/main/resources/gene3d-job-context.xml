@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="persistence-config.xml"/>    
+    <import resource="spring-config-jobs.xml"/>
+
+    <!-- ######################## JOB: Gene 3D ############################  -->
+    <bean id="gene3dJob" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"                        value="Gene3D analysis and filtering"/>
+    </bean>
+
+    <bean id="abstractGene3dStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+         <property name="job"                                ref="gene3dJob"/>
+         <property name="maxProteins"                        value="5000"/>
+         <property name="createStepInstancesForNewProteins"  value="true"/>
+         <property name="retries"                            value="0"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="gene3dWriteFastaStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractGene3dStep">
+        <property name="stepDescription"                    value="Create FASTA file."/>
+        <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO"                         ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="gene3dRunHmmer3Step"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon"                        ref="gene3dWriteFastaStep"/>
+        <property name="stepDescription"                    value="Run HMMER3"/>
+        <property name="fullPathToBinary"                   value="${binary.hmmer3.hmmsearch.path}"/>
+        <!--TODO: Much better to do this as a simple string-->
+        <property name="binarySwitches" >
+            <list>
+                <value>-Z</value><value>100000</value>
+                <value>--domE</value><value>1</value>
+            </list>
+        </property>
+        <property name="fullPathToHmmFile"                  value="${gene3d.hmm.path}"/>
+        <property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <bean id="gene3dDeleteFastaFileStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon"                        ref="gene3dRunHmmer3Step"/>
+        <property name="stepDescription"                    value="Delete FASTA file after HMMER3 run"/>
+        <property name="fileNameTemplate"                   ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!-- STEP 3 -->
+    <bean id="gene3dParseHmmerOutputStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3ParseStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon"                        ref="gene3dRunHmmer3Step"/>
+        <property name="stepDescription"                    value="Parse output from HMMER3"/>
+        <property name="outputFileTemplate"                 ref="rawAnalaysisOutputFileTemplate"/>
+        <!--<property name="fullPath"                       value="${gene3d.hmm.path}"/>-->
+        <property name="serialGroup"                        value="PARSE_HMMER_3"/>
+        <property name="rawMatchDAO"                        ref="gene3dRawMatchDAO"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Gene3DHmmer3ParserSupport">
+                        <!--TODO: We need to pass in or look up release number-->
+                        <property name="signatureLibraryRelease" value="3.3.0"/>
+                        <property name="alignmentEncoder">
+                            <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="gene3dDeleteHmmerOutputStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractGene3dStep"  >
+        <property name="dependsUpon"                        ref="gene3dParseHmmerOutputStep"/>
+        <property name="stepDescription"                    value="Delete HMMER output file after parsing"/>
+        <property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+    <!-- STEP 4 -->
+    <bean id="gene3dFilterStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3FilterStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon"                        ref="gene3dParseHmmerOutputStep"/>
+        <property name="stepDescription"                    value="Filter raw results"/>
+        <property name="serialGroup"                        value="GENE_3D_FILTERING"/>
+        <!--TODO: We need to pass in or look up release number-->
+        <property name="signatureLibraryRelease"            value="3.3.0"/>
+        <property name="signatureLibrary"                   value="GENE3D"/>
+        <property name="rawMatchDAO"                        ref="gene3dRawMatchDAO"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO"/>
+        </property>
+        <property name="filter">
+            <bean class="uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter">
+                <property name="binaryRunner">
+                    <bean class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">
+                        <property name="binary"               value="DomainFinder3"/>
+                        <property name="arguments"            value="-l 5900 -e 0.001"/>
+                        <property name="deleteTemporaryFiles" value="true"/>
+                        <property name="commandLineConversation">
+                            <bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl"/>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>        
+    </bean>
+
+    <!-- ######################## Dependencies ############################  -->
+
+    <bean id="gene3dRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.Gene3dHmmer3RawMatchDAOImpl"/>
+    
+</beans>
