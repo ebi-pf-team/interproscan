@@ -26,9 +26,9 @@ public class LANWorkerRunner implements WorkerRunner {
     LANServerListing lanServerListing;
 
     /**
-     * The command to run on each host, to start the JVM / worker. (probably a call to the java executable)
+     * The command to run on each host, to run the JVM / worker. (probably a call to the java executable)
      *
-     * @param command The command to run on each host, to start the JVM / worker. (probably a call to the java executable)
+     * @param command The command to run on each host, to run the JVM / worker. (probably a call to the java executable)
      */
     @Required
     public void setCommand(String command) {
@@ -86,7 +86,7 @@ public class LANWorkerRunner implements WorkerRunner {
                 try {
                     Runtime.getRuntime().exec(commandBuf.toString());
                 } catch (IOException e) {
-                    throw new IllegalStateException("Cannot start the worker", e);
+                    throw new IllegalStateException("Cannot run the worker", e);
                 }
             }
         }

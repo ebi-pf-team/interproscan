@@ -16,7 +16,7 @@ public class RunMaster {
         AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String []{"spring-config-master.xml"});
         ctx.registerShutdownHook();
         Master broker = (Master) ctx.getBean("master");
-        broker.start();
+        broker.run();
         ctx.close();
     }
 }
