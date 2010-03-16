@@ -5,22 +5,21 @@
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
     <import resource="persistence-config.xml"/>    
-    <import resource="spring-config-jobs.xml"/>
 
     <!-- ######################## JOB: Gene 3D ############################  -->
-    <bean id="gene3dJob" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobGene3d" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"                        value="Gene3D analysis and filtering"/>
     </bean>
 
     <bean id="abstractGene3dStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-         <property name="job"                                ref="gene3dJob"/>
+         <property name="job"                                ref="jobGene3d"/>
          <property name="maxProteins"                        value="5000"/>
          <property name="createStepInstancesForNewProteins"  value="true"/>
          <property name="retries"                            value="0"/>
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="gene3dWriteFastaStep"
+    <bean id="stepGene3dWriteFasta"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractGene3dStep">
         <property name="stepDescription"                    value="Create FASTA file."/>
@@ -29,13 +28,19 @@
     </bean>
 
     <!-- STEP 2 -->
-    <bean id="gene3dRunHmmer3Step"
+    <bean id="stepGene3dRunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step"
           parent="abstractGene3dStep">
-        <property name="dependsUpon"                        ref="gene3dWriteFastaStep"/>
+        <property name="dependsUpon"                        ref="stepGene3dWriteFasta"/>
         <property name="stepDescription"                    value="Run HMMER3"/>
         <property name="fullPathToBinary"                   value="${binary.hmmer3.hmmsearch.path}"/>
-        <!--TODO: Much better to do this as a simple string-->
+        <!--TODO: Much better to do this as a simple string
+
+            Phil: It has been done like this because we are using the ProcessBuilder class rather than
+            the (almost) deprecated System.getRuntime().  ProcessBuilder accepts commands and arguments
+            as a List<String> so if we pass in a String here, it needs to be 'parsed out'.
+
+            This configuration makes no assumptions about format.-->
         <property name="binarySwitches" >
             <list>
                 <value>-Z</value><value>100000</value>
@@ -47,19 +52,19 @@
         <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
     </bean>
 
-    <bean id="gene3dDeleteFastaFileStep"
+    <bean id="stepGene3dDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractGene3dStep">
-        <property name="dependsUpon"                        ref="gene3dRunHmmer3Step"/>
+        <property name="dependsUpon"                        ref="stepGene3dRunHmmer3"/>
         <property name="stepDescription"                    value="Delete FASTA file after HMMER3 run"/>
         <property name="fileNameTemplate"                   ref="fastaFileNameTemplate"/>
     </bean>
 
     <!-- STEP 3 -->
-    <bean id="gene3dParseHmmerOutputStep"
+    <bean id="stepGene3dParseHmmerOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3ParseStep"
           parent="abstractGene3dStep">
-        <property name="dependsUpon"                        ref="gene3dRunHmmer3Step"/>
+        <property name="dependsUpon"                        ref="stepGene3dRunHmmer3"/>
         <property name="stepDescription"                    value="Parse output from HMMER3"/>
         <property name="outputFileTemplate"                 ref="rawAnalaysisOutputFileTemplate"/>
         <!--<property name="fullPath"                       value="${gene3d.hmm.path}"/>-->
@@ -80,19 +85,19 @@
         </property>
     </bean>
 
-    <bean id="gene3dDeleteHmmerOutputStep"
+    <bean id="stepGene3dDeleteHmmerOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractGene3dStep"  >
-        <property name="dependsUpon"                        ref="gene3dParseHmmerOutputStep"/>
+        <property name="dependsUpon"                        ref="stepGene3dParseHmmerOutput"/>
         <property name="stepDescription"                    value="Delete HMMER output file after parsing"/>
         <property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
     <!-- STEP 4 -->
-    <bean id="gene3dFilterStep"
+    <bean id="stepGene3dFilter"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3FilterStep"
           parent="abstractGene3dStep">
-        <property name="dependsUpon"                        ref="gene3dParseHmmerOutputStep"/>
+        <property name="dependsUpon"                        ref="stepGene3dParseHmmerOutput"/>
         <property name="stepDescription"                    value="Filter raw results"/>
         <property name="serialGroup"                        value="GENE_3D_FILTERING"/>
         <!--TODO: We need to pass in or look up release number-->

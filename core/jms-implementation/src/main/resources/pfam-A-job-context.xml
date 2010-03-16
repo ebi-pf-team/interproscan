@@ -13,7 +13,6 @@
                            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <import resource="persistence-config.xml"/>
-    <import resource="spring-config-jobs.xml"/>
 
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="jobPfamA" class="uk.ac.ebi.interpro.scan.management.model.Job">
