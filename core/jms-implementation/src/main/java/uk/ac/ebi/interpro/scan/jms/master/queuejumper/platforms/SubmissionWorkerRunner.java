@@ -75,7 +75,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
             Runtime.getRuntime().exec(commandBuf.toString());
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot start the worker", e);
+            throw new IllegalStateException("Cannot run the worker", e);
         }
     }
 

@@ -15,7 +15,7 @@ import java.util.UUID;
  * @version $Id: Worker.java,v 1.3 2009/10/16 12:19:19 pjones Exp $
  * @since 1.0
  */
-public interface Worker {
+public interface Worker extends Runnable {
 
     /**
      * Sets the name of the JMS queue from which the Worker takes a job to do.
@@ -30,11 +30,6 @@ public interface Worker {
       */
     @Required
     void setJobResponseQueueName(String jobResponseQueueName);
-
-    /**
-     * Start the Worker running.
-     */
-    void start();
 
     /**
      * Tells the Worker to shut down gracefully (finish whatever it's doing, then shut down.)

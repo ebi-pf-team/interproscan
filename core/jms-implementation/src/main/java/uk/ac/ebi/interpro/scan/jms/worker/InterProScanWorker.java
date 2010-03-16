@@ -181,7 +181,7 @@ public class InterProScanWorker implements Worker {
     }
 
 
-    public void start(){
+    public void run(){
         lastActivityTime = startTime = new Date().getTime();
         SessionHandler sessionHandler = null;
         try{

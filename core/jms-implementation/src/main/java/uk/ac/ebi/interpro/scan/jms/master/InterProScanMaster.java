@@ -115,7 +115,7 @@ public class InterProScanMaster implements Master {
     /**
      * Run the Master Application.
      */
-    public void start(){
+    public void run(){
         SessionHandler sessionHandler = null;
         try {
             // Initialise the sessionHandler for the master thread

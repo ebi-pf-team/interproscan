@@ -22,7 +22,7 @@ import java.util.UUID;
  * @version $Id: WorkerMonitorController.java,v 1.2 2009/10/29 17:58:00 pjones Exp $
  * @since 1.0
  */
-public class WorkerMonitorController {
+public class WorkerMonitorController implements Runnable{
 
     private JPanel mainLayoutManager;
     private JTable workerDisplayTable;
@@ -59,11 +59,6 @@ public class WorkerMonitorController {
     public UUID getMonitorId() {
         return monitorId;
     }
-
-//    public static void main(String[] args) {
-//        WorkerMonitorController wmc = new WorkerMonitorController();
-//        wmc.run();
-//    }
 
     public void run() {
 
