@@ -8,6 +8,7 @@
     <!-- Import common beans -->
     <import resource="pfam-A-job-context.xml"/>
     <import resource="phobius-job-context.xml"/>
+    <import resource="gene3d-job-context.xml"/>
     <!--<import resource="job-load-from-fasta-spring.xml"/>-->
     <import resource="persistence-config.xml"/>
 
@@ -23,6 +24,7 @@
                 <!-- Analyses -->
                 <ref bean="jobPfamA"/>
                 <ref bean="jobPhobius"/>
+                <ref bean="jobGene3d"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${base.directory.temp.files}"/>
