@@ -128,7 +128,10 @@ public class InterProScanMaster implements Master {
             jobResponseMessageConsumer.setMessageListener(responseMonitor);
 
             sessionHandler.start();
-//            loadPfamModels();
+
+            // TODO - Temporary hack to load models on startup - need to rethink this mechanism.
+            loadGene3dModels();
+            loadPfamModels();
             while(true){       // TODO should be while(running) to allow shutdown.
                 for (Job job : jobs.getJobList()){
                     for (Step step : job.getSteps()){
