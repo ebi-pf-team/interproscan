@@ -13,28 +13,28 @@
     <!-- Starts up parallel workers.  Used by the queueJumper bean, which starts up
     a new parallel worker each time a parallel TaskExecution is run. -->
     <bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-        <property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.lsf.submission.hostname}"/>
-        <property name="submissionJobFile" ref="lsfParallelFile"/>
-        <property name="submissionType" value="lsf"/>
+        <property name="submissionCommand" value="${worker.command}"/>
     </bean>
 
-    <!-- Starts up a serial worker using the Sun Grid Engine.  Used by the broker bean to start up a single multi-use worker.
-         The shellPath is optional and defaults to the Bourne shell /bin/sh if not set.-->
-    <bean id="serialWorkerRunnerSGE" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-        <property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.sge.submission.hostname}"/>
-        <property name="shellPath" value = "/bin/bash"/>
-        <property name="submissionJobFile" ref="sgeExecutionFile"/>
-        <property name="submissionType" value="sge"/>
-    </bean>
+    <!--&lt;!&ndash; Starts up a serial worker using the Sun Grid Engine.  Used by the broker bean to start up a single multi-use worker.-->
+         <!--The shellPath is optional and defaults to the Bourne shell /bin/sh if not set.&ndash;&gt;-->
+    <!--<bean id="serialWorkerRunnerSGE" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">-->
+        <!--<property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.sge.submission.hostname}"/>-->
+        <!--<property name="shellPath" value = "/bin/bash"/>-->
+        <!--<property name="submissionJobFile" ref="sgeExecutionFile"/>-->
+        <!--<property name="submissionType" value="sge"/>-->
+        <!--<property name="submissionCommand"/>-->
+    <!--</bean>-->
 
-    <!-- Starts up a serial worker using the Portable Batch System.  Used by the broker bean to start up a single multi-use worker.
-         The shellPath is optional and defaults to the user's login shell if not set.-->
-    <bean id="serialWorkerRunnerPBS" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-        <property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.pbs.submission.hostname}"/>
-        <property name="shellPath" value = "/bin/bash"/>
-        <property name="submissionJobFile" ref="pbsExecutionFile"/>
-        <property name="submissionType" value="pbs"/>
-    </bean>
+    <!--&lt;!&ndash; Starts up a serial worker using the Portable Batch System.  Used by the broker bean to start up a single multi-use worker.-->
+         <!--The shellPath is optional and defaults to the user's login shell if not set.&ndash;&gt;-->
+    <!--<bean id="serialWorkerRunnerPBS" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">-->
+        <!--<property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.pbs.submission.hostname}"/>-->
+        <!--<property name="shellPath" value = "/bin/bash"/>-->
+        <!--<property name="submissionJobFile" ref="pbsExecutionFile"/>-->
+        <!--<property name="submissionType" value="pbs"/>-->
+        <!--<property name="submissionCommand"/>-->
+    <!--</bean>-->
 
     <!-- Starts up a serial worker on a local machine (defined in spring-config-servers.xml).  Used by the lanBroker bean to start up a single multi-use worker. -->
     <bean id="lanWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANWorkerRunner">
