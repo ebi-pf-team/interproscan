@@ -123,7 +123,7 @@
             <artifactId>netty</artifactId>
             <version>3.1.5.GA</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jboss.javaee</groupId>
             <artifactId>jboss-jms-api</artifactId>
@@ -227,163 +227,38 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>ideauidesigner-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>javac2</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <fork>true</fork>
+
+                    <debug>true</debug>
+                    <failOnError>true</failOnError>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.intellij</groupId>
+                        <artifactId>javac2</artifactId>
+
+                        <version>7.0.3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
 
     </build>
 
     <profiles>
-
-        <profile>
-            <id>runMaster</id>
-
-            <build><plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.1</version>
-                    <executions>
-                        <execution>
-
-                            <goals>
-                                <goal>java</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunMaster</mainClass>
-                    </configuration>
-
-                </plugin>
-            </plugins></build>
-        </profile>
-
-        <profile>
-            <id>runParallelWorker</id>
-            <build><plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.1</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>java</goal>
-                            </goals>
-
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunParallelWorker</mainClass>
-                    </configuration>
-                </plugin>
-            </plugins></build>
-        </profile>
-
-        <profile>
-            <id>runSerialWorker</id>
-            <build><plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.1</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>java</goal>
-                            </goals>
-
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunSerialWorker</mainClass>
-                    </configuration>
-                </plugin>
-            </plugins></build>
-        </profile>
-
-        <profile>
-            <id>runMonitor</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.intellij</groupId>
-                    <artifactId>javac2</artifactId>
-                    <version>7.0.3</version>
-
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.1</version>
-
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-
-                            <mainClass>uk.ac.ebi.interpro.scan.jms.main.RunMonitor</mainClass>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>ideauidesigner-maven-plugin</artifactId>
-                        <executions>
-
-                            <execution>
-                                <goals>
-                                    <goal>javac2</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <fork>true</fork>
-
-                            <debug>true</debug>
-                            <failOnError>true</failOnError>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.intellij</groupId>
-                                <artifactId>javac2</artifactId>
-
-                                <version>7.0.3</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-
-        <!--profile>
-            <id>runBroker</id>
-            <build><plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.1</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>java</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <mainClass>test.main.RunBroker</mainClass>
-                    </configuration>
-                </plugin>
-            </plugins></build>
-        </profile-->
-
         <profile>
             <!-- Copy this profile into your own [HOME]/.m2/settings.xml file, rename and
              edit appropriately. Use with "mvn -P profile-id GOAL" -->
@@ -401,18 +276,6 @@
             </dependencies>
 
             <properties>
-
-                <mvn.i5.database.driver>org.hsqldb.jdbcDriver</mvn.i5.database.driver>
-                <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
-                <mvn.i5.database.username>sa</mvn.i5.database.username>
-                <mvn.i5.database.password></mvn.i5.database.password>
-                <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
-                <mvn.hibernate.show_sql>true</mvn.hibernate.show_sql>
-                <mvn.hibernate.format_sql>true</mvn.hibernate.format_sql>
-                <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
-                <mvn.hibernate.default_schema>testmodel</mvn.hibernate.default_schema>
-                <mvn.hibernate.jdbc.batch.size>30</mvn.hibernate.jdbc.batch.size>
-                <mvn.hibernate.use_sql_comments>true</mvn.hibernate.use_sql_comments>
 
                 <mvn.broker.bindings.directory>target/data/bindings</mvn.broker.bindings.directory>
                 <mvn.broker.journal.directory>target/data/journal</mvn.broker.journal.directory>
@@ -447,7 +310,7 @@
 
                 <mvn.parallel.worker.xmx>2048</mvn.parallel.worker.xmx>
                 <mvn.serial.worker.xmx>28000</mvn.serial.worker.xmx>
-                
+
 
                 <!-- You can rename the queues to anything you like-->
                 <mvn.worker.job.request.queue>worker_job_request_queue</mvn.worker.job.request.queue>
