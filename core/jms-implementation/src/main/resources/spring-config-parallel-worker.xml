@@ -10,7 +10,7 @@
     <import resource="spring-config-jobs.xml"/>
 
 
-    <bean id="parallelWorker" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker">
+    <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker">
         <property name="connectionFactory" ref="connectionFactory"/>
         <property name="jobRequestQueueName" value="jms.queue.${mvn.worker.job.request.queue}"/>
         <property name="jobResponseQueueName" value="jms.queue.${mvn.worker.job.response.queue}"/>

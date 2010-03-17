@@ -21,7 +21,7 @@ public class RunParallelWorker {
     public static void main(String[] args) {
         AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String []{"spring-config-parallel-worker.xml"});
         ctx.registerShutdownHook();
-        Worker worker = (Worker) ctx.getBean("parallelWorker");
+        Worker worker = (Worker) ctx.getBean("worker");
         worker.run();
         ctx.close();
     }
