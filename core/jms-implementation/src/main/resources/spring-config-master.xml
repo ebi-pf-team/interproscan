@@ -80,8 +80,8 @@
         <constructor-arg value="pbs_exec.sh" />
     </bean>
 
-    <bean id="lsfParallelFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="lsf_exec.sh" />
+    <bean id="lsfParallelFile" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg value="scripts/lsf_exec.sh" />
     </bean>
 
 
@@ -131,7 +131,7 @@
 
 
 
-    <!-- Quartz job to start spare parallel worker.  Currently turned on. -->
+    <!-- Quartz job to run spare parallel worker.  Currently turned on. -->
     <bean id="startSpareParallelWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="parallelWorkerRunner"/>
         <property name="targetMethod" value="startupNewWorker"/>

@@ -13,6 +13,14 @@
                <include>*.jar</include>
            </includes>
        </fileSet>
+       <fileSet>
+           <directory>target/classes</directory>
+           <outputDirectory>scripts</outputDirectory>
+           <includes>
+               <include>*.sh</include>
+               <include>*.bat</include>
+           </includes>
+       </fileSet>
    </fileSets>
    <dependencySets>
        <dependencySet>
