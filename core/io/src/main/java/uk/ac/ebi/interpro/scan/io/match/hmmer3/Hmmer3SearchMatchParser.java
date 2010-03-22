@@ -257,7 +257,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 }
                                 // getting the actual alignment sequence string
 
-                                if ( (currentDomain!=null) && (currentSequenceIdentifier!=null) && (line.trim().startsWith(currentSequenceIdentifier) )){
+                                if ( (currentDomain!=null) && (currentSequenceIdentifier!=null) && (line.trim().startsWith(currentSequenceIdentifier+" ") )){
                                     Matcher alignmentSequencePattern = DomainMatch.ALIGNMENT_SEQUENCE_PATTERN.matcher(line);
                                     if(alignmentSequencePattern.matches() && alignmentSequencePattern.group(1).equals(currentSequenceIdentifier)){
                                         alignSeq.append(alignmentSequencePattern.group(3));
