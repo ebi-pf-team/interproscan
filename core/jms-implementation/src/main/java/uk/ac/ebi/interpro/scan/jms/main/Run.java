@@ -33,14 +33,19 @@ public class Run {
 
 
     public static void main(String[] args) {
-        String mode="master";
+        String mode = null;
 
         if (args.length>0) {
             mode=args[0];
         }
 
-        if (! modeToSpringXmlFile.keySet().contains(mode)){
-            LOGGER.fatal("The mode '" + mode + "' is not handled.  Should be one of: " );
+        if (mode == null || ! modeToSpringXmlFile.keySet().contains(mode)){
+            if (mode == null){
+                LOGGER.fatal("A 'mode' runtime argument is required.  Should be one of: " );
+            }
+            else {
+                LOGGER.fatal("The mode '" + mode + "' is not handled.  Should be one of: " );
+            }
             for (String validMode : modeToSpringXmlFile.keySet()){
                 LOGGER.fatal(validMode);
             }
