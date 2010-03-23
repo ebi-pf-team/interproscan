@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.phobius;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.phobius.PhobiusMatchParser;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
@@ -8,6 +9,8 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAO;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 
@@ -20,6 +23,8 @@ import java.util.Set;
  * @since 1.0
  */
 public class ParsePhobiusOutputStep extends Step {
+
+    private static final Logger LOGGER = Logger.getLogger(ParsePhobiusOutputStep.class.getName());
 
     private String phobiusOutputFileNameTemplate;
 
@@ -54,7 +59,7 @@ public class ParsePhobiusOutputStep extends Step {
      * @throws Exception could be anything thrown by the execute method.
      */
     @Override
-    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws Exception {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, phobiusOutputFileNameTemplate);
         InputStream is = null;
         try{
@@ -62,9 +67,15 @@ public class ParsePhobiusOutputStep extends Step {
             Set<PhobiusProtein> phobiusProteins = parser.parse(is, fileName);
             phobiusMatchDAO.persist(phobiusProteins);
         }
-        finally {
+        catch (IOException e) {
+            throw new IllegalStateException("IOException thrown when attempting to parse Phobius file " + fileName, e);
+        } finally {
             if (is != null){
-                is.close();
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    LOGGER.error ("Unable to close connection to the Phobius output file located at " + fileName, e);
+                }
             }
         }
     }

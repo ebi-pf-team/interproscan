@@ -48,11 +48,16 @@ public class WriteFastaFileStep extends Step {
      * @param temporaryFileDirectory
      */
     @Override
-    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws IOException, WriteFastaFile.FastaFileWritingException, InterruptedException {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
         List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        fastaFile.writeFastaFile(proteins, fastaFilePathName);
-        // Thread.sleep(2000);
+        try {
+            fastaFile.writeFastaFile(proteins, fastaFilePathName);
+        } catch (IOException e) {
+            throw new IllegalStateException ("IOException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
+        } catch (WriteFastaFile.FastaFileWritingException e) {
+            throw new IllegalStateException ("WriteFastaFile.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
+        }
     }
 }
 

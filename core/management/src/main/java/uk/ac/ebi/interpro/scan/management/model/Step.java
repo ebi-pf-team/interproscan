@@ -173,9 +173,8 @@ public abstract class Step implements BeanNameAware {
      *
      * @param stepInstance containing the parameters for executing.
      * @param temporaryFileDirectory
-     * @throws Exception could be anything thrown by the execute method.
      */
-    public abstract void execute(StepInstance stepInstance, String temporaryFileDirectory) throws Exception;
+    public abstract void execute(StepInstance stepInstance, String temporaryFileDirectory);
 
 
     @Override

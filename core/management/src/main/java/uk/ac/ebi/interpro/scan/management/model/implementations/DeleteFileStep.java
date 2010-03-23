@@ -37,7 +37,7 @@ public class DeleteFileStep extends Step {
      * @throws Exception could be anything thrown by the execute method.
      */
     @Override
-    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws Exception {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileNameTemplate);
         File file = new File(filePathName);
         if (! file.delete()){

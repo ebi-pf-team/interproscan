@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
@@ -51,21 +52,25 @@ abstract class ParseStep<T extends RawMatch> extends Step {
         this.rawMatchDAO = rawMatchDAO;
     }
 
-    @Override public void execute(StepInstance stepInstance, String temporaryFileDirectory)
-            throws InterruptedException, IOException {
+    @Override public void execute(StepInstance stepInstance, String temporaryFileDirectory){
         if (LOGGER.isDebugEnabled())    {
             LOGGER.debug("Running ParseStep for proteins " + stepInstance.getBottomProtein() +
                     " to " + stepInstance.getTopProtein());
         }
-        InputStream is = new FileInputStream(stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory,
-                    getOutputFileTemplate()));
+        InputStream is = null;
+        final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileTemplate());
         try{
+            is = new FileInputStream(fileName);
             final Set<RawProtein<T>> results = getParser().parse(is);
             rawMatchDAO.insertProteinMatches(results);
         }
-        finally {
+        catch (IOException e) {
+            throw new IllegalStateException("IOException thrown when attempting to parse " + fileName, e);
+        } finally {
             try {
-                is.close();
+                if (is != null){
+                    is.close();
+                }
             }
             catch (IOException e) {
                 LOGGER.warn("Error closing input stream", e);
