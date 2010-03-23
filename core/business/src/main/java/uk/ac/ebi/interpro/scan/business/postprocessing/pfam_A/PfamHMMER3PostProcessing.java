@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 
+import java.io.IOException;
 import java.util.*;
 import java.io.Serializable;
 
@@ -26,13 +27,13 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
     private PfamClanData clanData;
 
+    private ClanFileParser clanFileParser;
+
     private SeedAlignmentDataRetriever seedAlignmentDataRetriever;
 
-
-
     @Required
-    public void setClanFileParser(ClanFileParser clanFileParser) throws Exception {
-        this.clanData = clanFileParser.getClanData();
+    public void setClanFileParser(ClanFileParser clanFileParser) {
+        this.clanFileParser = clanFileParser;
     }
 
     /**
@@ -50,7 +51,10 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @param proteinIdToRawMatchMap being a Map of protein IDs to a List of raw matches
      * @return a Map of proteinIds to a List of filtered matches.
      */
-    public Map<String, RawProtein<PfamHmmer3RawMatch>> process(Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawMatchMap) {
+    public Map<String, RawProtein<PfamHmmer3RawMatch>> process(Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawMatchMap) throws IOException {
+        if (clanData == null){
+            clanData = clanFileParser.getClanData();
+        }
         Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<PfamHmmer3RawMatch>>();
         final long startNanos = System.nanoTime();
         // Iterate over UniParc IDs in range and processBatch them
