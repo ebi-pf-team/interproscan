@@ -9,6 +9,7 @@
     <import resource="spring-config-common.xml"/>
     <import resource="spring-config-jobs.xml"/>
     <import resource="spring-config-servers.xml"/>
+    <import resource="hornetq-config-spring.xml"/>
 
     <!-- Starts up parallel workers.  Used by the queueJumper bean, which starts up
     a new parallel worker each time a parallel TaskExecution is run. -->
@@ -16,7 +17,7 @@
         <property name="submissionCommand" value="${worker.command}"/>
     </bean>
 
-    <!--&lt;!&ndash; Starts up a serial worker using the Sun Grid Engine.  Used by the broker bean to start up a single multi-use worker.-->
+    <!--&lt;!&ndash; Starts up a serial worker using the Sun Grid Engine.  Used by the broker bean to runBroker up a single multi-use worker.-->
          <!--The shellPath is optional and defaults to the Bourne shell /bin/sh if not set.&ndash;&gt;-->
     <!--<bean id="serialWorkerRunnerSGE" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">-->
         <!--<property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.sge.submission.hostname}"/>-->
@@ -26,7 +27,7 @@
         <!--<property name="submissionCommand"/>-->
     <!--</bean>-->
 
-    <!--&lt;!&ndash; Starts up a serial worker using the Portable Batch System.  Used by the broker bean to start up a single multi-use worker.-->
+    <!--&lt;!&ndash; Starts up a serial worker using the Portable Batch System.  Used by the broker bean to runBroker up a single multi-use worker.-->
          <!--The shellPath is optional and defaults to the user's login shell if not set.&ndash;&gt;-->
     <!--<bean id="serialWorkerRunnerPBS" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">-->
         <!--<property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.pbs.submission.hostname}"/>-->
@@ -36,7 +37,7 @@
         <!--<property name="submissionCommand"/>-->
     <!--</bean>-->
 
-    <!-- Starts up a serial worker on a local machine (defined in spring-config-servers.xml).  Used by the lanBroker bean to start up a single multi-use worker. -->
+    <!-- Starts up a serial worker on a local machine (defined in spring-config-servers.xml).  Used by the lanBroker bean to runBroker up a single multi-use worker. -->
     <bean id="lanWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANWorkerRunner">
         <property name="command"
                   value='${maven.home} -e -P runParallelWorker -f ${basedir}/pom.xml exec:java ${mvn.parallel.worker.xmx}'/>
@@ -86,6 +87,7 @@
 
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
+        <property name="embeddedBroker" ref="jmsBroker"/>
         <property name="jobs" ref="jobs"/>
 
         <!-- The following properties are just for the 'hacked' demonstration. (Loading proteins
@@ -99,10 +101,18 @@
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
-        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="connectionFactory" ref="inVmConnectionFactory"/>
         <property name="workerJobResponseQueueName" value="jms.queue.${mvn.worker.job.response.queue}"/>
         <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
         <property name="workerJobRequestQueueName" value="jms.queue.${mvn.worker.job.request.queue}"/>
+    </bean>
+
+    <bean id="inVmConnectionFactory" class="org.hornetq.jms.client.HornetQConnectionFactory">
+        <constructor-arg ref="inVmTransportConfiguration"/>
+    </bean>
+
+    <bean id="inVmTransportConfiguration" class="org.hornetq.api.core.TransportConfiguration">
+        <constructor-arg index="0" value="org.hornetq.core.remoting.impl.invm.InVMConnectorFactory"/>
     </bean>
 
     <!-- Quartz Scheduler - contains list of Quartz jobs. -->
@@ -124,7 +134,8 @@
 
     <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
-        <property name="startDelay" value="0"/>
+        <!-- Wait a minute before attempting to load proteins. -->
+        <property name="startDelay" value="60000"/>
         <!-- repeat every 30 minutes -->
         <property name="repeatInterval" value="180000"/>
     </bean>

@@ -268,12 +268,13 @@ public class InterProScanWorker implements Worker {
                         LOGGER.error ("An ObjectMessage was received but had no contents.");
                         return;
                     }
-                    LOGGER.debug("Message received of queue - attempting to execute");
+                    LOGGER.debug("Message received of queue - attempting to executeInTransaction");
 
                     try{
-                        execute(stepExecution, messageProducer, sessionHandler);
+                        executeInTransaction(stepExecution, messageProducer, sessionHandler);
                     } catch (Exception e) {
-                        LOGGER.error ("Execution thrown when attempting to execute the StepExecution.  All database activity rolled back.", e);
+                        running = false;
+                        LOGGER.error ("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
                         // Something went wrong in the execution - try to send back failure
                         // message to the broker.  This in turn may fail if it is the JMS connection
                         // that failed during the execution.
@@ -316,7 +317,7 @@ public class InterProScanWorker implements Worker {
             try{
                 if (message instanceof TextMessage){
                     TextMessage managementRequest = (TextMessage) message;
-                    managementRequest.acknowledge();
+                    managementRequest.acknowledge();     // TODO - when should message receipt be acknowledged?
                     // Just echo back the managementRequest with the name of the worker host to uk.ac.ebi.interpro.scan.jms the multicast topic.
                     WorkerState workerState = new WorkerState(
                             System.currentTimeMillis() - startTime,
@@ -375,9 +376,9 @@ public class InterProScanWorker implements Worker {
      * @param sessionHandler         to send the reply to the broker
      */
     @Transactional
-    private void execute(StepExecution stepExecution,
+    private void executeInTransaction(StepExecution stepExecution,
                          MessageProducer messageProducer,
-                         SessionHandler sessionHandler) throws Exception{
+                         SessionHandler sessionHandler){
         stepExecution.setToRun();
         final StepInstance stepInstance = stepExecution.getStepInstance();
         final Step step = stepInstance.getStep(jobs);
@@ -386,10 +387,15 @@ public class InterProScanWorker implements Worker {
         LOGGER.debug("Step execution id: " + stepExecution.getId());
         step.execute(stepInstance, getValidWorkingDirectory(step));
         stepExecution.completeSuccessfully();
-        LOGGER.debug ("Successful run of Step.execute() method for StepExecution ID: " + stepExecution.getId());
+        LOGGER.debug ("Successful run of Step.executeInTransaction() method for StepExecution ID: " + stepExecution.getId());
 
-        ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
-        messageProducer.send(responseMessage);
+        try{
+            ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
+            messageProducer.send(responseMessage);
+        } catch (JMSException e) {
+            throw new IllegalStateException ("JMSException thrown when attempting to communicate successful completion of step " + stepExecution.getId() + " to the broker.", e);
+        }
+
         LOGGER.debug("Followed by successful reply to the JMS Broker and acknowledgement of the message.");
     }
 
