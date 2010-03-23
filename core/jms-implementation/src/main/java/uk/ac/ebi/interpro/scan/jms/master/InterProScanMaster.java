@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 import uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.jms.broker.EmbeddedBroker;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
@@ -43,6 +44,7 @@ public class InterProScanMaster implements Master {
     private GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO;
 
     private String pfamHMMfilePath;
+
     private Resource gene3dModel2SfFile;    
 
     private ConnectionFactory connectionFactory;
@@ -52,6 +54,19 @@ public class InterProScanMaster implements Master {
     private String workerJobRequestQueueName;
 
     private WorkerRunner parallelWorkerRunner;
+
+    private EmbeddedBroker embeddedBroker;
+
+    /**
+     * This OPTIONAL bean method allows an Embedded JMS broker to be injected.
+     * If not injected, the Master will make no attempt to runBroker a Broker, but
+     * rely on an external one being present.
+     *
+     * @param embeddedBroker implementation, e.g. for HornetQ, ActiveMQ.
+     */
+    public void setEmbeddedBroker(EmbeddedBroker embeddedBroker) {
+        this.embeddedBroker = embeddedBroker;
+    }
 
     @Required
     public void setParallelWorkerRunner(WorkerRunner workerRunner) {
@@ -118,6 +133,11 @@ public class InterProScanMaster implements Master {
     public void run(){
         SessionHandler sessionHandler = null;
         try {
+            if (embeddedBroker != null){
+                embeddedBroker.runBroker();
+                LOGGER.info("The embedded broker has been started and the runBroker method has returned.");
+                Thread.sleep(3000);   // Give the broker a chance to start up properly.
+            }
             // Initialise the sessionHandler for the master thread
             sessionHandler = new SessionHandler(connectionFactory);
 
@@ -237,7 +257,10 @@ public class InterProScanMaster implements Master {
         stepExecution.submit(stepExecutionDAO);
         ObjectMessage message = sessionHandler.createObjectMessage(stepExecution);
         producer.setPriority(stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 7);
+        LOGGER.debug ("Placing message on to destination " + producer.getDestination().toString());
         producer.send(message);
         parallelWorkerRunner.startupNewWorker();
     }
+
+
 }

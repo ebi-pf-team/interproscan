@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import uk.ac.ebi.interpro.scan.jms.broker.EmbeddedBroker;
+
 /**
  * Interface for the Master application.
  *
@@ -8,5 +10,13 @@ package uk.ac.ebi.interpro.scan.jms.master;
  * @since 1.0
  */
 public interface Master extends Runnable{
+
+    /**
+     * This OPTIONAL bean method allows an Embedded JMS broker to be injected.
+     * If not injected, the Master will make no attempt to runBroker a Broker, but
+     * rely on an external one being present.
+     * @param embeddedBroker implementation, e.g. for HornetQ, ActiveMQ.
+     */
+    public void setEmbeddedBroker(EmbeddedBroker embeddedBroker);
 
 }

@@ -27,7 +27,8 @@
         </property>
         <property name="acceptorConfigurations">
             <set>
-                <ref local="nettyAcceptorTransportConfiguration"/>
+                <ref local="nettyAcceptorTransportConfig"/>
+                <ref local="inVMAcceptorTransportConfig"/>
             </set>
         </property>
     </bean>
@@ -47,7 +48,8 @@
         <constructor-arg index="2" value="netty-connector"/>
     </bean>
 
-    <bean id="nettyAcceptorTransportConfiguration" class="org.hornetq.api.core.TransportConfiguration">
+    <!-- Default acceptor used by workers, monitors, other processes that are running in separate JVMs. -->
+    <bean id="nettyAcceptorTransportConfig" class="org.hornetq.api.core.TransportConfiguration">
         <constructor-arg index="0" value="org.hornetq.integration.transports.netty.NettyAcceptorFactory"/>
         <constructor-arg index="1">
             <map>
@@ -56,5 +58,14 @@
             </map>
         </constructor-arg>
         <constructor-arg index="2" value="netty-acceptor"/>
+    </bean>
+
+    <!-- "In Virtual Machine" acceptor that accepts connections from the Master, running in the same JVM as the broker. -->
+    <bean id="inVMAcceptorTransportConfig" class="org.hornetq.api.core.TransportConfiguration">
+        <constructor-arg index="0" value="org.hornetq.core.remoting.impl.invm.InVMAcceptorFactory"/>
+        <constructor-arg index="1">
+            <map/>
+        </constructor-arg>
+        <constructor-arg index="2" value="netty-invm-acceptor"/>
     </bean>
 </beans>
