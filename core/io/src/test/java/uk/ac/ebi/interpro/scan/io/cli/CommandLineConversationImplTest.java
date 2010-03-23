@@ -57,10 +57,6 @@ public class CommandLineConversationImplTest extends TestCase {
             LOGGER.error(e);
             Assert.fail(e.toString());
         }
-        catch (FileIsNotADirectoryException e) {
-            LOGGER.error(e);
-            Assert.fail(e.toString());
-        }
     }
 
     @Test
@@ -88,10 +84,6 @@ public class CommandLineConversationImplTest extends TestCase {
             Assert.fail(e.toString());
         }
         catch (InterruptedException e) {
-            LOGGER.error(e);
-            Assert.fail(e.toString());
-        }
-        catch (FileIsNotADirectoryException e) {
             LOGGER.error(e);
             Assert.fail(e.toString());
         }

@@ -32,7 +32,7 @@ public interface CommandLineConversation extends Serializable {
      * @throws IOException propagated from the RunTime.execute method.
      * @throws InterruptedException If the thread is interrupted while waiting for the command to return.
      */
-    int runCommand(boolean mergeOutputAndError, List<String> commands) throws IOException, InterruptedException;    
+    int runCommand(boolean mergeOutputAndError, List<String> commands) throws IOException, InterruptedException;
 
     /**
      * Runs a command on the command line synchronously.
@@ -64,7 +64,7 @@ public interface CommandLineConversation extends Serializable {
      * If a filePath is set, then the method 'getOutput' will return null.
      * @param filePath the path of the file to which output should be redirected.
      */
-    void setOutputPathToFile (String filePath, boolean overwriteIfExists, boolean append) throws IOException, InterruptedException;
+    void setOutputPathToFile (String filePath, boolean overwriteIfExists, boolean append) throws IOException;
 
     /**
      * Redirects the error stream from the command directly to the specified file.
