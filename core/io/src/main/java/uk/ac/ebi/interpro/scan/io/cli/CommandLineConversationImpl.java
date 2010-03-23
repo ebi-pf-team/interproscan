@@ -167,7 +167,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
      * @param filePath the path of the file to which output should be redirected.
      */
     @Override public void setOutputPathToFile(String filePath, boolean overwriteIfExists, boolean append)
-            throws IOException, InterruptedException {
+            throws IOException {
         outputFileHandle = createfileHandle(filePath, overwriteIfExists, append);
     }
 
@@ -223,7 +223,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         return exitStatus;
     }
     
-    private File createfileHandle(String filePath, boolean overwriteIfExists, boolean append) throws IOException, InterruptedException {
+    private File createfileHandle(String filePath, boolean overwriteIfExists, boolean append) throws IOException {
         File sinkFile = new File(filePath);
         if (sinkFile.exists()){
             if (! sinkFile.isFile()){
