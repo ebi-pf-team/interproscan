@@ -124,7 +124,7 @@ public class ClanFileParser implements Serializable {
      * @throws IOException in the event of a problem reading the
      * clan data file.
      */
-    public PfamClanData getClanData() throws Exception {
+    public PfamClanData getClanData() throws IOException {
         if (clanData == null){
             buildClanAndModelModel();
         }
@@ -138,7 +138,7 @@ public class ClanFileParser implements Serializable {
      * in PfamClanData.  The RecordHolder object is then discarded.
      * @throws IOException in the event of a problem reading the file.
      */
-    private void buildClanAndModelModel() throws Exception {
+    private void buildClanAndModelModel() throws IOException {
         clanData = new PfamClanData();
         parsePfamASeed();
         parsePfamC();
