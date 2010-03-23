@@ -4,9 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
+import uk.ac.ebi.interpro.scan.io.cli.FileIsNotADirectoryException;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,7 +88,8 @@ public class RunHmmer3Step extends Step {
      * @param temporaryFileDirectory
      */
     @Override
-    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws Exception {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        try{
         LOGGER.debug("About to run HMMER binary... some output should follow.");
 
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
@@ -116,7 +120,12 @@ public class RunHmmer3Step extends Step {
             failureMessage.append (clc.getErrorMessage());
             LOGGER.error(failureMessage);
             // TODO Look for a more specific Exception to throw here...
-            throw new Exception (failureMessage.toString());
+            throw new IllegalStateException (failureMessage.toString());
+        }
+        } catch (IOException e) {
+            throw new IllegalStateException ("IOException thrown when attempting to run HMMER3", e);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException ("InterruptedException thrown when attempting to run HMMER3", e);
         }
     }
 }

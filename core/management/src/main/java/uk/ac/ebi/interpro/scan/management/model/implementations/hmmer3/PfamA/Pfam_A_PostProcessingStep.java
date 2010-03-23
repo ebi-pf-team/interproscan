@@ -11,6 +11,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -80,8 +81,7 @@ public class Pfam_A_PostProcessingStep extends Step {
      * @throws Exception could be anything thrown by the execute method.
      */
     @Override
-    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws InterruptedException {
-        Thread.sleep(2000);  // Have a snooze to allow NFS to catch up.
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Retrieve raw results for protein range.
         Map<String, RawProtein<PfamHmmer3RawMatch>> rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
                 Long.toString(stepInstance.getBottomProtein()),
@@ -90,8 +90,12 @@ public class Pfam_A_PostProcessingStep extends Step {
         );
 
         // Post process
-        Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = getPostProcessor().process(rawMatches);
-        filteredMatchDAO.persistFilteredMatches(filteredMatches.values());
+        try{
+            Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = getPostProcessor().process(rawMatches);
+            filteredMatchDAO.persistFilteredMatches(filteredMatches.values());
+        } catch (IOException e) {
+            throw new IllegalStateException ("IOException thrown when attemptin to post process filtered matches.", e);
+        }
     }
 
     private int countMatches(Map<String, RawProtein<PfamHmmer3RawMatch>> matches) {

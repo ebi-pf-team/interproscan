@@ -4,9 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
+import uk.ac.ebi.interpro.scan.io.cli.FileIsNotADirectoryException;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +65,8 @@ public class RunPhobiusBinaryStep extends Step {
      * @throws Exception could be anything thrown by the execute method.
      */
     @Override
-    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws Exception {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        try{
         final String fastaFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFileNameTemplate);
         final String phobiusOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, phobiusOutputFileNameTemplate);
         final List<String> command = new ArrayList<String>();
@@ -91,7 +95,12 @@ public class RunPhobiusBinaryStep extends Step {
             failureMessage.append (clc.getErrorMessage());
             LOGGER.error(failureMessage);
             // TODO Look for a more specific Exception to throw here...
-            throw new Exception (failureMessage.toString());
+            throw new IllegalStateException (failureMessage.toString());
+        }
+        } catch (InterruptedException e) {
+            throw new IllegalStateException ("InterruptedException thrown by RunPhobiusBinaryStep", e);
+        } catch (IOException e) {
+            throw new IllegalStateException ("IOException thrown by RunPhobiusBinaryStep", e);
         }
     }
 }

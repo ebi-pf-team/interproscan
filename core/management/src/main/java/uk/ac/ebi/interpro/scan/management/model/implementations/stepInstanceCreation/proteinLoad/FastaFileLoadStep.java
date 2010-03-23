@@ -40,18 +40,22 @@ public class FastaFileLoadStep extends Step {
      * @param temporaryFileDirectory
      */
     @Override
-    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws FileNotFoundException {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.debug("Entered execute() method of FastaFileLoadStep");
         LOGGER.debug("LoadFastaFile object: " + fastaFileLoader);
         final String providedPath = stepInstance.getStepParameters().get(FASTA_FILE_PATH_KEY);
         LOGGER.debug("Fasta file path from step parameters; " + providedPath);
 
         // Try resolving the fasta file as an absolute file path
-        InputStream fastaFileInputStream;
+        InputStream fastaFileInputStream = null;
         File file = new File (providedPath);
         if (file.exists()){
             if (file.canRead()) {
-                fastaFileInputStream = new FileInputStream(file);
+                try {
+                    fastaFileInputStream = new FileInputStream(file);
+                } catch (FileNotFoundException e) {
+                    throw new IllegalStateException ("FileNotFoundException thrown when attempting to load a fasta file located at " + file.getAbsolutePath(), e);
+                }
             }
             else {
                 throw new IllegalArgumentException ("The fasta file " + providedPath + " is visible but cannot be read.  Please check file permissions.");

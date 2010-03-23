@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
@@ -71,7 +72,7 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
      * @param temporaryFileDirectory
      */
     @Override
-    public void execute(StepInstance stepInstance, String temporaryFileDirectory) throws InterruptedException, IOException {
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.debug("Running Parser HMMER3 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
         InputStream is = null;
         try{
@@ -82,7 +83,10 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
             final Set<RawProtein<PfamHmmer3RawMatch>> parsedResults = parser.parse(is);
             pfamRawMatchDAO.insertProteinMatches(parsedResults);
         }
-        finally {
+
+        catch (IOException e) {
+            throw new IllegalStateException ("IOException thrown when attempting to read " + hmmerOutputFilePathTemplate, e);
+        } finally {
             if (is != null){
                 try {
                     is.close();
