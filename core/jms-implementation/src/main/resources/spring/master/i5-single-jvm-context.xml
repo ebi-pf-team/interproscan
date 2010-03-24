@@ -6,9 +6,9 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <!-- Import common beans -->
-    <import resource="spring-config-jobs.xml"/>
-    <import resource="hornetq-config-single-jvm-context.xml"/>
-    <import resource="spring-config-embedded-worker.xml"/>
+    <import resource="../jobs/all-jobs-context.xml"/>
+    <import resource="../../spring/jms/hornetq-config-single-jvm-context.xml"/>
+    <import resource="../worker/embedded-worker-context.xml"/>
 
     <bean id="i5standalone" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
         <property name="embeddedBroker" ref="jmsBroker"/>

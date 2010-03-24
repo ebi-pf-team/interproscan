@@ -6,7 +6,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- The following two beans define the TCP connection to a remote broker,
+    <!-- The following two beans define the TCP connection to a remote jms,
     normally used by Workers and monitors. -->
     <bean id="nettyConnectionFactory" class="org.hornetq.jms.client.HornetQConnectionFactory">
         <constructor-arg ref="transportConfiguration"/>

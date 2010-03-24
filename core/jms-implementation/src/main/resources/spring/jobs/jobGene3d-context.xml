@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <import resource="persistence-config.xml"/>    
+    <import resource="../persistence-config-context.xml"/>
 
     <!-- ######################## JOB: Gene 3D ############################  -->
     <bean id="jobGene3d" class="uk.ac.ebi.interpro.scan.management.model.Job">

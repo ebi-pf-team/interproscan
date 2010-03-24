@@ -8,7 +8,7 @@
 
     <bean id="jmsBroker" class="uk.ac.ebi.interpro.scan.jms.broker.EmbeddedHornetQBroker">
         <property name="hornetQConfig" ref="hornetQConfig"/>
-        <property name="jmsConfigFileName" value="hornetq-jms.xml"/>
+        <property name="jmsConfigFileName" value="hornetq/hornetq-jms.xml"/>
     </bean>
 
     <bean id="hornetQConfig" class="org.hornetq.core.config.impl.ConfigurationImpl">
@@ -60,7 +60,7 @@
         <constructor-arg index="2" value="netty-acceptor"/>
     </bean>
 
-    <!-- "In Virtual Machine" acceptor that accepts connections from the Master, running in the same JVM as the broker. -->
+    <!-- "In Virtual Machine" acceptor that accepts connections from the Master, running in the same JVM as the jms. -->
     <bean id="inVMAcceptorTransportConfig" class="org.hornetq.api.core.TransportConfiguration">
         <constructor-arg index="0" value="org.hornetq.core.remoting.impl.invm.InVMAcceptorFactory"/>
         <constructor-arg index="1">

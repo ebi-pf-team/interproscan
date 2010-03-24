@@ -6,10 +6,10 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <!-- Import common beans -->
-    <import resource="spring-config-common.xml"/>
-    <import resource="spring-config-jobs.xml"/>
-    <import resource="spring-config-servers.xml"/>
-    <import resource="hornetq-config-spring.xml"/>
+    <import resource="../common-context.xml"/>
+    <import resource="../jobs/all-jobs-context.xml"/>
+    <import resource="../servers-context.xml"/>
+    <import resource="../jms/hornetq-config-context.xml"/>
 
     <!-- Starts up parallel workers.  Used by the queueJumper bean, which starts up
     a new parallel worker each time a parallel TaskExecution is run. -->
@@ -17,7 +17,7 @@
         <property name="submissionCommand" value="${worker.command}"/>
     </bean>
 
-    <!--&lt;!&ndash; Starts up a serial worker using the Sun Grid Engine.  Used by the broker bean to runBroker up a single multi-use worker.-->
+    <!--&lt;!&ndash; Starts up a serial worker using the Sun Grid Engine.  Used by the jms bean to runBroker up a single multi-use worker.-->
          <!--The shellPath is optional and defaults to the Bourne shell /bin/sh if not set.&ndash;&gt;-->
     <!--<bean id="serialWorkerRunnerSGE" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">-->
         <!--<property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.sge.submission.hostname}"/>-->
@@ -27,7 +27,7 @@
         <!--<property name="submissionCommand"/>-->
     <!--</bean>-->
 
-    <!--&lt;!&ndash; Starts up a serial worker using the Portable Batch System.  Used by the broker bean to runBroker up a single multi-use worker.-->
+    <!--&lt;!&ndash; Starts up a serial worker using the Portable Batch System.  Used by the jms bean to runBroker up a single multi-use worker.-->
          <!--The shellPath is optional and defaults to the user's login shell if not set.&ndash;&gt;-->
     <!--<bean id="serialWorkerRunnerPBS" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">-->
         <!--<property name="optionalPrefix" value="ssh -x ${unix.username}@${mvn.pbs.submission.hostname}"/>-->
@@ -37,7 +37,7 @@
         <!--<property name="submissionCommand"/>-->
     <!--</bean>-->
 
-    <!-- Starts up a serial worker on a local machine (defined in spring-config-servers.xml).  Used by the lanBroker bean to runBroker up a single multi-use worker. -->
+    <!-- Starts up a serial worker on a local machine (defined in servers-context.xml).  Used by the lanBroker bean to runBroker up a single multi-use worker. -->
     <bean id="lanWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANWorkerRunner">
         <property name="command"
                   value='${maven.home} -e -P runParallelWorker -f ${basedir}/pom.xml exec:java ${mvn.parallel.worker.xmx}'/>
@@ -45,28 +45,28 @@
         <property name="lanServerListing" ref="serverNames"/>
     </bean>
 
-    <!--<bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->            
+    <!--<bean id="lanBroker" class="uk.ac.ebi.interpro.scan.jms.jms.OnionBroker">-->
         <!--<property name="serialWorkerRunner" ref="lanWorkerRunner"/>-->
         <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
         <!--<property name="queueJumper" ref="queueJumper"/>-->
         <!--<property name="jmsConfigurationXml" value="hornetq-jms.xml"/>-->
     <!--</bean>-->
 
-    <!--<bean id="sgeBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
+    <!--<bean id="sgeBroker" class="uk.ac.ebi.interpro.scan.jms.jms.OnionBroker">-->
         <!--<property name="serialWorkerRunner" ref="serialWorkerRunnerSGE"/>-->
         <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
         <!--<property name="queueJumper" ref="queueJumper"/>-->
         <!--<property name="jmsConfigurationXml" value="hornetq-jms.xml"/>-->
     <!--</bean>-->
 
-    <!--<bean id="pbsBroker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
+    <!--<bean id="pbsBroker" class="uk.ac.ebi.interpro.scan.jms.jms.OnionBroker">-->
         <!--<property name="serialWorkerRunner" ref="serialWorkerRunnerPBS"/>-->
         <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
         <!--<property name="queueJumper" ref="queueJumper"/>-->
         <!--<property name="jmsConfigurationXml" value="hornetq-jms.xml"/>-->
     <!--</bean>-->
 
-    <!--<bean id="broker" class="uk.ac.ebi.interpro.scan.jms.broker.OnionBroker">-->
+    <!--<bean id="jms" class="uk.ac.ebi.interpro.scan.jms.jms.OnionBroker">-->
         <!--<property name="serialWorkerRunner" ref="serialWorkerRunner"/>-->
         <!--<property name="connectionConfigurationXml" value="hornetq-configuration.xml"/>-->
         <!--<property name="queueJumper" ref="queueJumper"/>-->
@@ -131,10 +131,12 @@
         <!-- Wait a minute before attempting to load proteins. -->
         <property name="startDelay" value="60000"/>
         <!-- repeat every nnn milliseconds
+        600000 = 10 minutes
+        3600000 = 1 hour
         7200000 = 2 hours
         43200000 = 12 hours
         -->
-        <property name="repeatInterval" value="7200000"/>
+        <property name="repeatInterval" value="600000"/>
     </bean>
 
 

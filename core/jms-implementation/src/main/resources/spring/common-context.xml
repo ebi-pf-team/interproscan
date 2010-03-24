@@ -6,8 +6,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- The following two beans define an in-virtual-machine connection to the broker
-     used by the Master (the JVM of which the broker is embedded in) and potentially by a
+    <!-- The following two beans define an in-virtual-machine connection to the jms
+     used by the Master (the JVM of which the jms is embedded in) and potentially by a
      'single JVM' implementation of I5, i.e. a single worker. -->
     <bean id="inVmConnectionFactory" class="org.hornetq.jms.client.HornetQConnectionFactory">
         <constructor-arg ref="inVmTransportConfiguration"/>
