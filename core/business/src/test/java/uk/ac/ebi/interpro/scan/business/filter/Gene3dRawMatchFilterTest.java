@@ -27,32 +27,32 @@ import java.io.IOException;
 @ContextConfiguration
 public final class Gene3dRawMatchFilterTest {
     
-    @Resource
-    private BinaryRunner binaryRunner;
+//    @Resource
+//    private BinaryRunner binaryRunner;
 
     @Resource
     private org.springframework.core.io.Resource rawMatches;
 
     @Resource
-    private org.springframework.core.io.Resource filteredMatches;    
+    private org.springframework.core.io.Resource filteredMatches;
 
-    // TODO: Use SSF output file instead of needing to run DomainFinder
+    @Resource
+    private org.springframework.core.io.Resource filteredSsf;
+
     @Test
-    @Ignore("Change test so does not rely on DomainFinder (this could be re-enabled as an integration test)")
     public void testFilter() throws IOException {
 
         // Read raw matches
         final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins =
-                new HashSet<RawProtein<Gene3dHmmer3RawMatch>>(parseRawMatches(rawMatches));
+                new HashSet<RawProtein<Gene3dHmmer3RawMatch>>(parseRawMatches(rawMatches));        
 
         // Read filtered matches
         final Set<RawProtein<Gene3dHmmer3RawMatch>> expectedFilteredProteins =
                 new HashSet<RawProtein<Gene3dHmmer3RawMatch>>(parseRawMatches(filteredMatches));
 
-        // Run DomainFinder
+        // Parse and filter SSF file
         Gene3dRawMatchFilter f = new Gene3dRawMatchFilter();
-        f.setBinaryRunner(binaryRunner);
-        Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = f.filter(rawProteins);
+        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins =  f.filter(rawProteins, filteredSsf);
 
         // Check
         assertEquals(expectedFilteredProteins.size(), filteredProteins.size());
@@ -60,7 +60,7 @@ public final class Gene3dRawMatchFilterTest {
 
     }
 
-    private Collection<RawProtein<Gene3dHmmer3RawMatch>> parseRawMatches(org.springframework.core.io.Resource f) 
+    private Collection<RawProtein<Gene3dHmmer3RawMatch>> parseRawMatches(org.springframework.core.io.Resource f)
             throws IOException {
         OnionRawMatchResourceReader reader = new OnionRawMatchResourceReader();
         final Collection<Gene3dHmmer3RawMatch> matches = reader.read(f);

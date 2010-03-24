@@ -47,8 +47,16 @@ public interface CommandLineConversation extends Serializable {
      * @throws InterruptedException If the thread is interrupted while waiting for the command to return.
      */
     int runCommand(boolean mergeOutputAndError, String... commands) throws IOException, InterruptedException;
-    
-    InputStream runCommand(String command) throws IOException;
+
+    /**
+     * Runs command and returns exit status.
+     *
+     * @param   command             Command to run, for example "head -n 100 /tmp/example.txt"
+     * @return  Exit status
+     * @throws  IOException if could not run command
+     * @throws  IllegalStateException if could not run command, or if command returns a failure flag
+     */    
+    int runCommand(String command) throws IOException;
 
     /**
      * Allows the environment to be set, overriding any environment variables that

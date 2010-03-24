@@ -37,8 +37,8 @@ public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Ge
 //   status            CHAR(1)         NOT NULL,
 //   timestamp	     DATE	     NOT NULL
     @Override protected String createLine(Gene3dHmmer3RawMatch m) {
-        String analyisTypeId = "54"; // TODO: Inject
-        String status        = "T";  // TODO: Inject
+        String analysisTypeId = "54"; // TODO: Inject
+        String status         = "T";  // TODO: Inject
         Calendar calendar = Calendar.getInstance();
         java.sql.Timestamp timestamp = new java.sql.Timestamp(calendar.getTime().getTime());
         String[] rel      = m.getSignatureLibraryRelease().split("\\.");
@@ -52,7 +52,7 @@ public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Ge
             throw new IllegalStateException("Could not find signature accession for " + m.getModel());
         }
         String[] line = {
-                analyisTypeId,
+                analysisTypeId,
                 m.getSequenceIdentifier(),
                 signatureAc,
                 relNoMajor,
