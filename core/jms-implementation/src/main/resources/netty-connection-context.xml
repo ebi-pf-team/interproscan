@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- The following two beans define the TCP connection to a remote broker,
+    normally used by Workers and monitors. -->
+    <bean id="nettyConnectionFactory" class="org.hornetq.jms.client.HornetQConnectionFactory">
+        <constructor-arg ref="transportConfiguration"/>
+    </bean>
+
+    <bean id="transportConfiguration" class="org.hornetq.api.core.TransportConfiguration">
+        <constructor-arg index="0" value="org.hornetq.integration.transports.netty.NettyConnectorFactory"/>
+        <constructor-arg index="1">
+            <map>
+                <entry key="host" value="${jms.broker.host.name}"/>
+                <entry key="port" value="${jms.broker.port.number}"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+</beans>
