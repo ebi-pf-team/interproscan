@@ -27,6 +27,7 @@ public class Run {
 
     static {
         modeToSpringXmlFile.put("master", "spring-config-master.xml");
+        modeToSpringXmlFile.put("i5standalone", "i5-single-jvm-context.xml");
         modeToSpringXmlFile.put("worker", "spring-config-parallel-worker.xml");
         modeToSpringXmlFile.put("monitor", "spring-config-monitor.xml");
     }

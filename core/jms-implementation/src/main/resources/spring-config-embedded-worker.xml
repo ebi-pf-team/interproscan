@@ -7,17 +7,14 @@
 
     <!-- Import common beans -->
     <import resource="spring-config-common.xml"/>
-    <import resource="netty-connection-context.xml"/>
     <import resource="spring-config-jobs.xml"/>
 
 
-    <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker">
-        <property name="connectionFactory" ref="nettyConnectionFactory"/>
+    <bean id="embeddedWorker" class="uk.ac.ebi.interpro.scan.jms.worker.InterProScanWorker">
+        <property name="connectionFactory" ref="inVmConnectionFactory"/>
         <property name="jobRequestQueueName" value="jms.queue.${mvn.worker.job.request.queue}"/>
         <property name="jobResponseQueueName" value="jms.queue.${mvn.worker.job.response.queue}"/>
         <property name="jobs" ref="jobs"/>
-        <property name="millisecondsMaxIdleTime" value="${jvm.maximum.idle.time.seconds}000"/>   <!-- Close after 2 minutes of being idle. -->
-        <property name="millisecondsToLive" value="${jvm.maximum.life.seconds}000"/>       <!-- Maximum time to live 2 hours. -->
         <property name="workerManagerTopicName" value="jms.topic.${mvn.worker.manager.topic}"/>
         <property name="workerManagerResponseQueueName" value="jms.queue.${mvn.worker.manager.response.queue}"/>
     </bean>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- Import common beans -->
+    <import resource="spring-config-jobs.xml"/>
+    <import resource="hornetq-config-single-jvm-context.xml"/>
+    <import resource="spring-config-embedded-worker.xml"/>
+
+    <bean id="i5standalone" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
+        <property name="embeddedBroker" ref="jmsBroker"/>
+        <property name="embeddedWorker" ref="embeddedWorker"/>
+        <property name="jobs" ref="jobs"/>
+
+        <!-- The following properties are just for the 'hacked' demonstration. (Loading proteins
+        and Pfam models prior to running the analysis. -->
+        <property name="pfamHMMfilePath" value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
+        <property name="gene3dModel2SfFile">
+            <bean class="org.springframework.core.io.FileSystemResource">
+                <constructor-arg value="/ebi/production/interpro/data/members/gene3d/3.3.0/model2sf_map.csv"/>
+            </bean>
+        </property>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+        <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
+        <property name="connectionFactory" ref="inVmConnectionFactory"/>
+        <property name="workerJobResponseQueueName" value="jms.queue.${mvn.worker.job.response.queue}"/>
+        <property name="workerJobRequestQueueName" value="jms.queue.${mvn.worker.job.request.queue}"/>
+    </bean>
+
+
+
+    <!-- Quartz Scheduler - contains list of Quartz jobs. -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="proteinLoadTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+
+
+    <bean id="proteinLoadQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="i5standalone"/>
+        <property name="targetMethod" value="createProteinLoadJob"/>
+    </bean>
+
+    <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="proteinLoadQuartzJob"/>
+        <!-- Wait a minute before attempting to load proteins. -->
+        <property name="startDelay" value="60000"/>
+        <!-- repeat every 30 minutes -->
+        <property name="repeatInterval" value="180000000"/>
+    </bean>
+
+</beans>
+

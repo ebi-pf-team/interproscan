@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader;
 import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.jms.broker.EmbeddedBroker;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
+import uk.ac.ebi.interpro.scan.jms.worker.Worker;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.*;
@@ -57,6 +58,8 @@ public class InterProScanMaster implements Master {
 
     private EmbeddedBroker embeddedBroker;
 
+    private Worker embeddedWorker;
+
     /**
      * This OPTIONAL bean method allows an Embedded JMS broker to be injected.
      * If not injected, the Master will make no attempt to runBroker a Broker, but
@@ -68,7 +71,15 @@ public class InterProScanMaster implements Master {
         this.embeddedBroker = embeddedBroker;
     }
 
-    @Required
+    /**
+     * This OPTIONAL bean method allows an embedded Worker to be injected.
+     *
+     * @param embeddedWorker to do all the work!?
+     */
+    public void setEmbeddedWorker(Worker embeddedWorker) {
+        this.embeddedWorker = embeddedWorker;
+    }
+
     public void setParallelWorkerRunner(WorkerRunner workerRunner) {
         this.parallelWorkerRunner = workerRunner;
     }
@@ -137,6 +148,12 @@ public class InterProScanMaster implements Master {
                 embeddedBroker.runBroker();
                 LOGGER.info("The embedded broker has been started and the runBroker method has returned.");
                 Thread.sleep(3000);   // Give the broker a chance to start up properly.
+            }
+
+            if (embeddedWorker != null){
+                // Needs to run in its own thread.
+                Thread workerThread = new Thread(embeddedWorker);
+                workerThread.start();
             }
             // Initialise the sessionHandler for the master thread
             sessionHandler = new SessionHandler(connectionFactory);
@@ -259,7 +276,9 @@ public class InterProScanMaster implements Master {
         producer.setPriority(stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 7);
         LOGGER.debug ("Placing message on to destination " + producer.getDestination().toString());
         producer.send(message);
-        parallelWorkerRunner.startupNewWorker();
+        if (parallelWorkerRunner != null){ // Not mandatory (e.g. in single-jvm implementation)
+            parallelWorkerRunner.startupNewWorker();
+        }
     }
 
 

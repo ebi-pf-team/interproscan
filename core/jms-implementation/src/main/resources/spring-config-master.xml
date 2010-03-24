@@ -107,13 +107,7 @@
         <property name="workerJobRequestQueueName" value="jms.queue.${mvn.worker.job.request.queue}"/>
     </bean>
 
-    <bean id="inVmConnectionFactory" class="org.hornetq.jms.client.HornetQConnectionFactory">
-        <constructor-arg ref="inVmTransportConfiguration"/>
-    </bean>
 
-    <bean id="inVmTransportConfiguration" class="org.hornetq.api.core.TransportConfiguration">
-        <constructor-arg index="0" value="org.hornetq.core.remoting.impl.invm.InVMConnectorFactory"/>
-    </bean>
 
     <!-- Quartz Scheduler - contains list of Quartz jobs. -->
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -136,8 +130,11 @@
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
         <!-- Wait a minute before attempting to load proteins. -->
         <property name="startDelay" value="60000"/>
-        <!-- repeat every 30 minutes -->
-        <property name="repeatInterval" value="180000"/>
+        <!-- repeat every nnn milliseconds
+        7200000 = 2 hours
+        43200000 = 12 hours
+        -->
+        <property name="repeatInterval" value="7200000"/>
     </bean>
 
 

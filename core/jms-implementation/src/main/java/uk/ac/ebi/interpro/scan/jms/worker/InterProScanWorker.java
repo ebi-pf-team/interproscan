@@ -439,19 +439,13 @@ public class InterProScanWorker implements Worker {
      */
     private boolean possibleMemoryLeakDetected() {
 
-        System.gc();System.gc();System.gc();System.gc();
-        System.gc();System.gc();System.gc();System.gc();
-        System.gc();System.gc();System.gc();System.gc();
-        System.gc();System.gc();System.gc();System.gc();
+        System.gc();
 
         final long Xmx = Runtime.getRuntime().maxMemory();
         final long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         final boolean leaky = Xmx / used < 3;
-        if (LOGGER.isDebugEnabled()){
-            LOGGER.debug ("Finished StepExecution - Checking for memory leak.");
-            LOGGER.debug ("Used memory: " + used / (1024 * 1024 * 1024) + " GB");
-            LOGGER.debug ("Xmx: " + Xmx / (1024 * 1024 * 1024) + " GB");
-            LOGGER.debug ((leaky) ? "Leaking" : "OK.");
+        if (leaky){
+            LOGGER.error("The JVM is full - closing down?");
         }
         return leaky;
     }

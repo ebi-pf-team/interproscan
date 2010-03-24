@@ -85,7 +85,7 @@
     </bean>
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
-        <property name="proteinInsertBatchSize" value="1000"/>
+        <property name="proteinInsertBatchSize" value="500"/> <!-- MUST NOT EXCEED 1000 -->
         <property name="proteinLoadListener" ref="proteinLoadListener"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
@@ -99,7 +99,7 @@
     <bean id="uniparcLoader" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
         <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
         <property name="rowCallbackHandlerTemplate" ref="rowCallbackHandlerTemplate"/>
-        <property name="maximumProteins" value="20000"/>
+        <property name="maximumProteins" value="500000"/>
         <property name="xrefDao" ref="xrefDAO"/>
     </bean>
 
