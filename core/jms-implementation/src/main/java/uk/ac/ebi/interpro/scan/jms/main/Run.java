@@ -26,10 +26,10 @@ public class Run {
     private static final Map<String, String> modeToSpringXmlFile = new HashMap<String, String>();
 
     static {
-        modeToSpringXmlFile.put("master", "spring-config-master.xml");
-        modeToSpringXmlFile.put("i5standalone", "i5-single-jvm-context.xml");
-        modeToSpringXmlFile.put("worker", "spring-config-parallel-worker.xml");
-        modeToSpringXmlFile.put("monitor", "spring-config-monitor.xml");
+        modeToSpringXmlFile.put("master", "spring/master/master-context.xml");
+        modeToSpringXmlFile.put("i5standalone", "spring/master/i5-single-jvm-context.xml");
+        modeToSpringXmlFile.put("worker", "spring/worker/parallel-worker-context.xml");
+        modeToSpringXmlFile.put("monitor", "spring/monitor/monitor-context.xml");
     }
 
 

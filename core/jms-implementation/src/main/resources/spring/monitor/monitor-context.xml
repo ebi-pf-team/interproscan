@@ -6,8 +6,8 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <!-- Import common beans -->
-    <import resource="spring-config-common.xml"/>
-    <import resource="netty-connection-context.xml"/>
+    <import resource="../common-context.xml"/>
+    <import resource="../jms/netty-connection-context.xml"/>
 
     <bean id="monitor" class="uk.ac.ebi.interpro.scan.jms.monitor.WorkerMonitorController">
         <property name="refreshInterval" value="500"/>

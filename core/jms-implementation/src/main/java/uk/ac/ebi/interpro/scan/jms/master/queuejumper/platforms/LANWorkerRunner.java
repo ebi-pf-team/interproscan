@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * This WorkerRunner runs workers on named hosts on the local area network.
  * <p/>
- * It is configured with a hostname, and optionally (in the spring-config-servers.xml file) the number of
+ * It is configured with a hostname, and optionally (in the servers-context.xml file) the number of
  * JVMs to run on the host, allowing powerful / multiprocessor machines to run more than one Worker.
  *
  * @author Phil Jones, John Maslen
