@@ -87,7 +87,7 @@
         <plugins>
             <!--See http://acs.lbl.gov/~ksb/Scratch/Maven_notes.html#assemble-->
             <!--Run: mvn clean package assembly:assembly-->
-            <!--TODO: See URL above for how to run assembly automatically-->
+            <!--TODO: See http://acs.lbl.gov/~ksb/Scratch/Maven_notes.html#lifecycle for how to run assembly automatically-->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>

@@ -76,11 +76,20 @@ abstract class AbstractBinaryRunner implements BinaryRunner {
     }
 
     @Override public InputStream run() throws IOException  {
-        return commandLineConversation.runCommand(buildCommand(null));
+        return runCommand(buildCommand(null));
     }    
 
     @Override public InputStream run(String additionalArguments) throws IOException  {
-        return commandLineConversation.runCommand(buildCommand(additionalArguments));
+        return runCommand(buildCommand(additionalArguments));
+    }
+
+    private InputStream runCommand(String command) throws IOException {
+        // TODO: This is fine if running on single box, but will not work if next step runs on different machine
+        // Store results in temporary file
+        File file = File.createTempFile("ipr-", ".out");
+        commandLineConversation.setOutputPathToFile(file.getAbsolutePath(), true, false);
+        int exitCode = commandLineConversation.runCommand(command);
+        return new FileInputStream(file);
     }
 
     private String buildCommand(String additionalArguments) throws IOException {

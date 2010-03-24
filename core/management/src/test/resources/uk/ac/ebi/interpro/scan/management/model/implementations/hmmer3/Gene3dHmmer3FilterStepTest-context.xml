@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--<bean id="job" class="uk.ac.ebi.interpro.scan.management.model.Job">-->
+        <!--<property name="description"                        value="Gene3D analysis and filtering"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="abstractStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">-->
+         <!--<property name="job"                                ref="job"/>-->
+         <!--<property name="maxProteins"                        value="5000"/>-->
+         <!--<property name="createStepInstancesForNewProteins"  value="true"/>-->
+         <!--<property name="retries"                            value="0"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="filterStep"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3FilterStep"-->
+          <!--parent="abstractStep">-->
+        <!--<property name="stepDescription"                    value="Filter raw results"/>-->
+        <!--<property name="serialGroup"                        value="GENE_3D_FILTERING"/>-->
+        <!--<property name="signatureLibraryRelease"            value="3.3.0"/>-->
+        <!--<property name="signatureLibrary"                   value="GENE3D"/>-->
+        <!--<property name="rawMatchDAO">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.raw.Gene3dHmmer3RawMatchDAOImpl"/>-->
+        <!--</property>-->
+        <!--&lt;!&ndash;<property name="rawMatchDAO"><null/></property>&ndash;&gt;-->
+        <!--<property name="filteredMatchDAO">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO"/>-->
+        <!--</property>-->
+        <!--<property name="filter">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter">-->
+                <!--<property name="binaryRunner">-->
+                    <!--<bean class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">-->
+                        <!--<property name="binary"               value="DomainFinder3"/>-->
+                        <!--<property name="arguments"            value="-l 5900 -e 0.001"/>-->
+                        <!--<property name="deleteTemporaryFiles" value="true"/>-->
+                        <!--<property name="commandLineConversation">-->
+                            <!--<bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl"/>-->
+                        <!--</property>-->
+                    <!--</bean>-->
+                <!--</property>-->
+            <!--</bean>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>-->
+
+    <bean id="filter" class="uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter">
+        <property name="binaryRunner">
+            <bean class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">
+                <property name="binary"               value="DomainFinder3"/>
+                <property name="arguments"            value="-l 5900 -e 0.001"/>
+                <property name="deleteTemporaryFiles" value="true"/>
+                <property name="commandLineConversation">
+                    <bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

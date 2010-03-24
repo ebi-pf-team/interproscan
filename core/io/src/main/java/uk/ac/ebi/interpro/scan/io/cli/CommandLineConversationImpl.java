@@ -87,7 +87,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
         // Run the command
         if (LOGGER.isDebugEnabled()){
-            LOGGER.debug("Command Line: \n "+ pb);
+            LOGGER.debug("Command Line: \n "+ pb.command());
         }
 
 
@@ -124,14 +124,14 @@ public class CommandLineConversationImpl implements CommandLineConversation {
     }
 
     /**
-     * Runs command and returns result as an {@link InputStream}.
+     * Runs command and returns exit status.
      * 
      * @param   command             Command to run, for example "head -n 100 /tmp/example.txt"
-     * @return  Command output
+     * @return  Exit status
      * @throws  IOException if could not run command
      * @throws  IllegalStateException if could not run command, or if command returns a failure flag
      */
-    @Override public InputStream runCommand(String command) throws IOException {
+    @Override public int runCommand(String command) throws IOException {
         int exitStatus;
         try {
             exitStatus = runCommand(false, Arrays.asList(command.split(" ")));
@@ -142,8 +142,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         if (exitStatus != 0) {
             throw new IllegalStateException (getErrorMessage());
         }
-        // Not an ideal way to get an input stream...
-        return new ByteArrayInputStream(getOutput().getBytes("UTF-8"));
+        return exitStatus;
     }
 
     /**

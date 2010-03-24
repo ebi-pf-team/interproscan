@@ -46,24 +46,10 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         this.binaryRunner = binaryRunner;
     }
 
-    public Set<RawProtein<Gene3dHmmer3RawMatch>> filter(Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins) {
+    @Override public Set<RawProtein<Gene3dHmmer3RawMatch>> filter(Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins) {
 
-        // Generate SSF file
-        // TODO: Put this into DomainFinderRecord.valueOf
-        Collection<DomainFinderRecord> records = new ArrayList<DomainFinderRecord>();
-        for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
-            for (Gene3dHmmer3RawMatch m : p.getMatches())   {
-                records.add(DomainFinderRecord.valueOf(m));
-            }
-        }
-        Resource ssfInputFile = createTemporaryResource(".input.ssf");
-        DomainFinderResourceWriter writer = new DomainFinderResourceWriter();
-        try {
-            writer.write(ssfInputFile, records);
-        }
-        catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        // Create SSF file
+        Resource ssfInputFile = createSsf(rawProteins);
 
         // Run DF3 on SSF file
         Resource ssfOutputFile = createTemporaryResource(".output.ssf");
@@ -85,15 +71,8 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
             throw new IllegalStateException(e);
         }
 
-        // Parse DF3 results
-        DomainFinderResourceReader resourceReader = new DomainFinderResourceReader();
-        Collection<DomainFinderRecord> results;
-        try {
-            results = resourceReader.read(ssfOutputFile);
-        }
-        catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        // Parse and filter DF3 results
+        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredRawProteins = filter(rawProteins, ssfOutputFile);
 
         // Delete
         if (binaryRunner.isDeleteTemporaryFiles())   {
@@ -110,11 +89,47 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
             }
         }        
 
+        return filteredRawProteins;
+
+     }
+
+    private Resource createSsf(Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins) {
+        // Generate SSF file
+        // TODO: Put this into DomainFinderRecord.valueOf
+        Collection<DomainFinderRecord> records = new ArrayList<DomainFinderRecord>();
+        for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
+            for (Gene3dHmmer3RawMatch m : p.getMatches())   {
+                records.add(DomainFinderRecord.valueOf(m));
+            }
+        }
+        Resource ssfFile = createTemporaryResource(".input.ssf");
+        DomainFinderResourceWriter writer = new DomainFinderResourceWriter();
+        try {
+            writer.write(ssfFile, records);
+        }
+        catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return ssfFile;    
+    }
+    
+    Set<RawProtein<Gene3dHmmer3RawMatch>> filter(Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins, Resource ssfFile) {
+
+        // Parse DF3 results
+        DomainFinderResourceReader resourceReader = new DomainFinderResourceReader();
+        Collection<DomainFinderRecord> results;
+        try {
+            results = resourceReader.read(ssfFile);
+        }
+        catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
         // Update raw matches with values from DomainFinder
         // TODO: Put this into DomainFinderRecord
         final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredRawProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
         for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
-            String id = p.getProteinIdentifier(); 
+            String id = p.getProteinIdentifier();
             RawProtein<Gene3dHmmer3RawMatch> rp = new RawProtein<Gene3dHmmer3RawMatch>(id);
             for (Gene3dHmmer3RawMatch m : p.getMatches())   {
                 if (id.equals(m.getSequenceIdentifier()))    {
@@ -130,7 +145,7 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
 
      }
 
-    public void addRecord(final RawProtein<Gene3dHmmer3RawMatch> protein,
+    private void addRecord(final RawProtein<Gene3dHmmer3RawMatch> protein,
                           final Gene3dHmmer3RawMatch m,
                           final Collection<DomainFinderRecord> records)  {
         for (DomainFinderRecord r : records)    {
