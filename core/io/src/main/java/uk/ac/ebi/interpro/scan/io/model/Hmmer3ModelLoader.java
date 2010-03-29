@@ -135,7 +135,8 @@ public class Hmmer3ModelLoader implements Serializable {
     }
 
     protected Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release, StringBuffer modelBuf){
-        Model model = new Model(accession, name, description, modelBuf.toString());
+//        Model model = new Model(accession, name, description, modelBuf.toString());
+        Model model = new Model(accession, name, description, null);
         modelBuf.delete(0, modelBuf.length());
         return new Signature(accession, name, null, description, null, release, Collections.singleton(model));
     }
