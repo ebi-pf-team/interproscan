@@ -59,6 +59,7 @@ public class EmbeddedHornetQBroker implements EmbeddedBroker {
             JMSServerManager jmsServerManager = new JMSServerManagerImpl(server, jmsConfigFileName);
             jmsServerManager.setContext(context);
             jmsServerManager.start();
+            while (!jmsServerManager.isStarted()) Thread.sleep(1000);
             LOGGER.info("STARTED::");
         }
         catch (Throwable e){
