@@ -42,12 +42,6 @@ public class InterProScanMaster implements Master {
 
     private StepExecutionDAO stepExecutionDAO;
 
-    private GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO;
-
-    private String pfamHMMfilePath;
-
-    private Resource gene3dModel2SfFile;    
-
     private ConnectionFactory connectionFactory;
 
     private String workerJobResponseQueueName;
@@ -114,10 +108,7 @@ public class InterProScanMaster implements Master {
         this.stepExecutionDAO = stepExecutionDAO;
     }
 
-    @Required
-    public void setSignatureLibraryReleaseDAO(GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO) {
-        this.signatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
-    }
+
 
     public Jobs getJobs() {
         return jobs;
@@ -128,16 +119,7 @@ public class InterProScanMaster implements Master {
         this.jobs = jobs;
     }
 
-    @Required
-    public void setPfamHMMfilePath(String pfamHMMfilePath) {
-        this.pfamHMMfilePath = pfamHMMfilePath;
-    }
-
-    @Required
-    public void setGene3dModel2SfFile(Resource gene3dModel2SfFile) {
-        this.gene3dModel2SfFile = gene3dModel2SfFile;
-    }
-
+    
     /**
      * Run the Master Application.
      */
@@ -147,7 +129,6 @@ public class InterProScanMaster implements Master {
             if (embeddedBroker != null){
                 embeddedBroker.runBroker();
                 LOGGER.info("The embedded broker has been started and the runBroker method has returned.");
-                Thread.sleep(3000);   // Give the broker a chance to start up properly.
             }
 
             if (embeddedWorker != null){
@@ -166,9 +147,6 @@ public class InterProScanMaster implements Master {
 
             sessionHandler.start();
 
-            // TODO - Temporary hack to load models on startup - need to rethink this mechanism.
-//            loadGene3dModels();
-//            loadPfamModels();
             while(true){       // TODO should be while(running) to allow shutdown.
                 for (Job job : jobs.getJobList()){
                     for (Step step : job.getSteps()){
@@ -215,49 +193,7 @@ public class InterProScanMaster implements Master {
         }
     }
 
-    private void loadGene3dModels() throws IOException {
-        // Read models
-        Model2SfReader reader = new Model2SfReader();
-        final Map<String, String> modelMap = reader.read(gene3dModel2SfFile);
-        // Create signatures
-        final Map<String, Signature> signatureMap = new HashMap<String, Signature>();
-        for (String modelAc : modelMap.keySet())  {
-            String signatureAc = modelMap.get(modelAc);
-            Signature signature;
-            if (signatureMap.containsKey(signatureAc))  {
-                signature = signatureMap.get(signatureAc);    
-            }
-            else    {
-                signature = new Signature(signatureAc);
-                signatureMap.put(signatureAc, signature);
-            }
-            signature.addModel(new Model(modelAc));
-        }
-        // Create and persist release
-        SignatureLibraryRelease release =
-                new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.0.0", 
-                        new HashSet<Signature>(signatureMap.values()));
-        signatureLibraryReleaseDAO.insert(release);
-    }
 
-    private void loadPfamModels() {
-        // Parse and retrieve the signatures.
-        Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(SignatureLibrary.PFAM, "24.0");
-        SignatureLibraryRelease release = null;
-        try{
-            release = modelLoader.parse(pfamHMMfilePath);
-        } catch (IOException e) {
-            LOGGER.debug("IOException thrown when parsing HMM file.");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            System.exit(1);
-        }
-
-        // And store the Models / Signatures to the database.
-        LOGGER.debug("Storing SignatureLibraryRelease...");
-        signatureLibraryReleaseDAO.insert(release);
-        LOGGER.debug("Storing SignatureLibraryRelease...DONE");
-
-    }
 
     /**
      * Creates simple text messages to be sent to Worker nodes.
