@@ -10,7 +10,7 @@
     <import resource="jobPhobius-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
     <!--<import resource="job-load-from-fasta-spring.xml"/>-->
-    <import resource="../persistence-config-context.xml"/>
+    <import resource="../persistence/persistence-config-context.xml"/>
 
     <import resource="../uapro-db-access-context.xml"/>
 
@@ -99,7 +99,7 @@
     <bean id="uniparcLoader" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
         <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
         <property name="rowCallbackHandlerTemplate" ref="rowCallbackHandlerTemplate"/>
-        <property name="maximumProteins" value="10000"/>
+        <property name="maximumProteins" value="10"/>
         <property name="xrefDao" ref="xrefDAO"/>
     </bean>
 
