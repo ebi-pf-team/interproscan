@@ -32,6 +32,13 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
+    <properties>
+        <mvn.worker.job.request.queue>worker_job_request_queue</mvn.worker.job.request.queue>
+        <mvn.worker.job.response.queue>worker_job_response_queue</mvn.worker.job.response.queue>
+        <mvn.worker.manager.topic>worker_manager_topic</mvn.worker.manager.topic>
+        <mvn.worker.manager.response.queue>worker_manager_response_queue</mvn.worker.manager.response.queue>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -44,12 +51,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>${oracle.ojdbc.version}</version>
         </dependency>
 
         <dependency>
@@ -258,70 +259,70 @@
 
     </build>
 
-    <profiles>
-        <profile>
-            <!-- Copy this profile into your own [HOME]/.m2/settings.xml file, rename and
-             edit appropriately. Use with "mvn -P profile-id GOAL" -->
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--&lt;!&ndash; Copy this profile into your own [HOME]/.m2/settings.xml file, rename and-->
+             <!--edit appropriately. Use with "mvn -P profile-id GOAL" &ndash;&gt;-->
+            <!--<id>default</id>-->
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
 
-            <dependencies>
-                <dependency>
-                    <groupId>hsqldb</groupId>
-                    <artifactId>hsqldb</artifactId>
-                    <version>${hsqldb.version}</version>
-                </dependency>
-            </dependencies>
+            <!--<dependencies>-->
+                <!--<dependency>-->
+                    <!--<groupId>hsqldb</groupId>-->
+                    <!--<artifactId>hsqldb</artifactId>-->
+                    <!--<version>${hsqldb.version}</version>-->
+                <!--</dependency>-->
+            <!--</dependencies>-->
 
-            <properties>
+            <!--<properties>-->
 
-                <mvn.broker.bindings.directory>target/data/bindings</mvn.broker.bindings.directory>
-                <mvn.broker.journal.directory>target/data/journal</mvn.broker.journal.directory>
-                <mvn.broker.large.messages.directory>target/data/largemessages</mvn.broker.large.messages.directory>
-                <mvn.broker.paging.directory>target/data/paging</mvn.broker.paging.directory>
-                <mvn.broker.host.name>localhost</mvn.broker.host.name>
-                <mvn.broker.port.number>5445</mvn.broker.port.number>
-                <mvn.unix.username>pjones</mvn.unix.username>
-                <!-- LSF settings -->
-                <mvn.lsf.submission.hostname>ebi-001.ebi.ac.uk</mvn.lsf.submission.hostname>
-                <mvn.lsf.queue.submission>production</mvn.lsf.queue.submission>
-                <mvn.lsf.output.file>lsf-serial-worker.out</mvn.lsf.output.file>
-                <!-- SGE settings -->
-                <mvn.sge.submission.hostname>sge001.ebi.ac.uk</mvn.sge.submission.hostname>
-                <mvn.sge.output.file>sge-serial-worker.out</mvn.sge.output.file>
-                <mvn.sge.memory.setting>-DXmx=2048m</mvn.sge.memory.setting>
-                <mvn.sge.mail.settings>aes</mvn.sge.mail.settings>
-                <!-- PBS settings -->
-                <mvn.pbs.submission.hostname>pbs001.ebi.ac.uk</mvn.pbs.submission.hostname>
-                <mvn.pbs.queue.submission>dque</mvn.pbs.queue.submission>
-                <mvn.pbs.output.file>pbs-serial-worker.out</mvn.pbs.output.file>
-                <mvn.pbs.memory.setting>-DXmx=2048m</mvn.pbs.memory.setting>
-                <mvn.pbs.mail.settings>ae</mvn.pbs.mail.settings>
-                <!-- General settings -->
-                <mvn.notification.emailaddress>maslen@ebi.ac.uk</mvn.notification.emailaddress>
-                <mvn.maven.executable>/net/nas10b/vol1/homes/maslen/work/apache-maven-2.2.1/bin/mvn</mvn.maven.executable>
-                <mvn.jms-implementation.pom.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/pom.xml</mvn.jms-implementation.pom.path>
-                <mvn.absolute.output.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation</mvn.absolute.output.path>
+                <!--<mvn.broker.bindings.directory>target/data/bindings</mvn.broker.bindings.directory>-->
+                <!--<mvn.broker.journal.directory>target/data/journal</mvn.broker.journal.directory>-->
+                <!--<mvn.broker.large.messages.directory>target/data/largemessages</mvn.broker.large.messages.directory>-->
+                <!--<mvn.broker.paging.directory>target/data/paging</mvn.broker.paging.directory>-->
+                <!--<mvn.broker.host.name>localhost</mvn.broker.host.name>-->
+                <!--<mvn.broker.port.number>5445</mvn.broker.port.number>-->
+                <!--<mvn.unix.username>pjones</mvn.unix.username>-->
+                <!--&lt;!&ndash; LSF settings &ndash;&gt;-->
+                <!--<mvn.lsf.submission.hostname>ebi-001.ebi.ac.uk</mvn.lsf.submission.hostname>-->
+                <!--<mvn.lsf.queue.submission>production</mvn.lsf.queue.submission>-->
+                <!--<mvn.lsf.output.file>lsf-serial-worker.out</mvn.lsf.output.file>-->
+                <!--&lt;!&ndash; SGE settings &ndash;&gt;-->
+                <!--<mvn.sge.submission.hostname>sge001.ebi.ac.uk</mvn.sge.submission.hostname>-->
+                <!--<mvn.sge.output.file>sge-serial-worker.out</mvn.sge.output.file>-->
+                <!--<mvn.sge.memory.setting>-DXmx=2048m</mvn.sge.memory.setting>-->
+                <!--<mvn.sge.mail.settings>aes</mvn.sge.mail.settings>-->
+                <!--&lt;!&ndash; PBS settings &ndash;&gt;-->
+                <!--<mvn.pbs.submission.hostname>pbs001.ebi.ac.uk</mvn.pbs.submission.hostname>-->
+                <!--<mvn.pbs.queue.submission>dque</mvn.pbs.queue.submission>-->
+                <!--<mvn.pbs.output.file>pbs-serial-worker.out</mvn.pbs.output.file>-->
+                <!--<mvn.pbs.memory.setting>-DXmx=2048m</mvn.pbs.memory.setting>-->
+                <!--<mvn.pbs.mail.settings>ae</mvn.pbs.mail.settings>-->
+                <!--&lt;!&ndash; General settings &ndash;&gt;-->
+                <!--<mvn.notification.emailaddress>maslen@ebi.ac.uk</mvn.notification.emailaddress>-->
+                <!--<mvn.maven.executable>/net/nas10b/vol1/homes/maslen/work/apache-maven-2.2.1/bin/mvn</mvn.maven.executable>-->
+                <!--<mvn.jms-implementation.pom.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation/pom.xml</mvn.jms-implementation.pom.path>-->
+                <!--<mvn.absolute.output.path>/net/nas10b/vol1/homes/maslen/work/interproscan/core/jms-implementation</mvn.absolute.output.path>-->
 
-                <mvn.lsf.parallel.worker.memoryrequirement>8000</mvn.lsf.parallel.worker.memoryrequirement>
-                <mvn.lsf.serial.worker.memoryrequirement>31000</mvn.lsf.serial.worker.memoryrequirement>
+                <!--<mvn.lsf.parallel.worker.memoryrequirement>8000</mvn.lsf.parallel.worker.memoryrequirement>-->
+                <!--<mvn.lsf.serial.worker.memoryrequirement>31000</mvn.lsf.serial.worker.memoryrequirement>-->
 
-                <mvn.parallel.worker.xmx>2048</mvn.parallel.worker.xmx>
-                <mvn.serial.worker.xmx>28000</mvn.serial.worker.xmx>
-
-
-                <!-- You can rename the queues to anything you like-->
-                <mvn.worker.job.request.queue>worker_job_request_queue</mvn.worker.job.request.queue>
-                <mvn.worker.job.response.queue>worker_job_response_queue</mvn.worker.job.response.queue>
-                <mvn.worker.manager.topic>worker_manager_topic</mvn.worker.manager.topic>
-                <mvn.worker.manager.response.queue>worker_manager_response_queue</mvn.worker.manager.response.queue>
-
-            </properties>
-        </profile>
+                <!--<mvn.parallel.worker.xmx>2048</mvn.parallel.worker.xmx>-->
+                <!--<mvn.serial.worker.xmx>28000</mvn.serial.worker.xmx>-->
 
 
+                <!--&lt;!&ndash; You can rename the queues to anything you like&ndash;&gt;-->
+                <!--<mvn.worker.job.request.queue>worker_job_request_queue</mvn.worker.job.request.queue>-->
+                <!--<mvn.worker.job.response.queue>worker_job_response_queue</mvn.worker.job.response.queue>-->
+                <!--<mvn.worker.manager.topic>worker_manager_topic</mvn.worker.manager.topic>-->
+                <!--<mvn.worker.manager.response.queue>worker_manager_response_queue</mvn.worker.manager.response.queue>-->
 
-    </profiles>
+            <!--</properties>-->
+        <!--</profile>-->
+
+
+
+    <!--</profiles>-->
 </project>
