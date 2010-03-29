@@ -28,7 +28,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     public void startupNewWorker() {
         try{
             String command=submissionCommand;
-            command.replaceAll("%config%",System.getProperty("config"));
+            command=command.replaceAll("%config%",System.getProperty("config"));
             
             System.out.println("Submitted Command: " + command);
             Runtime.getRuntime().exec(command);
