@@ -11,7 +11,7 @@
                            http://www.springframework.org/schema/tx
                            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-    <import resource="../persistence-config-context.xml"/>
+    <import resource="../persistence/persistence-config-context.xml"/>
 
     <!-- ######################## JOB: job_phobius ############################  -->
     <bean id="jobPhobius" class="uk.ac.ebi.interpro.scan.management.model.Job">
