@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- Import common beans -->
+    <import resource="../common-context.xml"/>
+    <import resource="../persistence/datasource-context.xml"/>
+    
+    
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="interproDataSource"/>
+        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence" />
+        <property name="jpaProperties">
+            <map>
+                <entry key="hibernate.show_sql" value="${hibernate.show_sql}"/>
+                <entry key="hibernate.format_sql" value="${hibernate.format_sql}"/>
+                <entry key="hibernate.dialect" value="${hibernate.dialect}"/>
+                <entry key="hibernate.default_schema" value="${hibernate.default_schema}"/>
+                <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
+                <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch.size}"/>
+                <entry key="hibernate.hbm2ddl.auto" value="update"/>
+            </map>
+        </property>
+    </bean>
+    
+
+    <bean id="installer" class="uk.ac.ebi.interpro.scan.jms.installer.Installer">
+        <!--<property name="sessionFactoryBean" ref="&amp;sessionFactory"/>-->
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <property name="pfamHMMfilePath" value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
+        <property name="gene3dModel2SfFile">
+            <bean class="org.springframework.core.io.FileSystemResource">
+                <constructor-arg value="/ebi/production/interpro/data/members/gene3d/3.3.0/model2sf_map.csv"/>
+            </bean>
+        </property>
+        <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
+    </bean>
+
+</beans>
+
