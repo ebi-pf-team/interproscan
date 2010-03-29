@@ -22,7 +22,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,20 +35,23 @@ import java.util.Set;
  * @since   1.0
  */
 @Entity
-@Table(name="signature_library_release")
+@Table(name="signature_library_release", uniqueConstraints =
+    @UniqueConstraint(columnNames = {"library", "version"}))
 @XmlRootElement(name="signature-library-release")
 @XmlType(name="SignatureLibraryReleaseType")
+
 public class SignatureLibraryRelease implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator="SIG_LIB_IDGEN")
-    @TableGenerator(name="SIG_LIB_IDGEN", table="KEYGEN", pkColumnValue="signature_library_release", initialValue = 0, allocationSize = 50)
+    @TableGenerator(name="SIG_LIB_IDGEN", table="KEYGEN", pkColumnValue="signature_library_release", initialValue = 0, allocationSize = 1)
     private Long id;
 
     @Enumerated(javax.persistence.EnumType.STRING)
+    @Column (nullable = false)
     private SignatureLibrary library;
 
-    @Column (length = 255)
+    @Column (length = 255, nullable = false)
     private String version;
 
     // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
