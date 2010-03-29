@@ -14,18 +14,8 @@
         <property name="embeddedBroker" ref="jmsBroker"/>
         <property name="embeddedWorker" ref="embeddedWorker"/>
         <property name="jobs" ref="jobs"/>
-
-        <!-- The following properties are just for the 'hacked' demonstration. (Loading proteins
-        and Pfam models prior to running the analysis. -->
-        <property name="pfamHMMfilePath" value="/ebi/production/interpro/data/members/PFAM_HMMER3/24.0/Pfam-A.hmm"/>
-        <property name="gene3dModel2SfFile">
-            <bean class="org.springframework.core.io.FileSystemResource">
-                <constructor-arg value="/ebi/production/interpro/data/members/gene3d/3.3.0/model2sf_map.csv"/>
-            </bean>
-        </property>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
-        <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
         <property name="connectionFactory" ref="inVmConnectionFactory"/>
         <property name="workerJobResponseQueueName" value="jms.queue.${mvn.worker.job.response.queue}"/>
         <property name="workerJobRequestQueueName" value="jms.queue.${mvn.worker.job.request.queue}"/>
@@ -52,7 +42,7 @@
     <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
         <!-- Wait a minute before attempting to load proteins. -->
-        <property name="startDelay" value="60000"/>
+        <property name="startDelay" value="1000"/>
         <!-- repeat every 30 minutes -->
         <property name="repeatInterval" value="180000000"/>
     </bean>
