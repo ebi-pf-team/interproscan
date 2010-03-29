@@ -102,7 +102,6 @@ public class RunHmmer3Step extends Step {
         command.add(fastaFilePathName);
 
         CommandLineConversation clc = new CommandLineConversationImpl();
-        clc.setWorkingDirectory(hmmerOutputFileName.substring(0, hmmerOutputFileName.lastIndexOf('/')));
         clc.setOutputPathToFile(hmmerOutputFileName, true, false);
         int exitStatus = clc.runCommand(false, command);
         if (exitStatus == 0){

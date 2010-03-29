@@ -77,8 +77,7 @@ public class RunPhobiusBinaryStep extends Step {
         }
         command.add(fastaFilePath);
         CommandLineConversation clc = new CommandLineConversationImpl();
-        clc.setOutputPathToFile(phobiusOutputFilePath, true, false);
-        clc.setWorkingDirectory(phobiusOutputFilePath.substring(0, phobiusOutputFilePath.lastIndexOf('/')));
+        clc.setOutputPathToFile(phobiusOutputFilePath, true, false);            
         int exitStatus = clc.runCommand(false, command);
         if (exitStatus == 0){
             LOGGER.debug("phobius completed successfully!");
