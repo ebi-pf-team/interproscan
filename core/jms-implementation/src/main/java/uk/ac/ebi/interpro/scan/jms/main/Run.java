@@ -30,6 +30,7 @@ public class Run {
         modeToSpringXmlFile.put("i5standalone", "spring/master/i5-single-jvm-context.xml");
         modeToSpringXmlFile.put("worker", "spring/worker/parallel-worker-context.xml");
         modeToSpringXmlFile.put("monitor", "spring/monitor/monitor-context.xml");
+        modeToSpringXmlFile.put("installer", "spring/installer/installer-context.xml");
     }
 
 
@@ -56,9 +57,10 @@ public class Run {
         String config=System.getProperty("config");
 
         LOGGER.info("Welcome to InterProScan v5");
+        LOGGER.info("Memory free: "+Runtime.getRuntime().freeMemory()+" total: "+Runtime.getRuntime().totalMemory()+" max: "+Runtime.getRuntime().maxMemory());
         LOGGER.info("Running as: "+mode);
         if (config==null){
-            LOGGER.info("No custom config used. Use java -Dconfig=");
+            LOGGER.info("No custom config used. Use java -Dconfig=config/my.properties");
         }
         else{
             LOGGER.info("Custom config: "+config);
@@ -68,5 +70,10 @@ public class Run {
         Runnable main = (Runnable) ctx.getBean(mode);
         main.run();
         ctx.close();
+
+
+
+
+        
     }
 }
