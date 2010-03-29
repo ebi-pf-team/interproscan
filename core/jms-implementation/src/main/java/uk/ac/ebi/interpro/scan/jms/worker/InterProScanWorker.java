@@ -273,7 +273,8 @@ public class InterProScanWorker implements Worker {
                     try{
                         executeInTransaction(stepExecution, messageProducer, sessionHandler);
                     } catch (Exception e) {
-                        running = false;
+//todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.                        
+            //            running = false;
                         LOGGER.error ("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
                         // Something went wrong in the execution - try to send back failure
                         // message to the broker.  This in turn may fail if it is the JMS connection
