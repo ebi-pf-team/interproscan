@@ -10,19 +10,13 @@
         <constructor-arg ref="uniparcDataSource"/>
     </bean>
 
-    <!-- the target (BioMart) datasource -->
-    <bean id="uniparcDataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+
+    <bean id="uniparcDataSource" class="uk.ac.ebi.interpro.scan.genericjpadao.ExternalDriverDataSource">
+        <property name="driverJar" value="/sw/arch/dbtools/oracle/product/11.1.0.6.2/client/jdbc/lib/ojdbc6.jar" />
+        <property name="driverClassName" value="" />
         <property name="url" value="jdbc:oracle:thin:@gin.ebi.ac.uk:1571:UAPRO"/>
         <property name="username" value="interpro_webserver"/>
         <property name="password" value="iwebserv"/>
-        <property name="testOnBorrow" value="true"/>
-        <property name="validationQuery" value="select 1 from dual"/>
-        <property name="maxIdle" value="2"/>
-        <property name="maxActive" value="3"/>
-        <property name="removeAbandoned" value="true"/>
-        <property name="removeAbandonedTimeout" value="60"/>
-        <property name="testWhileIdle" value="true"/>
     </bean>
 
 </beans>
