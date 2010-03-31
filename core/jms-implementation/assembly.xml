@@ -17,6 +17,7 @@
        <fileSet>
            <directory>/nfs/seqdb/production/interpro/production/interproscan-5/support</directory>
            <outputDirectory>support</outputDirectory>
+           <fileMode>0755</fileMode>
        </fileSet>
    </fileSets>
    <dependencySets>
