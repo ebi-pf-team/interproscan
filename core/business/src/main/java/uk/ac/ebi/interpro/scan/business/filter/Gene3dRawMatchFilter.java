@@ -38,7 +38,7 @@ import java.io.File;
  */
 public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3RawMatch> {
 
-    private Resource tempDirectory = null;    
+    private String temporaryFilePath = null;
     
     BinaryRunner binaryRunner = new SimpleBinaryRunner();
 
@@ -186,28 +186,18 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         }
     }
 
-    /**
-     * Sets temporary directory for intermediate files.
-     * Default is system temporary directory, for example "/tmp" on Unix
-     *
-     * @param tempDirectory Temporary directory for intermediate files.
-     */
-    public void setTempDirectory(Resource tempDirectory) {
-        if (!tempDirectory.exists()) {
-            throw new IllegalArgumentException("Directory does not exist: " + tempDirectory);
-        }
-        this.tempDirectory = tempDirectory;
+    public void setTemporaryFilePath(String temporaryFilePath) {
+        this.temporaryFilePath = temporaryFilePath;
     }
 
     private Resource createTemporaryResource(String suffix)  {
         try {
-            String prefix = "ipr-";
             File file;
-            if (tempDirectory == null)  {
-                file = File.createTempFile(prefix, suffix);
+            if (temporaryFilePath == null)  {
+                file = File.createTempFile("ipr-", suffix);
             }
             else    {
-                file = File.createTempFile(prefix, suffix, tempDirectory.getFile());
+                file = new File(temporaryFilePath + suffix);
             }
             return new FileSystemResource(file);
         }
