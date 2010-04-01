@@ -33,6 +33,7 @@ abstract class AbstractBinaryRunner implements BinaryRunner {
     private String binary;
     private Resource binaryPath;
     private String arguments;
+    private String temporaryFilePath = null;
     private boolean deleteTemporaryFiles = true;
 
     @Override public CommandLineConversation getCommandLineConversation() {
@@ -75,6 +76,14 @@ abstract class AbstractBinaryRunner implements BinaryRunner {
         this.deleteTemporaryFiles = deleteTemporaryFiles;
     }
 
+    @Override public String getTemporaryFilePath() {
+        return temporaryFilePath;
+    }
+
+    @Override public void setTemporaryFilePath(String temporaryFilePath) {
+        this.temporaryFilePath = temporaryFilePath;
+    }
+
     @Override public InputStream run() throws IOException  {
         return runCommand(buildCommand(null));
     }    
@@ -84,9 +93,15 @@ abstract class AbstractBinaryRunner implements BinaryRunner {
     }
 
     private InputStream runCommand(String command) throws IOException {
-        // TODO: This is fine if running on single box, but will not work if next step runs on different machine
         // Store results in temporary file
-        File file = File.createTempFile("ipr-", ".out");
+        File file;
+        if (temporaryFilePath == null)  {
+            // TODO: This is fine if running on single box, but will not work if next step runs on different machine
+            file = File.createTempFile("ipr-", ".out");
+        }
+        else    {
+            file = new File(temporaryFilePath);
+        }
         commandLineConversation.setOutputPathToFile(file.getAbsolutePath(), true, false);
         int exitCode = commandLineConversation.runCommand(command);
         return new FileInputStream(file);

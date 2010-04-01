@@ -84,8 +84,8 @@
             <bean class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">
                 <property name="binary"               value="DomainFinder3"/>
                 <property name="arguments"            value="-l 5900 -e 0.001"/>
-                <property name="deleteTemporaryFiles" value="false"/>
                 <property name="commandLineConversation" ref="commandLineConversation"/>
+                <property name="deleteTemporaryFiles" value="false"/>
             </bean>
         </property>
     </bean>

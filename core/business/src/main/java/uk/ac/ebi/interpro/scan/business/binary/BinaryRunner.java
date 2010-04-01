@@ -33,6 +33,10 @@ public interface BinaryRunner {
 
     void setDeleteTemporaryFiles(boolean deleteTemporaryFiles);
 
+    String getTemporaryFilePath();
+
+    void setTemporaryFilePath(String temporaryFilePath);
+
     /** Returns file name of binary. For example "grep".
      *
      * @return file name of binary

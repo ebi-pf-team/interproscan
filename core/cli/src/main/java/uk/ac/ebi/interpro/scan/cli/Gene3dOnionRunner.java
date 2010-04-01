@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.cli;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.io.*;
@@ -23,7 +24,7 @@ public class Gene3dOnionRunner {
     private static final Logger LOGGER = Logger.getLogger(Gene3dOnionRunner.class);
 
     private RawMatchBinaryRunner<Gene3dHmmer3RawMatch> binaryRunner;
-    private RawMatchFilter<Gene3dHmmer3RawMatch> filter;
+    private Gene3dRawMatchFilter filter;
     private ResourceWriter<Gene3dHmmer3RawMatch> analysisWriter;
     private ResourceWriter<Gene3dHmmer3RawMatch> resultsWriter;
 
@@ -37,6 +38,7 @@ public class Gene3dOnionRunner {
         String resultsFilePath = resultsDir.getFile() + File.separator + resultsFileName;
 
         // Run HMMER
+        binaryRunner.setTemporaryFilePath(resultsFilePath + ".bin.out");
         final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = binaryRunner.process(fastaFile, hmmFile);
 
         // Write TSV
@@ -46,6 +48,7 @@ public class Gene3dOnionRunner {
         }
 
         // Run DomainFinder
+        filter.setTemporaryFilePath(resultsFilePath);
         final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = filter.filter(rawProteins);
 
         // Write TSV
@@ -80,7 +83,7 @@ public class Gene3dOnionRunner {
         this.binaryRunner = binaryRunner;
     }
 
-    public void setFilter(RawMatchFilter<Gene3dHmmer3RawMatch> filter) {
+    public void setFilter(Gene3dRawMatchFilter filter) {
         this.filter = filter;
     }
 
