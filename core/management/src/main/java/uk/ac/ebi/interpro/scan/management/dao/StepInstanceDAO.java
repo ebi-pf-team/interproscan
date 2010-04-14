@@ -31,5 +31,11 @@ public interface StepInstanceDAO extends GenericDAO<StepInstance, String> {
      * @return true if the SerialGroup passed in as argument
      * does not currently have a running instance.
      */
-    public boolean serialGroupCanRun(StepInstance stepInstance, Jobs jobs);
+    boolean serialGroupCanRun(StepInstance stepInstance, Jobs jobs);
+
+    /**
+     * Returns true if there are steps left to run
+     * @return true if there are steps left to run
+     */
+    boolean futureStepsAvailable();
 }

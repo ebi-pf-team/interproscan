@@ -67,35 +67,36 @@ public class RunPhobiusBinaryStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         try{
-        final String fastaFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFileNameTemplate);
-        final String phobiusOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, phobiusOutputFileNameTemplate);
-        final List<String> command = new ArrayList<String>();
+            Thread.sleep(5000);
+            final String fastaFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFileNameTemplate);
+            final String phobiusOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, phobiusOutputFileNameTemplate);
+            final List<String> command = new ArrayList<String>();
 
-        command.add(fullPathToBinary);
-        if (binarySwitches != null){
-            command.addAll(binarySwitches);
-        }
-        command.add(fastaFilePath);
-        CommandLineConversation clc = new CommandLineConversationImpl();
-        clc.setOutputPathToFile(phobiusOutputFilePath, true, false);            
-        int exitStatus = clc.runCommand(false, command);
-        if (exitStatus == 0){
-            LOGGER.debug("phobius completed successfully!");
-        }
-        else {
-            StringBuffer failureMessage = new StringBuffer();
-            failureMessage.append ("Command line failed with exit code: ")
-                    .append (exitStatus)
-                    .append ("\nCommand: ");
-            for (String element : command){
-                failureMessage.append (element).append(' ');
+            command.add(fullPathToBinary);
+            if (binarySwitches != null){
+                command.addAll(binarySwitches);
             }
-            failureMessage.append ("\nError output from binary:\n");
-            failureMessage.append (clc.getErrorMessage());
-            LOGGER.error(failureMessage);
-            // TODO Look for a more specific Exception to throw here...
-            throw new IllegalStateException (failureMessage.toString());
-        }
+            command.add(fastaFilePath);
+            CommandLineConversation clc = new CommandLineConversationImpl();
+            clc.setOutputPathToFile(phobiusOutputFilePath, true, false);
+            int exitStatus = clc.runCommand(false, command);
+            if (exitStatus == 0){
+                LOGGER.debug("phobius completed successfully!");
+            }
+            else {
+                StringBuffer failureMessage = new StringBuffer();
+                failureMessage.append ("Command line failed with exit code: ")
+                        .append (exitStatus)
+                        .append ("\nCommand: ");
+                for (String element : command){
+                    failureMessage.append (element).append(' ');
+                }
+                failureMessage.append ("\nError output from binary:\n");
+                failureMessage.append (clc.getErrorMessage());
+                LOGGER.error(failureMessage);
+                // TODO Look for a more specific Exception to throw here...
+                throw new IllegalStateException (failureMessage.toString());
+            }
         } catch (InterruptedException e) {
             throw new IllegalStateException ("InterruptedException thrown by RunPhobiusBinaryStep", e);
         } catch (IOException e) {

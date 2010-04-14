@@ -94,6 +94,9 @@ public class StepInstance implements Serializable {
     @OneToMany (targetEntity = StepExecution.class, fetch = FetchType.EAGER, mappedBy = "stepInstance", cascade = {})
     private Set<StepExecution> executions = new HashSet<StepExecution>();
 
+    public StepInstance(Step step){
+        this(step, null, null, null, null);
+    }
 
     public StepInstance(Step step, Long bottomProteinId, Long topProteinId, Long bottomModelId, Long topModelId) {
         this.step = step;            // This is NOT persisted.

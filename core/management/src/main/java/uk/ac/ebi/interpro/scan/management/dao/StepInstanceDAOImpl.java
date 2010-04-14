@@ -85,12 +85,34 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
         if (stepIds == null){    // There are no steps in this SerialGroup, so no restriction on running.  Should never be called though!
             return true;
         }
+        // TODO - THis is using an in clause - need to ensure that the in clause never gets too big, so need to
+        // iterate.
         final Query query = entityManager.createQuery(
                 "select count(i) from StepInstance i inner join i.executions e " +
                 "where i.stepId in (:stepIds) and e.submittedTime is not null and e.completedTime is null");
         query.setParameter("stepIds", stepIds);
         final long count = (Long)query.getSingleResult();
         return count == 0L;
+    }
+
+    /**
+     * Returns true if there are steps left to run
+     *
+     * @return true if there are steps left to run
+     */
+    @Override
+    public boolean futureStepsAvailable() {
+        Query query = entityManager.createQuery(
+                        "select count(i) " +
+                        "from StepInstance i " +
+                        "where i not in (" +
+                                "select j " +
+                                "from StepInstance j " +
+                                "inner join j.executions e " +
+                                "where e.state = :successful)");
+
+        query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
+        return ((Long)query.getSingleResult()) > 0L;
     }
 
     private List<String> buildMapStepIdsInGroup(SerialGroup serialGroup, Jobs jobs) {
