@@ -28,6 +28,8 @@ public class Job implements Serializable, BeanNameAware {
 
     private String id;
 
+    private boolean analysis = false;
+
     private String description;
 
     
@@ -53,6 +55,15 @@ public class Job implements Serializable, BeanNameAware {
     @Required
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Required
+    public void setAnalysis(boolean isAnalysis){
+        this.analysis = isAnalysis;
+    }
+
+    public boolean isAnalysis() {
+        return analysis;
     }
 
     public List<Step> getSteps() {
