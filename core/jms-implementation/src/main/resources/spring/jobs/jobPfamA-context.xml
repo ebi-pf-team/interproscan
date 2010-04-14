@@ -17,6 +17,7 @@
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="jobPfamA" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"                        value="Pfam HMMER3 Raw Analysis and Post Processing"/>
+        <property name="analysis"                           value="true"/>
     </bean>
 
     <bean id="abstractPfamAStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">

@@ -45,6 +45,7 @@
     <!-- ######################## JOB: job-load-from-fasta ############################  -->
     <bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"                        value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="analysis"                           value="false"/>
     </bean>
 
 
@@ -64,6 +65,7 @@
     <!-- ######################## JOB: jobLoadFromUniParc ############################  -->
     <bean id="jobLoadFromUniParc" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"                        value="Load proteins from UniParc and create required JobInstance objects"/>
+        <property name="analysis"                           value="false"/>
     </bean>
 
     <!-- STEP 1 -->
@@ -99,7 +101,7 @@
     <bean id="uniparcLoader" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
         <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
         <property name="rowCallbackHandlerTemplate" ref="rowCallbackHandlerTemplate"/>
-        <property name="maximumProteins" value="10"/>
+        <property name="maximumProteins" value="${ebi.uniparc.protein.load.size}"/>
         <property name="xrefDao" ref="xrefDAO"/>
     </bean>
 

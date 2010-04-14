@@ -11,4 +11,6 @@ package uk.ac.ebi.interpro.scan.jms.broker;
 public interface EmbeddedBroker {
 
     void runBroker();
+
+    void shutDownBroker();
 }

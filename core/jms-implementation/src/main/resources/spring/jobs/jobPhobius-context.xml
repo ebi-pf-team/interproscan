@@ -16,6 +16,7 @@
     <!-- ######################## JOB: job_phobius ############################  -->
     <bean id="jobPhobius" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"                         value="Phobius analysis"/>
+        <property name="analysis"                            value="true"/>
     </bean>
 
     <bean id="abstractPhobiusStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">

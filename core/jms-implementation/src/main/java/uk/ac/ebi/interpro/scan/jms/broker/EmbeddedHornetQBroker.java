@@ -30,6 +30,8 @@ public class EmbeddedHornetQBroker implements EmbeddedBroker {
 
     private Context context;
 
+    private JMSServerManager jmsServerManager;
+
     /**
      * COnfiguration of the hornetQ server.
      * @param hornetQConfig
@@ -54,9 +56,12 @@ public class EmbeddedHornetQBroker implements EmbeddedBroker {
 
     @Override
     public void runBroker(){
+        if (jmsServerManager != null){
+            throw new IllegalStateException("EmbeddedHornetQBroker.runBroker has been called more than once.");
+        }
         try{
             HornetQServer server = HornetQServers.newHornetQServer(hornetQConfig);
-            JMSServerManager jmsServerManager = new JMSServerManagerImpl(server, jmsConfigFileName);
+            jmsServerManager = new JMSServerManagerImpl(server, jmsConfigFileName);
             jmsServerManager.setContext(context);
             jmsServerManager.start();
             while (!jmsServerManager.isStarted()) Thread.sleep(1000);
@@ -66,4 +71,19 @@ public class EmbeddedHornetQBroker implements EmbeddedBroker {
             LOGGER.fatal("Failed to runBroker Broker.", e);
         }
     }
+
+    @Override
+    public void shutDownBroker(){
+        if (jmsServerManager != null){
+            try {
+                jmsServerManager.stop();      // This method is not documented, however examining the code
+                                              // reveals that everything is stopped, including the
+                                              // HornetQServer.
+            } catch (Exception e) {
+                // NOTE - may be called from shutdown hook, so don't rely on Log4j still running.
+                System.out.println ("Exception thrown when attempting to stop the Broker.");
+            }
+        }
+    }
+
 }
