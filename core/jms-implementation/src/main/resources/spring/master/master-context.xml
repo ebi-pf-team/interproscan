@@ -123,15 +123,9 @@
 
     <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
-        <!-- Wait a minute before attempting to load proteins. -->
-        <property name="startDelay" value="60000"/>
-        <!-- repeat every nnn milliseconds
-        600000 = 10 minutes
-        3600000 = 1 hour
-        7200000 = 2 hours
-        43200000 = 12 hours
-        -->
-        <property name="repeatInterval" value="600000"/>
+        <!-- Wait a while before attempting to load proteins. -->
+        <property name="startDelay" value="${ebi.uniparc.protein.load.startdelay}"/>
+        <property name="repeatInterval" value="${ebi.uniparc.protein.load.repeatinterval}"/>
     </bean>
 
 

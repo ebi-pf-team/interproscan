@@ -111,14 +111,10 @@ public class InterProScanWorker implements Worker {
         this.jobResponseQueueName = jobResponseQueueName;
     }
 
-    @Override
-    @Required
     public void setWorkerManagerTopicName(String workerManagerTopicName) {
         this.workerManagerTopicName = workerManagerTopicName;
     }
 
-    @Override
-    @Required
     public void setWorkerManagerResponseQueueName(String workerManagerResponseQueueName) {
         this.workerManagerResponseQueueName = workerManagerResponseQueueName;
     }
@@ -188,16 +184,18 @@ public class InterProScanWorker implements Worker {
             sessionHandler = new SessionHandler(connectionFactory);
             MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
             MessageProducer messageProducer = sessionHandler.getMessageProducer(jobResponseQueueName);
-            StepExecutionListener listener = new StepExecutionListener(messageProducer, sessionHandler);
-            messageConsumer.setMessageListener(listener);
-
-            MessageConsumer monitorMessageConsumer = sessionHandler.getMessageConsumer(workerManagerTopicName);
-            MessageProducer monitorMessageProducer = sessionHandler.getMessageProducer(workerManagerResponseQueueName);
-            InterProScanMonitorListener monitorListener = new InterProScanMonitorListener(sessionHandler, monitorMessageProducer);
-            monitorMessageConsumer.setMessageListener(monitorListener);
+            StepExecutionListener stepExecutionListener = new StepExecutionListener(messageProducer, sessionHandler);
+            messageConsumer.setMessageListener(stepExecutionListener);
+            InterProScanMonitorListener monitorListener = null;
+            if (workerManagerTopicName != null && workerManagerResponseQueueName != null){
+                MessageConsumer monitorMessageConsumer = sessionHandler.getMessageConsumer(workerManagerTopicName);
+                MessageProducer monitorMessageProducer = sessionHandler.getMessageProducer(workerManagerResponseQueueName);
+                monitorListener = new InterProScanMonitorListener(sessionHandler, monitorMessageProducer);
+                monitorMessageConsumer.setMessageListener(monitorListener);
+            }
 
             sessionHandler.start();
-            while (running || listener.isBusy() || monitorListener.isBusy()){
+            while (running || stepExecutionListener.isBusy() || (monitorListener != null && monitorListener.isBusy())){
                 Thread.sleep(2000);
 
                 final long now = new Date().getTime();
@@ -212,16 +210,16 @@ public class InterProScanWorker implements Worker {
                 }
 
                 // Cleanly stop the server if there is a risk of a memory leak.
-                if (running && possibleMemoryLeakDetected()){
-                    running = false;
-                }
+//                if (running && possibleMemoryLeakDetected()){
+//                    running = false;
+//                }
             }
         }
         catch (JMSException e) {
-            LOGGER.error("JMSException thrown by worker.  Exiting.", e);
+            LOGGER.error("JMSException thrown by worker.  Worker closing.", e);
         }
         catch (InterruptedException e) {
-            LOGGER.error ("InterruptedException thrown in InterProScanWorker.", e);
+            LOGGER.info ("InterruptedException thrown in InterProScanWorker. Worker closing.", e);
         } finally{
             running = false;  //To ensure that the Monitor thread exits.
             try {

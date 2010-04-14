@@ -1,12 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.installer;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
@@ -15,9 +11,6 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
-import javax.activation.DataHandler;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;

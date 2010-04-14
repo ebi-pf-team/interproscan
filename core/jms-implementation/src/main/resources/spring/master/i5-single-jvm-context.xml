@@ -12,7 +12,10 @@
 
     <bean id="i5standalone" class="uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster">
         <property name="embeddedBroker" ref="jmsBroker"/>
-        <property name="embeddedWorker" ref="embeddedWorker"/>
+        <property name="embeddedWorkerFactory" ref="embeddedWorkerFactory"/>
+        <!-- By default, the number of embedded workers equals the number of processors, if this
+        value is not set -->
+        <property name="embeddedWorkerCount" value="${number.of.embedded.workers}" />
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
@@ -20,32 +23,5 @@
         <property name="workerJobResponseQueueName" value="jms.queue.${mvn.worker.job.response.queue}"/>
         <property name="workerJobRequestQueueName" value="jms.queue.${mvn.worker.job.request.queue}"/>
     </bean>
-
-
-
-    <!-- Quartz Scheduler - contains list of Quartz jobs. -->
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="triggers">
-            <list>
-                <ref bean="proteinLoadTrigger"/>
-            </list>
-        </property>
-    </bean>
-
-
-
-    <bean id="proteinLoadQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="i5standalone"/>
-        <property name="targetMethod" value="createProteinLoadJob"/>
-    </bean>
-
-    <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-        <property name="jobDetail" ref="proteinLoadQuartzJob"/>
-        <!-- Wait a minute before attempting to load proteins. -->
-        <property name="startDelay" value="1000"/>
-        <!-- repeat every 30 minutes -->
-        <property name="repeatInterval" value="180000000"/>
-    </bean>
-
 </beans>
 
