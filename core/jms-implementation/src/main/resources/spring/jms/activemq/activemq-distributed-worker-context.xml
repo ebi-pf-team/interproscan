@@ -1,0 +1,41 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+        http://activemq.apache.org/schema/core
+        http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <import resource="activemq-tcp-connection-config-context.xml"/>
+    <import resource="activemq-queue-config-context.xml"/>
+    <import resource="../../jobs/all-jobs-context.xml"/>
+
+    <bean id="amqDistributedWorkerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="remoteJmsFactory"/>
+        <property name="destination" ref="jobRequestQueue"/>
+        <property name="messageListener" ref="amqworker" />
+        <property name="sessionTransacted" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+    </bean>
+
+    <bean id="amqworker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
+        <property name="jobs" ref="jobs"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="jmsTemplate" ref="remoteJmsTemplate"/>
+    </bean>
+
+    <!--<bean id="amqInterProScanMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="remoteJmsFactory"/>-->
+        <!--<property name="destination" ref="workerManagerTopic"/>-->
+        <!--<property name="messageListener" ref="amqInterProScanMonitor" />-->
+    <!--</bean>-->
+
+    <!--<bean id="amqInterProScanMonitor" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMonitorListener">-->
+        <!--<property name="jobs" ref="jobs"/>-->
+        <!--<property name="workerManagerResponseQueue" ref="workerManagerResponseQueue"/>-->
+        <!--<property name="worker" ref="amqworker"/>-->
+        <!--<property name="jmsTemplate" ref="remoteJmsTemplate"/>-->
+    <!--</bean>-->
+
+</beans>

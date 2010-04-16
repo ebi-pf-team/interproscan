@@ -6,10 +6,11 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <!-- Import common beans -->
-    <import resource="../common-context.xml"/>
+    <import resource="../spring-properties-context.xml"/>
     <import resource="../jobs/all-jobs-context.xml"/>
     <import resource="../servers-context.xml"/>
-    <import resource="../jms/hornetq-config-context.xml"/>
+    <import resource="../jms/hornetq/hornetq-config-context.xml"/>
+    <import resource="../jms/hornetq/in-vm-transport-context.xml"/>
 
     <!-- Starts up parallel workers.  Used by the queueJumper bean, which starts up
     a new parallel worker each time a parallel TaskExecution is run. -->
@@ -124,8 +125,8 @@
     <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
         <!-- Wait a while before attempting to load proteins. -->
-        <property name="startDelay" value="${ebi.uniparc.protein.load.startdelay}"/>
-        <property name="repeatInterval" value="${ebi.uniparc.protein.load.repeatinterval}"/>
+        <property name="startDelay" value="${ebi.uniparc.protein.load.start.delay.seconds}000"/>
+        <property name="repeatInterval" value="${ebi.uniparc.protein.load.repeat.interval.seconds}000"/>
     </bean>
 
 
@@ -138,9 +139,8 @@
 
     <bean id="startSpareParallelWorkerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>
-        <property name="startDelay" value="60000"/>
-        <!-- repeat every minute -->
-        <property name="repeatInterval" value="60000"/>
+        <property name="startDelay" value="${spare.worker.start.delay.seconds}000"/>
+        <property name="repeatInterval" value="${spare.worker.repeat.interval.seconds}000"/>
     </bean>
 </beans>
 

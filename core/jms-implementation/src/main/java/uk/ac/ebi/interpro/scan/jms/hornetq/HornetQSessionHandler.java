@@ -1,20 +1,11 @@
-package uk.ac.ebi.interpro.scan.jms;
+package uk.ac.ebi.interpro.scan.jms.hornetq;
 
 import org.apache.log4j.Logger;
-import org.hornetq.api.core.TransportConfiguration;
-import org.hornetq.integration.transports.netty.NettyConnectorFactory;
-import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.hornetq.jms.client.HornetQDestination;
-import org.springframework.beans.factory.annotation.Required;
 
 import javax.jms.*;
 import java.io.Serializable;
 import java.lang.IllegalStateException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hornetq.integration.transports.netty.TransportConstants.HOST_PROP_NAME;
-import static org.hornetq.integration.transports.netty.TransportConstants.PORT_PROP_NAME;
 
 /**
  * Simple bean holding information about queues and the JMS Broker.
@@ -24,23 +15,23 @@ import static org.hornetq.integration.transports.netty.TransportConstants.PORT_P
  * Use in a single Thread only.
  *
  * @author Phil Jones
- * @version $Id: SessionHandler.java,v 1.3 2009/10/21 18:44:40 pjones Exp $
+ * @version $Id: HornetQSessionHandler.java,v 1.3 2009/10/21 18:44:40 pjones Exp $
  * @since 1.0
  */
-public class SessionHandler {
+public class HornetQSessionHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(SessionHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(HornetQSessionHandler.class);
 
     private Connection connection;
     private Session session;
 
-    public SessionHandler(ConnectionFactory cf) throws JMSException {
+    public HornetQSessionHandler(ConnectionFactory cf) throws JMSException {
         connection = cf.createConnection();
         try{
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
         }
         catch (JMSException e){
-            LOGGER.error ("JMSException thrown when attempting to instantiate a SessionHandler.  Closing the Session and Connection.", e);
+            LOGGER.error ("JMSException thrown when attempting to instantiate a HornetQSessionHandler.  Closing the Session and Connection.", e);
             try{
                 if (session != null){
                     session.close();

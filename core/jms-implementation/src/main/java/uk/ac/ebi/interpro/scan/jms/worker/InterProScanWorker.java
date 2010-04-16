@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.jms.hornetq.HornetQSessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
@@ -179,22 +179,22 @@ public class InterProScanWorker implements Worker {
 
     public void run(){
         lastActivityTime = startTime = new Date().getTime();
-        SessionHandler sessionHandler = null;
+        HornetQSessionHandler hornetQSessionHandler = null;
         try{
-            sessionHandler = new SessionHandler(connectionFactory);
-            MessageConsumer messageConsumer = sessionHandler.getMessageConsumer(jobRequestQueueName);
-            MessageProducer messageProducer = sessionHandler.getMessageProducer(jobResponseQueueName);
-            StepExecutionListener stepExecutionListener = new StepExecutionListener(messageProducer, sessionHandler);
+            hornetQSessionHandler = new HornetQSessionHandler(connectionFactory);
+            MessageConsumer messageConsumer = hornetQSessionHandler.getMessageConsumer(jobRequestQueueName);
+            MessageProducer messageProducer = hornetQSessionHandler.getMessageProducer(jobResponseQueueName);
+            StepExecutionListener stepExecutionListener = new StepExecutionListener(messageProducer, hornetQSessionHandler);
             messageConsumer.setMessageListener(stepExecutionListener);
             InterProScanMonitorListener monitorListener = null;
             if (workerManagerTopicName != null && workerManagerResponseQueueName != null){
-                MessageConsumer monitorMessageConsumer = sessionHandler.getMessageConsumer(workerManagerTopicName);
-                MessageProducer monitorMessageProducer = sessionHandler.getMessageProducer(workerManagerResponseQueueName);
-                monitorListener = new InterProScanMonitorListener(sessionHandler, monitorMessageProducer);
+                MessageConsumer monitorMessageConsumer = hornetQSessionHandler.getMessageConsumer(workerManagerTopicName);
+                MessageProducer monitorMessageProducer = hornetQSessionHandler.getMessageProducer(workerManagerResponseQueueName);
+                monitorListener = new InterProScanMonitorListener(hornetQSessionHandler, monitorMessageProducer);
                 monitorMessageConsumer.setMessageListener(monitorListener);
             }
 
-            sessionHandler.start();
+            hornetQSessionHandler.start();
             while (running || stepExecutionListener.isBusy() || (monitorListener != null && monitorListener.isBusy())){
                 Thread.sleep(2000);
 
@@ -223,8 +223,8 @@ public class InterProScanWorker implements Worker {
         } finally{
             running = false;  //To ensure that the Monitor thread exits.
             try {
-                if (sessionHandler != null){
-                    sessionHandler.close();
+                if (hornetQSessionHandler != null){
+                    hornetQSessionHandler.close();
                 }
             } catch (JMSException e) {
                 LOGGER.error("JMSException when attempting to close session / connection to JMS broker.", e);
@@ -236,14 +236,14 @@ public class InterProScanWorker implements Worker {
 
         private final MessageProducer messageProducer;
 
-        private final SessionHandler sessionHandler;
+        private final HornetQSessionHandler hornetQSessionHandler;
 
 
         private boolean busy = false;
 
-        StepExecutionListener(final MessageProducer messageProducer, final SessionHandler sessionHandler) {
+        StepExecutionListener(final MessageProducer messageProducer, final HornetQSessionHandler hornetQSessionHandler) {
             this.messageProducer = messageProducer;
-            this.sessionHandler = sessionHandler;
+            this.hornetQSessionHandler = hornetQSessionHandler;
         }
 
         @Override
@@ -269,7 +269,7 @@ public class InterProScanWorker implements Worker {
                     LOGGER.debug("Message received of queue - attempting to executeInTransaction");
 
                     try{
-                        executeInTransaction(stepExecution, messageProducer, sessionHandler);
+                        executeInTransaction(stepExecution, messageProducer, hornetQSessionHandler);
                     } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.                        
             //            running = false;
@@ -278,7 +278,7 @@ public class InterProScanWorker implements Worker {
                         // message to the broker.  This in turn may fail if it is the JMS connection
                         // that failed during the execution.
                         stepExecution.fail();
-                        ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
+                        ObjectMessage responseMessage = hornetQSessionHandler.createObjectMessage(stepExecution);
                         messageProducer.send(responseMessage);
                         LOGGER.debug ("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
                     }
@@ -299,14 +299,14 @@ public class InterProScanWorker implements Worker {
 
     class InterProScanMonitorListener implements MessageListener{
 
-        private SessionHandler sessionHandler;
+        private HornetQSessionHandler hornetQSessionHandler;
 
         private MessageProducer messageProducer;
 
         private boolean busy = false;
 
-        InterProScanMonitorListener(SessionHandler sessionHandler, MessageProducer messageProducer) {
-            this.sessionHandler = sessionHandler;
+        InterProScanMonitorListener(HornetQSessionHandler hornetQSessionHandler, MessageProducer messageProducer) {
+            this.hornetQSessionHandler = hornetQSessionHandler;
             this.messageProducer = messageProducer;
         }
 
@@ -338,7 +338,7 @@ public class InterProScanWorker implements Worker {
                         workerState.setJobId(stepExecution.getId().toString());
                         workerState.setJobDescription(stepExecution.getStepInstance().getStep(jobs).getStepDescription());
                     }
-                    ObjectMessage responseObject = sessionHandler.createObjectMessage(workerState);
+                    ObjectMessage responseObject = hornetQSessionHandler.createObjectMessage(workerState);
 
                     // Find out if there is a 'requestee' header, which should be added to the response message
                     // so the management responses can be filtered out by the client that sent them.
@@ -372,12 +372,12 @@ public class InterProScanWorker implements Worker {
      * if the execution is successful.
      * @param stepExecution          The StepExecution to run.
      * @param messageProducer        For building the reply to the Broker
-     * @param sessionHandler         to send the reply to the broker
+     * @param hornetQSessionHandler         to send the reply to the broker
      */
     @Transactional
     private void executeInTransaction(StepExecution stepExecution,
                          MessageProducer messageProducer,
-                         SessionHandler sessionHandler){
+                         HornetQSessionHandler hornetQSessionHandler){
         stepExecution.setToRun();
         final StepInstance stepInstance = stepExecution.getStepInstance();
         final Step step = stepInstance.getStep(jobs);
@@ -389,7 +389,7 @@ public class InterProScanWorker implements Worker {
         LOGGER.debug ("Successful run of Step.executeInTransaction() method for StepExecution ID: " + stepExecution.getId());
 
         try{
-            ObjectMessage responseMessage = sessionHandler.createObjectMessage(stepExecution);
+            ObjectMessage responseMessage = hornetQSessionHandler.createObjectMessage(stepExecution);
             messageProducer.send(responseMessage);
         } catch (JMSException e) {
             throw new IllegalStateException ("JMSException thrown when attempting to communicate successful completion of step " + stepExecution.getId() + " to the broker.", e);

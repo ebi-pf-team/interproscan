@@ -1,12 +1,5 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.jms.SessionHandler;
-import uk.ac.ebi.interpro.scan.management.model.Jobs;
-
-import javax.jms.ConnectionFactory;
-
 /**
  * The WorkerManager monitors the WorkerManagerTopic, used to monitor
  * the progress of Workers and to send them management messages

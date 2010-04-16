@@ -1,0 +1,29 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+
+    <!-- Remote (e.g. TCP) JMS ConnectionFactory -->
+    <amq:connectionFactory
+            id="remoteJmsFactory"
+            useCompression="true"
+            optimizeAcknowledge="true"
+            brokerURL="tcp://${jms.broker.host.name}:${jms.broker.port.number}"/>
+
+
+    <!-- Remote Spring JMSTemplate -->
+    <bean id="remoteJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <!-- lets wrap in a pool to avoid creating a connection per send -->
+            <bean class="org.springframework.jms.connection.SingleConnectionFactory">
+                <property name="targetConnectionFactory">
+                    <ref local="remoteJmsFactory" />
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

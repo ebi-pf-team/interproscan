@@ -1,8 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.jms.SessionHandler;
+import uk.ac.ebi.interpro.scan.jms.hornetq.HornetQSessionHandler;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerMonitor;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 
@@ -79,11 +78,11 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
     @Override
     protected Void doInBackground() throws Exception {
 
-        SessionHandler sessionHandler = null;
+        HornetQSessionHandler hornetQSessionHandler = null;
         try{
-            sessionHandler = new SessionHandler(connectionFactory);
-            sessionHandler.start();
-            MessageProducer requestStatusMessageProducer = sessionHandler.getMessageProducer(workerManagerTopicName);
+            hornetQSessionHandler = new HornetQSessionHandler(connectionFactory);
+            hornetQSessionHandler.start();
+            MessageProducer requestStatusMessageProducer = hornetQSessionHandler.getMessageProducer(workerManagerTopicName);
 
 
             // Work out a receive timeout - set to (fairly arbitrarily) one twentieth of the refresh interval.
@@ -106,12 +105,12 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
                         .toString();
                 // The selector ensures that this monitor application instance only receives messages in response
                 // to its own monitor requests.
-                final MessageConsumer workerResponsemessageConsumer = sessionHandler.getMessageConsumer(workerManagerResponseQueueName, selector);
+                final MessageConsumer workerResponsemessageConsumer = hornetQSessionHandler.getMessageConsumer(workerManagerResponseQueueName, selector);
 
                 List<WorkerState> workerStates = new ArrayList<WorkerState>();
 
                 // Send the status request to the workerManagerTopic.
-                TextMessage statusRequestMessage =  sessionHandler.createTextMessage("status");
+                TextMessage statusRequestMessage =  hornetQSessionHandler.createTextMessage("status");
                 statusRequestMessage.setStringProperty(WorkerMonitor.REQUESTEE_PROPERTY, requestId);
                 requestStatusMessageProducer.send(statusRequestMessage);
 
@@ -133,8 +132,8 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
             return null;
         }
         finally {
-            if (sessionHandler != null){
-                sessionHandler.close();
+            if (hornetQSessionHandler != null){
+                hornetQSessionHandler.close();
             }
         }
     }

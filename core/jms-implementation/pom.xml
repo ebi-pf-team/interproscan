@@ -102,6 +102,35 @@
         <!-- JPA tests -->
 
         <dependency>
+            <groupId>com.jgoodies</groupId>
+            <artifactId>looks</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.2.128</version>
+        </dependency>
+
+        <!-- PUBLICLY-AVAILABLE Maven repository downloads for Quartz:-->
+
+        <dependency>
+            <groupId>org.opensymphony.quartz</groupId>
+            <artifactId>quartz-all</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+        </dependency>
+
+        <!-- TODO - decide between hornetQ and activeMQ. -->
+
+        <!-- HornetQ broker dependencies -->
+        <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core</artifactId>
             <version>${hornetq.version}</version>
@@ -137,30 +166,23 @@
             <version>1.1.0.GA</version>
         </dependency>
 
+        <!-- ActiveMQ broker dependencies -->
         <dependency>
-            <groupId>com.jgoodies</groupId>
-            <artifactId>looks</artifactId>
-            <version>2.2.2</version>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+            <version>5.3.1</version>
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.2.128</version>
-        </dependency>
-
-        <!-- PUBLICLY-AVAILABLE Maven repository downloads for Quartz:-->
-
-        <dependency>
-            <groupId>org.opensymphony.quartz</groupId>
-            <artifactId>quartz-all</artifactId>
-            <version>1.6.1</version>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>3.6</version>
         </dependency>
 
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2</version>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi</artifactId>
+            <version>3.0.0</version>
         </dependency>
 
     </dependencies>
@@ -267,6 +289,5 @@
                 </dependencies>
             </plugin>
         </plugins>
-
     </build>
 </project>

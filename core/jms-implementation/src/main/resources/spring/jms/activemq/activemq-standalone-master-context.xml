@@ -1,0 +1,40 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- TODO - this import ensures that there is ONE embedded worker
+         TODO - and also imports other dependencies of the standalone master.
+         TODO - need to rethink this to allow multiple standalone workers.
+    -->
+
+    <import resource="activemq-standalone-worker-context.xml"/>
+
+    <!--  Embedded ActiveMQ Broker - in vm connections only· -->
+    <amq:broker useJmx="false" persistent="false" useShutdownHook="false">
+        <amq:transportConnectors>
+            <amq:transportConnector uri="vm://localhost" />
+        </amq:transportConnectors>
+    </amq:broker>
+
+    <bean id="amqstandalone" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
+        <property name="jobs" ref="jobs"/>
+        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
+        <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
+    </bean>
+
+    <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="jobResponseQueue"/>
+        <property name="messageListener" ref="responseMonitorListener" />
+    </bean>
+
+    <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
+        <constructor-arg ref="stepExecutionDAO"/>
+    </bean>
+
+</beans>
