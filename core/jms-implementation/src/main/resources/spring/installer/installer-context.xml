@@ -6,7 +6,7 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <!-- Import common beans -->
-    <import resource="../common-context.xml"/>
+    <import resource="../spring-properties-context.xml"/>
     <import resource="../persistence/datasource-context.xml"/>
     
     

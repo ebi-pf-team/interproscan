@@ -1,8 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.jms.SessionHandler;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.ConnectionFactory;
@@ -16,20 +14,6 @@ import java.util.UUID;
  * @since 1.0
  */
 public interface Worker extends Runnable {
-
-    /**
-     * Sets the name of the JMS queue from which the Worker takes a job to do.
-      * @param jobRequestQueueName the name of the JMS queue from which the Worker takes a job to do.
-      */
-    @Required
-    void setJobRequestQueueName(String jobRequestQueueName);
-
-    /**
-     * Sets the name of the JMS queue to which the Worker returns the results of a job.
-      * @param jobResponseQueueName  the name of the JMS queue to which the Worker returns the results of a job.
-      */
-    @Required
-    void setJobResponseQueueName(String jobResponseQueueName);
 
     /**
      * Tells the Worker to shut down gracefully (finish whatever it's doing, then shut down.)

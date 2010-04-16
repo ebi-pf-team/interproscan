@@ -1,0 +1,84 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!--<import resource="activemq-queue-config-context.xml"/>-->
+    <import resource="activemq-inVm-connection-config-context.xml"/>
+    <import resource="../../jobs/all-jobs-context.xml"/>
+
+    <!--  lets create an embedded ActiveMQ Broker -->
+    <amq:broker useJmx="false"
+                persistent="true"
+                useShutdownHook="true"
+                dataDirectory="${broker.journal.directory}" 
+            >
+        <amq:transportConnectors>
+            <!-- Connector for remote workers-->
+            <amq:transportConnector name="remote" uri="tcp://${jms.broker.host.name}:${jms.broker.port.number}" />
+            <!-- Connector for Master (the broker is embedded, so use in JVM communication).-->
+            <amq:transportConnector name="inVM" uri="vm://localhost" />
+        </amq:transportConnectors>
+    </amq:broker>
+
+    <bean id="amqmaster" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
+        <property name="jobs" ref="jobs"/>
+        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
+        <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
+        <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
+    </bean>
+
+    <bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+        <property name="submissionCommand" value="${worker.command}"/>
+    </bean>
+
+    <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="jobResponseQueue"/>
+        <property name="messageListener" ref="responseMonitorListener" />
+    </bean>
+
+    <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
+        <constructor-arg ref="stepExecutionDAO"/>
+    </bean>
+
+        <!-- Quartz Scheduler - contains list of Quartz jobs. -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="proteinLoadTrigger"/>
+                <ref bean="startSpareParallelWorkerTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Quartz job to load proteins from UniParc -->
+    <bean id="proteinLoadQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="amqmaster"/>
+        <property name="targetMethod" value="createProteinLoadJob"/>
+    </bean>
+
+    <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="proteinLoadQuartzJob"/>
+        <!-- Wait a while before attempting to load proteins. -->
+        <property name="startDelay" value="${ebi.uniparc.protein.load.start.delay.seconds}000"/>
+        <property name="repeatInterval" value="${ebi.uniparc.protein.load.repeat.interval.seconds}000"/>
+    </bean>
+
+    <!-- Quartz job to run spare parallel worker.  Currently turned on. -->
+    <bean id="startSpareParallelWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="parallelWorkerRunner"/>
+        <property name="targetMethod" value="startupNewWorker"/>
+    </bean>
+
+    <bean id="startSpareParallelWorkerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>
+        <property name="startDelay" value="${spare.worker.start.delay.seconds}000"/>
+        <property name="repeatInterval" value="${spare.worker.repeat.interval.seconds}000"/>
+    </bean>
+
+</beans>

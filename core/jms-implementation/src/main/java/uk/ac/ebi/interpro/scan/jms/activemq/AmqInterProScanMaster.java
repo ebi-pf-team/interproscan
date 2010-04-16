@@ -1,10 +1,11 @@
-package uk.ac.ebi.interpro.scan.jms.master;
+package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.jms.broker.EmbeddedBroker;
-import uk.ac.ebi.interpro.scan.jms.hornetq.HornetQSessionHandler;
+import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.worker.EmbeddedWorkerFactory;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
@@ -12,37 +13,34 @@ import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.*;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep;
 
-import javax.jms.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import java.util.*;
 
 /**
- * The InterProScan master application.
+ * TODO: Description
  *
  * @author Phil Jones
- * @version $Id: TestMaster.java,v 1.4 2009/10/28 15:04:00 pjones Exp $
- * @since 1.0
+ * @version $Id$
+ * @since 1.0-SNAPSHOT
  */
-public class InterProScanMaster implements Master {
+public class AmqInterProScanMaster implements Master {
 
-    private static final Logger LOGGER = Logger.getLogger(InterProScanMaster.class);
+    private static final Logger LOGGER = Logger.getLogger(AmqInterProScanMaster.class);
+
+    private JmsTemplate jmsTemplate;
 
     private Jobs jobs;
 
     private StepInstanceDAO stepInstanceDAO;
 
     private StepExecutionDAO stepExecutionDAO;
-
-    private ConnectionFactory connectionFactory;
-
-    private String workerJobResponseQueueName;
-
-    private String workerJobRequestQueueName;
+    
+    private Destination workerJobRequestQueue;
 
     private WorkerRunner parallelWorkerRunner;
-
-    private EmbeddedBroker embeddedBroker;
 
     private EmbeddedWorkerFactory embeddedWorkerFactory;
 
@@ -59,17 +57,6 @@ public class InterProScanMaster implements Master {
     private String outputFormat;
 
     private List<String> analyses;
-
-    /**
-     * This OPTIONAL bean method allows an Embedded JMS broker to be injected.
-     * If not injected, the Master will make no attempt to runBroker a Broker, but
-     * rely on an external one being present.
-     *
-     * @param embeddedBroker implementation, e.g. for HornetQ, ActiveMQ.
-     */
-    public void setEmbeddedBroker(EmbeddedBroker embeddedBroker) {
-        this.embeddedBroker = embeddedBroker;
-    }
 
     /**
      * This OPTIONAL bean method allows an embedded Worker to be injected.
@@ -89,24 +76,14 @@ public class InterProScanMaster implements Master {
     }
 
     @Required
-    public void setWorkerJobRequestQueueName(String workerJobRequestQueueName) {
-        this.workerJobRequestQueueName = workerJobRequestQueueName;
-    }
-
-    /**
-     * Sets the name of the destinationResponseQueue.
-     * @param workerJobResponseQueueName the name of the destinationResponseQueue.
-     */
-    @Required
-    public void setWorkerJobResponseQueueName(String workerJobResponseQueueName) {
-        this.workerJobResponseQueueName = workerJobResponseQueueName;
+    public void setWorkerJobRequestQueue(Destination workerJobRequestQueue) {
+        this.workerJobRequestQueue = workerJobRequestQueue;
     }
 
     @Required
-    public void setConnectionFactory(ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
+    public void setJmsTemplate(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
     }
-
 
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
@@ -118,8 +95,6 @@ public class InterProScanMaster implements Master {
         this.stepExecutionDAO = stepExecutionDAO;
     }
 
-
-
     public Jobs getJobs() {
         return jobs;
     }
@@ -129,30 +104,15 @@ public class InterProScanMaster implements Master {
         this.jobs = jobs;
     }
 
-
-    /**
+     /**
      * Run the Master Application.
      */
     public void run(){
-//        ShutdownHook shutDownHook = new ShutdownHook(this);
-//        Runtime.getRuntime().addShutdownHook(shutDownHook);
-
-        HornetQSessionHandler hornetQSessionHandler = null;
         try {
-            startUpEmbeddedBroker();
             startUpEmbeddedWorkers();
             createFastaFileLoadStepInstance();
-            // Initialise the hornetQSessionHandler for the master thread
-            hornetQSessionHandler = new HornetQSessionHandler(connectionFactory);
 
-            final MessageConsumer jobResponseMessageConsumer = hornetQSessionHandler.getMessageConsumer(workerJobResponseQueueName);
-            final MessageProducer jobRequestMessageProducer = hornetQSessionHandler.getMessageProducer(workerJobRequestQueueName);
-
-            ResponseMonitorImpl responseMonitor = new ResponseMonitorImpl(stepExecutionDAO);
-            jobResponseMessageConsumer.setMessageListener(responseMonitor);
-
-            hornetQSessionHandler.start();
-
+            LOGGER.info ("Fasta file load step instance has been created.");
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             while(! shutdownCalled && (embeddedWorkerFactory == null || stepInstanceDAO.futureStepsAvailable())){       // TODO should be while(running) to allow shutdown.
@@ -163,7 +123,7 @@ public class InterProScanMaster implements Master {
                         for (Step step : job.getSteps()){
                             for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
                                 if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
-                                    sendMessage(stepInstance, hornetQSessionHandler, jobRequestMessageProducer);
+                                    sendMessage(stepInstance);
                                 }
                             }
                         }
@@ -176,18 +136,6 @@ public class InterProScanMaster implements Master {
         } catch (Exception e){
             LOGGER.error ("Exception thrown by Master", e);
         }
-
-        finally {
-            // Shut down session.
-            if (hornetQSessionHandler != null){
-                try {
-                    hornetQSessionHandler.close();
-                } catch (JMSException e) {
-                    LOGGER.error ("JMSException thrown when attempting to close the HornetQSessionHandler.", e);
-                }
-            }
-            shutdown();
-        }
     }
 
     /**
@@ -196,32 +144,30 @@ public class InterProScanMaster implements Master {
      * for analyses for the loaded proteins.
      */
     private void createFastaFileLoadStepInstance() {
-        if (fastaFilePath == null) return;
-
-        Job insertProteinJob = jobs.getJobById("jobLoadFromFasta");
-        for (Step step : insertProteinJob.getSteps()){
-            StepInstance stepInstance = new StepInstance(step);
-            stepInstance.addStepParameter(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
-            stepInstanceDAO.insert(stepInstance);
+        if (fastaFilePath != null) {
+            Map<String, String> params = new HashMap<String, String>(1);
+            params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
+            createStepInstancesForJob("jobLoadFromFasta", params);
         }
-
     }
 
     /**
-     * Called by quartz to load some more proteins.
+     * Called by quartz to load proteins from UniParc.
      */
     public void createProteinLoadJob(){
-        Job insertProteinJob = jobs.getJobById("jobLoadFromUniParc");
-        for (Step step : insertProteinJob.getSteps()){
-            StepInstance stepInstance = new StepInstance(step);
-            stepInstanceDAO.insert(stepInstance);
-        }
+        createStepInstancesForJob("jobLoadFromUniParc", null);
     }
 
-    private void startUpEmbeddedBroker(){
-        if (embeddedBroker != null){
-            embeddedBroker.runBroker();
-            LOGGER.info("Embedded broker started.");
+    private void createStepInstancesForJob (String jobId, Map<String, String> stepParameters){
+        Job job = jobs.getJobById(jobId);
+        for (Step step : job.getSteps()){
+            StepInstance stepInstance = new StepInstance(step);
+            if (stepParameters != null){
+                for (String key : stepParameters.keySet()){
+                    stepInstance.addStepParameter(key, stepParameters.get(key));
+                }
+            }
+            stepInstanceDAO.insert(stepInstance);
         }
     }
 
@@ -255,28 +201,25 @@ public class InterProScanMaster implements Master {
      * Creates messages to be sent to Worker nodes.
      * Does all of this in a transaction, hence in this separate method.
      * @param stepInstance to send as a message
-     * @param hornetQSessionHandler used to create the ObjectMessage.
-     * @param producer being the MessageProducer upon which to send the message.
      * @throws JMSException in the event of a failure sending the message to the JMS Broker.
      */
     @Transactional
-    private void sendMessage(StepInstance stepInstance, HornetQSessionHandler hornetQSessionHandler, MessageProducer producer) throws JMSException {
+    private void sendMessage(StepInstance stepInstance) throws JMSException {
+        LOGGER.info ("Attempting to send message to queue.");
         final StepExecution stepExecution = stepInstance.createStepExecution();
         stepExecutionDAO.insert(stepExecution);
         stepExecution.submit(stepExecutionDAO);
-        ObjectMessage message = hornetQSessionHandler.createObjectMessage(stepExecution);
-        producer.setPriority(stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 7);
-        LOGGER.debug ("Placing message on to destination " + producer.getDestination().toString());
-        producer.send(message);
+
+        jmsTemplate.setPriority(stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 7);
+        jmsTemplate.send(workerJobRequestQueue, new MessageCreator(){
+            public Message createMessage(Session session) throws JMSException {
+                return session.createObjectMessage(stepExecution);
+            }
+        });
+
+
         if (parallelWorkerRunner != null){ // Not mandatory (e.g. in single-jvm implementation)
             parallelWorkerRunner.startupNewWorker();
-        }
-    }
-
-    private void shutdown(){
-        // Shut down broker.
-        if (embeddedBroker != null){
-            embeddedBroker.shutDownBroker();
         }
     }
 
@@ -284,6 +227,7 @@ public class InterProScanMaster implements Master {
      * If a fasta file path is set, load the proteins at start up and analyse them.
      * @param fastaFilePath from which to load the proteins at start up and analyse them.
      */
+    @Override
     public void setFastaFilePath(String fastaFilePath) {
         this.fastaFilePath = fastaFilePath;
     }
@@ -293,6 +237,7 @@ public class InterProScanMaster implements Master {
      * @param outputFile if set, then the results will be output to this file in the format specified in
      * the field outputFormat (defaulting to XML).
      */
+    @Override
     public void setOutputFile(String outputFile) {
         this.outputFile = outputFile;
     }
@@ -303,6 +248,7 @@ public class InterProScanMaster implements Master {
      * @param outputFormat the output format.  If no value is specified for outputFile, this format
      * value will be ignored.
      */
+    @Override
     public void setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
     }
@@ -312,6 +258,7 @@ public class InterProScanMaster implements Master {
      * all analyses will be run.
      * @param analyses the analyses that should be run.  If not set, all analyses will be run.
      */
+    @Override
     public void setAnalyses(String analyses) {
         String[] analysisArray = analyses.split(":");
         this.analyses = Arrays.asList(analysisArray);

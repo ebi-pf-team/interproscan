@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.jms;
+package uk.ac.ebi.interpro.scan.jms.hornetq;
 
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.integration.transports.netty.NettyConnectorFactory;
@@ -22,11 +22,11 @@ import static org.hornetq.integration.transports.netty.TransportConstants.PORT_P
  * Use in a single Thread only.
  *
  * @author John Maslen
- * @version $Id: SessionHandlerFactory .java,v 1.0 2009/10/21 18:44:40 maslen Exp $
+ * @version $Id: HornetQSessionHandlerFactory .java,v 1.0 2009/10/21 18:44:40 maslen Exp $
  * @since 1.0
  */
 
-public class SessionHandlerFactory {
+public class HornetQSessionHandlerFactory {
 
     private Connection connection;
     private Session session;
@@ -60,7 +60,7 @@ public class SessionHandlerFactory {
         return session;
     }
 
-    public SessionHandlerFactory() {
+    public HornetQSessionHandlerFactory() {
     }
 
     public MessageConsumer getMessageConsumer(String destinationName, String messageSelector) throws JMSException {

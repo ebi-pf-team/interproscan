@@ -1,0 +1,34 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <import resource="activemq-queue-config-context.xml"/>
+
+    <!-- JMS ConnectionFactory to use, configuring the embedded broker using XML -->
+    <amq:connectionFactory
+            id="inVmJmsFactory"
+            useCompression="false"
+            optimizeAcknowledge="true"
+            brokerURL="vm://localhost?create=false"/>
+
+
+    <!-- Spring JMS Template -->
+    <bean id="InVmJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <!-- lets wrap in a pool to avoid creating a connection per send -->
+            <bean class="org.springframework.jms.connection.SingleConnectionFactory">
+                <property name="targetConnectionFactory">
+                    <ref local="inVmJmsFactory" />
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!--<bean id="consumerJmsTemplate" class="org.springframework.jms.core.JmsTemplate">-->
+        <!--<property name="connectionFactory" ref="inVmJmsFactory"/>-->
+    <!--</bean>-->
+
+</beans>

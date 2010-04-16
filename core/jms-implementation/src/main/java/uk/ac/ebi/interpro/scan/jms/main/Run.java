@@ -4,7 +4,7 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import uk.ac.ebi.interpro.scan.jms.master.InterProScanMaster;
+import uk.ac.ebi.interpro.scan.jms.master.Master;
 
 /**
  * The main entry point for the the master and workers in a
@@ -87,6 +87,10 @@ public class Run {
         WORKER("spring/worker/parallel-worker-context.xml"),
         MONITOR("spring/monitor/monitor-context.xml"),
         INSTALLER("spring/installer/installer-context.xml"),
+        AMQSTANDALONE("spring/jms/activemq/activemq-standalone-master-context.xml"),
+        AMQMASTER("spring/jms/activemq/activemq-distributed-master-context.xml"),
+        AMQWORKER("spring/jms/activemq/activemq-distributed-worker-context.xml")
+
         ;
 
         private String contextXML;
@@ -171,8 +175,8 @@ public class Run {
             Runnable runnable = (Runnable) ctx.getBean(modeArgument);
 
             // Set command line parameters on Master.
-            if (runnable instanceof InterProScanMaster){
-                InterProScanMaster master = (InterProScanMaster) runnable;
+            if (runnable instanceof Master){
+                Master master = (Master) runnable;
                 if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())){
                     master.setFastaFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()));
                 }
