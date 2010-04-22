@@ -1,11 +1,11 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer3;
 
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertEquals;
 
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.Ignore;
 
@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.*;
 
-import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.model.raw.*;
 
 /**
@@ -36,6 +35,10 @@ public class Hmmer3SearchMatchParserTest {
     @Resource private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
     @Resource private org.springframework.core.io.Resource gene3dFile;
 
+    // Tests two matches at same location (see IBU-1133)
+    @Resource private org.springframework.core.io.Resource highestScoringDomainFile;
+
+    // Tests empty alignment lines
     @Resource private org.springframework.core.io.Resource emptyAlignmentLineFile;
 
     @Test
@@ -53,7 +56,29 @@ public class Hmmer3SearchMatchParserTest {
                 actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
             }
         }
-        assertTrue("Expected alignments not found", expected.equals(actual));
+        assertEquals("Expected matches not found", expected, actual);
+    }
+
+    @Test
+    public void testHighestScoringDomain() throws IOException {
+        final String SEP = ":";
+        final Set<String> expected = new HashSet<String>(Arrays.asList(
+                "UPI0000054B90" + SEP +
+                "564" + SEP +           // start
+                "615" + SEP +           // end
+                "21.5"                  // score
+        ));
+        final Set<String> actual = new HashSet<String>();
+        Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, highestScoringDomainFile.getInputStream());
+        for (RawProtein<Gene3dHmmer3RawMatch> p : proteins)   {
+            for (Gene3dHmmer3RawMatch m : p.getMatches())   {                
+                actual.add(m.getSequenceIdentifier() + SEP +
+                           m.getLocationStart() + SEP + 
+                           m.getLocationEnd() + SEP +
+                           m.getLocationScore());
+            }
+        }
+        assertEquals("Expected matches not found", expected, actual);
     }
 
     @Test
@@ -72,7 +97,7 @@ public class Hmmer3SearchMatchParserTest {
             }
         }
 
-        assertTrue("Expected alignments not found", expected.equals(actual));
+        assertEquals("Expected alignments not found", expected, actual);        
     }
 
     @Test

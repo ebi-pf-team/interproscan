@@ -51,9 +51,13 @@
         <constructor-arg value="data/hmmer3/hmmsearch/2hxsA00.out"/>
     </bean>
 
+    <!--Email from Sead Eddy: "HMMER3 should only keep highest scoring domain"-->    
+    <bean id="highestScoringDomainFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/hmmer3/hmmsearch/Q5HDF6-1aopA02.txt"/>
+    </bean>
+
     <bean id="emptyAlignmentLineFile" class="org.springframework.core.io.ClassPathResource">
-           <constructor-arg value="data/hmmer3/hmmsearch/empty-alignment-line.txt"/>
-       </bean>
-        
+        <constructor-arg value="data/hmmer3/hmmsearch/empty-alignment-line.txt"/>
+    </bean>
     
 </beans>

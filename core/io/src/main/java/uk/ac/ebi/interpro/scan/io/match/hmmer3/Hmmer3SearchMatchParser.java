@@ -23,9 +23,11 @@ import java.util.regex.Pattern;
  * This has been designed to work as fast as possible, parsing a file
  * most of which is ignored.
  *
- * @author Phil Jones
+ * @author  Phil Jones
+ * @author  David Binns
+ * @author  Antony Quinn
  * @version $Id$
- * @since 1.0-SNAPSHOT
+ * @since   1.0-SNAPSHOT
  *
 Query:       7tm_2  [M=242]
 Accession:   PF00002.17
@@ -227,6 +229,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
 
                         case LOOKING_FOR_DOMAIN_SECTION:
 
+                            // Example: >> UPI0000054B90
                             if (line.startsWith(DOMAIN_SECTION_START)){
 
                                 // Find out which model the domain matches are for and then parse them.
@@ -271,6 +274,12 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
 
                             break;
 
+                        /* Example:
+                         #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+                       ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+                         1 !   21.5   0.0   6.5e-09   0.00065      12      64 ..     564     615 ..     423     621 .. 0.70
+                         2 !   21.0   0.0   8.8e-09   0.00088      12      64 ..     564     615 ..     553     645 .. 0.88
+                        */
                         case LOOKING_FOR_DOMAIN_DATA_LINE:
 
                             // Look for a domain data line.
@@ -280,12 +289,35 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                             }
                             else if (domainDataLineMatcher.matches()){
                                 DomainMatch domainMatch = new DomainMatch(domainDataLineMatcher);
-                                method.addDomainMatch(currentSequenceIdentifier, domainMatch);
-                                
-                                //before start of next sequence match store the method in ssf file
-                                //send the parsed domain details to ssf file generation
-                                  //dfiw.writeMethodToFile(method,currentSequenceIdentifier,domainDataLineMatcher.group(1));
-                                  domains.put(domainDataLineMatcher.group(1),domainMatch);
+                                String domainLineId = domainDataLineMatcher.group(1);
+                                // Account for bug in HMMER 3.0b2 (IBU-1133) -- START
+                                // This code can be removed when all member databases use fixed versions of HMMER
+                                boolean add = true;
+                                if (domains.size() > 0) {
+                                    for (DomainMatch m : domains.values())   {
+                                        if (m.getAliFrom() == domainMatch.getAliFrom() &&
+                                            m.getAliTo()   == domainMatch.getAliTo()) {
+                                            // More than one match at same location, so take highest scoring domain (IBU-1133)
+                                            if (domainMatch.getScore() > m.getScore())  {
+                                                add = true;
+                                                // Remove match with lower score
+                                                method.removeDomainMatch(currentSequenceIdentifier, domainMatch);
+                                                domains.remove(domainLineId);
+                                            }
+                                            else    {
+                                                add = false;
+                                            }
+                                        }
+                                    }
+                                }
+                                // Account for bug in HMMER 3.0b2 (IBU-1133) -- END
+                                if (add)    {
+                                    method.addDomainMatch(currentSequenceIdentifier, domainMatch);
+                                    //before start of next sequence match store the method in ssf file
+                                    //send the parsed domain details to ssf file generation
+                                    //dfiw.writeMethodToFile(method,currentSequenceIdentifier,domainDataLineMatcher.group(1));
+                                    domains.put(domainLineId, domainMatch);
+                                }
                             }
                             break;
 
