@@ -9,9 +9,10 @@ import java.io.Serializable;
 /**
  * This model object accepts the data parsed from a sequence match line in the hmmsearch output format.
  *
- * @author Phil Jones
+ * @author  Phil Jones
+ * @author  Antony Quinn
  * @version $Id$
- * @since 1.0-SNAPSHOT
+ * @since   1.0-SNAPSHOT
  */
 public class SequenceMatch implements Serializable {
 
@@ -21,7 +22,8 @@ public class SequenceMatch implements Serializable {
      * Group 3: Sequence Bias
      * Group 4: UPI
      */
-    public static final Pattern SEQUENCE_LINE_PATTERN = Pattern.compile("^\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\d+\\s+(\\S+).*$");
+    public static final Pattern SEQUENCE_LINE_PATTERN =
+            Pattern.compile("^\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\d+\\s+(\\S+).*$");
 
 
     // The following four ints are to help with extracting data from the Pattern above - KEEP THEM IN SYNC!
@@ -66,6 +68,10 @@ public class SequenceMatch implements Serializable {
 
     void addDomainMatch(DomainMatch domainMatch){
         this.domainMatches.add (domainMatch);
+    }
+
+    void removeDomainMatch(DomainMatch domainMatch){
+        this.domainMatches.remove(domainMatch);
     }
 
     public List<DomainMatch> getDomainMatches() {

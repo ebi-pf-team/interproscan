@@ -72,6 +72,14 @@ public final class HmmSearchRecord implements Serializable {
             throw new IllegalStateException ("Cannot add a domain match without a corresponding sequence match.");
         }
         parentSequenceMatch.addDomainMatch(domainMatch);
-    }    
+    }
+
+    public void removeDomainMatch (String sequenceId, DomainMatch domainMatch) {
+        SequenceMatch parentSequenceMatch = this.sequenceMatches.get(sequenceId);
+        if (parentSequenceMatch == null) {
+            throw new IllegalStateException ("Cannot remove a domain match without a corresponding sequence match.");
+        }
+        parentSequenceMatch.removeDomainMatch(domainMatch);
+    }
 
 }
