@@ -95,7 +95,6 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
 
     private Resource createSsf(Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins) {
         // Generate SSF file
-        // TODO: Put this into DomainFinderRecord.valueOf
         Collection<DomainFinderRecord> records = new ArrayList<DomainFinderRecord>();
         for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
             for (Gene3dHmmer3RawMatch m : p.getMatches())   {
@@ -112,75 +111,113 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         }
         return ssfFile;    
     }
-    
+
+    // Package-private so we can test
     Set<RawProtein<Gene3dHmmer3RawMatch>> filter(Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins, Resource ssfFile) {
 
         // Parse DF3 results
         DomainFinderResourceReader resourceReader = new DomainFinderResourceReader();
-        Collection<DomainFinderRecord> results;
+        Collection<DomainFinderRecord> domainFinderRecords;
         try {
-            results = resourceReader.read(ssfFile);
+            domainFinderRecords = resourceReader.read(ssfFile);
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
         }
 
         // Update raw matches with values from DomainFinder
-        // TODO: Put this into DomainFinderRecord
-        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredRawProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
-        for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
-            String id = p.getProteinIdentifier();
-            RawProtein<Gene3dHmmer3RawMatch> rp = new RawProtein<Gene3dHmmer3RawMatch>(id);
-            for (Gene3dHmmer3RawMatch m : p.getMatches())   {
-                if (id.equals(m.getSequenceIdentifier()))    {
-                    addRecord(rp, m, results);
-                }
-            }
-            if (!rp.getMatches().isEmpty()) {
-                filteredRawProteins.add(rp);
-            }
-        }
-
-        return filteredRawProteins;
+        return filter(rawProteins, domainFinderRecords);
 
      }
 
-    private void addRecord(final RawProtein<Gene3dHmmer3RawMatch> protein,
+    // Update raw matches with values from DomainFinder
+    private Set<RawProtein<Gene3dHmmer3RawMatch>> filter(final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins,
+                                                         final Collection<DomainFinderRecord> domainFinderRecords) {
+        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
+        for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
+            String id = p.getProteinIdentifier();
+            RawProtein<Gene3dHmmer3RawMatch> filteredProtein = new RawProtein<Gene3dHmmer3RawMatch>(id);
+            for (Gene3dHmmer3RawMatch match : p.getMatches())   {
+                if (id.equals(match.getSequenceIdentifier()))    {
+                    addRecord(filteredProtein, match, domainFinderRecords);
+                }
+            }
+            if (!filteredProtein.getMatches().isEmpty()) {
+                filteredProteins.add(filteredProtein);
+            }
+        }
+        return filteredProteins;
+    }
+
+    private void addRecord(final RawProtein<Gene3dHmmer3RawMatch> filteredProtein,
                           final Gene3dHmmer3RawMatch m,
-                          final Collection<DomainFinderRecord> records)  {
-        for (DomainFinderRecord r : records)    {
-            // Parse location start and end
-            // TODO: Put this into DomainFinderRecord
+                          final Collection<DomainFinderRecord> domainFinderRecords)  {
+        for (DomainFinderRecord r : domainFinderRecords)    {
+            // Parse segment boundaries
             String s = r.getSegmentBoundaries();
-            String[] segments = s.split(":");
-            int locationStart = Integer.valueOf(segments[0]);
-            int locationEnd   = Integer.valueOf(segments[segments.length - 1]);
+            String[] segments   = s.split(DomainFinderRecord.SEGMENT_BOUNDARY_SEPARATOR);
+            int lowestBoundary  = Integer.valueOf(segments[0]);
+            int highestBoundary = Integer.valueOf(segments[segments.length - 1]);
+            // Match up the DomainFinder record with the corresponding raw match
+            // Check for "greater than" or "less than" positions, because DomainFinder may have split the domain
+            // match into smaller chunks.
+            // In this example, the original raw match as reported by HMMER (position 4-41) is split into
+            // two matches (positions 6-10 and 20-26). To marry up the raw match with the
+            // filtered matches (so we can get the evalue, score ...etc),  we need to check that the raw match
+            // start (4) is equal to or less than the lowest filtered match boundary (6) and
+            // the end (41) is equal to or greater than the highest filtered match boundary (26).
+            //                     4                                  41
+            // raw match:      |---####################################--------|
+            //                       6   10        20    26                 
+            // filtered match: |-----#####---------#######---------------------|
+            // ... where #=domain 
             if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
                 m.getModel().equals(r.getModelId()) && 
-                m.getLocationStart() == locationStart &&
-                m.getLocationEnd() == locationEnd)    {
-                Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
-                        m.getSequenceIdentifier(),
-                        m.getModel(),
-                        m.getSignatureLibraryRelease(),
-                        m.getLocationStart(),
-                        m.getLocationEnd(),
-                        m.getEvalue(),
-                        m.getScore(),
-                        m.getHmmStart(),
-                        m.getHmmEnd(),
-                        m.getHmmBounds(),
-                        m.getLocationScore(),
-                        m.getEnvelopeStart(),
-                        m.getEnvelopeEnd(),
-                        m.getExpectedAccuracy(),
-                        m.getFullSequenceBias(),
-                        m.getDomainCeValue(),
-                        m.getDomainIeValue(),
-                        m.getDomainBias(),
-                        m.getCigarAlignment());
-                if (!protein.getMatches().contains(match))   {
-                    protein.addMatch(match);
+                m.getLocationStart() <= lowestBoundary &&
+                m.getLocationEnd() >= highestBoundary)    {
+                if (!filteredProtein.getMatches().contains(m))   {
+                    // Get start and end coordinates for each split domain
+                    // For example "10:20:30:40" represents two domains: (start=10,end=20) and (start=30,end=40)
+                    // The domain string has already been split, so we have:
+                    // segments[0]=10, segments[1]=20, segments[2]=30, segments[4]=40
+                    // The even numbered array indexes contain the start position, and
+                    // the odd numbered indexes contain the end position
+                    int splitDomainStart = 0;
+                    for (int i = 0; i < segments.length; i++)   {
+                        int number = Integer.valueOf(segments[i]);
+                        int splitDomainEnd;
+                        // Even numbers (array index 0, 2, 4 ...etc) = start
+                        if (i % 2 == 0)    {
+                            splitDomainStart = number;
+                        }
+                        // Odd numbers (array index 1, 3, 5 ...etc) = end
+                        else    {
+                            splitDomainEnd = number;
+                            // Create match for each split domain
+                            Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
+                                    m.getSequenceIdentifier(),
+                                    m.getModel(),
+                                    m.getSignatureLibraryRelease(),
+                                    splitDomainStart,
+                                    splitDomainEnd,
+                                    m.getEvalue(),
+                                    m.getScore(),
+                                    m.getHmmStart(),       // TODO: What should HMM start and end be for split domains?
+                                    m.getHmmEnd(),
+                                    m.getHmmBounds(),
+                                    m.getLocationScore(),
+                                    m.getEnvelopeStart(),  // TODO: What should env start and end be for split domains?
+                                    m.getEnvelopeEnd(),
+                                    m.getExpectedAccuracy(),
+                                    m.getFullSequenceBias(),
+                                    m.getDomainCeValue(),
+                                    m.getDomainIeValue(),
+                                    m.getDomainBias(),
+                                    m.getCigarAlignment());
+                            // Add match
+                            filteredProtein.addMatch(match);
+                        }
+                    }
                 }
             }
         }
