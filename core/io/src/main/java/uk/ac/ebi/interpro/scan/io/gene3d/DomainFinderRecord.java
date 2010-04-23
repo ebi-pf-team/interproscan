@@ -37,8 +37,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @version $Id$
  */
 public final class DomainFinderRecord {
-
-    // TODO: Consider third-party TSV library for reading and writing
+   
+    public static final String SEGMENT_BOUNDARY_SEPARATOR = ":";
 
     private static final String COLUMN_SEP = "\t";
 
@@ -206,6 +206,18 @@ public final class DomainFinderRecord {
         return segmentBoundaries;
     }
 
+    public static DomainFinderRecord valueOf(Gene3dHmmer3RawMatch rawMatch) {
+        if (rawMatch == null)  {
+            throw new NullPointerException("RawMatch object is null");
+        }
+        return new DomainFinderRecord(rawMatch.getSequenceIdentifier(), rawMatch.getModel(),
+                              rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
+                              rawMatch.getHmmStart(), rawMatch.getHmmEnd(),
+                              rawMatch.getDomainIeValue(), rawMatch.getLocationScore(),
+                              rawMatch.getCigarAlignment());
+
+    }    
+
     public static DomainFinderRecord valueOf(String line) {
         String[] columns        = line.split(COLUMN_SEP);
         String sequenceId       = columns[SEQUENCE_ID_POS];
@@ -258,19 +270,6 @@ public final class DomainFinderRecord {
         }
         return builder.toString();
     }
-    
-    public static DomainFinderRecord valueOf(Gene3dHmmer3RawMatch rawMatch) {
-        if (rawMatch == null)  {
-            throw new NullPointerException("RawMatch object is null");
-        }
-        // TODO: Which evalue and score should we use?
-        return new DomainFinderRecord(rawMatch.getSequenceIdentifier(), rawMatch.getModel(),
-                              rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
-                              rawMatch.getHmmStart(), rawMatch.getHmmEnd(),
-                              rawMatch.getDomainIeValue(), rawMatch.getLocationScore(),
-                              rawMatch.getCigarAlignment());
-
-    }
 
     // TODO: Sort out Manjula code below -- IntelliJ complains that it's "too complex to analyze"
     /*
@@ -315,7 +314,7 @@ public final class DomainFinderRecord {
                      case CigarAlignmentEncoder.INSERT_CHAR:
                            insertCounter+=residueCounter;  //this is to handle two insert segment followed by each other
                            if (insertCounter >=30 && endOfMatch > startOfMatch ) {
-                               sb.append(startOfMatch).append(":").append(endOfMatch - 1).append(":");
+                               sb.append(startOfMatch).append(SEGMENT_BOUNDARY_SEPARATOR).append(endOfMatch - 1).append(SEGMENT_BOUNDARY_SEPARATOR);
                                startOfMatch=residueLength;
                                segmentCounter++;
                            }
@@ -332,7 +331,7 @@ public final class DomainFinderRecord {
 
         } //end of for
         if( endOfMatch > startOfMatch ) {
-            sb.append(startOfMatch).append(":").append(endOfMatch - 1).append(":");  //not to missout any trailing segment
+            sb.append(startOfMatch).append(SEGMENT_BOUNDARY_SEPARATOR).append(endOfMatch - 1).append(SEGMENT_BOUNDARY_SEPARATOR);  //not to missout any trailing segment
         }
         String segmentBoundaries = sb.toString().substring(0, sb.toString().length() - 1);
         return new SegmentRecord(segmentCounter, segmentBoundaries);
