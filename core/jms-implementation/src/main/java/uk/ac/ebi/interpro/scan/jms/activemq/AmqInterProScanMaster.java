@@ -112,23 +112,30 @@ public class AmqInterProScanMaster implements Master {
             startUpEmbeddedWorkers();
             createFastaFileLoadStepInstance();
 
-            LOGGER.info ("Fasta file load step instance has been created.");
+
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
-            while(! shutdownCalled && (embeddedWorkerFactory == null || stepInstanceDAO.futureStepsAvailable())){       // TODO should be while(running) to allow shutdown.
+            while(! shutdownCalled){
+                // TODO should be while(running) to allow shutdown.
+                boolean completed=true;
                 for (Job job : jobs.getJobList()){
                     // If the optional list of analyses has been passed in, only run those analyses.
                     // Otherwise, run all of them.
+
                     if (! job.isAnalysis() || analyses == null || analyses.contains(job.getId())){
                         for (Step step : job.getSteps()){
                             for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
+                                completed=false;
+                                LOGGER.debug("Step not yet completed:"+stepInstance+" "+stepInstance.getState());
                                 if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
+                                    LOGGER.debug("Step submitted:"+stepInstance);
                                     sendMessage(stepInstance);
                                 }
                             }
                         }
                     }
                 }
+                if (completed) break;
                 Thread.sleep (5000);  // Every 5 seconds, checks for any runnable StepInstances and runs them.
             }
         } catch (JMSException e) {
@@ -136,6 +143,7 @@ public class AmqInterProScanMaster implements Master {
         } catch (Exception e){
             LOGGER.error ("Exception thrown by Master", e);
         }
+        LOGGER.debug("Ending"); 
     }
 
     /**
@@ -148,6 +156,7 @@ public class AmqInterProScanMaster implements Master {
             Map<String, String> params = new HashMap<String, String>(1);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
             createStepInstancesForJob("jobLoadFromFasta", params);
+            LOGGER.info ("Fasta file load step instance has been created.");
         }
     }
 

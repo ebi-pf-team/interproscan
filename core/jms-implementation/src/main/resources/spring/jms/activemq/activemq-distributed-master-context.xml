@@ -15,6 +15,10 @@
                 useShutdownHook="true"
                 dataDirectory="${broker.journal.directory}" 
             >
+<!-- shutdownhook is the default shutdown mode for ActiveMQ, see:
+http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broker/BrokerService.html#setUseShutdownHook(boolean)
+-->
+
         <amq:transportConnectors>
             <!-- Connector for remote workers-->
             <amq:transportConnector name="remote" uri="tcp://${jms.broker.host.name}:${jms.broker.port.number}" />
