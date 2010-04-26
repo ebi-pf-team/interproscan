@@ -37,5 +37,6 @@ public interface StepInstanceDAO extends GenericDAO<StepInstance, String> {
      * Returns true if there are steps left to run
      * @return true if there are steps left to run
      */
+    @Deprecated
     boolean futureStepsAvailable();
 }
