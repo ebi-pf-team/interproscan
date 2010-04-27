@@ -14,12 +14,11 @@ import javax.jms.*;
 import java.io.File;
 import java.lang.IllegalStateException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * TODO: Description
+ * ActiveMQ worker.
  *
  * @author Phil Jones
  * @version $Id$
@@ -37,15 +36,16 @@ public class AmqInterProScanWorker implements MessageListener {
 
     private List<String> validatedDirectories = new ArrayList<String>();
 
-    private Long startTime;
-
-    private Long lastActivityTime;
-
-    private Double workDone;
-
-    private StepExecution currentStepExecution;
+    private final Object validDirectoryLock = new Object();
 
     private final UUID uniqueWorkerIdentification = UUID.randomUUID();
+
+    /**
+     * The distributed worker controller is in charge of calling 'stop' on the
+     * Spring MonitorListenerContainer when the conditions are correct.
+     * @see uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController
+     */
+    private DistributedWorkerController controller;
 
     AmqInterProScanWorker() {
     }
@@ -55,9 +55,12 @@ public class AmqInterProScanWorker implements MessageListener {
         this.jobs = jobs;
     }
 
-    @Required
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
+    }
+
+    public void setController(DistributedWorkerController controller) {
+        this.controller = controller;
     }
 
     /**
@@ -69,62 +72,63 @@ public class AmqInterProScanWorker implements MessageListener {
         this.jobResponseQueue = jobResponseQueue;
     }
 
-    /**
-     * This method should return:
-     * null, if the amount of work done is unknown
-     * a value between 0 and 1 if the proportion of work done is known.
-     *
-     * @return null, if the amount of work done is unknown
-     *         a value between 0 and 1 if the proportion of work done is known.
-     */
-    public Double getProportionOfWorkDone() {
-        return workDone;
-    }
-
     @Override
     public void onMessage(Message message) {
-        lastActivityTime = new Date().getTime();
+        final String messageId;
+
+        try {
+            messageId = message.getJMSMessageID();
+        } catch (JMSException e) {
+            LOGGER.error ("JMSException thrown in MessageListener when attempting to get the JMS Message ID.", e);
+            return;
+        }
+
+
         try{
-            if (message != null){
-                message.acknowledge();     // Acknowledge receipt of the message.
-                LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+            if (controller != null){
+                controller.jobStarted(messageId);
+            }
+            message.acknowledge();     // Acknowledge receipt of the message.
+            LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
 
-                if (! (message instanceof ObjectMessage)){
-                    LOGGER.error ("Received a message of an unknown type (non-ObjectMessage)");
-                    return;
-                }
-                ObjectMessage stepExecutionMessage = (ObjectMessage) message;
-                final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
-                currentStepExecution = stepExecution;
-                if (stepExecution == null){
-                    LOGGER.error ("An ObjectMessage was received but had no contents.");
-                    return;
-                }
-                LOGGER.debug("Message received of queue - attempting to executeInTransaction");
+            if (! (message instanceof ObjectMessage)){
+                LOGGER.error ("Received a message of an unknown type (non-ObjectMessage)");
+                return;
+            }
+            final ObjectMessage stepExecutionMessage = (ObjectMessage) message;
+            final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
+            if (stepExecution == null){
+                LOGGER.error ("An ObjectMessage was received but had no contents.");
+                return;
+            }
+            LOGGER.debug("Message received of queue - attempting to executeInTransaction");
 
-                try{
-                    executeInTransaction(stepExecution);
-                } catch (Exception e) {
+            try{
+                executeInTransaction(stepExecution);
+            } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
-                    //            running = false;
-                    LOGGER.error ("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
-                    // Something went wrong in the execution - try to send back failure
-                    // message to the broker.  This in turn may fail if it is the JMS connection
-                    // that failed during the execution.
-                    stepExecution.fail();
+                //            running = false;
+                LOGGER.error ("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
+                // Something went wrong in the execution - try to send back failure
+                // message to the broker.  This in turn may fail if it is the JMS connection
+                // that failed during the execution.
+                stepExecution.fail();
 
-                    jmsTemplate.send(jobResponseQueue, new MessageCreator(){
-                        public Message createMessage(Session session) throws JMSException {
-                            return session.createObjectMessage(stepExecution);
-                        }
-                    });
-
-                    LOGGER.debug ("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
-                }
+                jmsTemplate.send(jobResponseQueue, new MessageCreator(){
+                    public Message createMessage(Session session) throws JMSException {
+                        return session.createObjectMessage(stepExecution);
+                    }
+                });
+                LOGGER.debug ("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
             }
         }
         catch (JMSException e) {
             LOGGER.error ("JMSException thrown in MessageListener.", e);
+        }
+        finally {
+            if (controller != null){
+                controller.jobFinished(messageId);
+            }
         }
     }
 
@@ -167,55 +171,28 @@ public class AmqInterProScanWorker implements MessageListener {
                 .append(step.getJob().getId())
                 .toString();
         // Check (just the once) that the working directory exists.
-        if (! validatedDirectories.contains(directory)){
-            final File file = new File (directory);
-            if (! file.exists()){
-                if (! file.mkdirs()){
-                    throw new IllegalStateException("Unable to create the working directory " + directory);
+        synchronized(validDirectoryLock){
+            if (! validatedDirectories.contains(directory)){
+                final File file = new File (directory);
+                if (! file.exists()){
+                    if (! file.mkdirs()){
+                        throw new IllegalStateException("Unable to create the working directory " + directory);
+                    }
                 }
+                else if (! file.isDirectory()){
+                    throw new IllegalStateException ("The path " + directory + " exists, but is not a directory.");
+                }
+                else if (! file.canWrite()){
+                    throw new IllegalStateException("Unable to write to the directory " + directory);
+                }
+                validatedDirectories.add(directory);
             }
-            else if (! file.isDirectory()){
-                throw new IllegalStateException ("The path " + directory + " exists, but is not a directory.");
-            }
-            else if (! file.canWrite()){
-                throw new IllegalStateException("Unable to write to the directory " + directory);
-            }
-            validatedDirectories.add(directory);
         }
         return directory;
     }
 
-    /**
-     * Returns true if after calling System.gc, there is no
-     * evidence of a memory leak.
-     *
-     * Conservative - looks for used memory being no more
-     * than 1/3 of Xmx.
-     * @return true if all is OK.
-     */
-    private boolean possibleMemoryLeakDetected() {
-
-        System.gc();
-
-        final long Xmx = Runtime.getRuntime().maxMemory();
-        final long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        final boolean leaky = Xmx / used < 3;
-        if (leaky){
-            LOGGER.error("The JVM is full - closing down?");
-        }
-        return leaky;
-    }
-
-    public Long getStartTime() {
-        return startTime;
-    }
-
     public UUID getUniqueWorkerIdentification() {
         return uniqueWorkerIdentification;
-    }
-
-    public StepExecution getCurrentStepExecution() {
-        return currentStepExecution;
     }
 }
 

@@ -23,19 +23,49 @@
         <property name="jobs" ref="jobs"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="jmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="controller" ref="distributedWorkerController"/>
     </bean>
 
+    <bean id="distributedWorkerController" class="uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController">
+        <property name="messageListenerContainer" ref="amqDistributedWorkerJmsContainer"/>
+        <property name="maximumIdleTimeSeconds" value="${jvm.maximum.idle.time.seconds}"/>
+        <property name="maximumLifeSeconds" value="${jvm.maximum.life.seconds}"/>
+    </bean>
+    <!-- Quartz Scheduler - contains list of Quartz jobs. -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="stopWorkerLoadTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="stopWorkerLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="stopWorkerQuartzJob"/>
+        <property name="startDelay" value="2000"/>
+        <property name="repeatInterval" value="2000"/>
+    </bean>
+
+    <!-- Quartz job to load proteins from UniParc -->
+    <bean id="stopWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="distributedWorkerController"/>
+        <property name="targetMethod" value="stopIfAppropriate"/>
+    </bean>
+
+    <!-- TODO - the monitor needs to be re-written, as the Worker (which is now thread-safe) may be processing
+    several jobs at a time -->
+
     <!--<bean id="amqInterProScanMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
-        <!--<property name="connectionFactory" ref="remoteJmsFactory"/>-->
-        <!--<property name="destination" ref="workerManagerTopic"/>-->
-        <!--<property name="messageListener" ref="amqInterProScanMonitor" />-->
+    <!--<property name="connectionFactory" ref="remoteJmsFactory"/>-->
+    <!--<property name="destination" ref="workerManagerTopic"/>-->
+    <!--<property name="messageListener" ref="amqInterProScanMonitor" />-->
     <!--</bean>-->
 
     <!--<bean id="amqInterProScanMonitor" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMonitorListener">-->
-        <!--<property name="jobs" ref="jobs"/>-->
-        <!--<property name="workerManagerResponseQueue" ref="workerManagerResponseQueue"/>-->
-        <!--<property name="worker" ref="amqworker"/>-->
-        <!--<property name="jmsTemplate" ref="remoteJmsTemplate"/>-->
+    <!--<property name="jobs" ref="jobs"/>-->
+    <!--<property name="workerManagerResponseQueue" ref="workerManagerResponseQueue"/>-->
+    <!--<property name="worker" ref="amqworker"/>-->
+    <!--<property name="jmsTemplate" ref="remoteJmsTemplate"/>-->
     <!--</bean>-->
 
 </beans>

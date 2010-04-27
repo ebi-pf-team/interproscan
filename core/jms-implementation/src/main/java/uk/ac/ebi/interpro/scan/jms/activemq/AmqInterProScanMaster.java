@@ -59,6 +59,12 @@ public class AmqInterProScanMaster implements Master {
     private List<String> analyses;
 
     /**
+     * This boolean allows configuration of whether or not the Master closes down when there are no more
+     * runnable StepExecutions available.
+     */
+    private boolean closeOnCompletion;
+
+    /**
      * This OPTIONAL bean method allows an embedded Worker to be injected.
      *
      * @param embeddedWorkerFactory to do all the work!?
@@ -93,6 +99,11 @@ public class AmqInterProScanMaster implements Master {
     @Required
     public void setStepExecutionDAO(StepExecutionDAO stepExecutionDAO) {
         this.stepExecutionDAO = stepExecutionDAO;
+    }
+
+    @Required
+    public void setCloseOnCompletion(boolean closeOnCompletion) {
+        this.closeOnCompletion = closeOnCompletion;
     }
 
     public Jobs getJobs() {
@@ -135,7 +146,9 @@ public class AmqInterProScanMaster implements Master {
                         }
                     }
                 }
-                if (completed) break;
+
+                if (closeOnCompletion && completed) break;
+
                 Thread.sleep (5000);  // Every 5 seconds, checks for any runnable StepInstances and runs them.
             }
         } catch (JMSException e) {

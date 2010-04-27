@@ -26,6 +26,7 @@
         <property name="jmsTemplate" ref="InVmJmsTemplate"/>
     </bean>
 
+
     <!--<bean id="amqInterProScanMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
         <!--<property name="connectionFactory" ref="inVmJmsFactory"/>-->
         <!--<property name="destination" ref="workerManagerTopic"/>-->

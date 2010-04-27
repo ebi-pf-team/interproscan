@@ -34,6 +34,7 @@ http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broke
         <property name="jmsTemplate" ref="InVmJmsTemplate"/>
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
+        <property name="closeOnCompletion" value="false"/>
     </bean>
 
     <bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
