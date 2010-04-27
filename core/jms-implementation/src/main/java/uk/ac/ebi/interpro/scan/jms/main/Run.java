@@ -28,6 +28,8 @@ public class Run {
 
     private static final String HELP_MESSAGE_TITLE = "java -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms512M -Xmx2048M [-Dconfig=/path/to/config.properties] -jar interproscan-5.jar";
 
+    private static final int MEGA = 1024 * 1024;
+
     private enum I5Option {
         MODE("mode", "m", true, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME"),
         FASTA("fasta", "f", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH"),
@@ -82,18 +84,20 @@ public class Run {
     }
 
     private enum Mode{
-        MASTER("spring/master/master-context.xml"),
-        I5STANDALONE("spring/master/i5-single-jvm-context.xml"),
-        WORKER("spring/worker/parallel-worker-context.xml"),
-        MONITOR("spring/monitor/monitor-context.xml"),
-        INSTALLER("spring/installer/installer-context.xml"),
-        AMQSTANDALONE("spring/jms/activemq/activemq-standalone-master-context.xml"),
-        AMQMASTER("spring/jms/activemq/activemq-distributed-master-context.xml"),
-        AMQWORKER("spring/jms/activemq/activemq-distributed-worker-context.xml")
+        MASTER("master", "spring/master/master-context.xml"),
+        I5STANDALONE("i5standalone", "spring/master/i5-single-jvm-context.xml"),
+        WORKER("worker", "spring/worker/parallel-worker-context.xml"),
+        MONITOR("monitor", "spring/monitor/monitor-context.xml"),
+        INSTALLER("installer", "spring/installer/installer-context.xml"),
+        AMQSTANDALONE("amqstandalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
+        AMQMASTER("amqmaster", "spring/jms/activemq/activemq-distributed-master-context.xml"),
+        AMQWORKER(null, "spring/jms/activemq/activemq-distributed-worker-context.xml")
 
         ;
 
         private String contextXML;
+
+        private String runnableBean;
 
         private static String commaSepModeList;
 
@@ -106,8 +110,18 @@ public class Run {
             commaSepModeList = sb.toString();
         }
 
-        private Mode(String contextXml){
+        /**
+         * Constructor for modes.
+         * @param runnableBean Optional bean that implements Runnable.
+         * @param contextXml being the Spring context.xml file to load.
+         */
+        private Mode(String runnableBean, String contextXml){
+            this.runnableBean = runnableBean;
             this.contextXML = contextXml;
+        }
+
+        public String getRunnableBean() {
+            return runnableBean;
         }
 
         public String getContextXML() {
@@ -161,7 +175,8 @@ public class Run {
 
             String config=System.getProperty("config");
             LOGGER.info("Welcome to InterProScan v5");
-            LOGGER.info("Memory free: "+Runtime.getRuntime().freeMemory()+" total: "+Runtime.getRuntime().totalMemory()+" max: "+Runtime.getRuntime().maxMemory());
+
+            LOGGER.info("Memory free: "+Runtime.getRuntime().freeMemory() / MEGA +"MB total: "+Runtime.getRuntime().totalMemory() / MEGA +"MB max: "+Runtime.getRuntime().maxMemory() / MEGA + "MB");
             LOGGER.info("Running as: "+ mode);
             if (config==null){
                 LOGGER.info("No custom config used. Use java -Dconfig=config/my.properties");
@@ -172,28 +187,30 @@ public class Run {
 
             AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String []{mode.getContextXML()});
             ctx.registerShutdownHook();
-            Runnable runnable = (Runnable) ctx.getBean(modeArgument);
+            if (mode.getRunnableBean() != null){
+                Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
 
-            // Set command line parameters on Master.
-            if (runnable instanceof Master){
-                Master master = (Master) runnable;
-                if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())){
-                    master.setFastaFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()));
+                // Set command line parameters on Master.
+                if (runnable instanceof Master){
+                    Master master = (Master) runnable;
+                    if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())){
+                        master.setFastaFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()));
+                    }
+                    if (parsedCommandLine.hasOption(I5Option.OUT_FILE.getLongOpt())){
+                        master.setOutputFile(parsedCommandLine.getOptionValue(I5Option.OUT_FILE.getLongOpt()));
+                    }
+                    if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMAT.getLongOpt())){
+                        master.setOutputFormat(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FORMAT.getLongOpt()));
+                    }
+                    if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())){
+                        master.setAnalyses(parsedCommandLine.getOptionValue(I5Option.ANALYSES.getLongOpt()));
+                    }
                 }
-                if (parsedCommandLine.hasOption(I5Option.OUT_FILE.getLongOpt())){
-                    master.setOutputFile(parsedCommandLine.getOptionValue(I5Option.OUT_FILE.getLongOpt()));
-                }
-                if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMAT.getLongOpt())){
-                    master.setOutputFormat(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FORMAT.getLongOpt()));
-                }
-                if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())){
-                    master.setAnalyses(parsedCommandLine.getOptionValue(I5Option.ANALYSES.getLongOpt()));
-                }
+
+                // TODO Currently silently ignores command line parameters that are not appropriate for the mode.
+
+                runnable.run();
             }
-
-            // TODO Currently silently ignores command line parameters that are not appropriate for the mode.
-
-            runnable.run();
             ctx.close();
         }
         catch( ParseException exp ) {

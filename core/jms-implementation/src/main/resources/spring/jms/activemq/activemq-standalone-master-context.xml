@@ -25,6 +25,7 @@
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="jmsTemplate" ref="InVmJmsTemplate"/>
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
+        <property name="closeOnCompletion" value="true"/>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">

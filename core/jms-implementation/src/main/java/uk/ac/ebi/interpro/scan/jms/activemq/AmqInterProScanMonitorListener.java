@@ -3,14 +3,11 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessagePostProcessor;
-import uk.ac.ebi.interpro.scan.jms.worker.WorkerMonitor;
-import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
-import javax.jms.*;
-import java.net.UnknownHostException;
+import javax.jms.Destination;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
 /**
  * TODO: Description
@@ -51,8 +48,13 @@ public class AmqInterProScanMonitorListener implements MessageListener {
         this.jobs = jobs;
     }
 
+
+    /**
+     * TODO - needs to be re-written as the AmqInterProScanWorker may be used in multiple threads.
+     * @param message
+     */
     public void onMessage(Message message) {
-        try{
+        /*try{
             if (message instanceof TextMessage){
                 final TextMessage managementRequest = (TextMessage) message;
                 managementRequest.acknowledge();     // TODO - when should message receipt be acknowledged?
@@ -97,6 +99,6 @@ public class AmqInterProScanMonitorListener implements MessageListener {
             LOGGER.error("JMSException thrown by InterProScanMonitorListener", e);
         } catch (UnknownHostException e) {
             LOGGER.error("UnknownHostException thrown by InterProScanMonitorListener", e);
-        }
+        }*/
     }
 }
