@@ -4,17 +4,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.management.model.Jobs;
-import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import javax.jms.*;
-import java.io.File;
-import java.lang.IllegalStateException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -32,11 +24,7 @@ public class AmqInterProScanWorker implements MessageListener {
 
     private Destination jobResponseQueue;
 
-    private Jobs jobs;
-
-    private List<String> validatedDirectories = new ArrayList<String>();
-
-    private final Object validDirectoryLock = new Object();
+    private StepExecutionTransaction stepExecutor;
 
     private final UUID uniqueWorkerIdentification = UUID.randomUUID();
 
@@ -50,17 +38,17 @@ public class AmqInterProScanWorker implements MessageListener {
     AmqInterProScanWorker() {
     }
 
-    @Required
-    public void setJobs(Jobs jobs) {
-        this.jobs = jobs;
-    }
-
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
     }
 
     public void setController(DistributedWorkerController controller) {
         this.controller = controller;
+    }
+
+    @Required
+    public void setStepExecutor(StepExecutionTransaction stepExecutor) {
+        this.stepExecutor = stepExecutor;
     }
 
     /**
@@ -83,12 +71,11 @@ public class AmqInterProScanWorker implements MessageListener {
             return;
         }
 
-
         try{
             if (controller != null){
                 controller.jobStarted(messageId);
             }
-            message.acknowledge();     // Acknowledge receipt of the message.
+
             LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
 
             if (! (message instanceof ObjectMessage)){
@@ -104,7 +91,7 @@ public class AmqInterProScanWorker implements MessageListener {
             LOGGER.debug("Message received of queue - attempting to executeInTransaction");
 
             try{
-                executeInTransaction(stepExecution);
+                stepExecutor.executeInTransaction(stepExecution, message);
             } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
@@ -119,8 +106,11 @@ public class AmqInterProScanWorker implements MessageListener {
                         return session.createObjectMessage(stepExecution);
                     }
                 });
+                message.acknowledge(); // Acknowledge message following failure.
+
                 LOGGER.debug ("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
             }
+
         }
         catch (JMSException e) {
             LOGGER.error ("JMSException thrown in MessageListener.", e);
@@ -132,67 +122,7 @@ public class AmqInterProScanWorker implements MessageListener {
         }
     }
 
-    /**
-     * Executing the StepInstance and responding to the JMS Broker
-     * if the execution is successful.
-     * @param stepExecution          The StepExecution to run.
-     */
-    @Transactional
-    private void executeInTransaction(final StepExecution stepExecution){
-        stepExecution.setToRun();
-        final StepInstance stepInstance = stepExecution.getStepInstance();
-        final Step step = stepInstance.getStep(jobs);
-        LOGGER.debug("Step ID: "+ step.getId());
-        LOGGER.debug("Step instance: " + stepInstance);
-        LOGGER.debug("Step execution id: " + stepExecution.getId());
-        step.execute(stepInstance, getValidWorkingDirectory(step));
-        stepExecution.completeSuccessfully();
-        LOGGER.debug ("Successful run of Step.executeInTransaction() method for StepExecution ID: " + stepExecution.getId());
-
-        jmsTemplate.send(jobResponseQueue, new MessageCreator(){
-            public Message createMessage(Session session) throws JMSException {
-                return session.createObjectMessage(stepExecution);
-            }
-        });
-
-        LOGGER.debug("Followed by successful reply to the JMS Broker and acknowledgement of the message.");
-    }
-
-    /**
-     * Builds the path to the directory in which the work should be performed and checks that it
-     * exists and is writable.  (Also attempts to create this directory if it does not exist.)
-     * @param step being the step for which the directory should be returned
-     * @return the path of the working directory.
-     */
-    String getValidWorkingDirectory(Step step){
-        final String directory = new StringBuilder()
-                .append(jobs.getBaseDirectoryTemporaryFiles())
-                .append('/')
-                .append(step.getJob().getId())
-                .toString();
-        // Check (just the once) that the working directory exists.
-        synchronized(validDirectoryLock){
-            if (! validatedDirectories.contains(directory)){
-                final File file = new File (directory);
-                if (! file.exists()){
-                    if (! file.mkdirs()){
-                        throw new IllegalStateException("Unable to create the working directory " + directory);
-                    }
-                }
-                else if (! file.isDirectory()){
-                    throw new IllegalStateException ("The path " + directory + " exists, but is not a directory.");
-                }
-                else if (! file.canWrite()){
-                    throw new IllegalStateException("Unable to write to the directory " + directory);
-                }
-                validatedDirectories.add(directory);
-            }
-        }
-        return directory;
-    }
-
     public UUID getUniqueWorkerIdentification() {
         return uniqueWorkerIdentification;
     }
 }
-

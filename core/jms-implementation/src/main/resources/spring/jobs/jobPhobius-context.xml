@@ -46,6 +46,7 @@
         <property name="fullPathToBinary"                   value="${binary.phobius.pl.path}"/>
         <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
         <property name="phobiusOutputFileNameTemplate"      ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="retries"                            value="3"/>
     </bean>
 
     <bean id="stepPhobiusDeleteFastaFile"
@@ -66,6 +67,7 @@
         <property name="phobiusOutputFileNameTemplate"      ref="rawAnalaysisOutputFileTemplate"/>
         <property name="phobiusMatchDAO"                    ref="phobiusMatchDAO"/>
         <property name="parser"                             ref="phobiusParser"/>
+        <property name="retries"                            value="3"/>
     </bean>
 
     <bean id="stepPhobiusDeleteBinaryOutputFile"

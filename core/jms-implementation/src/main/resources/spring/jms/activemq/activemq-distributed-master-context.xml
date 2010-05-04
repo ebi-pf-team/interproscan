@@ -10,7 +10,8 @@
     <import resource="../../jobs/all-jobs-context.xml"/>
 
     <!--  lets create an embedded ActiveMQ Broker -->
-    <amq:broker useJmx="false"
+    <amq:broker id="i5_broker"
+                useJmx="true"
                 persistent="true"
                 useShutdownHook="true"
                 dataDirectory="${broker.journal.directory}" 

@@ -51,6 +51,7 @@
         <property name="fullPathToHmmFile"                  value="${gene3d.hmm.path}"/>
         <property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
+        <property name="retries"                            value="3"/>
     </bean>
 
     <bean id="stepGene3dDeleteFastaFile"
@@ -84,6 +85,7 @@
                 </property>
             </bean>
         </property>
+        <property name="retries"                            value="3"/>
     </bean>
 
     <bean id="stepGene3dDeleteHmmerOutput"
