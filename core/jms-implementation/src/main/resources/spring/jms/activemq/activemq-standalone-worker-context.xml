@@ -18,12 +18,19 @@
         <property name="maxConcurrentConsumers" value="${number.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+        <property name="autoStartup" value="true"/> 
     </bean>
 
     <bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
-        <property name="jobs" ref="jobs"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="jmsTemplate" ref="InVmJmsTemplate"/>
+        <property name="stepExecutor" ref="embeddedStepExecutor"/>
+    </bean>
+
+    <bean id="embeddedStepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
+        <property name="jobs" ref="jobs"/>
+        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
     </bean>
 
 

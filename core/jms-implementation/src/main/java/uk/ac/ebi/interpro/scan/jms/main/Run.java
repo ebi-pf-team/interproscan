@@ -91,7 +91,7 @@ public class Run {
         INSTALLER("installer", "spring/installer/installer-context.xml"),
         AMQSTANDALONE("amqstandalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
         AMQMASTER("amqmaster", "spring/jms/activemq/activemq-distributed-master-context.xml"),
-        AMQWORKER(null, "spring/jms/activemq/activemq-distributed-worker-context.xml")
+        AMQWORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml")
 
         ;
 

@@ -55,6 +55,7 @@
         <property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>
         <property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
+        <property name="retries"                            value="3"/>
     </bean>
 
     <bean id="stepPfamADeleteFastaFile"
@@ -76,6 +77,7 @@
         <property name="parser"                             ref="pfamAHmmer3SearchParser"/>
         <property name="serialGroup"                        value="PARSE_HMMER_3"/>
         <property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>
+        <property name="retries"                            value="3"/>
     </bean>
 
     <bean id="stepPfamADeleteHmmerOutput"

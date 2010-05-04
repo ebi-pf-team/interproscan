@@ -15,41 +15,28 @@
         <property name="connectionFactory" ref="remoteJmsFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="amqworker" />
-        <property name="sessionTransacted" value="true"/>
+        <property name="sessionTransacted" value="false"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="10000"/>
     </bean>
 
     <bean id="amqworker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
-        <property name="jobs" ref="jobs"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="jmsTemplate" ref="remoteJmsTemplate"/>
         <property name="controller" ref="distributedWorkerController"/>
+        <property name="stepExecutor" ref="stepExecutor"/>
+    </bean>
+
+    <bean id="stepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
+        <property name="jobs" ref="jobs"/>
+        <property name="jmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
     </bean>
 
     <bean id="distributedWorkerController" class="uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController">
         <property name="messageListenerContainer" ref="amqDistributedWorkerJmsContainer"/>
         <property name="maximumIdleTimeSeconds" value="${jvm.maximum.idle.time.seconds}"/>
         <property name="maximumLifeSeconds" value="${jvm.maximum.life.seconds}"/>
-    </bean>
-    <!-- Quartz Scheduler - contains list of Quartz jobs. -->
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="triggers">
-            <list>
-                <ref bean="stopWorkerLoadTrigger"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="stopWorkerLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-        <property name="jobDetail" ref="stopWorkerQuartzJob"/>
-        <property name="startDelay" value="2000"/>
-        <property name="repeatInterval" value="2000"/>
-    </bean>
-
-    <!-- Quartz job to load proteins from UniParc -->
-    <bean id="stopWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="distributedWorkerController"/>
-        <property name="targetMethod" value="stopIfAppropriate"/>
     </bean>
 
     <!-- TODO - the monitor needs to be re-written, as the Worker (which is now thread-safe) may be processing
