@@ -45,7 +45,9 @@ public class ChunkerSingleton implements Chunker{
         }
         if (chunks != null){
             for (String chunk : chunks){
-                buf.append(chunk);
+                if (chunk != null){
+                    buf.append(chunk);
+                }
             }
         }
         return (buf.length() == 0) ? null : buf.toString();
@@ -62,7 +64,7 @@ public class ChunkerSingleton implements Chunker{
         if (text == null){
             return Collections.emptyList();
         }
-        int chunkCount = text.length() / CHUNK_SIZE;   // The resulting value is one less than the number of chunks, but using this in the loop which starts at 0.
+        int chunkCount = (text.length() - 1) / CHUNK_SIZE;   // The resulting value is one less than the number of chunks, but using this in the loop which starts at 0.
         for (int offset = 0; offset <= chunkCount; offset++) {
             if (offset < chunkCount) {
                 chunks.add(
