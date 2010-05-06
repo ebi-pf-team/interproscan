@@ -32,6 +32,8 @@ public class AmqInterProScanMaster implements Master {
 
     private JmsTemplate jmsTemplate;
 
+    private final Object jmsTemplateLock = new Object();
+
     private Jobs jobs;
 
     private StepInstanceDAO stepInstanceDAO;
@@ -231,17 +233,24 @@ public class AmqInterProScanMaster implements Master {
         final StepExecution stepExecution = stepInstance.createStepExecution();
         stepExecutionDAO.insert(stepExecution);
         stepExecution.submit(stepExecutionDAO);
+        if (! jmsTemplate.isExplicitQosEnabled()){
+            throw new IllegalStateException ("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
+        }
 
-        jmsTemplate.setPriority(stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 7);
-        jmsTemplate.send(workerJobRequestQueue, new MessageCreator(){
-            public Message createMessage(Session session) throws JMSException {
-                return session.createObjectMessage(stepExecution);
-            }
-        });
+        final int priority = stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 8;
+
+        synchronized (jmsTemplateLock){
+            jmsTemplate.setPriority(priority);
+            jmsTemplate.send(workerJobRequestQueue, new MessageCreator(){
+                public Message createMessage(Session session) throws JMSException {
+                    return session.createObjectMessage(stepExecution);
+                }
+            });
+        }
 
 
         if (parallelWorkerRunner != null){ // Not mandatory (e.g. in single-jvm implementation)
-            parallelWorkerRunner.startupNewWorker();
+            parallelWorkerRunner.startupNewWorker(priority);
         }
     }
 

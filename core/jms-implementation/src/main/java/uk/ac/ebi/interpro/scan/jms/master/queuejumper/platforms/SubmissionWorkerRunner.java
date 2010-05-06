@@ -1,11 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
 
 
 /**
@@ -24,11 +21,25 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.submissionCommand = submissionCommand;
     }
 
+    /**
+     * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
+     * Assumes that the jar being executed has a main class define in the MANIFEST.
+     */
     @Override
     public void startupNewWorker() {
+        final int priority = (Math.random() < 0.5) ? 4 : 8;
+        startupNewWorker(priority);
+    }
+
+    @Override
+    public void startupNewWorker(int priority) {
         try{
             String command=submissionCommand;
             command=command.replaceAll("%config%",System.getProperty("config"));
+            
+            if (priority > 0){
+                command = command + " --priority=" + priority;
+            }
             
             System.out.println("Submitted Command: " + command);
             Runtime.getRuntime().exec(command);

@@ -25,6 +25,8 @@
                 </property>
             </bean>
         </property>
+        <property name="explicitQosEnabled" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
     </bean>
 
     <!--<bean id="consumerJmsTemplate" class="org.springframework.jms.core.JmsTemplate">-->
