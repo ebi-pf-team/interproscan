@@ -17,6 +17,7 @@ package uk.ac.ebi.interpro.scan.business.filter;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderResourceWriter;
@@ -170,11 +171,12 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
             // raw match:      |---####################################--------|
             //                       6   10        20    26                 
             // filtered match: |-----#####---------#######---------------------|
-            // ... where #=domain 
+            // ... where #=domain
             if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
                 m.getModel().equals(r.getModelId()) && 
                 m.getLocationStart() <= lowestBoundary &&
-                m.getLocationEnd() >= highestBoundary)    {
+                m.getLocationEnd() >= highestBoundary &&
+                m.getEvalue() == r.getEvalue())    {
                 if (!filteredProtein.getMatches().contains(m))   {
                     // Get start and end coordinates for each split domain
                     // For example "10:20:30:40" represents two domains: (start=10,end=20) and (start=30,end=40)

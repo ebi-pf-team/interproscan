@@ -26,7 +26,7 @@ public final class PersistenceConversion {
 
     /**
      * Returns antilog(x), the original value that was converted for persistence.
-     * Rounded to 7 sig fig.
+     * Rounded to 7 significant figures.
      *
      * @param   x Value
      * @return antilog(x)
@@ -41,6 +41,7 @@ public final class PersistenceConversion {
      * For use in equals methods, where the value may have been converted to log10 and
      * back again, causing rounding errors.  Returns true if the values are only
      * minutely different.
+     * 
      * @param a first value
      * @param b second value
      * @return true if the different in ratio is less than ACCEPTABLE_RATIO_DIFFERENCE
