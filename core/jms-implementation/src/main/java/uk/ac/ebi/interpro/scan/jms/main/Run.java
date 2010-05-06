@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 
 /**
@@ -36,6 +37,7 @@ public class Run {
         OUTPUT_FORMAT("output-format", "F", false, "Optional output format. One of: XML ... (other formats to follow?)", "OUTPUT-FORMAT"),
         OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH"),
         ANALYSES("analyses", "a", false, "Optional colon-separated list of analyses.  If this option is not set, ALL analyses will be run.", "ANALYSES_COLON_SEPARATED"),
+        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY")
         ;
 
         private String longOpt;
@@ -204,6 +206,17 @@ public class Run {
                     }
                     if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())){
                         master.setAnalyses(parsedCommandLine.getOptionValue(I5Option.ANALYSES.getLongOpt()));
+                    }
+                }
+
+                if (runnable instanceof DistributedWorkerController){
+                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt())){
+                        final DistributedWorkerController workerController = (DistributedWorkerController) runnable;
+                        final int priority = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.PRIORITY.getLongOpt()));
+                        if (priority < 0 || priority > 9){
+                            throw new IllegalStateException ("The JMS priority value must be an integer between 0 and 9.  The value passed in is " + priority);
+                        }
+                        workerController.setMinimumJmsPriority(priority);
                     }
                 }
 

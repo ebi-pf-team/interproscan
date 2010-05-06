@@ -35,6 +35,7 @@ public class DistributedWorkerController implements Runnable{
     private final Object jobListLock        = new Object();
 
     private DefaultMessageListenerContainer messageListenerContainer;
+    private int priority;
 
     public void setMaximumIdleTimeSeconds(Long maximumIdleTime) {
         this.maximumIdleTimeMillis = maximumIdleTime * 1000;
@@ -47,6 +48,7 @@ public class DistributedWorkerController implements Runnable{
     @Required
     public void setMessageListenerContainer(DefaultMessageListenerContainer messageListenerContainer) {
         this.messageListenerContainer = messageListenerContainer;
+        setListenerMinimumPriority();
     }
 
     public void jobStarted(String jmsMessageId){
@@ -112,6 +114,22 @@ public class DistributedWorkerController implements Runnable{
             }
         } catch (InterruptedException e) {
             LOGGER.error ("InterruptedException thrown by DistributedWorkerController.  Stopping now.", e);
+        }
+    }
+
+    public void setMinimumJmsPriority(int priority) {
+        this.priority = priority;
+        setListenerMinimumPriority();
+    }
+
+    /**
+     * Gets called after either the priority of the messageListenerContainer get set,
+     * to ensure that the priority being listened for is set (if required).
+     */
+    private void setListenerMinimumPriority() {
+        if (this.messageListenerContainer != null && priority > 0){
+            LOGGER.info("This worker has been set to receive messages with priority >= " + priority);
+            messageListenerContainer.setMessageSelector("JMSPriority >= " + priority);
         }
     }
 }
