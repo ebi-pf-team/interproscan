@@ -29,7 +29,8 @@ public abstract class AbstractResourceWriter<T> implements ResourceWriter<T> {
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(resource.getFile(), append));
-            for (T record : records)    {
+            final Collection<T> sortedRecords = sort(records);
+            for (T record : sortedRecords)    {
                 writer.write(createLine(record));
                 writer.newLine();
             }
@@ -39,6 +40,16 @@ public abstract class AbstractResourceWriter<T> implements ResourceWriter<T> {
                 writer.close();
             }
         }
+    }
+
+    /**
+     * Returns sorted records. This implementation simply returns the records without sorting.
+     *
+     * @param  records Collection to sort
+     * @return Sorted records.
+     */
+    protected Collection<T> sort(Collection<T> records) {
+        return records;
     }
 
     protected abstract String createLine(T record);

@@ -17,4 +17,16 @@
         <constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/gene3d-matches.output.ssf"/>
     </bean>
 
+    <!--<bean id="rawMatches" class="org.springframework.core.io.ClassPathResource">-->
+        <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/UPI0000001B96.raw"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="filteredMatches" class="org.springframework.core.io.ClassPathResource">-->
+        <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/UPI0000001B96.fil"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="filteredSsf" class="org.springframework.core.io.ClassPathResource">-->
+        <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/UPI0000001B96.output.ssf"/>-->
+    <!--</bean>-->
+
 </beans>

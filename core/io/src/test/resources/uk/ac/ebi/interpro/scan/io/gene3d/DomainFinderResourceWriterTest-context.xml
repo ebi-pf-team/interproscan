@@ -9,9 +9,10 @@
     <bean id="file" class="org.springframework.core.io.FileSystemResource">
         <constructor-arg value="target/DomainFinderResourceWriter.ssf"/>
     </bean>
-    
+
+    <!--Sorted by e-value and sequence.start-->
     <bean id="expectedFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/gene3d/2hxsA00.ssf"/>
+        <constructor-arg value="data/gene3d/2hxsA00-sorted.ssf"/>
     </bean>
 
  </beans>
