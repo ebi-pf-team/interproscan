@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,6 +46,7 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                         // Store previous record, if it exists.
                         if (currentId != null){
                             if (first && LOGGER.isDebugEnabled()){
+                                first = false;
                                 LOGGER.debug ("About to call the ProteinLoader.store method (logged first time only).");
                                 LOGGER.debug ("Current sequence: " + currentSequence);
                                 LOGGER.debug ("Current id: " + currentId);
