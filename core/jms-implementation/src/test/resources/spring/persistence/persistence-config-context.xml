@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+    <!-- Using AspectJ for AOP -->
+    <!--<aop:aspectj-autoproxy/>-->
+    
+    <!-- JPA Configuration -->
+    <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>-->
+
+    
+    <import resource="datasource-context.xml"/>
+    
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="interproDataSource"/>
+        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence" />
+        <property name="jpaProperties">
+            <map>
+                <entry key="hibernate.show_sql" value="${hibernate.show_sql}"/>
+                <entry key="hibernate.format_sql" value="${hibernate.format_sql}"/>
+                <entry key="hibernate.dialect" value="${hibernate.dialect}"/>
+                <entry key="hibernate.default_schema" value="${hibernate.default_schema}"/>
+                <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
+                <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch.size}"/>
+                <entry key="hibernate.hbm2ddl.auto" value="update"/>
+            </map>
+        </property>
+    </bean>
+    
+
+</beans>

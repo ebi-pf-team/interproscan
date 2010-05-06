@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- Import common beans -->
+    <!--<import resource="job-load-from-fasta-spring.xml"/>-->
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!--<import resource="../uapro-db-access-context.xml"/>-->
+
+    <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
+        <property name="jobList">
+            <list>
+                <ref bean="jobLoadFromFasta"/>
+                <ref bean="jobTest"/>
+            </list>
+        </property>
+        <property name="baseDirectoryTemporaryFiles" value="./"/>
+    </bean>
+
+    <!-- ######################## JOB: job-load-from-fasta ############################  -->
+    <bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"                        value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="analysis"                           value="false"/>
+    </bean>
+
+
+    <!-- STEP 1 -->
+    <bean id="stepLoadFromFasta"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <property name="job"                                ref="jobLoadFromFasta"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription"                    value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins"  value="false"/>
+        <property name="retries"                            value="2"/>
+        <property name="serialGroup"                        value="LOAD_PROTEINS"/>
+        <property name="fastaFileLoader"                    ref="fastaFileLoader"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromFasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## JOB: jobTest ############################  -->
+
+    <bean id="jobTest" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"                        value="Junit test job"/>
+        <property name="analysis"                           value="false"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobTest !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="fastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
+        <property name="proteinLoader" ref="proteinLoader"/>
+    </bean>
+
+    <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
+        <property name="proteinInsertBatchSize" value="500"/> <!-- MUST NOT EXCEED 1000 -->
+        <property name="proteinLoadListener" ref="proteinLoadListener"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="jobs" ref="jobs"/>
+    </bean>
+
+</beans>
+
