@@ -15,7 +15,7 @@
        </fileSet>
 
        <fileSet>
-           <directory>/nfs/seqdb/production/interpro/production/interproscan-5/support</directory>
+           <directory>${mvn.ebi.interproscan5.support}</directory>                      
            <outputDirectory>support</outputDirectory>
            <fileMode>0755</fileMode>
        </fileSet>
