@@ -115,6 +115,13 @@ public class StepInstance implements Serializable {
         stepParameters.put(key, value);
     }
 
+    public void addStepParameters(Map<String, String> stepParameters) {
+        if (this.stepParameters == null){
+            this.stepParameters = new HashMap<String, String>();
+        }
+        this.stepParameters.putAll(stepParameters);        
+    }
+
     /**
      * Retrieve arbitrary step parameters.
      * @return Map of parameters (key, value pairs in a Map).
@@ -122,6 +129,8 @@ public class StepInstance implements Serializable {
     public Map<String, String> getStepParameters() {
         return stepParameters;
     }
+
+
 
     /**
      * Don't use this! Only here because required by JPA for persistence.
@@ -234,6 +243,16 @@ public class StepInstance implements Serializable {
         return false;
     }
 
+
+    // todo: check thread safety
+    public boolean haveFinished(Jobs jobs){
+        if (StepExecutionState.STEP_EXECUTION_SUCCESSFUL==getState()) return true;
+        if (StepExecutionState.STEP_EXECUTION_FAILED == getState() && this.getExecutions().size() >= this.getStep(jobs).getRetries()) return true;
+        return false;
+    }
+        
+
+
     public Set<StepExecution> getExecutions() {
         return executions;
     }
@@ -308,4 +327,6 @@ public class StepInstance implements Serializable {
         sb.append('}');
         return sb.toString();
     }
+
+
 }
