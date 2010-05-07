@@ -31,6 +31,16 @@ public class Jobs {
         return new ArrayList<Job>( jobMap.values() );
     }
 
+    /**
+     * Spring constructor
+     */
+    public Jobs() {
+    }
+
+    public Jobs(List<Job> jobList) {
+        setJobList(jobList);
+    }
+
     @Required
     public void setJobList(List<Job> jobList) {
         this.jobMap = new HashMap<String, Job>(jobList.size());
@@ -64,6 +74,14 @@ public class Jobs {
             }
         }
         return stepMap.get(stepId);
+    }
+
+    public Jobs subset(String[] ids) {
+        List<Job> subsetJobs=new ArrayList<Job>();
+        for (String id : ids) {
+            subsetJobs.add(jobMap.get(id));
+        }
+        return new Jobs(subsetJobs);
     }
 
     @Override
