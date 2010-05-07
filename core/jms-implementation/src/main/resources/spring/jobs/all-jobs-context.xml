@@ -20,6 +20,7 @@
             <list>
                 <ref bean="jobLoadFromFasta"/>
                 <ref bean="jobLoadFromUniParc"/>
+                <ref bean="jobWriteOutput"/>
 
                 <!-- Analyses -->
                 <ref bean="jobPfamA"/>
@@ -58,7 +59,11 @@
         <property name="retries"                            value="2"/>
         <property name="serialGroup"                        value="LOAD_PROTEINS"/>
         <property name="fastaFileLoader"                    ref="fastaFileLoader"/>
+        <property name="jobs"                               ref="jobs"/>
+        <property name="stepInstanceDAO"                    ref="stepInstanceDAO"/>
     </bean>
+
+
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromFasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
@@ -79,6 +84,25 @@
         <property name="uniparcLoader"                      ref="uniparcLoader"/>
     </bean>
 
+    <!-- ######################## JOB: writeOut ############################  -->
+    <bean id="jobWriteOutput" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"                        value="Write output for proteins when analysis finished"/>
+        <property name="analysis"                           value="false"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepWriteOutput"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep">
+        <property name="job"                                ref="jobWriteOutput"/>
+        <!-- This step is made dependent on the steps created by the protein load listener -->
+        <property name="stepDescription"                    value="Write output for completed analysis"/>
+        <property name="createStepInstancesForNewProteins"  value="false"/>
+        <property name="retries"                            value="0"/>
+        <!--<property name="serialGroup"                        value="LOAD_PROTEINS"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+
+
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
@@ -94,6 +118,7 @@
 
     <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="completionJob" ref="jobWriteOutput"/>
         <property name="jobs" ref="jobs"/>
     </bean>
 
