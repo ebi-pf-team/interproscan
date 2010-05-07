@@ -37,6 +37,7 @@
         <mvn.worker.job.response.queue>worker_job_response_queue</mvn.worker.job.response.queue>
         <mvn.worker.manager.topic>worker_manager_topic</mvn.worker.manager.topic>
         <mvn.worker.manager.response.queue>worker_manager_response_queue</mvn.worker.manager.response.queue>
+        <mvn.ebi.interproscan5.support>/nfs/seqdb/production/interpro/production/interproscan-5/support</mvn.ebi.interproscan5.support>        
     </properties>
 
     <dependencies>
