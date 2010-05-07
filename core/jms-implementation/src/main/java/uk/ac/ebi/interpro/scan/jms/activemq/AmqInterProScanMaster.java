@@ -11,6 +11,7 @@ import uk.ac.ebi.interpro.scan.jms.worker.EmbeddedWorkerFactory;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.*;
+import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep;
 
 import javax.jms.Destination;
@@ -58,7 +59,7 @@ public class AmqInterProScanMaster implements Master {
 
     private String outputFormat;
 
-    private List<String> analyses;
+    private String analyses;
 
     /**
      * This boolean allows configuration of whether or not the Master closes down when there are no more
@@ -135,18 +136,19 @@ public class AmqInterProScanMaster implements Master {
                     // If the optional list of analyses has been passed in, only run those analyses.
                     // Otherwise, run all of them.
 
-                    if (! job.isAnalysis() || analyses == null || analyses.contains(job.getId())){
+                    //if (! job.isAnalysis() || analyses == null || analyses.contains(job.getId())){
+                        LOGGER.debug("Finding uncompleted steps");
                         for (Step step : job.getSteps()){
                             for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
-                                completed=false;
-                                LOGGER.debug("Step not yet completed:"+stepInstance+" "+stepInstance.getState());
+                                completed&=stepInstance.haveFinished(jobs);                                
+                                LOGGER.debug("Step not yet completed:"+stepInstance+" "+stepInstance.getState()+" "+stepInstance.canBeSubmitted(jobs)+" "+stepInstanceDAO.serialGroupCanRun(stepInstance, jobs));
                                 if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
                                     LOGGER.debug("Step submitted:"+stepInstance);
                                     sendMessage(stepInstance);
                                 }
                             }
                         }
-                    }
+                    //} 
                 }
 
                 if (closeOnCompletion && completed) break;
@@ -170,6 +172,9 @@ public class AmqInterProScanMaster implements Master {
         if (fastaFilePath != null) {
             Map<String, String> params = new HashMap<String, String>(1);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
+            params.put(FastaFileLoadStep.ANALYSIS_JOB_NAMES_KEY, analyses);
+            params.put(FastaFileLoadStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
+            params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, fastaFilePath.replaceAll("\\.fasta","")+".tsv");
             createStepInstancesForJob("jobLoadFromFasta", params);
             LOGGER.info ("Fasta file load step instance has been created.");
         }
@@ -285,13 +290,12 @@ public class AmqInterProScanMaster implements Master {
     }
 
     /**
-     * Optionally, set the analyses that should be run.  If not set (so analysisArray remains null),
-     * all analyses will be run.
-     * @param analyses the analyses that should be run.  If not set, all analyses will be run.
+     * Optionally, set the analyses that should be run.
+     * If not set, or set to null, all analyses will be run.
+     * @param analyses a comma separated list of analyses (job names) that should be run. Null for all jobs.
      */
     @Override
     public void setAnalyses(String analyses) {
-        String[] analysisArray = analyses.split(":");
-        this.analyses = Arrays.asList(analysisArray);
+        this.analyses = analyses;
     }
 }
