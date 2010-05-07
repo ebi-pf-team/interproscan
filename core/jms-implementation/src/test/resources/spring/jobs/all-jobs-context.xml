@@ -36,7 +36,9 @@
         <property name="createStepInstancesForNewProteins"  value="false"/>
         <property name="retries"                            value="2"/>
         <property name="serialGroup"                        value="LOAD_PROTEINS"/>
-        <property name="fastaFileLoader"                    ref="fastaFileLoader"/>
+        <property name="fastaFileLoader"                    ref="fastaFileLoader"/>        
+        <property name="jobs"                               ref="jobs"/>
+        <property name="stepInstanceDAO"                    ref="stepInstanceDAO"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromFasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
