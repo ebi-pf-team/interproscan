@@ -88,13 +88,17 @@ public class ProteinLoader implements Serializable {
         }
     }
 
-    public void persist(){
+    public void persist(ProteinLoadListener proteinLoadListener){
         persistBatch();
         // Create StepInstances here...
         LOGGER.debug("About to call ProteinLoadListener.createStepInstances()");
         proteinLoadListener.createStepInstances(bottomProteinId, topProteinId);
         bottomProteinId = null;
         topProteinId = null;
+    }
+
+    public void persist(){
+        persist(proteinLoadListener);
     }
 
 

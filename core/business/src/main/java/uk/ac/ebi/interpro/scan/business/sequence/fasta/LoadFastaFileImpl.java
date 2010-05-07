@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
 
 import java.io.BufferedReader;
@@ -30,7 +31,7 @@ public class LoadFastaFileImpl implements LoadFastaFile {
 
     @Override
     @Transactional
-    public void loadSequences(InputStream fastaFileInputStream) {
+    public void loadSequences(InputStream fastaFileInputStream, ProteinLoadListener proteinLoaderListener) {
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         BufferedReader reader = null;
         boolean first = true;
@@ -66,7 +67,7 @@ public class LoadFastaFileImpl implements LoadFastaFile {
             if (currentId != null){
                 proteinLoader.store (currentSequence.toString(), currentId);
                 LOGGER.debug("About to call ProteinLoader.persist().");
-                proteinLoader.persist();
+                proteinLoader.persist(proteinLoaderListener);
             }
         }
         catch (IOException e) {
