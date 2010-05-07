@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
@@ -70,6 +71,17 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * (Allows the caller to retrieve the primary keys for the proteins).
      */
     public PersistedProteins insertNewProteins(Collection<Protein> newProteins);
+
+
+    /**
+     * Retrieve all proteins with their matches and cross references for a slice or proteins
+     *
+     * @param bottom
+     * @param top
+     * @deprecated Doesn't actually work
+     * @return
+     */
+    public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom,long top);
 
     /**
      * Instances of this class are returned from the insert method above.
