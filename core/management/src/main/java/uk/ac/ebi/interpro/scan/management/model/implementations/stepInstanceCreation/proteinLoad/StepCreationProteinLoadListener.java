@@ -27,6 +27,9 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
     private StepInstanceDAO stepInstanceDAO;
 
     private Jobs jobs;
+    private Job completionJob;
+    private Map<String, String> stepParameters;
+
 
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
@@ -36,6 +39,19 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
     @Required
     public void setJobs(Jobs jobs) {
         this.jobs = jobs;
+    }
+
+    public void setCompletionJob(Job completionJob) {
+        this.completionJob = completionJob;
+    }
+
+    public StepCreationProteinLoadListener() {
+    }
+
+    public StepCreationProteinLoadListener(Jobs analysisJobs, Job completionJob, Map<String, String> stepParameters) {
+        this.stepParameters = stepParameters;
+        this.jobs = analysisJobs;
+        this.completionJob = completionJob;                 
     }
 
     /**
@@ -50,43 +66,70 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
     @Override
     public void createStepInstances(Long bottomProteinId, Long topProteinId) {
         try{
-        if (bottomProteinId == null || topProteinId == null){
-            return;
-        }
-        if (topProteinId < bottomProteinId){
-            throw new IllegalArgumentException ("The bounds make no sense - the top bound (" + topProteinId + ") is lower than the bottom bound (" + bottomProteinId + ").  Programming error?");
-        }
-        final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
+            if (bottomProteinId == null || topProteinId == null){
+                return;
+            }
+            if (topProteinId < bottomProteinId){
+                throw new IllegalArgumentException ("The bounds make no sense - the top bound (" + topProteinId + ") is lower than the bottom bound (" + bottomProteinId + ").  Programming error?");
+            }
+            final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
 
-        // Instantiate the StepInstances - no dependencies yet.
-        for (Job job : jobs.getJobList()){
-            for (Step step : job.getSteps()){
-                if (step.isCreateStepInstancesForNewProteins()){
-                    stepToStepInstances.put (step, createStepInstances(step, bottomProteinId, topProteinId));
+            List<StepInstance> completionStepInstances=new ArrayList<StepInstance>();
+                                                
+            LOGGER.debug("Completion Job:"+completionJob);
+
+            for (String key : stepParameters.keySet()) {
+                LOGGER.debug("setparameter:"+key+" "+stepParameters.get(key));
+            }
+
+            if (completionJob!=null) {
+                for (Step step : completionJob.getSteps()) {
+                    StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
+                    stepInstance.addStepParameters(stepParameters);
+                    completionStepInstances.add(stepInstance);
                 }
             }
-        }
 
-        // Add the dependencies to the StepInstances.
-        for (Step step : stepToStepInstances.keySet()){
-            for (StepInstance stepInstance : stepToStepInstances.get(step)){
-                final List<Step> dependsUpon = stepInstance.getStep(jobs).getDependsUpon();
-                if (dependsUpon != null){
-                    for (Step stepRequired : dependsUpon){
-                        List<StepInstance> candidateStepInstances = stepToStepInstances.get(stepRequired);
-                        if (candidateStepInstances != null){
-                            for (StepInstance candidate : candidateStepInstances){
-                                if (stepInstance.proteinBoundsOverlap(candidate)){
-                                    stepInstance.addDependentStepInstance(candidate);
-                                }
+            LOGGER.debug("Completion Steps:"+completionStepInstances.size());
+
+            // Instantiate the StepInstances - no dependencies yet.
+            for (Job job : jobs.getJobList()){
+                for (Step step : job.getSteps()){
+                    if (step.isCreateStepInstancesForNewProteins()){
+                        List<StepInstance> jobStepInstances = createStepInstances(step, bottomProteinId, topProteinId);
+                        stepToStepInstances.put (step, jobStepInstances);
+                        for (StepInstance jobStepInstance : jobStepInstances) {
+                            for (StepInstance completionStepInstance : completionStepInstances) {
+                                completionStepInstance.addDependentStepInstance(jobStepInstance);
                             }
                         }
                     }
                 }
             }
-            // Persist the StepInstances that now have their dependencies added.
-            stepInstanceDAO.insert(stepToStepInstances.get(step));
-        }
+
+            // Add the dependencies to the StepInstances.
+            for (Step step : stepToStepInstances.keySet()){
+                for (StepInstance stepInstance : stepToStepInstances.get(step)){
+                    final List<Step> dependsUpon = stepInstance.getStep(jobs).getDependsUpon();
+                    if (dependsUpon != null){
+                        for (Step stepRequired : dependsUpon){
+                            List<StepInstance> candidateStepInstances = stepToStepInstances.get(stepRequired);
+                            if (candidateStepInstances != null){
+                                for (StepInstance candidate : candidateStepInstances){
+                                    if (stepInstance.proteinBoundsOverlap(candidate)){
+                                        stepInstance.addDependentStepInstance(candidate);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // Persist the StepInstances that now have their dependencies added.
+                stepInstanceDAO.insert(stepToStepInstances.get(step));
+
+
+            }
+            stepInstanceDAO.insert(completionStepInstances);
         }
         catch (Exception e){
             LOGGER.error("Exception thrown in createStepInstances() method: ", e);
