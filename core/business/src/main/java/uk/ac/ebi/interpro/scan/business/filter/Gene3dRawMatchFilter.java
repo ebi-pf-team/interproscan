@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.interpro.scan.business.filter;
 
+import org.apache.log4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
@@ -38,6 +39,8 @@ import java.io.File;
  * @version $Id$
  */
 public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3RawMatch> {
+
+    private static final Logger LOGGER = Logger.getLogger(Gene3dRawMatchFilter.class);
 
     private String temporaryFilePath = null;
     
@@ -172,6 +175,17 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
             //                       6   10        20    26                 
             // filtered match: |-----#####---------#######---------------------|
             // ... where #=domain
+            if (LOGGER.isDebugEnabled())    {
+                if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
+                    m.getModel().equals(r.getModelId()) &&
+                    m.getLocationStart() <= lowestBoundary &&
+                    m.getLocationEnd() >= highestBoundary)    {
+                    LOGGER.debug(m.getSequenceIdentifier() + "\t" +
+                                 m.getModel()              + "\t" +
+                                 m.getEvalue()             + "\t" + 
+                                 r.getEvalue());
+                }
+            }
             if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
                 m.getModel().equals(r.getModelId()) && 
                 m.getLocationStart() <= lowestBoundary &&
