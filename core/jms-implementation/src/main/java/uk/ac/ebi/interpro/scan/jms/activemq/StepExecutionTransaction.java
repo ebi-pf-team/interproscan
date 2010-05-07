@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.Message;
@@ -15,7 +14,6 @@ import javax.jms.Message;
  */
 public interface StepExecutionTransaction {
 
-    @Transactional
     void executeInTransaction(StepExecution stepExecution, Message message);
 
 }
