@@ -71,6 +71,23 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     }
 
     /**
+     * Retrieves all Proteins, cross references and matches for a range
+     *
+     * @param bottom range lower bound (included)
+     * @param top range upper bound (included)
+     * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
+     *         primary key is not present in the database.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom,long top) {
+        Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.matches left outer join fetch p.crossReferences where p.id >= :bottom and p.id <= :top");
+        query.setParameter("bottom", bottom);
+        query.setParameter("top", top);
+        return (List<Protein>) query.getResultList(); 
+    }
+
+    /**
      * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
      * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
      * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
