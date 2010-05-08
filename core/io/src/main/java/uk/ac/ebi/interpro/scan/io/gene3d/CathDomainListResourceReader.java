@@ -17,18 +17,13 @@ public final class CathDomainListResourceReader extends AbstractResourceReader<C
     @Override protected CathDomainListRecord createRecord(String line) {
         if (line.startsWith("#"))   {
             return null;
-        }
-        final String domainName;
-        final int classNumber;
-        final int architectureNumber;
-        final int topologyNumber;
-        final int homologousSuperfamilyNumber;        
+        }        
         Scanner scanner = new Scanner(line);
-        domainName          = scanner.next();
-        classNumber         = scanner.nextInt();
-        architectureNumber  = scanner.nextInt();
-        topologyNumber      = scanner.nextInt();
-        homologousSuperfamilyNumber = scanner.nextInt();          
+        final String domainName       = scanner.next();
+        final int classNumber         = scanner.nextInt();
+        final int architectureNumber  = scanner.nextInt();
+        final int topologyNumber      = scanner.nextInt();
+        final int homologousSuperfamilyNumber = scanner.nextInt();
         return new CathDomainListRecord(domainName, classNumber, architectureNumber,
                                         topologyNumber, homologousSuperfamilyNumber);
     }

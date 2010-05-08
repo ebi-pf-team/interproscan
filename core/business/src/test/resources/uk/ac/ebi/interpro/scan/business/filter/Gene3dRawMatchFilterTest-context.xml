@@ -4,29 +4,20 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+    <!--See http://www.ebi.ac.uk/panda/jira/browse/IBU-1133-->
+
     <bean id="rawMatches" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/gene3d-matches.raw"/>
     </bean>
 
+    <!--NOTE: Not same as cli FIL file - just the corresponding lines from .raw file-->
     <bean id="filteredMatches" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/gene3d-matches.fil"/>
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/gene3d-matches.raw.fil"/>
     </bean>
 
     <!-- Note the split domain in this file: "UPI000002973F	... 44:255:295:649" -->
     <bean id="filteredSsf" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/gene3d-matches.output.ssf"/>
     </bean>
-
-    <!--<bean id="rawMatches" class="org.springframework.core.io.ClassPathResource">-->
-        <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/UPI0000001B96.raw"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="filteredMatches" class="org.springframework.core.io.ClassPathResource">-->
-        <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/UPI0000001B96.fil"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="filteredSsf" class="org.springframework.core.io.ClassPathResource">-->
-        <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/UPI0000001B96.output.ssf"/>-->
-    <!--</bean>-->
 
 </beans>

@@ -68,6 +68,7 @@ public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Ge
                 status,
                 timestamp.toString()
         };
+        // TODO: Replace with org.springframework.util.StringUtils.arrayToDelimitedString()        
         StringBuilder builder = new StringBuilder();
         int last = line.length - 1;
         for (int i=0; i<line.length; i++)   {
