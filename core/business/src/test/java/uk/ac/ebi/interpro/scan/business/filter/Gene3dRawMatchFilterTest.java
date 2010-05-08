@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.business.filter;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+
+import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
 import org.junit.Test;
 import org.junit.Ignore;
@@ -26,10 +28,9 @@ import java.io.IOException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public final class Gene3dRawMatchFilterTest {
-    
-//    @Resource
-//    private BinaryRunner binaryRunner;
 
+    private static final Logger LOGGER = Logger.getLogger(Gene3dRawMatchFilterTest.class);
+    
     @Resource
     private org.springframework.core.io.Resource rawMatches;
 
@@ -52,12 +53,30 @@ public final class Gene3dRawMatchFilterTest {
 
         // Parse and filter SSF file
         Gene3dRawMatchFilter f = new Gene3dRawMatchFilter();
-        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins =  f.filter(rawProteins, filteredSsf);
+        final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = f.filter(rawProteins, filteredSsf);
 
         // Check
         assertEquals(expectedFilteredProteins.size(), filteredProteins.size());
-        assertEquals(expectedFilteredProteins, filteredProteins);
+        
+        // DomainFinder might reduce the domain match, so location.start and location.end may be different, therefore
+        // we can't do: assertEquals(expectedFilteredProteins, filteredProteins)
+        // Instead we'll make a unique key for the expected and actual results, and compare these
+        assertEquals(createKeys(expectedFilteredProteins), createKeys(filteredProteins));
 
+    }
+
+    private Set<String> createKeys(Set<RawProtein<Gene3dHmmer3RawMatch>> proteins) {
+        Set<String> keys = new HashSet<String>();
+        for(RawProtein<Gene3dHmmer3RawMatch> p : proteins)    {
+            for (Gene3dHmmer3RawMatch m : p.getMatches())   {    
+                String key = m.getSequenceIdentifier() + "_" +
+                             m.getEnvelopeStart()      + "_"  +
+                             m.getEnvelopeEnd()        + "_"  +
+                             m.getDomainIeValue();
+                keys.add(key);
+            }
+        }
+        return keys;
     }
 
     private Collection<RawProtein<Gene3dHmmer3RawMatch>> parseRawMatches(org.springframework.core.io.Resource f)
@@ -84,6 +103,11 @@ public final class Gene3dRawMatchFilterTest {
         @Override protected Gene3dHmmer3RawMatch createRecord(String line) {
             Scanner s = new Scanner(line);
             try {
+                // For file format see: uk.ac.ebi.interpro.scan.cli.Gene3dOnionAnalysisResourceWriter
+                // UPI, METHOD_AC, RELNO_MAJOR, RELNO_MINOR, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS,
+                // ENVELOPE_START, ENVELOPE_END, SCORE, SEQSCORE, SEQEVALUE, DOMAIN_C_EVALUE, DOMAIN_I_EVALUE,
+                // ACC, ALIGNMENT                
+                // Example:
                 // UPI000002973F	1lshA02	3	3	119	189	175	249	..	83	202	10.9	12.1	-0.36653154442041347	-4.958607314841775	0.04139268515822508	null	38M3D28M1D5M
                 String seqId    = s.next();
                 String modelId  = s.next();
@@ -111,11 +135,10 @@ public final class Gene3dRawMatchFilterTest {
                         domCevalue, domIevalue, domBias, cigar);
             }
             catch (InputMismatchException e) {
-                System.err.println("Error reading line: " + line);
+                LOGGER.error("Error reading line: " + line);
                 throw e;
             }
         }
     }
-
 
 }

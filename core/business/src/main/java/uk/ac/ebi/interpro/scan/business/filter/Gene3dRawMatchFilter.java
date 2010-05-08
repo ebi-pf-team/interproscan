@@ -18,7 +18,6 @@ package uk.ac.ebi.interpro.scan.business.filter;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderResourceWriter;
@@ -82,10 +81,10 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         if (binaryRunner.isDeleteTemporaryFiles())   {
             try {
                 if (!ssfInputFile.getFile().delete())   {
-                    System.err.println("Could not delete " + ssfInputFile.getDescription());
+                    LOGGER.warn("Could not delete " + ssfInputFile.getDescription());
                 }
                 if (!ssfOutputFile.getFile().delete())   {
-                    System.err.println("Could not delete " + ssfOutputFile.getDescription());
+                    LOGGER.warn("Could not delete " + ssfOutputFile.getDescription());
                 }
             }
             catch (IOException e) {
@@ -175,64 +174,55 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
             //                       6   10        20    26                 
             // filtered match: |-----#####---------#######---------------------|
             // ... where #=domain
-            if (LOGGER.isDebugEnabled())    {
-                if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
-                    m.getModel().equals(r.getModelId()) &&
-                    m.getLocationStart() <= lowestBoundary &&
-                    m.getLocationEnd() >= highestBoundary)    {
-                    LOGGER.debug(m.getSequenceIdentifier() + "\t" +
-                                 m.getModel()              + "\t" +
-                                 m.getEvalue()             + "\t" + 
-                                 r.getEvalue());
-                }
-            }
             if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
                 m.getModel().equals(r.getModelId()) && 
                 m.getLocationStart() <= lowestBoundary &&
                 m.getLocationEnd() >= highestBoundary &&
-                m.getEvalue() == r.getEvalue())    {
-                if (!filteredProtein.getMatches().contains(m))   {
-                    // Get start and end coordinates for each split domain
-                    // For example "10:20:30:40" represents two domains: (start=10,end=20) and (start=30,end=40)
-                    // The domain string has already been split, so we have:
-                    // segments[0]=10, segments[1]=20, segments[2]=30, segments[4]=40
-                    // The even numbered array indexes contain the start position, and
-                    // the odd numbered indexes contain the end position
-                    int splitDomainStart = 0;
-                    for (int i = 0; i < segments.length; i++)   {
-                        int number = Integer.valueOf(segments[i]);
-                        int splitDomainEnd;
-                        // Even numbers (array index 0, 2, 4 ...etc) = start
-                        if (i % 2 == 0)    {
-                            splitDomainStart = number;
-                        }
-                        // Odd numbers (array index 1, 3, 5 ...etc) = end
-                        else    {
-                            splitDomainEnd = number;
-                            // Create match for each split domain
-                            Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
-                                    m.getSequenceIdentifier(),
-                                    m.getModel(),
-                                    m.getSignatureLibraryRelease(),
-                                    splitDomainStart,
-                                    splitDomainEnd,
-                                    m.getEvalue(),
-                                    m.getScore(),
-                                    m.getHmmStart(),       // TODO: What should HMM start and end be for split domains?
-                                    m.getHmmEnd(),
-                                    m.getHmmBounds(),
-                                    m.getLocationScore(),
-                                    m.getEnvelopeStart(),  // TODO: What should env start and end be for split domains?
-                                    m.getEnvelopeEnd(),
-                                    m.getExpectedAccuracy(),
-                                    m.getFullSequenceBias(),
-                                    m.getDomainCeValue(),
-                                    m.getDomainIeValue(),
-                                    m.getDomainBias(),
-                                    m.getCigarAlignment());
-                            // Add match
-                            filteredProtein.addMatch(match);
-                        }
+                m.getDomainIeValue() == r.getDomainIeValue())    {
+                // We should never find more than one raw match
+                if (filteredProtein.getMatches().contains(m))   {
+                    throw new IllegalStateException("Found duplicate filtered match: " + m);
+                }
+                // Get start and end coordinates for each split domain
+                // For example "10:20:30:40" represents two domains: (start=10,end=20) and (start=30,end=40)
+                // The domain string has already been split, so we have:
+                // segments[0]=10, segments[1]=20, segments[2]=30, segments[4]=40
+                // The even numbered array indexes contain the start position, and
+                // the odd numbered indexes contain the end position
+                int splitDomainStart = 0;
+                for (int i = 0; i < segments.length; i++)   {
+                    int number = Integer.valueOf(segments[i]);
+                    int splitDomainEnd;
+                    // Even numbers (array index 0, 2, 4 ...etc) = start
+                    if (i % 2 == 0)    {
+                        splitDomainStart = number;
+                    }
+                    // Odd numbers (array index 1, 3, 5 ...etc) = end
+                    else    {
+                        splitDomainEnd = number;
+                        // Create match for each split domain
+                        Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
+                                m.getSequenceIdentifier(),
+                                m.getModel(),
+                                m.getSignatureLibraryRelease(),
+                                splitDomainStart,
+                                splitDomainEnd,
+                                m.getEvalue(),
+                                m.getScore(),
+                                m.getHmmStart(),       // TODO: What should HMM start and end be for split domains?
+                                m.getHmmEnd(),
+                                m.getHmmBounds(),
+                                m.getLocationScore(),
+                                m.getEnvelopeStart(),  // TODO: What should env start and end be for split domains?
+                                m.getEnvelopeEnd(),
+                                m.getExpectedAccuracy(),
+                                m.getFullSequenceBias(),
+                                m.getDomainCeValue(),
+                                m.getDomainIeValue(),
+                                m.getDomainBias(),
+                                m.getCigarAlignment());
+                        // Add match
+                        filteredProtein.addMatch(match);
                     }
                 }
             }

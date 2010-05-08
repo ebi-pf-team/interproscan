@@ -27,7 +27,7 @@ public final class DomainFinderResourceWriter extends AbstractResourceWriter<Dom
         Collections.sort(list, new Comparator<DomainFinderRecord>() {
                 public int compare(DomainFinderRecord record1, DomainFinderRecord record2) {
                     // Sort by e-value
-                    int c = record1.getEvalue().compareTo(record2.getEvalue());
+                    int c = record1.getDomainIeValue().compareTo(record2.getDomainIeValue());
                     // If e-values are the same, sort by sequence start
                     if (c == 0) {
                         return record1.getSequenceStart().compareTo(record2.getSequenceStart());

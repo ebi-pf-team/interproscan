@@ -52,7 +52,7 @@ public final class DomainFinderRecord {
     private static final int SEQUENCE_END_POS           = 7;
     private static final int MODEL_START_POS            = 8;
     private static final int MODEL_END_POS              = 9;
-    private static final int EVALUE_POS                 = 10;
+    private static final int DOMAIN_I_EVALUE_POS = 10;
     private static final int SCORE_POS                  = 11;
     private static final int REVERSE_SCORE_POS          = 12;
     private static final int MATCHED_SEQUENCE_COUNT_POS = 13;
@@ -76,12 +76,12 @@ public final class DomainFinderRecord {
     private final Integer sequenceEnd;
     private final Integer modelStart;
     private final Integer modelEnd;
-    private final Double evalue;
+    private final Double domainIeValue;
     private final Double score;
     private final Double reverseScore;
     private final Integer matchedSequenceCount;
     private final String segmentBoundaries;
-    
+
     private DomainFinderRecord() {                
         this.sequenceId     = null;
         this.modelId        = null;
@@ -93,7 +93,7 @@ public final class DomainFinderRecord {
         this.sequenceEnd    = null;
         this.modelStart     = null;
         this.modelEnd       = null;
-        this.evalue         = null;
+        this.domainIeValue = null;
         this.score          = null;
         this.reverseScore   = null;
         this.matchedSequenceCount = null;
@@ -103,7 +103,7 @@ public final class DomainFinderRecord {
     public DomainFinderRecord(String sequenceId, String modelId,
                               Integer sequenceStart, Integer sequenceEnd,
                               Integer modelStart, Integer modelEnd,
-                              Double evalue, Double score, String cigarAlignment) {
+                              Double domainIeValue, Double score, String cigarAlignment) {
         SegmentRecord segmentRecord = getSegmentAndBoundaries(cigarAlignment, sequenceStart);
         this.sequenceId          = sequenceId;
         this.modelId             = modelId;
@@ -115,7 +115,7 @@ public final class DomainFinderRecord {
         this.sequenceEnd         = sequenceEnd;
         this.modelStart          = modelStart;
         this.modelEnd            = modelEnd;
-        this.evalue              = evalue;
+        this.domainIeValue       = domainIeValue;
         this.score               = score;
         this.reverseScore        = DEFAULT_REVERSE_SCORE;
         this.matchedSequenceCount = segmentRecord.getMatchedSequenceCount();
@@ -127,7 +127,7 @@ public final class DomainFinderRecord {
                               Integer alignmentLength, Integer matchedResidueCount,
                               Integer sequenceStart, Integer sequenceEnd,
                               Integer modelStart, Integer modelEnd,
-                              Double evalue, Double score, Double reverseScore,
+                              Double domainIeValue, Double score, Double reverseScore,
                               Integer matchedSequenceCount, String segmentBoundaries) {
         this.sequenceId          = sequenceId;
         this.modelId             = modelId;
@@ -139,7 +139,7 @@ public final class DomainFinderRecord {
         this.sequenceEnd         = sequenceEnd;
         this.modelStart          = modelStart;
         this.modelEnd            = modelEnd;
-        this.evalue              = evalue;
+        this.domainIeValue       = domainIeValue;
         this.score               = score;
         this.reverseScore        = reverseScore;
         this.matchedSequenceCount = matchedSequenceCount;
@@ -186,8 +186,8 @@ public final class DomainFinderRecord {
         return modelEnd;
     }
 
-    public Double getEvalue() {
-        return evalue;
+    public Double getDomainIeValue() {
+        return domainIeValue;
     }
 
     public Double getScore() {
@@ -230,7 +230,7 @@ public final class DomainFinderRecord {
         Integer sequenceEnd     = Integer.parseInt(columns[SEQUENCE_END_POS]);
         Integer modelStart      = Integer.parseInt(columns[MODEL_START_POS]);
         Integer modelEnd        = Integer.parseInt(columns[MODEL_END_POS]);
-        Double evalue           = Double.parseDouble(columns[EVALUE_POS]);
+        Double domainIeValue    = Double.parseDouble(columns[DOMAIN_I_EVALUE_POS]);
         Double score            = Double.parseDouble(columns[SCORE_POS]);
         Double reverseScore     = Double.parseDouble(columns[REVERSE_SCORE_POS]);
         Integer matchedSequenceCount = Integer.parseInt(columns[MATCHED_SEQUENCE_COUNT_POS]);
@@ -240,7 +240,7 @@ public final class DomainFinderRecord {
                               alignmentLength, matchedResidueCount,
                               sequenceStart, sequenceEnd,
                               modelStart, modelEnd,
-                              evalue, score, reverseScore,
+                              domainIeValue, score, reverseScore,
                               matchedSequenceCount, segmentBoundaries);
     }
 
@@ -256,7 +256,7 @@ public final class DomainFinderRecord {
         columns[SEQUENCE_END_POS]       = String.valueOf(record.sequenceEnd);
         columns[MODEL_START_POS]        = String.valueOf(record.modelStart);
         columns[MODEL_END_POS]          = String.valueOf(record.modelEnd);
-        columns[EVALUE_POS]             = String.valueOf(record.evalue);
+        columns[DOMAIN_I_EVALUE_POS]    = String.valueOf(record.domainIeValue);
         columns[SCORE_POS]              = String.valueOf(record.score);
         columns[REVERSE_SCORE_POS]      = String.valueOf(record.reverseScore);
         columns[MATCHED_SEQUENCE_COUNT_POS] = String.valueOf(record.matchedSequenceCount);
@@ -279,7 +279,7 @@ public final class DomainFinderRecord {
     *(3) If a lower case letter is reached open a gap;
     *    if an upper case letter is reached close a gap.
     *    '.'s and '-'s are ignored, i.e. they don't open or close gaps and are ignored when calculating the gap length
-    *(4) At the point of closing a gap, if the gap was >= 30 residues then the sequence is split into
+    *(4) At the point of closing a gap, if the gap was > 30 residues then the sequence is split into
     *    two segments around it. So the end of the first segment is the last residue before the gap opens,
     *    while the beginning of the second is the first after the gap closes.
     *(5) Continue on down the sequence ...
@@ -313,7 +313,7 @@ public final class DomainFinderRecord {
 
                      case CigarAlignmentEncoder.INSERT_CHAR:
                            insertCounter+=residueCounter;  //this is to handle two insert segment followed by each other
-                           if (insertCounter >=30 && endOfMatch > startOfMatch ) {
+                           if (insertCounter > 30 && endOfMatch > startOfMatch ) {
                                sb.append(startOfMatch).append(SEGMENT_BOUNDARY_SEPARATOR).append(endOfMatch - 1).append(SEGMENT_BOUNDARY_SEPARATOR);
                                startOfMatch=residueLength;
                                segmentCounter++;
@@ -361,7 +361,7 @@ public final class DomainFinderRecord {
                 .isEquals()
                 && 
                 // Allow for some imprecision in evalues
-                PersistenceConversion.equivalent(evalue, r.evalue);
+                PersistenceConversion.equivalent(domainIeValue, r.domainIeValue);
     }
 
     @Override public int hashCode() {
@@ -376,7 +376,7 @@ public final class DomainFinderRecord {
                 .append(sequenceEnd)
                 .append(modelStart)
                 .append(modelEnd)
-                .append(evalue)
+                .append(domainIeValue)
                 .append(score)
                 .append(reverseScore)
                 .append(matchedSequenceCount)

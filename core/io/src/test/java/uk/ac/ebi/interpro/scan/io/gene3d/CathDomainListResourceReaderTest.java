@@ -29,7 +29,7 @@ public class CathDomainListResourceReaderTest {
     @Resource
     private org.springframework.core.io.Resource file;
 
-    static final Collection<CathDomainListRecord> EXPECTED = Arrays.asList(
+    private static final Collection<CathDomainListRecord> EXPECTED = Arrays.asList(
         new CathDomainListRecord("1oaiA00", 1, 10,  8,  10),
         new CathDomainListRecord("1go5A00", 1, 10,  8,  10),
         new CathDomainListRecord("1oksA00", 1, 10,  8,  10),
