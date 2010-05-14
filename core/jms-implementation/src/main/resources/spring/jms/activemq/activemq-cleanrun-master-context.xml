@@ -1,0 +1,17 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <import resource="../../spring-properties-context.xml"/>
+
+    <bean id="cleanrun" class="uk.ac.ebi.interpro.scan.jms.activemq.CleanRunDatabase">
+        <property name="installedDatabasePath" value="${i5.database.installed}"/>
+        <property name="originalDatabasePath" value="${i5.database.original}"/>
+        <!--<property name="installedDatabasePath" value="support/interpro.h2.db"/>-->
+        <!--<property name="originalDatabasePath" value="support/clean_database/interpro.h2.db"/>-->
+    </bean>
+
+</beans>

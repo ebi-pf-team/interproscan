@@ -93,10 +93,12 @@ public class Run {
         INSTALLER("installer", "spring/installer/installer-context.xml"),
         AMQSTANDALONE("amqstandalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
         AMQMASTER("amqmaster", "spring/jms/activemq/activemq-distributed-master-context.xml"),
-        AMQWORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml")
+        AMQWORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
+        AMQCLEANRUN("cleanrun", "spring/jms/activemq/activemq-cleanrun-master-context.xml") 
 
         ;
 
+        //
         private String contextXML;
 
         private String runnableBean;
