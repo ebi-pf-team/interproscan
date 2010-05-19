@@ -72,7 +72,7 @@ public class Installer implements Runnable {
 
     private void loadGene3dModels() {
 		if (gene3dModel2SfFile==null) {
-			LOGGER.info("Not loadin gene3d");
+			LOGGER.info("Not loading gene3d");
 			return;
 		}
 
@@ -109,7 +109,7 @@ public class Installer implements Runnable {
     // TODO load pfam models in chunks, not all at one go... java.lang.OutOfMemory
     private void loadPfamModels() {
 		if (pfamHMMfilePath==null) {
-			LOGGER.info("Not loadin pfam");
+			LOGGER.info("Not loading pfam");
 			return;
 		}
         // Parse and retrieve the signatures.
