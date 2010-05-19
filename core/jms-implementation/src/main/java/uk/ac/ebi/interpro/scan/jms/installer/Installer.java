@@ -36,12 +36,12 @@ public class Installer implements Runnable {
     public void setSignatureLibraryReleaseDAO(GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO) {
         this.signatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
     }
-    @Required
+    
     public void setPfamHMMfilePath(String pfamHMMfilePath) {
         this.pfamHMMfilePath = pfamHMMfilePath;
     }
 
-    @Required
+    
     public void setGene3dModel2SfFile(Resource gene3dModel2SfFile) {
         this.gene3dModel2SfFile = gene3dModel2SfFile;
     }
@@ -71,6 +71,11 @@ public class Installer implements Runnable {
     }
 
     private void loadGene3dModels() {
+		if (gene3dModel2SfFile==null) {
+			LOGGER.info("Not loadin gene3d");
+			return;
+		}
+
         // Read models
         Model2SfReader reader = new Model2SfReader();
         Map<String, String> modelMap;
@@ -103,6 +108,10 @@ public class Installer implements Runnable {
 
     // TODO load pfam models in chunks, not all at one go... java.lang.OutOfMemory
     private void loadPfamModels() {
+		if (pfamHMMfilePath==null) {
+			LOGGER.info("Not loadin pfam");
+			return;
+		}
         // Parse and retrieve the signatures.
         Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(SignatureLibrary.PFAM, "24.0");
         SignatureLibraryRelease release = null;
