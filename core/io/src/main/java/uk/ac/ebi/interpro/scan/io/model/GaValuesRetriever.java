@@ -1,14 +1,14 @@
 package uk.ac.ebi.interpro.scan.io.model;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
+import uk.ac.ebi.interpro.scan.io.ParseException;
+
 import java.io.*;
 import java.nio.channels.FileLock;
-
-import uk.ac.ebi.interpro.scan.io.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -38,7 +38,7 @@ public class GaValuesRetriever implements Serializable{
     /**
      * Extracts the GA values in the forms "24.0 24.0" as group 1.
      */
-    private static final Pattern GA_LINE_PATTERN = Pattern.compile("^GA\\s+(.+);$");
+    private static final Pattern GA_LINE_PATTERN = Pattern.compile("^GA\\s+(.+);?\\s*$");
 
     // TODO Inject the OPTION of stripping off the version number from the model.
     // Strips of accession version number.
@@ -144,8 +144,8 @@ public class GaValuesRetriever implements Serializable{
             reader = new BufferedReader (new FileReader(modelFileAbsolutePath));
             String accession = null, gaValues = null;
             int lineNumber = 0;
-            while (reader.ready()){
-                String line = reader.readLine();
+            String line;
+            while ((line = reader.readLine()) != null){
                 lineNumber++;
                 // Speed things up a lot... just check the first char of each line
                 char firstChar = line.charAt(0);
