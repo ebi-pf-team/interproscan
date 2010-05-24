@@ -25,12 +25,12 @@ import org.hibernate.annotations.IndexColumn;
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.io.Serializable;
 
 /**
  * Protein.
@@ -104,6 +104,16 @@ public class Protein implements Serializable {
         setMatches(matches);
         setSequenceAndMd5(sequence);
         setCrossReferences(crossReferences);
+    }
+
+    /**
+     * Utility method to add a List of cross references
+     * @param crossReferences
+     */
+    public void addCrossReferences(String... crossReferences) {
+        for (String xrefName : crossReferences){
+            addCrossReference(new Xref(xrefName));
+        }
     }
 
     /**
