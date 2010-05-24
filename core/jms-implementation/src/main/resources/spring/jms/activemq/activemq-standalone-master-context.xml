@@ -11,11 +11,14 @@
     -->
 
     <import resource="activemq-standalone-worker-context.xml"/>
+    <import resource="classpath:/spring/spring-properties-context.xml"/>
+    <import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>
+    <import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>
 
     <!--  Embedded ActiveMQ Broker - in vm connections only· -->
     <amq:broker useJmx="false" persistent="false" useShutdownHook="false">
         <amq:transportConnectors>
-            <amq:transportConnector uri="vm://localhost" />
+            <amq:transportConnector uri="vm://localhost"/>
         </amq:transportConnectors>
     </amq:broker>
 
@@ -26,12 +29,14 @@
         <property name="jmsTemplate" ref="InVmJmsTemplate"/>
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="closeOnCompletion" value="true"/>
+        <property name="cleanDatabase" value="true"/>
+        <property name="databaseCleaner" ref="databaseCleaner"/>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="inVmJmsFactory"/>
         <property name="destination" ref="jobResponseQueue"/>
-        <property name="messageListener" ref="responseMonitorListener" />
+        <property name="messageListener" ref="responseMonitorListener"/>
     </bean>
 
     <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">

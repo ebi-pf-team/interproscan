@@ -40,15 +40,6 @@
         <mvn.ebi.interproscan5.support>support-mini-x86-32</mvn.ebi.interproscan5.support>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>full_support</id>
-            <properties>
-                <mvn.ebi.interproscan5.support>/nfs/seqdb/production/interpro/production/interproscan-5/support</mvn.ebi.interproscan5.support>
-            </properties>
-        </profile>
-    </profiles>
-
     <dependencies>
 
         <dependency>
@@ -230,11 +221,18 @@
                 <directory>src/test/resources/</directory>
                 <excludes>
                     <exclude>persistence.xml</exclude>
+                    <exclude>interpro.h2.db</exclude>
                 </excludes>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>interpro.h2.db</include>
+                </includes>
                 <filtering>false</filtering>
             </testResource>
         </testResources>
-
 
         <plugins>
             <plugin>
@@ -300,4 +298,64 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>installer</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>uk.ac.ebi.interpro.scan.jms.main.Run</mainClass>
+                            <commandlineArgs>-m installer</commandlineArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>amqstandalone</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>uk.ac.ebi.interpro.scan.jms.main.Run</mainClass>
+                            <commandlineArgs>-m amqstandalone -f src/test/resources/5k.fasta</commandlineArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>full_support</id>
+            <properties>
+                <mvn.ebi.interproscan5.support>/nfs/seqdb/production/interpro/production/interproscan-5/support
+                </mvn.ebi.interproscan5.support>
+            </properties>
+        </profile>
+
+    </profiles>
+
 </project>

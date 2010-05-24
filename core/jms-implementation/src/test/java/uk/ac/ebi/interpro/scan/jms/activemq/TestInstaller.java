@@ -5,11 +5,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
+import uk.ac.ebi.interpro.scan.jms.installer.Installer;
 
 import javax.annotation.Resource;
 
 /**
- * Currently a stub for testing the ActiveMQ setup.
+ * Junit test for the Installer mode.
  *
  * @author Phil Jones
  * @version $Id$
@@ -17,18 +19,20 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class TestActiveMQ {
+public class TestInstaller {
 
-    private static Logger LOGGER = Logger.getLogger(TestActiveMQ.class.getName());
+    private static Logger LOGGER = Logger.getLogger(TestInstaller.class.getName());
 
     @Resource
-    private AmqInterProScanMaster amqstandalone;
+    private Installer installer;
+
+    @Resource
+    private TemporaryDirectoryManager tempDirectoryManager;
 
     @Test
-    public void testEmbeddedSystem() {
-        amqstandalone.setFastaFilePath("5.fasta");
-        amqstandalone.run();
+    public void testInstaller() {
+        installer.run();
 
-        // TODO - Test the contents of the database  - look for proteins / sequences / completed steps etc.
+
     }
 }

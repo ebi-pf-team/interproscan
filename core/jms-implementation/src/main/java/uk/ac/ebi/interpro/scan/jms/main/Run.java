@@ -10,9 +10,9 @@ import uk.ac.ebi.interpro.scan.jms.master.Master;
 /**
  * The main entry point for the the master and workers in a
  * Java Messaging configuration of InterProScan.
- *
+ * <p/>
  * Runs in mode 'master' by default.
- *
+ * <p/>
  * Usage:
  * java -Dconfig=conf/myconfig.props -jar interproscan-5.jar master
  * java -Dconfig=conf/myconfig.props -jar interproscan-5.jar worker
@@ -37,8 +37,7 @@ public class Run {
         OUTPUT_FORMAT("output-format", "F", false, "Optional output format. One of: XML ... (other formats to follow?)", "OUTPUT-FORMAT"),
         OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH"),
         ANALYSES("analyses", "a", false, "Optional colon-separated list of analyses.  If this option is not set, ALL analyses will be run.", "ANALYSES_COLON_SEPARATED"),
-        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY")
-        ;
+        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY");
 
         private String longOpt;
 
@@ -85,7 +84,7 @@ public class Run {
         }
     }
 
-    private enum Mode{
+    private enum Mode {
         MASTER("master", "spring/master/master-context.xml"),
         I5STANDALONE("i5standalone", "spring/master/i5-single-jvm-context.xml"),
         WORKER("worker", "spring/worker/parallel-worker-context.xml"),
@@ -94,9 +93,7 @@ public class Run {
         AMQSTANDALONE("amqstandalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
         AMQMASTER("amqmaster", "spring/jms/activemq/activemq-distributed-master-context.xml"),
         AMQWORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
-        AMQCLEANRUN("cleanrun", "spring/jms/activemq/activemq-cleanrun-master-context.xml") 
-
-        ;
+        AMQCLEANRUN("cleanrun", "spring/jms/activemq/activemq-cleanrun-master-context.xml");
 
         //
         private String contextXML;
@@ -105,9 +102,9 @@ public class Run {
 
         private static String commaSepModeList;
 
-        static{
+        static {
             StringBuilder sb = new StringBuilder();
-            for (Mode mode : Mode.values()){
+            for (Mode mode : Mode.values()) {
                 if (sb.length() > 0) sb.append(", ");
                 sb.append(mode.toString().toLowerCase());
             }
@@ -116,10 +113,11 @@ public class Run {
 
         /**
          * Constructor for modes.
+         *
          * @param runnableBean Optional bean that implements Runnable.
-         * @param contextXml being the Spring context.xml file to load.
+         * @param contextXml   being the Spring context.xml file to load.
          */
-        private Mode(String runnableBean, String contextXml){
+        private Mode(String runnableBean, String contextXml) {
             this.runnableBean = runnableBean;
             this.contextXML = contextXml;
         }
@@ -138,16 +136,14 @@ public class Run {
     }
 
 
-
-
-    static{
-        for (I5Option i5Option : I5Option.values()){
+    static {
+        for (I5Option i5Option : I5Option.values()) {
             OptionBuilder builder = OptionBuilder.withLongOpt(i5Option.getLongOpt())
                     .withDescription(i5Option.getDescription());
-            if (i5Option.isRequired()){
+            if (i5Option.isRequired()) {
                 builder = builder.isRequired();
             }
-            if (i5Option.getArgumentName() != null){
+            if (i5Option.getArgumentName() != null) {
                 builder = builder.hasArg().withArgName(i5Option.getArgumentName());
             }
 
@@ -161,8 +157,6 @@ public class Run {
     }
 
 
-
-
     public static void main(String[] args) {
 
         // create the command line parser
@@ -170,53 +164,52 @@ public class Run {
         String modeArgument = null;
         try {
             // parse the command line arguments
-            CommandLine parsedCommandLine = parser.parse( COMMAND_LINE_OPTIONS, args );
+            CommandLine parsedCommandLine = parser.parse(COMMAND_LINE_OPTIONS, args);
 
             modeArgument = parsedCommandLine.getOptionValue(I5Option.MODE.getLongOpt()).toLowerCase();
 
             // Will throw handled IllegalArgumentException if the Mode is not recognised.
             final Mode mode = Mode.valueOf(modeArgument.toUpperCase());
 
-            String config=System.getProperty("config");
+            String config = System.getProperty("config");
             LOGGER.info("Welcome to InterProScan v5");
 
-            LOGGER.info("Memory free: "+Runtime.getRuntime().freeMemory() / MEGA +"MB total: "+Runtime.getRuntime().totalMemory() / MEGA +"MB max: "+Runtime.getRuntime().maxMemory() / MEGA + "MB");
-            LOGGER.info("Running as: "+ mode);
-            if (config==null){
+            LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+            LOGGER.info("Running as: " + mode);
+            if (config == null) {
                 LOGGER.info("No custom config used. Use java -Dconfig=config/my.properties");
-            }
-            else{
-                LOGGER.info("Custom config: "+config);
+            } else {
+                LOGGER.info("Custom config: " + config);
             }
 
-            AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String []{mode.getContextXML()});
+            AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
             ctx.registerShutdownHook();
-            if (mode.getRunnableBean() != null){
+            if (mode.getRunnableBean() != null) {
                 Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
 
                 // Set command line parameters on Master.
-                if (runnable instanceof Master){
+                if (runnable instanceof Master) {
                     Master master = (Master) runnable;
-                    if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())){
+                    if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
                         master.setFastaFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()));
                     }
-                    if (parsedCommandLine.hasOption(I5Option.OUT_FILE.getLongOpt())){
+                    if (parsedCommandLine.hasOption(I5Option.OUT_FILE.getLongOpt())) {
                         master.setOutputFile(parsedCommandLine.getOptionValue(I5Option.OUT_FILE.getLongOpt()));
                     }
-                    if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMAT.getLongOpt())){
+                    if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMAT.getLongOpt())) {
                         master.setOutputFormat(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FORMAT.getLongOpt()));
                     }
-                    if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())){
+                    if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                         master.setAnalyses(parsedCommandLine.getOptionValue(I5Option.ANALYSES.getLongOpt()));
                     }
                 }
 
-                if (runnable instanceof DistributedWorkerController){
-                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt())){
+                if (runnable instanceof DistributedWorkerController) {
+                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt())) {
                         final DistributedWorkerController workerController = (DistributedWorkerController) runnable;
                         final int priority = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.PRIORITY.getLongOpt()));
-                        if (priority < 0 || priority > 9){
-                            throw new IllegalStateException ("The JMS priority value must be an integer between 0 and 9.  The value passed in is " + priority);
+                        if (priority < 0 || priority > 9) {
+                            throw new IllegalStateException("The JMS priority value must be an integer between 0 and 9.  The value passed in is " + priority);
                         }
                         workerController.setMinimumJmsPriority(priority);
                     }
@@ -228,12 +221,12 @@ public class Run {
             }
             ctx.close();
         }
-        catch( ParseException exp ) {
+        catch (ParseException exp) {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
-            HELP_FORMATTER.printHelp( HELP_MESSAGE_TITLE,COMMAND_LINE_OPTIONS );
+            HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, COMMAND_LINE_OPTIONS);
         }
-        catch (IllegalArgumentException iae){
-            LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList() );
+        catch (IllegalArgumentException iae) {
+            LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
             System.exit(1);
         }
     }
