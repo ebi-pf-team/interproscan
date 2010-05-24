@@ -1,13 +1,15 @@
-package uk.ac.ebi.interpro.scan.genericjpadao;
+package uk.ac.ebi.interpro.scan.jms.activemq;
 
+import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.AbstractDriverBasedDataSource;
+import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 
-import javax.sql.DataSource;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -17,6 +19,9 @@ import java.util.Properties;
  */
 
 public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
+
+    private static final Logger LOGGER = Logger.getLogger(ExternalDriverDataSource.class.getName());
+
     private volatile boolean loaded;
     private SQLException failure;
     private Driver driver;
@@ -25,6 +30,39 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
     private final Object driverLoadLock=new Object();
 
     private static Map<String,Driver> driverCache=new HashMap<String,Driver>();
+
+    /**
+     * can be used to filter the URL for the database connection.
+     */
+    private final TemporaryDirectoryManager directoryManager;
+
+
+    public ExternalDriverDataSource(TemporaryDirectoryManager directoryManager) {
+        if (LOGGER.isDebugEnabled()){
+            LOGGER.debug("Directory manager " + directoryManager);
+        }
+        this.directoryManager = directoryManager;
+    }
+
+
+    /**
+     * Set the JDBC URL to use for connecting through the Driver.
+     *
+     * @see java.sql.Driver#connect(String, java.util.Properties)
+     */
+    @Override
+    public void setUrl(String url) {
+        if (LOGGER.isDebugEnabled()){
+            LOGGER.debug("Directory manager "+directoryManager);
+        }
+        try{
+            super.setUrl(directoryManager.replacePath(url));
+        }
+        catch (Exception e ){
+            LOGGER.error ("Exception thrown when setting URL ", e);
+            throw new IllegalStateException(e);
+        }
+    }
 
     /**
      * Set location of jar file and optionally the class name of the JDBC driver.
