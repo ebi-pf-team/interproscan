@@ -1,13 +1,12 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.junit.runner.RunWith;
 import org.junit.Test;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 import javax.annotation.Resource;
-
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -18,7 +17,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
  * @author Phil Jones, EMBL-EBI
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/springconfig/spring-ModelDAOTest-config.xml"})
+@ContextConfiguration
 public class ModelDAOTest {
 
     @Resource(name= "modelDAO")

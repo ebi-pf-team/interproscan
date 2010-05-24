@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import static junit.framework.Assert.*;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -14,6 +13,8 @@ import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static junit.framework.Assert.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: thimma
@@ -23,14 +24,14 @@ import java.util.List;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration( locations={"/springconfig/spring-BlastProDomLocationDAOTest-config.xml"} )
+@ContextConfiguration
 
 public class BlastProDomLocationDAOTest {
 
       /**
      * Logger for Junit logging. Log messages will be associated with the ProteinPersistenceTest class.
      */
-    private static Logger LOGGER = Logger.getLogger(BlastProDomLocationDAOTest.class);
+    private static final Logger LOGGER = Logger.getLogger(BlastProDomLocationDAOTest.class);
 
     private static final Long LONG_ZERO = 0L;
 

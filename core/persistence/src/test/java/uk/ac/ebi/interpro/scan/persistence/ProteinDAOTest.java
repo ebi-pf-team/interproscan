@@ -41,8 +41,7 @@ import static junit.framework.TestCase.*;
  * @author Phil Jones, EMBL-EBI
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/springconfig/spring-ProteinDAOTest-config.xml"})
-//@Ignore
+@ContextConfiguration
 public class ProteinDAOTest {
 
     /**
@@ -51,6 +50,8 @@ public class ProteinDAOTest {
     private static Logger LOGGER = Logger.getLogger(ProteinDAOTest.class);
 
     private static final String[] ACCESSIONS = {"Q12345","P99999", "IPI01234567", "ENSP120923423423234"};
+
+    private static final String[] ACCESSIONS_2 = {"Q98765","P23423", "IPI01234598", "ENSP120923423423268"};
 
     private static final Long LONG_ZERO = 0L;
 
@@ -115,10 +116,7 @@ public class ProteinDAOTest {
         dao.insert(protein);
         Long id = protein.getId();
         assertNotNull("The protein ID (following persistence) should not be null", id);
-        for (String accession : ACCESSIONS){
-            Xref xref = new Xref(accession);
-            protein.addCrossReference(xref);
-        }
+        addXrefsToProtein(protein, ACCESSIONS);
         dao.update(protein);
         Long idAfterUpdate = protein.getId();
         assertEquals("The protein ID following update should be the same as before update", id, idAfterUpdate);
@@ -153,6 +151,39 @@ public class ProteinDAOTest {
         assertNotNull("The second retrieved protein should not be null", secondRetrievedProtein);
         assertEquals("The second retrieved protein should have " + (ACCESSIONS.length + 1) + " cross references.", (ACCESSIONS.length + 1), secondRetrievedProtein.getCrossReferences().size());
     }
+
+
+    /**
+     * This test exercises storage of XrefSequenceIdentifier objects that are
+     * associated with a Protein object.
+     *
+     * It also exercises the GenericDAOImpl<Protein, Long>.update(Protein protein)
+     * method in relation to XrefSequenceIdentifier objects
+     */
+    @Test
+    public void testGetProteinsAndMatchesAndCrossReferencesBetweenIds(){
+        emptyProteinTable();
+        final Protein protein1 = new Protein (GOOD);
+        final Protein protein2 = new Protein (GOOD + "ACD");
+        // First of all, insert the protein not including Xrefs.
+        dao.insert(protein1);
+        Long id = protein1.getId();
+        assertNotNull("The protein ID (following persistence) should not be null", id);
+        addXrefsToProtein(protein1, ACCESSIONS);
+        addXrefsToProtein(protein2, ACCESSIONS_2);
+
+
+        dao.update(protein1);
+
+    }
+
+    private void addXrefsToProtein(Protein protein1, final String[] accessions) {
+        for (String accession : accessions){
+            Xref xref = new Xref(accession);
+            protein1.addCrossReference(xref);
+        }
+    }
+
 
     /**
      * Test that a PersistenceException is thrown if an attempt is made to
