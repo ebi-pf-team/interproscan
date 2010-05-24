@@ -5,7 +5,10 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.management.model.*;
 
 import javax.persistence.Query;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * DAO for StepInstance objects.  Used to retrieve
@@ -58,6 +61,27 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
                                 "and j.stepId = :stepId) order by i.id desc");
 
         query.setParameter("stepId", step.getId());
+        query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieve the StepInstances from the database.
+     *
+     * @return the List of StepInstance objects.
+     */
+    @Transactional(readOnly = true)
+    public List<StepInstance> retrieveUnfinishedStepInstances() {
+        Query query = entityManager.createQuery(
+                        "select distinct i " +
+                        "from StepInstance i " +
+                        "where i not in (" +
+                                "select j " +
+                                "from StepInstance j " +
+                                "inner join j.executions e " +
+                                "where e.state = :successful" +
+                                ") order by i.id desc");
+
         query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
         return query.getResultList();
     }

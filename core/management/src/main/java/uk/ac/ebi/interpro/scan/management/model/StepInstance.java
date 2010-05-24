@@ -116,10 +116,13 @@ public class StepInstance implements Serializable {
     }
 
     public void addStepParameters(Map<String, String> stepParameters) {
+
+        if (stepParameters == null) return;
+
         if (this.stepParameters == null){
             this.stepParameters = new HashMap<String, String>();
         }
-        this.stepParameters.putAll(stepParameters);        
+        this.stepParameters.putAll(stepParameters);
     }
 
     /**
@@ -161,12 +164,13 @@ public class StepInstance implements Serializable {
             return StepExecutionState.NEW_STEP_INSTANCE;
         }
         for (StepExecution exec : executions){
-            switch (exec.getState()){
+            final StepExecutionState executionState = exec.getState();
+            switch (executionState){
                 case NEW_STEP_EXECUTION:
                 case STEP_EXECUTION_SUBMITTED:
                 case STEP_EXECUTION_RUNNING:
                 case STEP_EXECUTION_SUCCESSFUL:
-                    return exec.getState();
+                    return executionState;
                 default:
                     break;
             }
@@ -226,12 +230,17 @@ public class StepInstance implements Serializable {
     public boolean canBeSubmitted(Jobs jobs){
         // First, check if the state of this StepInstance allows it to be run...
         // (Not submitted or previously failed, and number of retries not exceeded)
-        if (StepExecutionState.NEW_STEP_INSTANCE == getState()
+        final StepExecutionState state = getState();
+
+        if (StepExecutionState.NEW_STEP_INSTANCE == state
                 ||
-            (StepExecutionState.STEP_EXECUTION_FAILED == getState() && this.getExecutions().size() < this.getStep(jobs).getRetries())){
+            (StepExecutionState.STEP_EXECUTION_FAILED == state && this.getExecutions().size() < this.getStep(jobs).getRetries())){
             // Then check that all the dependencies have been completed successfully.
             if (dependsUpon != null){
                 for (StepInstance dependency : dependsUpon){
+                    // The state of the dependencies already checked may change during this loop,
+                    // however this is not a problem - the worst that can happen, is that the StepInstance is not
+                    // executed now.
                     if (dependency.getState() != StepExecutionState.STEP_EXECUTION_SUCCESSFUL){
                         return false;
                     }
@@ -246,8 +255,9 @@ public class StepInstance implements Serializable {
 
     // todo: check thread safety
     public boolean haveFinished(Jobs jobs){
-        if (StepExecutionState.STEP_EXECUTION_SUCCESSFUL==getState()) return true;
-        if (StepExecutionState.STEP_EXECUTION_FAILED == getState() && this.getExecutions().size() >= this.getStep(jobs).getRetries()) return true;
+        final StepExecutionState executionState = getState();
+        if (StepExecutionState.STEP_EXECUTION_SUCCESSFUL== executionState) return true;
+        if (StepExecutionState.STEP_EXECUTION_FAILED == executionState && this.getExecutions().size() >= this.getStep(jobs).getRetries()) return true;
         return false;
     }
         

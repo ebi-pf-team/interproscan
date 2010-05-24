@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
-import uk.ac.ebi.interpro.scan.management.model.*;
+import uk.ac.ebi.interpro.scan.management.model.Jobs;
+import uk.ac.ebi.interpro.scan.management.model.Step;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import java.util.List;
 
@@ -21,6 +23,12 @@ public interface StepInstanceDAO extends GenericDAO<StepInstance, String> {
      * @return the List of StepInstance objects.
      */
     List<StepInstance> retrieveUnfinishedStepInstances(Step step);
+
+    /**
+     * Retrieve the StepInstances from the database.
+     * @return the List of StepInstance objects.
+     */
+    List<StepInstance> retrieveUnfinishedStepInstances();
 
     /**
      * Returns true if the SerialGroup passed in as argument
