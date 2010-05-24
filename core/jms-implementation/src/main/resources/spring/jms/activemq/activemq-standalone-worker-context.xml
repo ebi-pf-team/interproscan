@@ -7,18 +7,19 @@
         http://activemq.apache.org/schema/core
         http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-    <import resource="../../jobs/all-jobs-context.xml"/>
+    <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
+    <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
     <import resource="activemq-inVm-connection-config-context.xml"/>
 
     <bean id="amqEmbeddedWorkerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="inVmJmsFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
-        <property name="messageListener" ref="amqEmbeddedWorker" />
+        <property name="messageListener" ref="amqEmbeddedWorker"/>
         <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentConsumers" value="${number.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
-        <property name="autoStartup" value="true"/> 
+        <property name="autoStartup" value="true"/>
     </bean>
 
     <bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
@@ -31,20 +32,21 @@
         <property name="jobs" ref="jobs"/>
         <property name="jmsTemplate" ref="InVmJmsTemplate"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="directoryManager" ref="tempDirectoryManager"/>
     </bean>
 
 
     <!--<bean id="amqInterProScanMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
-        <!--<property name="connectionFactory" ref="inVmJmsFactory"/>-->
-        <!--<property name="destination" ref="workerManagerTopic"/>-->
-        <!--<property name="messageListener" ref="amqInterProScanMonitor" />-->
+    <!--<property name="connectionFactory" ref="inVmJmsFactory"/>-->
+    <!--<property name="destination" ref="workerManagerTopic"/>-->
+    <!--<property name="messageListener" ref="amqInterProScanMonitor" />-->
     <!--</bean>-->
 
     <!--<bean id="amqInterProScanMonitor" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMonitorListener">-->
-        <!--<property name="jobs" ref="jobs"/>-->
-        <!--<property name="workerManagerResponseQueue" ref="workerManagerResponseQueue"/>-->
-        <!--<property name="worker" ref="amqEmbeddedWorker"/>-->
-        <!--<property name="jmsTemplate" ref="InVmJmsTemplate"/>-->
+    <!--<property name="jobs" ref="jobs"/>-->
+    <!--<property name="workerManagerResponseQueue" ref="workerManagerResponseQueue"/>-->
+    <!--<property name="worker" ref="amqEmbeddedWorker"/>-->
+    <!--<property name="jmsTemplate" ref="InVmJmsTemplate"/>-->
     <!--</bean>-->
 
 </beans>

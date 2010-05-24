@@ -18,7 +18,10 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * TODO: Description
@@ -40,7 +43,7 @@ public class AmqInterProScanMaster implements Master {
     private StepInstanceDAO stepInstanceDAO;
 
     private StepExecutionDAO stepExecutionDAO;
-    
+
     private Destination workerJobRequestQueue;
 
     private WorkerRunner parallelWorkerRunner;
@@ -67,6 +70,10 @@ public class AmqInterProScanMaster implements Master {
      */
     private boolean closeOnCompletion;
 
+    private CleanRunDatabase databaseCleaner;
+
+    private boolean cleanDatabase = false;
+
     /**
      * This OPTIONAL bean method allows an embedded Worker to be injected.
      *
@@ -76,7 +83,7 @@ public class AmqInterProScanMaster implements Master {
         this.embeddedWorkerFactory = embeddedWorkerFactory;
     }
 
-    public void setEmbeddedWorkerCount(Integer numberOfEmbeddedWorkers){
+    public void setEmbeddedWorkerCount(Integer numberOfEmbeddedWorkers) {
         this.numberOfEmbeddedWorkers = numberOfEmbeddedWorkers;
     }
 
@@ -118,49 +125,67 @@ public class AmqInterProScanMaster implements Master {
         this.jobs = jobs;
     }
 
-     /**
+    /**
      * Run the Master Application.
      */
-    public void run(){
+    public void run() {
         try {
+            if (cleanDatabase) {
+                databaseCleaner.run();
+            }
+
             startUpEmbeddedWorkers();
             createFastaFileLoadStepInstance();
 
 
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
-            while(! shutdownCalled){
+            while (!shutdownCalled) {
                 // TODO should be while(running) to allow shutdown.
-                boolean completed=true;
-                for (Job job : jobs.getJobList()){
+                boolean completed = true;
+
+                for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                    completed &= stepInstance.haveFinished(jobs);
+                    if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)) {
+                        LOGGER.debug("Step submitted:" + stepInstance);
+                        sendMessage(stepInstance);
+                    }
+                }
+
+
+                /*for (Job job : jobs.getJobList()){
                     // If the optional list of analyses has been passed in, only run those analyses.
                     // Otherwise, run all of them.
 
                     //if (! job.isAnalysis() || analyses == null || analyses.contains(job.getId())){
-                        LOGGER.debug("Finding uncompleted steps");
-                        for (Step step : job.getSteps()){
-                            for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
-                                completed&=stepInstance.haveFinished(jobs);                                
-                                LOGGER.debug("Step not yet completed:"+stepInstance+" "+stepInstance.getState()+" "+stepInstance.canBeSubmitted(jobs)+" "+stepInstanceDAO.serialGroupCanRun(stepInstance, jobs));
-                                if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
-                                    LOGGER.debug("Step submitted:"+stepInstance);
-                                    sendMessage(stepInstance);
-                                }
+                    LOGGER.debug("Finding uncompleted steps");
+
+
+
+
+                    for (Step step : job.getSteps()){
+                        for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
+                            completed&=stepInstance.haveFinished(jobs);
+                            LOGGER.debug("Step not yet completed:"+stepInstance+" "+stepInstance.getState()+" "+stepInstance.canBeSubmitted(jobs)+" "+stepInstanceDAO.serialGroupCanRun(stepInstance, jobs));
+                            if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
+                                LOGGER.debug("Step submitted:"+stepInstance);
+                                sendMessage(stepInstance);
                             }
                         }
+                    }
                     //} 
                 }
-
+*/
                 if (closeOnCompletion && completed) break;
 
-                Thread.sleep (5000);  // Every 5 seconds, checks for any runnable StepInstances and runs them.
+                Thread.sleep(5000);  // Every 5 seconds, checks for any runnable StepInstances and runs them.
             }
         } catch (JMSException e) {
-            LOGGER.error ("JMSException thrown by Master", e);
-        } catch (Exception e){
-            LOGGER.error ("Exception thrown by Master", e);
+            LOGGER.error("JMSException thrown by Master", e);
+        } catch (Exception e) {
+            LOGGER.error("Exception thrown by Master", e);
         }
-        LOGGER.debug("Ending"); 
+        LOGGER.debug("Ending");
     }
 
     /**
@@ -174,54 +199,49 @@ public class AmqInterProScanMaster implements Master {
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
             params.put(FastaFileLoadStep.ANALYSIS_JOB_NAMES_KEY, analyses);
             params.put(FastaFileLoadStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
-            params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, fastaFilePath.replaceAll("\\.fasta","")+".tsv");
+            params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, fastaFilePath.replaceAll("\\.fasta", "") + ".tsv");
             createStepInstancesForJob("jobLoadFromFasta", params);
-            LOGGER.info ("Fasta file load step instance has been created.");
+            LOGGER.info("Fasta file load step instance has been created.");
         }
     }
 
     /**
      * Called by quartz to load proteins from UniParc.
      */
-    public void createProteinLoadJob(){
+    public void createProteinLoadJob() {
         createStepInstancesForJob("jobLoadFromUniParc", null);
     }
 
-    private void createStepInstancesForJob (String jobId, Map<String, String> stepParameters){
+    private void createStepInstancesForJob(String jobId, Map<String, String> stepParameters) {
         Job job = jobs.getJobById(jobId);
-        for (Step step : job.getSteps()){
+        for (Step step : job.getSteps()) {
             StepInstance stepInstance = new StepInstance(step);
-            if (stepParameters != null){
-                for (String key : stepParameters.keySet()){
-                    stepInstance.addStepParameter(key, stepParameters.get(key));
-                }
-            }
+            stepInstance.addStepParameters(stepParameters);
             stepInstanceDAO.insert(stepInstance);
         }
     }
 
-    private void startUpEmbeddedWorkers(){
-        if (embeddedWorkerFactory != null){
-            if (workerThreads == null){
+    private void startUpEmbeddedWorkers() {
+        if (embeddedWorkerFactory != null) {
+            if (workerThreads == null) {
                 workerThreads = new ArrayList<Thread>(numberOfEmbeddedWorkers);
             }
             // Has the number of embedded workers been set?
             final int processorCount = Runtime.getRuntime().availableProcessors();
-            if (numberOfEmbeddedWorkers == null){
+            if (numberOfEmbeddedWorkers == null) {
                 // Default to the number of processors on this box.
                 numberOfEmbeddedWorkers = processorCount;
-                LOGGER.info ("Embedded worker count defaulting to processor count: " + numberOfEmbeddedWorkers);
-            }
-            else {
-                if (numberOfEmbeddedWorkers > processorCount){
+                LOGGER.info("Embedded worker count defaulting to processor count: " + numberOfEmbeddedWorkers);
+            } else {
+                if (numberOfEmbeddedWorkers > processorCount) {
                     LOGGER.warn("WARNING: This stand-alone I5 installation has been configured to start up " + numberOfEmbeddedWorkers + " workers, however there are only " + numberOfEmbeddedWorkers + " available on this machine.  This is likely to be detrimental to performance.  Consider reducing the number of workers.");
                 }
             }
-            for (int i = 0; i < numberOfEmbeddedWorkers; i++){
+            for (int i = 0; i < numberOfEmbeddedWorkers; i++) {
                 Thread workerThread = new Thread(embeddedWorkerFactory.getInstance());
                 workerThreads.add(workerThread);
                 workerThread.start();
-                LOGGER.info ("Worker thread started.");
+                LOGGER.info("Worker thread started.");
             }
         }
     }
@@ -229,24 +249,26 @@ public class AmqInterProScanMaster implements Master {
     /**
      * Creates messages to be sent to Worker nodes.
      * Does all of this in a transaction, hence in this separate method.
+     *
      * @param stepInstance to send as a message
      * @throws JMSException in the event of a failure sending the message to the JMS Broker.
+     *                      TODO - URGENT Need to pull this method out into an Interface & Implementation so the @Transactional works.
      */
     @Transactional
     private void sendMessage(StepInstance stepInstance) throws JMSException {
-        LOGGER.info ("Attempting to send message to queue.");
+        LOGGER.info("Attempting to send message to queue.");
         final StepExecution stepExecution = stepInstance.createStepExecution();
         stepExecutionDAO.insert(stepExecution);
         stepExecution.submit(stepExecutionDAO);
-        if (! jmsTemplate.isExplicitQosEnabled()){
-            throw new IllegalStateException ("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
+        if (!jmsTemplate.isExplicitQosEnabled()) {
+            throw new IllegalStateException("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
         }
 
         final int priority = stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 8;
 
-        synchronized (jmsTemplateLock){
+        synchronized (jmsTemplateLock) {
             jmsTemplate.setPriority(priority);
-            jmsTemplate.send(workerJobRequestQueue, new MessageCreator(){
+            jmsTemplate.send(workerJobRequestQueue, new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     return session.createObjectMessage(stepExecution);
                 }
@@ -254,13 +276,14 @@ public class AmqInterProScanMaster implements Master {
         }
 
 
-        if (parallelWorkerRunner != null){ // Not mandatory (e.g. in single-jvm implementation)
+        if (parallelWorkerRunner != null) { // Not mandatory (e.g. in single-jvm implementation)
             parallelWorkerRunner.startupNewWorker(priority);
         }
     }
 
     /**
      * If a fasta file path is set, load the proteins at start up and analyse them.
+     *
      * @param fastaFilePath from which to load the proteins at start up and analyse them.
      */
     @Override
@@ -269,9 +292,8 @@ public class AmqInterProScanMaster implements Master {
     }
 
     /**
-     *
      * @param outputFile if set, then the results will be output to this file in the format specified in
-     * the field outputFormat (defaulting to XML).
+     *                   the field outputFormat (defaulting to XML).
      */
     @Override
     public void setOutputFile(String outputFile) {
@@ -281,8 +303,9 @@ public class AmqInterProScanMaster implements Master {
     /**
      * Allows the output format to be changed from the default XML.  If no value is specified for outputFile, this
      * value will be ignored.
+     *
      * @param outputFormat the output format.  If no value is specified for outputFile, this format
-     * value will be ignored.
+     *                     value will be ignored.
      */
     @Override
     public void setOutputFormat(String outputFormat) {
@@ -292,10 +315,20 @@ public class AmqInterProScanMaster implements Master {
     /**
      * Optionally, set the analyses that should be run.
      * If not set, or set to null, all analyses will be run.
+     *
      * @param analyses a comma separated list of analyses (job names) that should be run. Null for all jobs.
      */
     @Override
     public void setAnalyses(String analyses) {
         this.analyses = analyses;
+    }
+
+    public void setCleanDatabase(boolean clean) {
+        cleanDatabase = clean;
+    }
+
+
+    public void setDatabaseCleaner(CleanRunDatabase databaseCleaner) {
+        this.databaseCleaner = databaseCleaner;
     }
 }

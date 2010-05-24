@@ -18,27 +18,29 @@
                 <ref bean="jobTest"/>
             </list>
         </property>
-        <property name="baseDirectoryTemporaryFiles" value="./"/>
+        <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
     </bean>
 
     <!-- ######################## JOB: job-load-from-fasta ############################  -->
     <bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description"                        value="Load proteins from a fasta file and create required JobInstance objects"/>
-        <property name="analysis"                           value="false"/>
+        <property name="description" value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="analysis" value="false"/>
     </bean>
 
 
     <!-- STEP 1 -->
-    <bean id="stepLoadFromFasta"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
-        <property name="job"                                ref="jobLoadFromFasta"/>
+    <bean id="stepLoadFromFasta"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <property name="job" ref="jobLoadFromFasta"/>
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
-        <property name="stepDescription"                    value="Load proteins from a fasta file and create required JobInstance objects"/>
-        <property name="createStepInstancesForNewProteins"  value="false"/>
-        <property name="retries"                            value="2"/>
-        <property name="serialGroup"                        value="LOAD_PROTEINS"/>
-        <property name="fastaFileLoader"                    ref="fastaFileLoader"/>        
-        <property name="jobs"                               ref="jobs"/>
-        <property name="stepInstanceDAO"                    ref="stepInstanceDAO"/>
+        <property name="stepDescription"
+                  value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="2"/>
+        <property name="serialGroup" value="LOAD_PROTEINS"/>
+        <property name="fastaFileLoader" ref="fastaFileLoader"/>
+        <property name="jobs" ref="jobs"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromFasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
@@ -46,8 +48,8 @@
     <!-- ######################## JOB: jobTest ############################  -->
 
     <bean id="jobTest" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description"                        value="Junit test job"/>
-        <property name="analysis"                           value="false"/>
+        <property name="description" value="Junit test job"/>
+        <property name="analysis" value="false"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobTest !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
@@ -58,12 +60,14 @@
     </bean>
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
-        <property name="proteinInsertBatchSize" value="500"/> <!-- MUST NOT EXCEED 1000 -->
+        <property name="proteinInsertBatchSize" value="500"/>
+        <!-- MUST NOT EXCEED 1000 -->
         <property name="proteinLoadListener" ref="proteinLoadListener"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
+    <bean id="proteinLoadListener"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="jobs" ref="jobs"/>
     </bean>

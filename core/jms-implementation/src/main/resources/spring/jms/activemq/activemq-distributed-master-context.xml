@@ -8,23 +8,24 @@
     <!--<import resource="activemq-queue-config-context.xml"/>-->
     <import resource="activemq-inVm-connection-config-context.xml"/>
     <import resource="../../jobs/all-jobs-context.xml"/>
+    <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
 
     <!--  lets create an embedded ActiveMQ Broker -->
     <amq:broker id="i5_broker"
                 useJmx="true"
                 persistent="true"
                 useShutdownHook="true"
-                dataDirectory="${broker.journal.directory}" 
+                dataDirectory="${broker.directory}"
             >
-<!-- shutdownhook is the default shutdown mode for ActiveMQ, see:
-http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broker/BrokerService.html#setUseShutdownHook(boolean)
--->
+        <!-- shutdownhook is the default shutdown mode for ActiveMQ, see:
+        http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broker/BrokerService.html#setUseShutdownHook(boolean)
+        -->
 
         <amq:transportConnectors>
             <!-- Connector for remote workers-->
-            <amq:transportConnector name="remote" uri="tcp://${jms.broker.host.name}:${jms.broker.port.number}" />
+            <amq:transportConnector name="remote" uri="tcp://${jms.broker.host.name}:${jms.broker.port.number}"/>
             <!-- Connector for Master (the broker is embedded, so use in JVM communication).-->
-            <amq:transportConnector name="inVM" uri="vm://localhost" />
+            <amq:transportConnector name="inVM" uri="vm://localhost"/>
         </amq:transportConnectors>
     </amq:broker>
 
@@ -38,21 +39,22 @@ http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broke
         <property name="closeOnCompletion" value="false"/>
     </bean>
 
-    <bean id="parallelWorkerRunner" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+    <bean id="parallelWorkerRunner"
+          class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
         <property name="submissionCommand" value="${worker.command}"/>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="inVmJmsFactory"/>
         <property name="destination" ref="jobResponseQueue"/>
-        <property name="messageListener" ref="responseMonitorListener" />
+        <property name="messageListener" ref="responseMonitorListener"/>
     </bean>
 
     <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
         <constructor-arg ref="stepExecutionDAO"/>
     </bean>
 
-        <!-- Quartz Scheduler - contains list of Quartz jobs. -->
+    <!-- Quartz Scheduler - contains list of Quartz jobs. -->
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
@@ -76,7 +78,8 @@ http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broke
     </bean>
 
     <!-- Quartz job to run spare parallel worker.  Currently turned on. -->
-    <bean id="startSpareParallelWorkerQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <bean id="startSpareParallelWorkerQuartzJob"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="parallelWorkerRunner"/>
         <property name="targetMethod" value="startupNewWorker"/>
     </bean>

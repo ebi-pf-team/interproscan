@@ -31,30 +31,26 @@ public class Installer implements Runnable {
 
     private Resource gene3dModel2SfFile;
 
-
     @Required
     public void setSignatureLibraryReleaseDAO(GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO) {
         this.signatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
     }
-    
+
     public void setPfamHMMfilePath(String pfamHMMfilePath) {
         this.pfamHMMfilePath = pfamHMMfilePath;
     }
 
-    
+
     public void setGene3dModel2SfFile(Resource gene3dModel2SfFile) {
         this.gene3dModel2SfFile = gene3dModel2SfFile;
     }
-
-
-
 //    private LocalSessionFactoryBean sessionFactoryBean;
 
 
     @Override
     public void run() {
         LOGGER.info("Schema creation");
-
+        // By Magic!
         LOGGER.info("Loading signatures");
         loadGene3dModels();
         loadPfamModels();
@@ -71,29 +67,28 @@ public class Installer implements Runnable {
     }
 
     private void loadGene3dModels() {
-		if (gene3dModel2SfFile==null) {
-			LOGGER.info("Not loading gene3d");
-			return;
-		}
+        if (gene3dModel2SfFile == null) {
+            LOGGER.info("Not loading gene3d");
+            return;
+        }
 
         // Read models
         Model2SfReader reader = new Model2SfReader();
         Map<String, String> modelMap;
         try {
-             modelMap = reader.read(gene3dModel2SfFile);
+            modelMap = reader.read(gene3dModel2SfFile);
         } catch (IOException e) {
-            LOGGER.fatal("IOException thrown when parsing HMM file.",e);
-            throw new IllegalStateException("Unable to load Gene3d models",e);
+            LOGGER.fatal("IOException thrown when parsing HMM file.", e);
+            throw new IllegalStateException("Unable to load Gene3d models", e);
         }
         // Create signatures
         final Map<String, Signature> signatureMap = new HashMap<String, Signature>();
-        for (String modelAc : modelMap.keySet())  {
+        for (String modelAc : modelMap.keySet()) {
             String signatureAc = modelMap.get(modelAc);
             Signature signature;
-            if (signatureMap.containsKey(signatureAc))  {
+            if (signatureMap.containsKey(signatureAc)) {
                 signature = signatureMap.get(signatureAc);
-            }
-            else    {
+            } else {
                 signature = new Signature(signatureAc);
                 signatureMap.put(signatureAc, signature);
             }
@@ -107,19 +102,20 @@ public class Installer implements Runnable {
     }
 
     // TODO load pfam models in chunks, not all at one go... java.lang.OutOfMemory
+
     private void loadPfamModels() {
-		if (pfamHMMfilePath==null) {
-			LOGGER.info("Not loading pfam");
-			return;
-		}
+        if (pfamHMMfilePath == null) {
+            LOGGER.info("Not loading pfam");
+            return;
+        }
         // Parse and retrieve the signatures.
         Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(SignatureLibrary.PFAM, "24.0");
         SignatureLibraryRelease release = null;
-        try{
+        try {
             release = modelLoader.parse(pfamHMMfilePath);
         } catch (IOException e) {
-            LOGGER.fatal("IOException thrown when parsing HMM file.",e);
-            throw new IllegalStateException("Unable to load Pfam models",e);
+            LOGGER.fatal("IOException thrown when parsing HMM file.", e);
+            throw new IllegalStateException("Unable to load Pfam models", e);
         }
 
         // And store the Models / Signatures to the database.

@@ -28,7 +28,7 @@
                 <ref bean="jobGene3d"/>
             </list>
         </property>
-        <property name="baseDirectoryTemporaryFiles" value="${base.directory.temp.files}"/>
+        <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
     </bean>
 
     <!-- String properties common to all jobs -->
@@ -45,62 +45,63 @@
 
     <!-- ######################## JOB: job-load-from-fasta ############################  -->
     <bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description"                        value="Load proteins from a fasta file and create required JobInstance objects"/>
-        <property name="analysis"                           value="false"/>
+        <property name="description" value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="analysis" value="false"/>
     </bean>
 
 
     <!-- STEP 1 -->
-    <bean id="stepLoadFromFasta"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
-        <property name="job"                                ref="jobLoadFromFasta"/>
+    <bean id="stepLoadFromFasta"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <property name="job" ref="jobLoadFromFasta"/>
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
-        <property name="stepDescription"                    value="Load proteins from a fasta file and create required JobInstance objects"/>
-        <property name="createStepInstancesForNewProteins"  value="false"/>
-        <property name="retries"                            value="2"/>
-        <property name="serialGroup"                        value="LOAD_PROTEINS"/>
-        <property name="fastaFileLoader"                    ref="fastaFileLoader"/>
-        <property name="jobs"                               ref="jobs"/>
-        <property name="stepInstanceDAO"                    ref="stepInstanceDAO"/>
+        <property name="stepDescription"
+                  value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="2"/>
+        <property name="serialGroup" value="LOAD_PROTEINS"/>
+        <property name="fastaFileLoader" ref="fastaFileLoader"/>
+        <property name="jobs" ref="jobs"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
     </bean>
-
 
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromFasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## JOB: jobLoadFromUniParc ############################  -->
     <bean id="jobLoadFromUniParc" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description"                        value="Load proteins from UniParc and create required JobInstance objects"/>
-        <property name="analysis"                           value="false"/>
+        <property name="description" value="Load proteins from UniParc and create required JobInstance objects"/>
+        <property name="analysis" value="false"/>
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="stepLoadFromUniParc"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.UniparcProteinLoadStep">
-        <property name="job"                                ref="jobLoadFromUniParc"/>
+    <bean id="stepLoadFromUniParc"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.UniparcProteinLoadStep">
+        <property name="job" ref="jobLoadFromUniParc"/>
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
-        <property name="stepDescription"                    value="Load proteins from UniParc and create required JobInstance objects"/>
-        <property name="createStepInstancesForNewProteins"  value="false"/>
-        <property name="retries"                            value="2"/>
-        <property name="serialGroup"                        value="LOAD_PROTEINS"/>
-        <property name="uniparcLoader"                      ref="uniparcLoader"/>
+        <property name="stepDescription" value="Load proteins from UniParc and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="2"/>
+        <property name="serialGroup" value="LOAD_PROTEINS"/>
+        <property name="uniparcLoader" ref="uniparcLoader"/>
     </bean>
 
     <!-- ######################## JOB: writeOut ############################  -->
     <bean id="jobWriteOutput" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description"                        value="Write output for proteins when analysis finished"/>
-        <property name="analysis"                           value="false"/>
+        <property name="description" value="Write output for proteins when analysis finished"/>
+        <property name="analysis" value="false"/>
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="stepWriteOutput"                 class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep">
-        <property name="job"                                ref="jobWriteOutput"/>
+    <bean id="stepWriteOutput" class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep">
+        <property name="job" ref="jobWriteOutput"/>
         <!-- This step is made dependent on the steps created by the protein load listener -->
-        <property name="stepDescription"                    value="Write output for completed analysis"/>
-        <property name="createStepInstancesForNewProteins"  value="false"/>
-        <property name="retries"                            value="0"/>
+        <property name="stepDescription" value="Write output for completed analysis"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="0"/>
         <!--<property name="serialGroup"                        value="LOAD_PROTEINS"/>-->
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
-
 
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
@@ -111,12 +112,14 @@
     </bean>
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
-        <property name="proteinInsertBatchSize" value="500"/> <!-- MUST NOT EXCEED 1000 -->
+        <property name="proteinInsertBatchSize" value="500"/>
+        <!-- MUST NOT EXCEED 1000 -->
         <property name="proteinLoadListener" ref="proteinLoadListener"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
+    <bean id="proteinLoadListener"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="completionJob" ref="jobWriteOutput"/>
         <property name="jobs" ref="jobs"/>
@@ -130,7 +133,8 @@
         <property name="xrefDao" ref="xrefDAO"/>
     </bean>
 
-    <bean id="rowCallbackHandlerTemplate" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.UniParcDBRowCallbackHandler">
+    <bean id="rowCallbackHandlerTemplate"
+          class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.UniParcDBRowCallbackHandler">
         <property name="proteinLoader" ref="proteinLoader"/>
     </bean>
 

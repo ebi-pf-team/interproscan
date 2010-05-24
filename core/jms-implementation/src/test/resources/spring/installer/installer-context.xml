@@ -13,14 +13,7 @@
 
 
     <bean id="installer" class="uk.ac.ebi.interpro.scan.jms.installer.Installer">
-        <!--<property name="sessionFactoryBean" ref="&amp;sessionFactory"/>-->
         <property name="entityManagerFactory" ref="schemaCreatingEntityManagerFactory"/>
-        <property name="pfamHMMfilePath" value="${Pfam-A.hmm.path}"/>
-        <property name="gene3dModel2SfFile">
-            <bean class="org.springframework.core.io.FileSystemResource">
-                <constructor-arg value="${gene3d.model2sf_map.path}"/>
-            </bean>
-        </property>
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
     </bean>
 

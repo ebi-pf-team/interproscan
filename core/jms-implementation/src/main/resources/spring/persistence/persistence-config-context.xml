@@ -11,16 +11,16 @@
 
     <!-- Using AspectJ for AOP -->
     <!--<aop:aspectj-autoproxy/>-->
-    
+
     <!-- JPA Configuration -->
     <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>-->
 
-    
-    <import resource="datasource-context.xml"/>
-    
+
+    <import resource="classpath:/spring/persistence/datasource-context.xml"/>
+
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="interproDataSource"/>
-        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence" />
+        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence"/>
         <property name="jpaProperties">
             <map>
                 <entry key="hibernate.show_sql" value="${hibernate.show_sql}"/>
@@ -33,6 +33,13 @@
             </map>
         </property>
     </bean>
-    
+
+    <!-- JPA Transaction Setup -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <tx:annotation-driven/>
+
 
 </beans>
