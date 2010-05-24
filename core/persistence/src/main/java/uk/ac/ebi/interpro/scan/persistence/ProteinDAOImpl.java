@@ -17,9 +17,9 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Xref;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -81,7 +81,9 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     @Override
     @Transactional(readOnly = true)
     public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom,long top) {
-        Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.matches left outer join fetch p.crossReferences where p.id >= :bottom and p.id <= :top");
+        Query query = entityManager.createQuery("select distinct p from Protein p " +
+                "left outer join fetch p.matches " +
+                "left outer join fetch p.crossReferences where p.id >= :bottom and p.id <= :top");
         query.setParameter("bottom", bottom);
         query.setParameter("top", top);
         return (List<Protein>) query.getResultList(); 

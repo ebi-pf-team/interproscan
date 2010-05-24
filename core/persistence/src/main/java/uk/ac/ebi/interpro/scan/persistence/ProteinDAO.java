@@ -16,9 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+import uk.ac.ebi.interpro.scan.model.Protein;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -78,7 +77,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      *
      * @param bottom
      * @param top
-     * @deprecated Doesn't actually work
+//     * @deprecated Doesn't actually work
      * @return
      */
     public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom,long top);

@@ -7,7 +7,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusFeature;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
+import uk.ac.ebi.interpro.scan.model.Location;
+import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.Xref;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -44,6 +47,15 @@ public class PhobiusFilteredMatchDAOTest {
             "GHI",
             "JKL",
             "MNO"
+    };
+
+    private static final String[][] XREFS = new String[][]{
+            {"Bob", "Henry"},
+            {"Geoff", "George"},
+            {"Dave", "Dennis"},
+            {"Sheelah", "Alice"},
+            {"Derek", "Gustav"}
+
     };
 
     private static final String[][] PHOBIUS_FEATURE_LINES = new String[][]{
@@ -112,8 +124,11 @@ public class PhobiusFilteredMatchDAOTest {
     @Test
     public void phobiusMatchStoreTest(){ // Build some proteins and persist them.
         List<Protein> proteins = new ArrayList<Protein>(SEQUENCES.length);
-        for (String sequence : SEQUENCES){
-            proteins.add (new Protein (sequence));
+        for (int i = 0, SEQUENCESLength = SEQUENCES.length; i < SEQUENCESLength; i++) {
+            String sequence = SEQUENCES[i];
+            final Protein protein = new Protein(sequence);
+            protein.addCrossReferences(XREFS[i]);
+            proteins.add(protein);
         }
         proteins = insertProteinsInTransaction(proteins);
         // Assert that the Proteins have primary keys (and have therefore been persisted)
@@ -162,5 +177,24 @@ public class PhobiusFilteredMatchDAOTest {
         // Now try to retrieve PhobiusMatches from the database to check they exist.
         assertTrue(featureCount > 0L);
         assertEquals(new Long(featureCount),  phobiusDAO.count());
+
+        List<Protein> retrievedProteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(0, Long.MAX_VALUE);
+        for (Protein retrieved : retrievedProteins){
+            LOGGER.info ("Protein ID: " + retrieved.getId());
+            LOGGER.info ("Number of Xrefs: " + retrieved.getCrossReferences().size());
+            for (Xref xref : retrieved.getCrossReferences()){
+                LOGGER.info ("\tXref: " + xref.getIdentifier());
+            }
+            LOGGER.info ("Number of Matches " + retrieved.getMatches().size());
+            for (Match match : retrieved.getMatches()){
+                LOGGER.info ("\tMatch: " + match.getSignature().getAccession());
+                Set<Location> locations = match.getLocations();
+                for (Location location : locations){
+                    LOGGER.info ("\tStart: " + location.getStart());
+                    LOGGER.info ("\tStop: " + location.getEnd());
+                }
+            }
+
+        }
     }
 }

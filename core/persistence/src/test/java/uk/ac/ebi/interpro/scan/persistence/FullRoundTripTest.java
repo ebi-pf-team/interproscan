@@ -1,13 +1,11 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import static junit.framework.TestCase.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
@@ -21,7 +19,12 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import javax.annotation.Resource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+
+import static junit.framework.TestCase.*;
 
 /**
  * Performs a full round-trip test of persistence
@@ -34,10 +37,10 @@ import java.io.*;
  * @see     org.custommonkey.xmlunit.XMLUnit
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/springconfig/spring-FullRoundTripTest-config.xml"})
+@ContextConfiguration
 public class FullRoundTripTest {
 
-    private static final Log logger = LogFactory.getLog(FullRoundTripTest.class);
+    private static final Logger LOGGER = Logger.getLogger(FullRoundTripTest.class.getName());
 
     @Resource (name="signatureMarshaller")
     private Marshaller signatureMarshaller;
@@ -173,12 +176,12 @@ public class FullRoundTripTest {
                 String unpersistedOutputXml = marshal(marshaller, persistableObject);
                 Diff myDiff = new Diff(inputXml, unpersistedOutputXml);
                 if (! myDiff.similar()) {
-                    logger.error("\nNot similar: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
-                    logger.error("\ntoString(): \n\n" + persistableObject.toString());
+                    LOGGER.error("\nNot similar: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
+                    LOGGER.error("\ntoString(): \n\n" + persistableObject.toString());
                 }
                 else if (! myDiff.identical()){
-                    logger.error("\nNot identical: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
-                    logger.error("\ntoString(): \n\n" + persistableObject.toString());
+                    LOGGER.error("\nNot identical: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
+                    LOGGER.error("\ntoString(): \n\n" + persistableObject.toString());
                 }
                 assertTrue("Round trip XML (not persistence) should be similar." + myDiff, myDiff.similar());
                 assertTrue("Round trip XML (not persistence) should be identical." + myDiff, myDiff.identical());
@@ -189,7 +192,7 @@ public class FullRoundTripTest {
                 // Retrieve its primary key
                 Long id = retriever.getPrimaryKey(persistableObject);
                 assertNotNull("The stored persistableObject should not have a null primary key·", id);
-                logger.debug("Primary key of persisted object (mid round-trip following insert): "+ id);
+                LOGGER.debug("Primary key of persisted object (mid round-trip following insert): "+ id);
                 // And retrieve into a new reference
                 T retrievedPersistable = retriever.getObjectByPrimaryKey(dao, id);
 
@@ -200,10 +203,10 @@ public class FullRoundTripTest {
                 String persistedOutputXML = marshal(marshaller, retrievedPersistable);
                 myDiff = new Diff(inputXml, persistedOutputXML);
                 if (! myDiff.similar()) {
-                    logger.error("\nNot similar: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
+                    LOGGER.error("\nNot similar: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
                 }
                 else if (! myDiff.identical()){
-                    logger.error("\nNot identical: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
+                    LOGGER.error("\nNot identical: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
 
                 }
                 assertTrue("Round trip XML (persisted) should be similar." + myDiff, myDiff.similar());
@@ -211,10 +214,10 @@ public class FullRoundTripTest {
 
 
             } catch (IOException e) {
-                logger.error("IOException thrown during XML round trip test:" , e);
+                LOGGER.error("IOException thrown during XML round trip test:" , e);
                 fail("IOException thrown during XML round trip test (full stack trace logged):" + e.getMessage());
             } catch (SAXException e) {
-                logger.error("SAXExeption thrown when attempting comparison of XML files.", e);
+                LOGGER.error("SAXExeption thrown when attempting comparison of XML files.", e);
                 fail ("SAXExeption thrown when attempting comparison of XML files (full stack trace logged): " + e.getMessage());
             }
             finally {
@@ -234,7 +237,7 @@ public class FullRoundTripTest {
         Writer writer = new StringWriter();
         marshaller.marshal(o, new StreamResult(writer));
         String xml = writer.toString();
-        logger.debug("\n" + xml);
+        LOGGER.debug("\n" + xml);
         return xml;
     }
 
@@ -247,7 +250,7 @@ public class FullRoundTripTest {
      */
     private Object unmarshal(Unmarshaller unmarshaller, String xml) throws IOException  {
         Object o = unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
-        logger.debug(o);
+        LOGGER.debug(o);
         return o;
     }
 

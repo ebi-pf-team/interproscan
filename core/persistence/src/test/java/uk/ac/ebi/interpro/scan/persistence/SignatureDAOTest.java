@@ -17,12 +17,9 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import junit.framework.Assert;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
-import org.junit.Ignore;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -31,6 +28,9 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -41,7 +41,7 @@ import java.util.List;
  * @author Phil Jones, EMBL-EBI
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration( locations={"/springconfig/spring-SignatureDAOTest-config.xml"} )
+@ContextConfiguration
 //@Ignore
 public class SignatureDAOTest {
 
