@@ -45,7 +45,7 @@
         <property name="stepDescription"                    value="Run HMMER 3 Binary for selected proteins"/>
         <property name="fullPathToBinary"                   value="${binary.phobius.pl.path}"/>
         <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
-        <property name="phobiusOutputFileNameTemplate"      ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate"             ref="rawAnalaysisOutputFileTemplate"/>
         <property name="retries"                            value="3"/>
     </bean>
 
