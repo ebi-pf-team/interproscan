@@ -64,7 +64,7 @@ public class DomainFinderRecordTest {
     // See http://www.uniprot.org/uniprot/O25505
     private final static DomainFinderRecord EXPECTED_RECORD =
             new DomainFinderRecord (SEQ_ID, MODEL_ID, SEQ_START, SEQ_END,
-                                    MODEL_START, MODEL_END, DOMAIN_I_EVALUE, DOMAIN_SCORE, ALIGNMENT);
+                                    MODEL_START, MODEL_END, DOMAIN_I_EVALUE, DOMAIN_SCORE, ALIGNMENT, SEQ_EVALUE);
 
     private final static String EXPECTED_LINE =
             SEQ_ID + "\t" + MODEL_ID + "\t" +

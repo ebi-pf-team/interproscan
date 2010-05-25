@@ -22,7 +22,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Column 8: Last residue in sequence to match model (last upper case letter)
  * Column 9: First matched position in model
  * Column 10: Last matched position in model
- * Column 11: Evalue
+ * Column 11: Domain i-evalue
  * Column 12: Simple score
  * Column 13: Reverse score
  * Column 14: Number of matched sequence segments (2+: discontinuous match)
@@ -82,6 +82,9 @@ public final class DomainFinderRecord {
     private final Integer matchedSequenceCount;
     private final String segmentBoundaries;
 
+    // NOTE: Sequence e-value is not stored in SSF file, but is required for ordering of SSF file
+    private final Double sequenceEvalue;
+
     private DomainFinderRecord() {                
         this.sequenceId     = null;
         this.modelId        = null;
@@ -98,12 +101,14 @@ public final class DomainFinderRecord {
         this.reverseScore   = null;
         this.matchedSequenceCount = null;
         this.segmentBoundaries = null;
+        this.sequenceEvalue = null;
     }
 
     public DomainFinderRecord(String sequenceId, String modelId,
                               Integer sequenceStart, Integer sequenceEnd,
                               Integer modelStart, Integer modelEnd,
-                              Double domainIeValue, Double score, String cigarAlignment) {
+                              Double domainIeValue, Double score, String cigarAlignment,
+                              Double sequenceEvalue) {
         SegmentRecord segmentRecord = getSegmentAndBoundaries(cigarAlignment, sequenceStart);
         this.sequenceId          = sequenceId;
         this.modelId             = modelId;
@@ -120,6 +125,7 @@ public final class DomainFinderRecord {
         this.reverseScore        = DEFAULT_REVERSE_SCORE;
         this.matchedSequenceCount = segmentRecord.getMatchedSequenceCount();
         this.segmentBoundaries   = segmentRecord.getSegmentBoundaries();
+        this.sequenceEvalue     = sequenceEvalue;
     }
 
     DomainFinderRecord(String sequenceId, String modelId,
@@ -128,7 +134,7 @@ public final class DomainFinderRecord {
                               Integer sequenceStart, Integer sequenceEnd,
                               Integer modelStart, Integer modelEnd,
                               Double domainIeValue, Double score, Double reverseScore,
-                              Integer matchedSequenceCount, String segmentBoundaries) {
+                              Integer matchedSequenceCount, String segmentBoundaries, Double sequenceEvalue) {
         this.sequenceId          = sequenceId;
         this.modelId             = modelId;
         this.sequenceLength      = sequenceLength;
@@ -144,6 +150,7 @@ public final class DomainFinderRecord {
         this.reverseScore        = reverseScore;
         this.matchedSequenceCount = matchedSequenceCount;
         this.segmentBoundaries   = segmentBoundaries;
+        this.sequenceEvalue      = sequenceEvalue;
     }
 
     public String getSequenceId() {
@@ -206,6 +213,10 @@ public final class DomainFinderRecord {
         return segmentBoundaries;
     }
 
+    public Double getSequenceEvalue() {
+        return sequenceEvalue;
+    }
+
     public static DomainFinderRecord valueOf(Gene3dHmmer3RawMatch rawMatch) {
         if (rawMatch == null)  {
             throw new NullPointerException("RawMatch object is null");
@@ -214,7 +225,7 @@ public final class DomainFinderRecord {
                               rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
                               rawMatch.getHmmStart(), rawMatch.getHmmEnd(),
                               rawMatch.getDomainIeValue(), rawMatch.getLocationScore(),
-                              rawMatch.getCigarAlignment());
+                              rawMatch.getCigarAlignment(), rawMatch.getEvalue());
 
     }    
 
@@ -241,7 +252,7 @@ public final class DomainFinderRecord {
                               sequenceStart, sequenceEnd,
                               modelStart, modelEnd,
                               domainIeValue, score, reverseScore,
-                              matchedSequenceCount, segmentBoundaries);
+                              matchedSequenceCount, segmentBoundaries, null);
     }
 
     public static String toLine(DomainFinderRecord record) {
