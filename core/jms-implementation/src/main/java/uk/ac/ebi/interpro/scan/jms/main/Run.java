@@ -27,7 +27,9 @@ public class Run {
 
     private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
 
-    private static final String HELP_MESSAGE_TITLE = "java -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms512M -Xmx2048M [-Dconfig=/path/to/config.properties] -jar interproscan-5.jar";
+    private static final String HELP_MESSAGE_TITLE = "java -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms512M -Xmx2048M -jar interproscan-5.jar";
+
+// [-Dconfig=/path/to/config.properties]
 
     private static final int MEGA = 1024 * 1024;
 
@@ -171,16 +173,17 @@ public class Run {
             // Will throw handled IllegalArgumentException if the Mode is not recognised.
             final Mode mode = Mode.valueOf(modeArgument.toUpperCase());
 
-            String config = System.getProperty("config");
+            //String config = System.getProperty("config");
             LOGGER.info("Welcome to InterProScan v5");
 
             LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
             LOGGER.info("Running as: " + mode);
-            if (config == null) {
-                LOGGER.info("No custom config used. Use java -Dconfig=config/my.properties");
-            } else {
-                LOGGER.info("Custom config: " + config);
-            }
+//
+//            if (config == null) {
+//                LOGGER.info("No custom config used. Use java -Dconfig=config/my.properties");
+//            } else {
+//                LOGGER.info("Custom config: " + config);
+//            }
 
             AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
             ctx.registerShutdownHook();
