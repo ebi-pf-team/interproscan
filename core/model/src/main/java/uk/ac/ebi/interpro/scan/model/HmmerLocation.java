@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 @Entity
 @Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
 @XmlType(name="HmmerLocationType", propOrder={"score", "evalue", "hmmStart", "hmmEnd", "hmmBounds"})
-abstract class HmmerLocation extends Location {
+public abstract class HmmerLocation extends Location {
 
     @Column(nullable = false, name="hmm_start")
     private int hmmStart;
