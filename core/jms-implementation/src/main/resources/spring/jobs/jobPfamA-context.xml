@@ -53,9 +53,9 @@
             </list>
         </property>
         <property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>
-        <property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
         <property name="retries"                            value="3"/>
+        <property name="outputFileNameTemplate"             ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepPfamADeleteFastaFile"
