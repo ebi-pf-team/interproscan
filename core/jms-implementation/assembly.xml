@@ -6,6 +6,16 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
+
+
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory></outputDirectory>
+            <includes><include>interproscan-5.jar</include></includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
+
+
         <fileSet>
             <directory>target</directory>
             <outputDirectory></outputDirectory>
@@ -14,11 +24,27 @@
             </includes>
         </fileSet>
 
+
         <fileSet>
             <directory>${mvn.ebi.interproscan5.support}</directory>
-            <outputDirectory>support</outputDirectory>
+            <outputDirectory></outputDirectory>
+            <includes><include>*.sh</include></includes>
             <fileMode>0755</fileMode>
         </fileSet>
+
+        <fileSet>
+            <directory>${mvn.ebi.interproscan5.support}/bin</directory>
+            <outputDirectory>bin</outputDirectory>            
+            <fileMode>0755</fileMode>
+        </fileSet>
+
+
+        <fileSet>
+            <directory>${mvn.ebi.interproscan5.support}</directory>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+
+
 
         <!-- todo: distribution directory adding to zip file root (dbinns) -->
 
