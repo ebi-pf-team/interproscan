@@ -49,7 +49,7 @@
             </list>
         </property>
         <property name="fullPathToHmmFile"                  value="${gene3d.hmm.path}"/>
-        <property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate"             ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
         <property name="retries"                            value="3"/>
     </bean>
