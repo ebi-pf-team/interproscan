@@ -62,7 +62,7 @@ public class AmqInterProScanMaster implements Master {
 
     private String outputFormat;
 
-    private String analyses;
+    private String[] analyses;
 
     /**
      * This boolean allows configuration of whether or not the Master closes down when there are no more
@@ -195,9 +195,19 @@ public class AmqInterProScanMaster implements Master {
      */
     private void createFastaFileLoadStepInstance() {
         if (fastaFilePath != null) {
+            StringBuffer analysisBuffer = new StringBuffer();
+            if (analyses != null) {
+                for (String analysis : analyses) {
+                    if (analysisBuffer.length() > 0) {
+                        analysisBuffer.append(',');
+                    }
+                    analysisBuffer.append(analysis);
+                }
+            }
+
             Map<String, String> params = new HashMap<String, String>(1);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
-            params.put(FastaFileLoadStep.ANALYSIS_JOB_NAMES_KEY, analyses);
+            params.put(FastaFileLoadStep.ANALYSIS_JOB_NAMES_KEY, analysisBuffer.toString());
             params.put(FastaFileLoadStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
             params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, fastaFilePath.replaceAll("\\.fasta", "") + ".tsv");
             createStepInstancesForJob("jobLoadFromFasta", params);
@@ -319,7 +329,7 @@ public class AmqInterProScanMaster implements Master {
      * @param analyses a comma separated list of analyses (job names) that should be run. Null for all jobs.
      */
     @Override
-    public void setAnalyses(String analyses) {
+    public void setAnalyses(String[] analyses) {
         this.analyses = analyses;
     }
 

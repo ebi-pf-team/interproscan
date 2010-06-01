@@ -2,15 +2,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
-import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
-import uk.ac.ebi.interpro.scan.io.cli.FileIsNotADirectoryException;
-import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +24,6 @@ public class RunHmmer3Step extends RunBinaryStep {
 
     private String fullPathToHmmFile;
 
-    private List<String> binarySwitches;
-
     private String fastaFileNameTemplate;
 
     public String getFullPathToBinary() {
@@ -41,15 +33,6 @@ public class RunHmmer3Step extends RunBinaryStep {
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
         this.fullPathToBinary = fullPathToBinary;
-    }
-
-    public List<String> getBinarySwitches() {
-        return binarySwitches;
-    }
-
-    @Required
-    public void setBinarySwitches(List<String> binarySwitches) {
-        this.binarySwitches = binarySwitches;
     }
 
     public String getFullPathToHmmFile() {
@@ -75,7 +58,7 @@ public class RunHmmer3Step extends RunBinaryStep {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         List<String> command = new ArrayList<String>();
         command.add(this.getFullPathToBinary());
-        command.addAll(this.getBinarySwitches());
+        command.addAll(this.getBinarySwitchesAsList());
         command.add(this.getFullPathToHmmFile());
         command.add(fastaFilePathName);
         return command;

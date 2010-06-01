@@ -16,15 +16,15 @@
 
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="jobPfamA" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description"                        value="Pfam HMMER3 Raw Analysis and Post Processing"/>
-        <property name="analysis"                           value="true"/>
+        <property name="description" value="Pfam HMMER3 Raw Analysis and Post Processing"/>
+        <property name="analysis" value="true"/>
     </bean>
 
     <bean id="abstractPfamAStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-         <property name="job"                                ref="jobPfamA"/>
-         <property name="maxProteins"                        value="5000"/>
-         <property name="createStepInstancesForNewProteins"  value="true"/>
-         <property name="retries"                            value="0"/>
+        <property name="job" ref="jobPfamA"/>
+        <property name="maxProteins" value="5000"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
     </bean>
 
     <!-- STEP 1 -->
@@ -32,87 +32,82 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractPfamAStep">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
-        <property name="stepDescription"                    value="Create fasta file."/>
-        <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
-        <property name="proteinDAO"                         ref="proteinDAO"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
     <!-- STEP 2 -->
     <bean id="stepPfamARunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step"
           parent="abstractPfamAStep">
-        <property name="dependsUpon"                        ref="stepPfamAWriteFastaFile"/>
-        <property name="stepDescription"                    value="Run HMMER 3 Binary for selected proteins"/>
-        <property name="fullPathToBinary"                   value="${binary.hmmer3.hmmsearch.path}"/>
-        <property name="binarySwitches" >
-            <list>
-                <value>-Z</value>
-                <value>9421015</value>
-                <value>--cut_ga</value>
-            </list>
-        </property>
-        <property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>
-        <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
-        <property name="retries"                            value="3"/>
-        <property name="outputFileNameTemplate"             ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="dependsUpon" ref="stepPfamAWriteFastaFile"/>
+        <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
+        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="binarySwitches" value="-Z 9421015 --cut_ga"/>
+        <property name="fullPathToHmmFile" value="${Pfam-A.hmm.path}"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepPfamADeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPfamAStep">
-        <property name="dependsUpon"                        ref="stepPfamARunHmmer3"/>
-        <property name="stepDescription"                    value="Delete the fasta file following successful run of HMMER3"/>
-        <property name="fileNameTemplate"                   ref="fastaFileNameTemplate"/>
+        <property name="dependsUpon" ref="stepPfamARunHmmer3"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of HMMER3"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
     <!-- STEP 3 -->
     <bean id="stepPfamAParseHmmerOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.ParsePfam_A_HMMER3OutputStep"
           parent="abstractPfamAStep">
-        <property name="dependsUpon"                        ref="stepPfamARunHmmer3"/>
-        <property name="stepDescription"                    value="Parse the output from HMMER3"/>
-        <property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>
-        <property name="parser"                             ref="pfamAHmmer3SearchParser"/>
-        <property name="serialGroup"                        value="PARSE_HMMER_3"/>
-        <property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>
-        <property name="retries"                            value="3"/>
+        <property name="dependsUpon" ref="stepPfamARunHmmer3"/>
+        <property name="stepDescription" value="Parse the output from HMMER3"/>
+        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fullPathToHmmFile" value="${Pfam-A.hmm.path}"/>
+        <property name="parser" ref="pfamAHmmer3SearchParser"/>
+        <property name="serialGroup" value="PARSE_HMMER_3"/>
+        <property name="pfamRawMatchDAO" ref="pfamRawMatchDAO"/>
+        <property name="retries" value="3"/>
     </bean>
 
     <bean id="stepPfamADeleteHmmerOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPfamAStep"  >
-        <property name="dependsUpon"                        ref="stepPfamAParseHmmerOutput"/>
-        <property name="stepDescription"                    value="Delete the hmmer output file following successful parsing"/>
-        <property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>
+          parent="abstractPfamAStep">
+        <property name="dependsUpon" ref="stepPfamAParseHmmerOutput"/>
+        <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
     <!-- STEP 4 -->
     <bean id="stepPfamAPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep"
           parent="abstractPfamAStep">
-        <property name="dependsUpon"                        ref="stepPfamAParseHmmerOutput"/>
-        <property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>
-        <property name="postProcessor"                      ref="pfamAPostProcessor"/>
-        <property name="serialGroup"                        value="PFAM_A_POST_PROCESSING"/>
-        <property name="signatureLibraryRelease"            value="24.0"/>
-        <property name="signatureLibrary"                   value="PFAM"/>
-        <property name="rawMatchDAO"                        ref="pfamRawMatchDAO"/>
-        <property name="filteredMatchDAO"                   ref="pfamFilteredMatchDAO"/>
+        <property name="dependsUpon" ref="stepPfamAParseHmmerOutput"/>
+        <property name="stepDescription" value="Performs post processing on Pfam data (Hmmer 3 based)"/>
+        <property name="postProcessor" ref="pfamAPostProcessor"/>
+        <property name="serialGroup" value="PFAM_A_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" value="24.0"/>
+        <property name="signatureLibrary" value="PFAM"/>
+        <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
+        <property name="filteredMatchDAO" ref="pfamFilteredMatchDAO"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <bean id="pfamAPostProcessor"                        class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing">
-        <property name="clanFileParser"                     ref="pfamAClanFileParser"/>
+    <bean id="pfamAPostProcessor"
+          class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing">
+        <property name="clanFileParser" ref="pfamAClanFileParser"/>
     </bean>
 
-    <bean id="pfamAClanFileParser"                        class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
-        <property name="pfamASeedFile"                      value="${Pfam-A.seed.path}"/>
-        <property name="pfamCFile"                          value="${Pfam-C.path}"/>
+    <bean id="pfamAClanFileParser" class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
+        <property name="pfamASeedFile" value="${Pfam-A.seed.path}"/>
+        <property name="pfamCFile" value="${Pfam-C.path}"/>
     </bean>
-    
+
     <bean id="pfamAHmmer3SearchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
         <property name="parserSupport">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
@@ -121,8 +116,8 @@
                         <constructor-arg value="${Pfam-A.hmm.path}"/>
                     </bean>
                 </property>
-                <property name="signatureLibraryRelease"            value="24.0"/>
-                <property name="signatureLibrary"                   value="PFAM"/>
+                <property name="signatureLibraryRelease" value="24.0"/>
+                <property name="signatureLibrary" value="PFAM"/>
             </bean>
         </property>
     </bean>
@@ -130,6 +125,6 @@
     <bean id="pfamRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl"/>
 
     <bean id="pfamFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
-    
+
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

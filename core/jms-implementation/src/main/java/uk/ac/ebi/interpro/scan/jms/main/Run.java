@@ -33,15 +33,55 @@ public class Run {
 
     private static final int MEGA = 1024 * 1024;
 
+    /**
+     * InterProScan 4 command line options:
+     * ./iprscan -cli
+     * <p/>
+     * usage: ./iprscan -cli [-email <addr>] [-appl <name> ...] [-nocrc] [-altjobs] [-seqtype p|n] [-trlen <N>] [-trtable <table>]
+     * [-iprlookup] [-goterms] -i <seqfile> [-o <output file>]
+     * <p/>
+     * -i <seqfile>      Your sequence file (mandatory).
+     * -o <output file>  The output file where to write results (optional), default is STDOUT.
+     * -email <addr>     Submitter email address (required for non-interactive).
+     * -appl <name>      Application(s) to run (optional), default is all.
+     * Possible values (dependent on set-up):
+     * blastprodom
+     * fprintscan
+     * hamap
+     * hmmpfam
+     * hmmpir
+     * hmmpanther
+     * hmmtigr
+     * hmmsmart
+     * superfamily
+     * gene3d
+     * patternscan
+     * profilescan
+     * seg
+     * coils
+     * [tmhmm]
+     * [signalp]
+     * -nocrc            Don't perform CRC64 check, default is on.
+     * -altjobs          Launch jobs alternatively, chunk after chunk. Default is off.
+     * -seqtype <type>   Sequence type: n for DNA/RNA, p for protein (default).
+     * -trlen <n>        Transcript length threshold (20-150).
+     * -trtable <table>  Codon table number.
+     * -goterms          Show GO terms if iprlookup option is also given.
+     * -iprlookup        Switch on the InterPro lookup for results.
+     * -format <format>  Output results format (raw, txt, html, xml(default), ebixml(EBI header on top of xml), gff)
+     * -verbose          Print messages during run
+     */
     private enum I5Option {
-        MODE("mode", "m", true, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME"),
-        FASTA("fasta", "f", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH"),
-        OUTPUT_FORMAT("output-format", "F", false, "Optional output format. One of: XML ... (other formats to follow?)", "OUTPUT-FORMAT"),
-        OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH"),
-        ANALYSES("analyses", "a", false, "Optional colon-separated list of analyses.  If this option is not set, ALL analyses will be run.", "ANALYSES_COLON_SEPARATED"),
-        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY");
+        MODE("mode", "m", true, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
+        FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
+        OUTPUT_FORMAT("format", "F", false, "Optional output format. One of: txt ... (other formats to follow)", "OUTPUT-FORMAT", false),
+        OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH", false),
+        ANALYSES("analyses", "appl", false, "Optional white space separated list of analyses.  If this option is not set, ALL analyses will be run.  Any of: jobPfamA, jobPhobius (... others to follow)", "ANALYSES_LIST", true),
+        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false);
 
         private String longOpt;
+
+        private boolean multipleArgs;
 
         private String shortOpt;
 
@@ -56,13 +96,15 @@ public class Run {
                 String shortOpt,
                 boolean required,
                 String description,
-                String argumentName
+                String argumentName,
+                boolean multipleArgs
         ) {
             this.longOpt = longOpt;
             this.shortOpt = shortOpt;
             this.required = required;
             this.description = description;
             this.argumentName = argumentName;
+            this.multipleArgs = multipleArgs;
         }
 
         public String getLongOpt() {
@@ -83,6 +125,10 @@ public class Run {
 
         public String getArgumentName() {
             return argumentName;
+        }
+
+        public boolean hasMultipleArgs() {
+            return multipleArgs;
         }
     }
 
@@ -146,7 +192,12 @@ public class Run {
                 builder = builder.isRequired();
             }
             if (i5Option.getArgumentName() != null) {
-                builder = builder.hasArg().withArgName(i5Option.getArgumentName());
+                builder = builder.withArgName(i5Option.getArgumentName());
+                if (i5Option.hasMultipleArgs()) {
+                    builder = builder.hasArgs();
+                } else {
+                    builder = builder.hasArg();
+                }
             }
 
             builder = OptionBuilder.withValueSeparator();
@@ -203,7 +254,7 @@ public class Run {
                         master.setOutputFormat(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FORMAT.getLongOpt()));
                     }
                     if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
-                        master.setAnalyses(parsedCommandLine.getOptionValue(I5Option.ANALYSES.getLongOpt()));
+                        master.setAnalyses(parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt()));
                     }
                 }
 

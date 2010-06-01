@@ -22,17 +22,11 @@ public class RunPhobiusBinaryStep extends RunBinaryStep {
 
     private String fullPathToBinary;
 
-    private List<String> binarySwitches;
-
     private String fastaFileNameTemplate;
 
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
         this.fullPathToBinary = fullPathToBinary;
-    }
-
-    public void setBinarySwitches(List<String> binarySwitches) {
-        this.binarySwitches = binarySwitches;
     }
 
     @Required
@@ -45,9 +39,7 @@ public class RunPhobiusBinaryStep extends RunBinaryStep {
         final String fastaFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFileNameTemplate);
         final List<String> command = new ArrayList<String>();
         command.add(fullPathToBinary);
-        if (binarySwitches != null){
-            command.addAll(binarySwitches);
-        }
+        command.addAll(getBinarySwitchesAsList());
         command.add(fastaFilePath);
         return command;
     }

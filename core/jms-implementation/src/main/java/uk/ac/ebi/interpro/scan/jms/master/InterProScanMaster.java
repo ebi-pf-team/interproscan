@@ -321,8 +321,7 @@ public class InterProScanMaster implements Master {
      *
      * @param analyses the analyses that should be run.  If not set, all analyses will be run.
      */
-    public void setAnalyses(String analyses) {
-        String[] analysisArray = analyses.split(":");
-        this.analyses = Arrays.asList(analysisArray);
+    public void setAnalyses(String[] analyses) {
+        this.analyses = Arrays.asList(analyses);
     }
 }
