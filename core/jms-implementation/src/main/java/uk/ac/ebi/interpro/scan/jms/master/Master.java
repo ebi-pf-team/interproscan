@@ -14,7 +14,7 @@ public interface Master extends Runnable {
 
     void setOutputFormat(String outputFormat);
 
-    void setAnalyses(String analyses);
+    void setAnalyses(String[] analyses);
 
     public void setCleanDatabase(boolean clean);
 }

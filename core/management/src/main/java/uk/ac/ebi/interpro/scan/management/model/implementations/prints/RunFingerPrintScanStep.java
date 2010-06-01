@@ -12,7 +12,6 @@ import java.util.List;
  * This class runs fingerprintscan and reports any errors
  * spat out if the exit status != 0.
  *
- *
  * @author Phil Jones
  * @version $Id$
  * @since 1.0-SNAPSHOT
@@ -25,8 +24,6 @@ public class RunFingerPrintScanStep extends RunBinaryStep {
 
     private String fullPathToHmmFile;
 
-    private List<String> binarySwitches;
-
     private String fastaFileNameTemplate;
 
     public String getFullPathToBinary() {
@@ -36,15 +33,6 @@ public class RunFingerPrintScanStep extends RunBinaryStep {
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
         this.fullPathToBinary = fullPathToBinary;
-    }
-
-    public List<String> getBinarySwitches() {
-        return binarySwitches;
-    }
-
-    @Required
-    public void setBinarySwitches(List<String> binarySwitches) {
-        this.binarySwitches = binarySwitches;
     }
 
     public String getFullPathToHmmFile() {
@@ -66,10 +54,10 @@ public class RunFingerPrintScanStep extends RunBinaryStep {
     }
 
     /**
-     *current command line from Onion:
+     * current command line from Onion:
      * /ebi/sp/pro1/interpro/binaries/64_bit_Linux/fingerPRINTScan /ebi/sp/pro1/interpro/data/members/prints/40.0/prints.pval xxxxx.fasta -e 0.0001 -d 10 -E 257043 84355444 -fj  -o 15
      *
-     * @param stepInstance containing the parameters for executing.
+     * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory is the relative path in which files are stored.
      * @return
      */
@@ -81,7 +69,7 @@ public class RunFingerPrintScanStep extends RunBinaryStep {
         command.add(this.getFullPathToBinary());
         command.add(this.getFullPathToHmmFile());
         command.add(fastaFilePathName);
-        command.addAll(this.getBinarySwitches());
+        command.addAll(this.getBinarySwitchesAsList());
         return command;
     }
 }

@@ -16,15 +16,15 @@
 
     <!-- ######################## JOB: PRINTS ############################  -->
     <bean id="jobPRINTS" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description"                        value="PRINTS Raw Analysis and Post Processing"/>
-        <property name="analysis"                           value="true"/>
+        <property name="description" value="PRINTS Raw Analysis and Post Processing"/>
+        <property name="analysis" value="true"/>
     </bean>
 
     <bean id="abstractPrintsStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-         <property name="job"                                ref="jobPRINTS"/>
-         <property name="maxProteins"                        value="5000"/>
-         <property name="createStepInstancesForNewProteins"  value="true"/>
-         <property name="retries"                            value="0"/>
+        <property name="job" ref="jobPRINTS"/>
+        <property name="maxProteins" value="5000"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
     </bean>
 
     <!-- STEP 1 -->
@@ -32,10 +32,10 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractPrintsStep">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
-        <property name="stepDescription"                    value="Create fasta file."/>
-        <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
-        <property name="proteinDAO"                         ref="proteinDAO"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
     <!-- STEP 2 -->
@@ -43,77 +43,63 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prints.RunFingerPrintScanStep"
           parent="abstractPrintsStep">
         <!-- /ebi/sp/pro1/interpro/binaries/64_bit_Linux/fingerPRINTScan /ebi/sp/pro1/interpro/data/members/prints/40.0/prints.pval xxxxx.fasta -e 0.0001 -d 10 -E 257043 84355444 -fj  -o 15 -->
-        <property name="dependsUpon"                        ref="stepPrintsWriteFastaFile"/>
-        <property name="stepDescription"                    value="Run fingerprintscan Binary for selected proteins"/>
-        <property name="fullPathToBinary"                   value="${binary.fingerprintscan.path}"/>
-        <property name="binarySwitches" >
-            <list>
-                <value>-e</value>
-                <value>0.0001</value>
-                <value>-d</value>
-                <value>10</value>
-                <value>-E</value>
-                <value>257043</value>
-                <value>84355444</value>
-                <value>-fj</value>
-                <value>-o</value>
-                <value>15</value>
-
-            </list>
-        </property>
-        <property name="fullPathToHmmFile"                  value="${prints.pval.path}"/>
-        <property name="outputFileNameTemplate"             ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="fastaFileNameTemplate"              ref="fastaFileNameTemplate"/>
-        <property name="retries"                            value="3"/>
+        <property name="dependsUpon" ref="stepPrintsWriteFastaFile"/>
+        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        <property name="fullPathToBinary" value="${binary.fingerprintscan.path}"/>
+        <property name="binarySwitches" value="-e 0.0001 -d 10 -E 257043 84355444 -fj -o 15"/>
+        <property name="fullPathToHmmFile" value="${prints.pval.path}"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
     </bean>
 
     <bean id="stepPrintsDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPrintsStep">
-        <property name="dependsUpon"                        ref="stepPrintsRunFingerPrintScan"/>
-        <property name="stepDescription"                    value="Delete the fasta file following successful run of FPS"/>
-        <property name="fileNameTemplate"                   ref="fastaFileNameTemplate"/>
+        <property name="dependsUpon" ref="stepPrintsRunFingerPrintScan"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
     <!-- STEP 3 -->
     <!--<bean id="stepPrintsParseHmmerOutput"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.ParsePfam_A_HMMER3OutputStep"-->
-          <!--parent="abstractPrintsStep">-->
-        <!--<property name="dependsUpon"                        ref="stepPrintsRunFingerPrintScan"/>-->
-        <!--<property name="stepDescription"                    value="Parse the output from HMMER3"/>-->
-        <!--<property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>-->
-        <!--<property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>-->
-        <!--<property name="parser"                             ref="PrintsHmmer3SearchParser"/>-->
-        <!--<property name="serialGroup"                        value="PARSE_HMMER_3"/>-->
-        <!--<property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>-->
-        <!--<property name="retries"                            value="3"/>-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.ParsePfam_A_HMMER3OutputStep"-->
+    <!--parent="abstractPrintsStep">-->
+    <!--<property name="dependsUpon"                        ref="stepPrintsRunFingerPrintScan"/>-->
+    <!--<property name="stepDescription"                    value="Parse the output from HMMER3"/>-->
+    <!--<property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--<property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>-->
+    <!--<property name="parser"                             ref="PrintsHmmer3SearchParser"/>-->
+    <!--<property name="serialGroup"                        value="PARSE_HMMER_3"/>-->
+    <!--<property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>-->
+    <!--<property name="retries"                            value="3"/>-->
     <!--</bean>-->
 
     <!--<bean id="stepPrintsDeleteHmmerOutput"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-          <!--parent="abstractPrintsStep"  >-->
-        <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
-        <!--<property name="stepDescription"                    value="Delete the hmmer output file following successful parsing"/>-->
-        <!--<property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
+    <!--parent="abstractPrintsStep"  >-->
+    <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
+    <!--<property name="stepDescription"                    value="Delete the hmmer output file following successful parsing"/>-->
+    <!--<property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>-->
     <!--</bean>-->
 
     <!-- STEP 4 -->
     <!--<bean id="stepPrintsPostProcessing"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.Pfam_A_PostProcessingStep"-->
-          <!--parent="abstractPrintsStep">-->
-        <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
-        <!--<property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>-->
-        <!--<property name="postProcessor"                      ref="PrintsPostProcessor"/>-->
-        <!--<property name="serialGroup"                        value="PFAM_A_POST_PROCESSING"/>-->
-        <!--<property name="signatureLibraryRelease"            value="24.0"/>-->
-        <!--<property name="signatureLibrary"                   value="PFAM"/>-->
-        <!--<property name="rawMatchDAO"                        ref="pfamRawMatchDAO"/>-->
-        <!--<property name="filteredMatchDAO"                   ref="pfamFilteredMatchDAO"/>-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.Pfam_A_PostProcessingStep"-->
+    <!--parent="abstractPrintsStep">-->
+    <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
+    <!--<property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>-->
+    <!--<property name="postProcessor"                      ref="PrintsPostProcessor"/>-->
+    <!--<property name="serialGroup"                        value="PFAM_A_POST_PROCESSING"/>-->
+    <!--<property name="signatureLibraryRelease"            value="24.0"/>-->
+    <!--<property name="signatureLibrary"                   value="PFAM"/>-->
+    <!--<property name="rawMatchDAO"                        ref="pfamRawMatchDAO"/>-->
+    <!--<property name="filteredMatchDAO"                   ref="pfamFilteredMatchDAO"/>-->
     <!--</bean>-->
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
 
-    
+
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
