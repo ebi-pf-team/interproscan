@@ -8,7 +8,7 @@
 #
 #     Please cite:
 #
-#     Lukas Käll, Anders Krogh and Erik L. L. Sonnhammer.
+#     Lukas Kï¿½ll, Anders Krogh and Erik L. L. Sonnhammer.
 #     A Combined Transmembrane Topology and Signal Peptide Prediction Method.
 #     Journal of Molecular Biology, 338(5):1027-1036, May 2004.
 #
@@ -21,12 +21,15 @@ use FindBin;
 #use lib $FindBin::RealBin;
 #use seq_tools;
 
+# Modified by Phil Jones, EMBL-EBI to allow the .model and .options files to be
+# located elsewhere.
 my $PHOBIUS_DIR =      "$FindBin::RealBin";
+my $PHOBIUS_DATA_DIR = "$PHOBIUS_DIR/../data/phobius";
 my $DECODEANHMM =      "$PHOBIUS_DIR/decodeanhmm";
-my $PHOBIUS_OPT_FILE = "$PHOBIUS_DIR/phobius.options";
-my $MODELFILE =        "$PHOBIUS_DIR/phobius.model";
-my $PHOBIUS =          "$DECODEANHMM -f $PHOBIUS_OPT_FILE $PHOBIUS_DIR/phobius.model";
-my $PHOBIUS_PLP =      "$DECODEANHMM -plp $PHOBIUS_DIR/phobius.model";
+my $PHOBIUS_OPT_FILE = "$PHOBIUS_DATA_DIR/phobius.options";
+my $MODELFILE =        "$PHOBIUS_DATA_DIR/phobius.model";
+my $PHOBIUS =          "$DECODEANHMM -f $PHOBIUS_OPT_FILE $MODELFILE";
+my $PHOBIUS_PLP =      "$DECODEANHMM -plp $MODELFILE";
 my $PHOBIUS_VER =      "Phobius ver 1.01\n(c) 2004 Lukas Kall, Anders Krogh, Erik Sonnhammer\n\n";
 my $GNUPLOT =          "gnuplot";
 my $GNUPLOT_TERMINAL = "png transparent small color xffffff \\
