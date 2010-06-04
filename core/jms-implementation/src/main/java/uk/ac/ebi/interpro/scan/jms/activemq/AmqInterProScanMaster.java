@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.worker.EmbeddedWorkerFactory;
@@ -195,21 +197,23 @@ public class AmqInterProScanMaster implements Master {
      */
     private void createFastaFileLoadStepInstance() {
         if (fastaFilePath != null) {
-            StringBuffer analysisBuffer = new StringBuffer();
-            if (analyses != null) {
-                for (String analysis : analyses) {
-                    if (analysisBuffer.length() > 0) {
-                        analysisBuffer.append(',');
-                    }
-                    analysisBuffer.append(analysis);
-                }
-            }
-
             Map<String, String> params = new HashMap<String, String>(1);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
-            params.put(FastaFileLoadStep.ANALYSIS_JOB_NAMES_KEY, analysisBuffer.toString());
+            if (analyses!=null) {
+                List<String> jobNameList = new ArrayList<String>();
+                for (String analysisName : analyses) {
+                    jobNameList.add("job"+analysisName);
+                }
+                params.put(FastaFileLoadStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
+            }
             params.put(FastaFileLoadStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
-            params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, fastaFilePath.replaceAll("\\.fasta", "") + ".tsv");
+
+            String outputFilePath = outputFile;
+            if (outputFilePath==null) {
+                outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + ".tsv";
+            }
+            params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
+
             createStepInstancesForJob("jobLoadFromFasta", params);
             LOGGER.info("Fasta file load step instance has been created.");
         }
