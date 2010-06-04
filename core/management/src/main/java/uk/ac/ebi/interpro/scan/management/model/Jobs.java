@@ -27,6 +27,12 @@ public class Jobs {
     private final Object stepMapLocker = new Object();
 
 
+    public Jobs getAnalysisJobs() {
+        List<Job> analysisJobs=new ArrayList<Job>();
+        for (Job job : jobMap.values()) if (job.isAnalysis()) analysisJobs.add(job);
+        return new Jobs(analysisJobs);
+    }
+
     public List<Job> getJobList() {
         return new ArrayList<Job>( jobMap.values() );
     }
@@ -93,4 +99,6 @@ public class Jobs {
         sb.append('}');
         return sb.toString();
     }
+
+
 }
