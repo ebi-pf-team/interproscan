@@ -6,6 +6,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
+import uk.ac.ebi.interpro.scan.management.model.Job;
+import uk.ac.ebi.interpro.scan.management.model.Jobs;
 
 /**
  * The main entry point for the the master and workers in a
@@ -33,51 +35,14 @@ public class Run {
 
     private static final int MEGA = 1024 * 1024;
 
-    /**
-     * InterProScan 4 command line options:
-     * ./iprscan -cli
-     * <p/>
-     * usage: ./iprscan -cli [-email <addr>] [-appl <name> ...] [-nocrc] [-altjobs] [-seqtype p|n] [-trlen <N>] [-trtable <table>]
-     * [-iprlookup] [-goterms] -i <seqfile> [-o <output file>]
-     * <p/>
-     * -i <seqfile>      Your sequence file (mandatory).
-     * -o <output file>  The output file where to write results (optional), default is STDOUT.
-     * -email <addr>     Submitter email address (required for non-interactive).
-     * -appl <name>      Application(s) to run (optional), default is all.
-     * Possible values (dependent on set-up):
-     * blastprodom
-     * fprintscan
-     * hamap
-     * hmmpfam
-     * hmmpir
-     * hmmpanther
-     * hmmtigr
-     * hmmsmart
-     * superfamily
-     * gene3d
-     * patternscan
-     * profilescan
-     * seg
-     * coils
-     * [tmhmm]
-     * [signalp]
-     * -nocrc            Don't perform CRC64 check, default is on.
-     * -altjobs          Launch jobs alternatively, chunk after chunk. Default is off.
-     * -seqtype <type>   Sequence type: n for DNA/RNA, p for protein (default).
-     * -trlen <n>        Transcript length threshold (20-150).
-     * -trtable <table>  Codon table number.
-     * -goterms          Show GO terms if iprlookup option is also given.
-     * -iprlookup        Switch on the InterPro lookup for results.
-     * -format <format>  Output results format (raw, txt, html, xml(default), ebixml(EBI header on top of xml), gff)
-     * -verbose          Print messages during run
-     */
+   
     private enum I5Option {
-        MODE("mode", "m", true, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
-        FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
-        OUTPUT_FORMAT("format", "F", false, "Optional output format. One of: txt ... (other formats to follow)", "OUTPUT-FORMAT", false),
-        OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH", false),
-        ANALYSES("analyses", "appl", false, "Optional white space separated list of analyses.  If this option is not set, ALL analyses will be run.  Any of: jobPfamA, jobPhobius (... others to follow)", "ANALYSES_LIST", true),
-        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false);
+        MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME",false),
+        FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH",false),
+        OUTPUT_FORMAT("format", "F", false, "Optional output format. One of: tsv (tab separated values)", "OUTPUT-FORMAT",false),
+        OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH",false),
+        ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES",true),
+        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY",false);
 
         private String longOpt;
 
@@ -183,6 +148,8 @@ public class Run {
         }
     }
 
+    private static final Mode DEFAULT_MODE= Mode.AMQSTANDALONE;
+
 
     static {
         for (I5Option i5Option : I5Option.values()) {
@@ -219,10 +186,9 @@ public class Run {
             // parse the command line arguments
             CommandLine parsedCommandLine = parser.parse(COMMAND_LINE_OPTIONS, args);
 
-            modeArgument = parsedCommandLine.getOptionValue(I5Option.MODE.getLongOpt()).toLowerCase();
+            modeArgument = parsedCommandLine.getOptionValue(I5Option.MODE.getLongOpt());
 
-            // Will throw handled IllegalArgumentException if the Mode is not recognised.
-            final Mode mode = Mode.valueOf(modeArgument.toUpperCase());
+            final Mode mode = modeArgument!=null?Mode.valueOf(modeArgument.toUpperCase()):DEFAULT_MODE;
 
             //String config = System.getProperty("config");
             LOGGER.info("Welcome to InterProScan v5");
@@ -237,7 +203,20 @@ public class Run {
 //            }
 
             AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
+
             ctx.registerShutdownHook();
+
+            if (args.length==0) {
+                printHelp();
+                System.out.println("Available analyses in this installation:");
+                Jobs jobs=(Jobs)ctx.getBean("jobs");
+
+                for (Job job : jobs.getAnalysisJobs().getJobList()) {
+                    System.out.printf("    %20s : %s\n",job.getId().replace("job", ""),job.getDescription());
+                }
+                System.exit(1);
+            }
+
             if (mode.getRunnableBean() != null) {
                 Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
 
@@ -277,12 +256,17 @@ public class Run {
         }
         catch (ParseException exp) {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
-            HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, COMMAND_LINE_OPTIONS);
+            printHelp();
+            System.exit(1);
         }
         catch (IllegalArgumentException iae) {
             LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
             System.exit(1);
         }
+    }
+
+    private static void printHelp() {
+        HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, COMMAND_LINE_OPTIONS);
     }
 
 }
