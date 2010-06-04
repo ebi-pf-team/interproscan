@@ -163,6 +163,9 @@ public class InterProScanMaster implements Master {
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             while (!shutdownCalled && (embeddedWorkerFactory == null || stepInstanceDAO.futureStepsAvailable())) {       // TODO should be while(running) to allow shutdown.
+
+                // todo: David notes: this code is probably broken by changes made to the AMQ master
+
                 for (Job job : jobs.getJobList()) {
                     // If the optional list of analyses has been passed in, only run those analyses.
                     // Otherwise, run all of them.
