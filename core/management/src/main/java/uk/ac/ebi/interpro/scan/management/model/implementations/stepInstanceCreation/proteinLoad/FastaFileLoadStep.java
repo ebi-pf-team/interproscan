@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
+import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -93,11 +94,11 @@ public class FastaFileLoadStep extends Step {
             }
 
 
-            Jobs analysisJobs = jobs;
-            if (analysisJobNames!=null) analysisJobs=jobs.subset(analysisJobNames.split(","));
-
+            Jobs analysisJobs = analysisJobNames==null?jobs.getAnalysisJobs():jobs.subset(analysisJobNames.split(","));
+            Job completionJob = jobs.getJobById(completionJobName);
+            
             StepCreationProteinLoadListener proteinLoaderListener=
-                    new StepCreationProteinLoadListener(analysisJobs,jobs.getJobById(completionJobName),stepInstance.getStepParameters());
+                    new StepCreationProteinLoadListener(analysisJobs, completionJob,stepInstance.getStepParameters());
             proteinLoaderListener.setStepInstanceDAO(stepInstanceDAO);
 
             fastaFileLoader.loadSequences(fastaFileInputStream,proteinLoaderListener);
