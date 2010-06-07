@@ -24,25 +24,21 @@ public class KdatParserTest extends TestCase {
 
     private static final String[] testAccessions = {"PR00439", "PR00305", "PR00916", "PR00159", "PR00551", "PR00352", "PR00003", "PR00353", "PR00512", "PR00513"};
 
-
     @Test
     public void testParser() throws IOException {
-
         URL testFile = KdatParserTest.class.getClassLoader().getResource(testFileName);
-
         KdatParser parser = new KdatParser();
-        Map<String, KdatSignatureData> results = parser.parse(testFile.getPath());
+        Map<String, String> results = parser.parse(testFile.getPath());
         assertEquals(10, results.size());
         for (String testAccession : testAccessions) {
             assertTrue("Accession missing from final Map: " + testAccession, results.keySet().contains(testAccession));
-            KdatSignatureData signatureData = results.get(testAccession);
-            assertNotNull(signatureData);
-            assertNotNull(signatureData.getName());
-            assertNotNull(signatureData.getPrintsAbstract());
+            String printsAbstract = results.get(testAccession);
+            assertNotNull(printsAbstract);
+            assertNotNull(printsAbstract);
+            assertTrue(printsAbstract.length() > 0);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Accession: " + testAccession);
-                LOGGER.debug("Name: " + signatureData.getName());
-                LOGGER.debug("Abstract: " + signatureData.getPrintsAbstract());
+                LOGGER.debug("Abstract: " + printsAbstract);
             }
         }
     }
