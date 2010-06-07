@@ -33,8 +33,8 @@ public class KdatParser implements Serializable {
      * @return
      * @throws IOException
      */
-    public Map<String, KdatSignatureData> parse(String printsKdatFilePath) throws IOException {
-        final Map<String, KdatSignatureData> accessionToSignature = new HashMap<String, KdatSignatureData>();
+    public Map<String, String> parse(String printsKdatFilePath) throws IOException {
+        final Map<String, String> accessionToSignature = new HashMap<String, String>();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(printsKdatFilePath));
@@ -68,8 +68,6 @@ public class KdatParser implements Serializable {
                 reader.close();
             }
         }
-
-
         return accessionToSignature;
     }
 
@@ -77,12 +75,12 @@ public class KdatParser implements Serializable {
         return line.substring(3).trim();
     }
 
-    private void addRecord(Map<String, KdatSignatureData> accessionToSignature, String accession, String name, StringBuffer printAbstract, int lineNumber) {
+    private void addRecord(Map<String, String> accessionToSignature, String accession, String name, StringBuffer printAbstract, int lineNumber) {
         if (name != null) {
             if (accession == null) {  // Got a name but not an accession?
                 throw new ParseException("The kdat file, line number " + lineNumber + " contains an entry with no accession (gx line).");
             }
-            accessionToSignature.put(accession, new KdatSignatureData(name, printAbstract.toString()));
+            accessionToSignature.put(accession, printAbstract.toString());
         }
     }
 }

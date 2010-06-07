@@ -24,11 +24,18 @@ public class PvalParser implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(PvalParser.class);
 
+    private static final String LINE_SIG_NAME = "gc";
+    private static final String LINE_SIG_ACCESSION = "gx";
+    private static final String LINE_SIG_DESCRIPTION = "gi";
+    private static final String LINE_SIG_MODEL_COUNT = "gn";
+    private static final String LINE_MODEL_ACCESSION = "mx";
+    private static final String LINE_MODEL_NAME = "mi";
+
     private SignatureLibrary library;
 
     private String releaseVersion;
 
-    private Map<String, KdatSignatureData> kdatFileData;
+    private Map<String, String> kdatFileData;
 
     public PvalParser(SignatureLibrary library, String releaseVersion) {
         this.library = library;
@@ -36,19 +43,31 @@ public class PvalParser implements Serializable {
     }
 
     @Transactional
-    public SignatureLibraryRelease parse(Map<String, KdatSignatureData> kdatFileData, String printsPvalFilePath) throws IOException {
+    public SignatureLibraryRelease parse(Map<String, String> kdatFileData, String printsPvalFilePath) throws IOException {
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
+
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(printsPvalFilePath));
+            String line, sigAcc = null, sigName = null, sigDescription = null,
+                    modelAcc = null, modelName = null;
+            // TODO - work out how to add individual models.
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(LINE_SIG_NAME)) {
+                    createSignature(release, sigAcc, sigName, sigDescription, modelAcc, modelName);
+                }
+            }
+            createSignature(release, sigAcc, sigName, sigDescription, modelAcc, modelName);
         }
         finally {
             if (reader != null) {
                 reader.close();
             }
         }
-
-
         return release;
+    }
+
+    private void createSignature(SignatureLibraryRelease release, String sigAcc, String sigName, String sigDescription, String modelAcc, String modelName) {
+
     }
 }
