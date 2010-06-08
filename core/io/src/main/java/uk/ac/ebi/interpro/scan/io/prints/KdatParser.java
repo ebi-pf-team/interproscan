@@ -1,11 +1,12 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,15 +30,24 @@ public class KdatParser implements Serializable {
 
 
     /**
-     * @param printsKdatFilePath
+     * @param resource
      * @return
      * @throws IOException
      */
-    public Map<String, String> parse(String printsKdatFilePath) throws IOException {
+    public Map<String, String> parse(Resource resource) throws IOException {
+        if (resource == null) {
+            throw new NullPointerException("Resource is null");
+        }
+        if (!resource.exists()) {
+            throw new IllegalStateException(resource.getFilename() + " does not exist");
+        }
+        if (!resource.isReadable()) {
+            throw new IllegalStateException(resource.getFilename() + " is not readable");
+        }
         final Map<String, String> accessionToSignature = new HashMap<String, String>();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(printsKdatFilePath));
+            reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
             String line, accession = null, name = null;
             StringBuffer printsAbstract = new StringBuffer();
