@@ -45,7 +45,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
     private String graphscan;
 
     /**
-     * The number of motifs in the FingerPrint model (NOT the number of matches motifs).
+     * The number of motifs in the FingerPrint model (NOT the number of matched motifs).
      * TODO - discuss renaming this attribute with Alex.
      */
     @Column(nullable = false)
