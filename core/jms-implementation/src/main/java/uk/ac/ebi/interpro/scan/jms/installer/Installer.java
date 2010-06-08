@@ -6,6 +6,8 @@ import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
+import uk.ac.ebi.interpro.scan.io.prints.KdatParser;
+import uk.ac.ebi.interpro.scan.io.prints.PvalParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
@@ -31,6 +33,10 @@ public class Installer implements Runnable {
 
     private Resource gene3dModel2SfFile;
 
+    private Resource printsPvalFile;
+
+    private Resource printsKdatFile;
+
     @Required
     public void setSignatureLibraryReleaseDAO(GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO) {
         this.signatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
@@ -44,8 +50,14 @@ public class Installer implements Runnable {
     public void setGene3dModel2SfFile(Resource gene3dModel2SfFile) {
         this.gene3dModel2SfFile = gene3dModel2SfFile;
     }
-//    private LocalSessionFactoryBean sessionFactoryBean;
 
+    public void setPrintsPvalFile(Resource printsPvalFile) {
+        this.printsPvalFile = printsPvalFile;
+    }
+
+    public void setPrintsKdatFile(Resource printsKdatFile) {
+        this.printsKdatFile = printsKdatFile;
+    }
 
     @Override
     public void run() {
@@ -54,13 +66,9 @@ public class Installer implements Runnable {
         LOGGER.info("Loading signatures");
         loadGene3dModels();
         loadPfamModels();
+        loadPrintsModels();
         LOGGER.info("Loaded signatures");
     }
-
-
-//    public void setSessionFactoryBean(LocalSessionFactoryBean sessionFactoryBean) {
-//        this.sessionFactoryBean = sessionFactoryBean;
-//    }
 
     public void setEntityManagerFactory(javax.persistence.EntityManagerFactory entityManagerFactory) {
 
@@ -110,7 +118,7 @@ public class Installer implements Runnable {
         }
         // Parse and retrieve the signatures.
         Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(SignatureLibrary.PFAM, "24.0");
-        SignatureLibraryRelease release = null;
+        SignatureLibraryRelease release;
         try {
             release = modelLoader.parse(pfamHMMfilePath);
         } catch (IOException e) {
@@ -119,10 +127,28 @@ public class Installer implements Runnable {
         }
 
         // And store the Models / Signatures to the database.
-        LOGGER.debug("Storing SignatureLibraryRelease...");
         signatureLibraryReleaseDAO.insert(release);
-        LOGGER.debug("Storing SignatureLibraryRelease...DONE");
 
+    }
+
+    private void loadPrintsModels() {
+        if (printsPvalFile == null || printsKdatFile == null) {
+            LOGGER.info("Not loading PRINTS");
+            return;
+        }
+        SignatureLibraryRelease release;
+        try {
+            KdatParser kdatParser = new KdatParser();
+            Map<String, String> accessionToAbstract = kdatParser.parse(printsKdatFile);
+
+            PvalParser pvalParser = new PvalParser("40");
+            release = pvalParser.parse(accessionToAbstract, printsPvalFile);
+        } catch (IOException e) {
+            LOGGER.fatal("IOException thrown when parsing prints files.", e);
+            throw new IllegalStateException("Unable to load PRINTS models.", e);
+        }
+        // And store the Models / Signatures to the database.
+        signatureLibraryReleaseDAO.insert(release);
     }
 
 }
