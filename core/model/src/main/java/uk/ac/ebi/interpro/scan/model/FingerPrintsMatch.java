@@ -22,43 +22,46 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.Set;
 
 /**
  * FingerPRINTS match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 @Entity
-@Table(name="finger_prints_match")
-@XmlType(name="FingerPrintsMatchType")
+@Table(name = "finger_prints_match")
+@XmlType(name = "FingerPrintsMatchType")
 public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocation> {
 
     @Column(nullable = false)
     private double evalue;
 
-    @Column (nullable = false, length=15)
+    @Column(nullable = false, length = 15)
     private String graphscan;
 
+    /**
+     * The number of motifs in the FingerPrint model (NOT the number of matches motifs).
+     * TODO - discuss renaming this attribute with Alex.
+     */
     @Column(nullable = false)
     private int motifCount;
 
-    protected FingerPrintsMatch() {}
+    protected FingerPrintsMatch() {
+    }
 
     public FingerPrintsMatch(Signature signature, double evalue, String graphscan, int motifCount, Set<FingerPrintsLocation> locations) {
         super(signature, locations);
         setEvalue(evalue);
         setGraphscan(graphscan);
-        setMotifCount(motifCount);        
+        setMotifCount(motifCount);
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public double getEvalue() {
         return PersistenceConversion.get(evalue);
     }
@@ -67,7 +70,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         this.evalue = PersistenceConversion.set(evalue);
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public String getGraphscan() {
         return graphscan;
     }
@@ -76,7 +79,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         this.graphscan = graphscan;
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public int getMotifCount() {
         return motifCount;
     }
@@ -85,7 +88,8 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         this.motifCount = motifCount;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof FingerPrintsMatch))
@@ -98,7 +102,8 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
                 PersistenceConversion.equivalent(evalue, m.evalue);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 63)
                 .appendSuper(super.hashCode())
                 .append(evalue)
@@ -108,26 +113,27 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
     /**
      * Location(s) of match on protein sequence
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     @Entity
-    @Table(name="finger_prints_location")
-    @XmlType(name="FingerPrintsLocationType")
+    @Table(name = "finger_prints_location")
+    @XmlType(name = "FingerPrintsLocationType")
     public static class FingerPrintsLocation extends Location {
 
-        @Column (nullable = false)
+        @Column(nullable = false)
         private double pvalue;
 
-        @Column (nullable = false)
+        @Column(nullable = false)
         private double score;
 
-        @Column (nullable = false, name = "motif_number")
+        @Column(nullable = false, name = "motif_number")
         private int motifNumber;
 
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
-        protected FingerPrintsLocation() {}
+        protected FingerPrintsLocation() {
+        }
 
         public FingerPrintsLocation(int start, int end, double pvalue, double score, int motifNumber) {
             super(start, end);
@@ -136,7 +142,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
             setMotifNumber(motifNumber);
         }
 
-        @XmlAttribute(required=true)
+        @XmlAttribute(required = true)
         public double getPvalue() {
             return pvalue;
         }
@@ -145,7 +151,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
             this.pvalue = pvalue;
         }
 
-        @XmlAttribute(required=true)
+        @XmlAttribute(required = true)
         public double getScore() {
             return score;
         }
@@ -154,7 +160,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
             this.score = score;
         }
 
-        @XmlAttribute(required=true)
+        @XmlAttribute(required = true)
         public int getMotifNumber() {
             return motifNumber;
         }
@@ -163,7 +169,8 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
             this.motifNumber = motifNumber;
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (!(o instanceof FingerPrintsLocation))
@@ -177,7 +184,8 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
                     .isEquals();
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return new HashCodeBuilder(19, 61)
                     .appendSuper(super.hashCode())
                     .append(pvalue)
