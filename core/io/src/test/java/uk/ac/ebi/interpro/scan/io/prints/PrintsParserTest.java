@@ -3,12 +3,13 @@ package uk.ac.ebi.interpro.scan.io.prints;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Map;
 
 /**
@@ -33,9 +34,9 @@ public class PrintsParserTest extends TestCase {
 
     @Test
     public void testKdatParser() throws IOException {
-        URL testKdatFile = PrintsParserTest.class.getClassLoader().getResource(kdatFileName);
         KdatParser kdatParser = new KdatParser();
-        Map<String, String> accessionToAbstract = kdatParser.parse(testKdatFile.getPath());
+        Resource kdatResource = new ClassPathResource(kdatFileName);
+        Map<String, String> accessionToAbstract = kdatParser.parse(kdatResource);
         assertEquals(testAccessions.length, accessionToAbstract.size());
         for (String testAccession : testAccessions) {
             assertTrue("Accession missing from final Map: " + testAccession, accessionToAbstract.keySet().contains(testAccession));
@@ -52,14 +53,13 @@ public class PrintsParserTest extends TestCase {
 
     @Test
     public void testPvalParser() throws IOException {
-        URL testKdatFile = PrintsParserTest.class.getClassLoader().getResource(kdatFileName);
-        URL testPvalFile = PrintsParserTest.class.getClassLoader().getResource(pvalFileName);
-
         KdatParser kdatParser = new KdatParser();
-        Map<String, String> accessionToAbstract = kdatParser.parse(testKdatFile.getPath());
+        Resource kdatResource = new ClassPathResource(kdatFileName);
+        Map<String, String> accessionToAbstract = kdatParser.parse(kdatResource);
 
         PvalParser pvalParser = new PvalParser(TEST_RELEASE_VERSION);
-        SignatureLibraryRelease release = pvalParser.parse(accessionToAbstract, testPvalFile.getPath());
+        Resource pvalResource = new ClassPathResource(pvalFileName);
+        SignatureLibraryRelease release = pvalParser.parse(accessionToAbstract, pvalResource);
 
         assertNotNull(release);
         assertEquals(SignatureLibrary.PRINTS, release.getLibrary());

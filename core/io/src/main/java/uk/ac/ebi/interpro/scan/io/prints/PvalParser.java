@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -9,8 +10,8 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
@@ -41,12 +42,22 @@ public class PvalParser implements Serializable {
     }
 
     @Transactional
-    public SignatureLibraryRelease parse(Map<String, String> kdatFileData, String printsPvalFilePath) throws IOException {
+    public SignatureLibraryRelease parse(Map<String, String> kdatFileData, Resource resource) throws IOException {
+        if (resource == null) {
+            throw new NullPointerException("Resource is null");
+        }
+        if (!resource.exists()) {
+            throw new IllegalStateException(resource.getFilename() + " does not exist");
+        }
+        if (!resource.isReadable()) {
+            throw new IllegalStateException(resource.getFilename() + " is not readable");
+        }
+
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, releaseVersion);
 
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(printsPvalFilePath));
+            reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
             String line, sigAcc = null, sigName = null, sigDescription = null;
             Integer modelCount = null;
             while ((line = reader.readLine()) != null) {
