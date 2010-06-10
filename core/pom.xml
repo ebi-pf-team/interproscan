@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -56,7 +57,7 @@
             <name>JBoss releases</name>
             <url>http://repository.jboss.org/maven2</url>
         </repository>
-        
+
     </repositories>
 
     <licenses>
@@ -72,7 +73,7 @@
         <url>http://interproscan.googlecode.com/svn/</url>
     </scm>
 
-	<properties>
+    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependency versions -->
@@ -84,12 +85,12 @@
         <groovy.version>1.6.3</groovy.version>
         <hornetq.version>2.0.0.GA</hornetq.version>
         <hsqldb.version>1.8.0.10</hsqldb.version>
-        <mysql.version>5.1.10</mysql.version>
+        <mysql.version>5.1.12</mysql.version>
         <slf4j.version>1.5.2</slf4j.version>
-	</properties>
+    </properties>
 
     <modules>
-		<module>generic-jpa-dao</module>
+        <module>generic-jpa-dao</module>
         <module>model</module>
         <module>io</module>
         <module>persistence</module>
@@ -124,7 +125,7 @@
             <artifactId>log4j</artifactId>
             <version>1.2.14</version>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -148,7 +149,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <overview />
+                    <overview/>
                 </configuration>
             </plugin>
             <!-- Create JAR of source files (source:jar, source:test-jar) -->
@@ -159,7 +160,7 @@
                     <finalName>filename-of-generated-jar-file</finalName>
                     <attach>false</attach>
                     </configuration-->
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 
