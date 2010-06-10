@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.io.prints;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
@@ -102,7 +101,7 @@ public class PvalParser implements Serializable {
             final String sigAbstract = kdatFileData.get(sigAcc);
 
             if (sigAbstract == null) {
-                throw new ParseException("There is no corresponding entry in the kdat file for fingerprint " + sigAcc);
+                LOGGER.info("There is no abstract available for PRINTS model " + sigAcc + " / " + sigName);
             }
 
             final Set<Model> model = Collections.singleton(
