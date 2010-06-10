@@ -21,6 +21,16 @@
                 <constructor-arg value="${gene3d.model2sf_map.path}"/>
             </bean>
         </property>
+        <property name="printsKdatFile">
+            <bean class="org.springframework.core.io.FileSystemResource">
+                <constructor-arg value="${prints.kdat.path}"/>
+            </bean>
+        </property>
+        <property name="printsPvalFile">
+            <bean class="org.springframework.core.io.FileSystemResource">
+                <constructor-arg value="${prints.pval.path}"/>
+            </bean>
+        </property>
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
     </bean>
 
