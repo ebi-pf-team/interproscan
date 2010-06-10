@@ -41,18 +41,18 @@
 
     <bean id="blastProdomLocationDAO"
           class="uk.ac.ebi.interpro.scan.persistence.BlastProDomLocationDAOImpl">
-
     </bean>
 
-    <bean id="signatureLibraryReleaseDAO" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease"/>
-    </bean>
+    <bean id="signatureLibraryReleaseDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAOImpl"/>
 
-    <bean id="stepInstanceDAO" class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl"/>
+    <bean id="stepInstanceDAO"
+          class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl"/>
 
-    <bean id="stepExecutionDAO" class="uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAOImpl"/>
+    <bean id="stepExecutionDAO"
+          class="uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAOImpl"/>
 
-    <bean id="xrefDAO" class="uk.ac.ebi.interpro.scan.persistence.XrefDAOImpl"/>
-
+    <bean id="xrefDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.XrefDAOImpl"/>
 
 </beans>

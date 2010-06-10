@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.jms.installer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader;
 import uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelLoader;
 import uk.ac.ebi.interpro.scan.io.prints.KdatParser;
@@ -12,6 +11,7 @@ import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAO;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class Installer implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(Installer.class.getName());
 
 
-    private GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO;
+    private SignatureLibraryReleaseDAO signatureLibraryReleaseDAO;
 
     private String pfamHMMfilePath;
 
@@ -38,7 +38,7 @@ public class Installer implements Runnable {
     private Resource printsKdatFile;
 
     @Required
-    public void setSignatureLibraryReleaseDAO(GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO) {
+    public void setSignatureLibraryReleaseDAO(SignatureLibraryReleaseDAO signatureLibraryReleaseDAO) {
         this.signatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
     }
 
@@ -79,6 +79,10 @@ public class Installer implements Runnable {
             LOGGER.info("Not loading gene3d");
             return;
         }
+        if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(SignatureLibrary.GENE3D, "3.0.0")) {
+            LOGGER.info("Gene3D version 3.0.0 is already loaded.");
+            return;
+        }
 
         // Read models
         Model2SfReader reader = new Model2SfReader();
@@ -116,6 +120,10 @@ public class Installer implements Runnable {
             LOGGER.info("Not loading pfam");
             return;
         }
+        if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(SignatureLibrary.PFAM, "24.0")) {
+            LOGGER.info("Pfam version 24.0 is already loaded.");
+            return;
+        }
         // Parse and retrieve the signatures.
         Hmmer3ModelLoader modelLoader = new Hmmer3ModelLoader(SignatureLibrary.PFAM, "24.0");
         SignatureLibraryRelease release;
@@ -134,6 +142,10 @@ public class Installer implements Runnable {
     private void loadPrintsModels() {
         if (printsPvalFile == null || printsKdatFile == null) {
             LOGGER.info("Not loading PRINTS");
+            return;
+        }
+        if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(SignatureLibrary.PRINTS, "40")) {
+            LOGGER.info("PRINTS version 40 is already loaded.");
             return;
         }
         SignatureLibraryRelease release;
