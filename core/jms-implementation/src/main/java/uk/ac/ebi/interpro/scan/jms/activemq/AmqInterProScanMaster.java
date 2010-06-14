@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
@@ -199,17 +198,17 @@ public class AmqInterProScanMaster implements Master {
         if (fastaFilePath != null) {
             Map<String, String> params = new HashMap<String, String>(1);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
-            if (analyses!=null) {
+            if (analyses != null) {
                 List<String> jobNameList = new ArrayList<String>();
                 for (String analysisName : analyses) {
-                    jobNameList.add("job"+analysisName);
+                    jobNameList.add("job" + analysisName);
                 }
                 params.put(FastaFileLoadStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
             }
             params.put(FastaFileLoadStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
             String outputFilePath = outputFile;
-            if (outputFilePath==null) {
+            if (outputFilePath == null) {
                 outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + ".tsv";
             }
             params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
@@ -270,7 +269,7 @@ public class AmqInterProScanMaster implements Master {
      */
     @Transactional
     private void sendMessage(StepInstance stepInstance) throws JMSException {
-        LOGGER.info("Attempting to send message to queue.");
+        LOGGER.debug("Attempting to send message to queue.");
         final StepExecution stepExecution = stepInstance.createStepExecution();
         stepExecutionDAO.insert(stepExecution);
         stepExecution.submit(stepExecutionDAO);
