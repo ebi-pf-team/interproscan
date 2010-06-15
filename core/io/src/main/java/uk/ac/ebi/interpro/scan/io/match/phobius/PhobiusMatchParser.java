@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.io.match.phobius;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusFeature;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
-import uk.ac.ebi.interpro.scan.model.PhobiusMatch;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +17,7 @@ import java.util.regex.Matcher;
  * Returns significant matches as a Set of PhobiusProtein
  * objects (light-weight transitory model objects, just used
  * for parsing).
- *
+ * <p/>
  * It is the responsibility of the calling code to build
  * the persistable model objects from these transitory objects
  * and persist them.
@@ -28,22 +27,22 @@ import java.util.regex.Matcher;
  * @since 1.0
  */
 public class PhobiusMatchParser {
-    public  Set<PhobiusProtein> parse(InputStream is, String fileName) throws IOException {
+    public Set<PhobiusProtein> parse(InputStream is, String fileName) throws IOException {
         Set<PhobiusProtein> proteinsWithMatches = new HashSet<PhobiusProtein>();
         BufferedReader reader = null;
-        try{
+        try {
             reader = new BufferedReader(new InputStreamReader(is));
             PhobiusProtein protein = null;
             int lineNumber = 0;
-            while (reader.ready()){
+            String line;
+            while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                String line = reader.readLine();
-                if (line.startsWith("//")){
+                if (line.startsWith("//")) {
                     // Process complete record.
-                    if (protein == null){
+                    if (protein == null) {
                         throw new ParseException("Phobius output parsing: Got to the end of an entry marked by //, but don't appear to have a protein ID.", fileName, line, lineNumber);
                     }
-                    if (protein.isTM() || protein.isSP()){ 
+                    if (protein.isTM() || protein.isSP()) {
                         // Only store details of meaningful matches.
                         // (Single features "CYTOPLASMIC" or "NON-CYTOPLASMIC" are junk
                         // according to Phobius documentation, so only want matches for proteins
@@ -52,26 +51,24 @@ public class PhobiusMatchParser {
                     }
                     // Reset flags / proteinId
                     protein = null;
-                }
-                else if (line.startsWith("ID")){
-                    if (protein != null){
+                } else if (line.startsWith("ID")) {
+                    if (protein != null) {
                         throw new ParseException("Phobius output parsing: Found a second protein ID line in the same record.", fileName, line, lineNumber);
                     }
                     protein = new PhobiusProtein(line.substring(2).trim());
-                }
-                else if (line.startsWith("FT")){
-                    if (protein == null){
+                } else if (line.startsWith("FT")) {
+                    if (protein == null) {
                         throw new ParseException("Phobius output parsing: Found a feature line in a record, but haven't found an ID line yet.", fileName, line, lineNumber);
                     }
                     Matcher ftLineMatcher = PhobiusFeature.FT_LINE_PATTERN.matcher(line);
-                    if (ftLineMatcher.matches()){
+                    if (ftLineMatcher.matches()) {
                         protein.addFeature(new PhobiusFeature(ftLineMatcher));
                     }
                 }
             }
         }
         finally {
-            if (reader != null){
+            if (reader != null) {
                 reader.close();
             }
         }
