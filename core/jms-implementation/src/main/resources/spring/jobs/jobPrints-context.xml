@@ -64,16 +64,24 @@
     <!-- STEP 3 -->
     <!--<bean id="stepPrintsParseHmmerOutput"-->
     <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.ParsePfam_A_HMMER3OutputStep"-->
-    <!--parent="abstractPrintsStep">-->
-    <!--<property name="dependsUpon"                        ref="stepPrintsRunFingerPrintScan"/>-->
-    <!--<property name="stepDescription"                    value="Parse the output from HMMER3"/>-->
-    <!--<property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--<property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>-->
-    <!--<property name="parser"                             ref="PrintsHmmer3SearchParser"/>-->
-    <!--<property name="serialGroup"                        value="PARSE_HMMER_3"/>-->
-    <!--<property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>-->
-    <!--<property name="retries"                            value="3"/>-->
+          <!--parent="abstractPrintsStep">-->
+        <!--<property name="dependsUpon" ref="stepPrintsRunFingerPrintScan"/>-->
+        <!--<property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>-->
+        <!--<property name="fileNameTemplate" ref="fastaFileNameTemplate"/>-->
     <!--</bean>-->
+
+    <!-- STEP 3 -->
+    <bean   id="stepPrintsParseFingerPrintScanOutput"
+            class="uk.ac.ebi.interpro.scan.management.model.implementations.prints.ParsePrintsOutputStep"
+            parent="abstractPrintsStep">
+        <property name="dependsUpon"                        ref="stepPrintsRunFingerPrintScan"/>
+        <property name="stepDescription"                    value="Parse the output from FingerPrintScan"/>
+        <property name="parser"                             ref="printsParser"/>
+        <property name="serialGroup"                        value="PARSE_PRINTS"/>
+        <property name="retries"                            value="3"/>
+        <property name="pathToCutOffFile"                   value="${prints.hierarchy.path}"/>
+        <property name="printsOutputFileNameTemplate"       ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
 
     <!--<bean id="stepPrintsDeleteHmmerOutput"-->
     <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
@@ -100,6 +108,7 @@
 
     <!-- ######################## Dependencies ############################  -->
 
+    <bean id="printsParser" class="uk.ac.ebi.interpro.scan.io.match.prints.PrintsMatchParser"/>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

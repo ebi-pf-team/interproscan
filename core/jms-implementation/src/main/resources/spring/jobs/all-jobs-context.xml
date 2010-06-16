@@ -9,6 +9,7 @@
     <import resource="jobPfamA-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
     <!--<import resource="jobGene3d-context.xml"/>-->
+    <import resource="jobPrints-context.xml"/>
     <!--<import resource="job-load-from-fasta-spring.xml"/>-->
     <import resource="../persistence/persistence-config-context.xml"/>
 
@@ -26,6 +27,7 @@
                 <ref bean="jobPfamA"/>
                 <ref bean="jobPhobius"/>
                 <!--<ref bean="jobGene3d"/>-->
+                <ref bean="jobPRINTS"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>

@@ -18,6 +18,7 @@ public enum SerialGroup {
     WRITE_FASTA_FILE,
     PARSE_HMMER_3,
     PARSE_PHOBIUS,
+    PARSE_PRINTS,
     PFAM_A_POST_PROCESSING,
     GENE_3D_FILTERING
     
