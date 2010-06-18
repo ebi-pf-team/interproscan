@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,7 @@ abstract public class RunBinaryStep extends Step {
     private List<String> binarySwitchesInList = Collections.emptyList();
 
     private String binarySwitches;
+    private InputStream commandInputStream;
 
     public String getOutputFileNameTemplate() {
         return outputFileNameTemplate;
@@ -67,8 +69,6 @@ abstract public class RunBinaryStep extends Step {
     }
 
     public final List<String> getBinarySwitchesAsList() {
-
-
         return binarySwitchesInList;
     }
 
@@ -88,6 +88,8 @@ abstract public class RunBinaryStep extends Step {
 
             CommandLineConversation clc = new CommandLineConversationImpl();
             clc.setOutputPathToFile(outputFileName, true, false);
+            clc.setCommandInputStream(createCommandInputStream(stepInstance, temporaryFileDirectory));
+
             int exitStatus = clc.runCommand(false, command);
             if (exitStatus == 0) {
                 LOGGER.debug("binary finished successfully!");
@@ -123,5 +125,17 @@ abstract public class RunBinaryStep extends Step {
      */
     protected abstract List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory);
 
+    /**
+     * Implementations of RunBinaryStep may optionally override this method to
+     * return an InputStream that can be piped into the command.
+     *
+     * @param stepInstance           containing the parameters for execution (e.g. fasta file template)
+     * @param temporaryFileDirectory provides methods to create file paths from file templates
+     * @return either null or an InputStream to be piped into the command
+     * @throws java.io.IOException during creation of the InputStream
+     */
+    protected InputStream createCommandInputStream(StepInstance stepInstance, String temporaryFileDirectory) throws IOException {
+        return null;
+    }
 
 }

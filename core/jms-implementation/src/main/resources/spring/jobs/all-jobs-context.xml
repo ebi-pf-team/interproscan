@@ -10,7 +10,7 @@
     <import resource="jobPhobius-context.xml"/>
     <!--<import resource="jobGene3d-context.xml"/>-->
     <import resource="jobPrints-context.xml"/>
-    <!--<import resource="job-load-from-fasta-spring.xml"/>-->
+    <import resource="jobCoils-context.xml"/>
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <import resource="../uapro-db-access-context.xml"/>
@@ -28,6 +28,7 @@
                 <ref bean="jobPhobius"/>
                 <!--<ref bean="jobGene3d"/>-->
                 <ref bean="jobPRINTS"/>
+                <ref bean="jobCoils"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
