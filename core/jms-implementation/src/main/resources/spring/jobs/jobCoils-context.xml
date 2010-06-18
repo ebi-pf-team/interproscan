@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: PRINTS ############################  -->
+    <bean id="jobCoils" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="Coils Raw Analysis and Persistence"/>
+        <property name="analysis" value="true"/>
+    </bean>
+
+    <bean id="abstractCoilsStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobCoils"/>
+        <property name="maxProteins" value="5000"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepCoilsWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractCoilsStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepCoilsRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.coils.RunCoilsBinaryStep"
+          parent="abstractCoilsStep">
+        <!-- /ebi/sp/pro1/interpro/binaries/32_bit_Linux/ncoils -c -m /ebi/sp/pro1/interpro/data/members/coils/2.2/new_coil.mat <  -->
+        <property name="dependsUpon" ref="stepCoilsWriteFastaFile"/>
+        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        <property name="fullPathToBinary" value="${binary.coils.path}"/>
+        <property name="binarySwitches" value="-c -m"/>
+        <property name="fullPathToNewCoilMatFile" value="${coils.new_coil.mat.path}"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+    </bean>
+
+    <bean id="stepCoilsDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractCoilsStep">
+        <property name="dependsUpon" ref="stepCoilsRunBinary"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!-- STEP 3 -->
+    <!--<bean id="stepPrintsParseHmmerOutput"-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.ParsePfam_A_HMMER3OutputStep"-->
+    <!--parent="abstractPrintsStep">-->
+    <!--<property name="dependsUpon"                        ref="stepPrintsRunFingerPrintScan"/>-->
+    <!--<property name="stepDescription"                    value="Parse the output from HMMER3"/>-->
+    <!--<property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--<property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>-->
+    <!--<property name="parser"                             ref="PrintsHmmer3SearchParser"/>-->
+    <!--<property name="serialGroup"                        value="PARSE_HMMER_3"/>-->
+    <!--<property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>-->
+    <!--<property name="retries"                            value="3"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="stepPrintsDeleteHmmerOutput"-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
+    <!--parent="abstractPrintsStep"  >-->
+    <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
+    <!--<property name="stepDescription"                    value="Delete the hmmer output file following successful parsing"/>-->
+    <!--<property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--</bean>-->
+
+    <!-- STEP 4 -->
+    <!--<bean id="stepPrintsPostProcessing"-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.Pfam_A_PostProcessingStep"-->
+    <!--parent="abstractPrintsStep">-->
+    <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
+    <!--<property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>-->
+    <!--<property name="postProcessor"                      ref="PrintsPostProcessor"/>-->
+    <!--<property name="serialGroup"                        value="PFAM_A_POST_PROCESSING"/>-->
+    <!--<property name="signatureLibraryRelease"            value="24.0"/>-->
+    <!--<property name="signatureLibrary"                   value="PFAM"/>-->
+    <!--<property name="rawMatchDAO"                        ref="pfamRawMatchDAO"/>-->
+    <!--<property name="filteredMatchDAO"                   ref="pfamFilteredMatchDAO"/>-->
+    <!--</bean>-->
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
