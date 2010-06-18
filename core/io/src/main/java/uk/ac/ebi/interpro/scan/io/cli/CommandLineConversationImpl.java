@@ -13,18 +13,20 @@ import java.util.Map;
 /**
  * Instances of this class can be instantiated to build a generic 'commmand line conversation'.
  * This allows any command to be called and captures both the console output and error output.
- *
+ * <p/>
  * This class is <b>NOT THREAD SAFE</b>, however a single instance of this class
  * can be reused synchronously in a single thread.
  *
- * @author  Phil Jones, EMBL-EBI
- * @author  Antony Quinn
+ * @author Phil Jones, EMBL-EBI
+ * @author Antony Quinn
  * @version $Id: CommandLineConversationImpl.java 112 2009-08-12 13:49:39Z aquinn.ebi $
- * @since   1.0
+ * @since 1.0
  */
 public class CommandLineConversationImpl implements CommandLineConversation {
 
     private static volatile Logger LOGGER = Logger.getLogger(CommandLineConversationImpl.class);
+
+    private static final int BUFFER_SIZE = 4096;
 
     private String output;
     private String error;
@@ -37,17 +39,23 @@ public class CommandLineConversationImpl implements CommandLineConversation {
     private volatile IOException exceptionThrownByGobbler;
 
     /**
+     * This is an optional InputStream of data to be piped into the command (i.e. on STDIN).
+     */
+    private InputStream commandInputStream;
+
+    /**
      * Runs a command on the command line synchronously.
      *
      * @param mergeErrorIntoOutput if true, error messages will be included in the
-     *                            output and can be accessed through the <code>getOutput()</code> method.  In this case,
-     *                            <code>getErrorMessage()</code> will return <code>null</code>.
+     *                             output and can be accessed through the <code>getOutput()</code> method.  In this case,
+     *                             <code>getErrorMessage()</code> will return <code>null</code>.
      * @param commands             being a set of recognised commands.  Note that compound commands (i.e. commands
-     * separated by spaces) need to be submitted as separate strings, e.g. `ls -l` is passed in as "ls", "-l"
+     *                             separated by spaces) need to be submitted as separate strings, e.g. `ls -l` is passed in as "ls", "-l"
      * @return the return code from the command after it has completed.
      * @throws java.io.IOException propagated from the RunTime.execute method.
      */
-    @Override public int runCommand(boolean mergeErrorIntoOutput, String... commands)
+    @Override
+    public int runCommand(boolean mergeErrorIntoOutput, String... commands)
             throws IOException, InterruptedException {
         return runCommand(mergeErrorIntoOutput, new ArrayList<String>(Arrays.asList(commands)));
     }
@@ -57,14 +65,15 @@ public class CommandLineConversationImpl implements CommandLineConversation {
      * Runs a command on the command line synchronously.
      *
      * @param mergeErrorIntoOutput if true, error messages will be included in the
-     *                            output and can be accessed through the <code>getOutput()</code> method.  In this case,
-     *                            <code>getErrorMessage()</code> will return <code>null</code>.
+     *                             output and can be accessed through the <code>getOutput()</code> method.  In this case,
+     *                             <code>getErrorMessage()</code> will return <code>null</code>.
      * @param commands             being a set of recognised commands.  Note that compound commands (i.e. commands
-     * separated by spaces) need to be submitted as separate strings, e.g. `ls -l` is passed in as "ls", "-l"
+     *                             separated by spaces) need to be submitted as separate strings, e.g. `ls -l` is passed in as "ls", "-l"
      * @return the return code from the command after it has completed.
      * @throws java.io.IOException propagated from the RunTime.execute method.
      */
-    @Override public int runCommand(boolean mergeErrorIntoOutput, List<String> commands)
+    @Override
+    public int runCommand(boolean mergeErrorIntoOutput, List<String> commands)
             throws IOException, InterruptedException {
 
         ProcessBuilder pb = new ProcessBuilder(commands);
@@ -74,10 +83,10 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
         // Sort out the environment stuff.
         Map<String, String> retrievedEnvironment = pb.environment();
-        if (overrideAllEnvironment){
+        if (overrideAllEnvironment) {
             retrievedEnvironment.clear();
         }
-        if (environment != null){
+        if (environment != null) {
             retrievedEnvironment.putAll(environment);
         }
 
@@ -86,17 +95,35 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         pb.directory(workingDirectory);
 
         // Run the command
-        if (LOGGER.isDebugEnabled()){
-            LOGGER.debug("Command Line: \n "+ pb.command());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Command Line: \n " + pb.command());
         }
 
-
-        Process process = pb.start();
-        StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputFileHandle);
-        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), errorFileHandle);
-        // kick them off
+        StreamGobbler outputGobbler = null;
+        StreamGobbler errorGobbler = null;
+        Process process = null;
+        process = pb.start();
+        outputGobbler = new StreamGobbler(process.getInputStream(), outputFileHandle);
+        errorGobbler = new StreamGobbler(process.getErrorStream(), errorFileHandle);
         errorGobbler.start();
         outputGobbler.start();
+        if (commandInputStream != null) {
+            BufferedOutputStream bos = null;
+            try {
+                bos = new BufferedOutputStream(process.getOutputStream());
+                byte[] buf = new byte[BUFFER_SIZE];
+                int readLength;
+                while ((readLength = commandInputStream.read(buf)) > -1) {
+                    bos.write(buf, 0, readLength);
+                }
+            }
+            finally {
+                commandInputStream.close();
+                if (bos != null) {
+                    bos.close();
+                }
+            }
+        }
 
         // Retrieve status and output from the command.
         exitStatus = process.waitFor();
@@ -105,18 +132,17 @@ public class CommandLineConversationImpl implements CommandLineConversation {
          * Attempt to ensure that any IOExceptions thrown in the Gobbler threads are re-thrown
          * to be handled by the Worker.
          */
-        if (exceptionThrownByGobbler != null){
+        if (exceptionThrownByGobbler != null) {
             throw exceptionThrownByGobbler;
         }
 
-        if (outputFileHandle == null){
+        if (outputFileHandle == null) {
             output = outputGobbler.getStreamContent();
         }
 
-        if (mergeErrorIntoOutput || errorFileHandle != null){
+        if (mergeErrorIntoOutput || errorFileHandle != null) {
             error = null;
-        }
-        else {
+        } else {
             error = errorGobbler.getStreamContent();
         }
 
@@ -125,13 +151,14 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
     /**
      * Runs command and returns exit status.
-     * 
-     * @param   command             Command to run, for example "head -n 100 /tmp/example.txt"
-     * @return  Exit status
-     * @throws  IOException if could not run command
-     * @throws  IllegalStateException if could not run command, or if command returns a failure flag
+     *
+     * @param command Command to run, for example "head -n 100 /tmp/example.txt"
+     * @return Exit status
+     * @throws IOException           if could not run command
+     * @throws IllegalStateException if could not run command, or if command returns a failure flag
      */
-    @Override public int runCommand(String command) throws IOException {
+    @Override
+    public int runCommand(String command) throws IOException {
         int exitStatus;
         try {
             exitStatus = runCommand(false, Arrays.asList(command.split(" ")));
@@ -140,7 +167,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
             throw new IllegalStateException(e);
         }
         if (exitStatus != 0) {
-            throw new IllegalStateException (getErrorMessage());
+            throw new IllegalStateException(getErrorMessage());
         }
         return exitStatus;
     }
@@ -153,7 +180,8 @@ public class CommandLineConversationImpl implements CommandLineConversation {
      * @param environmentVariables being a Map of environment variable name to value.
      * @param overrideAll          if all preexisting environment variables should be cleared first.
      */
-    @Override public void setEnvironment(Map<String, String> environmentVariables, boolean overrideAll) {
+    @Override
+    public void setEnvironment(Map<String, String> environmentVariables, boolean overrideAll) {
         this.environment = environmentVariables;
         this.overrideAllEnvironment = overrideAll;
     }
@@ -165,7 +193,8 @@ public class CommandLineConversationImpl implements CommandLineConversation {
      *
      * @param filePath the path of the file to which output should be redirected.
      */
-    @Override public void setOutputPathToFile(String filePath, boolean overwriteIfExists, boolean append)
+    @Override
+    public void setOutputPathToFile(String filePath, boolean overwriteIfExists, boolean append)
             throws IOException {
         outputFileHandle = createfileHandle(filePath, overwriteIfExists, append);
     }
@@ -176,25 +205,36 @@ public class CommandLineConversationImpl implements CommandLineConversation {
      *
      * @param filePath the path of the file to which error output should be redirected.
      */
-    @Override public void setErrorPathToFile(String filePath, boolean overwriteIfExists, boolean append)
+    @Override
+    public void setErrorPathToFile(String filePath, boolean overwriteIfExists, boolean append)
             throws IOException, InterruptedException {
-        errorFileHandle = createfileHandle (filePath, overwriteIfExists, append);
+        errorFileHandle = createfileHandle(filePath, overwriteIfExists, append);
+    }
+
+    /**
+     * This optional method allows data to be piped into a command (i.e. on STDIN)
+     *
+     * @param commandInputStream data to be piped into the command.
+     */
+    public void setCommandInputStream(InputStream commandInputStream) {
+        this.commandInputStream = commandInputStream;
     }
 
     /**
      * Sets the working directory for subsequent commands.
      *
      * @param directoryPath being a valid path to a working directory
-     * @throws FileNotFoundException if the directory path given does not exist.
+     * @throws FileNotFoundException        if the directory path given does not exist.
      * @throws FileIsNotADirectoryException if the path exists, but does not resolve to a directory.
      */
-    @Override public void setWorkingDirectory(String directoryPath)
+    @Override
+    public void setWorkingDirectory(String directoryPath)
             throws FileNotFoundException, FileIsNotADirectoryException {
-        File file = new File (directoryPath);
-        if (! file.exists()){
+        File file = new File(directoryPath);
+        if (!file.exists()) {
             throw new FileNotFoundException("Directory " + directoryPath + " does not exist.");
         }
-        if (! file.isDirectory()){
+        if (!file.isDirectory()) {
             throw new FileIsNotADirectoryException("Directory " + directoryPath + " exists, " +
                     "but inputStream not a directory.");
         }
@@ -204,54 +244,47 @@ public class CommandLineConversationImpl implements CommandLineConversation {
     /**
      * @return The output from the command, or null if no output was produced or no command has been run.
      */
-    @Override public String getOutput() {
+    @Override
+    public String getOutput() {
         return output;
     }
 
     /**
      * @return The error message from the command, or null if no error message was generated or no command has been run.
      */
-    @Override public String getErrorMessage() {
+    @Override
+    public String getErrorMessage() {
         return error;
     }
 
     /**
      * @return The exit status from the last command run, or null if no command has been run yet.
      */
-    @Override public Integer getExitStatus() {
+    @Override
+    public Integer getExitStatus() {
         return exitStatus;
     }
-    
+
     private File createfileHandle(String filePath, boolean overwriteIfExists, boolean append) throws IOException {
         File sinkFile = new File(filePath);
-        if (sinkFile.exists()){
-            if (! sinkFile.isFile()){
+        if (sinkFile.exists()) {
+            if (!sinkFile.isFile()) {
                 throw new IOException("Attempting to redirect to a path which points to a directory or hidden file.");
             }
-            if (overwriteIfExists){
-                if (! sinkFile.delete()){
+            if (overwriteIfExists) {
+                if (!sinkFile.delete()) {
                     throw new IOException("The filePath " + filePath +
                             " already contains a file that cannot be deleted.");
                 }
-//                Thread.sleep (5000);
-//                if (! sinkFile.createNewFile()){
-//                    throw new IOException("Unable to create a new file " + filePath + " to route to.");
-//                }
-            }
-            else if (append){
-                if (! sinkFile.canWrite() ){
+            } else if (append) {
+                if (!sinkFile.canWrite()) {
                     throw new IOException("Attempting to append to a read-only file: " + filePath);
                 }
-            }
-            else {
-                throw new IOException ("There is already a file located at " + filePath + ". " +
+            } else {
+                throw new IOException("There is already a file located at " + filePath + ". " +
                         "The calling code has set overwriteIfExists to false, so this file will not be deleted.");
             }
         }
-//        else if (! sinkFile.createNewFile()){
-//            throw new IOException("Unable to create a new file " + filePath);
-//        }
-//        Thread.sleep (5000); // Give NFS a chance to catch up before proceeding.
         return sinkFile;
     }
 
@@ -259,7 +292,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
      * Inner class that reads in the output / error streams from the process.
      * This is required because otherwise the stream buffers in the underlying OS
      * may / will fill causing the process to hang.
-     *
+     * <p/>
      * These readers operate in a separate thread, ensuring that the buffers
      * for error / output are emptied in a timely manner.
      */
@@ -270,13 +303,13 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
         StreamGobbler(InputStream inputStream) {
             this(inputStream, null);
-            // These stream gobblers really need to run to keep up with the external process.
-            this.setPriority(Thread.MAX_PRIORITY);
         }
 
         StreamGobbler(InputStream inputStream, File outputFileHandle) {
+            // These stream gobblers really need to run to keep up with the external process.
+            this.setPriority(Thread.MAX_PRIORITY);
             this.inputStream = inputStream;
-            if (outputFileHandle != null){
+            if (outputFileHandle != null) {
                 this.gobblerFileHandle = outputFileHandle;
             }
         }
@@ -284,23 +317,21 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         /**
          * Run method than consumes any ouput from the external process as it is produced.
          */
-        public void run(){
-            if (gobblerFileHandle == null){
+        public void run() {
+            if (gobblerFileHandle == null) {
                 outputToString();
-            }
-            else {
+            } else {
                 outputToFile();
             }
         }
 
 
-
-        private void outputToString(){
+        private void outputToString() {
             BufferedReader bufferedReader = null;
             try {
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
-                while ( (line = bufferedReader.readLine()) != null){
+                while ((line = bufferedReader.readLine()) != null) {
                     stringBuffer
                             .append(line)
                             .append('\n');
@@ -310,8 +341,8 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                 LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
                 exceptionThrownByGobbler = ioe;
             }
-            finally{
-                if (bufferedReader != null){
+            finally {
+                if (bufferedReader != null) {
                     try {
                         bufferedReader.close();
                     } catch (IOException ioe) {
@@ -327,32 +358,32 @@ public class CommandLineConversationImpl implements CommandLineConversation {
          * Uses java.nio for maximum speed / efficiency.
          */
         private void outputToFile() {
-            final int BUFFER_SIZE = 4096;
+
 
             FileChannel destinationChannel = null;
             try {
                 destinationChannel = new FileOutputStream(gobblerFileHandle).getChannel();
                 ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-				byte[] bufferArray = buffer.array(); //get the backing byte array
+                byte[] bufferArray = buffer.array(); //get the backing byte array
                 while (true) {
-					buffer.clear(); // Prepare buffer for use, sets position to 0 and limit at capacity
-					int lim = inputStream.read(bufferArray);
-					if (lim == -1)
-						break; // No more bytes to transfer
-					buffer.flip(); //prepare for write, set position to 0
-					buffer.limit(lim); //set the limit to what was read in from the stream
-                    while (buffer.hasRemaining()){
-					    destinationChannel.write(buffer);
+                    buffer.clear(); // Prepare buffer for use, sets position to 0 and limit at capacity
+                    int lim = inputStream.read(bufferArray);
+                    if (lim == -1)
+                        break; // No more bytes to transfer
+                    buffer.flip(); //prepare for write, set position to 0
+                    buffer.limit(lim); //set the limit to what was read in from the stream
+                    while (buffer.hasRemaining()) {
+                        destinationChannel.write(buffer);
                     }
-				}
+                }
             }
             catch (IOException ioe) {
                 LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
                 exceptionThrownByGobbler = ioe;
             }
-            finally{
-                try{
-                    if (destinationChannel != null){
+            finally {
+                try {
+                    if (destinationChannel != null) {
                         destinationChannel.close();
                     }
                     inputStream.close();
@@ -367,9 +398,10 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
         /**
          * Accessor to retrieve the ouput from the process as a String.
+         *
          * @return the ouput from the process as a String.
          */
-        public String getStreamContent(){
+        public String getStreamContent() {
             return stringBuffer.toString();
         }
     }
