@@ -99,12 +99,9 @@ public class CommandLineConversationImpl implements CommandLineConversation {
             LOGGER.debug("Command Line: \n " + pb.command());
         }
 
-        StreamGobbler outputGobbler = null;
-        StreamGobbler errorGobbler = null;
-        Process process = null;
-        process = pb.start();
-        outputGobbler = new StreamGobbler(process.getInputStream(), outputFileHandle);
-        errorGobbler = new StreamGobbler(process.getErrorStream(), errorFileHandle);
+        Process process = pb.start();
+        StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputFileHandle);
+        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), errorFileHandle);
         errorGobbler.start();
         outputGobbler.start();
         if (commandInputStream != null) {
