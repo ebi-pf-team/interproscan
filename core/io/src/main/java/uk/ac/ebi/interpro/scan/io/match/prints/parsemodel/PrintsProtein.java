@@ -76,7 +76,13 @@ public class PrintsProtein {
 
     private String graphScan;
 
-    private float eValue;
+    private Float eValue;
+
+    public PrintsProtein(String proteinIdentifier, String motifName, Float eValue) {
+        this.proteinIdentifier = proteinIdentifier;
+        this.motifName = motifName;
+        this.eValue = eValue;
+    }
 
     public String getProteinIdentifier() {
         return proteinIdentifier;
@@ -114,7 +120,48 @@ public class PrintsProtein {
         return graphScan;
     }
 
-    public float geteValue() {
+    public Float geteValue() {
         return eValue;
     }
+
+    public void setProteinIdentifier(String proteinIdentifier) {
+        this.proteinIdentifier = proteinIdentifier;
+    }
+
+    public void setMotifName(String motifName) {
+        this.motifName = motifName;
+    }
+
+    public void setMotifNo(int motifNo) {
+        this.motifNo = motifNo;
+    }
+
+    public void setMotifTotal(int motifTotal) {
+        this.motifTotal = motifTotal;
+    }
+
+    public void setIdScore(float idScore) {
+        this.idScore = idScore;
+    }
+
+    public void setpValue(float pValue) {
+        this.pValue = pValue;
+    }
+
+    public void setSeqStartPos(int seqStartPos) {
+        this.seqStartPos = seqStartPos;
+    }
+
+    public void setSeqEndPos(int seqEndPos) {
+        this.seqEndPos = seqEndPos;
+    }
+
+    public void setGraphScan(String graphScan) {
+        this.graphScan = graphScan;
+    }
+
+    public void seteValue(Float eValue) {
+        this.eValue = eValue;
+    }
+
 }

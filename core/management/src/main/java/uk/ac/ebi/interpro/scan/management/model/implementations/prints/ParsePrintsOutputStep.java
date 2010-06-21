@@ -29,7 +29,7 @@ public class ParsePrintsOutputStep extends Step {
 
     private PrintsMatchParser parser;
 
-    private float defaultCutOff = Float.parseFloat("1e-04");
+    private float defaultCutOff = log10(1e-04);
 
     @Required
     public void setPrintsOutputFileNameTemplate(String printsOutputFileNameTemplate) {
@@ -64,9 +64,10 @@ public class ParsePrintsOutputStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        Map evalCutoffs = null;
+        Map evalCutoffs;
+        InputStream inputStreamCutoff = ParsePrintsOutputStep.class.getClassLoader().getResourceAsStream(pathToCutOffFile);
         try {
-            evalCutoffs = readPrintsParsingFile(pathToCutOffFile, defaultCutOff);
+            evalCutoffs = readPrintsParsingFile(inputStreamCutoff, defaultCutOff);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to initialise Prints hierarchy file to determine cutoff values.");
         }
@@ -76,18 +77,25 @@ public class ParsePrintsOutputStep extends Step {
             throw new IllegalStateException ("InterruptedException thrown by ParsePrintsOutputStep while having a snooze to allow NFS to catch up.");
         }
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, printsOutputFileNameTemplate);
-        InputStream is = null;
+        InputStream inputStreamParser = null;
         try{
-            is = new FileInputStream(fileName);
-            Set<PrintsProtein> printsProteins = parser.parse(is, fileName, evalCutoffs);
+            inputStreamParser = new FileInputStream(fileName);
+            Set<PrintsProtein> printsProteins = parser.parse(inputStreamParser, fileName, evalCutoffs);
             //printsMatchDAO.persist(printsProteins);
         }
         catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse Prints file " + fileName, e);
         } finally {
-            if (is != null){
+            if (inputStreamCutoff != null){
                 try {
-                    is.close();
+                    inputStreamCutoff.close();
+                } catch (IOException e) {
+                    LOGGER.error ("Unable to close connection to the Prints cutoff limits file " + pathToCutOffFile, e);
+                }
+            }
+            if (inputStreamParser != null){
+                try {
+                    inputStreamParser.close();
                 } catch (IOException e) {
                     LOGGER.error ("Unable to close connection to the Prints output file located at " + fileName, e);
                 }
@@ -95,20 +103,20 @@ public class ParsePrintsOutputStep extends Step {
         }
     }
 
-    public static Map<String, Object> readPrintsParsingFile(String pathToCutOffFile, float defaultCutOff) throws IOException {
+    public static Map<String, Object> readPrintsParsingFile(InputStream is, float defaultCutOff) throws IOException {
         // Example of FingerPRINTShierarchy.db content:
         // The vast majority of motifs have a cutoff of 1e-04, so we will only store those whose cutoff is different
         // Need to store Fingerprint motif name and cutoff evalue
         // VIRIONINFFCT|PR00349|1e-04|0|
         // Y414FAMILY|PR01048|1e-04|0|
-        BufferedReader fReader = new BufferedReader(new FileReader(pathToCutOffFile));
+        BufferedReader fReader = new BufferedReader(new InputStreamReader(is));
         String printsFileCommentCharacter = "#";
         String in;
         Map<String, Object> ret = new HashMap<String, Object>();
         while ((in = fReader.readLine()) != null) {
              if (!in.startsWith(printsFileCommentCharacter)) {
                 String[] line = in.split("\\|");
-                Float checkCutoff = Float.parseFloat(line[2]);
+                float checkCutoff = log10(Double.parseDouble(line[2]));
                 if (checkCutoff != defaultCutOff) {
                     ret.put(line[0], checkCutoff);
                 }
@@ -116,4 +124,9 @@ public class ParsePrintsOutputStep extends Step {
         }
         return ret;
     }
+
+    public static float log10(double x) {
+		return (float) (Math.log(x) / Math.log(10.0));
+	}
+
 }
