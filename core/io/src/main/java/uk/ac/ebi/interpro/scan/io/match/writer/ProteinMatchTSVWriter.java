@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.io.match;
+package uk.ac.ebi.interpro.scan.io.match.writer;
 
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
 import uk.ac.ebi.interpro.scan.model.*;
@@ -13,16 +13,18 @@ import java.util.Set;
 /**
  * Write matches as output for InterProScan user.
  */
-public class MatchWriter implements Closeable {
+public class ProteinMatchTSVWriter implements ProteinWriter {
+
+    
     private TSVWriter tsvWriter;
 
     DateFormat dmyFormat =new SimpleDateFormat("dd-MM-yyyy");
 
-    public MatchWriter(File file) throws IOException {
+    public ProteinMatchTSVWriter(File file) throws IOException {
         tsvWriter=new TSVWriter(new BufferedWriter(new FileWriter(file)));
     }
 
-    
+
     public void write(Protein protein) throws IOException {
 
         String proteinAc = makeProteinAc(protein);
