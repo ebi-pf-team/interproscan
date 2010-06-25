@@ -10,9 +10,12 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.prints;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.prints.PrintsMatchParser;
-import uk.ac.ebi.interpro.scan.io.match.prints.parsemodel.PrintsProtein;
+
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAO;
 
 import java.io.*;
 import java.util.*;
@@ -25,15 +28,21 @@ public class ParsePrintsOutputStep extends Step {
 
     private String pathToCutOffFile;
 
-    //private PrintsFilteredMatchDAO printsMatchDAO;
+    private PrintsRawMatchDAO printsMatchDAO;
 
     private PrintsMatchParser parser;
 
-    private float defaultCutOff = log10(1e-04);
+    private double defaultCutOff = log10(1e-04);
+
+    private String signatureLibraryRelease;
 
     @Required
     public void setPrintsOutputFileNameTemplate(String printsOutputFileNameTemplate) {
         this.printsOutputFileNameTemplate = printsOutputFileNameTemplate;
+    }
+
+    public String getPrintsOutputFileNameTemplate() {
+        return printsOutputFileNameTemplate;
     }
 
     @Required
@@ -41,12 +50,24 @@ public class ParsePrintsOutputStep extends Step {
         this.pathToCutOffFile = pathToCutOffFile;
     }
 
-    //    @Required
-//    public void setPrintsMatchDAO(PrintsFilteredMatchDAO printsMatchDAO) {
-//        this.printsMatchDAO = printsMatchDAO;
-//    }
+    public String getPathToCutOffFile() {
+        return pathToCutOffFile;
+    }
 
     @Required
+    public void setPrintsRawMatchDAO(PrintsRawMatchDAO printsMatchDAO) {
+        this.printsMatchDAO = printsMatchDAO;
+    }
+
+    @Required
+    public void setSignatureLibraryRelease(String signatureLibraryRelease) {
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
+    public String getSignatureLibraryRelease() {
+        return signatureLibraryRelease;
+    }
+
     public void setParser(PrintsMatchParser parser) {
         this.parser = parser;
     }
@@ -65,68 +86,69 @@ public class ParsePrintsOutputStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         Map evalCutoffs;
-        InputStream inputStreamCutoff = ParsePrintsOutputStep.class.getClassLoader().getResourceAsStream(pathToCutOffFile);
         try {
-            evalCutoffs = readPrintsParsingFile(inputStreamCutoff, defaultCutOff);
+            evalCutoffs = readPrintsParsingFile(pathToCutOffFile, defaultCutOff);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to initialise Prints hierarchy file to determine cutoff values.");
         }
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
-            throw new IllegalStateException ("InterruptedException thrown by ParsePrintsOutputStep while having a snooze to allow NFS to catch up.");
+            throw new IllegalStateException("InterruptedException thrown by ParsePrintsOutputStep while having a snooze to allow NFS to catch up.");
         }
-        final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, printsOutputFileNameTemplate);
         InputStream inputStreamParser = null;
-        try{
-            inputStreamParser = new FileInputStream(fileName);
-            Set<PrintsProtein> printsProteins = parser.parse(inputStreamParser, fileName, evalCutoffs);
-            //printsMatchDAO.persist(printsProteins);
+        try {
+            final String printsOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, printsOutputFileNameTemplate);
+            inputStreamParser = new FileInputStream(printsOutputFilePath);
+            final PrintsMatchParser parser = this.parser;
+            Set <RawProtein<PrintsRawMatch>> parsedResults = parser.parse(inputStreamParser, printsOutputFilePath, evalCutoffs, signatureLibraryRelease);
+            printsMatchDAO.insertProteinMatches(parsedResults);
         }
         catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when attempting to parse Prints file " + fileName, e);
+            throw new IllegalStateException("IOException thrown when attempting to parse Prints file " + printsOutputFileNameTemplate, e);
         } finally {
-            if (inputStreamCutoff != null){
-                try {
-                    inputStreamCutoff.close();
-                } catch (IOException e) {
-                    LOGGER.error ("Unable to close connection to the Prints cutoff limits file " + pathToCutOffFile, e);
-                }
-            }
-            if (inputStreamParser != null){
+            if (inputStreamParser != null) {
                 try {
                     inputStreamParser.close();
                 } catch (IOException e) {
-                    LOGGER.error ("Unable to close connection to the Prints output file located at " + fileName, e);
+                    LOGGER.error("Unable to close connection to the Prints output file located at " + printsOutputFileNameTemplate, e);
                 }
             }
         }
     }
 
-    public static Map<String, Object> readPrintsParsingFile(InputStream is, float defaultCutOff) throws IOException {
+    public static Map<String, Object> readPrintsParsingFile(String cutoffFile, double defaultCutOff) throws IOException {
         // Example of FingerPRINTShierarchy.db content:
         // The vast majority of motifs have a cutoff of 1e-04, so we will only store those whose cutoff is different
         // Need to store Fingerprint motif name and cutoff evalue
         // VIRIONINFFCT|PR00349|1e-04|0|
         // Y414FAMILY|PR01048|1e-04|0|
-        BufferedReader fReader = new BufferedReader(new InputStreamReader(is));
-        String printsFileCommentCharacter = "#";
-        String in;
+        BufferedReader fReader = null;
         Map<String, Object> ret = new HashMap<String, Object>();
-        while ((in = fReader.readLine()) != null) {
-             if (!in.startsWith(printsFileCommentCharacter)) {
-                String[] line = in.split("\\|");
-                float checkCutoff = log10(Double.parseDouble(line[2]));
-                if (checkCutoff != defaultCutOff) {
-                    ret.put(line[0], checkCutoff);
+        try {
+            fReader = new BufferedReader(new FileReader(new File(cutoffFile)));
+            String printsFileCommentCharacter = "#";
+            String in;
+            while ((in = fReader.readLine()) != null) {
+                if (!in.startsWith(printsFileCommentCharacter)) {
+                    String[] line = in.split("\\|");
+                    double checkCutoff = log10(Double.parseDouble(line[2]));
+                    if (checkCutoff != defaultCutOff) {
+                        ret.put(line[0], checkCutoff);
+                    }
                 }
+            }
+        }
+        finally {
+            if (fReader != null) {
+                fReader.close();
             }
         }
         return ret;
     }
 
-    public static float log10(double x) {
-		return (float) (Math.log(x) / Math.log(10.0));
-	}
+    public static double log10(double x) {
+        return Math.log(x) / Math.log(10.0);
+    }
 
 }

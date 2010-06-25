@@ -94,4 +94,5 @@ public class PrintsRawMatch extends RawMatch {
     private void setMotifNumber(int motifNumber) {
         this.motifNumber = motifNumber;
     }
+
 }
