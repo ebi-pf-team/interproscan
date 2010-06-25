@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -124,6 +126,34 @@ public class ProteinTest extends AbstractTest<Protein> {
         assertFalse("Original and copy should not be equal", original.equals(copy));
         copy.addMatch((Hmmer2Match)SerializationUtils.clone(match));
         assertEquals(original, copy);
+    }
+
+    /**
+     * Tests the serialization and de-serialization works.
+     */
+    @Test public void testSerization() throws IOException {
+
+        Protein original = new Protein(GOOD);
+        Xref xref = original.addCrossReference(new Xref("A0A000_9ACTO"));
+        original.addCrossReference(xref);
+        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
+        Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+        original.addMatch(match);
+
+        byte[] data=SerializationUtils.serialize(original);
+        String originalXML = marshal(original);
+        Object retrieved=SerializationUtils.deserialize(data);
+        String unserializedXML = marshal((Protein) retrieved);
+        System.out.println(unserializedXML);
+        System.out.println("Data lengths serialized: "+data.length+" original xml: "+originalXML.length()+" unserialized xml: "+unserializedXML.length());
+
+        XMLUnit.setIgnoreComments(true);
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setIgnoreAttributeOrder(true);
+        XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+        XMLUnit.setNormalizeWhitespace(true);
+        assertEquals(originalXML,unserializedXML);
     }
 
     /**
