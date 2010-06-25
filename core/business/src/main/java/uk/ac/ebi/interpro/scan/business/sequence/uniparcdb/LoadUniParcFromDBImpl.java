@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
 import uk.ac.ebi.interpro.scan.persistence.XrefDAO;
 
@@ -40,7 +41,7 @@ public class LoadUniParcFromDBImpl implements LoadUniParcFromDB {
     private XrefDAO xrefDao;
 
     private Integer maximumProteins;
-
+    
     @Required
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -81,4 +82,6 @@ public class LoadUniParcFromDBImpl implements LoadUniParcFromDB {
         jdbcTemplate.query(sql , new Object[]{highWaterMark, maximumProteins}, rowCallbackHandlerTemplate);
         rowCallbackHandlerTemplate.persist();
     }
+
+
 }

@@ -22,28 +22,22 @@ public class ProteinLoader implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinLoader.class);
 
+    private PrecalculatedProteinLookup proteinLookup;
+
     private ProteinDAO proteinDAO;
 
     private int proteinInsertBatchSize;
 
     private Set<Protein> proteinsAwaitingPersistence;
 
+    private Set<Protein> precalculatedProteins=new HashSet<Protein>();
+
     private Long bottomProteinId;
 
     private Long topProteinId;
-    
-    /**
-     * TODO - COULD make this into a List of listeners, if required.
-     * Highly unlikely to be required however.
-     *
-     * This interface is implemented to allow StepInstances to be
-     * created.  The implementation appears in the management module.
-     */
-    private ProteinLoadListener proteinLoadListener;
 
-    @Required
-    public void setProteinLoadListener(ProteinLoadListener proteinLoadListener) {
-        this.proteinLoadListener = proteinLoadListener;
+    public void setProteinLookup(PrecalculatedProteinLookup proteinLookup) {
+        this.proteinLookup = proteinLookup;
     }
 
     @Required
@@ -72,11 +66,16 @@ public class ProteinLoader implements Serializable {
                     protein.addCrossReference(xref);
                 }
             }
-            proteinsAwaitingPersistence.add (protein);
+            Protein precalculatedProtein=proteinLookup!=null?proteinLookup.getPrecalculated(protein):null;
+            if (precalculatedProtein!=null) precalculatedProteins.add(precalculatedProtein);
+            else addProteinToBatch(protein);
         }
-        if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize){
-            persistBatch();
-        }
+
+    }
+
+    private void addProteinToBatch(Protein protein) {
+        proteinsAwaitingPersistence.add (protein);
+        if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize) persistBatch();
     }
 
     private void persistBatch(){
@@ -90,16 +89,30 @@ public class ProteinLoader implements Serializable {
 
     public void persist(ProteinLoadListener proteinLoadListener){
         persistBatch();
-        // Create StepInstances here...
-        LOGGER.debug("About to call ProteinLoadListener.createStepInstances()");
-        proteinLoadListener.createStepInstances(bottomProteinId, topProteinId);
+
+        Long bottomNewProteinId=bottomProteinId;
+        Long topNewProteinId=topProteinId;
+
+        resetBounds();
+
+        for (Protein precalculatedProtein : precalculatedProteins) addProteinToBatch(precalculatedProtein);
+
+        persistBatch();
+
+        Long bottomPrecalcProteinId=bottomProteinId;
+        Long topPrecalcProteinId=topProteinId;
+
+
+        proteinLoadListener.proteinsLoaded(bottomNewProteinId,topNewProteinId,bottomPrecalcProteinId,topPrecalcProteinId);
+
+        resetBounds();
+    }
+
+    private void resetBounds() {
         bottomProteinId = null;
         topProteinId = null;
     }
 
-    public void persist(){
-        persist(proteinLoadListener);
-    }
 
 
 }

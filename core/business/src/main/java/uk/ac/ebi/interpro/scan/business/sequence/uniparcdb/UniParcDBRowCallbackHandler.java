@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.business.sequence.uniparcdb;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
 
 import java.sql.ResultSet;
@@ -24,6 +25,8 @@ public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
 
     private ProteinLoader proteinLoader;
 
+    private ProteinLoadListener proteinLoadListener;    
+
     private int counter = 0;
 
     /**
@@ -36,6 +39,11 @@ public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
     @Required
     public void setProteinLoader(ProteinLoader proteinLoader) {
         this.proteinLoader = proteinLoader;
+    }
+
+    @Required
+    public void setProteinLoadListener(ProteinLoadListener proteinLoadListener) {
+        this.proteinLoadListener = proteinLoadListener;
     }
 
     /**
@@ -67,6 +75,6 @@ public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
      * Call persist on the underlying proteinLoader at the end of the transaction.
      */
     public void persist(){
-        proteinLoader.persist();
+        proteinLoader.persist(proteinLoadListener);
     }
 }
