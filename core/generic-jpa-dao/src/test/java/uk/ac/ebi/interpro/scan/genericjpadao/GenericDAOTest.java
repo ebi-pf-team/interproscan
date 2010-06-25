@@ -18,7 +18,6 @@ package uk.ac.ebi.interpro.scan.genericjpadao;
 
 import static junit.framework.TestCase.*;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +35,7 @@ import java.util.List;
  * @author Phil Jones, EMBL-EBI
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-DAOTest-config.xml"})
+@ContextConfiguration
 public class GenericDAOTest {
 
     /**
