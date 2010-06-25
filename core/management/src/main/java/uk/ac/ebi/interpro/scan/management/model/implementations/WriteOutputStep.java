@@ -2,14 +2,12 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-import uk.ac.ebi.interpro.scan.io.match.MatchWriter;
+import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchTSVWriter;
+import uk.ac.ebi.interpro.scan.io.match.writer.ProteinWriter;
+import uk.ac.ebi.interpro.scan.io.match.writer.ZipWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Xref;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import java.io.File;
@@ -28,7 +26,26 @@ public class WriteOutputStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(WriteOutputStep.class);
 
+    enum Format  {
+        TSV{
+            public ProteinWriter makeWriter(File file) throws IOException {
+                return new ProteinMatchTSVWriter(file);
+            }
+        },
+        ZIP{
+            @Override
+            public ProteinWriter makeWriter(File file) throws IOException {
+                return new ZipWriter(file);
+            }
+        };
+
+
+        public abstract ProteinWriter makeWriter(File file) throws IOException;
+
+    }
+
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
+    public static final String OUTPUT_FILE_FORMAT = "OUTPUT_FORMAT";
 
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
@@ -44,14 +61,18 @@ public class WriteOutputStep extends Step {
         Map<String,String> stepParameters = stepInstance.getStepParameters();
         final String outputFilePathName = stepParameters.get(OUTPUT_FILE_PATH_KEY);
 
-        //David says: this might be more efficient, but doesn't work at the moment
-        //List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        Format format=Format.valueOf(stepParameters.get(OUTPUT_FILE_FORMAT).toUpperCase());
 
+
+
+        //David says: this might be more efficient, but doesn't work at the moment
+        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        //List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
         try {
-            MatchWriter writer=new MatchWriter(new File(outputFilePathName));
-            for (Protein protein : proteins) {                               
+            ProteinWriter writer=format.makeWriter(new File(outputFilePathName));
+            LOGGER.info("Writing output:"+writer.getClass().getCanonicalName());
+            for (Protein protein : proteins) {
                 writer.write(protein);
             }
             writer.close();
