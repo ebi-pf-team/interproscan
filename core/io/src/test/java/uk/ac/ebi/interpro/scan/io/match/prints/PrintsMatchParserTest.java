@@ -10,6 +10,8 @@ package uk.ac.ebi.interpro.scan.io.match.prints;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,18 +36,17 @@ public class PrintsMatchParserTest extends TestCase {
     private static final String CUTOFF_FILE_PATH = "data/prints/FingerPRINTShierarchy.db";
 
     private float defaultCutOff = log10(1e-04);
-/*
-
-    */
 
     /**
      * Parses a (largish) file and outputs memory usage at the end of the parse.
      *
      * @throws java.io.IOException
-     *//*
+     */
 
     @Test
+    @Ignore("Needs to be reimplemented")
     public void testParserEfficiency() throws IOException {
+        /*
         logMemUsage("Before parse: ");
         InputStream is = PrintsMatchParserTest.class.getClassLoader().getResourceAsStream(CUTOFF_FILE_PATH);
         Map evalCutoffs;
@@ -69,8 +70,9 @@ public class PrintsMatchParserTest extends TestCase {
         for (PrintsProtein protein : results){
             System.out.println(protein.getMotifName() + " | " + protein.geteValue().toString() + " | " + protein.getGraphScan() + " | " + protein.getSeqEndPos() + " | " + protein.getSeqStartPos());
         }
+        */
     }
-*/
+
     private void logMemUsage(String prefix) {
         if (LOGGER.isDebugEnabled()) {
             System.gc();
