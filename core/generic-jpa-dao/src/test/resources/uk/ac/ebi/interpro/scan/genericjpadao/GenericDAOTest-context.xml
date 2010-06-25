@@ -9,7 +9,7 @@
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <!-- All the common Spring config -->
-    <import resource="spring-persistence-config.xml"/>
+    <import resource="classpath:/spring-persistence-config.xml"/>
     <!-- Test class -->
     <bean id="proteinGenericDAOtest" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOTest"/>
 
