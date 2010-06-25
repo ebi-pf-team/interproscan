@@ -44,11 +44,13 @@ public class LoadFastaFileTest {
     @Test
     public void testLoader() throws IOException {
         System.out.println("Loader:" + loader);
-        System.out.println("FastaFile: " + fastaFile);        
+        System.out.println("FastaFile: " + fastaFile);
         loader.loadSequences(fastaFile.getInputStream(),new ProteinLoadListener(){
             @Override
-            public void createStepInstances(Long bottomProteinId, Long topProteinId) {
-                System.out.println("Loaded:"+bottomProteinId+"-"+topProteinId);
+            public void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId, Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId) {
+                System.out.println("Loaded New:"+bottomNewProteinId+"-"+topNewProteinId);
+                System.out.println("Loaded New:"+bottomPrecalculatedProteinId+"-"+topPrecalculatedProteinId);
+
             }
         });
         System.out.println("Proteins loaded: " + proteinDAO.count());

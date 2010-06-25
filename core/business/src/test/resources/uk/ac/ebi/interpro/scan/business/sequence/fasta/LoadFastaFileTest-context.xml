@@ -22,7 +22,6 @@
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
         <property name="proteinInsertBatchSize" value="200"/>
-        <property name="proteinLoadListener" ref="proteinLoadListener"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 

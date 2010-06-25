@@ -19,9 +19,10 @@ public class NoopProteinLoadListener implements ProteinLoadListener {
      *
      * @param bottomProteinId bottom protein primary key, inclusive.
      * @param topProteinId    top protein primary key, inclusive.
-     */
+     */    
+
     @Override
-    public void createStepInstances(Long bottomProteinId, Long topProteinId) {
-        // No-op.
+    public void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId, Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId) {
+        //no-op
     }
 }

@@ -12,12 +12,18 @@ package uk.ac.ebi.interpro.scan.business.sequence;
  */
 public interface ProteinLoadListener {
 
+
+
     /**
-     * Implementations of this method will create StepInstances for the
-     * range of proteins passed in as parameters.  If either of these
-     * values are null, then no action is taken.
-     * @param bottomProteinId bottom protein primary key, inclusive.
-     * @param topProteinId top protein primary key, inclusive.
+     * Proteins have been loaded. These are divided into new proteins (where computations need to be performed) and
+     * precalculated proteins (where computations do not need to be performed).
+     *
+     * These ranges should have no gap between them.
+     *
+     * @param bottomNewProteinId bottom protein primary key of new proteins, inclusive.
+     * @param topNewProteinId top protein primary key of new proteins, inclusive.
+     * @param bottomPrecalculatedProteinId bottom protein primary key of precalculated proteins, inclusive.
+     * @param topPrecalculatedProteinId top protein primary key of precalculated proteins, inclusive.
      */
-    void createStepInstances(Long bottomProteinId, Long topProteinId);
+    void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId,Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId);
 }
