@@ -10,13 +10,13 @@ package uk.ac.ebi.interpro.scan.io.match.prints;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import uk.ac.ebi.interpro.scan.io.match.prints.parsemodel.PrintsProtein;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Tests the PhobiusMatchParser, specifically looking at memory usage.
@@ -34,11 +34,16 @@ public class PrintsMatchParserTest extends TestCase {
     private static final String CUTOFF_FILE_PATH = "data/prints/FingerPRINTShierarchy.db";
 
     private float defaultCutOff = log10(1e-04);
+/*
+
+    */
 
     /**
      * Parses a (largish) file and outputs memory usage at the end of the parse.
+     *
      * @throws java.io.IOException
-     */
+     *//*
+
     @Test
     public void testParserEfficiency() throws IOException {
         logMemUsage("Before parse: ");
@@ -65,15 +70,30 @@ public class PrintsMatchParserTest extends TestCase {
             System.out.println(protein.getMotifName() + " | " + protein.geteValue().toString() + " | " + protein.getGraphScan() + " | " + protein.getSeqEndPos() + " | " + protein.getSeqStartPos());
         }
     }
-
-    private void logMemUsage(String prefix){
-        if (LOGGER.isDebugEnabled()){
-            System.gc();System.gc();System.gc();System.gc();
-            System.gc();System.gc();System.gc();System.gc();
-            System.gc();System.gc();System.gc();System.gc();
-            System.gc();System.gc();System.gc();System.gc();
-            System.gc();System.gc();System.gc();System.gc();
-            LOGGER.debug(prefix + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024) + " MB.");
+*/
+    private void logMemUsage(String prefix) {
+        if (LOGGER.isDebugEnabled()) {
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            LOGGER.debug(prefix + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB.");
         }
     }
 
@@ -83,7 +103,7 @@ public class PrintsMatchParserTest extends TestCase {
         String in;
         Map<String, Object> ret = new HashMap<String, Object>();
         while ((in = fReader.readLine()) != null) {
-             if (!in.startsWith(printsFileCommentCharacter)) {
+            if (!in.startsWith(printsFileCommentCharacter)) {
                 String[] line = in.split("\\|");
                 float checkCutoff = log10(Double.parseDouble(line[2]));
                 if (checkCutoff != defaultCutOff) {
@@ -95,7 +115,7 @@ public class PrintsMatchParserTest extends TestCase {
     }
 
     public static float log10(double x) {
-		return (float) (Math.log(x) / Math.log(10.0));
-	}
+        return (float) (Math.log(x) / Math.log(10.0));
+    }
 
 }
