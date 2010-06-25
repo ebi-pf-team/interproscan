@@ -30,6 +30,7 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
     private Job completionJob;
     private Map<String, String> stepParameters;
 
+    
 
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
@@ -54,24 +55,35 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
         this.completionJob = completionJob;                 
     }
 
-    /**
-     * Implementations of this method will create StepInstances for the
-     * range of proteins passed in as parameters.  If either of these
-     * values are null, then no action is taken.
-     *
-     *
-     * @param bottomProteinId bottom protein primary key, inclusive.
-     * @param topProteinId    top protein primary key, inclusive.
-     */
+
+    private static Long min(Long l1,Long l2) {
+        if (l1==null && l2==null) return null;
+        if (l2==null) return l1;
+        if (l1==null) return l2;
+        return Math.min(l1,l2);
+    }
+    private static Long max(Long l1,Long l2) {
+        if (l1==null && l2==null) return null;
+        if (l2==null) return l1;
+        if (l1==null) return l2;
+        return Math.max(l1,l2);
+    }
+
     @Override
-    public void createStepInstances(Long bottomProteinId, Long topProteinId) {
+    public void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId,Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId) {
         try{
+
+            Long bottomProteinId=min(bottomNewProteinId,bottomPrecalculatedProteinId);
+            Long topProteinId=max(topNewProteinId,topPrecalculatedProteinId);
+
             if (bottomProteinId == null || topProteinId == null){
                 return;
             }
-            if (topProteinId < bottomProteinId){
-                throw new IllegalArgumentException ("The bounds make no sense - the top bound (" + topProteinId + ") is lower than the bottom bound (" + bottomProteinId + ").  Programming error?");
-            }
+//            if (topProteinId < bottomProteinId){
+//                throw new IllegalArgumentException ("The bounds make no sense - the top bound (" + topProteinId + ") is lower than the bottom bound (" + bottomProteinId + ").  Programming error?");
+//            }
+
+
             final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
 
             List<StepInstance> completionStepInstances=new ArrayList<StepInstance>();
@@ -96,7 +108,7 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
             for (Job job : jobs.getJobList()){
                 for (Step step : job.getSteps()){
                     if (step.isCreateStepInstancesForNewProteins()){
-                        List<StepInstance> jobStepInstances = createStepInstances(step, bottomProteinId, topProteinId);
+                        List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewProteinId, topNewProteinId);
                         stepToStepInstances.put (step, jobStepInstances);
                         for (StepInstance jobStepInstance : jobStepInstances) {
                             for (StepInstance completionStepInstance : completionStepInstances) {
@@ -155,5 +167,6 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
         }
         return stepInstances;
     }
+
 
 }
