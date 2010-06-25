@@ -115,11 +115,15 @@
         <property name="proteinLoader" ref="proteinLoader"/>
     </bean>
 
+    <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.PrecalculatedProteinLookup">
+        <constructor-arg value="data/precalculated.zip"/>
+    </bean>
+
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
         <property name="proteinInsertBatchSize" value="500"/>
         <!-- MUST NOT EXCEED 1000 -->
-        <property name="proteinLoadListener" ref="proteinLoadListener"/>
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="proteinLookup" ref="precalculatedLookup"/>
     </bean>
 
     <bean id="proteinLoadListener"
@@ -131,6 +135,7 @@
 
 
     <bean id="uniparcLoader" class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
+
         <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
         <property name="rowCallbackHandlerTemplate" ref="rowCallbackHandlerTemplate"/>
         <property name="maximumProteins" value="${ebi.uniparc.protein.load.size}"/>
@@ -140,6 +145,7 @@
     <bean id="rowCallbackHandlerTemplate"
           class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.UniParcDBRowCallbackHandler">
         <property name="proteinLoader" ref="proteinLoader"/>
+        <property name="proteinLoadListener" ref="proteinLoadListener"/>
     </bean>
 
 </beans>

@@ -61,7 +61,7 @@ public class AmqInterProScanMaster implements Master {
 
     private String outputFile;
 
-    private String outputFormat;
+    private String outputFormat="tsv";
 
     private String[] analyses;
 
@@ -209,9 +209,10 @@ public class AmqInterProScanMaster implements Master {
 
             String outputFilePath = outputFile;
             if (outputFilePath == null) {
-                outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + ".tsv";
+                outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + "."+outputFormat.toLowerCase();
             }
             params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
+            params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat);
 
             createStepInstancesForJob("jobLoadFromFasta", params);
             LOGGER.info("Fasta file load step instance has been created.");
