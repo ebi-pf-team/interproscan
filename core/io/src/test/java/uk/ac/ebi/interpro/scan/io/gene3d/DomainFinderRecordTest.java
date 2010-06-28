@@ -74,7 +74,7 @@ public class DomainFinderRecordTest {
             DUMMY_DBL + "\t" + MATCHED_SEQ_COUNT + "\t" + SEGMENT_BOUNDARIES;
 
     private final static Gene3dHmmer3RawMatch EXPECTED_RAW_MATCH
-            = new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "3.0.0",
+            = new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "3.3.0",
                                        SEQ_START, SEQ_END, SEQ_EVALUE, SEQ_SCORE,
                                        MODEL_START, MODEL_END, HMM_BOUNDS, DOMAIN_SCORE,
                                        ENV_START, ENV_END, EXPECTED_ACCURACY, SEQ_BIAS,

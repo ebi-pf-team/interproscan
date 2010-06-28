@@ -45,7 +45,7 @@ public class RawMatchDAOTest {
     private static final int ENV_END        = 171;
     private static final double EXPECTED_ACCURACY = 0.83;
     private static final String ALIGNMENT   = "24M2I9M1D9";
-    private static final String DB_RELEASE  = "3.0.0";    
+    private static final String DB_RELEASE  = "3.3.0";    
 
     @Resource
     RawMatchDAO<Gene3dHmmer3RawMatch> dao;
