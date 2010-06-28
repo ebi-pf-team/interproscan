@@ -32,7 +32,7 @@ public class ParsePrintsOutputStep extends Step {
 
     private PrintsMatchParser parser;
 
-    private double defaultCutOff = log10(1e-04);
+    private double defaultCutOff = Math.log10(1e-04);
 
     private String signatureLibraryRelease;
 
@@ -132,7 +132,7 @@ public class ParsePrintsOutputStep extends Step {
             while ((in = fReader.readLine()) != null) {
                 if (!in.startsWith(printsFileCommentCharacter)) {
                     String[] line = in.split("\\|");
-                    double checkCutoff = log10(Double.parseDouble(line[2]));
+                    double checkCutoff = Math.log10(Double.parseDouble(line[2]));
                     if (checkCutoff != defaultCutOff) {
                         ret.put(line[0], checkCutoff);
                     }
@@ -146,9 +146,4 @@ public class ParsePrintsOutputStep extends Step {
         }
         return ret;
     }
-
-    public static double log10(double x) {
-        return Math.log(x) / Math.log(10.0);
-    }
-
 }

@@ -34,7 +34,7 @@ public class PrintsMatchParser {
     public static final String END_ENTRY_ANNOT_MARKER = "3TBF";
 
     //TODO pass as parameter from properties file?
-    public static final double PRINTS_DEFAULT_CUTOFF = log10(1e-04);
+    public static final double PRINTS_DEFAULT_CUTOFF = Math.log10(1e-04);
 
     public Set<RawProtein<PrintsRawMatch>> parse(InputStream is, String fileName, Map evalCutOffs, String signatureReleaseLibrary) throws IOException {
         Map<String, RawProtein<PrintsRawMatch>> rawResults = new HashMap<String, RawProtein<PrintsRawMatch>>();
@@ -57,7 +57,7 @@ public class PrintsMatchParser {
                     String[] lineSplit = line.split("\\s+");
                     String motifName = lineSplit[1];
                     String model = lineSplit[lineSplit.length-1];
-                    double eValue = log10(Double.parseDouble(lineSplit[2]));
+                    double eValue = Math.log10(Double.parseDouble(lineSplit[2]));
                     if (evaluateEvalue(motifName, eValue, evalCutOffs)) {
                         if (proteinIdentifier == null) {
                             throw new ParseException("FingerPrintScan output parsing: Trying to parse raw output but don't appear to have a protein ID.", fileName, line, lineNumber);
@@ -71,7 +71,7 @@ public class PrintsMatchParser {
                     //2TBN ASNGLNASE       2  of  3  53.34    26.67    326        5.5e-06     15          I.i
                     String[] matchSplit = line.split("\\s+");
                     String motifName = matchSplit[1];
-                    double eValue = log10(Double.parseDouble(matchSplit[9]));
+                    double eValue = Math.log10(Double.parseDouble(matchSplit[9]));
                     String graphScan = matchSplit[10];
                     if (evaluateEvalue(motifName, eValue, evalCutOffs)) {
                         PrintsMotif protein;
@@ -100,7 +100,7 @@ public class PrintsMatchParser {
                         int motifNumber = Integer.parseInt(matchSplit[2]);
                         int motifCount = Integer.parseInt(matchSplit[4]);
                         double score = Double.parseDouble(matchSplit[5]);
-                        double pvalue = log10(Double.parseDouble((matchSplit[7])));
+                        double pvalue = Math.log10(Double.parseDouble((matchSplit[7])));
                         int seqLength = Integer.parseInt(matchSplit[9]);
                         // Inherited from Onion:
                         // The hack below is here because of The FingerPrintScan, for starting positions that are in
@@ -141,10 +141,6 @@ public class PrintsMatchParser {
             }
         }
         return new HashSet<RawProtein<PrintsRawMatch>> (rawResults.values());
-    }
-
-    public static double log10(double x) {
-        return Math.log(x) / Math.log(10.0);
     }
 
     public static boolean evaluateEvalue(String motifName, double eValue, Map evalCutOffs) {
