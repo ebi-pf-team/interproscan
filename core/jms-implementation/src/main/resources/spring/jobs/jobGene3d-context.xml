@@ -116,6 +116,10 @@
 
     <!-- ######################## Dependencies ############################  -->
 
-    <bean id="gene3dRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.Gene3dHmmer3RawMatchDAOImpl"/>
+    <!--TODO: Remove Gene3dHmmer3RawMatchDAOImpl? -->
+    <!--<bean id="gene3dRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.Gene3dHmmer3RawMatchDAOImpl"/>    -->
+    <bean id="gene3dRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch"/>
+    </bean>
 
 </beans>

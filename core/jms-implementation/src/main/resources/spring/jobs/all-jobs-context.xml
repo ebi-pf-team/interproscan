@@ -8,8 +8,8 @@
     <!-- Import common beans -->
     <import resource="jobPfamA-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
-    <!--<import resource="jobGene3d-context.xml"/>-->
-    <import resource="jobPrints-context.xml"/>
+    <import resource="jobGene3d-context.xml"/>
+    <!--<import resource="jobPrints-context.xml"/>-->
     <import resource="jobCoils-context.xml"/>
     <import resource="../persistence/persistence-config-context.xml"/>
 
@@ -26,8 +26,8 @@
                 <!-- Analyses -->
                 <ref bean="jobPfamA"/>
                 <ref bean="jobPhobius"/>
-                <!--<ref bean="jobGene3d"/>-->
-                <ref bean="jobPRINTS"/>
+                <ref bean="jobGene3d"/>
+                <!--<ref bean="jobPRINTS"/>-->
                 <ref bean="jobCoils"/>
             </list>
         </property>
