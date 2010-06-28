@@ -47,6 +47,7 @@ public class RawMatchDAOImpl <T extends RawMatch>
     @Transactional(readOnly=true)
     @Override public Set<RawProtein<T>> getProteinsByIdRange (String bottomId, String topId,
                                                               String signatureDatabaseRelease) {
+        // Get raw matches
         Query query = entityManager
                 .createQuery(String.format("select p from %s p  " +
                              "where p.sequenceIdentifier >= :bottom " +
@@ -55,8 +56,19 @@ public class RawMatchDAOImpl <T extends RawMatch>
                 .setParameter("bottom", bottomId)
                 .setParameter("top", topId)
                 .setParameter("sigLibRelease", signatureDatabaseRelease);
-        @SuppressWarnings("unchecked") List<RawProtein<T>> list = query.getResultList();
-        return new HashSet<RawProtein<T>>(list);
+        @SuppressWarnings("unchecked") List<T> list = query.getResultList();
+        // Create raw proteins from raw matches
+        Map<String, RawProtein<T>> map = new HashMap<String, RawProtein<T>>();
+        for (T match : list) {
+            String id = match.getSequenceIdentifier();
+            RawProtein<T> rawProtein = map.get(id);
+            if (rawProtein == null){
+                rawProtein = new RawProtein<T>(id);
+                map.put(id, rawProtein);
+            }
+            rawProtein.addMatch(match);
+        }
+        return new HashSet<RawProtein<T>>(map.values());
     }    
 
 }

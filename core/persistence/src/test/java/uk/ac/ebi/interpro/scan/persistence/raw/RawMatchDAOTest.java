@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.persistence.raw;
 
 import static junit.framework.Assert.assertEquals;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.Test;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,7 +28,7 @@ import java.util.HashSet;
 public class RawMatchDAOTest {
 
     private static final String MODEL_ID    = "2hxsA00";
-    private static final String SEQ_ID      = "HP0834";
+    private static final String SEQ_ID      = "001";
     private static final double SEQ_EVALUE  = 2.6e-21;
     private static final double SEQ_SCORE   = 79.0;
     private static final double SEQ_BIAS    = 0.1;
@@ -43,22 +45,39 @@ public class RawMatchDAOTest {
     private static final int ENV_END        = 171;
     private static final double EXPECTED_ACCURACY = 0.83;
     private static final String ALIGNMENT   = "24M2I9M1D9";
+    private static final String DB_RELEASE  = "3.0.0";    
 
     @Resource
     RawMatchDAO<Gene3dHmmer3RawMatch> dao;
+
+    @Before
+    @After
+    public void deleteAll(){
+        dao.deleteAll();
+        assertEquals("Could not delete all proteins", Long.valueOf(0), dao.count());
+    }
     
     @Test
-    //@Ignore
     public void insertProteinMatches() {
+        deleteAll();
         dao.insertProteinMatches(createGene3dMatches());
         assertEquals(1, dao.retrieveAll().size());
+    }
+
+    @Test
+    public void getProteinsByIdRange() {
+        deleteAll();
+        dao.insertProteinMatches(createGene3dMatches());
+        Set<RawProtein<Gene3dHmmer3RawMatch>> proteins =
+                dao.getProteinsByIdRange(SEQ_ID, SEQ_ID, DB_RELEASE);
+        assertEquals(1, proteins.size());
     }
 
     private Set<RawProtein<Gene3dHmmer3RawMatch>> createGene3dMatches() {
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
         RawProtein<Gene3dHmmer3RawMatch> p = new RawProtein<Gene3dHmmer3RawMatch>(SEQ_ID);        
         Gene3dHmmer3RawMatch match =
-              new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "3.0.0",
+              new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, DB_RELEASE,
                                        SEQ_START, SEQ_END, SEQ_EVALUE, SEQ_SCORE,
                                        MODEL_START, MODEL_END, HMM_BOUNDS, DOMAIN_SCORE,
                                        ENV_START, ENV_END, EXPECTED_ACCURACY, SEQ_BIAS,
