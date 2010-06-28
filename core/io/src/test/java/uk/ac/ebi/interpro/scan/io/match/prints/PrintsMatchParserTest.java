@@ -35,7 +35,7 @@ public class PrintsMatchParserTest extends TestCase {
 
     private static final String CUTOFF_FILE_PATH = "data/prints/FingerPRINTShierarchy.db";
 
-    private float defaultCutOff = log10(1e-04);
+    private double defaultCutOff = Math.log10(1e-04);
 
     /**
      * Parses a (largish) file and outputs memory usage at the end of the parse.
@@ -107,17 +107,12 @@ public class PrintsMatchParserTest extends TestCase {
         while ((in = fReader.readLine()) != null) {
             if (!in.startsWith(printsFileCommentCharacter)) {
                 String[] line = in.split("\\|");
-                float checkCutoff = log10(Double.parseDouble(line[2]));
+                double checkCutoff = Math.log10(Double.parseDouble(line[2]));
                 if (checkCutoff != defaultCutOff) {
                     ret.put(line[0], checkCutoff);
                 }
             }
         }
         return ret;
-    }
-
-    public static float log10(double x) {
-        return (float) (Math.log(x) / Math.log(10.0));
-    }
-
+   }
 }
