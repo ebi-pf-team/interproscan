@@ -79,8 +79,8 @@ public class Installer implements Runnable {
             LOGGER.info("Not loading gene3d");
             return;
         }
-        if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(SignatureLibrary.GENE3D, "3.0.0")) {
-            LOGGER.info("Gene3D version 3.0.0 is already loaded.");
+        if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(SignatureLibrary.GENE3D, "3.3.0")) {
+            LOGGER.info("Gene3D version 3.3.0 is already loaded.");
             return;
         }
 
@@ -108,7 +108,7 @@ public class Installer implements Runnable {
         }
         // Create and persist release
         SignatureLibraryRelease release =
-                new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.0.0",
+                new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.3.0",
                         new HashSet<Signature>(signatureMap.values()));
         signatureLibraryReleaseDAO.insert(release);
     }
