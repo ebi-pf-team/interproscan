@@ -14,7 +14,7 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: PRINTS ############################  -->
+    <!-- ######################## JOB: Coils ############################  -->
     <bean id="jobCoils" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="Coils Raw Analysis and Persistence"/>
         <property name="analysis" value="true"/>
@@ -60,45 +60,34 @@
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <!-- STEP 3 -->
-    <!--<bean id="stepPrintsParseHmmerOutput"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.ParsePfam_A_HMMER3OutputStep"-->
-    <!--parent="abstractPrintsStep">-->
-    <!--<property name="dependsUpon"                        ref="stepPrintsRunFingerPrintScan"/>-->
-    <!--<property name="stepDescription"                    value="Parse the output from HMMER3"/>-->
-    <!--<property name="hmmerOutputFileNameTemplate"        ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--<property name="fullPathToHmmFile"                  value="${Pfam-A.hmm.path}"/>-->
-    <!--<property name="parser"                             ref="PrintsHmmer3SearchParser"/>-->
-    <!--<property name="serialGroup"                        value="PARSE_HMMER_3"/>-->
-    <!--<property name="pfamRawMatchDAO"                    ref="pfamRawMatchDAO"/>-->
-    <!--<property name="retries"                            value="3"/>-->
-    <!--</bean>-->
+    <bean id="stepCoilsStoreFilteredMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.coils.ParseCoilsOutputStep"
+          parent="abstractCoilsStep">
+        <property name="dependsUpon" ref="stepCoilsRunBinary"/>
+        <property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>
+        <property name="coilsOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="parser" ref="coilsParser"/>
+        <property name="matchDAO" ref="coilsMatchDAO"/>
+    </bean>
 
-    <!--<bean id="stepPrintsDeleteHmmerOutput"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-    <!--parent="abstractPrintsStep"  >-->
-    <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
-    <!--<property name="stepDescription"                    value="Delete the hmmer output file following successful parsing"/>-->
-    <!--<property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--</bean>-->
+    <bean id="stepCoilsDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractCoilsStep">
+        <property name="dependsUpon" ref="stepCoilsStoreFilteredMatches"/>
+        <property name="stepDescription"
+                  value="Delete the raw output file following successful parsing and persistence"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
 
-    <!-- STEP 4 -->
-    <!--<bean id="stepPrintsPostProcessing"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.Pfam_A_PostProcessingStep"-->
-    <!--parent="abstractPrintsStep">-->
-    <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
-    <!--<property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>-->
-    <!--<property name="postProcessor"                      ref="PrintsPostProcessor"/>-->
-    <!--<property name="serialGroup"                        value="PFAM_A_POST_PROCESSING"/>-->
-    <!--<property name="signatureLibraryRelease"            value="24.0"/>-->
-    <!--<property name="signatureLibrary"                   value="PFAM"/>-->
-    <!--<property name="rawMatchDAO"                        ref="pfamRawMatchDAO"/>-->
-    <!--<property name="filteredMatchDAO"                   ref="pfamFilteredMatchDAO"/>-->
-    <!--</bean>-->
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
+    <bean id="coilsParser"
+          class="uk.ac.ebi.interpro.scan.io.match.coils.CoilsMatchParser"/>
 
-
+    <bean id="coilsMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.CoilsFilteredMatchDAOImpl">
+        <constructor-arg value="1.0"/>
+    </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

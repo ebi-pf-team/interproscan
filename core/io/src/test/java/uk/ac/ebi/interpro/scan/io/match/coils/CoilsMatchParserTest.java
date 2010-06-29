@@ -29,7 +29,7 @@ public class CoilsMatchParserTest extends TestCase {
         logMemUsage("Before parse: ");
         InputStream is = CoilsMatchParserTest.class.getClassLoader().getResourceAsStream(TEST_FILE_PATH);
         CoilsMatchParser parser = new CoilsMatchParser();
-        Set<CoilMatch> results = parser.parse(is, TEST_FILE_PATH);
+        Set<ParseCoilsMatch> results = parser.parse(is, TEST_FILE_PATH);
         is.close();
         logMemUsage("After parse: ");
         System.out.println("Result count: " + results.size());

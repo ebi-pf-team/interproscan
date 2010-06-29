@@ -45,9 +45,9 @@ public class CoilsMatchParser {
     private static final Pattern START_STOP_PATTERN = Pattern.compile("^(\\d+)\\s+(\\d+).*$");
 
 
-    public Set<CoilMatch> parse(InputStream is, String fileName) throws IOException, ParseException {
+    public Set<ParseCoilsMatch> parse(InputStream is, String fileName) throws IOException, ParseException {
         BufferedReader reader = null;
-        Set<CoilMatch> matches = new HashSet<CoilMatch>();
+        Set<ParseCoilsMatch> matches = new HashSet<ParseCoilsMatch>();
         try {
             reader = new BufferedReader(new InputStreamReader(is));
             String currentProteinAccession = null;
@@ -62,7 +62,7 @@ public class CoilsMatchParser {
                         if (matcher.matches()) {
                             final int start = Integer.parseInt(matcher.group(1));
                             final int end = Integer.parseInt(matcher.group(2));
-                            matches.add(new CoilMatch(
+                            matches.add(new ParseCoilsMatch(
                                     currentProteinAccession,
                                     start,
                                     end
