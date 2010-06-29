@@ -4,25 +4,25 @@ package uk.ac.ebi.interpro.scan.io.match.coils;
  * Model class representing a single coils match.
  *
  * @author Phil Jones
- * @version $Id: CoilMatch.java,v 1.1 2009/11/25 14:01:17 pjones Exp $
+ * @version $Id: ParseCoilsMatch.java,v 1.1 2009/11/25 14:01:17 pjones Exp $
  * @since 1.0-SNAPSHOT
  */
-public class CoilMatch {
+public class ParseCoilsMatch {
 
-    private String proteinAccession;
+    private String proteinDatabaseIdentifier;
 
     private int startCoordinate;
 
     private int stopCoordinate;
 
-    public CoilMatch(String proteinAccession, int startCoordinate, int stopCoordinate) {
-        this.proteinAccession = proteinAccession;
+    public ParseCoilsMatch(String proteinDatabaseIdentifier, int startCoordinate, int stopCoordinate) {
+        this.proteinDatabaseIdentifier = proteinDatabaseIdentifier;
         this.startCoordinate = startCoordinate;
         this.stopCoordinate = stopCoordinate;
     }
 
-    public String getProteinAccession() {
-        return proteinAccession;
+    public String getProteinDatabaseIdentifier() {
+        return proteinDatabaseIdentifier;
     }
 
     public int getStartCoordinate() {
