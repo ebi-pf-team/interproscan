@@ -137,12 +137,22 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
     private Set<RawProtein<Gene3dHmmer3RawMatch>> filter(final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins,
                                                          final Collection<DomainFinderRecord> domainFinderRecords) {
         final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
+        final Set<String> matchKeys = new HashSet<String>();        
         for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
             String id = p.getProteinIdentifier();
             RawProtein<Gene3dHmmer3RawMatch> filteredProtein = new RawProtein<Gene3dHmmer3RawMatch>(id);
-            for (Gene3dHmmer3RawMatch match : p.getMatches())   {
+            // TODO: Sort p.getMatches() by location.start so we always get consistent results if need to choose between raw matches
+            List<Gene3dHmmer3RawMatch> matchList = new ArrayList<Gene3dHmmer3RawMatch>(p.getMatches());
+            Collections.sort(matchList, new Comparator<Gene3dHmmer3RawMatch>() {
+                public int compare(Gene3dHmmer3RawMatch record1, Gene3dHmmer3RawMatch record2) {
+                    return Integer.valueOf(record1.getLocationStart()).compareTo(record2.getLocationStart());
+                }
+            }
+            );
+            //for (Gene3dHmmer3RawMatch match : p.getMatches())   {
+            for (Gene3dHmmer3RawMatch match : matchList)   {
                 if (id.equals(match.getSequenceIdentifier()))    {
-                    addRecord(filteredProtein, match, domainFinderRecords);
+                    addRecord(filteredProtein, match, domainFinderRecords, matchKeys);
                 }
             }
             if (!filteredProtein.getMatches().isEmpty()) {
@@ -154,7 +164,8 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
 
     private void addRecord(final RawProtein<Gene3dHmmer3RawMatch> filteredProtein,
                           final Gene3dHmmer3RawMatch m,
-                          final Collection<DomainFinderRecord> domainFinderRecords)  {
+                          final Collection<DomainFinderRecord> domainFinderRecords,
+                          final Set<String> matchKeys)  {
         for (DomainFinderRecord r : domainFinderRecords)    {
             // Parse segment boundaries
             String s = r.getSegmentBoundaries();
@@ -174,11 +185,16 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
             //                       6   10        20    26                 
             // filtered match: |-----#####---------#######---------------------|
             // ... where #=domain
+            // Track matches that we've added in case there are two raw matches with the same e-value that fall within
+            // the greater-than/less-than boundaries but have different start and end positions -- in these cases
+            // "just take the first match" (Source: Craig McAnulla, June 2010)
+            String matchKey = m.getSequenceIdentifier() + "-" + m.getModel() + "-" + r.getSegmentBoundaries();
             if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
                 m.getModel().equals(r.getModelId()) && 
                 m.getLocationStart() <= lowestBoundary &&
                 m.getLocationEnd() >= highestBoundary &&
-                m.getDomainIeValue() == r.getDomainIeValue())    {
+                m.getDomainIeValue() == r.getDomainIeValue() && 
+                !matchKeys.contains(matchKey))    {
                 // We should never find more than one raw match
                 if (filteredProtein.getMatches().contains(m))   {
                     throw new IllegalStateException("Found duplicate filtered match: " + m);
@@ -223,6 +239,7 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
                                 m.getCigarAlignment());
                         // Add match
                         filteredProtein.addMatch(match);
+                        matchKeys.add(matchKey);
                     }
                 }
             }

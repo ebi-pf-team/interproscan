@@ -43,15 +43,15 @@ public final class Gene3dRawMatchFilterTest {
     @Test
     public void testFilter() throws IOException {
 
-        // Read raw matches
+        // Read raw matches -- we map back to these in Gene3dRawMatchFilter.filter()
         final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins =
                 new HashSet<RawProtein<Gene3dHmmer3RawMatch>>(parseRawMatches(rawMatches));        
 
-        // Read filtered matches
+        // Read filtered matches -- this is what we expect
         final Set<RawProtein<Gene3dHmmer3RawMatch>> expectedFilteredProteins =
                 new HashSet<RawProtein<Gene3dHmmer3RawMatch>>(parseRawMatches(filteredMatches));
 
-        // Parse and filter SSF file
+        // Parse and filter output from DomainFinder (filtered SSF file)
         Gene3dRawMatchFilter f = new Gene3dRawMatchFilter();
         final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = f.filter(rawProteins, filteredSsf);
 
