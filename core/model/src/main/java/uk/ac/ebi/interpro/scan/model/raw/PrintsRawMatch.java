@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
@@ -33,8 +34,6 @@ public class PrintsRawMatch extends RawMatch {
     protected PrintsRawMatch() {
     }
 
-    /* TODO - Use setters instead of assigning directly? */
-
     public PrintsRawMatch(String sequenceIdentifier, String model,
                           String signatureLibraryRelease,
                           int locationStart, int locationEnd,
@@ -42,20 +41,20 @@ public class PrintsRawMatch extends RawMatch {
                           int motifCount, int motifNumber,
                           double pvalue, double score) {
         super(sequenceIdentifier, model, SignatureLibrary.PRINTS, signatureLibraryRelease, locationStart, locationEnd);
-        this.evalue = evalue;
-        this.graphscan = graphscan;
-        this.motifCount = motifCount;
-        this.pvalue = pvalue;
-        this.score = score;
-        this.motifNumber = motifNumber;
+        this.setEvalue(evalue);
+        this.setGraphscan(graphscan);
+        this.setMotifCount(motifCount);
+        this.setPvalue(pvalue);
+        this.setScore(score);
+        this.setMotifNumber(motifNumber);
     }
 
     public double getEvalue() {
-        return evalue;          /* TODO Use PersistenceConversion? */
+        return PersistenceConversion.get(evalue);
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = evalue;   /* TODO Use PersistenceConversion? */
+        this.evalue = PersistenceConversion.set(evalue);
     }
 
     public String getGraphscan() {
@@ -75,11 +74,11 @@ public class PrintsRawMatch extends RawMatch {
     }
 
     public double getPvalue() {
-        return pvalue;
+        return PersistenceConversion.get(pvalue);
     }
 
     private void setPvalue(double pvalue) {
-        this.pvalue = pvalue;
+        this.pvalue = PersistenceConversion.set(pvalue);
     }
 
     public double getScore() {
@@ -107,7 +106,7 @@ public class PrintsRawMatch extends RawMatch {
 
         PrintsRawMatch that = (PrintsRawMatch) o;
 
-        if (Double.compare(that.evalue, evalue) != 0) return false;
+        if (!PersistenceConversion.equivalent(this.getEvalue(), that.getEvalue())) return false;
         if (motifNumber != that.motifNumber) return false;
 
         return true;

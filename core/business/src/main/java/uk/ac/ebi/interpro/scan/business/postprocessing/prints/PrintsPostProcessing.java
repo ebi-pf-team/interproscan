@@ -44,6 +44,8 @@ public class PrintsPostProcessing implements Serializable {
 
     private Map<String, FingerPRINTSHierarchyDBParser.HierachyDBEntry> printsModelData;
 
+    private List<String> allPrintsModelIDs;
+
     private final Object hierchDbLock = new Object();
 
     @Required
@@ -71,6 +73,11 @@ public class PrintsPostProcessing implements Serializable {
                     }
                     Resource resource = new FileSystemResource(fingerPRINTSHierarchyDB);
                     printsModelData = hierarchyDBParser.parse(resource);
+                    allPrintsModelIDs = new ArrayList<String>(printsModelData.size());
+                    for (FingerPRINTSHierarchyDBParser.HierachyDBEntry entry : printsModelData.values()) {
+                        allPrintsModelIDs.add(entry.getId());
+                    }
+                    allPrintsModelIDs = Collections.unmodifiableList(allPrintsModelIDs);
                 }
             }
         }
@@ -128,7 +135,8 @@ public class PrintsPostProcessing implements Serializable {
         Set<PrintsRawMatch> motifMatchesForCurrentModel = new HashSet<PrintsRawMatch>();
         boolean currentMatchesPass = true;
         FingerPRINTSHierarchyDBParser.HierachyDBEntry currentHierachyDBEntry = null;
-        final List<String> hierarchyModelIDLimitation = new ArrayList<String>();
+        final List<String> hierarchyModelIDLimitation = new ArrayList<String>(allPrintsModelIDs);
+
         for (PrintsRawMatch rawMatch : sortedRawMatches) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Iterating over sorted raw matches.  Currently looking at protein " + rawProteinUnfiltered.getProteinIdentifier() + " model " + rawMatch.getModel());
@@ -206,7 +214,7 @@ public class PrintsPostProcessing implements Serializable {
         }
 
         // Fourth filter - if there is a limitation from the previous model hierarchy, enforce
-        if (hierarchyModelIDLimitation.size() > 0 && !hierarchyModelIDLimitation.contains(hierachyDBEntry.getId())) {
+        if (!hierarchyModelIDLimitation.contains(hierachyDBEntry.getId())) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Match FAILED model hierarchy test, model ID " + hierachyDBEntry.getId());
             }
@@ -215,12 +223,11 @@ public class PrintsPostProcessing implements Serializable {
 
         // Passed filter and may have its own hierarchy.  Check and set the current hierarchy limitation
         // if this is the case.
-        if (hierachyDBEntry.getHierarchicalRelations() != null && hierachyDBEntry.getHierarchicalRelations().size() > 0) {
+        if (hierachyDBEntry.getHierarchicalRelations().size() < hierarchyModelIDLimitation.size()) {
             hierarchyModelIDLimitation.clear();
             hierarchyModelIDLimitation.addAll(hierachyDBEntry.getHierarchicalRelations());
-        } else if (hierarchyModelIDLimitation.size() > 0) {  // And this passing model has no relations! (Which is an error)
-            throw new IllegalStateException("Have found inconsistencies in the FingerPRINTSHierarchy.db file.  Check hierarchy including PRINTS ID " + hierachyDBEntry.getId());
         }
+
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Matches passed!");
         }
