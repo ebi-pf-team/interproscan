@@ -10,15 +10,16 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.prints;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.prints.PrintsMatchParser;
-
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAO;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Set;
 
 public class ParsePrintsOutputStep extends Step {
 
@@ -26,13 +27,9 @@ public class ParsePrintsOutputStep extends Step {
 
     private String printsOutputFileNameTemplate;
 
-    private String pathToCutOffFile;
-
     private PrintsRawMatchDAO printsMatchDAO;
 
     private PrintsMatchParser parser;
-
-    private double defaultCutOff = Math.log10(1e-04);
 
     private String signatureLibraryRelease;
 
@@ -43,15 +40,6 @@ public class ParsePrintsOutputStep extends Step {
 
     public String getPrintsOutputFileNameTemplate() {
         return printsOutputFileNameTemplate;
-    }
-
-    @Required
-    public void setPathToCutOffFile(String pathToCutOffFile) {
-        this.pathToCutOffFile = pathToCutOffFile;
-    }
-
-    public String getPathToCutOffFile() {
-        return pathToCutOffFile;
     }
 
     @Required
@@ -85,12 +73,6 @@ public class ParsePrintsOutputStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        Map evalCutoffs;
-        try {
-            evalCutoffs = readPrintsParsingFile(pathToCutOffFile, defaultCutOff);
-        } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when attempting to initialise Prints hierarchy file to determine cutoff values.");
-        }
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -101,7 +83,7 @@ public class ParsePrintsOutputStep extends Step {
             final String printsOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, printsOutputFileNameTemplate);
             inputStreamParser = new FileInputStream(printsOutputFilePath);
             final PrintsMatchParser parser = this.parser;
-            Set <RawProtein<PrintsRawMatch>> parsedResults = parser.parse(inputStreamParser, printsOutputFilePath, evalCutoffs, signatureLibraryRelease);
+            Set<RawProtein<PrintsRawMatch>> parsedResults = parser.parse(inputStreamParser, printsOutputFilePath, signatureLibraryRelease);
             printsMatchDAO.insertProteinMatches(parsedResults);
         }
         catch (IOException e) {
@@ -115,35 +97,5 @@ public class ParsePrintsOutputStep extends Step {
                 }
             }
         }
-    }
-
-    public static Map<String, Object> readPrintsParsingFile(String cutoffFile, double defaultCutOff) throws IOException {
-        // Example of FingerPRINTShierarchy.db content:
-        // The vast majority of motifs have a cutoff of 1e-04, so we will only store those whose cutoff is different
-        // Need to store Fingerprint motif name and cutoff evalue
-        // VIRIONINFFCT|PR00349|1e-04|0|
-        // Y414FAMILY|PR01048|1e-04|0|
-        BufferedReader fReader = null;
-        Map<String, Object> ret = new HashMap<String, Object>();
-        try {
-            fReader = new BufferedReader(new FileReader(new File(cutoffFile)));
-            String printsFileCommentCharacter = "#";
-            String in;
-            while ((in = fReader.readLine()) != null) {
-                if (!in.startsWith(printsFileCommentCharacter)) {
-                    String[] line = in.split("\\|");
-                    double checkCutoff = Math.log10(Double.parseDouble(line[2]));
-                    if (checkCutoff != defaultCutOff) {
-                        ret.put(line[0], checkCutoff);
-                    }
-                }
-            }
-        }
-        finally {
-            if (fReader != null) {
-                fReader.close();
-            }
-        }
-        return ret;
     }
 }

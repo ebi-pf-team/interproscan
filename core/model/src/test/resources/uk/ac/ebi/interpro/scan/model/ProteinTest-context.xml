@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"                                                                                           
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:lang="http://www.springframework.org/schema/lang"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -14,9 +14,9 @@
     <import resource="oxm-context.xml"/>
 
     <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Protein" />
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Protein"/>
     </bean>
-    
+
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
         <!-- HMM databases -->
         <entry key="Gene3D">
@@ -95,7 +95,7 @@
     <bean id="gene3dXml" class="java.lang.String">
         <constructor-arg>
             <value>
-            <![CDATA[
+                <![CDATA[
             <protein md5="1de2cf633901ff1f00785735c8ce7e70" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
                 <xref id="A0A314"/>
@@ -162,7 +162,7 @@
     <bean id="pfamXml" class="java.lang.String">
         <constructor-arg>
             <value>
-            <![CDATA[
+                <![CDATA[
             <protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
                 <xref id="A0A000_9ACTO"/>
@@ -211,7 +211,7 @@
     <bean id="pirsfXml" class="java.lang.String">
         <constructor-arg>
             <value>
-            <![CDATA[
+                <![CDATA[
             <protein md5="58F1C327155B01E0EE4C95CE0067973C" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKARYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLNYMTDLWKSQGRM</sequence>
                 <xref id="UPI0001C4B400"/>
@@ -237,26 +237,36 @@
                 <bean class="uk.ac.ebi.interpro.scan.model.Hmmer2Match">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
-                            <constructor-arg value="SM00323"/>  <!-- Accession -->
-                            <constructor-arg value="RasGAP_2"/> <!-- Name -->
+                            <constructor-arg value="SM00323"/>
+                            <!-- Accession -->
+                            <constructor-arg value="RasGAP_2"/>
+                            <!-- Name -->
                         </bean>
                     </constructor-arg>
-                    <constructor-arg value="543.4"   /> <!--Score-->
-                    <constructor-arg value="2.7e-164"/> <!--E-value-->
+                    <constructor-arg value="543.4"/>
+                    <!--Score-->
+                    <constructor-arg value="2.7e-164"/>
+                    <!--E-value-->
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.Hmmer2Match.HmmerLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location">
-                                <constructor-arg value="512" />        <!--Start-->
-                                <constructor-arg value="857" />        <!--End-->
-                                <constructor-arg value="543.4" />      <!--Score-->
-                                <constructor-arg value="2.7e-164" />   <!--E-value-->
-                                <constructor-arg value="1" />          <!--HMM start-->
-                                <constructor-arg value="390" />        <!--HMM end-->
+                                <constructor-arg value="512"/>
+                                <!--Start-->
+                                <constructor-arg value="857"/>
+                                <!--End-->
+                                <constructor-arg value="543.4"/>
+                                <!--Score-->
+                                <constructor-arg value="2.7e-164"/>
+                                <!--E-value-->
+                                <constructor-arg value="1"/>
+                                <!--HMM start-->
+                                <constructor-arg value="390"/>
+                                <!--HMM end-->
                                 <constructor-arg value="COMPLETE"
                                                  type="uk.ac.ebi.interpro.scan.model.HmmBounds"/>
                             </bean>
                         </util:set>
-                     </constructor-arg>
+                    </constructor-arg>
                 </bean>
             </util:set>
         </constructor-arg>
@@ -301,7 +311,7 @@
     <bean id="smartXml" class="java.lang.String">
         <constructor-arg>
             <value>
-            <![CDATA[
+                <![CDATA[
             <protein md5="829339ede4627f6a6bf9166f3e9526d9" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
                 <xref id="GAP2_CAEEL"/>
@@ -326,26 +336,36 @@
                 <bean class="uk.ac.ebi.interpro.scan.model.Hmmer2Match">
                     <constructor-arg>
                         <bean class="uk.ac.ebi.interpro.scan.model.Signature">
-                            <constructor-arg value="SSF53098"/>             <!-- Accession -->
-                            <constructor-arg value="Ribonuclease H-like"/>  <!-- Name -->
+                            <constructor-arg value="SSF53098"/>
+                            <!-- Accession -->
+                            <constructor-arg value="Ribonuclease H-like"/>
+                            <!-- Name -->
                         </bean>
                     </constructor-arg>
-                    <constructor-arg value="93.8"/>     <!--Score-->
-                    <constructor-arg value="2.4e-32"/>  <!--E-value-->
+                    <constructor-arg value="93.8"/>
+                    <!--Score-->
+                    <constructor-arg value="2.4e-32"/>
+                    <!--E-value-->
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.Hmmer2Match.HmmerLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location">
-                                <constructor-arg value="1"/>        <!--Start-->
-                                <constructor-arg value="237"/>      <!--End-->
-                                <constructor-arg value="93.8"/>     <!--Score-->
-                                <constructor-arg value="2.4e-32"/>  <!--E-value-->
-                                <constructor-arg value="1"/>        <!--HMM start-->
-                                <constructor-arg value="262"/>      <!--HMM end-->
+                                <constructor-arg value="1"/>
+                                <!--Start-->
+                                <constructor-arg value="237"/>
+                                <!--End-->
+                                <constructor-arg value="93.8"/>
+                                <!--Score-->
+                                <constructor-arg value="2.4e-32"/>
+                                <!--E-value-->
+                                <constructor-arg value="1"/>
+                                <!--HMM start-->
+                                <constructor-arg value="262"/>
+                                <!--HMM end-->
                                 <constructor-arg value="N_TERMINAL_COMPLETE"
                                                  type="uk.ac.ebi.interpro.scan.model.HmmBounds"/>
                             </bean>
                         </util:set>
-                     </constructor-arg>
+                    </constructor-arg>
                 </bean>
             </util:set>
         </constructor-arg>
@@ -390,7 +410,7 @@
     <bean id="superfamilyXml" class="java.lang.String">
         <constructor-arg>
             <value>
-            <![CDATA[
+                <![CDATA[
             <protein md5="992407d4eb2062c4e4b90ae12b568311" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                 <xref id="A6Q974"/>
@@ -421,17 +441,23 @@
                             <constructor-arg value="RHODOPSIN"/>
                         </bean>
                     </constructor-arg>
-                    <constructor-arg value="2.2e-64"/> <!--E-value-->
-                    <constructor-arg value="IIIIII"/>  <!--Graphscan-->
-                    <constructor-arg value="6"/>       <!--MotifCount-->
+                    <constructor-arg value="2.2e-64"/>
+                    <!--E-value-->
+                    <constructor-arg value="IIIIII"/>
+                    <!--Graphscan-->
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch.FingerPrintsLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation">
-                                <constructor-arg value="3"/>        <!--Start-->
-                                <constructor-arg value="21"/>       <!--End-->
-                                <constructor-arg value="1.45e-14"/> <!--P-value-->
-                                <constructor-arg value="86.94"/>    <!--Score-->
-                                <constructor-arg value="1"/>        <!--MotifNumber-->
+                                <constructor-arg value="3"/>
+                                <!--Start-->
+                                <constructor-arg value="21"/>
+                                <!--End-->
+                                <constructor-arg value="1.45e-14"/>
+                                <!--P-value-->
+                                <constructor-arg value="86.94"/>
+                                <!--Score-->
+                                <constructor-arg value="1"/>
+                                <!--MotifNumber-->
                             </bean>
                             <bean class="uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation">
                                 <constructor-arg value="22"/>
@@ -469,7 +495,7 @@
                                 <constructor-arg value="6"/>
                             </bean>
                         </util:set>
-                     </constructor-arg>
+                    </constructor-arg>
                 </bean>
             </util:set>
         </constructor-arg>
@@ -483,25 +509,25 @@
                 </bean>
             </util:set>
         </constructor-arg>
-            <!--
-                Sn; sp|P02700|OPSD_SHEEP Rhodopsin OS=Ovis aries GN=RHO PE=1 SV=2
-                Si; Fasta sequence
-                1TBS
-                1TBH RHODOPSIN       2.186312e-64
-                1TBF
-                2TBS
-                2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan
-                2TBH RHODOPSIN       6  of  6  4.9e+02  82       4791       7.6e-70     2.2e-64     IIIIII
-                2TBF
-                3TBS
-                3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high
-                3TBH RHODOPSIN       1  of  6  86.94   898     1.45e-14  GTEGPNFYVPFSNKTGVVR                                     19   3    3     6
-                3TBH RHODOPSIN       2  of  6  80.20   808     2.06e-10  SPFEAPQYYLAEPWQFS                                       17   22   22    25
-                3TBH RHODOPSIN       3  of  6  81.56   763     1.83e-13  FMVFGGFTTTLYTSLHG                                       17   85   85    88
-                3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194
-                3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274
-                3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322
-            -->
+        <!--
+            Sn; sp|P02700|OPSD_SHEEP Rhodopsin OS=Ovis aries GN=RHO PE=1 SV=2
+            Si; Fasta sequence
+            1TBS
+            1TBH RHODOPSIN       2.186312e-64
+            1TBF
+            2TBS
+            2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan
+            2TBH RHODOPSIN       6  of  6  4.9e+02  82       4791       7.6e-70     2.2e-64     IIIIII
+            2TBF
+            3TBS
+            3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high
+            3TBH RHODOPSIN       1  of  6  86.94   898     1.45e-14  GTEGPNFYVPFSNKTGVVR                                     19   3    3     6
+            3TBH RHODOPSIN       2  of  6  80.20   808     2.06e-10  SPFEAPQYYLAEPWQFS                                       17   22   22    25
+            3TBH RHODOPSIN       3  of  6  81.56   763     1.83e-13  FMVFGGFTTTLYTSLHG                                       17   85   85    88
+            3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194
+            3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274
+            3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322
+        -->
     </bean>
     <bean id="printsXml" class="java.lang.String">
         <constructor-arg>
@@ -512,7 +538,7 @@
                     <xref id="P02700"/>
                     <xref id="OPSD_SHEEP"/>
                     <matches>
-                        <fingerprints-match motifCount="6" graphscan="IIIIII" evalue="2.2E-64">
+                        <fingerprints-match graphscan="IIIIII" evalue="2.2E-64">
                             <signature ac="PR00579" name="RHODOPSIN" />
                             <locations>
                                 <fingerprints-location motifNumber="1" start="3"   end="21"  score="86.94" pvalue="1.45E-14" />
@@ -543,28 +569,31 @@
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomMatch.BlastProDomLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation">
-                                <constructor-arg value="9"/>        <!--Start-->
-                                <constructor-arg value="150"/>      <!--End-->
-                                <constructor-arg value="763"/>      <!--Score-->
+                                <constructor-arg value="9"/>
+                                <!--Start-->
+                                <constructor-arg value="150"/>
+                                <!--End-->
+                                <constructor-arg value="763"/>
+                                <!--Score-->
                             </bean>
                         </util:set>
-                     </constructor-arg>
+                    </constructor-arg>
                 </bean>
                 <!--<bean class="uk.ac.ebi.interpro.scan.model.BlastProDomMatch                  -->
-                    <!--<constructor-arg>-->
-                        <!--<bean class="uk.ac.ebi.interpro.scan.model.Signature">-->
-                            <!--<constructor-arg value="PD596253"/>-->
-                        <!--</bean>-->
-                    <!--</constructor-arg>-->
-                    <!--<constructor-arg>-->
-                        <!--<util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomMatch.BlastProDomLocationastProDomLocation">-->
-                            <!--<bean class="uk.ac.ebi.interpro.scan.model.BlastProDomMatch.BlastProDomLocationastProDomLocation">-->
-                                <!--<constructor-arg value="151"/>      --><!--Start-->
-                                <!--<constructor-arg value="245"/>      --><!--End-->
-                                <!--<constructor-arg value="496"/>      --><!--Score-->
-                            <!--</bean>-->
-                        <!--</util:set>-->
-                     <!--</constructor-arg>-->
+                <!--<constructor-arg>-->
+                <!--<bean class="uk.ac.ebi.interpro.scan.model.Signature">-->
+                <!--<constructor-arg value="PD596253"/>-->
+                <!--</bean>-->
+                <!--</constructor-arg>-->
+                <!--<constructor-arg>-->
+                <!--<util:set value-type="uk.ac.ebi.interpro.scan.model.BlastProDomMatch.BlastProDomLocationastProDomLocation">-->
+                <!--<bean class="uk.ac.ebi.interpro.scan.model.BlastProDomMatch.BlastProDomLocationastProDomLocation">-->
+                <!--<constructor-arg value="151"/>      --><!--Start-->
+                <!--<constructor-arg value="245"/>      --><!--End-->
+                <!--<constructor-arg value="496"/>      --><!--Score-->
+                <!--</bean>-->
+                <!--</util:set>-->
+                <!--</constructor-arg>-->
                 <!--</bean>-->
             </util:set>
         </constructor-arg>
@@ -584,7 +613,7 @@
     <bean id="proDomXml" class="java.lang.String">
         <constructor-arg>
             <value>
-            <![CDATA[
+                <![CDATA[
             <protein md5="daa9d1290a78528c68605d254f9ba358" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
                 <xref id="UPI000048E726"/>
@@ -622,13 +651,15 @@
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.PatternScanMatch.PatternScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation">
-                                <constructor-arg value="166"/>      <!--Start-->
-                                <constructor-arg value="179"/>      <!--End-->
+                                <constructor-arg value="166"/>
+                                <!--Start-->
+                                <constructor-arg value="179"/>
+                                <!--End-->
                                 <constructor-arg value="STRONG"
                                                  type="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation$Level"/>
                             </bean>
                         </util:set>
-                     </constructor-arg>
+                    </constructor-arg>
                 </bean>
             </util:set>
         </constructor-arg>
@@ -641,12 +672,12 @@
         </constructor-arg>
         <!--
             UPI0001AFC88D	ps_scan|v1.57	PS00675	166	179	.	.	.	Name "SIGMA54_INTERACT_1" ; LevelTag "(0)" ; Sequence "VLLtGETGTGKevF" ; SequenceDescription "UPI0001AFC88D" ; KnownFalsePos 209
-        -->        
+        -->
     </bean>
     <bean id="proSitePatternsXml" class="java.lang.String">
         <constructor-arg>
             <value>
-            <![CDATA[
+                <![CDATA[
                 <protein md5="386964a0a573631d643f2a7e7de03066" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
                     <xref id="UPI0001AFC88D"/>
@@ -678,12 +709,15 @@
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch.ProfileScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation">
-                                <constructor-arg value="171"/>      <!--Start-->
-                                <constructor-arg value="275"/>      <!--End-->
-                                <constructor-arg value="24.202"/>   <!--Score-->
+                                <constructor-arg value="171"/>
+                                <!--Start-->
+                                <constructor-arg value="275"/>
+                                <!--End-->
+                                <constructor-arg value="24.202"/>
+                                <!--Score-->
                             </bean>
                         </util:set>
-                     </constructor-arg>
+                    </constructor-arg>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch">
                     <constructor-arg>
@@ -695,12 +729,15 @@
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch.ProfileScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation">
-                                <constructor-arg value="292"/>      <!--Start-->
-                                <constructor-arg value="370"/>      <!--End-->
-                                <constructor-arg value="15.158"/>   <!--Score-->
+                                <constructor-arg value="292"/>
+                                <!--Start-->
+                                <constructor-arg value="370"/>
+                                <!--End-->
+                                <constructor-arg value="15.158"/>
+                                <!--Score-->
                             </bean>
                         </util:set>
-                     </constructor-arg>
+                    </constructor-arg>
                 </bean>
             </util:set>
         </constructor-arg>
@@ -711,10 +748,10 @@
                 </bean>
             </util:set>
         </constructor-arg>
-            <!-- Note: dash ("-") replaced by hyphen ("–") so HTML comments not messed up:
-                UPI0001AF8DCD	ps_scan|v1.57	PS50042	171	275	24.202	.	.	Name "CNMP_BINDING_3" ; Level 1 ; RawScore 1207 ; FeatureFrom 1 ; FeatureTo –18 ; Sequence "VFSKVPVANIEAMFQRMERINTVAGQVIIQQGAAGDYYYLIESGTVLVTRADGVnaHPLLVAELQSGDAFGEEALVSDNKRNATVAMKTDGQLLRLNKHDFVALL–––––––––––––––––" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 5
-                UPI0001AF8DCD	ps_scan|v1.57	PS50206	292	370	15.158	.	.	Name "RHODANESE_3" ; Level 0 ; RawScore 60203 ; FeatureFrom 1 ; FeatureTo –1 ; Sequence "IaDGAIWVDAR––––––––––––––––––LPSEYQYDHIDGAINLPLNEIR–––––––––––––QKLLeLDYRKSHVVYCQT–GRRSSAAAFILAQNGF–DVVVLK––––––––GGARAN" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 0
-            -->
+        <!-- Note: dash ("-") replaced by hyphen ("–") so HTML comments not messed up:
+            UPI0001AF8DCD	ps_scan|v1.57	PS50042	171	275	24.202	.	.	Name "CNMP_BINDING_3" ; Level 1 ; RawScore 1207 ; FeatureFrom 1 ; FeatureTo –18 ; Sequence "VFSKVPVANIEAMFQRMERINTVAGQVIIQQGAAGDYYYLIESGTVLVTRADGVnaHPLLVAELQSGDAFGEEALVSDNKRNATVAMKTDGQLLRLNKHDFVALL–––––––––––––––––" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 5
+            UPI0001AF8DCD	ps_scan|v1.57	PS50206	292	370	15.158	.	.	Name "RHODANESE_3" ; Level 0 ; RawScore 60203 ; FeatureFrom 1 ; FeatureTo –1 ; Sequence "IaDGAIWVDAR––––––––––––––––––LPSEYQYDHIDGAINLPLNEIR–––––––––––––QKLLeLDYRKSHVVYCQT–GRRSSAAAFILAQNGF–DVVVLK––––––––GGARAN" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 0
+        -->
     </bean>
     <bean id="proSiteProfilesXml" class="java.lang.String">
         <constructor-arg>

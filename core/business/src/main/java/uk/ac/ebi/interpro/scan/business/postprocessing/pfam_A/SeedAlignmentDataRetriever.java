@@ -1,13 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
 
-import uk.ac.ebi.interpro.scan.model.Protein;
-
-import java.util.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.io.Serializable;
+import java.util.*;
 
 /**
  * Used in post-processing to load seed alignment data into memory
@@ -22,12 +16,13 @@ public class SeedAlignmentDataRetriever implements Serializable {
     /**
      * Retrieves a Map of UPI (protein accession) to List<SeedAlignment> for use in
      * post processing.
+     *
      * @param proteinIds for which to return the seed alignment data.
      * @return a Map of UPI (protein accession) to List<SeedAlignment> for use in
-     * post processing.
+     *         post processing.
      * @throws java.sql.SQLException in the event of a database problem.
      */
-    public SeedAlignmentData retrieveSeedAlignmentData (Set<String> proteinIds){
+    public SeedAlignmentData retrieveSeedAlignmentData(Set<String> proteinIds) {
         SeedAlignmentData seedAlignmentData = null;
 
         // TODO - Get the seed alignment data from somewhere...
@@ -38,26 +33,25 @@ public class SeedAlignmentDataRetriever implements Serializable {
 
     public class SeedAlignmentData implements Serializable {
 
-        private final Map<String, List<SeedAlignment>> data =  new HashMap<String, List<SeedAlignment>>();
+        private final Map<String, List<SeedAlignment>> data = new HashMap<String, List<SeedAlignment>>();
 
-        private SeedAlignmentData(){
+        private SeedAlignmentData() {
         }
 
-        private void put(final String upi, final SeedAlignment seedAlignment){
+        private void put(final String upi, final SeedAlignment seedAlignment) {
             List<SeedAlignment> seedAlignmentList = data.get(upi);
-            if (seedAlignmentList == null){
+            if (seedAlignmentList == null) {
                 seedAlignmentList = new ArrayList<SeedAlignment>();
                 seedAlignmentList.add(seedAlignment);
                 data.put(upi, seedAlignmentList);
-            }
-            else {
+            } else {
                 seedAlignmentList.add(seedAlignment);
             }
         }
 
-        public List<SeedAlignment> getSeedAlignments(final String proteinId){
+        public List<SeedAlignment> getSeedAlignments(final String proteinId) {
             List<SeedAlignment> seedAlignmentList = data.get(proteinId);
-            if (seedAlignmentList == null){
+            if (seedAlignmentList == null) {
                 seedAlignmentList = Collections.emptyList();
             }
             return seedAlignmentList;
