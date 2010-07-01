@@ -9,7 +9,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author John Maslen
@@ -33,10 +36,7 @@ public class PrintsMatchParser {
 
     public static final String END_ENTRY_ANNOT_MARKER = "3TBF";
 
-    //TODO pass as parameter from properties file?
-    public static final double PRINTS_DEFAULT_CUTOFF = Math.log10(1e-04);
-
-    public Set<RawProtein<PrintsRawMatch>> parse(InputStream is, String fileName, Map evalCutOffs, String signatureReleaseLibrary) throws IOException {
+    public Set<RawProtein<PrintsRawMatch>> parse(InputStream is, String fileName, String signatureReleaseLibrary) throws IOException {
         Map<String, RawProtein<PrintsRawMatch>> rawResults = new HashMap<String, RawProtein<PrintsRawMatch>>();
         BufferedReader reader = null;
         try {
@@ -56,32 +56,25 @@ public class PrintsMatchParser {
                     //1TBH GLU5KINASE      1.103000e-49   Glutamate 5-kinase family signature     PR00474
                     String[] lineSplit = line.split("\\s+");
                     String motifName = lineSplit[1];
-                    String model = lineSplit[lineSplit.length-1];
+                    String model = lineSplit[lineSplit.length - 1];
                     double eValue = Math.log10(Double.parseDouble(lineSplit[2]));
-                    if (evaluateEvalue(motifName, eValue, evalCutOffs)) {
-                        if (proteinIdentifier == null) {
-                            throw new ParseException("FingerPrintScan output parsing: Trying to parse raw output but don't appear to have a protein ID.", fileName, line, lineNumber);
-                        }
-                        PrintsMotif protein = new PrintsMotif(proteinIdentifier, motifName, eValue, model);
-                        motifPrintsProteinMap.put(motifName, protein);
+                    if (proteinIdentifier == null) {
+                        throw new ParseException("FingerPrintScan output parsing: Trying to parse raw output but don't appear to have a protein ID.", fileName, line, lineNumber);
                     }
+                    PrintsMotif motifMatch = new PrintsMotif(proteinIdentifier, motifName, eValue, model);
+                    motifPrintsProteinMap.put(motifName, motifMatch);
                 } else if (line.startsWith(SECOND_LEVEL_ANNOTATION_H) || line.startsWith(SECOND_LEVEL_ANNOTATION_N)) {
                     //2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan
                     //2TBH GLU5KINASE      5  of  5  2.6e+02  52       2861       1.5e-55     1.1e-49     IIIII
                     //2TBN ASNGLNASE       2  of  3  53.34    26.67    326        5.5e-06     15          I.i
                     String[] matchSplit = line.split("\\s+");
                     String motifName = matchSplit[1];
-                    double eValue = Math.log10(Double.parseDouble(matchSplit[9]));
                     String graphScan = matchSplit[10];
-                    if (evaluateEvalue(motifName, eValue, evalCutOffs)) {
-                        PrintsMotif protein;
-                        if (motifPrintsProteinMap.containsKey(motifName)) {
-                            protein = motifPrintsProteinMap.get(motifName);
-                        } else {
-                            protein = new PrintsMotif(proteinIdentifier, motifName, eValue);
-                        }
-                        protein.setGraphScan(graphScan);
-                        motifPrintsProteinMap.put(motifName, protein);
+
+                    if (motifPrintsProteinMap.containsKey(motifName)) {
+                        PrintsMotif motifMatch = motifPrintsProteinMap.get(motifName);
+                        motifMatch.setGraphScan(graphScan);
+                        motifPrintsProteinMap.put(motifName, motifMatch);
                     }
                 } else if (line.startsWith(THIRD_LEVEL_ANNOTATION_H) || line.startsWith(THIRD_LEVEL_ANNOTATION_N)) {
                     //3TBH/3TBN 	→		motifName (1), motifNo matching (2), motifTotal (4), idScore (5), pValue (7)*, length (9), position (11)**
@@ -94,43 +87,41 @@ public class PrintsMatchParser {
                     if (motifPrintsProteinMap.containsKey(motifName)) {
                         PrintsMotif protein = motifPrintsProteinMap.get(motifName);
                         //TODO - REMOVE: fudge for testing only - in testing so far, no significant hits are found WITHOUT a Prints model id, but just in case.....
-                        if (protein.getModelId() == null || protein.getModelId().length() == 0) {
-                            protein.setModelId("PRXXXXX");
-                        }
-                        int motifNumber = Integer.parseInt(matchSplit[2]);
-                        int motifCount = Integer.parseInt(matchSplit[4]);
-                        double score = Double.parseDouble(matchSplit[5]);
-                        double pvalue = Math.log10(Double.parseDouble((matchSplit[7])));
-                        int seqLength = Integer.parseInt(matchSplit[9]);
-                        // Inherited from Onion:
-                        // The hack below is here because of The FingerPrintScan, for starting positions that are in
-                        // 5 figures, fails to separate pos and high columns with a space, then we just have to
-                        // pick out the  correct start position manually
-                        //  Len  low  pos  high
-                        //  19   81   101689976
-                        String seqStartPosStr = matchSplit[11];
-                        if (seqStartPosStr.length() > 5) {
-                            seqStartPosStr = seqStartPosStr.substring(0, 6);
-                        }
-                        int locationStart = Integer.parseInt(seqStartPosStr);
-                        if (locationStart < 1) {
-                           locationStart = 1;
-                        }
-                        //TODO: see note below on Onion sanity check
-                        int locationEnd = locationStart + seqLength - 1;
+                        if (protein != null) {
+                            int motifNumber = Integer.parseInt(matchSplit[2]);
+                            int motifCount = Integer.parseInt(matchSplit[4]);
+                            double score = Double.parseDouble(matchSplit[5]);
+                            double pvalue = Math.log10(Double.parseDouble((matchSplit[7])));
+                            int seqLength = Integer.parseInt(matchSplit[9]);
+                            // Inherited from Onion:
+                            // The hack below is here because of The FingerPrintScan, for starting positions that are in
+                            // 5 figures, fails to separate pos and high columns with a space, then we just have to
+                            // pick out the  correct start position manually
+                            //  Len  low  pos  high
+                            //  19   81   101689976
+                            String seqStartPosStr = matchSplit[11];
+                            if (seqStartPosStr.length() > 5) {
+                                seqStartPosStr = seqStartPosStr.substring(0, 6);
+                            }
+                            int locationStart = Integer.parseInt(seqStartPosStr);
+                            if (locationStart < 1) {
+                                locationStart = 1;
+                            }
+                            //TODO: see note below on Onion sanity check
+                            int locationEnd = locationStart + seqLength - 1;
 
-                        RawProtein<PrintsRawMatch> sequenceIdentifier = rawResults.get(proteinIdentifier);
-                        if (sequenceIdentifier == null){
-                            sequenceIdentifier = new RawProtein<PrintsRawMatch>(proteinIdentifier);
-                            rawResults.put(proteinIdentifier, sequenceIdentifier);
+                            RawProtein<PrintsRawMatch> sequenceIdentifier = rawResults.get(proteinIdentifier);
+                            if (sequenceIdentifier == null) {
+                                sequenceIdentifier = new RawProtein<PrintsRawMatch>(proteinIdentifier);
+                                rawResults.put(proteinIdentifier, sequenceIdentifier);
+                            }
+
+                            final PrintsRawMatch match = new PrintsRawMatch(proteinIdentifier, protein.getModelId(), signatureReleaseLibrary, locationStart,
+                                    locationEnd, protein.geteValue(), protein.getGraphScan(), motifCount, motifNumber,
+                                    pvalue, score);//, motifName);
+
+                            sequenceIdentifier.addMatch(match);
                         }
-
-                        final PrintsRawMatch match = new PrintsRawMatch(proteinIdentifier, protein.getModelId(), signatureReleaseLibrary, locationStart,
-                                                                locationEnd, protein.geteValue(), protein.getGraphScan(), motifCount, motifNumber,
-                                                                pvalue, score);//, motifName);
-
-                        sequenceIdentifier.addMatch(match);
-
                     }
                 }
             }
@@ -140,15 +131,7 @@ public class PrintsMatchParser {
                 reader.close();
             }
         }
-        return new HashSet<RawProtein<PrintsRawMatch>> (rawResults.values());
-    }
-
-    public static boolean evaluateEvalue(String motifName, double eValue, Map evalCutOffs) {
-        if (evalCutOffs.containsKey(motifName)) {
-            return eValue < (Double) evalCutOffs.get(motifName);
-        } else {
-            return eValue < PRINTS_DEFAULT_CUTOFF;
-        }
+        return new HashSet<RawProtein<PrintsRawMatch>>(rawResults.values());
     }
 }
 

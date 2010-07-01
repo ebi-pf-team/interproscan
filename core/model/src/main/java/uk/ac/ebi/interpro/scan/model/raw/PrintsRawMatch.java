@@ -10,6 +10,7 @@ import javax.persistence.Table;
  * <a href="http://www.bioinf.manchester.ac.uk/dbbrowser/PRINTS/">PRINTS</a> raw match.
  *
  * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
 @Entity
@@ -18,7 +19,7 @@ public class PrintsRawMatch extends RawMatch {
 
     @Column
     private double evalue;
-    @Column(length = 15)
+    @Column
     private String graphscan;
     @Column
     private int motifCount;
@@ -97,4 +98,28 @@ public class PrintsRawMatch extends RawMatch {
         this.motifNumber = motifNumber;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PrintsRawMatch)) return false;
+        if (!super.equals(o)) return false;
+
+        PrintsRawMatch that = (PrintsRawMatch) o;
+
+        if (Double.compare(that.evalue, evalue) != 0) return false;
+        if (motifNumber != that.motifNumber) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        long temp;
+        temp = evalue != +0.0d ? Double.doubleToLongBits(evalue) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + motifNumber;
+        return result;
+    }
 }

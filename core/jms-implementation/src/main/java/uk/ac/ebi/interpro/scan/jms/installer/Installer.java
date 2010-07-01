@@ -26,6 +26,8 @@ public class Installer implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(Installer.class.getName());
 
+    private static final String PRINTS_VERSION = "40.0";
+
 
     private SignatureLibraryReleaseDAO signatureLibraryReleaseDAO;
 
@@ -144,8 +146,8 @@ public class Installer implements Runnable {
             LOGGER.info("Not loading PRINTS");
             return;
         }
-        if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(SignatureLibrary.PRINTS, "40")) {
-            LOGGER.info("PRINTS version 40 is already loaded.");
+        if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(SignatureLibrary.PRINTS, PRINTS_VERSION)) {
+            LOGGER.info("PRINTS version " + PRINTS_VERSION + " is already loaded.");
             return;
         }
         SignatureLibraryRelease release;
@@ -153,7 +155,7 @@ public class Installer implements Runnable {
             KdatParser kdatParser = new KdatParser();
             Map<String, String> accessionToAbstract = kdatParser.parse(printsKdatFile);
 
-            PvalParser pvalParser = new PvalParser("40");
+            PvalParser pvalParser = new PvalParser(PRINTS_VERSION);
             release = pvalParser.parse(accessionToAbstract, printsPvalFile);
         } catch (IOException e) {
             LOGGER.fatal("IOException thrown when parsing prints files.", e);

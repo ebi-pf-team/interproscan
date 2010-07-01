@@ -53,57 +53,65 @@
         <property name="retries" value="3"/>
     </bean>
 
-    <!--<bean id="stepPrintsDeleteFastaFile"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-          <!--parent="abstractPrintsStep">-->
-        <!--<property name="dependsUpon" ref="stepPrintsRunFingerPrintScan"/>-->
-        <!--<property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>-->
-        <!--<property name="fileNameTemplate" ref="fastaFileNameTemplate"/>-->
-    <!--</bean>-->
-
-    <!-- STEP 3 -->
-    <bean   id="stepPrintsParseFingerPrintScanOutput"
-            class="uk.ac.ebi.interpro.scan.management.model.implementations.prints.ParsePrintsOutputStep"
-            parent="abstractPrintsStep">
-        <property name="dependsUpon"                        ref="stepPrintsRunFingerPrintScan"/>
-        <property name="stepDescription"                    value="Parse the output from FingerPrintScan"/>
-        <property name="parser"                             ref="printsParser"/>
-        <property name="printsRawMatchDAO"                  ref="printsMatchDAO"/>
-        <property name="serialGroup"                        value="PARSE_PRINTS"/>
-        <property name="retries"                            value="3"/>
-        <property name="signatureLibraryRelease"            value="40.0"/>
-        <property name="pathToCutOffFile"                   value="${prints.hierarchy.path}"/>
-        <property name="printsOutputFileNameTemplate"       ref="rawAnalaysisOutputFileTemplate"/>
+    <bean id="stepPrintsDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPrintsStep">
+        <property name="dependsUpon" ref="stepPrintsRunFingerPrintScan"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <!--<bean id="stepPrintsDeleteHmmerOutput"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-    <!--parent="abstractPrintsStep"  >-->
-    <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
-    <!--<property name="stepDescription"                    value="Delete the hmmer output file following successful parsing"/>-->
-    <!--<property name="fileNameTemplate"                   ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--</bean>-->
+    <!-- STEP 3 -->
+    <bean id="stepPrintsParseFingerPrintScanOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prints.ParsePrintsOutputStep"
+          parent="abstractPrintsStep">
+        <property name="dependsUpon" ref="stepPrintsRunFingerPrintScan"/>
+        <property name="stepDescription" value="Parse the output from FingerPrintScan"/>
+        <property name="parser" ref="printsParser"/>
+        <property name="printsRawMatchDAO" ref="printsRawMatchDAO"/>
+        <property name="serialGroup" value="PARSE_PRINTS"/>
+        <property name="retries" value="3"/>
+        <property name="signatureLibraryRelease" value="40.0"/>
+        <property name="printsOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
 
-    <!-- STEP 4 -->
-    <!--<bean id="stepPrintsPostProcessing"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Prints.Pfam_A_PostProcessingStep"-->
-    <!--parent="abstractPrintsStep">-->
-    <!--<property name="dependsUpon"                        ref="stepPrintsParseHmmerOutput"/>-->
-    <!--<property name="stepDescription"                    value="Performs post processing on Pfam data (Hmmer 3 based)"/>-->
-    <!--<property name="postProcessor"                      ref="PrintsPostProcessor"/>-->
-    <!--<property name="serialGroup"                        value="PFAM_A_POST_PROCESSING"/>-->
-    <!--<property name="signatureLibraryRelease"            value="24.0"/>-->
-    <!--<property name="signatureLibrary"                   value="PFAM"/>-->
-    <!--<property name="rawMatchDAO"                        ref="pfamRawMatchDAO"/>-->
-    <!--<property name="filteredMatchDAO"                   ref="pfamFilteredMatchDAO"/>-->
-    <!--</bean>-->
+
+    <bean id="stepPrintsDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPrintsStep">
+        <property name="dependsUpon" ref="stepPrintsParseFingerPrintScanOutput"/>
+        <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+    <bean id="stepPrintsPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prints.PrintsPostProcessingStep"
+          parent="abstractPrintsStep">
+        <property name="dependsUpon" ref="stepPrintsParseFingerPrintScanOutput"/>
+        <property name="stepDescription" value="Performs post processing and Match persistence on PRINTS data"/>
+        <property name="postProcessor" ref="printsPostProcessor"/>
+        <property name="serialGroup" value="PRINTS_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" value="40.0"/>
+        <property name="rawMatchDAO" ref="printsRawMatchDAO"/>
+        <property name="filteredMatchDAO" ref="printsFilteredMatchDAO"/>
+    </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
 
     <bean id="printsParser" class="uk.ac.ebi.interpro.scan.io.match.prints.PrintsMatchParser"/>
 
-    <bean id="printsMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAOImpl"/>    
+    <bean id="printsRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAOImpl"/>
+
+    <bean id="printsFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl"/>
+
+    <bean id="printsPostProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.prints.PrintsPostProcessing">
+        <property name="hierarchyDBParser" ref="hierarchyDBParser"/>
+        <property name="fingerPRINTSHierarchyDB" value="${prints.hierarchy.path}"/>
+    </bean>
+
+    <bean id="hierarchyDBParser" class="uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser"></bean>
+
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

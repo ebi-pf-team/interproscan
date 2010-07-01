@@ -1,36 +1,34 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
+import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import javax.persistence.Query;
 import java.util.*;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.apache.log4j.Logger;
-
 /**
  * Persists filtered Pfam HMMER3 matches to the database.
  *
- * @author  Phil Jones
- * @author  Antony Quinn
+ * @author Phil Jones
+ * @author Antony Quinn
  * @version $Id$
  */
-public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long> implements PfamFilteredMatchDAO{
+public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match, Long> implements PfamFilteredMatchDAO {
 
 
     private static final Logger LOGGER = Logger.getLogger(PfamFilteredMatchDAOImpl.class);
 
     /**
      * Sets the class of the model that the DOA instance handles.
-     *
      */
     public PfamFilteredMatchDAOImpl() {
         super(Hmmer3Match.class);
@@ -39,18 +37,18 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
     /**
      * To understand this class, START HERE - uses private 'helper' methods to simplify this very
      * complex transaction.
-     *
+     * <p/>
      * Persists filtered matches to the database that are referenced
      * from a RawProtein<PfamHmmer3RawMatch> object.
-     *
+     * <p/>
      * NOTE: While complex, this example is relatively simple as the Signatures and the Models have
      * the same accession in Pfam, so shortcuts can be taken.
      *
-     * @param rawProteins             containing a Collection of filtered PfamHmmer3RawMatch objects
+     * @param rawProteins containing a Collection of filtered PfamHmmer3RawMatch objects
      */
     @Transactional
     public void persistFilteredMatches(Collection<RawProtein<PfamHmmer3RawMatch>> rawProteins) {
-        try{
+        try {
             // First of all, retrieve the appropriate Signatures for all of the (filtered) raw matches,
             // and all of the appropriate Protein objects.
             final Map<String, Signature> signatureAccessionToSignatureMap = new HashMap<String, Signature>();
@@ -63,15 +61,14 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
             List<String> modelAccessions = new ArrayList<String>();
             List<Long> proteinIds = new ArrayList<Long>();
             LOGGER.debug("In PfamFilteredMatchDAOImpl.persistFilteredMatches() method.");
-            for (RawProtein<PfamHmmer3RawMatch> rawProtein : rawProteins){
-                for (PfamHmmer3RawMatch match : rawProtein.getMatches()){
-                    if (signatureLibraryName == null){
+            for (RawProtein<PfamHmmer3RawMatch> rawProtein : rawProteins) {
+                for (PfamHmmer3RawMatch match : rawProtein.getMatches()) {
+                    if (signatureLibraryName == null) {
                         signatureLibraryName = match.getSignatureLibrary();
                         signatureLibraryVersion = match.getSignatureLibraryRelease();
-                    }
-                    else if (! signatureLibraryName.equals(match.getSignatureLibrary()) ||
-                            ! signatureLibraryVersion.equals(match.getSignatureLibraryRelease())){
-                        throw new IllegalArgumentException ("Filtered matches are from different signature library versions (more than one library version found)");
+                    } else if (!signatureLibraryName.equals(match.getSignatureLibrary()) ||
+                            !signatureLibraryVersion.equals(match.getSignatureLibraryRelease())) {
+                        throw new IllegalArgumentException("Filtered matches are from different signature library versions (more than one library version found)");
                     }
 
                     modelAccessions.add(match.getModel());
@@ -79,19 +76,18 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
                 }
             }
             LOGGER.debug("In PfamFilteredMatchDAOImpl.persistFilteredMatches() method.");
-            if (modelAccessions.size() == 0){
+            if (modelAccessions.size() == 0) {
                 LOGGER.debug("No filtered matches to store.");
                 return;     // Nothing to do.
-            }
-            else if (signatureLibraryName == null || signatureLibraryVersion == null){
+            } else if (signatureLibraryName == null || signatureLibraryVersion == null) {
                 throw new IllegalArgumentException("Filtered matches do not have signature library name or version information.");
             }
             LOGGER.debug("In PfamFilteredMatchDAOImpl.persistFilteredMatches() method. Have matches to score.");
             // Set all of the query parameters.
             // Get the Protein objects - maximum 100 at a go
-            for (int index = 0; index < proteinIds.size(); index += MAXIMUM_IN_CLAUSE_SIZE){
+            for (int index = 0; index < proteinIds.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
                 int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
-                if (endIndex > proteinIds.size()){
+                if (endIndex > proteinIds.size()) {
                     endIndex = proteinIds.size();
                 }
                 final List<Long> proteinIdSlice = proteinIds.subList(index, endIndex);
@@ -99,37 +95,28 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
                         "select p from Protein p where p.id in (:proteinId)"
                 );
                 proteinQuery.setParameter("proteinId", proteinIdSlice);
-                proteinIdToProteinMap.putAll (getProteinIdToProteinMap (proteinQuery));
+                proteinIdToProteinMap.putAll(getProteinIdToProteinMap(proteinQuery));
             }
 
-            // Get the Signature objects - maximum 100 at a go.
-            for (int index = 0; index < modelAccessions.size(); index += MAXIMUM_IN_CLAUSE_SIZE){
-                int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
-                if (endIndex > modelAccessions.size()){
-                    endIndex = modelAccessions.size();
-                }
-                final List<String> modelAccessionSlice = modelAccessions.subList(index, endIndex);
-                final Query signatureQuery = entityManager.createQuery(
-                        "select s from Signature s " +
-                                "where s.accession in (:modelId) " +
-                                "and s.signatureLibraryRelease.version = :signatureLibraryVersion " +
-                                "and s.signatureLibraryRelease.library = :signatureLibraryName");
-                signatureQuery.setParameter("signatureLibraryName", signatureLibraryName);
-                signatureQuery.setParameter("signatureLibraryVersion", signatureLibraryVersion);
-                signatureQuery.setParameter("modelId", modelAccessionSlice);
+            // Get the Signature objects
+            final Query signatureQuery = entityManager.createQuery(
+                    "select s from Signature s " +
+                            "where s.signatureLibraryRelease.version = :signatureLibraryVersion " +
+                            "and s.signatureLibraryRelease.library = :signatureLibraryName");
+            signatureQuery.setParameter("signatureLibraryName", signatureLibraryName);
+            signatureQuery.setParameter("signatureLibraryVersion", signatureLibraryVersion);
 
-                // Retrieve the signatures and proteins and place them in Maps for quick lookup.
-                signatureAccessionToSignatureMap.putAll (getSignatureAccessionToSignatureMap (signatureQuery));
-            }
+            // Retrieve the signatures and proteins and place them in Maps for quick lookup.
+            signatureAccessionToSignatureMap.putAll(getSignatureAccessionToSignatureMap(signatureQuery));
 
             LOGGER.debug("Retrieved Signatures and Proteins to link by matches");
 
             // Finally build and store the HmmerMatch objects.
             buildHmmerMatches(rawProteins, signatureAccessionToSignatureMap, proteinIdToProteinMap);
         }
-        catch (Exception e){
+        catch (Exception e) {
             LOGGER.error("Exception thrown when attempting to store the post-processed matches for Pfam-A.", e);
-            throw new IllegalStateException ("Caught Exception when storing post-processed matches", e);
+            throw new IllegalStateException("Caught Exception when storing post-processed matches", e);
         }
     }
 
@@ -137,32 +124,32 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
      * Helper method to simplify a very complex transaction - creates Matches between Protein and Signature
      * objects based upon (filtered) raw match data.
      *
-     * @param rawProteins   Raw analysis results
-     * @param signatures    Signature accessions with corresponding Signature objects
-     * @param proteins      Proteins accessions with corresponding Protein objects
+     * @param rawProteins Raw analysis results
+     * @param signatures  Signature accessions with corresponding Signature objects
+     * @param proteins    Proteins accessions with corresponding Protein objects
      */
     private void buildHmmerMatches(Collection<RawProtein<PfamHmmer3RawMatch>> rawProteins,
                                    final Map<String, Signature> signatures,
-                                   final Map<String, Protein> proteins){
+                                   final Map<String, Protein> proteins) {
         // Iterate over the filtered matches again and link the appropriate Signature and Protein objects.
         LOGGER.debug("In buildHmmerMatches method.");
-        for (RawProtein<PfamHmmer3RawMatch> rawProtein : rawProteins){
+        for (RawProtein<PfamHmmer3RawMatch> rawProtein : rawProteins) {
             Protein protein = proteins.get(rawProtein.getProteinIdentifier());
-            // TODO - This is DEFINITELY not the right course of action for InterProScan - may be a Protein that has not been seen before in I5.
-            if (protein == null){
-                throw new IllegalStateException ("Cannot store match to a protein that is not in database " +
+            if (protein == null) {
+                throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
             // Convert raw matches to filtered matches
-            LOGGER.debug ("About to call RawMatch.Listener()");
+            LOGGER.debug("About to call RawMatch.Listener()");
             Collection<Hmmer3Match> matches = Hmmer3RawMatch.getMatches(rawProtein.getMatches(),
                     new RawMatch.Listener() {
-                        @Override public Signature getSignature(String modelAccession,
-                                                                SignatureLibrary signatureLibrary,
-                                                                String signatureLibraryRelease) {
+                        @Override
+                        public Signature getSignature(String modelAccession,
+                                                      SignatureLibrary signatureLibrary,
+                                                      String signatureLibraryRelease) {
                             Signature signature = signatures.get(modelAccession);
-                            if (signature == null){
-                                throw new NullPointerException ("Cannot store match with a signature that is " +
+                            if (signature == null) {
+                                throw new NullPointerException("Cannot store match with a signature that is " +
                                         "not in database [model accession=" + modelAccession + "]");
                             }
                             return signature;
@@ -170,8 +157,8 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
                     }
             );
             // TODO: Add "addMatches()" method to Protein
-            LOGGER.debug ("Added matches to protein object");
-            for (Hmmer3Match m : matches)   {
+            LOGGER.debug("Added matches to protein object");
+            for (Hmmer3Match m : matches) {
                 protein.addMatch(m);
             }
             entityManager.persist(protein);
@@ -186,13 +173,13 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
      * @return a Map of signature accessions to Signature objects.
      */
 
-    private Map<String, Signature> getSignatureAccessionToSignatureMap (Query signatureQuery){
+    private Map<String, Signature> getSignatureAccessionToSignatureMap(Query signatureQuery) {
         @SuppressWarnings("unchecked") List<Signature> signatures = signatureQuery.getResultList();
-        if (LOGGER.isDebugEnabled()){
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Number of signatures retrieved: " + signatures.size());
         }
         Map<String, Signature> signatureAccessionToSignatureMap = new HashMap<String, Signature>(signatures.size());
-        for (Signature signature : signatures){
+        for (Signature signature : signatures) {
             signatureAccessionToSignatureMap.put(signature.getAccession(), signature);
         }
         return signatureAccessionToSignatureMap;
@@ -202,17 +189,18 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match,  Long>
     /**
      * Helper method that converts a List of Protein objects retrieved from a JQL query
      * into a Map of protein IDs to Protein objects.
+     *
      * @param proteinQuery being the query to retrieve the Proteins
      * @return a Map of protein IDs to Protein objects.
      */
 
-    private Map<String, Protein> getProteinIdToProteinMap (Query proteinQuery){
+    private Map<String, Protein> getProteinIdToProteinMap(Query proteinQuery) {
         @SuppressWarnings("unchecked") List<Protein> proteins = proteinQuery.getResultList();
-        if (LOGGER.isDebugEnabled()){
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Number of proteins retrieved: " + proteins.size());
         }
         Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(proteins.size());
-        for (Protein protein : proteins){
+        for (Protein protein : proteins) {
             proteinIdToProteinMap.put(protein.getId().toString(), protein);
         }
         return proteinIdToProteinMap;

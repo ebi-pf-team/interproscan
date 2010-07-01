@@ -44,21 +44,13 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
     @Column(nullable = false, length = 15)
     private String graphscan;
 
-    /**
-     * The number of motifs in the FingerPrint model (NOT the number of matched motifs).
-     * TODO - discuss renaming this attribute with Alex.
-     */
-    @Column(nullable = false)
-    private int motifCount;
-
     protected FingerPrintsMatch() {
     }
 
-    public FingerPrintsMatch(Signature signature, double evalue, String graphscan, int motifCount, Set<FingerPrintsLocation> locations) {
+    public FingerPrintsMatch(Signature signature, double evalue, String graphscan, Set<FingerPrintsLocation> locations) {
         super(signature, locations);
         setEvalue(evalue);
         setGraphscan(graphscan);
-        setMotifCount(motifCount);
     }
 
     @XmlAttribute(required = true)
@@ -77,15 +69,6 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
 
     private void setGraphscan(String graphscan) {
         this.graphscan = graphscan;
-    }
-
-    @XmlAttribute(required = true)
-    public int getMotifCount() {
-        return motifCount;
-    }
-
-    private void setMotifCount(int motifCount) {
-        this.motifCount = motifCount;
     }
 
     @Override
