@@ -66,17 +66,17 @@ public class FingerPRINTSHierarchyDBParser implements Serializable {
                     final double evalueCutoff = Double.parseDouble(lineElements[INDEX_EVALUE_CUTTOFF].trim());
                     final int minimumMotifCount = Integer.parseInt(lineElements[INDEX_MINIMUM_MOTIF_COUNT].trim());
                     boolean domain = false;
-                    List<String> siblings = Collections.emptyList();
+                    List<String> hierarchy = Collections.emptyList();
                     if (lineElements.length > 4) {
                         String siblingListString = lineElements[INDEX_SIBLING_LIST].trim();
                         if (FINGERPRINT_IS_DOMAIN.equals(siblingListString)) {
                             domain = true;
                         } else if (siblingListString.length() > 0) {
                             String[] siblingIds = siblingListString.split("\\,");
-                            siblings = Arrays.asList(siblingIds);
+                            hierarchy = Arrays.asList(siblingIds);
                         }
                     }
-                    printsIdToDBEntry.put(modelAccession, new HierachyDBEntry(modelId, modelAccession, evalueCutoff, minimumMotifCount, siblings, domain));
+                    printsIdToDBEntry.put(modelAccession, new HierachyDBEntry(modelId, modelAccession, evalueCutoff, minimumMotifCount, hierarchy, domain));
                 }
             }
         }
@@ -101,6 +101,9 @@ public class FingerPRINTSHierarchyDBParser implements Serializable {
         private boolean domain;
 
         private HierachyDBEntry(String id, String accession, double evalueCutoff, int minimumMotifCount, List<String> hierarchicalRelations, boolean domain) {
+            if (hierarchicalRelations == null) {
+                throw new IllegalArgumentException("The hierarchicalRelations Collection must not be null.");
+            }
             this.id = id;
             this.accession = accession;
             this.evalueCutoff = evalueCutoff;

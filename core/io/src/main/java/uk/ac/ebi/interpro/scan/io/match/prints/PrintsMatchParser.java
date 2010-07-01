@@ -57,7 +57,7 @@ public class PrintsMatchParser {
                     String[] lineSplit = line.split("\\s+");
                     String motifName = lineSplit[1];
                     String model = lineSplit[lineSplit.length - 1];
-                    double eValue = Math.log10(Double.parseDouble(lineSplit[2]));
+                    double eValue = Double.parseDouble(lineSplit[2]);
                     if (proteinIdentifier == null) {
                         throw new ParseException("FingerPrintScan output parsing: Trying to parse raw output but don't appear to have a protein ID.", fileName, line, lineNumber);
                     }
@@ -91,7 +91,7 @@ public class PrintsMatchParser {
                             int motifNumber = Integer.parseInt(matchSplit[2]);
                             int motifCount = Integer.parseInt(matchSplit[4]);
                             double score = Double.parseDouble(matchSplit[5]);
-                            double pvalue = Math.log10(Double.parseDouble((matchSplit[7])));
+                            double pvalue = Double.parseDouble((matchSplit[7]));
                             int seqLength = Integer.parseInt(matchSplit[9]);
                             // Inherited from Onion:
                             // The hack below is here because of The FingerPrintScan, for starting positions that are in
