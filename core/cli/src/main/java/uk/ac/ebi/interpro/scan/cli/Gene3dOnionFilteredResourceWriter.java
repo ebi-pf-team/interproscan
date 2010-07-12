@@ -1,20 +1,20 @@
 package uk.ac.ebi.interpro.scan.cli;
 
-import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.io.AbstractResourceWriter;
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 
-import java.util.Calendar;
 import java.io.IOException;
+import java.util.Calendar;
 
 /**
  * This implementation writes flat-files for import into Onion's IPRScan table.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Gene3dHmmer3RawMatch> {
-    
+
     private Gene3dSupport support;
 
     public void setSupport(Gene3dSupport support) {
@@ -36,20 +36,22 @@ public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Ge
 //   evalue	     FLOAT(126)	     NULL,
 //   status            CHAR(1)         NOT NULL,
 //   timestamp	     DATE	     NOT NULL
-    @Override protected String createLine(Gene3dHmmer3RawMatch m) {
+
+    @Override
+    protected String createLine(Gene3dHmmer3RawMatch m) {
         String analysisTypeId = "54"; // TODO: Inject
-        String status         = "T";  // TODO: Inject
+        String status = "T";  // TODO: Inject
         Calendar calendar = Calendar.getInstance();
         java.sql.Timestamp timestamp = new java.sql.Timestamp(calendar.getTime().getTime());
-        String[] rel      = m.getSignatureLibraryRelease().split("\\.");
+        String[] rel = m.getSignatureLibraryRelease().split("\\.");
         String relNoMajor = rel[0];
         String relNoMinor = rel[1];
         String signatureAc;
         try {
-            signatureAc = support.findSignatureAccession(m.getModel());
+            signatureAc = support.findSignatureAccession(m.getModelId());
         }
         catch (IOException e) {
-            throw new IllegalStateException("Could not find signature accession for " + m.getModel());
+            throw new IllegalStateException("Could not find signature accession for " + m.getModelId());
         }
         String[] line = {
                 analysisTypeId,
@@ -71,9 +73,9 @@ public class Gene3dOnionFilteredResourceWriter extends AbstractResourceWriter<Ge
         // TODO: Replace with org.springframework.util.StringUtils.arrayToDelimitedString()        
         StringBuilder builder = new StringBuilder();
         int last = line.length - 1;
-        for (int i=0; i<line.length; i++)   {
+        for (int i = 0; i < line.length; i++) {
             builder.append(line[i]);
-            if (i < last)   {
+            if (i < last) {
                 builder.append("\t");
             }
         }

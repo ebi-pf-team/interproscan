@@ -98,7 +98,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
             for (final SeedAlignment seedAlignment : seedAlignments) {
                 for (final PfamHmmer3RawMatch candidateMatch : rawProteinUnfiltered.getMatches()) {
                     if (!seedMatches.contains(candidateMatch)) {
-                        if (seedAlignment.getModelAccession().equals(candidateMatch.getModel()) &&
+                        if (seedAlignment.getModelAccession().equals(candidateMatch.getModelId()) &&
                                 seedAlignment.getAlignmentStart() <= candidateMatch.getLocationStart() &&
                                 seedAlignment.getAlignmentEnd() >= candidateMatch.getLocationEnd()) {
                             // Found a match to a seed, where the coordinates fall within the seed alignment.
@@ -115,7 +115,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
         for (final RawMatch rawMatch : rawProteinUnfiltered.getMatches()) {
             final PfamHmmer3RawMatch candidateMatch = (PfamHmmer3RawMatch) rawMatch;
             if (!seedMatches.contains(candidateMatch)) {
-                final PfamClan candidateMatchClan = clanData.getClanByModelAccession(candidateMatch.getModel());
+                final PfamClan candidateMatchClan = clanData.getClanByModelAccession(candidateMatch.getModelId());
 
                 boolean passes = true;   // Optimistic algorithm!
 
@@ -123,7 +123,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                     // Iterate over the filtered rawProteinUnfiltered (so far) to check for passes
                     for (final RawMatch match : filteredMatches.getMatches()) {           // TODO - RawProtein should be typed for Match type.
                         final PfamHmmer3RawMatch passedMatch = (PfamHmmer3RawMatch) match;
-                        final PfamClan passedMatchClan = clanData.getClanByModelAccession(passedMatch.getModel());
+                        final PfamClan passedMatchClan = clanData.getClanByModelAccession(passedMatch.getModelId());
                         // Are both the candidate and the passedMatch in the same clan?
                         if (candidateMatchClan.equals(passedMatchClan)) {
                             // Both in the same clan, so check for overlap.  If they overlap
@@ -168,8 +168,8 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return true if the two domain matches are nested.
      */
     boolean matchesAreNested(PfamHmmer3RawMatch one, PfamHmmer3RawMatch two) {
-        PfamModel oneModel = clanData.getModelByModelAccession(one.getModel());
-        PfamModel twoModel = clanData.getModelByModelAccession(two.getModel());
+        PfamModel oneModel = clanData.getModelByModelAccession(one.getModelId());
+        PfamModel twoModel = clanData.getModelByModelAccession(two.getModelId());
 
         return !(oneModel == null || twoModel == null) &&
                 (oneModel.isNestedIn(twoModel) || twoModel.isNestedIn(oneModel));

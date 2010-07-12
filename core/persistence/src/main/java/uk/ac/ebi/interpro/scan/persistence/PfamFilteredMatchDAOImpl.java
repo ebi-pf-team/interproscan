@@ -71,7 +71,7 @@ public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match, Long> 
                         throw new IllegalArgumentException("Filtered matches are from different signature library versions (more than one library version found)");
                     }
 
-                    modelAccessions.add(match.getModel());
+                    modelAccessions.add(match.getModelId());
                     proteinIds.add(Long.parseLong(match.getSequenceIdentifier()));
                 }
             }

@@ -1,12 +1,11 @@
 package uk.ac.ebi.interpro.scan.io.gene3d;
 
-import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
-import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 
 /**
  * Represents a record in DomainFinder3's SSF format:
@@ -33,38 +32,38 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * pdb|101mA 3_2_0:2z8aA00 154 0 146 136 1 143 1 146 2.9e-28 97.00 0.00 1 1:143
  * </pre>
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public final class DomainFinderRecord {
-   
+
     public static final String SEGMENT_BOUNDARY_SEPARATOR = ":";
 
     private static final String COLUMN_SEP = "\t";
 
-    private static final int SEQUENCE_ID_POS            = 0;
-    private static final int MODEL_ID_POS               = 1;
-    private static final int SEQUENCE_LENGTH_POS        = 2;
-    private static final int MODEL_LENGTH_POS           = 3;
-    private static final int ALIGNMENT_LENGTH_POS       = 4;
-    private static final int MATCHED_RESIDUE_COUNT_POS  = 5;
-    private static final int SEQUENCE_START_POS         = 6;
-    private static final int SEQUENCE_END_POS           = 7;
-    private static final int MODEL_START_POS            = 8;
-    private static final int MODEL_END_POS              = 9;
+    private static final int SEQUENCE_ID_POS = 0;
+    private static final int MODEL_ID_POS = 1;
+    private static final int SEQUENCE_LENGTH_POS = 2;
+    private static final int MODEL_LENGTH_POS = 3;
+    private static final int ALIGNMENT_LENGTH_POS = 4;
+    private static final int MATCHED_RESIDUE_COUNT_POS = 5;
+    private static final int SEQUENCE_START_POS = 6;
+    private static final int SEQUENCE_END_POS = 7;
+    private static final int MODEL_START_POS = 8;
+    private static final int MODEL_END_POS = 9;
     private static final int DOMAIN_I_EVALUE_POS = 10;
-    private static final int SCORE_POS                  = 11;
-    private static final int REVERSE_SCORE_POS          = 12;
+    private static final int SCORE_POS = 11;
+    private static final int REVERSE_SCORE_POS = 12;
     private static final int MATCHED_SEQUENCE_COUNT_POS = 13;
-    private static final int SEGMENT_BOUNDARIES_POS     = 14;
+    private static final int SEGMENT_BOUNDARIES_POS = 14;
     private static final int LAST_POS = SEGMENT_BOUNDARIES_POS;
 
     // TODO: Find out if we really need these or not
-    private static final Integer DEFAULT_SEQUENCE_LENGTH  = 0;
+    private static final Integer DEFAULT_SEQUENCE_LENGTH = 0;
     private static final Integer DEFAULT_MATCHED_RESIDUE_COUNT = 0;
-    private static final Integer DEFAULT_MODEL_LENGTH     = 0;
+    private static final Integer DEFAULT_MODEL_LENGTH = 0;
     private static final Integer DEFAULT_ALIGNMENT_LENGTH = 0;
-    private static final Double  DEFAULT_REVERSE_SCORE    = 0.0;    
+    private static final Double DEFAULT_REVERSE_SCORE = 0.0;
 
     private final String sequenceId;
     private final String modelId;
@@ -85,20 +84,20 @@ public final class DomainFinderRecord {
     // NOTE: Sequence e-value is not stored in SSF file, but is required for ordering of SSF file
     private final Double sequenceEvalue;
 
-    private DomainFinderRecord() {                
-        this.sequenceId     = null;
-        this.modelId        = null;
+    private DomainFinderRecord() {
+        this.sequenceId = null;
+        this.modelId = null;
         this.sequenceLength = null;
-        this.modelLength    = null;
+        this.modelLength = null;
         this.alignmentLength = null;
         this.matchedResidueCount = null;
-        this.sequenceStart  = null;
-        this.sequenceEnd    = null;
-        this.modelStart     = null;
-        this.modelEnd       = null;
+        this.sequenceStart = null;
+        this.sequenceEnd = null;
+        this.modelStart = null;
+        this.modelEnd = null;
         this.domainIeValue = null;
-        this.score          = null;
-        this.reverseScore   = null;
+        this.score = null;
+        this.reverseScore = null;
         this.matchedSequenceCount = null;
         this.segmentBoundaries = null;
         this.sequenceEvalue = null;
@@ -110,47 +109,47 @@ public final class DomainFinderRecord {
                               Double domainIeValue, Double score, String cigarAlignment,
                               Double sequenceEvalue) {
         SegmentRecord segmentRecord = getSegmentAndBoundaries(cigarAlignment, sequenceStart);
-        this.sequenceId          = sequenceId;
-        this.modelId             = modelId;
-        this.sequenceLength      = DEFAULT_SEQUENCE_LENGTH;
-        this.modelLength         = DEFAULT_MODEL_LENGTH;
-        this.alignmentLength     = DEFAULT_ALIGNMENT_LENGTH;
+        this.sequenceId = sequenceId;
+        this.modelId = modelId;
+        this.sequenceLength = DEFAULT_SEQUENCE_LENGTH;
+        this.modelLength = DEFAULT_MODEL_LENGTH;
+        this.alignmentLength = DEFAULT_ALIGNMENT_LENGTH;
         this.matchedResidueCount = DEFAULT_MATCHED_RESIDUE_COUNT;
-        this.sequenceStart       = sequenceStart;
-        this.sequenceEnd         = sequenceEnd;
-        this.modelStart          = modelStart;
-        this.modelEnd            = modelEnd;
-        this.domainIeValue       = domainIeValue;
-        this.score               = score;
-        this.reverseScore        = DEFAULT_REVERSE_SCORE;
+        this.sequenceStart = sequenceStart;
+        this.sequenceEnd = sequenceEnd;
+        this.modelStart = modelStart;
+        this.modelEnd = modelEnd;
+        this.domainIeValue = domainIeValue;
+        this.score = score;
+        this.reverseScore = DEFAULT_REVERSE_SCORE;
         this.matchedSequenceCount = segmentRecord.getMatchedSequenceCount();
-        this.segmentBoundaries   = segmentRecord.getSegmentBoundaries();
-        this.sequenceEvalue     = sequenceEvalue;
+        this.segmentBoundaries = segmentRecord.getSegmentBoundaries();
+        this.sequenceEvalue = sequenceEvalue;
     }
 
     DomainFinderRecord(String sequenceId, String modelId,
-                              Integer sequenceLength, Integer modelLength,
-                              Integer alignmentLength, Integer matchedResidueCount,
-                              Integer sequenceStart, Integer sequenceEnd,
-                              Integer modelStart, Integer modelEnd,
-                              Double domainIeValue, Double score, Double reverseScore,
-                              Integer matchedSequenceCount, String segmentBoundaries, Double sequenceEvalue) {
-        this.sequenceId          = sequenceId;
-        this.modelId             = modelId;
-        this.sequenceLength      = sequenceLength;
-        this.modelLength         = modelLength;
-        this.alignmentLength     = alignmentLength;
+                       Integer sequenceLength, Integer modelLength,
+                       Integer alignmentLength, Integer matchedResidueCount,
+                       Integer sequenceStart, Integer sequenceEnd,
+                       Integer modelStart, Integer modelEnd,
+                       Double domainIeValue, Double score, Double reverseScore,
+                       Integer matchedSequenceCount, String segmentBoundaries, Double sequenceEvalue) {
+        this.sequenceId = sequenceId;
+        this.modelId = modelId;
+        this.sequenceLength = sequenceLength;
+        this.modelLength = modelLength;
+        this.alignmentLength = alignmentLength;
         this.matchedResidueCount = matchedResidueCount;
-        this.sequenceStart       = sequenceStart;
-        this.sequenceEnd         = sequenceEnd;
-        this.modelStart          = modelStart;
-        this.modelEnd            = modelEnd;
-        this.domainIeValue       = domainIeValue;
-        this.score               = score;
-        this.reverseScore        = reverseScore;
+        this.sequenceStart = sequenceStart;
+        this.sequenceEnd = sequenceEnd;
+        this.modelStart = modelStart;
+        this.modelEnd = modelEnd;
+        this.domainIeValue = domainIeValue;
+        this.score = score;
+        this.reverseScore = reverseScore;
         this.matchedSequenceCount = matchedSequenceCount;
-        this.segmentBoundaries   = segmentBoundaries;
-        this.sequenceEvalue      = sequenceEvalue;
+        this.segmentBoundaries = segmentBoundaries;
+        this.sequenceEvalue = sequenceEvalue;
     }
 
     public String getSequenceId() {
@@ -218,64 +217,64 @@ public final class DomainFinderRecord {
     }
 
     public static DomainFinderRecord valueOf(Gene3dHmmer3RawMatch rawMatch) {
-        if (rawMatch == null)  {
+        if (rawMatch == null) {
             throw new NullPointerException("RawMatch object is null");
         }
-        return new DomainFinderRecord(rawMatch.getSequenceIdentifier(), rawMatch.getModel(),
-                              rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
-                              rawMatch.getHmmStart(), rawMatch.getHmmEnd(),
-                              rawMatch.getDomainIeValue(), rawMatch.getLocationScore(),
-                              rawMatch.getCigarAlignment(), rawMatch.getEvalue());
+        return new DomainFinderRecord(rawMatch.getSequenceIdentifier(), rawMatch.getModelId(),
+                rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
+                rawMatch.getHmmStart(), rawMatch.getHmmEnd(),
+                rawMatch.getDomainIeValue(), rawMatch.getLocationScore(),
+                rawMatch.getCigarAlignment(), rawMatch.getEvalue());
 
-    }    
+    }
 
     public static DomainFinderRecord valueOf(String line) {
-        String[] columns        = line.split(COLUMN_SEP);
-        String sequenceId       = columns[SEQUENCE_ID_POS];
-        String modelId          = columns[MODEL_ID_POS];
-        Integer sequenceLength  = Integer.parseInt(columns[SEQUENCE_LENGTH_POS]);
-        Integer modelLength     = Integer.parseInt(columns[MODEL_LENGTH_POS]);
+        String[] columns = line.split(COLUMN_SEP);
+        String sequenceId = columns[SEQUENCE_ID_POS];
+        String modelId = columns[MODEL_ID_POS];
+        Integer sequenceLength = Integer.parseInt(columns[SEQUENCE_LENGTH_POS]);
+        Integer modelLength = Integer.parseInt(columns[MODEL_LENGTH_POS]);
         Integer alignmentLength = Integer.parseInt(columns[ALIGNMENT_LENGTH_POS]);
         Integer matchedResidueCount = Integer.parseInt(columns[MATCHED_RESIDUE_COUNT_POS]);
-        Integer sequenceStart   = Integer.parseInt(columns[SEQUENCE_START_POS]);
-        Integer sequenceEnd     = Integer.parseInt(columns[SEQUENCE_END_POS]);
-        Integer modelStart      = Integer.parseInt(columns[MODEL_START_POS]);
-        Integer modelEnd        = Integer.parseInt(columns[MODEL_END_POS]);
-        Double domainIeValue    = Double.parseDouble(columns[DOMAIN_I_EVALUE_POS]);
-        Double score            = Double.parseDouble(columns[SCORE_POS]);
-        Double reverseScore     = Double.parseDouble(columns[REVERSE_SCORE_POS]);
+        Integer sequenceStart = Integer.parseInt(columns[SEQUENCE_START_POS]);
+        Integer sequenceEnd = Integer.parseInt(columns[SEQUENCE_END_POS]);
+        Integer modelStart = Integer.parseInt(columns[MODEL_START_POS]);
+        Integer modelEnd = Integer.parseInt(columns[MODEL_END_POS]);
+        Double domainIeValue = Double.parseDouble(columns[DOMAIN_I_EVALUE_POS]);
+        Double score = Double.parseDouble(columns[SCORE_POS]);
+        Double reverseScore = Double.parseDouble(columns[REVERSE_SCORE_POS]);
         Integer matchedSequenceCount = Integer.parseInt(columns[MATCHED_SEQUENCE_COUNT_POS]);
         String segmentBoundaries = columns[SEGMENT_BOUNDARIES_POS];
         return new DomainFinderRecord(sequenceId, modelId,
-                              sequenceLength, modelLength,
-                              alignmentLength, matchedResidueCount,
-                              sequenceStart, sequenceEnd,
-                              modelStart, modelEnd,
-                              domainIeValue, score, reverseScore,
-                              matchedSequenceCount, segmentBoundaries, null);
+                sequenceLength, modelLength,
+                alignmentLength, matchedResidueCount,
+                sequenceStart, sequenceEnd,
+                modelStart, modelEnd,
+                domainIeValue, score, reverseScore,
+                matchedSequenceCount, segmentBoundaries, null);
     }
 
     public static String toLine(DomainFinderRecord record) {
         String[] columns = new String[LAST_POS + 1];
-        columns[SEQUENCE_ID_POS]        = record.sequenceId;
-        columns[MODEL_ID_POS]           = record.modelId;
-        columns[SEQUENCE_LENGTH_POS]    = String.valueOf(record.sequenceLength);
-        columns[MODEL_LENGTH_POS]       = String.valueOf(record.modelLength);
-        columns[ALIGNMENT_LENGTH_POS]   = String.valueOf(record.alignmentLength);
+        columns[SEQUENCE_ID_POS] = record.sequenceId;
+        columns[MODEL_ID_POS] = record.modelId;
+        columns[SEQUENCE_LENGTH_POS] = String.valueOf(record.sequenceLength);
+        columns[MODEL_LENGTH_POS] = String.valueOf(record.modelLength);
+        columns[ALIGNMENT_LENGTH_POS] = String.valueOf(record.alignmentLength);
         columns[MATCHED_RESIDUE_COUNT_POS] = String.valueOf(record.matchedResidueCount);
-        columns[SEQUENCE_START_POS]     = String.valueOf(record.sequenceStart);
-        columns[SEQUENCE_END_POS]       = String.valueOf(record.sequenceEnd);
-        columns[MODEL_START_POS]        = String.valueOf(record.modelStart);
-        columns[MODEL_END_POS]          = String.valueOf(record.modelEnd);
-        columns[DOMAIN_I_EVALUE_POS]    = String.valueOf(record.domainIeValue);
-        columns[SCORE_POS]              = String.valueOf(record.score);
-        columns[REVERSE_SCORE_POS]      = String.valueOf(record.reverseScore);
+        columns[SEQUENCE_START_POS] = String.valueOf(record.sequenceStart);
+        columns[SEQUENCE_END_POS] = String.valueOf(record.sequenceEnd);
+        columns[MODEL_START_POS] = String.valueOf(record.modelStart);
+        columns[MODEL_END_POS] = String.valueOf(record.modelEnd);
+        columns[DOMAIN_I_EVALUE_POS] = String.valueOf(record.domainIeValue);
+        columns[SCORE_POS] = String.valueOf(record.score);
+        columns[REVERSE_SCORE_POS] = String.valueOf(record.reverseScore);
         columns[MATCHED_SEQUENCE_COUNT_POS] = String.valueOf(record.matchedSequenceCount);
-        columns[SEGMENT_BOUNDARIES_POS] = String.valueOf(record.segmentBoundaries);        
+        columns[SEGMENT_BOUNDARIES_POS] = String.valueOf(record.segmentBoundaries);
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < columns.length; i++)  {
+        for (int i = 0; i < columns.length; i++) {
             builder.append(columns[i]);
-            if (i < LAST_POS)   {
+            if (i < LAST_POS) {
                 builder.append(COLUMN_SEP);
             }
         }
@@ -295,6 +294,7 @@ public final class DomainFinderRecord {
     *    while the beginning of the second is the first after the gap closes.
     *(5) Continue on down the sequence ...
      */
+
     public static SegmentRecord getSegmentAndBoundaries(String cigarAlignment, int sequenceStart) {
 
         int residueLength = sequenceStart;
@@ -307,48 +307,48 @@ public final class DomainFinderRecord {
 
         for (char c : cigarAlignment.toCharArray()) {
 
-             if(Character.isUpperCase(c)) {
-                 residueCounter=Integer.parseInt(sb1.toString());
-                 sb1.append(c);
-                 sb1.setLength(0);
-                 residueLength+=residueCounter;
+            if (Character.isUpperCase(c)) {
+                residueCounter = Integer.parseInt(sb1.toString());
+                sb1.append(c);
+                sb1.setLength(0);
+                residueLength += residueCounter;
 
-                 switch(c) {
+                switch (c) {
 
-                     case CigarAlignmentEncoder.MATCH_CHAR:
-                          endOfMatch = residueLength;
-                          insertCounter=0;
-                          if(startOfMatch==0)
-                             startOfMatch =residueLength-residueCounter;  //to have a good start of match always
-                          break;
+                    case CigarAlignmentEncoder.MATCH_CHAR:
+                        endOfMatch = residueLength;
+                        insertCounter = 0;
+                        if (startOfMatch == 0)
+                            startOfMatch = residueLength - residueCounter;  //to have a good start of match always
+                        break;
 
-                     case CigarAlignmentEncoder.INSERT_CHAR:
-                           insertCounter+=residueCounter;  //this is to handle two insert segment followed by each other
-                           if (insertCounter > 30 && endOfMatch > startOfMatch ) {
-                               sb.append(startOfMatch).append(SEGMENT_BOUNDARY_SEPARATOR).append(endOfMatch - 1).append(SEGMENT_BOUNDARY_SEPARATOR);
-                               startOfMatch=residueLength;
-                               segmentCounter++;
-                           }
-                           break;
+                    case CigarAlignmentEncoder.INSERT_CHAR:
+                        insertCounter += residueCounter;  //this is to handle two insert segment followed by each other
+                        if (insertCounter > 30 && endOfMatch > startOfMatch) {
+                            sb.append(startOfMatch).append(SEGMENT_BOUNDARY_SEPARATOR).append(endOfMatch - 1).append(SEGMENT_BOUNDARY_SEPARATOR);
+                            startOfMatch = residueLength;
+                            segmentCounter++;
+                        }
+                        break;
 
-                     case CigarAlignmentEncoder.DELETE_CHAR:
-                         residueLength-=residueCounter;
-                         break;
-                 }
-             }
-             else {
-                 sb1.append(c);
-             }
+                    case CigarAlignmentEncoder.DELETE_CHAR:
+                        residueLength -= residueCounter;
+                        break;
+                }
+            } else {
+                sb1.append(c);
+            }
 
         } //end of for
-        if( endOfMatch > startOfMatch ) {
+        if (endOfMatch > startOfMatch) {
             sb.append(startOfMatch).append(SEGMENT_BOUNDARY_SEPARATOR).append(endOfMatch - 1).append(SEGMENT_BOUNDARY_SEPARATOR);  //not to missout any trailing segment
         }
         String segmentBoundaries = sb.toString().substring(0, sb.toString().length() - 1);
         return new SegmentRecord(segmentCounter, segmentBoundaries);
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof DomainFinderRecord))
@@ -370,12 +370,13 @@ public final class DomainFinderRecord {
                 .append(matchedSequenceCount, r.matchedSequenceCount)
                 .append(segmentBoundaries, r.segmentBoundaries)
                 .isEquals()
-                && 
+                &&
                 // Allow for some imprecision in evalues
                 PersistenceConversion.equivalent(domainIeValue, r.domainIeValue);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 97)
                 .append(sequenceId)
                 .append(modelId)
@@ -395,19 +396,20 @@ public final class DomainFinderRecord {
                 .toHashCode();
     }
 
- 
-    @Override public String toString()  {
+
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    public static final class SegmentRecord   {
+    public static final class SegmentRecord {
 
         private final Integer matchedSequenceCount;
         private final String segmentBoundaries;
 
         public SegmentRecord(Integer matchedSequenceCount, String segmentBoundaries) {
             this.matchedSequenceCount = matchedSequenceCount;
-            this.segmentBoundaries    = segmentBoundaries;
+            this.segmentBoundaries = segmentBoundaries;
         }
 
         public Integer getMatchedSequenceCount() {
@@ -418,7 +420,8 @@ public final class DomainFinderRecord {
             return segmentBoundaries;
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (!(o instanceof SegmentRecord))
@@ -430,7 +433,8 @@ public final class DomainFinderRecord {
                     .isEquals();
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return new HashCodeBuilder(19, 99)
                     .append(matchedSequenceCount)
                     .append(segmentBoundaries)
@@ -438,11 +442,12 @@ public final class DomainFinderRecord {
         }
 
 
-        @Override public String toString()  {
+        @Override
+        public String toString() {
             return ToStringBuilder.reflectionToString(this);
         }
 
-        
+
     }
 
 }

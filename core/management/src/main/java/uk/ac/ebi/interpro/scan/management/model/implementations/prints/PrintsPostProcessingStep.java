@@ -65,8 +65,8 @@ public class PrintsPostProcessingStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Retrieve raw results for protein range.
         Map<String, RawProtein<PrintsRawMatch>> rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
-                Long.toString(stepInstance.getBottomProtein()),
-                Long.toString(stepInstance.getTopProtein()),
+                stepInstance.getBottomProtein(),
+                stepInstance.getTopProtein(),
                 signatureLibraryRelease
         );
 

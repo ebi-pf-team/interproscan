@@ -1,20 +1,20 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+
 import java.util.Set;
-import java.util.Collection;
 
 /**
  * Data access object methods for {@link RawMatch}es.
  *
- * @author  Phil Jones
- * @author  Antony Quinn
+ * @author Phil Jones
+ * @author Antony Quinn
  * @version $Id$
  */
-public interface RawMatchDAO<T extends RawMatch> 
+public interface RawMatchDAO<T extends RawMatch>
         extends GenericDAO<T, Long> {
 
     /**
@@ -28,20 +28,20 @@ public interface RawMatchDAO<T extends RawMatch>
 
     /**
      * Retrieves matches using {@link uk.ac.ebi.interpro.scan.model.Model} IDs.
-     * 
-     * @param  modelId Corresponds to {@link uk.ac.ebi.interpro.scan.model.Model#getAccession()}
+     *
+     * @param modelId Corresponds to {@link uk.ac.ebi.interpro.scan.model.Model#getAccession()}
      * @return Matches
      */
-    public T getMatchesByModel (String modelId);
+    public T getMatchesByModel(String modelId);
 
     /**
      * Returns proteins within the given ID range.
      *
-     * @param bottomId                  Lower bound (protein.id >= bottomId)
-     * @param topId                     Upper bound (protein.id <= topId)
-     * @param signatureDatabaseRelease  Signature database release number.
+     * @param bottomId                 Lower bound (protein.id >= bottomId)
+     * @param topId                    Upper bound (protein.id <= topId)
+     * @param signatureDatabaseRelease Signature database release number.
      * @return Proteins within the given ID range
      */
-    public Set<RawProtein<T>> getProteinsByIdRange (String bottomId, String topId, String signatureDatabaseRelease);
-    
+    public Set<RawProtein<T>> getProteinsByIdRange(long bottomId, long topId, String signatureDatabaseRelease);
+
 }

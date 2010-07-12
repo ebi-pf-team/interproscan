@@ -87,14 +87,14 @@ public class PrintsFilteredMatchDAOImpl extends GenericDAOImpl<FingerPrintsMatch
             for (PrintsRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) continue;
                 currentRawMatch = rawMatch;
-                if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModel())) {
+                if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
                     if (currentSignatureAc != null) {
                         // Not the first...
                         protein.addMatch(new FingerPrintsMatch(currentSignature, rawMatch.getEvalue(), rawMatch.getGraphscan(), locations));
                     }
                     // Reset everything
                     locations = new HashSet<FingerPrintsMatch.FingerPrintsLocation>();
-                    currentSignatureAc = rawMatch.getModel();
+                    currentSignatureAc = rawMatch.getModelId();
                     currentSignature = modelIdToSignatureMap.get(currentSignatureAc);
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find PRINTS signature " + currentSignatureAc + " in the database.");

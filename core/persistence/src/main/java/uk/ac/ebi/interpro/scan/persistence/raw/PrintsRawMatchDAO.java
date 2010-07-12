@@ -26,7 +26,7 @@ public interface PrintsRawMatchDAO extends RawMatchDAO<PrintsRawMatch> {
      *         PrintsRawMatch objects for the protein IDs in the range
      *         specified (Database default String ordering)
      */
-    public Map<String, RawProtein<PrintsRawMatch>> getRawMatchesForProteinIdsInRange(String bottomId, String topId, String signatureDatabaseRelease);
+    public Map<String, RawProtein<PrintsRawMatch>> getRawMatchesForProteinIdsInRange(long bottomId, long topId, String signatureDatabaseRelease);
 
 
 }

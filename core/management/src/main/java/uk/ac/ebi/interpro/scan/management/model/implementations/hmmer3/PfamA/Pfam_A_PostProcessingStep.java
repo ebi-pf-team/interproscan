@@ -76,7 +76,7 @@ public class Pfam_A_PostProcessingStep extends Step {
     /**
      * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepInstance containing the parameters for executing.
+     * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory
      * @throws Exception could be anything thrown by the execute method.
      */
@@ -84,23 +84,23 @@ public class Pfam_A_PostProcessingStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Retrieve raw results for protein range.
         Map<String, RawProtein<PfamHmmer3RawMatch>> rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
-                Long.toString(stepInstance.getBottomProtein()),
-                Long.toString(stepInstance.getTopProtein()),
+                stepInstance.getBottomProtein(),
+                stepInstance.getTopProtein(),
                 getSignatureLibraryRelease()
         );
 
         // Post process
-        try{
+        try {
             Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = getPostProcessor().process(rawMatches);
             filteredMatchDAO.persistFilteredMatches(filteredMatches.values());
         } catch (IOException e) {
-            throw new IllegalStateException ("IOException thrown when attemptin to post process filtered matches.", e);
+            throw new IllegalStateException("IOException thrown when attemptin to post process filtered matches.", e);
         }
     }
 
     private int countMatches(Map<String, RawProtein<PfamHmmer3RawMatch>> matches) {
         int count = 0;
-        for (RawProtein<PfamHmmer3RawMatch> protein : matches.values()){
+        for (RawProtein<PfamHmmer3RawMatch> protein : matches.values()) {
             if (protein.getMatches() != null) count += protein.getMatches().size();
         }
         return count;
