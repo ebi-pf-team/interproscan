@@ -1,13 +1,13 @@
 package uk.ac.ebi.interpro.scan.cli;
 
-import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.io.AbstractResourceWriter;
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 
 /**
  * This implementation writes flat-files for import into Onion's analysis table.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public class Gene3dOnionAnalysisResourceWriter extends AbstractResourceWriter<Gene3dHmmer3RawMatch> {
@@ -32,12 +32,12 @@ public class Gene3dOnionAnalysisResourceWriter extends AbstractResourceWriter<Ge
         //  "DOMAIN_I_EVALUE" FLOAT(126),
         //  "ACC" FLOAT(126),
         //  "ALIGNMENT" VARCHAR2(4000 BYTE),
-        String[] rel      = m.getSignatureLibraryRelease().split("\\.");
+        String[] rel = m.getSignatureLibraryRelease().split("\\.");
         String relNoMajor = rel[0];
         String relNoMinor = rel[1];
         String[] line = {
                 m.getSequenceIdentifier(),
-                m.getModel(),
+                m.getModelId(),
                 relNoMajor,
                 relNoMinor,
                 String.valueOf(m.getLocationStart()),
@@ -49,7 +49,7 @@ public class Gene3dOnionAnalysisResourceWriter extends AbstractResourceWriter<Ge
                 String.valueOf(m.getEnvelopeEnd()),
                 String.valueOf(m.getLocationScore()),
                 String.valueOf(m.getScore()),
-                String.valueOf(PersistenceConversion.set(m.getEvalue())),  
+                String.valueOf(PersistenceConversion.set(m.getEvalue())),
                 String.valueOf(PersistenceConversion.set(m.getDomainCeValue())),
                 String.valueOf(PersistenceConversion.set(m.getDomainIeValue())),
                 String.valueOf(m.getExpectedAccuracy()),
@@ -57,13 +57,13 @@ public class Gene3dOnionAnalysisResourceWriter extends AbstractResourceWriter<Ge
         };
         StringBuilder builder = new StringBuilder();
         int last = line.length - 1;
-        for (int i=0; i<line.length; i++)   {
+        for (int i = 0; i < line.length; i++) {
             builder.append(line[i]);
-            if (i < last)   {
+            if (i < last) {
                 builder.append("\t");
             }
         }
-        return builder.toString();        
+        return builder.toString();
     }
 
 }

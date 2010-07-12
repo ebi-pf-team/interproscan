@@ -1,45 +1,42 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
-import org.junit.runner.RunWith;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-
-import javax.annotation.Resource;
-import javax.persistence.PersistenceException;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
+import javax.annotation.Resource;
+import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Map;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * Units tests for {@link PfamHmmer3RawMatchDAO}
  *
- * @author  Manjula Thimma
+ * @author Manjula Thimma
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class PfamHmmer3RawMatchDAOTest {
 
-    private final String UPI       = "UPI00015AC919";
-    private final String MODEL     = "PF04041";
+    private final String UPI = "UPI00015AC919";
+    private final String MODEL = "PF04041";
     private final SignatureLibrary signatureLibrary = SignatureLibrary.PFAM;
-    private final String dbVersion     = "24.0";
+    private final String dbVersion = "24.0";
     private final String hmmBounds = "[]";
-    private final String alignment="";
-    private final int start =15,  hmmStart=18,hmmEnd=320;
-    private final int end=345;
-    private final double evalue=0.00005,score=512.3, locationEvalue=-5.60205984115601,locationScore=779.4;
+    private final String alignment = "";
+    private final int start = 15, hmmStart = 18, hmmEnd = 320;
+    private final int end = 345;
+    private final double evalue = 0.00005, score = 512.3, locationEvalue = -5.60205984115601, locationScore = 779.4;
     //private static Logger LOGGER = Logger.getLogger(PfamHmmer3RawMatchDAOTest.class);
 
     //private static final String[] ACCESSIONS = {"Q12345","P99999", "IPI01234567", "ENSP120923423423234"};
@@ -49,9 +46,9 @@ public class PfamHmmer3RawMatchDAOTest {
     private static final Long LONG_ONE = 1L;
 
     // First line of UPI0000000001.fasta
-    public static final String GOOD       = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
+    public static final String GOOD = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
 
-    @Resource(name= "pfamDAO")
+    @Resource(name = "pfamDAO")
     private PfamHmmer3RawMatchDAO dao;
 
     public void setDao(PfamHmmer3RawMatchDAO dao) {
@@ -60,7 +57,7 @@ public class PfamHmmer3RawMatchDAOTest {
 
     @Before
     @After
-    public void emptyPfamTable(){
+    public void emptyPfamTable() {
         dao.deleteAll();
         assertEquals("There should be no pfam entries in the Pfam table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
@@ -68,14 +65,14 @@ public class PfamHmmer3RawMatchDAOTest {
     /**
      * This test exercises
      * GenericDAOImpl<Protein, Long>
-     *                              .insert(Protein protein)
-     *                              .count()
-     *                              .read(Long id)
-     *                              .retrieveAll()
-     *                              .delete(Protein protein)
+     * .insert(Protein protein)
+     * .count()
+     * .read(Long id)
+     * .retrieveAll()
+     * .delete(Protein protein)
      */
     @Test
-    public void storeAndRetrieveProtein(){
+    public void storeAndRetrieveProtein() {
         emptyPfamTable();
         PfamHmmer3RawMatch p = new PfamHmmer3RawMatch(UPI, MODEL, signatureLibrary, dbVersion, start, end,
                 3.7E-9, 0.035, 1, 104, "[]", 3.0, 0, 0, 0, 0, 0, 0, 0);
@@ -84,7 +81,7 @@ public class PfamHmmer3RawMatchDAOTest {
         Long id = p.getId();
         assertEquals("The count of pfams in the database is not correct.", LONG_ONE, dao.count());
         PfamHmmer3RawMatch retrievedPfam = dao.read(id);
-        assertEquals("The pfam methodAc of the retrieved object is not the same as the original object.", p.getModel(), retrievedPfam.getModel());
+        assertEquals("The pfam methodAc of the retrieved object is not the same as the original object.", p.getModelId(), retrievedPfam.getModelId());
         dao.delete(retrievedPfam);
         List<PfamHmmer3RawMatch> retrievedPfamList = dao.retrieveAll();
         assertEquals("There should be no pfams in the database, following removal of the single pfam that was added.", 0, retrievedPfamList.size());
@@ -97,8 +94,8 @@ public class PfamHmmer3RawMatchDAOTest {
      * Test that a PersistenceException is thrown if an attempt is made to
      * insert the same Protein twice.
      */
-    @Test (expected = PersistenceException.class)
-    public void testPersistenceExceptionOnSecondInsert(){
+    @Test(expected = PersistenceException.class)
+    public void testPersistenceExceptionOnSecondInsert() {
         emptyPfamTable();
         PfamHmmer3RawMatch p = getMatchExample(null);
         dao.insert(p);
@@ -109,25 +106,25 @@ public class PfamHmmer3RawMatchDAOTest {
      * Tests the GenericDAO.getMaximumPrimaryKey() method.
      */
     @Test
-    public void testMaximumPrimaryKeyCount(){
+    public void testMaximumPrimaryKeyCount() {
         emptyPfamTable();
         Long maxPrimaryKey = 0l;
-        for (int counter = 0; counter < 10; counter++){
+        for (int counter = 0; counter < 10; counter++) {
             PfamHmmer3RawMatch p = getMatchExample(null);
             dao.insert(p);
-            if (p.getId() > maxPrimaryKey){
+            if (p.getId() > maxPrimaryKey) {
                 maxPrimaryKey = p.getId();
             }
         }
         assertEquals("The maximum primary key is not as expected", maxPrimaryKey, dao.getMaximumPrimaryKey());
     }
 
-    private PfamHmmer3RawMatch getMatchExample(String proteinId)   {
-        if (proteinId == null){
+    private PfamHmmer3RawMatch getMatchExample(String proteinId) {
+        if (proteinId == null) {
             proteinId = "UPIblachabla";
         }
 
-        return new PfamHmmer3RawMatch(proteinId,"PF04041",SignatureLibrary.PFAM, dbVersion, (int)(Math.random() * 20), (int)(Math.random() * 100 + 20),
+        return new PfamHmmer3RawMatch(proteinId, "PF04041", SignatureLibrary.PFAM, dbVersion, (int) (Math.random() * 20), (int) (Math.random() * 100 + 20),
                 3.7E-9, 0.035, 1, 104, "[]", 3.0, 0, 0, 0, 0, 0, 0, 0);
     }
 
@@ -135,16 +132,16 @@ public class PfamHmmer3RawMatchDAOTest {
      * Test of the getMatchesForProteinIdsInRange() method.
      */
     @Test
-    public void testGetMatchesForProteinIdsInRange(){
+    public void testGetMatchesForProteinIdsInRange() {
         emptyPfamTable();
         String[] proteinIds = {"001", "002", "003", "003", "004", "005", "006", "007", "008"};
-        for (String proteinId : proteinIds){
+        for (String proteinId : proteinIds) {
             PfamHmmer3RawMatch p = getMatchExample(proteinId);
             dao.insert(p);
         }
-        Map<String, RawProtein<PfamHmmer3RawMatch>> matches = dao.getRawMatchesForProteinIdsInRange("003", "006", dbVersion);
+        Map<String, RawProtein<PfamHmmer3RawMatch>> matches = dao.getRawMatchesForProteinIdsInRange(3, 6, dbVersion);
         int matchCount = 0;
-        for (RawProtein rawProtein : matches.values()){
+        for (RawProtein rawProtein : matches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
         assertEquals(5, matchCount);
@@ -154,8 +151,7 @@ public class PfamHmmer3RawMatchDAOTest {
     /**
      * Tests the ProteinDAO.getProteinsInTransactionSlice() method.
 
-     @Test
-     public void testGetProteinsInTransactionSlice(){
+     @Test public void testGetProteinsInTransactionSlice(){
      emptyProteinTable();
      String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLOPPY", "GHGHGHGHG", "GRUFF", "SPLOD", "QUQUQUQU"};
      Long maxPrimaryKey = Long.MIN_VALUE;

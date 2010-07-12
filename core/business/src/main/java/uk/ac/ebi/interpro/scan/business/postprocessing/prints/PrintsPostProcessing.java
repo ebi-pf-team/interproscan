@@ -139,9 +139,9 @@ public class PrintsPostProcessing implements Serializable {
 
         for (PrintsRawMatch rawMatch : sortedRawMatches) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Iterating over sorted raw matches.  Currently looking at protein " + rawProteinUnfiltered.getProteinIdentifier() + " model " + rawMatch.getModel());
+                LOGGER.debug("Iterating over sorted raw matches.  Currently looking at protein " + rawProteinUnfiltered.getProteinIdentifier() + " model " + rawMatch.getModelId());
             }
-            if (currentModelAccession == null || !currentModelAccession.equals(rawMatch.getModel())) {
+            if (currentModelAccession == null || !currentModelAccession.equals(rawMatch.getModelId())) {
                 // Either just started, or got to the end of the matches for one model, so filter & reset.
 
                 // Process matches
@@ -155,10 +155,10 @@ public class PrintsPostProcessing implements Serializable {
                 // Reset
                 currentMatchesPass = true;
                 motifMatchesForCurrentModel.clear();
-                currentModelAccession = rawMatch.getModel();
+                currentModelAccession = rawMatch.getModelId();
                 currentHierachyDBEntry = printsModelData.get(currentModelAccession);
                 if (currentHierachyDBEntry == null) {
-                    throw new IllegalStateException("There is no entry in the FingerPRINThierarchy.db file for model accession " + rawMatch.getModel());
+                    throw new IllegalStateException("There is no entry in the FingerPRINThierarchy.db file for model accession " + rawMatch.getModelId());
                 }
             }
             // Fail any matches that do not hit the evalue cutoff - first filter..
@@ -264,7 +264,7 @@ public class PrintsPostProcessing implements Serializable {
                 else if (o1.getEvalue() > o2.getEvalue()) comparison = 1;
             }
             if (comparison == 0) {
-                comparison = o1.getModel().compareTo(o2.getModel());
+                comparison = o1.getModelId().compareTo(o2.getModelId());
             }
             if (comparison == 0) {
                 if (o1.getMotifNumber() < o2.getMotifNumber()) comparison = -1;
