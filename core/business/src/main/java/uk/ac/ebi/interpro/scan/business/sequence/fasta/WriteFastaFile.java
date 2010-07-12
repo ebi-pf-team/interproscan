@@ -9,10 +9,11 @@ import java.util.List;
  * This class writes a fasta file, using the database
  * primary keys as sequence identifiers, THEREFORE this
  * writer only works with PERSISTED Proteins
- * User: mumdad
- * Date: 15-Nov-2009
- * Time: 12:11:20
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Phil Jones
+ *         Date: 15-Nov-2009
+ *         Time: 12:11:20
+ *         To change this template use File | Settings | File Templates.
  */
 public class WriteFastaFile implements Serializable {
 
@@ -21,6 +22,7 @@ public class WriteFastaFile implements Serializable {
     /**
      * Optional setter for the fasta sequence line length
      * (defaults to 60).
+     *
      * @param sequenceLineLength the fasta sequence line length
      */
     public void setSequenceLineLength(int sequenceLineLength) {
@@ -29,26 +31,25 @@ public class WriteFastaFile implements Serializable {
 
     public void writeFastaFile(List<Protein> proteins, String filePath) throws IOException, FastaFileWritingException {
         BufferedWriter writer = null;
-        try{
+        try {
             File file = new File(filePath);
-            if (! file.createNewFile()){
+            if (!file.createNewFile()) {
                 return; // File already exists, so don't try to write it again.
             }
             writer = new BufferedWriter(new FileWriter(file));
-            for (Protein protein : proteins){
-                if (protein.getId() == null){
-                    throw new FastaFileWritingException ("The WriteFastaFile class can only write out Protein objects that have already been persisted to the database as it uses the database primary key as the protein ID in the fasta file.", filePath);
+            for (Protein protein : proteins) {
+                if (protein.getId() == null) {
+                    throw new FastaFileWritingException("The WriteFastaFile class can only write out Protein objects that have already been persisted to the database as it uses the database primary key as the protein ID in the fasta file.", filePath);
                 }
                 // Write ID line.
                 writer.write('>');
                 writer.write(protein.getId().toString());
                 writer.write('\n');
                 String seq = protein.getSequence();
-                for (int index = 0; index < seq.length(); index += sequenceLineLength){
-                    if (seq.length() > index + sequenceLineLength){
+                for (int index = 0; index < seq.length(); index += sequenceLineLength) {
+                    if (seq.length() > index + sequenceLineLength) {
                         writer.write(seq.substring(index, index + sequenceLineLength));
-                    }
-                    else {
+                    } else {
                         writer.write(seq.substring(index));
                     }
                     writer.write('\n');
@@ -56,14 +57,14 @@ public class WriteFastaFile implements Serializable {
             }
         }
         finally {
-            if (writer != null){
+            if (writer != null) {
                 writer.close();
             }
         }
     }
 
-    public class FastaFileWritingException extends Exception{
-        
+    public class FastaFileWritingException extends Exception {
+
         private String filePath;
 
         /**
