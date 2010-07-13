@@ -19,7 +19,7 @@ import java.io.*;
 
 public class CleanRunDatabase implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(CleanRunDatabase.class);
+    private static final Logger LOGGER = Logger.getLogger(CleanRunDatabase.class.getName());
 
     private String originalDatabasePath;
 

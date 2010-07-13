@@ -6,7 +6,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 /**
- * Allows StepExecutions to be refreshed in the database, following execution. 
+ * Allows StepExecutions to be refreshed in the database, following execution.
  *
  * @author Phil Jones
  * @version $Id$
@@ -14,7 +14,8 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
  */
 public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> implements StepExecutionDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(StepExecutionDAOImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(StepExecutionDAOImpl.class.getName());
+
     /**
      * Sets the class of the model that the DOA instance handles.
      * Note that this has been set up to use constructor injection
@@ -39,13 +40,13 @@ public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> 
     @Transactional
     public void refreshStepExecution(StepExecution freshStepExecution) {
 
-        if (LOGGER.isDebugEnabled()){
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Refreshing StepExecution with ID " + freshStepExecution.getId());
         }
         // Retrieve dirty step execution from the database.
         StepExecution dirtyStepExec = entityManager.find(StepExecution.class, freshStepExecution.getId());
-        if (dirtyStepExec == null){
-            throw new IllegalStateException ("Attempting to refresh a StepExecution that is not in the database.");
+        if (dirtyStepExec == null) {
+            throw new IllegalStateException("Attempting to refresh a StepExecution that is not in the database.");
         }
         LOGGER.debug("Retrieved Dirty StepExecution.");
         dirtyStepExec.refresh(freshStepExecution);

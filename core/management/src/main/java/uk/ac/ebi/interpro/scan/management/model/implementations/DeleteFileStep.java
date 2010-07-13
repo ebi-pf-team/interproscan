@@ -16,7 +16,7 @@ import java.io.File;
  */
 public class DeleteFileStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(DeleteFileStep.class);
+    private static final Logger LOGGER = Logger.getLogger(DeleteFileStep.class.getName());
 
     private String fileNameTemplate;
 
@@ -32,7 +32,7 @@ public class DeleteFileStep extends Step {
      * of this method MUST throw a suitable Exception, as the call
      * to execute is performed within a transaction with the reply to the JMSBroker.
      *
-     * @param stepInstance containing the parameters for executing.
+     * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory
      * @throws Exception could be anything thrown by the execute method.
      */
@@ -40,9 +40,9 @@ public class DeleteFileStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileNameTemplate);
         File file = new File(filePathName);
-        if (! file.delete()){
+        if (!file.delete()) {
             LOGGER.error("Unable to delete the file located at " + filePathName);
-            throw new IllegalStateException ("Unable to delete the file located at " + filePathName);
+            throw new IllegalStateException("Unable to delete the file located at " + filePathName);
         }
     }
 }

@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class Pfam_A_PostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(Pfam_A_PostProcessingStep.class);
+    private static final Logger LOGGER = Logger.getLogger(Pfam_A_PostProcessingStep.class.getName());
 
     private PfamHMMER3PostProcessing postProcessor;
 

@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.io.match.phobius;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusFeature;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
 import uk.ac.ebi.interpro.scan.model.PhobiusFeatureType;
@@ -21,7 +20,7 @@ import java.util.Set;
  */
 public class PhobiusMatchParserTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(PhobiusMatchParserTest.class);
+    private static final Logger LOGGER = Logger.getLogger(PhobiusMatchParserTest.class.getName());
 
     private static final String TEST_FILE_PATH = "data/phobius/10k.phobius.out";
 
@@ -36,22 +35,22 @@ public class PhobiusMatchParserTest extends TestCase {
         Set<PhobiusProtein> results = parser.parse(is, TEST_FILE_PATH);
         is.close();
         logMemUsage("After parse: ");
-        System.out.println("Protein count: " + results.size());
-        for (PhobiusProtein protein : results){
+        LOGGER.debug("Protein count: " + results.size());
+        for (PhobiusProtein protein : results) {
             assertTrue("The protein should be one or both of TM and SP.", protein.isSP() || protein.isTM());
             // Now test that those two methods work properly!
             // Determine that all the included proteins contain
             // valid features only.
             boolean isSignal = false;
             boolean isTM = false;
-//            System.out.println(protein.toString());
-            for (PhobiusFeature feature : protein.getFeatures()){
+//            LOGGER.debug(protein.toString());
+            for (PhobiusFeature feature : protein.getFeatures()) {
                 if (PhobiusFeatureType.SIGNAL_PEPTIDE_C_REGION == feature.getFeatureType() ||
-                    PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == feature.getFeatureType() ||
-                    PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == feature.getFeatureType()){
+                        PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == feature.getFeatureType() ||
+                        PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == feature.getFeatureType()) {
                     isSignal = true;
                 }
-                if (PhobiusFeatureType.TRANSMEMBRANE == feature.getFeatureType()){
+                if (PhobiusFeatureType.TRANSMEMBRANE == feature.getFeatureType()) {
                     isTM = true;
                 }
             }
@@ -59,14 +58,29 @@ public class PhobiusMatchParserTest extends TestCase {
         }
     }
 
-    private void logMemUsage(String prefix){
-        if (LOGGER.isDebugEnabled()){
-            System.gc();System.gc();System.gc();System.gc();
-            System.gc();System.gc();System.gc();System.gc();
-            System.gc();System.gc();System.gc();System.gc();
-            System.gc();System.gc();System.gc();System.gc();
-            System.gc();System.gc();System.gc();System.gc();
-            LOGGER.debug(prefix + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024) + " MB.");
+    private void logMemUsage(String prefix) {
+        if (LOGGER.isDebugEnabled()) {
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            System.gc();
+            LOGGER.debug(prefix + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024) + " MB.");
         }
     }
 }

@@ -7,19 +7,19 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO: Add class description
  *
- * @author  Phil Jones
+ * @author Phil Jones
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 public class CommandLineConversationImplTest extends TestCase {
 
-	private static Logger LOGGER = Logger.getLogger(CommandLineConversationImplTest.class);
+    private static final Logger LOGGER = Logger.getLogger(CommandLineConversationImplTest.class.getName());
 
     /**
      * System property that returns the location of the current users home directory.
@@ -38,18 +38,18 @@ public class CommandLineConversationImplTest extends TestCase {
         testCommand.add("java");
         testCommand.add("-version");
         CommandLineConversation clc = new CommandLineConversationImpl();
-        try{
+        try {
             clc.setWorkingDirectory(System.getProperty(USER_HOME));
             int outcome = clc.runCommand(false, testCommand);
             Assert.assertEquals("Outcome of " + testCommand.toString() + " should be 0.", 0, outcome);
             LOGGER.debug(clc.getOutput());
             LOGGER.debug(clc.getErrorMessage());
         }
-        catch (FileNotFoundException e){
+        catch (FileNotFoundException e) {
             LOGGER.error("Check you have set JAVA_HOME and added JAVA_HOME/bin to the PATH environment variable.", e);
             Assert.fail(e.toString());
         }
-        catch (IOException e){
+        catch (IOException e) {
             LOGGER.error("Check you have set JAVA_HOME and added JAVA_HOME/bin to the PATH environment variable.", e);
             Assert.fail(e.toString());
         }
@@ -60,13 +60,13 @@ public class CommandLineConversationImplTest extends TestCase {
     }
 
     @Test
-    public void testCommandWithFileOutput(){
+    public void testCommandWithFileOutput() {
         //String[] testCommand = {"java", "-version"};
         List<String> testCommand = new ArrayList<String>();
         testCommand.add("java");
         testCommand.add("-version");
         CommandLineConversation clc = new CommandLineConversationImpl();
-        try{
+        try {
             clc.setOutputPathToFile("command_output", false, true);
             clc.setErrorPathToFile("command_error", false, true);
             clc.setWorkingDirectory(System.getProperty(USER_HOME));
@@ -75,11 +75,11 @@ public class CommandLineConversationImplTest extends TestCase {
             LOGGER.debug(clc.getOutput());
             LOGGER.debug(clc.getErrorMessage());
         }
-        catch (FileNotFoundException e){
+        catch (FileNotFoundException e) {
             LOGGER.error("Check you have set JAVA_HOME and added JAVA_HOME/bin to the PATH environment variable.", e);
             Assert.fail(e.toString());
         }
-        catch (IOException e){
+        catch (IOException e) {
             LOGGER.error("Check you have set JAVA_HOME and added JAVA_HOME/bin to the PATH environment variable.", e);
             Assert.fail(e.toString());
         }
@@ -98,7 +98,7 @@ public class CommandLineConversationImplTest extends TestCase {
     public void testCommandLineErrorReporting() {
         final String[] testCommand = {"java", "-utter", "-nonsense"};
         CommandLineConversation clc = new CommandLineConversationImpl();
-        try{
+        try {
             int outcome = clc.runCommand(false, testCommand);
             Assert.assertNotSame("Outcome of '" + testCommand.toString() + "' should not be 0 as command is nonsense.", 0, outcome);
             Assert.assertNotNull("Error message expected in error output.", clc.getErrorMessage());
@@ -113,7 +113,7 @@ public class CommandLineConversationImplTest extends TestCase {
             LOGGER.debug(clc.getOutput());
             LOGGER.debug(clc.getErrorMessage());
         }
-        catch (IOException e){
+        catch (IOException e) {
             LOGGER.error(e);
             Assert.fail(e.toString());
         }

@@ -9,9 +9,9 @@ import java.lang.IllegalStateException;
 
 /**
  * Simple bean holding information about queues and the JMS Broker.
- *
+ * <p/>
  * NOT thread safe and CANNOT BE MADE THREAD SAFE as javax.jms.Session objects are not thread safe.
- *
+ * <p/>
  * Use in a single Thread only.
  *
  * @author Phil Jones
@@ -20,64 +20,63 @@ import java.lang.IllegalStateException;
  */
 public class HornetQSessionHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(HornetQSessionHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(HornetQSessionHandler.class.getName());
 
     private Connection connection;
     private Session session;
 
     public HornetQSessionHandler(ConnectionFactory cf) throws JMSException {
         connection = cf.createConnection();
-        try{
+        try {
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
         }
-        catch (JMSException e){
-            LOGGER.error ("JMSException thrown when attempting to instantiate a HornetQSessionHandler.  Closing the Session and Connection.", e);
-            try{
-                if (session != null){
+        catch (JMSException e) {
+            LOGGER.error("JMSException thrown when attempting to instantiate a HornetQSessionHandler.  Closing the Session and Connection.", e);
+            try {
+                if (session != null) {
                     session.close();
                 }
             }
             finally {
                 connection.close();
             }
-            throw new IllegalStateException ("Unable to get a Connection to the JMS Broker.", e);
+            throw new IllegalStateException("Unable to get a Connection to the JMS Broker.", e);
         }
     }
 
-    public void start() throws JMSException{
+    public void start() throws JMSException {
         connection.start();
     }
 
-    public MessageConsumer getMessageConsumer (String destinationName) throws JMSException {
+    public MessageConsumer getMessageConsumer(String destinationName) throws JMSException {
         return getMessageConsumer(destinationName, null);
     }
 
-    public MessageConsumer getMessageConsumer (String destinationName, String messageSelector) throws JMSException {
-        Destination destination = HornetQDestination.fromAddress (destinationName);
-        if (messageSelector == null){
+    public MessageConsumer getMessageConsumer(String destinationName, String messageSelector) throws JMSException {
+        Destination destination = HornetQDestination.fromAddress(destinationName);
+        if (messageSelector == null) {
             return session.createConsumer(destination);
-        }
-        else {
+        } else {
             return session.createConsumer(destination, messageSelector);
         }
     }
 
-    public MessageProducer getMessageProducer (String destinationName) throws JMSException {
-        Destination destination = HornetQDestination.fromAddress (destinationName);
+    public MessageProducer getMessageProducer(String destinationName) throws JMSException {
+        Destination destination = HornetQDestination.fromAddress(destinationName);
         return session.createProducer(destination);
     }
 
     public void close() throws JMSException {
-        if (connection != null){
+        if (connection != null) {
             connection.close();
         }
     }
 
-    public TextMessage createTextMessage (String message) throws JMSException {
+    public TextMessage createTextMessage(String message) throws JMSException {
         return session.createTextMessage(message);
     }
 
-    public ObjectMessage createObjectMessage (Serializable objectMessage) throws JMSException {
+    public ObjectMessage createObjectMessage(Serializable objectMessage) throws JMSException {
         ObjectMessage om = session.createObjectMessage();
         om.setObject(objectMessage);
         return om;

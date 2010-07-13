@@ -16,53 +16,49 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Test;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.xml.sax.SAXException;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xml.sax.SAXException;
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+import static org.junit.Assert.*;
 
 /**
  * Tests cases for {@link Protein}.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class ProteinTest extends AbstractTest<Protein> {
 
-    private static Logger LOGGER = Logger.getLogger(ProteinTest.class);
+    private static final Logger LOGGER = Logger.getLogger(ProteinTest.class.getName());
 
     // http://www.uniprot.org/uniparc/UPI0000000001.fasta
-    private static final String MULTILINE  =
-                              "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD\n" +
-                              "ADAQLDAVLSAATETYSGLTPEQKAYVPAMFTAALNIQTSVNTVVRDFENYVKQTCNSSA\n" +
-                              "VVDNKLKIQNVIIDECYGAPGSPTNLEFINTGSSKGNCAIKALMQLTTKATTQIAPKQVA\n" +
-                              "GTGVQFYMIVIGVIILAALFMYYAKRMLFTSTNDKIKLILANKENVHWTTYMDTFFRTSP\n" +
-                              "MVIATTDMQN";
-    private static final String SINGLELINE  =
-                               "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD" +
-                               "ADAQLDAVLSAATETYSGLTPEQKAYVPAMFTAALNIQTSVNTVVRDFENYVKQTCNSSA" +
-                               "VVDNKLKIQNVIIDECYGAPGSPTNLEFINTGSSKGNCAIKALMQLTTKATTQIAPKQVA" +
-                               "GTGVQFYMIVIGVIILAALFMYYAKRMLFTSTNDKIKLILANKENVHWTTYMDTFFRTSP" +
-                               "MVIATTDMQN";
+    private static final String MULTILINE =
+            "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD\n" +
+                    "ADAQLDAVLSAATETYSGLTPEQKAYVPAMFTAALNIQTSVNTVVRDFENYVKQTCNSSA\n" +
+                    "VVDNKLKIQNVIIDECYGAPGSPTNLEFINTGSSKGNCAIKALMQLTTKATTQIAPKQVA\n" +
+                    "GTGVQFYMIVIGVIILAALFMYYAKRMLFTSTNDKIKLILANKENVHWTTYMDTFFRTSP\n" +
+                    "MVIATTDMQN";
+    private static final String SINGLELINE =
+            "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD" +
+                    "ADAQLDAVLSAATETYSGLTPEQKAYVPAMFTAALNIQTSVNTVVRDFENYVKQTCNSSA" +
+                    "VVDNKLKIQNVIIDECYGAPGSPTNLEFINTGSSKGNCAIKALMQLTTKATTQIAPKQVA" +
+                    "GTGVQFYMIVIGVIILAALFMYYAKRMLFTSTNDKIKLILANKENVHWTTYMDTFFRTSP" +
+                    "MVIATTDMQN";
 
     // First line of UPI0000000001.fasta
     private static final String GOOD = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
@@ -77,7 +73,8 @@ public class ProteinTest extends AbstractTest<Protein> {
     /**
      * Tests that protein can be instantiated with amino acids sequences with and without whitespace
      */
-    @Test public void testGetSequence()   {
+    @Test
+    public void testGetSequence() {
         // Should be OK
         Protein protein = new Protein(GOOD);
         assertEquals("Should be correct amino acid sequence", GOOD, protein.getSequence());
@@ -87,12 +84,13 @@ public class ProteinTest extends AbstractTest<Protein> {
         try {
             new Protein(BAD);
         }
-        catch (Exception e)    {
+        catch (Exception e) {
             assertTrue("Should be IllegalArgumentException", e instanceof IllegalArgumentException);
         }
     }
 
-    @Test public void testCrossReferences() {
+    @Test
+    public void testCrossReferences() {
         final String id = "test";
         Protein protein = new Protein(GOOD);
         Xref xref = protein.addCrossReference(new Xref(id));
@@ -106,9 +104,10 @@ public class ProteinTest extends AbstractTest<Protein> {
     /**
      * Tests the equivalent() method works as expected
      */
-    @Test public void testEquals() {
+    @Test
+    public void testEquals() {
         Protein original = new Protein(GOOD);
-        Protein copy = (Protein)SerializationUtils.clone(original);
+        Protein copy = (Protein) SerializationUtils.clone(original);
         // Original should equal itself
         assertEquals(original, original);
         // Original and copy should be equal
@@ -117,21 +116,22 @@ public class ProteinTest extends AbstractTest<Protein> {
         Xref xref = original.addCrossReference(new Xref("A0A000_9ACTO"));
         assertFalse("Original and copy should not be equal", original.equals(copy));
         //  Original and copy should be equal again
-        copy.addCrossReference((Xref)SerializationUtils.clone(xref));
+        copy.addCrossReference((Xref) SerializationUtils.clone(xref));
         assertEquals(original, copy);
         // Try with locations
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
         locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
         Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
         assertFalse("Original and copy should not be equal", original.equals(copy));
-        copy.addMatch((Hmmer2Match)SerializationUtils.clone(match));
+        copy.addMatch((Hmmer2Match) SerializationUtils.clone(match));
         assertEquals(original, copy);
     }
 
     /**
      * Tests the serialization and de-serialization works.
      */
-    @Test public void testSerization() throws IOException {
+    @Test
+    public void testSerization() throws IOException {
 
         Protein original = new Protein(GOOD);
         Xref xref = original.addCrossReference(new Xref("A0A000_9ACTO"));
@@ -141,30 +141,34 @@ public class ProteinTest extends AbstractTest<Protein> {
         Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
         original.addMatch(match);
 
-        byte[] data=SerializationUtils.serialize(original);
+        byte[] data = SerializationUtils.serialize(original);
         String originalXML = marshal(original);
-        Object retrieved=SerializationUtils.deserialize(data);
+        Object retrieved = SerializationUtils.deserialize(data);
         String unserializedXML = marshal((Protein) retrieved);
-        System.out.println(unserializedXML);
-        System.out.println("Data lengths serialized: "+data.length+" original xml: "+originalXML.length()+" unserialized xml: "+unserializedXML.length());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(unserializedXML);
+            LOGGER.debug("Data lengths serialized: " + data.length + " original xml: " + originalXML.length() + " unserialized xml: " + unserializedXML.length());
+        }
 
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setIgnoreAttributeOrder(true);
         XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
         XMLUnit.setNormalizeWhitespace(true);
-        assertEquals(originalXML,unserializedXML);
+        assertEquals(originalXML, unserializedXML);
     }
 
     /**
      * Tests that MD5 checksum can be calculated for the protein sequence
      */
-    @Test public void testGetMd5()   {
+    @Test
+    public void testGetMd5() {
         Protein ps = new Protein(GOOD);
         assertEquals("MD5 checksums should be same", GOOD_MD5, ps.getMd5());
     }
 
-    @Test public void testRemoveMatch()    {
+    @Test
+    public void testRemoveMatch() {
         Protein protein = new Protein(GOOD);
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
         locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
@@ -184,16 +188,18 @@ public class ProteinTest extends AbstractTest<Protein> {
     }
     */
 
-    @Test public void testXml() throws IOException, SAXException {
+    @Test
+    public void testXml() throws IOException, SAXException {
         super.testSupportsMarshalling(Protein.class);
         super.testXmlRoundTrip();
     }
 
     // TODO: Re-enable when JPA works OK
+
     @Test
-    @Ignore ("Fails due to problems with retrievel of match data")
+    @Ignore("Fails due to problems with retrievel of match data")
     public void testJpa() {
-        super.testJpaXmlObjects(new ObjectRetriever<Protein>(){
+        super.testJpaXmlObjects(new ObjectRetriever<Protein>() {
             public Protein getObjectByPrimaryKey(GenericDAO<Protein, Long> dao, Long primaryKey) {
                 return dao.readDeep(primaryKey, "matches", "crossReferences");
             }

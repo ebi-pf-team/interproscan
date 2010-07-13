@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class PrintsMatchParserTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsMatchParserTest.class);
+    private static final Logger LOGGER = Logger.getLogger(PrintsMatchParserTest.class.getName());
 
     private static final String TEST_FILE_PATH = "data/prints/5ht_mouse_results.txt";
 
@@ -66,9 +66,9 @@ public class PrintsMatchParserTest extends TestCase {
         Set<PrintsProtein> results = parser.parse(isParse, TEST_FILE_PATH, evalCutoffs);
         isParse.close();
         logMemUsage("After parse: ");
-        System.out.println("Protein count: " + results.size());
+        LOGGER.debug("Protein count: " + results.size());
         for (PrintsProtein protein : results){
-            System.out.println(protein.getMotifName() + " | " + protein.geteValue().toString() + " | " + protein.getGraphScan() + " | " + protein.getSeqEndPos() + " | " + protein.getSeqStartPos());
+            LOGGER.debug(protein.getMotifName() + " | " + protein.geteValue().toString() + " | " + protein.getGraphScan() + " | " + protein.getSeqEndPos() + " | " + protein.getSeqStartPos());
         }
         */
     }
@@ -114,5 +114,5 @@ public class PrintsMatchParserTest extends TestCase {
             }
         }
         return ret;
-   }
+    }
 }

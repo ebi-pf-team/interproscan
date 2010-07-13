@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class CommandLineConversationImpl implements CommandLineConversation {
 
-    private static volatile Logger LOGGER = Logger.getLogger(CommandLineConversationImpl.class);
+    private static volatile Logger LOGGER = Logger.getLogger(CommandLineConversationImpl.class.getName());
 
     private static final int BUFFER_SIZE = 4096;
 

@@ -25,7 +25,7 @@ import java.util.*;
 public class PfamFilteredMatchDAOImpl extends GenericDAOImpl<Hmmer3Match, Long> implements PfamFilteredMatchDAO {
 
 
-    private static final Logger LOGGER = Logger.getLogger(PfamFilteredMatchDAOImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(PfamFilteredMatchDAOImpl.class.getName());
 
     /**
      * Sets the class of the model that the DOA instance handles.

@@ -1,31 +1,31 @@
 package uk.ac.ebi.interpro.scan.cli;
 
+import org.apache.log4j.Logger;
 import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.context.ApplicationContext;
-import org.apache.log4j.Logger;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 /**
  * Entry point for command line interface.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public class EntryPoint {
 
-    private static final Logger LOGGER = Logger.getLogger(EntryPoint.class);
+    private static final Logger LOGGER = Logger.getLogger(EntryPoint.class.getName());
 
     public static void main(String[] args) {
 
         // Parse command line arguments and options
         CommandLineValues values = new CommandLineValues();
-        CmdLineParser parser     = new CmdLineParser(values);
+        CmdLineParser parser = new CmdLineParser(values);
         parser.setUsageWidth(80);
         try {
             parser.parseArgument(args);
@@ -40,31 +40,28 @@ public class EntryPoint {
         }
 
         ApplicationContext ctx;
-        if (values.getSpringContext() == null)  {
-            ctx = new ClassPathXmlApplicationContext(new String[] {"beans.xml"});
-        }
-        else    {
+        if (values.getSpringContext() == null) {
+            ctx = new ClassPathXmlApplicationContext(new String[]{"beans.xml"});
+        } else {
             ctx = new FileSystemXmlApplicationContext(values.getSpringContext());
         }
 
         // Process
         try {
             Resource fastaFile = new FileSystemResource(values.getFastaFile());
-            Resource hmmFile   = new FileSystemResource(values.getHmmFile());
-            if (values.isOnionMode())   {
-                String resultsFile = values.getResultsFile();                
+            Resource hmmFile = new FileSystemResource(values.getHmmFile());
+            if (values.isOnionMode()) {
+                String resultsFile = values.getResultsFile();
                 Gene3dOnionRunner runner = (Gene3dOnionRunner) ctx.getBean("gene3dOnionRunner");
-                if (resultsFile == null)    {
+                if (resultsFile == null) {
                     runner.execute(fastaFile, hmmFile, new FileSystemResource(values.getResultsDir()));
-                }
-                else    {
+                } else {
                     runner.execute(resultsFile, fastaFile, hmmFile, new FileSystemResource(values.getResultsDir()));
                 }
-                if (LOGGER.isDebugEnabled())    {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Done");
                 }
-            }
-            else    {
+            } else {
                 Gene3dRunner runner = (Gene3dRunner) ctx.getBean("gene3dRunner");
                 runner.execute(fastaFile, hmmFile);
             }
@@ -79,22 +76,22 @@ public class EntryPoint {
 
         private static String ONION_MODE = "onion";
 
-        @Argument(required=true, index=0, metaVar="<fasta-file>", usage="FASTA file")
+        @Argument(required = true, index = 0, metaVar = "<fasta-file>", usage = "FASTA file")
         private String fastaFile;
 
-        @Argument(required=true, index=1, metaVar="<hmm-file>", usage="HMM file")
+        @Argument(required = true, index = 1, metaVar = "<hmm-file>", usage = "HMM file")
         private String hmmFile;
 
-        @Option(name="-m", aliases={"--mode"}, usage="Mode (one of: i5, onion)")
+        @Option(name = "-m", aliases = {"--mode"}, usage = "Mode (one of: i5, onion)")
         private String mode = ONION_MODE;
 
-        @Option(name="-r", aliases={"--resultsDir"}, usage="Directory to hold result files")
+        @Option(name = "-r", aliases = {"--resultsDir"}, usage = "Directory to hold result files")
         private String resultsDir = "/tmp";
 
-        @Option(name="-f", aliases={"--resultsFile"}, usage="Results file name")
+        @Option(name = "-f", aliases = {"--resultsFile"}, usage = "Results file name")
         private String resultsFile = null;
 
-        @Option(name="-c", aliases={"--springContext"}, usage="Spring application context")
+        @Option(name = "-c", aliases = {"--springContext"}, usage = "Spring application context")
         private String springContext = null;
 
         public String getFastaFile() {

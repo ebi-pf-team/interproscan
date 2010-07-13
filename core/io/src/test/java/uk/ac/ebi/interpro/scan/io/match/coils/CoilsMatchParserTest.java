@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class CoilsMatchParserTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(CoilsMatchParserTest.class);
+    private static final Logger LOGGER = Logger.getLogger(CoilsMatchParserTest.class.getName());
 
     private static final String TEST_FILE_PATH = "data/coils/10k.coils.out";
 
@@ -32,7 +32,7 @@ public class CoilsMatchParserTest extends TestCase {
         Set<ParseCoilsMatch> results = parser.parse(is, TEST_FILE_PATH);
         is.close();
         logMemUsage("After parse: ");
-        System.out.println("Result count: " + results.size());
+        LOGGER.debug("Result count: " + results.size());
     }
 
     private void logMemUsage(String prefix) {

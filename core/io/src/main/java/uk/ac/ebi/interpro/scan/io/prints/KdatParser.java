@@ -26,7 +26,7 @@ public class KdatParser implements Serializable {
     private static final String LINE_SIG_NAME = "gc";
     private static final String LINE_SIG_ABSTRACT = "gd";
 
-    private static final Logger LOGGER = Logger.getLogger(KdatParser.class);
+    private static final Logger LOGGER = Logger.getLogger(KdatParser.class.getName());
 
 
     /**

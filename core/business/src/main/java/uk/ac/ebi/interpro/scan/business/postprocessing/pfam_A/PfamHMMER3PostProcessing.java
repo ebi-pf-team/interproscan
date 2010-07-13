@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class PfamHMMER3PostProcessing implements Serializable {
 
-    private static Logger LOGGER = Logger.getLogger(PfamHMMER3PostProcessing.class);
+    private static final Logger LOGGER = Logger.getLogger(PfamHMMER3PostProcessing.class.getName());
 
     private PfamClanData clanData;
 

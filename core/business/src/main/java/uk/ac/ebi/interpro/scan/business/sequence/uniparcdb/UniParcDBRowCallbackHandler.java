@@ -21,11 +21,11 @@ import java.sql.SQLException;
  */
 public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(UniParcDBRowCallbackHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(UniParcDBRowCallbackHandler.class.getName());
 
     private ProteinLoader proteinLoader;
 
-    private ProteinLoadListener proteinLoadListener;    
+    private ProteinLoadListener proteinLoadListener;
 
     private int counter = 0;
 
@@ -57,15 +57,15 @@ public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
     public void processRow(ResultSet resultSet) throws SQLException {
         String upi = resultSet.getString(1);
         String sequence = resultSet.getString(2);
-        if (sequence == null || sequence.length() == 0){
+        if (sequence == null || sequence.length() == 0) {
             sequence = resultSet.getString(3);
         }
         if (sequence == null) {
-            throw new IllegalArgumentException ("Ugh - found a UPI with no associated sequence!");
+            throw new IllegalArgumentException("Ugh - found a UPI with no associated sequence!");
         }
-        if (LOGGER.isDebugEnabled()){
-            if (counter++ % 2000 == 0){
-                LOGGER.debug("Storing " + upi + " with sequence length "+ sequence.length());
+        if (LOGGER.isDebugEnabled()) {
+            if (counter++ % 2000 == 0) {
+                LOGGER.debug("Storing " + upi + " with sequence length " + sequence.length());
             }
         }
         proteinLoader.store(sequence, upi);
@@ -74,7 +74,7 @@ public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
     /**
      * Call persist on the underlying proteinLoader at the end of the transaction.
      */
-    public void persist(){
+    public void persist() {
         proteinLoader.persist(proteinLoadListener);
     }
 }

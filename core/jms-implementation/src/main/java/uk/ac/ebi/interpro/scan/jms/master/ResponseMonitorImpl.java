@@ -19,7 +19,7 @@ import javax.jms.ObjectMessage;
  */
 public class ResponseMonitorImpl implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(ResponseMonitorImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(ResponseMonitorImpl.class.getName());
 
     StepExecutionDAO stepExecutionDAO;
 
@@ -29,21 +29,20 @@ public class ResponseMonitorImpl implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
-        try{
-            if (message instanceof ObjectMessage){
+        try {
+            if (message instanceof ObjectMessage) {
                 ObjectMessage objectMessage = (ObjectMessage) message;
                 Object messageContents = objectMessage.getObject();
-                if (messageContents instanceof StepExecution){
+                if (messageContents instanceof StepExecution) {
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
                 }
-            }
-            else {
-                LOGGER.error ("Received message that I don't know how to handle.");
+            } else {
+                LOGGER.error("Received message that I don't know how to handle.");
                 throw new IllegalArgumentException("Don't know how to handle the message: " + message.toString());
             }
         }
-        catch (JMSException jmse){
+        catch (JMSException jmse) {
             LOGGER.error("JMSException thrown by Response Monitor on the Master", jmse);
         }
     }

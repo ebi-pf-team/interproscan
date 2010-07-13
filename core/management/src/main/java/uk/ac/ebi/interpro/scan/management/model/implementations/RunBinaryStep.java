@@ -30,7 +30,7 @@ import java.util.List;
 
 abstract public class RunBinaryStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(RunBinaryStep.class);
+    private static final Logger LOGGER = Logger.getLogger(RunBinaryStep.class.getName());
 
     private String outputFileNameTemplate;
 

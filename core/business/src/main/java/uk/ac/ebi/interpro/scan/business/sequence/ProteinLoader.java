@@ -1,17 +1,18 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Xref;
-import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
-import java.util.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This abstract class knows how to store protein sequences and cross references
- *
+ * <p/>
  * This must be a system-wide Singleton - achieved by ONLY injecting into the
  * SerialWorker JVM, from Spring.
  * User: phil
@@ -20,7 +21,7 @@ import java.io.Serializable;
  */
 public class ProteinLoader implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinLoader.class);
+    private static final Logger LOGGER = Logger.getLogger(ProteinLoader.class.getName());
 
     private PrecalculatedProteinLookup proteinLookup;
 
@@ -30,7 +31,7 @@ public class ProteinLoader implements Serializable {
 
     private Set<Protein> proteinsAwaitingPersistence;
 
-    private Set<Protein> precalculatedProteins=new HashSet<Protein>();
+    private Set<Protein> precalculatedProteins = new HashSet<Protein>();
 
     private Long bottomProteinId;
 
@@ -54,32 +55,33 @@ public class ProteinLoader implements Serializable {
 
     /**
      * This method stores sequences with (optionally) cross references.
+     *
      * @param sequence
      * @param crossReferences
      */
     public void store(String sequence, String... crossReferences) {
-        if (sequence != null && sequence.length() > 0){
+        if (sequence != null && sequence.length() > 0) {
             Protein protein = new Protein(sequence);
-            if (crossReferences != null){
-                for (String crossReference : crossReferences){
+            if (crossReferences != null) {
+                for (String crossReference : crossReferences) {
                     Xref xref = new Xref(crossReference);
                     protein.addCrossReference(xref);
                 }
             }
-            Protein precalculatedProtein=proteinLookup!=null?proteinLookup.getPrecalculated(protein):null;
-            if (precalculatedProtein!=null) precalculatedProteins.add(precalculatedProtein);
+            Protein precalculatedProtein = proteinLookup != null ? proteinLookup.getPrecalculated(protein) : null;
+            if (precalculatedProtein != null) precalculatedProteins.add(precalculatedProtein);
             else addProteinToBatch(protein);
         }
 
     }
 
     private void addProteinToBatch(Protein protein) {
-        proteinsAwaitingPersistence.add (protein);
+        proteinsAwaitingPersistence.add(protein);
         if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize) persistBatch();
     }
 
-    private void persistBatch(){
-        if (proteinsAwaitingPersistence.size() > 0){
+    private void persistBatch() {
+        if (proteinsAwaitingPersistence.size() > 0) {
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
@@ -87,11 +89,11 @@ public class ProteinLoader implements Serializable {
         }
     }
 
-    public void persist(ProteinLoadListener proteinLoadListener){
+    public void persist(ProteinLoadListener proteinLoadListener) {
         persistBatch();
 
-        Long bottomNewProteinId=bottomProteinId;
-        Long topNewProteinId=topProteinId;
+        Long bottomNewProteinId = bottomProteinId;
+        Long topNewProteinId = topProteinId;
 
         resetBounds();
 
@@ -99,11 +101,11 @@ public class ProteinLoader implements Serializable {
 
         persistBatch();
 
-        Long bottomPrecalcProteinId=bottomProteinId;
-        Long topPrecalcProteinId=topProteinId;
+        Long bottomPrecalcProteinId = bottomProteinId;
+        Long topPrecalcProteinId = topProteinId;
 
 
-        proteinLoadListener.proteinsLoaded(bottomNewProteinId,topNewProteinId,bottomPrecalcProteinId,topPrecalcProteinId);
+        proteinLoadListener.proteinsLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
 
         resetBounds();
     }
@@ -112,7 +114,6 @@ public class ProteinLoader implements Serializable {
         bottomProteinId = null;
         topProteinId = null;
     }
-
 
 
 }

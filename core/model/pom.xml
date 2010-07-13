@@ -12,11 +12,11 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-model</artifactId>
-	<version>1.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
-    <name>InterProScan Domain Model</name>    
+    <name>InterProScan Domain Model</name>
     <description>InterProScan Domain Model</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
@@ -32,7 +32,7 @@
         <name>EMBL - European Bioinformatics Institute</name>
         <url>http://www.ebi.ac.uk/</url>
     </organization>
-  
+
 
     <dependencies>
 
@@ -79,7 +79,7 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
-        </dependency>                
+        </dependency>
 
         <dependency>
             <groupId>xmlunit</groupId>
@@ -101,14 +101,14 @@
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-oxm</artifactId>
             <version>${spring.oxm.version}</version>
-            <scope>test</scope>            
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-oxm-tiger</artifactId>
             <version>${spring.oxm.version}</version>
-            <scope>test</scope>            
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -116,7 +116,7 @@
             <artifactId>groovy</artifactId>
             <version>${groovy.version}</version>
             <scope>test</scope>
-        </dependency>       
+        </dependency>
 
         <!-- JPA tests -->
 
@@ -147,10 +147,10 @@
             <version>${cglib.version}</version>
             <scope>test</scope>
         </dependency>
-      
+
 
     </dependencies>
-    
+
     <build>
         <testResources>
             <testResource>
@@ -253,11 +253,11 @@
                 <mvn.i5.database.username>sa</mvn.i5.database.username>
                 <mvn.i5.database.password></mvn.i5.database.password>
                 <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
-                <mvn.hibernate.show_sql>true</mvn.hibernate.show_sql>
-                <mvn.hibernate.format_sql>true</mvn.hibernate.format_sql>
+                <mvn.hibernate.show_sql>false</mvn.hibernate.show_sql>
+                <mvn.hibernate.format_sql>false</mvn.hibernate.format_sql>
                 <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
             </properties>
         </profile>
     </profiles>
-    
+
 </project>

@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class PrintsPostProcessing implements Serializable {
 
-    private static Logger LOGGER = Logger.getLogger(PrintsPostProcessing.class);
+    private static final Logger LOGGER = Logger.getLogger(PrintsPostProcessing.class.getName());
 
     private FingerPRINTSHierarchyDBParser hierarchyDBParser;
 

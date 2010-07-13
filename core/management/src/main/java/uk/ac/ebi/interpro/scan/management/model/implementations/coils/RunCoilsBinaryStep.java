@@ -22,7 +22,7 @@ import java.util.List;
 
 public class RunCoilsBinaryStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunCoilsBinaryStep.class);
+    private static final Logger LOGGER = Logger.getLogger(RunCoilsBinaryStep.class.getName());
 
     private String fullPathToBinary;
 

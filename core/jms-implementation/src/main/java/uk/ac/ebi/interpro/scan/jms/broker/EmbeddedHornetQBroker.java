@@ -12,7 +12,7 @@ import javax.naming.Context;
 
 /**
  * Simple embedded HornetQ Server.
- *
+ * <p/>
  * This is expected to be run from the Master, which will communicate
  * with this broker using an in-jvm connection.
  *
@@ -34,6 +34,7 @@ public class EmbeddedHornetQBroker implements EmbeddedBroker {
 
     /**
      * COnfiguration of the hornetQ server.
+     *
      * @param hornetQConfig
      */
     @Required
@@ -48,6 +49,7 @@ public class EmbeddedHornetQBroker implements EmbeddedBroker {
 
     /**
      * OPTIONAL JNDI Context for the JMS server.
+     *
      * @param context OPTIONAL JNDI Context for the JMS server.
      */
     public void setContext(Context context) {
@@ -55,11 +57,11 @@ public class EmbeddedHornetQBroker implements EmbeddedBroker {
     }
 
     @Override
-    public void runBroker(){
-        if (jmsServerManager != null){
+    public void runBroker() {
+        if (jmsServerManager != null) {
             throw new IllegalStateException("EmbeddedHornetQBroker.runBroker has been called more than once.");
         }
-        try{
+        try {
             HornetQServer server = HornetQServers.newHornetQServer(hornetQConfig);
             jmsServerManager = new JMSServerManagerImpl(server, jmsConfigFileName);
             jmsServerManager.setContext(context);
@@ -67,21 +69,21 @@ public class EmbeddedHornetQBroker implements EmbeddedBroker {
             while (!jmsServerManager.isStarted()) Thread.sleep(1000);
             LOGGER.info("STARTED::");
         }
-        catch (Throwable e){
+        catch (Throwable e) {
             LOGGER.fatal("Failed to runBroker Broker.", e);
         }
     }
 
     @Override
-    public void shutDownBroker(){
-        if (jmsServerManager != null){
+    public void shutDownBroker() {
+        if (jmsServerManager != null) {
             try {
                 jmsServerManager.stop();      // This method is not documented, however examining the code
-                                              // reveals that everything is stopped, including the
-                                              // HornetQServer.
+                // reveals that everything is stopped, including the
+                // HornetQServer.
             } catch (Exception e) {
                 // NOTE - may be called from shutdown hook, so don't rely on Log4j still running.
-                System.out.println ("Exception thrown when attempting to stop the Broker.");
+                System.out.println("Exception thrown when attempting to stop the Broker.");  // LEAVE as System.out
             }
         }
     }

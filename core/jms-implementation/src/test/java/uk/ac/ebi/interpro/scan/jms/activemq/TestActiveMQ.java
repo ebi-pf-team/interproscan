@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 @ContextConfiguration
 public class TestActiveMQ {
 
-    private static Logger LOGGER = Logger.getLogger(TestActiveMQ.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TestActiveMQ.class.getName());
 
     @Resource
     private AmqInterProScanMaster amqstandalone;

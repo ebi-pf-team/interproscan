@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class InterProScanMaster implements Master {
 
-    private static final Logger LOGGER = Logger.getLogger(InterProScanMaster.class);
+    private static final Logger LOGGER = Logger.getLogger(InterProScanMaster.class.getName());
 
     private Jobs jobs;
 
