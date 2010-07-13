@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.prints;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
@@ -40,7 +39,7 @@ public class PrintsPostProcessing implements Serializable {
 
     private FingerPRINTSHierarchyDBParser hierarchyDBParser;
 
-    private String fingerPRINTSHierarchyDB;
+    private Resource fingerPRINTSHierarchyDB;
 
     private Map<String, FingerPRINTSHierarchyDBParser.HierachyDBEntry> printsModelData;
 
@@ -54,7 +53,7 @@ public class PrintsPostProcessing implements Serializable {
     }
 
     @Required
-    public void setFingerPRINTSHierarchyDB(String fingerPRINTSHierarchyDB) {
+    public void setFingerPRINTSHierarchyDB(Resource fingerPRINTSHierarchyDB) {
         this.fingerPRINTSHierarchyDB = fingerPRINTSHierarchyDB;
     }
 
@@ -71,8 +70,7 @@ public class PrintsPostProcessing implements Serializable {
                     if (hierarchyDBParser == null || fingerPRINTSHierarchyDB == null) {
                         throw new IllegalStateException("The PrintsPostProcessing class requires the injection of a FingerPRINTSHierarchyDBParser and a fingerPRINTSHierarchyDB resource.");
                     }
-                    Resource resource = new FileSystemResource(fingerPRINTSHierarchyDB);
-                    printsModelData = hierarchyDBParser.parse(resource);
+                    printsModelData = hierarchyDBParser.parse(fingerPRINTSHierarchyDB);
                     allPrintsModelIDs = new ArrayList<String>(printsModelData.size());
                     for (FingerPRINTSHierarchyDBParser.HierachyDBEntry entry : printsModelData.values()) {
                         allPrintsModelIDs.add(entry.getId());

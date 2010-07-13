@@ -97,17 +97,20 @@ public class PrintsRawMatch extends RawMatch {
         this.motifNumber = motifNumber;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PrintsRawMatch)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
         PrintsRawMatch that = (PrintsRawMatch) o;
 
         if (!PersistenceConversion.equivalent(this.getEvalue(), that.getEvalue())) return false;
+        if (motifCount != that.motifCount) return false;
         if (motifNumber != that.motifNumber) return false;
+        if (!PersistenceConversion.equivalent(this.getPvalue(), that.getPvalue())) return false;
+        if (Double.compare(that.score, score) != 0) return false;
+        if (graphscan != null ? !graphscan.equals(that.graphscan) : that.graphscan != null) return false;
 
         return true;
     }
@@ -117,6 +120,12 @@ public class PrintsRawMatch extends RawMatch {
         int result = super.hashCode();
         long temp;
         temp = evalue != +0.0d ? Double.doubleToLongBits(evalue) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (graphscan != null ? graphscan.hashCode() : 0);
+        result = 31 * result + motifCount;
+        temp = pvalue != +0.0d ? Double.doubleToLongBits(pvalue) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = score != +0.0d ? Double.doubleToLongBits(score) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + motifNumber;
         return result;
