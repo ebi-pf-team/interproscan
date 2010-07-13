@@ -32,7 +32,6 @@ public abstract class RawMatch implements Serializable {
     @TableGenerator(name = "RAW_MATCH_IDGEN", table = "KEYGEN", pkColumnValue = "match", initialValue = 0, allocationSize = 100)
     private Long id;
 
-    @Index(name = "rawmatch_seq_id_idx")
     @Column(name = "sequence_id")
     private String sequenceIdentifier;      // eg. MD5
 
