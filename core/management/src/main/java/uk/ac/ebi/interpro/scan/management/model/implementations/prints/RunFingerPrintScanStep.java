@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class RunFingerPrintScanStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunFingerPrintScanStep.class);
+    private static final Logger LOGGER = Logger.getLogger(RunFingerPrintScanStep.class.getName());
 
     private String fullPathToBinary;
 

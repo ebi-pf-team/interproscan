@@ -18,7 +18,7 @@ import javax.jms.MessageListener;
  */
 public class AmqInterProScanMonitorListener implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(AmqInterProScanMonitorListener.class);
+    private static final Logger LOGGER = Logger.getLogger(AmqInterProScanMonitorListener.class.getName());
 
     private Destination workerManagerResponseQueue;
 
@@ -51,6 +51,7 @@ public class AmqInterProScanMonitorListener implements MessageListener {
 
     /**
      * TODO - needs to be re-written as the AmqInterProScanWorker may be used in multiple threads.
+     *
      * @param message
      */
     public void onMessage(Message message) {

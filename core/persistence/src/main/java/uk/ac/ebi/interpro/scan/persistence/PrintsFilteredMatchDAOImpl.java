@@ -21,7 +21,7 @@ import java.util.*;
 
 public class PrintsFilteredMatchDAOImpl extends GenericDAOImpl<FingerPrintsMatch, Long> implements PrintsFilteredMatchDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsFilteredMatchDAOImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(PrintsFilteredMatchDAOImpl.class.getName());
 
     /**
      * Sets the class of the model that the DOA instance handles.

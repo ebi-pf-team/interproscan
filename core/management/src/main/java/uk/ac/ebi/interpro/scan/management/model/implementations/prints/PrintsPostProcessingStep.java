@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class PrintsPostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsPostProcessingStep.class);
+    private static final Logger LOGGER = Logger.getLogger(PrintsPostProcessingStep.class.getName());
 
     private PrintsPostProcessing postProcessor;
 

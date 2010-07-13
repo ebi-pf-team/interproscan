@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 @ContextConfiguration
 public class TestInstaller {
 
-    private static Logger LOGGER = Logger.getLogger(TestInstaller.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TestInstaller.class.getName());
 
     @Resource
     private Installer installer;

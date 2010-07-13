@@ -18,7 +18,7 @@ import java.util.List;
 
 public class RunPhobiusBinaryStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunPhobiusBinaryStep.class);
+    private static final Logger LOGGER = Logger.getLogger(RunPhobiusBinaryStep.class.getName());
 
     private String fullPathToBinary;
 

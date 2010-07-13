@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,13 +8,15 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -24,6 +27,8 @@ import static junit.framework.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class PrintsRawMatchDAOImplTest {
+
+    private static final Logger LOGGER = Logger.getLogger(PrintsRawMatchDAOImplTest.class.getName());
 
     private static final String SIG_DB_VERSION = "40.0";
 
@@ -71,7 +76,33 @@ public class PrintsRawMatchDAOImplTest {
         assertEquals("Unexpected number of stored PrintsRawMatch objects", new Long(matchesToPersist.size()), dao.count());
 
         // Retrieve the raw matches using the DAO method used in PRINTS post-processing and check they are the same.
-        dao.getRawMatchesForProteinIdsInRange(minProteinId, maxProteinId, SIG_DB_VERSION);
+        Map<String, RawProtein<PrintsRawMatch>> retrievedRawProteins = dao.getRawMatchesForProteinIdsInRange(minProteinId, maxProteinId, SIG_DB_VERSION);
+
+        assertNotNull(retrievedRawProteins);
+        assertEquals("Unexpected number of RawProtein objects returned", 2, retrievedRawProteins.size());
+
+        boolean oneHundred = false, two = false;
+        for (String key : retrievedRawProteins.keySet()) {
+            oneHundred |= "100".equals(key);
+            two |= "2".equals(key);
+        }
+        assertTrue("Expected protein keys not found in key set.", oneHundred && two);
+        oneHundred = two = false;
+        final List<PrintsRawMatch> unseenRawMatches = new ArrayList<PrintsRawMatch>(REFERENCE_MATCHES.size());
+        unseenRawMatches.addAll(REFERENCE_MATCHES);
+        for (RawProtein<PrintsRawMatch> retrievedRawProtein : retrievedRawProteins.values()) {
+            oneHundred |= "100".equals(retrievedRawProtein.getProteinIdentifier());
+            two |= "2".equals(retrievedRawProtein.getProteinIdentifier());
+
+            for (PrintsRawMatch retrievedRawMatch : retrievedRawProtein.getMatches()) {
+                assertTrue("One of the matches retrieved from the database is not recognised.", unseenRawMatches.contains(retrievedRawMatch));
+                unseenRawMatches.remove(retrievedRawMatch);
+            }
+        }
+        LOGGER.debug("unseenRawMatches = " + unseenRawMatches);
+        assertTrue("Not all of the reference matches were retrieved from the database.", unseenRawMatches.isEmpty());
+        assertTrue("Expected protein keys not found in value set.", oneHundred && two);
+
     }
 
     /**

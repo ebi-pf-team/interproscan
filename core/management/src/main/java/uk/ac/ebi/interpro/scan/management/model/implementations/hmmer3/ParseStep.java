@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
@@ -18,13 +17,13 @@ import java.util.Set;
 /**
  * Parses and persists the output from binary.
  *
- * @author  Phil Jones
- * @author  Antony Quinn
+ * @author Phil Jones
+ * @author Antony Quinn
  * @version $Id$
  */
 abstract class ParseStep<T extends RawMatch> extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParseStep.class);
+    private static final Logger LOGGER = Logger.getLogger(ParseStep.class.getName());
 
     private String outputFileTemplate;
     private Hmmer3SearchMatchParser<T> parser;
@@ -52,14 +51,15 @@ abstract class ParseStep<T extends RawMatch> extends Step {
         this.rawMatchDAO = rawMatchDAO;
     }
 
-    @Override public void execute(StepInstance stepInstance, String temporaryFileDirectory){
-        if (LOGGER.isDebugEnabled())    {
+    @Override
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Running ParseStep for proteins " + stepInstance.getBottomProtein() +
                     " to " + stepInstance.getTopProtein());
         }
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileTemplate());
-        try{
+        try {
             is = new FileInputStream(fileName);
             final Set<RawProtein<T>> results = getParser().parse(is);
             rawMatchDAO.insertProteinMatches(results);
@@ -68,7 +68,7 @@ abstract class ParseStep<T extends RawMatch> extends Step {
             throw new IllegalStateException("IOException thrown when attempting to parse " + fileName, e);
         } finally {
             try {
-                if (is != null){
+                if (is != null) {
                     is.close();
                 }
             }

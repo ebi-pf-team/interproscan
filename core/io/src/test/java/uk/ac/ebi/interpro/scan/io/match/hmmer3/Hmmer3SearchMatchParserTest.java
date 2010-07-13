@@ -1,45 +1,57 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer3;
 
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.assertEquals;
-
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.junit.Test;
+import org.apache.log4j.Logger;
 import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import javax.annotation.Resource;
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.*;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-import uk.ac.ebi.interpro.scan.model.raw.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Tests for {@link Hmmer3SearchMatchParser}
  *
- * @author  Phil Jones
- * @author  Antony Quinn
+ * @author Phil Jones
+ * @author Antony Quinn
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class Hmmer3SearchMatchParserTest {
 
+    private static final Logger LOGGER = Logger.getLogger(Hmmer3SearchMatchParserTest.class.getName());
+
     // Pfam
-    @Resource private Hmmer3SearchMatchParser<Hmmer3RawMatch> pfamParser;
-    @Resource private org.springframework.core.io.Resource pfamFile;
+    @Resource
+    private Hmmer3SearchMatchParser<Hmmer3RawMatch> pfamParser;
+    @Resource
+    private org.springframework.core.io.Resource pfamFile;
 
     // Gene3D
-    @Resource private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
-    @Resource private org.springframework.core.io.Resource gene3dFile;
+    @Resource
+    private Hmmer3SearchMatchParser<Gene3dHmmer3RawMatch> gene3dParser;
+    @Resource
+    private org.springframework.core.io.Resource gene3dFile;
 
     // Tests two matches at same location (see IBU-1133)
-    @Resource private org.springframework.core.io.Resource highestScoringDomainFile;
+    @Resource
+    private org.springframework.core.io.Resource highestScoringDomainFile;
 
     // Tests empty alignment lines
-    @Resource private org.springframework.core.io.Resource emptyAlignmentLineFile;
+    @Resource
+    private org.springframework.core.io.Resource emptyAlignmentLineFile;
 
     @Test
     public void testGene3DParser() throws IOException {
@@ -51,8 +63,8 @@ public class Hmmer3SearchMatchParserTest {
         ));
         final Set<String> actual = new HashSet<String>();
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, gene3dFile.getInputStream());
-        for (RawProtein<Gene3dHmmer3RawMatch> p : proteins)   {
-            for (Gene3dHmmer3RawMatch m : p.getMatches())   {
+        for (RawProtein<Gene3dHmmer3RawMatch> p : proteins) {
+            for (Gene3dHmmer3RawMatch m : p.getMatches()) {
                 actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
             }
         }
@@ -64,18 +76,18 @@ public class Hmmer3SearchMatchParserTest {
         final String SEP = ":";
         final Set<String> expected = new HashSet<String>(Arrays.asList(
                 "UPI0000054B90" + SEP +
-                "564" + SEP +           // start
-                "615" + SEP +           // end
-                "21.5"                  // score
+                        "564" + SEP +           // start
+                        "615" + SEP +           // end
+                        "21.5"                  // score
         ));
         final Set<String> actual = new HashSet<String>();
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, highestScoringDomainFile.getInputStream());
-        for (RawProtein<Gene3dHmmer3RawMatch> p : proteins)   {
-            for (Gene3dHmmer3RawMatch m : p.getMatches())   {                
+        for (RawProtein<Gene3dHmmer3RawMatch> p : proteins) {
+            for (Gene3dHmmer3RawMatch m : p.getMatches()) {
                 actual.add(m.getSequenceIdentifier() + SEP +
-                           m.getLocationStart() + SEP + 
-                           m.getLocationEnd() + SEP +
-                           m.getLocationScore());
+                        m.getLocationStart() + SEP +
+                        m.getLocationEnd() + SEP +
+                        m.getLocationScore());
             }
         }
         assertEquals("Expected matches not found", expected, actual);
@@ -85,19 +97,21 @@ public class Hmmer3SearchMatchParserTest {
     public void testEmptyAlignmentLine() throws IOException {
 
         final Set<String> expected = new HashSet<String>(Arrays.asList(
-                "UPI0000005B9B:33M6I32M45I45M153D2M30I28M"                
+                "UPI0000005B9B:33M6I32M45I45M153D2M30I28M"
         ));
 
         final Set<String> actual = new HashSet<String>();
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, emptyAlignmentLineFile.getInputStream());
-        for (RawProtein<Gene3dHmmer3RawMatch> p : proteins)   {
-            for (Gene3dHmmer3RawMatch m : p.getMatches())   {
+        for (RawProtein<Gene3dHmmer3RawMatch> p : proteins) {
+            for (Gene3dHmmer3RawMatch m : p.getMatches()) {
                 actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
-                System.out.println(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                }
             }
         }
 
-        assertEquals("Expected alignments not found", expected, actual);        
+        assertEquals("Expected alignments not found", expected, actual);
     }
 
     @Test
@@ -107,7 +121,7 @@ public class Hmmer3SearchMatchParserTest {
     }
 
     private <T extends Hmmer3RawMatch> Set<RawProtein<T>> parse(Hmmer3SearchMatchParser<T> parser,
-                                                                InputStream is) 
+                                                                InputStream is)
             throws IOException {
         Set<RawProtein<T>> proteins = null;
         try {

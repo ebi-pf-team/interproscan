@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class WriteFastaFileStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteFastaFileStep.class);
+    private static final Logger LOGGER = Logger.getLogger(WriteFastaFileStep.class.getName());
 
     @Transient
     private final WriteFastaFile fastaFile = new WriteFastaFile();
@@ -44,7 +44,7 @@ public class WriteFastaFileStep extends Step {
     /**
      * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepInstance containing the parameters for executing.
+     * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory
      */
     @Override
@@ -54,9 +54,9 @@ public class WriteFastaFileStep extends Step {
         try {
             fastaFile.writeFastaFile(proteins, fastaFilePathName);
         } catch (IOException e) {
-            throw new IllegalStateException ("IOException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
+            throw new IllegalStateException("IOException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
         } catch (WriteFastaFile.FastaFileWritingException e) {
-            throw new IllegalStateException ("WriteFastaFile.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
+            throw new IllegalStateException("WriteFastaFile.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
         }
     }
 }

@@ -35,14 +35,14 @@ public class Run {
 
     private static final int MEGA = 1024 * 1024;
 
-   
+
     private enum I5Option {
-        MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME",false),
-        FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH",false),
-        OUTPUT_FORMAT("format", "F", false, "Optional output format. One of: tsv (tab separated values)", "OUTPUT-FORMAT",false),
-        OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH",false),
-        ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES",true),
-        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY",false);
+        MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
+        FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
+        OUTPUT_FORMAT("format", "F", false, "Optional output format. One of: tsv (tab separated values)", "OUTPUT-FORMAT", false),
+        OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH", false),
+        ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true),
+        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false);
 
         private String longOpt;
 
@@ -148,7 +148,7 @@ public class Run {
         }
     }
 
-    private static final Mode DEFAULT_MODE= Mode.AMQSTANDALONE;
+    private static final Mode DEFAULT_MODE = Mode.AMQSTANDALONE;
 
 
     static {
@@ -188,7 +188,7 @@ public class Run {
 
             modeArgument = parsedCommandLine.getOptionValue(I5Option.MODE.getLongOpt());
 
-            final Mode mode = modeArgument!=null?Mode.valueOf(modeArgument.toUpperCase()):DEFAULT_MODE;
+            final Mode mode = modeArgument != null ? Mode.valueOf(modeArgument.toUpperCase()) : DEFAULT_MODE;
 
             //String config = System.getProperty("config");
             LOGGER.info("Welcome to InterProScan v5");
@@ -206,13 +206,13 @@ public class Run {
 
             ctx.registerShutdownHook();
 
-            if (args.length==0) {
+            if (args.length == 0) {
                 printHelp();
-                System.out.println("Available analyses in this installation:");
-                Jobs jobs=(Jobs)ctx.getBean("jobs");
+                System.out.println("Available analyses in this installation:");    // LEAVE as System.out
+                Jobs jobs = (Jobs) ctx.getBean("jobs");
 
                 for (Job job : jobs.getAnalysisJobs().getJobList()) {
-                    System.out.printf("    %20s : %s\n",job.getId().replace("job", ""),job.getDescription());
+                    System.out.printf("    %20s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
                 }
                 System.exit(1);
             }

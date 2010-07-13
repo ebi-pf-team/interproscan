@@ -2,8 +2,6 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCre
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
-import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.Job;
@@ -31,7 +29,7 @@ public class FastaFileLoadStep extends Step {
     public static final String ANALYSIS_JOB_NAMES_KEY = "ANALYSIS_JOB_NAMES";
     public static final String COMPLETION_JOB_NAME_KEY = "COMPLETION_JOB_NAME";
 
-    private static final Logger LOGGER = Logger.getLogger(FastaFileLoadStep.class);
+    private static final Logger LOGGER = Logger.getLogger(FastaFileLoadStep.class.getName());
 
     private LoadFastaFile fastaFileLoader;
 
@@ -59,7 +57,7 @@ public class FastaFileLoadStep extends Step {
     /**
      * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepInstance containing the parameters for executing.
+     * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory
      */
     @Override
@@ -69,39 +67,37 @@ public class FastaFileLoadStep extends Step {
         final String analysisJobNames = stepInstance.getStepParameters().get(ANALYSIS_JOB_NAMES_KEY);
         final String completionJobName = stepInstance.getStepParameters().get(COMPLETION_JOB_NAME_KEY);
         LOGGER.debug("Fasta file path from step parameters; " + providedPath);
-        if (providedPath != null){
+        if (providedPath != null) {
             // Try resolving the fasta file as an absolute file path
             InputStream fastaFileInputStream = null;
-            File file = new File (providedPath);
-            if (file.exists()){
+            File file = new File(providedPath);
+            if (file.exists()) {
                 if (file.canRead()) {
                     try {
                         fastaFileInputStream = new FileInputStream(file);
                     } catch (FileNotFoundException e) {
-                        throw new IllegalStateException ("FileNotFoundException thrown when attempting to load a fasta file located at " + file.getAbsolutePath(), e);
+                        throw new IllegalStateException("FileNotFoundException thrown when attempting to load a fasta file located at " + file.getAbsolutePath(), e);
                     }
+                } else {
+                    throw new IllegalArgumentException("The fasta file " + providedPath + " is visible but cannot be read.  Please check file permissions.");
                 }
-                else {
-                    throw new IllegalArgumentException ("The fasta file " + providedPath + " is visible but cannot be read.  Please check file permissions.");
-                }
-            }
-            else {
+            } else {
                 // Absolute file path did not resolve, so try using the class loader.
                 fastaFileInputStream = FastaFileLoadStep.class.getClassLoader().getResourceAsStream(providedPath);
             }
-            if (fastaFileInputStream == null){
-                throw new IllegalArgumentException ("Cannot find the fasta file located at " + providedPath);
+            if (fastaFileInputStream == null) {
+                throw new IllegalArgumentException("Cannot find the fasta file located at " + providedPath);
             }
 
 
-            Jobs analysisJobs = analysisJobNames==null?jobs.getAnalysisJobs():jobs.subset(analysisJobNames.split(","));
+            Jobs analysisJobs = analysisJobNames == null ? jobs.getAnalysisJobs() : jobs.subset(analysisJobNames.split(","));
             Job completionJob = jobs.getJobById(completionJobName);
-            
-            StepCreationProteinLoadListener proteinLoaderListener=
-                    new StepCreationProteinLoadListener(analysisJobs, completionJob,stepInstance.getStepParameters());
+
+            StepCreationProteinLoadListener proteinLoaderListener =
+                    new StepCreationProteinLoadListener(analysisJobs, completionJob, stepInstance.getStepParameters());
             proteinLoaderListener.setStepInstanceDAO(stepInstanceDAO);
 
-            fastaFileLoader.loadSequences(fastaFileInputStream,proteinLoaderListener);
+            fastaFileLoader.loadSequences(fastaFileInputStream, proteinLoaderListener);
         }
     }
 }

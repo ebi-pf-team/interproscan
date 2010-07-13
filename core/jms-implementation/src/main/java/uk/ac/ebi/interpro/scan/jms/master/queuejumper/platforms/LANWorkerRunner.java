@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.util.List;
  * @since 1.0
  */
 public class LANWorkerRunner implements WorkerRunner {
+
+    private static final Logger LOGGER = Logger.getLogger(LANWorkerRunner.class.getName());
 
     String command;
 
@@ -81,7 +84,7 @@ public class LANWorkerRunner implements WorkerRunner {
                     commandBuf.append(' ').append(lanServerSettings.getMemory());
                 }
 
-                System.out.println("LAN command: " + commandBuf.toString());
+                LOGGER.debug("LAN command: " + commandBuf.toString());
 
                 try {
                     Runtime.getRuntime().exec(commandBuf.toString());

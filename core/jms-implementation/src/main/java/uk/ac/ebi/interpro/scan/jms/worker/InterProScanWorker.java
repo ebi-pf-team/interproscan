@@ -28,12 +28,12 @@ import java.util.UUID;
  */
 public class InterProScanWorker implements Worker {
 
-    private static final Logger LOGGER = Logger.getLogger(InterProScanWorker.class);
+    private static final Logger LOGGER = Logger.getLogger(InterProScanWorker.class.getName());
 
     /**
      * Testing concept of having a maximum life on a serial worker, which then expires and
      * asks for a new one.  This might work well in the context of LSF for example.
-     *
+     * <p/>
      * TODO - this should default to null and be injected.
      */
     private Long timeToLive = null;
@@ -77,6 +77,7 @@ public class InterProScanWorker implements Worker {
      * Optional time in milliseconds for the server to live for.
      * Note that this is the time until that last JMS job is accepted -
      * currently running jobs will run to completion.
+     *
      * @param millisecondsToLive time until that last JMS job is accepted.
      */
     @Override
@@ -90,6 +91,7 @@ public class InterProScanWorker implements Worker {
 
     /**
      * Sets the name of the JMS queue from which the Worker takes a job to do.
+     *
      * @param jobRequestQueueName the name of the JMS queue from which the Worker takes a job to do.
      */
     @Required
@@ -104,7 +106,8 @@ public class InterProScanWorker implements Worker {
 
     /**
      * Sets the name of the JMS queue to which the Worker returns the results of a job.
-     * @param jobResponseQueueName  the name of the JMS queue to which the Worker returns the results of a job.
+     *
+     * @param jobResponseQueueName the name of the JMS queue to which the Worker returns the results of a job.
      */
     @Required
     public void setJobResponseQueueName(String jobResponseQueueName) {
@@ -177,17 +180,17 @@ public class InterProScanWorker implements Worker {
     }
 
 
-    public void run(){
+    public void run() {
         lastActivityTime = startTime = new Date().getTime();
         HornetQSessionHandler hornetQSessionHandler = null;
-        try{
+        try {
             hornetQSessionHandler = new HornetQSessionHandler(connectionFactory);
             MessageConsumer messageConsumer = hornetQSessionHandler.getMessageConsumer(jobRequestQueueName);
             MessageProducer messageProducer = hornetQSessionHandler.getMessageProducer(jobResponseQueueName);
             StepExecutionListener stepExecutionListener = new StepExecutionListener(messageProducer, hornetQSessionHandler);
             messageConsumer.setMessageListener(stepExecutionListener);
             InterProScanMonitorListener monitorListener = null;
-            if (workerManagerTopicName != null && workerManagerResponseQueueName != null){
+            if (workerManagerTopicName != null && workerManagerResponseQueueName != null) {
                 MessageConsumer monitorMessageConsumer = hornetQSessionHandler.getMessageConsumer(workerManagerTopicName);
                 MessageProducer monitorMessageProducer = hornetQSessionHandler.getMessageProducer(workerManagerResponseQueueName);
                 monitorListener = new InterProScanMonitorListener(hornetQSessionHandler, monitorMessageProducer);
@@ -195,17 +198,17 @@ public class InterProScanWorker implements Worker {
             }
 
             hornetQSessionHandler.start();
-            while (running || stepExecutionListener.isBusy() || (monitorListener != null && monitorListener.isBusy())){
+            while (running || stepExecutionListener.isBusy() || (monitorListener != null && monitorListener.isBusy())) {
                 Thread.sleep(2000);
 
                 final long now = new Date().getTime();
                 // Cleanly stop the server if it has exceeded it's "time to live".
-                if (timeToLive != null && now - startTime > timeToLive){
+                if (timeToLive != null && now - startTime > timeToLive) {
                     running = false;
                 }
 
                 // Cleanly stop the server if has been idle for longer than its 'idleExpiryTime'
-                if (running && idleExpiryTime != null && now - lastActivityTime > idleExpiryTime){
+                if (running && idleExpiryTime != null && now - lastActivityTime > idleExpiryTime) {
                     running = false;
                 }
 
@@ -219,11 +222,11 @@ public class InterProScanWorker implements Worker {
             LOGGER.error("JMSException thrown by worker.  Worker closing.", e);
         }
         catch (InterruptedException e) {
-            LOGGER.info ("InterruptedException thrown in InterProScanWorker. Worker closing.", e);
-        } finally{
+            LOGGER.info("InterruptedException thrown in InterProScanWorker. Worker closing.", e);
+        } finally {
             running = false;  //To ensure that the Monitor thread exits.
             try {
-                if (hornetQSessionHandler != null){
+                if (hornetQSessionHandler != null) {
                     hornetQSessionHandler.close();
                 }
             } catch (JMSException e) {
@@ -232,7 +235,7 @@ public class InterProScanWorker implements Worker {
         }
     }
 
-    class StepExecutionListener implements MessageListener{
+    class StepExecutionListener implements MessageListener {
 
         private final MessageProducer messageProducer;
 
@@ -250,44 +253,44 @@ public class InterProScanWorker implements Worker {
         public void onMessage(Message message) {
             busy = true;
             lastActivityTime = new Date().getTime();
-            try{
-                if (message != null){
+            try {
+                if (message != null) {
                     message.acknowledge();     // Acknowledge receipt of the message.
                     LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
 
-                    if (! (message instanceof ObjectMessage)){
-                        LOGGER.error ("Received a message of an unknown type (non-ObjectMessage)");
+                    if (!(message instanceof ObjectMessage)) {
+                        LOGGER.error("Received a message of an unknown type (non-ObjectMessage)");
                         return;
                     }
                     ObjectMessage stepExecutionMessage = (ObjectMessage) message;
                     final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
                     currentStepExecution = stepExecution;
-                    if (stepExecution == null){
-                        LOGGER.error ("An ObjectMessage was received but had no contents.");
+                    if (stepExecution == null) {
+                        LOGGER.error("An ObjectMessage was received but had no contents.");
                         return;
                     }
                     LOGGER.debug("Message received of queue - attempting to executeInTransaction");
 
-                    try{
+                    try {
                         executeInTransaction(stepExecution, messageProducer, hornetQSessionHandler);
                     } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.                        
-            //            running = false;
-                        LOGGER.error ("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
+                        //            running = false;
+                        LOGGER.error("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
                         // Something went wrong in the execution - try to send back failure
                         // message to the broker.  This in turn may fail if it is the JMS connection
                         // that failed during the execution.
                         stepExecution.fail();
                         ObjectMessage responseMessage = hornetQSessionHandler.createObjectMessage(stepExecution);
                         messageProducer.send(responseMessage);
-                        LOGGER.debug ("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
+                        LOGGER.debug("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
                     }
                 }
             }
             catch (JMSException e) {
-                LOGGER.error ("JMSException thrown in MessageListener.", e);
+                LOGGER.error("JMSException thrown in MessageListener.", e);
             }
-            finally{
+            finally {
                 busy = false;
             }
         }
@@ -297,7 +300,7 @@ public class InterProScanWorker implements Worker {
         }
     }
 
-    class InterProScanMonitorListener implements MessageListener{
+    class InterProScanMonitorListener implements MessageListener {
 
         private HornetQSessionHandler hornetQSessionHandler;
 
@@ -313,8 +316,8 @@ public class InterProScanWorker implements Worker {
         @Override
         public void onMessage(Message message) {
             busy = true;
-            try{
-                if (message instanceof TextMessage){
+            try {
+                if (message instanceof TextMessage) {
                     TextMessage managementRequest = (TextMessage) message;
                     managementRequest.acknowledge();     // TODO - when should message receipt be acknowledged?
                     // Just echo back the managementRequest with the name of the worker host to uk.ac.ebi.interpro.scan.jms the multicast topic.
@@ -328,12 +331,11 @@ public class InterProScanWorker implements Worker {
                     workerState.setProportionComplete(getProportionOfWorkDone());
                     workerState.setWorkerStatus((isRunning()) ? "Running" : "Not Running");
                     StepExecution stepExecution = getCurrentStepExecution();
-                    if (stepExecution == null){
+                    if (stepExecution == null) {
                         workerState.setStepExecutionState(null);
                         workerState.setJobId("-");
                         workerState.setJobDescription("-");
-                    }
-                    else {
+                    } else {
                         workerState.setStepExecutionState(stepExecution.getState());
                         workerState.setJobId(stepExecution.getId().toString());
                         workerState.setJobDescription(stepExecution.getStepInstance().getStep(jobs).getStepDescription());
@@ -342,7 +344,7 @@ public class InterProScanWorker implements Worker {
 
                     // Find out if there is a 'requestee' header, which should be added to the response message
                     // so the management responses can be filtered out by the client that sent them.
-                    if (managementRequest.propertyExists(WorkerMonitor.REQUESTEE_PROPERTY)){
+                    if (managementRequest.propertyExists(WorkerMonitor.REQUESTEE_PROPERTY)) {
                         responseObject.setStringProperty(WorkerMonitor.REQUESTEE_PROPERTY,
                                 managementRequest.getStringProperty(WorkerMonitor.REQUESTEE_PROPERTY));
                     }
@@ -366,33 +368,33 @@ public class InterProScanWorker implements Worker {
     }
 
 
-
     /**
      * Executing the StepInstance and responding to the JMS Broker
      * if the execution is successful.
-     * @param stepExecution          The StepExecution to run.
-     * @param messageProducer        For building the reply to the Broker
-     * @param hornetQSessionHandler         to send the reply to the broker
+     *
+     * @param stepExecution         The StepExecution to run.
+     * @param messageProducer       For building the reply to the Broker
+     * @param hornetQSessionHandler to send the reply to the broker
      */
     @Transactional
     private void executeInTransaction(StepExecution stepExecution,
-                         MessageProducer messageProducer,
-                         HornetQSessionHandler hornetQSessionHandler){
+                                      MessageProducer messageProducer,
+                                      HornetQSessionHandler hornetQSessionHandler) {
         stepExecution.setToRun();
         final StepInstance stepInstance = stepExecution.getStepInstance();
         final Step step = stepInstance.getStep(jobs);
-        LOGGER.debug("Step ID: "+ step.getId());
+        LOGGER.debug("Step ID: " + step.getId());
         LOGGER.debug("Step instance: " + stepInstance);
         LOGGER.debug("Step execution id: " + stepExecution.getId());
         step.execute(stepInstance, getValidWorkingDirectory(step));
         stepExecution.completeSuccessfully();
-        LOGGER.debug ("Successful run of Step.executeInTransaction() method for StepExecution ID: " + stepExecution.getId());
+        LOGGER.debug("Successful run of Step.executeInTransaction() method for StepExecution ID: " + stepExecution.getId());
 
-        try{
+        try {
             ObjectMessage responseMessage = hornetQSessionHandler.createObjectMessage(stepExecution);
             messageProducer.send(responseMessage);
         } catch (JMSException e) {
-            throw new IllegalStateException ("JMSException thrown when attempting to communicate successful completion of step " + stepExecution.getId() + " to the broker.", e);
+            throw new IllegalStateException("JMSException thrown when attempting to communicate successful completion of step " + stepExecution.getId() + " to the broker.", e);
         }
 
         LOGGER.debug("Followed by successful reply to the JMS Broker and acknowledgement of the message.");
@@ -401,39 +403,40 @@ public class InterProScanWorker implements Worker {
     /**
      * Builds the path to the directory in which the work should be performed and checks that it
      * exists and is writable.  (Also attempts to create this directory if it does not exist.)
+     *
      * @param step being the step for which the directory should be returned
      * @return the path of the working directory.
      */
-    private String getValidWorkingDirectory(Step step){
+    private String getValidWorkingDirectory(Step step) {
         final String directory = new StringBuilder()
-                        .append(jobs.getBaseDirectoryTemporaryFiles())
-                        .append('/')
-                        .append(step.getJob().getId())
-                        .toString();
+                .append(jobs.getBaseDirectoryTemporaryFiles())
+                .append('/')
+                .append(step.getJob().getId())
+                .toString();
         // Check (just the once) that the working directory exists.
-        if (! validatedDirectories.contains(directory)){
-            final File file = new File (directory);
-            if (! file.exists()){
-                if (! file.mkdirs()){
+        if (!validatedDirectories.contains(directory)) {
+            final File file = new File(directory);
+            if (!file.exists()) {
+                if (!file.mkdirs()) {
                     throw new IllegalStateException("Unable to create the working directory " + directory);
                 }
-            }
-            else if (! file.isDirectory()){
-                throw new IllegalStateException ("The path " + directory + " exists, but is not a directory.");
-            }
-            else if (! file.canWrite()){
-                throw new IllegalStateException ("Unable to write to the directory " + directory);
+            } else if (!file.isDirectory()) {
+                throw new IllegalStateException("The path " + directory + " exists, but is not a directory.");
+            } else if (!file.canWrite()) {
+                throw new IllegalStateException("Unable to write to the directory " + directory);
             }
             validatedDirectories.add(directory);
         }
         return directory;
     }
+
     /**
      * Returns true if after calling System.gc, there is no
      * evidence of a memory leak.
-     *
+     * <p/>
      * Conservative - looks for used memory being no more
      * than 1/3 of Xmx.
+     *
      * @return true if all is OK.
      */
     private boolean possibleMemoryLeakDetected() {
@@ -443,7 +446,7 @@ public class InterProScanWorker implements Worker {
         final long Xmx = Runtime.getRuntime().maxMemory();
         final long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         final boolean leaky = Xmx / used < 3;
-        if (leaky){
+        if (leaky) {
             LOGGER.error("The JVM is full - closing down?");
         }
         return leaky;

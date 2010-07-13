@@ -10,7 +10,6 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
@@ -24,7 +23,7 @@ import java.util.Set;
  */
 public class ParsePfam_A_HMMER3OutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParsePfam_A_HMMER3OutputStep.class);
+    private static final Logger LOGGER = Logger.getLogger(ParsePfam_A_HMMER3OutputStep.class.getName());
 
     private String fullPathToHmmFile;
 
@@ -68,14 +67,14 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
     /**
      * This method is called to execute the action that the StepInstance must perform.
      *
-     * @param stepInstance containing the parameters for executing.
+     * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.debug("Running Parser HMMER3 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
         InputStream is = null;
-        try{
+        try {
 //            Thread.sleep(10000);  // Have a snooze to allow NFS to catch up.
             final String hmmerOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getHmmerOutputFileNameTemplate());
             is = new FileInputStream(hmmerOutputFilePath);
@@ -85,13 +84,13 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
         }
 
         catch (IOException e) {
-            throw new IllegalStateException ("IOException thrown when attempting to read " + hmmerOutputFilePathTemplate, e);
+            throw new IllegalStateException("IOException thrown when attempting to read " + hmmerOutputFilePathTemplate, e);
         } finally {
-            if (is != null){
+            if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    LOGGER.error ("Duh - parsed OK, but can't close the input stream?" , e);
+                    LOGGER.error("Duh - parsed OK, but can't close the input stream?", e);
                 }
             }
         }

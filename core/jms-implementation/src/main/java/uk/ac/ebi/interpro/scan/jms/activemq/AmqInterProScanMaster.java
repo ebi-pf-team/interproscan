@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class AmqInterProScanMaster implements Master {
 
-    private static final Logger LOGGER = Logger.getLogger(AmqInterProScanMaster.class);
+    private static final Logger LOGGER = Logger.getLogger(AmqInterProScanMaster.class.getName());
 
     private JmsTemplate jmsTemplate;
 
@@ -61,7 +61,7 @@ public class AmqInterProScanMaster implements Master {
 
     private String outputFile;
 
-    private String outputFormat="tsv";
+    private String outputFormat = "tsv";
 
     private String[] analyses;
 
@@ -209,7 +209,7 @@ public class AmqInterProScanMaster implements Master {
 
             String outputFilePath = outputFile;
             if (outputFilePath == null) {
-                outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + "."+outputFormat.toLowerCase();
+                outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + "." + outputFormat.toLowerCase();
             }
             params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
             params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat);

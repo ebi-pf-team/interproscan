@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class RunHmmer3Step extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunHmmer3Step.class);
+    private static final Logger LOGGER = Logger.getLogger(RunHmmer3Step.class.getName());
 
     private String fullPathToBinary;
 

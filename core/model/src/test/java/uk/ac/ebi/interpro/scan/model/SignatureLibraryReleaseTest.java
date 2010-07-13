@@ -17,39 +17,39 @@
 package uk.ac.ebi.interpro.scan.model;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.oxm.Marshaller;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.oxm.Unmarshaller;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
-import java.io.Writer;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for {@link SignatureLibraryRelease}
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRelease> {
 
-    @Test public void testRemoveSignature()   {
+    private static final Logger LOGGER = Logger.getLogger(SignatureLibraryReleaseTest.class.getName());
+
+    @Test
+    public void testRemoveSignature() {
         SignatureLibraryRelease sdr = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23.0");
         Signature s1 = sdr.addSignature(new Signature("PF00001"));
         Signature s2 = sdr.addSignature(new Signature("PF00002"));
@@ -62,7 +62,7 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
         try {
             sdr.removeSignature(null);
         }
-        catch (Exception e)    {
+        catch (Exception e) {
             assertTrue("Should be NullPointerException", e instanceof NullPointerException);
         }
         // Should be OK
@@ -72,7 +72,8 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
         assertEquals("Should have no signatures", 0, sdr.getSignatures().size());
     }
 
-    @Test public void testXml() throws IOException, SAXException {
+    @Test
+    public void testXml() throws IOException, SAXException {
         super.testSupportsMarshalling(SignatureLibraryRelease.class);
         super.testXmlRoundTrip();
     }
@@ -84,30 +85,29 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
 
     public static void main(String[] args) throws IOException {
         //http://www.bioinf.manchester.ac.uk/dbbrowser/xmlprints/PR00460.xml
-        if (args.length < 1)    {
+        if (args.length < 1) {
             System.err.println("Usage: SignatureLibraryReleaseTest <signatures-xml-file>");
         }
         String signaturesFile = args[0];
         org.springframework.core.io.Resource resource;
-        if (signaturesFile.startsWith("http"))  {
+        if (signaturesFile.startsWith("http")) {
             resource = new UrlResource(signaturesFile);
-        }
-        else    {
+        } else {
             resource = new FileSystemResource(signaturesFile);
         }
         ApplicationContext ctx = new ClassPathXmlApplicationContext("uk/ac/ebi/interpro/scan/model/oxm-context.xml");
         // Unmarshall
-        Unmarshaller unmarshaller = (Unmarshaller)ctx.getBean("unmarshaller");
-        SignatureLibraryRelease slr = 
+        Unmarshaller unmarshaller = (Unmarshaller) ctx.getBean("unmarshaller");
+        SignatureLibraryRelease slr =
                 (SignatureLibraryRelease) unmarshaller.unmarshal(new StreamSource(resource.getInputStream()));
         // Marshall
         // Marshaller marshaller     = (Marshaller)ctx.getBean("marshaller");
         //Writer writer = new StringWriter();
         //marshaller.marshal(slr, new StreamResult(writer));
         // Print
-        System.out.println("Received:");
-        System.out.println(slr.toString());
-        //System.out.println(writer.toString());
+        LOGGER.debug("Received:");
+        LOGGER.debug(slr.toString());
+        //LOGGER.debug(writer.toString());
     }
 
 }

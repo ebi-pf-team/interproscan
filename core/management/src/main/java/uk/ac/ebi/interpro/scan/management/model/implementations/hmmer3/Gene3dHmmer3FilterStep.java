@@ -23,7 +23,7 @@ import java.util.Set;
 //public class Gene3dHmmer3FilterStep extends FilterStep<Gene3dHmmer3RawMatch, Hmmer3Match> {
 public class Gene3dHmmer3FilterStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3dHmmer3FilterStep.class);
+    private static final Logger LOGGER = Logger.getLogger(Gene3dHmmer3FilterStep.class.getName());
 
     private SignatureLibrary signatureLibrary;
     private String signatureLibraryRelease;

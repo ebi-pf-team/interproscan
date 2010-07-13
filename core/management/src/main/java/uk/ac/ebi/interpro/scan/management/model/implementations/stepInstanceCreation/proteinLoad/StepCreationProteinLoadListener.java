@@ -9,7 +9,10 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Listener implementation that creates all required StepInstances
@@ -21,7 +24,7 @@ import java.util.*;
  */
 public class StepCreationProteinLoadListener implements ProteinLoadListener {
 
-    private static final Logger LOGGER = Logger.getLogger(StepCreationProteinLoadListener.class);
+    private static final Logger LOGGER = Logger.getLogger(StepCreationProteinLoadListener.class.getName());
 
 
     private StepInstanceDAO stepInstanceDAO;
@@ -30,7 +33,6 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
     private Job completionJob;
     private Map<String, String> stepParameters;
 
-    
 
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
@@ -52,31 +54,32 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
     public StepCreationProteinLoadListener(Jobs analysisJobs, Job completionJob, Map<String, String> stepParameters) {
         this.stepParameters = stepParameters;
         this.jobs = analysisJobs;
-        this.completionJob = completionJob;                 
+        this.completionJob = completionJob;
     }
 
 
-    private static Long min(Long l1,Long l2) {
-        if (l1==null && l2==null) return null;
-        if (l2==null) return l1;
-        if (l1==null) return l2;
-        return Math.min(l1,l2);
+    private static Long min(Long l1, Long l2) {
+        if (l1 == null && l2 == null) return null;
+        if (l2 == null) return l1;
+        if (l1 == null) return l2;
+        return Math.min(l1, l2);
     }
-    private static Long max(Long l1,Long l2) {
-        if (l1==null && l2==null) return null;
-        if (l2==null) return l1;
-        if (l1==null) return l2;
-        return Math.max(l1,l2);
+
+    private static Long max(Long l1, Long l2) {
+        if (l1 == null && l2 == null) return null;
+        if (l2 == null) return l1;
+        if (l1 == null) return l2;
+        return Math.max(l1, l2);
     }
 
     @Override
-    public void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId,Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId) {
-        try{
+    public void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId, Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId) {
+        try {
 
-            Long bottomProteinId=min(bottomNewProteinId,bottomPrecalculatedProteinId);
-            Long topProteinId=max(topNewProteinId,topPrecalculatedProteinId);
+            Long bottomProteinId = min(bottomNewProteinId, bottomPrecalculatedProteinId);
+            Long topProteinId = max(topNewProteinId, topPrecalculatedProteinId);
 
-            if (bottomProteinId == null || topProteinId == null){
+            if (bottomProteinId == null || topProteinId == null) {
                 return;
             }
 //            if (topProteinId < bottomProteinId){
@@ -86,15 +89,15 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
 
             final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
 
-            List<StepInstance> completionStepInstances=new ArrayList<StepInstance>();
-                                                
-            LOGGER.debug("Completion Job:"+completionJob);
+            List<StepInstance> completionStepInstances = new ArrayList<StepInstance>();
+
+            LOGGER.debug("Completion Job:" + completionJob);
 
             for (String key : stepParameters.keySet()) {
-                LOGGER.debug("setparameter:"+key+" "+stepParameters.get(key));
+                LOGGER.debug("setparameter:" + key + " " + stepParameters.get(key));
             }
 
-            if (completionJob!=null) {
+            if (completionJob != null) {
                 for (Step step : completionJob.getSteps()) {
                     StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
                     stepInstance.addStepParameters(stepParameters);
@@ -102,14 +105,14 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
                 }
             }
 
-            LOGGER.debug("Completion Steps:"+completionStepInstances.size());
+            LOGGER.debug("Completion Steps:" + completionStepInstances.size());
 
             // Instantiate the StepInstances - no dependencies yet.
-            for (Job job : jobs.getJobList()){
-                for (Step step : job.getSteps()){
-                    if (step.isCreateStepInstancesForNewProteins()){
+            for (Job job : jobs.getJobList()) {
+                for (Step step : job.getSteps()) {
+                    if (step.isCreateStepInstancesForNewProteins()) {
                         List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewProteinId, topNewProteinId);
-                        stepToStepInstances.put (step, jobStepInstances);
+                        stepToStepInstances.put(step, jobStepInstances);
                         for (StepInstance jobStepInstance : jobStepInstances) {
                             for (StepInstance completionStepInstance : completionStepInstances) {
                                 completionStepInstance.addDependentStepInstance(jobStepInstance);
@@ -120,15 +123,15 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
             }
 
             // Add the dependencies to the StepInstances.
-            for (Step step : stepToStepInstances.keySet()){
-                for (StepInstance stepInstance : stepToStepInstances.get(step)){
+            for (Step step : stepToStepInstances.keySet()) {
+                for (StepInstance stepInstance : stepToStepInstances.get(step)) {
                     final List<Step> dependsUpon = stepInstance.getStep(jobs).getDependsUpon();
-                    if (dependsUpon != null){
-                        for (Step stepRequired : dependsUpon){
+                    if (dependsUpon != null) {
+                        for (Step stepRequired : dependsUpon) {
                             List<StepInstance> candidateStepInstances = stepToStepInstances.get(stepRequired);
-                            if (candidateStepInstances != null){
-                                for (StepInstance candidate : candidateStepInstances){
-                                    if (stepInstance.proteinBoundsOverlap(candidate)){
+                            if (candidateStepInstances != null) {
+                                for (StepInstance candidate : candidateStepInstances) {
+                                    if (stepInstance.proteinBoundsOverlap(candidate)) {
                                         stepInstance.addDependentStepInstance(candidate);
                                     }
                                 }
@@ -143,25 +146,26 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
             }
             stepInstanceDAO.insert(completionStepInstances);
         }
-        catch (Exception e){
+        catch (Exception e) {
             LOGGER.error("Exception thrown in createStepInstances() method: ", e);
-            throw new IllegalStateException ("Caught and logged Exception, re-thrown so things work properly.", e);
+            throw new IllegalStateException("Caught and logged Exception, re-thrown so things work properly.", e);
         }
     }
 
     /**
      * Should be private - but want to junit test as prone to boundary errors!
+     *
      * @param step
      * @param bottomProteinId
      * @param topProteinId
      * @return
      */
-    List<StepInstance> createStepInstances(Step step, Long bottomProteinId, Long topProteinId){
+    List<StepInstance> createStepInstances(Step step, Long bottomProteinId, Long topProteinId) {
         final List<StepInstance> stepInstances = new ArrayList<StepInstance>();
         final long sliceSize = (step.getMaxProteins() == null)
                 ? topProteinId - bottomProteinId + 1
                 : step.getMaxProteins();
-        for (long bottom = bottomProteinId; bottom <= topProteinId; bottom += sliceSize){
+        for (long bottom = bottomProteinId; bottom <= topProteinId; bottom += sliceSize) {
             final long top = Math.min(topProteinId, bottom + sliceSize - 1);
             stepInstances.add(new StepInstance(step, bottom, top, null, null));
         }

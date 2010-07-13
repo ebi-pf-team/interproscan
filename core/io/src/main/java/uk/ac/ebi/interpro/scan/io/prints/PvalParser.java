@@ -27,7 +27,7 @@ public class PvalParser implements Serializable {
 
     // /ebi/production/interpro/data/members/prints/40.0/print.pval
 
-    private static final Logger LOGGER = Logger.getLogger(PvalParser.class);
+    private static final Logger LOGGER = Logger.getLogger(PvalParser.class.getName());
 
     private static final String LINE_SIG_NAME = "gc";
     private static final String LINE_SIG_ACCESSION = "gx";

@@ -1,27 +1,26 @@
 package uk.ac.ebi.interpro.scan.cli;
 
+import org.apache.log4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.business.binary.RawMatchBinaryRunner;
 import uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter;
+import uk.ac.ebi.interpro.scan.io.ResourceWriter;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.io.*;
-import uk.ac.ebi.interpro.scan.business.binary.RawMatchBinaryRunner;
-import uk.ac.ebi.interpro.scan.business.filter.RawMatchFilter;
 
-import java.util.*;
 import java.io.*;
+import java.util.Set;
 
 /**
  * Runs Gene3D in "Onion" mode, writing raw and filtered results to separate text files.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public class Gene3dOnionRunner {
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3dOnionRunner.class);
+    private static final Logger LOGGER = Logger.getLogger(Gene3dOnionRunner.class.getName());
 
     private RawMatchBinaryRunner<Gene3dHmmer3RawMatch> binaryRunner;
     private Gene3dRawMatchFilter filter;
@@ -43,7 +42,7 @@ public class Gene3dOnionRunner {
 
         // Write TSV
         Resource rawResource = new FileSystemResource(resultsFilePath + ".raw");
-        for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins)    {
+        for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins) {
             analysisWriter.write(rawResource, p.getMatches(), true);
         }
 
@@ -53,18 +52,17 @@ public class Gene3dOnionRunner {
 
         // Write TSV
         Resource filteredResource = new FileSystemResource(resultsFilePath + ".fil");
-        for (RawProtein<Gene3dHmmer3RawMatch> p : filteredProteins)    {
+        for (RawProtein<Gene3dHmmer3RawMatch> p : filteredProteins) {
             resultsWriter.write(filteredResource, p.getMatches(), true);
         }
 
-        if (LOGGER.isDebugEnabled())    {
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Raw matches [" + rawResource.getFilename() + "]:");
-            LOGGER.debug(cat(rawResource.getInputStream()));    
+            LOGGER.debug(cat(rawResource.getInputStream()));
             LOGGER.debug("Filtered matches [" + filteredResource.getFilename() + "]:");
-            if (filteredResource.exists())  {
+            if (filteredResource.exists()) {
                 LOGGER.debug(cat(filteredResource.getInputStream()));
-            }
-            else    {
+            } else {
                 LOGGER.debug("No results");
             }
         }
@@ -90,7 +88,7 @@ public class Gene3dOnionRunner {
     private String cat(InputStream in) throws IOException {
         StringBuilder sb = new StringBuilder();
         BufferedReader reader = null;
-        try{
+        try {
             reader = new BufferedReader(new InputStreamReader(in));
             while (reader.ready()) {
                 sb.append(reader.readLine()).append("\n");
@@ -98,7 +96,7 @@ public class Gene3dOnionRunner {
             return sb.toString();
         }
         finally {
-            if (reader != null){
+            if (reader != null) {
                 reader.close();
             }
         }
@@ -106,14 +104,14 @@ public class Gene3dOnionRunner {
 
     private void cat(InputStream in, PrintStream out) throws IOException {
         BufferedReader reader = null;
-        try{
+        try {
             reader = new BufferedReader(new InputStreamReader(in));
             while (reader.ready()) {
                 out.println(reader.readLine());
             }
         }
         finally {
-            if (reader != null){
+            if (reader != null) {
                 reader.close();
             }
         }

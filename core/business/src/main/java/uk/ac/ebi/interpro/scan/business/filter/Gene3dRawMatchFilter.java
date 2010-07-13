@@ -39,7 +39,7 @@ import java.util.*;
  */
 public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3RawMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3dRawMatchFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(Gene3dRawMatchFilter.class.getName());
 
     private String temporaryFilePath = null;
 

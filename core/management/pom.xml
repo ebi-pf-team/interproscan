@@ -126,8 +126,8 @@
                 <mvn.i5.database.username>sa</mvn.i5.database.username>
                 <mvn.i5.database.password></mvn.i5.database.password>
                 <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
-                <mvn.hibernate.show_sql>true</mvn.hibernate.show_sql>
-                <mvn.hibernate.format_sql>true</mvn.hibernate.format_sql>
+                <mvn.hibernate.show_sql>false</mvn.hibernate.show_sql>
+                <mvn.hibernate.format_sql>false</mvn.hibernate.format_sql>
                 <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
             </properties>
         </profile>

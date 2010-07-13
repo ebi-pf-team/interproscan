@@ -47,20 +47,20 @@ public class ProteinDAOTest {
     /**
      * Logger for Junit logging. Log messages will be associated with the ProteinPersistenceTest class.
      */
-    private static Logger LOGGER = Logger.getLogger(ProteinDAOTest.class);
+    private static final Logger LOGGER = Logger.getLogger(ProteinDAOTest.class.getName());
 
-    private static final String[] ACCESSIONS = {"Q12345","P99999", "IPI01234567", "ENSP120923423423234"};
+    private static final String[] ACCESSIONS = {"Q12345", "P99999", "IPI01234567", "ENSP120923423423234"};
 
-    private static final String[] ACCESSIONS_2 = {"Q98765","P23423", "IPI01234598", "ENSP120923423423268"};
+    private static final String[] ACCESSIONS_2 = {"Q98765", "P23423", "IPI01234598", "ENSP120923423423268"};
 
     private static final Long LONG_ZERO = 0L;
 
     private static final Long LONG_ONE = 1L;
 
     // First line of UPI0000000001.fasta
-    public static final String GOOD       = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
+    public static final String GOOD = "MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD";
 
-    @Resource (name= "proteinDAO")
+    @Resource(name = "proteinDAO")
     private ProteinDAO dao;
 
     public void setDao(ProteinDAO dao) {
@@ -69,7 +69,7 @@ public class ProteinDAOTest {
 
     @Before
     @After
-    public void emptyProteinTable(){
+    public void emptyProteinTable() {
         dao.deleteAll();
         assertEquals("There should be no proteins in the Protein table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
@@ -77,16 +77,16 @@ public class ProteinDAOTest {
     /**
      * This test exercises
      * GenericDAOImpl<Protein, Long>
-     *                              .insert(Protein protein)
-     *                              .count()
-     *                              .read(Long id)
-     *                              .retrieveAll()
-     *                              .delete(Protein protein)
+     * .insert(Protein protein)
+     * .count()
+     * .read(Long id)
+     * .retrieveAll()
+     * .delete(Protein protein)
      */
     @Test
-    public void storeAndRetrieveProtein(){
+    public void storeAndRetrieveProtein() {
         emptyProteinTable();
-        Protein protein = new Protein (GOOD);
+        Protein protein = new Protein(GOOD);
         assertNotNull("The ProteinDAOImpl object should be not-null.", dao);
         dao.insert(protein);
         Long id = protein.getId();
@@ -104,14 +104,14 @@ public class ProteinDAOTest {
     /**
      * This test exercises storage of XrefSequenceIdentifier objects that are
      * associated with a Protein object.
-     *
+     * <p/>
      * It also exercises the GenericDAOImpl<Protein, Long>.update(Protein protein)
      * method in relation to XrefSequenceIdentifier objects
      */
     @Test
-    public void storeAndRetrieveProteinWithXrefs(){
+    public void storeAndRetrieveProteinWithXrefs() {
         emptyProteinTable();
-        Protein protein = new Protein (GOOD);
+        Protein protein = new Protein(GOOD);
         // First of all, insert the protein not including Xrefs.
         dao.insert(protein);
         Long id = protein.getId();
@@ -130,14 +130,14 @@ public class ProteinDAOTest {
         Set<Xref> retrievedXRefs = firstRetrievedProtein.getCrossReferences();
         assertNotNull("The cross reference collection should not be null", retrievedXRefs);
         assertEquals("There should be " + ACCESSIONS.length + " cross references.", ACCESSIONS.length, retrievedXRefs.size());
-        for (String accession : ACCESSIONS){
+        for (String accession : ACCESSIONS) {
             boolean foundAccession = false;
-            for (Xref ident : retrievedXRefs){
-                if (accession != null && accession.equals(ident.getIdentifier())){
+            for (Xref ident : retrievedXRefs) {
+                if (accession != null && accession.equals(ident.getIdentifier())) {
                     foundAccession = true;
                 }
             }
-            if (! foundAccession){
+            if (!foundAccession) {
                 fail("The retrieved protein does not include the cross reference " + accession);
             }
         }
@@ -156,15 +156,15 @@ public class ProteinDAOTest {
     /**
      * This test exercises storage of XrefSequenceIdentifier objects that are
      * associated with a Protein object.
-     *
+     * <p/>
      * It also exercises the GenericDAOImpl<Protein, Long>.update(Protein protein)
      * method in relation to XrefSequenceIdentifier objects
      */
     @Test
-    public void testGetProteinsAndMatchesAndCrossReferencesBetweenIds(){
+    public void testGetProteinsAndMatchesAndCrossReferencesBetweenIds() {
         emptyProteinTable();
-        final Protein protein1 = new Protein (GOOD);
-        final Protein protein2 = new Protein (GOOD + "ACD");
+        final Protein protein1 = new Protein(GOOD);
+        final Protein protein2 = new Protein(GOOD + "ACD");
         // First of all, insert the protein not including Xrefs.
         dao.insert(protein1);
         Long id = protein1.getId();
@@ -178,7 +178,7 @@ public class ProteinDAOTest {
     }
 
     private void addXrefsToProtein(Protein protein1, final String[] accessions) {
-        for (String accession : accessions){
+        for (String accession : accessions) {
             Xref xref = new Xref(accession);
             protein1.addCrossReference(xref);
         }
@@ -190,10 +190,10 @@ public class ProteinDAOTest {
      * insert the same Protein twice.
      */
     @Test
-    public void testSecondInsertOfSameProtein(){
+    public void testSecondInsertOfSameProtein() {
         emptyProteinTable();
-        Protein protein1 = new Protein (GOOD);
-        Protein protein2 = new Protein (GOOD);
+        Protein protein1 = new Protein(GOOD);
+        Protein protein2 = new Protein(GOOD);
 
         dao.insert(protein1);
         assertEquals(protein1.getId(), (dao.insert(protein2)).getId());
@@ -203,14 +203,14 @@ public class ProteinDAOTest {
      * Tests the GenericDAO.getMaximumPrimaryKey() method.
      */
     @Test
-    public void testMaximumPrimaryKeyCount(){
+    public void testMaximumPrimaryKeyCount() {
         emptyProteinTable();
         String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLOPPY", "GHGHGHGHG", "GRUFF"};
         Long maxPrimaryKey = 0l;
-        for (String sequence : proteinSequences){
+        for (String sequence : proteinSequences) {
             Protein protein = new Protein(sequence);
             dao.insert(protein);
-            if (protein.getId() > maxPrimaryKey){
+            if (protein.getId() > maxPrimaryKey) {
                 maxPrimaryKey = protein.getId();
             }
         }
@@ -221,18 +221,18 @@ public class ProteinDAOTest {
      * Tests the ProteinDAO.getProteinsInTransactionSlice() method.
      */
     @Test
-    public void testGetProteinsInTransactionSlice(){
+    public void testGetProteinsInTransactionSlice() {
         emptyProteinTable();
         String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLOPPY", "GHGHGHGHG", "GRUFF", "SPLOD", "QUQUQUQU"};
         Long maxPrimaryKey = Long.MIN_VALUE;
         Long minPrimaryKey = Long.MAX_VALUE;
-        for (String sequence : proteinSequences){
+        for (String sequence : proteinSequences) {
             Protein protein = new Protein(sequence);
             dao.insert(protein);
-            if (protein.getId() > maxPrimaryKey){
+            if (protein.getId() > maxPrimaryKey) {
                 maxPrimaryKey = protein.getId();
             }
-            if (protein.getId() < minPrimaryKey){
+            if (protein.getId() < minPrimaryKey) {
                 minPrimaryKey = protein.getId();
             }
         }
@@ -241,7 +241,7 @@ public class ProteinDAOTest {
         assertEquals("The wrong number of proteins were returned from the database.", proteinSequences.length, retrievedProteins.size());
 
         // Now build a new, smaller slice and see if a smaller number of proteins are returned.
-        retrievedProteins= dao.getProteinsBetweenIds(minPrimaryKey + 1, maxPrimaryKey - 1);
+        retrievedProteins = dao.getProteinsBetweenIds(minPrimaryKey + 1, maxPrimaryKey - 1);
         assertEquals("The wrong number of proteins returned from the database for the smaller slice.", (proteinSequences.length - 2), retrievedProteins.size());
     }
 }

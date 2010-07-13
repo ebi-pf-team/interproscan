@@ -16,8 +16,6 @@
 
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
-import static junit.framework.TestCase.*;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,6 +23,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static junit.framework.TestCase.*;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -53,7 +53,7 @@ public class GenericDAOTest {
     private static final String[] ARRAY_OF_VALUES = new String[]{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
 
 
-    @Resource (name= "genericDAO")
+    @Resource(name = "genericDAO")
     private ModelObjectDAO dao;
 
     public void setDao(ModelObjectDAO dao) {
@@ -63,24 +63,24 @@ public class GenericDAOTest {
     /**
      * Utility method to empty the table between tests (should be called as the first
      * activity in each test.)
-     *
+     * <p/>
      * Methods GenericDAO   .deleteAll()
      */
-    private void emptyTable(){
+    private void emptyTable() {
         dao.deleteAll();
         assertEquals("There should be no proteins in the Protein table following a call to dao.deleteAll", Long_0, dao.count());
     }
 
     /**
      * This test exercises insertion and retrieval.
-     *
+     * <p/>
      * Methods GenericDAO   .insert(T persistentObject)
-     *                      .read(PK primaryKey)
+     * .read(PK primaryKey)
      */
     @Test
-    public void storeAndRetrieveObject(){
+    public void storeAndRetrieveObject() {
         emptyTable();
-        ModelObject persistable= new ModelObject(INITIAL_VALUE);
+        ModelObject persistable = new ModelObject(INITIAL_VALUE);
         dao.insert(persistable);
         assertNotNull("The primary key for the persisted object should not be null", persistable.getId());
         Long primaryKey = persistable.getId();
@@ -92,13 +92,13 @@ public class GenericDAOTest {
 
     /**
      * This test exercises insertion, update and retrieval.
-     *
+     * <p/>
      * Methods GenericDAO   .insert(T persistentObject)
-     *                      .update(T persistentObject)
-     *                      .read(PK primaryKey)
+     * .update(T persistentObject)
+     * .read(PK primaryKey)
      */
     @Test
-    public void modifyAndRetrieveObject(){
+    public void modifyAndRetrieveObject() {
         emptyTable();
         ModelObject persistable = new ModelObject(INITIAL_VALUE);
         dao.insert(persistable);
@@ -113,18 +113,18 @@ public class GenericDAOTest {
 
     /**
      * Exercises GenericDAO .count()
-     *                      .read(PK primaryKey)
-     *                      .retrieveAll()
-     *                      .getMaximumPrimaryKey()
+     * .read(PK primaryKey)
+     * .retrieveAll()
+     * .getMaximumPrimaryKey()
      */
     @Test
-    public void testCountAndMaximumPrimaryKey(){
+    public void testCountAndMaximumPrimaryKey() {
         emptyTable();
         Long maxPrimaryKey = Long.MIN_VALUE;
-        for (String value : ARRAY_OF_VALUES){
+        for (String value : ARRAY_OF_VALUES) {
             ModelObject persistable = new ModelObject(value);
             dao.insert(persistable);
-            if (persistable.getId() > maxPrimaryKey){
+            if (persistable.getId() > maxPrimaryKey) {
                 maxPrimaryKey = persistable.getId();
             }
         }
@@ -132,7 +132,7 @@ public class GenericDAOTest {
         assertEquals("The number of stored objects is not as expected", new Long(ARRAY_OF_VALUES.length), dao.count());
         List<ModelObject> retrievedObjects = dao.retrieveAll();
         assertEquals("The number of retrieved objects does not equal the number stored.", ARRAY_OF_VALUES.length, retrievedObjects.size());
-        for (ModelObject retrieved : retrievedObjects){
+        for (ModelObject retrieved : retrievedObjects) {
             assertNotNull("The List of retrieved objects should not contain any null objects", retrieved);
         }
     }
@@ -141,19 +141,18 @@ public class GenericDAOTest {
      * Attempts to insert three objects independently, wrapped in an outer transaction.
      * The third insert will fail (breaks not-null constraint) which should cause
      * then entire transaction to roll back.
-     *
+     * <p/>
      * Tested in the following query.
      */
     @Test
-    public void testNestedTransactionRollback(){
+    public void testNestedTransactionRollback() {
         emptyTable();
         assertEquals("The number of stored objects is not as expected", Long_0, dao.count());
         boolean exceptionThrown = false;
-        try{
+        try {
             dao.nestedTransaction(true);
         }
-        catch (Exception e){    // This should be thrown
-            e.printStackTrace();//TODO remove
+        catch (Exception e) {    // This should be thrown
             exceptionThrown = true;
         }
         assertTrue("An Exception should have been thrown by the nestedTransaction method, which attempts to insert a null value in a non-null column.", exceptionThrown);
@@ -165,19 +164,18 @@ public class GenericDAOTest {
      * Attempts to insert three objects independently, wrapped in an outer transaction.
      * The third insert will fail (breaks not-null constraint) which should cause
      * then entire transaction to roll back.
-     *
+     * <p/>
      * Tested in the following query.
      */
     @Test
-    public void testNestedTransactionCommit(){
+    public void testNestedTransactionCommit() {
         emptyTable();
         assertEquals("The number of stored objects is not as expected", Long_0, dao.count());
         boolean exceptionThrown = false;
-        try{
+        try {
             dao.nestedTransaction(false);
         }
-        catch (Exception e){    // This should NOT be thrown
-            e.printStackTrace();//TODO remove
+        catch (Exception e) {    // This should NOT be thrown
             exceptionThrown = true;
         }
         assertFalse("An Exception should not have been thrown by the nestedTransaction method.", exceptionThrown);
@@ -189,17 +187,17 @@ public class GenericDAOTest {
      * Test the readDeep method that allows retrieval of FetchType.LAZY related objects.
      */
     @Test
-    public void testReadDeep(){
+    public void testReadDeep() {
         final int RELATED_OBJECT_COUNT = 10;
 
         emptyTable();
         ModelObject persistable = new ModelObject(INITIAL_VALUE);
-        for (int i = 0; i < RELATED_OBJECT_COUNT; i++){
+        for (int i = 0; i < RELATED_OBJECT_COUNT; i++) {
             new RelatedModelObject(persistable, "value_" + i);
         }
         assertNotNull(persistable.getRelatedObjects());
         assertEquals(RELATED_OBJECT_COUNT, persistable.getRelatedObjects().size());
-        
+
         dao.insert(persistable);
         Long pk = persistable.getId();
 
@@ -213,21 +211,21 @@ public class GenericDAOTest {
 
     /**
      * Exercises GenericDAO .delete(T persistentObject)
-     *                      .count()
-     *                      .read(PK primaryKey)
+     * .count()
+     * .read(PK primaryKey)
      */
     @Test
-    public void testDelete(){
+    public void testDelete() {
         emptyTable();
         ModelObject toDelete = null;
-        for (String value : ARRAY_OF_VALUES){
+        for (String value : ARRAY_OF_VALUES) {
             ModelObject persistable = new ModelObject(value);
             dao.insert(persistable);
-            if ("three".equals(persistable.getTestFieldOne())){
-                 toDelete = persistable;
+            if ("three".equals(persistable.getTestFieldOne())) {
+                toDelete = persistable;
             }
         }
-        if (toDelete != null){
+        if (toDelete != null) {
             Long primaryKeyOfDeletable = toDelete.getId();
 
             assertEquals("All of the objects should be present prior to deleteion.", new Long(ARRAY_OF_VALUES.length), dao.count());
@@ -237,8 +235,7 @@ public class GenericDAOTest {
 
             ModelObject shouldBeNull = dao.read(primaryKeyOfDeletable);
             assertNull("The primary key of the deleted object should return null.", shouldBeNull);
-        }
-        else {
+        } else {
             fail("There should be an object to delete, however the expected reference is null");
         }
     }

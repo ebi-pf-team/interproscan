@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -12,13 +13,16 @@ import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
- * User: phil
- * Date: 14-Nov-2009
- * Time: 15:01:29
+ *
+ * @author Phil Jones
+ *         Date: 14-Nov-2009
+ *         Time: 15:01:29
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class LoadFastaFileTest {
+
+    private static final Logger LOGGER = Logger.getLogger(LoadFastaFileTest.class.getName());
 
     private LoadFastaFile loader;
 
@@ -26,33 +30,33 @@ public class LoadFastaFileTest {
 
     private ProteinDAO proteinDAO;
 
-    @javax.annotation.Resource (name="loader")
+    @javax.annotation.Resource(name = "loader")
     public void setLoader(LoadFastaFile loader) {
         this.loader = loader;
     }
 
-    @javax.annotation.Resource (name="fastaFile")
+    @javax.annotation.Resource(name = "fastaFile")
     public void setFastaFile(org.springframework.core.io.Resource fastaFile) {
         this.fastaFile = fastaFile;
     }
 
-    @javax.annotation.Resource (name="proteinDAO")
+    @javax.annotation.Resource(name = "proteinDAO")
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
     }
 
     @Test
     public void testLoader() throws IOException {
-        System.out.println("Loader:" + loader);
-        System.out.println("FastaFile: " + fastaFile);
-        loader.loadSequences(fastaFile.getInputStream(),new ProteinLoadListener(){
+        LOGGER.debug("Loader:" + loader);
+        LOGGER.debug("FastaFile: " + fastaFile);
+        loader.loadSequences(fastaFile.getInputStream(), new ProteinLoadListener() {
             @Override
             public void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId, Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId) {
-                System.out.println("Loaded New:"+bottomNewProteinId+"-"+topNewProteinId);
-                System.out.println("Loaded New:"+bottomPrecalculatedProteinId+"-"+topPrecalculatedProteinId);
+                LOGGER.debug("Loaded New:" + bottomNewProteinId + "-" + topNewProteinId);
+                LOGGER.debug("Loaded New:" + bottomPrecalculatedProteinId + "-" + topPrecalculatedProteinId);
 
             }
         });
-        System.out.println("Proteins loaded: " + proteinDAO.count());
+        LOGGER.debug("Proteins loaded: " + proteinDAO.count());
     }
 }

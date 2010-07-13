@@ -3,7 +3,10 @@ package uk.ac.ebi.interpro.scan.management.model;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Simply holds a List of Jobs.  Only used so that the List can be
@@ -16,7 +19,7 @@ import java.util.*;
  */
 public class Jobs {
 
-    private static final Logger LOGGER = Logger.getLogger(Jobs.class);
+    private static final Logger LOGGER = Logger.getLogger(Jobs.class.getName());
 
     private String baseDirectoryTemporaryFiles;
 
@@ -28,13 +31,13 @@ public class Jobs {
 
 
     public Jobs getAnalysisJobs() {
-        List<Job> analysisJobs=new ArrayList<Job>();
+        List<Job> analysisJobs = new ArrayList<Job>();
         for (Job job : jobMap.values()) if (job.isAnalysis()) analysisJobs.add(job);
         return new Jobs(analysisJobs);
     }
 
     public List<Job> getJobList() {
-        return new ArrayList<Job>( jobMap.values() );
+        return new ArrayList<Job>(jobMap.values());
     }
 
     /**
@@ -50,8 +53,8 @@ public class Jobs {
     @Required
     public void setJobList(List<Job> jobList) {
         this.jobMap = new HashMap<String, Job>(jobList.size());
-        for (Job job : jobList){
-            jobMap.put (job.getId(), job);
+        for (Job job : jobList) {
+            jobMap.put(job.getId(), job);
         }
     }
 
@@ -69,11 +72,11 @@ public class Jobs {
     }
 
     public Step getStepById(String stepId) {
-        synchronized (stepMapLocker){
-            if (stepMap == null){
+        synchronized (stepMapLocker) {
+            if (stepMap == null) {
                 this.stepMap = new HashMap<String, Step>();
-                for (Job job : jobMap.values()){
-                    for (Step step : job.getSteps()){
+                for (Job job : jobMap.values()) {
+                    for (Step step : job.getSteps()) {
                         stepMap.put(step.getId(), step);
                     }
                 }
@@ -83,7 +86,7 @@ public class Jobs {
     }
 
     public Jobs subset(String[] ids) {
-        List<Job> subsetJobs=new ArrayList<Job>();
+        List<Job> subsetJobs = new ArrayList<Job>();
         for (String id : ids) {
             subsetJobs.add(jobMap.get(id));
         }

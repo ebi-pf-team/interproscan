@@ -18,21 +18,21 @@ import java.util.Map;
 
 /**
  * Writes all matches for a slice of proteins to a file.
- *
+ * <p/>
  * Should be run once analysis is complete.
  */
 
 public class WriteOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteOutputStep.class);
+    private static final Logger LOGGER = Logger.getLogger(WriteOutputStep.class.getName());
 
-    enum Format  {
-        TSV{
+    enum Format {
+        TSV {
             public ProteinWriter makeWriter(File file) throws IOException {
                 return new ProteinMatchTSVWriter(file);
             }
         },
-        ZIP{
+        ZIP {
             @Override
             public ProteinWriter makeWriter(File file) throws IOException {
                 return new ZipWriter(file);
@@ -58,11 +58,10 @@ public class WriteOutputStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
-        Map<String,String> stepParameters = stepInstance.getStepParameters();
+        Map<String, String> stepParameters = stepInstance.getStepParameters();
         final String outputFilePathName = stepParameters.get(OUTPUT_FILE_PATH_KEY);
 
-        Format format=Format.valueOf(stepParameters.get(OUTPUT_FILE_FORMAT).toUpperCase());
-
+        Format format = Format.valueOf(stepParameters.get(OUTPUT_FILE_FORMAT).toUpperCase());
 
 
         //David says: this might be more efficient, but doesn't work at the moment
@@ -70,15 +69,15 @@ public class WriteOutputStep extends Step {
         //List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
         try {
-            ProteinWriter writer=format.makeWriter(new File(outputFilePathName));
-            LOGGER.info("Writing output:"+writer.getClass().getCanonicalName());
+            ProteinWriter writer = format.makeWriter(new File(outputFilePathName));
+            LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
             for (Protein protein : proteins) {
                 writer.write(protein);
             }
             writer.close();
 
         } catch (IOException e) {
-            throw new IllegalStateException ("IOException thrown when attempting to write a fasta file to " + outputFilePathName, e);
+            throw new IllegalStateException("IOException thrown when attempting to write a fasta file to " + outputFilePathName, e);
         }
 
     }

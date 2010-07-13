@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.io.IOException;
 
 public class SubmissionWorkerRunner implements WorkerRunner {
 
-
+    private static final Logger LOGGER = Logger.getLogger(SubmissionWorkerRunner.class.getName());
 
 
     private String submissionCommand;
@@ -33,15 +34,15 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     @Override
     public void startupNewWorker(int priority) {
-        try{
-            String command=submissionCommand;
-            command=command.replaceAll("%config%",System.getProperty("config"));
-            
-            if (priority > 0){
+        try {
+            String command = submissionCommand;
+            command = command.replaceAll("%config%", System.getProperty("config"));
+
+            if (priority > 0) {
                 command = command + " --priority=" + priority;
             }
-            
-            System.out.println("Submitted Command: " + command);
+
+            LOGGER.debug("Submitted Command: " + command);
             Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot run the worker", e);
@@ -104,7 +105,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 //        try{
 //            commandBuf.append(submissionJobFile.getFile().getAbsolutePath());
 //
-//            System.out.println("Submitted Command:\t" + commandBuf.toString());
+//            LOGGER.debug("Submitted Command:\t" + commandBuf.toString());
 //
 //            Runtime.getRuntime().exec(commandBuf.toString());
 //        } catch (IOException e) {

@@ -18,9 +18,9 @@ import java.util.*;
  * @version $Id$
  * @since 1.0
  */
-public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  Long> implements PhobiusFilteredMatchDAO{
+public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch, Long> implements PhobiusFilteredMatchDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(PhobiusFilteredMatchDAOImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(PhobiusFilteredMatchDAOImpl.class.getName());
 
     /**
      * The version number of Phobius being run.
@@ -36,6 +36,7 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
      * <p/>
      * Model class specific sub-classes should define a no-argument constructor
      * that calls this constructor with the appropriate class.
+     *
      * @param phobiusVersion being the current version number of Phobius.
      */
     public PhobiusFilteredMatchDAOImpl(String phobiusVersion) {
@@ -62,12 +63,12 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
         // Retrieve (or create and persist) PhobiusSignatures.
         Map<PhobiusFeatureType, Signature> featureTypeToSignatureMap = loadPersistedSignatures();
         Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(phobiusProteins);
-        for (PhobiusProtein phobiusProtein : phobiusProteins){
+        for (PhobiusProtein phobiusProtein : phobiusProteins) {
             final Protein persistentProtein = proteinIdToProteinMap.get(phobiusProtein.getProteinIdentifier());
-            if (persistentProtein == null){
-                throw new IllegalArgumentException ("Attempting to store a Phobius match for a protein with id " + phobiusProtein.getProteinIdentifier() + ", however this does not exist in the database.");
+            if (persistentProtein == null) {
+                throw new IllegalArgumentException("Attempting to store a Phobius match for a protein with id " + phobiusProtein.getProteinIdentifier() + ", however this does not exist in the database.");
             }
-            for (PhobiusFeature feature : phobiusProtein.getFeatures()){
+            for (PhobiusFeature feature : phobiusProtein.getFeatures()) {
                 final Signature signature = featureTypeToSignatureMap.get(feature.getFeatureType());
                 Set<PhobiusMatch.PhobiusLocation> locations = Collections.singleton(
                         new PhobiusMatch.PhobiusLocation(feature.getStart(), feature.getStop())
@@ -82,10 +83,11 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
      * This method retrieves the persisted Signatures for all of the
      * PhobiusFeatureTypes.  If any of them they do not exist in the database, this
      * method creates the required Signatures.
+     *
      * @return the persisted Signatures for all of the
-     * PhobiusFeatureTypes.
+     *         PhobiusFeatureTypes.
      */
-    private Map<PhobiusFeatureType, Signature> loadPersistedSignatures(){
+    private Map<PhobiusFeatureType, Signature> loadPersistedSignatures() {
         Map<PhobiusFeatureType, Signature> signatures = new HashMap<PhobiusFeatureType, Signature>(PhobiusFeatureType.values().length);
 
         // Check first to see if the SignatureLibraryRelease exists.  If not, create it.
@@ -95,20 +97,20 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
         final Query query = entityManager.createQuery("select s from Signature s where s.signatureLibraryRelease = :release");
         query.setParameter("release", release);
         @SuppressWarnings("unchecked") List<Signature> retrievedSignatures = query.getResultList();
-        for (final PhobiusFeatureType type : PhobiusFeatureType.values()){
+        for (final PhobiusFeatureType type : PhobiusFeatureType.values()) {
             boolean found = false;
-            for (final Signature retrievedSignature : retrievedSignatures){
+            for (final Signature retrievedSignature : retrievedSignatures) {
                 if (type.getName().equals(retrievedSignature.getName())
                         &&
                         type.getAccession().equals(retrievedSignature.getAccession())
                         &&
-                        type.getDescription().equals(retrievedSignature.getDescription())){
+                        type.getDescription().equals(retrievedSignature.getDescription())) {
                     signatures.put(type, retrievedSignature);
                     found = true;
                     break;  // Found the correct signature, don't carry on looking.
                 }
             }
-            if (! found){
+            if (!found) {
                 // Create and persist a new Signature.
                 Signature.Builder builder = new Signature.Builder(type.getAccession());
                 final Signature signature = builder
@@ -127,6 +129,7 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
      * This private method is responsible for retrieving OR persisting (as appropriate)
      * a SignatureLibraryRelease method for the version of Phobius being handled by this
      * DAO.
+     *
      * @return the retrieved / persisted SignatureLibraryRelease object.
      */
     private SignatureLibraryRelease loadPhobiusRelease() {
@@ -135,13 +138,11 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
         releaseQuery.setParameter("phobiusVersion", phobiusVersion);
         releaseQuery.setParameter("phobiusSignatureLibrary", SignatureLibrary.PHOBIUS);
         @SuppressWarnings("unchecked") List<SignatureLibraryRelease> releaseList = releaseQuery.getResultList();
-        if (releaseList.size() == 1 && releaseList.get(0) != null){
+        if (releaseList.size() == 1 && releaseList.get(0) != null) {
             release = releaseList.get(0);
-        }
-        else if (releaseList.size() > 1){
-            throw new IllegalStateException ("There is more than one SignatureLibraryRelease record for version " + phobiusVersion + " of Phobius in the databases.");
-        }
-        else {
+        } else if (releaseList.size() > 1) {
+            throw new IllegalStateException("There is more than one SignatureLibraryRelease record for version " + phobiusVersion + " of Phobius in the databases.");
+        } else {
             release = new SignatureLibraryRelease(SignatureLibrary.PHOBIUS, phobiusVersion);
             entityManager.persist(release);
         }
@@ -151,23 +152,24 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
     /**
      * Helper method that converts a List of Protein objects retrieved from a JQL query
      * into a Map of protein IDs to Protein objects.
+     *
      * @param phobiusProteins being the Set of PhobiusProteins containing the IDs of the Protein objects
-     * required.
+     *                        required.
      * @return a Map of protein IDs to Protein objects.
      */
 
-    private Map<String, Protein> getProteinIdToProteinMap(Set<PhobiusProtein> phobiusProteins){
+    private Map<String, Protein> getProteinIdToProteinMap(Set<PhobiusProtein> phobiusProteins) {
         final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(phobiusProteins.size());
 
         final List<Long> proteinIds = new ArrayList<Long>(phobiusProteins.size());
-        for (PhobiusProtein phobProt : phobiusProteins){
+        for (PhobiusProtein phobProt : phobiusProteins) {
             String proteinIdAsString = phobProt.getProteinIdentifier();
-            proteinIds.add (new Long (proteinIdAsString));
+            proteinIds.add(new Long(proteinIdAsString));
         }
 
-        for (int index = 0; index < proteinIds.size(); index += MAXIMUM_IN_CLAUSE_SIZE){
+        for (int index = 0; index < proteinIds.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
             int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
-            if (endIndex > proteinIds.size()){
+            if (endIndex > proteinIds.size()) {
                 endIndex = proteinIds.size();
             }
             final List<Long> proteinIdSlice = proteinIds.subList(index, endIndex);
@@ -176,7 +178,7 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch,  L
             );
             proteinQuery.setParameter("proteinId", proteinIdSlice);
             @SuppressWarnings("unchecked") List<Protein> proteins = proteinQuery.getResultList();
-            for (Protein protein : proteins){
+            for (Protein protein : proteins) {
                 proteinIdToProteinMap.put(protein.getId().toString(), protein);
             }
         }
