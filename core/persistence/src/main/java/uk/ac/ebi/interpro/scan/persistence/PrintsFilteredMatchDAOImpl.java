@@ -83,14 +83,14 @@ public class PrintsFilteredMatchDAOImpl extends GenericDAOImpl<FingerPrintsMatch
             Set<FingerPrintsMatch.FingerPrintsLocation> locations = null;
             String currentSignatureAc = null;
             Signature currentSignature = null;
-            PrintsRawMatch currentRawMatch = null;
+            PrintsRawMatch lastRawMatch = null;
             for (PrintsRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) continue;
-                currentRawMatch = rawMatch;
+
                 if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
                     if (currentSignatureAc != null) {
                         // Not the first...
-                        protein.addMatch(new FingerPrintsMatch(currentSignature, rawMatch.getEvalue(), rawMatch.getGraphscan(), locations));
+                        protein.addMatch(new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations));
                     }
                     // Reset everything
                     locations = new HashSet<FingerPrintsMatch.FingerPrintsLocation>();
@@ -109,11 +109,11 @@ public class PrintsFilteredMatchDAOImpl extends GenericDAOImpl<FingerPrintsMatch
                                 rawMatch.getMotifNumber()
                         )
                 );
-
+                lastRawMatch = rawMatch;
             }
             // Don't forget the last one!
-            if (currentRawMatch != null) {
-                protein.addMatch(new FingerPrintsMatch(currentSignature, currentRawMatch.getEvalue(), currentRawMatch.getGraphscan(), locations));
+            if (lastRawMatch != null) {
+                protein.addMatch(new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations));
             }
             entityManager.persist(protein);
         }
