@@ -107,7 +107,7 @@
 
     <bean id="printsPostProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.prints.PrintsPostProcessing">
         <property name="hierarchyDBParser" ref="hierarchyDBParser"/>
-        <property name="fingerPRINTSHierarchyDB" value="${prints.hierarchy.path}"/>
+        <property name="fingerPRINTSHierarchyDB" value="file:${prints.hierarchy.path}"/>
     </bean>
 
     <bean id="hierarchyDBParser" class="uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser"></bean>
