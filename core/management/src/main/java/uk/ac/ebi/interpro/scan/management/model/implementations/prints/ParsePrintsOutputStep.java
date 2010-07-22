@@ -73,11 +73,7 @@ public class ParsePrintsOutputStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException("InterruptedException thrown by ParsePrintsOutputStep while having a snooze to allow NFS to catch up.");
-        }
+        delayForNfs();
         InputStream inputStreamParser = null;
         try {
             final String printsOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, printsOutputFileNameTemplate);

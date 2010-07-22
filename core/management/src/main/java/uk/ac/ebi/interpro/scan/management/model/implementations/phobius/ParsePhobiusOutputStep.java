@@ -58,11 +58,7 @@ public class ParsePhobiusOutputStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException("InterruptedException thrown by ParsePhobiusOutputStep while having a snooze to allow NFS to catch up.");
-        }
+        delayForNfs();
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, phobiusOutputFileNameTemplate);
         InputStream is = null;
         try {
