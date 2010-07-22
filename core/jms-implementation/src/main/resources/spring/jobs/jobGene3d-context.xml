@@ -8,7 +8,8 @@
 
     <!-- ######################## JOB: Gene 3D ############################  -->
     <bean id="jobGene3d" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="Gene3D analysis and filtering"/>
+        <property name="description"
+                  value="Structural assignment for whole genes and genomes using the CATH domain structure database"/>
         <property name="analysis" value="true"/>
     </bean>
 
@@ -17,6 +18,7 @@
         <property name="maxProteins" value="5000"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
     <!-- STEP 1 -->

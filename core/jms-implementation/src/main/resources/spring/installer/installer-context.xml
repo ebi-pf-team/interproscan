@@ -13,26 +13,63 @@
 
 
     <bean id="installer" class="uk.ac.ebi.interpro.scan.jms.installer.Installer">
-        <!--<property name="sessionFactoryBean" ref="&amp;sessionFactory"/>-->
-        <property name="entityManagerFactory" ref="schemaCreatingEntityManagerFactory"/>
-        <property name="pfamHMMfilePath" value="${Pfam-A.hmm.path}"/>
-        <property name="gene3dModel2SfFile">
-            <bean class="org.springframework.core.io.FileSystemResource">
-                <constructor-arg value="${gene3d.model2sf_map.path}"/>
-            </bean>
-        </property>
-        <property name="printsKdatFile">
-            <bean class="org.springframework.core.io.FileSystemResource">
-                <constructor-arg value="${prints.kdat.path}"/>
-            </bean>
-        </property>
-        <property name="printsPvalFile">
-            <bean class="org.springframework.core.io.FileSystemResource">
-                <constructor-arg value="${prints.pval.path}"/>
-            </bean>
-        </property>
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
+        <property name="parsers">
+            <list>
+                <ref bean="HAMAPParser"/>
+                <ref bean="PrositePatternsParser"/>
+                <ref bean="PrositeProfilesParser"/>
+                <ref bean="gene3DParser"/>
+                <ref bean="pfamModelLoader"/>
+                <ref bean="printsModelLoader"/>
+            </list>
+        </property>
     </bean>
+
+    <bean id="pfamModelLoader" class="uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelParser">
+        <property name="signatureLibrary" value="PFAM"/>
+        <property name="modelFile" value="file:${Pfam-A.hmm.path}"/>
+        <property name="releaseVersionNumber" value="24.0"/>
+    </bean>
+
+    <bean id="printsModelLoader" class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
+        <property name="signatureLibrary" value="PRINTS"/>
+        <property name="modelFile" value="file:${prints.pval.path}"/>
+        <property name="kdatParser" ref="kdatParser"/>
+        <property name="releaseVersionNumber" value="40.0"/>
+    </bean>
+
+    <bean id="kdatParser" class="uk.ac.ebi.interpro.scan.io.prints.KdatParser">
+        <property name="kdatFileResource" value="file:${prints.kdat.path}"/>
+    </bean>
+
+    <bean id="gene3DParser" class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
+        <property name="signatureLibrary" value="GENE3D"/>
+        <property name="modelFile" value="file:${gene3d.model2sf_map.path}"/>
+        <property name="releaseVersionNumber" value="3.3.0"/>
+    </bean>
+
+    <bean id="HAMAPParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+        <property name="signatureLibrary" value="HAMAP"/>
+        <property name="modelFile" value="file:${hamap.profile.models.path}"/>
+        <property name="releaseVersionNumber" value="180510"/>
+        <property name="prositeModelType" value="ALL"/>
+    </bean>
+
+    <bean id="PrositePatternsParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+        <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
+        <property name="modelFile" value="file:${prosite.models.path}"/>
+        <property name="releaseVersionNumber" value="20.52"/>
+        <property name="prositeModelType" value="PATTERNS"/>
+    </bean>
+
+    <bean id="PrositeProfilesParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+        <property name="signatureLibrary" value="PROSITE_PROFILES"/>
+        <property name="modelFile" value="file:${prosite.models.path}"/>
+        <property name="releaseVersionNumber" value="20.52"/>
+        <property name="prositeModelType" value="PROFILES"/>
+    </bean>
+
 
 </beans>
 

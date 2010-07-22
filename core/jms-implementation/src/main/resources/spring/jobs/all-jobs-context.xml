@@ -11,6 +11,7 @@
     <import resource="jobGene3d-context.xml"/>
     <import resource="jobPrints-context.xml"/>
     <import resource="jobCoils-context.xml"/>
+    <import resource="jobHAMAP-context.xml"/>
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <import resource="../uapro-db-access-context.xml"/>
@@ -29,6 +30,7 @@
                 <ref bean="jobGene3d"/>
                 <ref bean="jobPRINTS"/>
                 <ref bean="jobCoils"/>
+                <!--<ref bean="jobHAMAP"/>-->
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>

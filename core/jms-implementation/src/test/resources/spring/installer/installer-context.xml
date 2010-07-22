@@ -13,8 +13,11 @@
 
 
     <bean id="installer" class="uk.ac.ebi.interpro.scan.jms.installer.Installer">
-        <property name="entityManagerFactory" ref="schemaCreatingEntityManagerFactory"/>
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
+        <property name="parsers">
+            <list>
+            </list>
+        </property>
     </bean>
 
 </beans>

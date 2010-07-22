@@ -16,7 +16,8 @@
 
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="jobPfamA" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="Pfam HMMER3 Raw Analysis and Post Processing"/>
+        <property name="description"
+                  value="A large collection of protein families, each represented by multiple sequence alignments and hidden Markov models (HMMs)"/>
         <property name="analysis" value="true"/>
     </bean>
 
@@ -25,6 +26,7 @@
         <property name="maxProteins" value="5000"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
     <!-- STEP 1 -->
