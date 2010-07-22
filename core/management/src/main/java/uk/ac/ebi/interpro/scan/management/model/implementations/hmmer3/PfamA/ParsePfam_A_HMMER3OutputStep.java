@@ -72,10 +72,10 @@ public class ParsePfam_A_HMMER3OutputStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        delayForNfs();
         LOGGER.debug("Running Parser HMMER3 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
         InputStream is = null;
         try {
-//            Thread.sleep(10000);  // Have a snooze to allow NFS to catch up.
             final String hmmerOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getHmmerOutputFileNameTemplate());
             is = new FileInputStream(hmmerOutputFilePath);
             final Hmmer3SearchMatchParser<PfamHmmer3RawMatch> parser = this.getParser();

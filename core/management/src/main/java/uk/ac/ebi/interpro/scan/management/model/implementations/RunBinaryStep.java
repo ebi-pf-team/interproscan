@@ -37,6 +37,7 @@ abstract public class RunBinaryStep extends Step {
     private List<String> binarySwitchesInList = Collections.emptyList();
 
     private String binarySwitches;
+
     private InputStream commandInputStream;
 
     public String getOutputFileNameTemplate() {
@@ -82,7 +83,7 @@ abstract public class RunBinaryStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         try {
             LOGGER.debug("About to run binary... some output should follow.");
-            Thread.sleep(5000);
+            delayForNfs();
             final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
             List<String> command = createCommand(stepInstance, temporaryFileDirectory);
 

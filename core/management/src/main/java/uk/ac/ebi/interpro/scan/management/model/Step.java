@@ -10,21 +10,21 @@ import java.util.List;
  * for a step.  A single step corresponds to a single
  * message to a JMS queue.  Steps can be dependent upon
  * one another.
- *
+ * <p/>
  * Steps are always part of a Job, where a Job may comprise
  * one or more steps.
- *
+ * <p/>
  * To actually run
  * analyses against specific proteins (and perhaps specific models)
  * StepInstances are instantiated.  These instances are then
  * run as StepExecutions.  If a StepExecution fails, and the
  * Step is configured to be repeatable, then another attempt
  * to run the instance will be made.
- *
+ * <p/>
  * NOTE: Instances of Jobs and Steps are defined in Spring XML.  They
  * are NOT persisted to the database - only StepInstances and StepExecutions
  * are persisted.
- *
+ * <p/>
  * This class is abstract - it is expected that this will be
  * subclassed to allow additional parameters to be injected
  * and to implement the execute method.
@@ -86,6 +86,13 @@ public abstract class Step implements BeanNameAware {
      * List of instances of this Step.
      */
     protected transient List<StepInstance> stepInstances;
+
+    /**
+     * The nfsDelayMilliseconds bean property can optionally be set to allow
+     * a Step to delay starting, if there is a risk of stale NFS handles affecting
+     * its operation.
+     */
+    private int nfsDelayMilliseconds;
 
     public String getId() {
         return id;
@@ -159,19 +166,43 @@ public abstract class Step implements BeanNameAware {
         return retries;
     }
 
+    public void setNfsDelayMilliseconds(int nfsDelayMilliseconds) {
+        this.nfsDelayMilliseconds = nfsDelayMilliseconds;
+    }
+
     @Required
     public void setRetries(int retries) {
         this.retries = retries;
     }
 
     /**
+     * This convenience method allows a delay to be called on a Step implementation, with the duration
+     * of the delay determined by the nfsDelayMilliseconds bean property.
+     * <p/>
+     * This method has to be called explicitly from the execute method, so it is not called willy-nilly when not
+     * required.
+     */
+    protected void delayForNfs() {
+        if (nfsDelayMilliseconds > 0) {
+            try {
+                Thread.sleep(nfsDelayMilliseconds);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("InterruptedException thrown when attempting to sleep for NFS delay.", e);
+            }
+        }
+    }
+
+    /**
      * This method is called to execute the action that the StepInstance must perform.
-     *
+     * <p/>
      * If an error occurs that cannot be immediately recovered from, the implementation
      * of this method MUST throw a suitable Exception, as the call
      * to execute is performed within a transaction with the reply to the JMSBroker.
+     * <p/>
+     * Implementations of this method MAY call delayForNfs() before starting, if, for example,
+     * they are operating of file system resources.
      *
-     * @param stepInstance containing the parameters for executing.
+     * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory
      */
     public abstract void execute(StepInstance stepInstance, String temporaryFileDirectory);
