@@ -1,20 +1,19 @@
 package uk.ac.ebi.interpro.scan.cli;
 
+import org.springframework.core.io.Resource;
+import uk.ac.ebi.interpro.scan.io.ResourceReader;
 import uk.ac.ebi.interpro.scan.io.gene3d.CathDomainListRecord;
 import uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader;
-import uk.ac.ebi.interpro.scan.io.ResourceReader;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
 import java.io.IOException;
-
-import org.springframework.core.io.Resource;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Support class for running Gene3D.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public final class Gene3dSupport {
@@ -24,12 +23,12 @@ public final class Gene3dSupport {
     // or this:
     private ResourceReader<CathDomainListRecord> reader;
     private Resource cathDomainList;
-    
+
     private final Map<String, String> map = new HashMap<String, String>();
 
     public String findSignatureAccession(String modelAccession) throws IOException {
-        if (map.isEmpty())  {
-            if (model2Sf == null)   {
+        if (map.isEmpty()) {
+            if (model2Sf == null) {
                 // Read CathDomainList
                 Collection<CathDomainListRecord> records = reader.read(cathDomainList);
                 // ... and convert to map
@@ -37,11 +36,11 @@ public final class Gene3dSupport {
                     // "DomainName" is the CATH name for model accession.
                     map.put(r.getDomainName(), r.getSignatureAccession());
                 }
-            }
-            else    {
+            } else {
                 // Do it the easy way!
                 Model2SfReader reader = new Model2SfReader();
-                map.putAll(reader.read(model2Sf));
+                reader.setModelFile(model2Sf);
+                map.putAll(reader.parseFileToMap());
             }
         }
         return map.get(modelAccession);
