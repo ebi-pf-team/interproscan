@@ -2,15 +2,14 @@ package uk.ac.ebi.interpro.scan.io.model;
 
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Serializable;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,13 +21,9 @@ import java.util.regex.Pattern;
  * Date: 11-Nov-2009
  * Time: 20:35:32
  */
-public class Hmmer3ModelLoader implements Serializable {
+public class Hmmer3ModelParser extends AbstractModelFileParser {
 
-    private static final Logger LOGGER = Logger.getLogger(Hmmer3ModelLoader.class.getName());
-
-    private SignatureLibrary library;
-
-    private String releaseVersion;
+    private static final Logger LOGGER = Logger.getLogger(Hmmer3ModelParser.class.getName());
 
     /**
      * Matches the name line.
@@ -50,13 +45,8 @@ public class Hmmer3ModelLoader implements Serializable {
     private static final String END_OF_RECORD = "//";
 
 
-    public Hmmer3ModelLoader(SignatureLibrary library, String releaseVersion) {
-        this.library = library;
-        this.releaseVersion = releaseVersion;
-    }
-
     @Transactional
-    public SignatureLibraryRelease parse(String hmmFilePath) throws IOException {
+    public SignatureLibraryRelease parse() throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
         BufferedReader reader = null;
@@ -64,15 +54,15 @@ public class Hmmer3ModelLoader implements Serializable {
             String accession = null, name = null, description = null;
             StringBuffer modelBuf = new StringBuffer();
 
-            reader = new BufferedReader(new FileReader(hmmFilePath));
+            reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
             int lineNumber = 0;
-            while (reader.ready()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
                 if (LOGGER.isDebugEnabled() && lineNumber++ % 10000 == 0) {
                     LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
                     LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
                 }
-                String line = reader.readLine();
-
+                line = line.trim();
                 // Load the model line by line into a temporary buffer.
                 // TODO - won't break anything, but needs some work.  Need to grab the hmm file header first!
                 modelBuf.append(line);
@@ -121,8 +111,6 @@ public class Hmmer3ModelLoader implements Serializable {
                 reader.close();
             }
         }
-
-
         return release;
     }
 
@@ -139,4 +127,6 @@ public class Hmmer3ModelLoader implements Serializable {
         modelBuf.delete(0, modelBuf.length());
         return new Signature(accession, name, null, description, null, release, Collections.singleton(model));
     }
+
+
 }

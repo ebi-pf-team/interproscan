@@ -65,7 +65,7 @@ public class PrintsMotif {
     public PrintsMotif(String proteinIdentifier, String motifName, double eValue) {
         this.proteinIdentifier = proteinIdentifier;
         this.motifName = motifName;
-        this.eValue = eValue;;
+        this.eValue = eValue;
     }
 
     public String getProteinIdentifier() {

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 
@@ -28,26 +29,31 @@ public class KdatParser implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(KdatParser.class.getName());
 
+    private Resource kdatFileResource;
+
+    @Required
+    public void setKdatFileResource(Resource kdatFileResource) {
+        this.kdatFileResource = kdatFileResource;
+    }
 
     /**
-     * @param resource
      * @return
      * @throws IOException
      */
-    public Map<String, String> parse(Resource resource) throws IOException {
-        if (resource == null) {
+    public Map<String, String> parse() throws IOException {
+        if (kdatFileResource == null) {
             throw new NullPointerException("Resource is null");
         }
-        if (!resource.exists()) {
-            throw new IllegalStateException(resource.getFilename() + " does not exist");
+        if (!kdatFileResource.exists()) {
+            throw new IllegalStateException(kdatFileResource.getFilename() + " does not exist");
         }
-        if (!resource.isReadable()) {
-            throw new IllegalStateException(resource.getFilename() + " is not readable");
+        if (!kdatFileResource.isReadable()) {
+            throw new IllegalStateException(kdatFileResource.getFilename() + " is not readable");
         }
         final Map<String, String> accessionToSignature = new HashMap<String, String>();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(kdatFileResource.getInputStream()));
 
             String line, accession = null, name = null;
             StringBuffer printsAbstract = new StringBuffer();

@@ -1,17 +1,16 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
 import org.apache.log4j.Logger;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +22,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PvalParser implements Serializable {
+public class PvalParser extends AbstractModelFileParser {
 
     // /ebi/production/interpro/data/members/prints/40.0/print.pval
 
@@ -32,33 +31,39 @@ public class PvalParser implements Serializable {
     private static final String LINE_SIG_NAME = "gc";
     private static final String LINE_SIG_ACCESSION = "gx";
     private static final String LINE_SIG_DESCRIPTION = "gi";
-    private static final String LINE_SIG_MODEL_COUNT = "gn";
 
-    private String releaseVersion;
+    private KdatParser kdatParser;
 
-    public PvalParser(String releaseVersion) {
-        this.releaseVersion = releaseVersion;
+
+    @Required
+    public void setKdatParser(KdatParser kdatParser) {
+        this.kdatParser = kdatParser;
     }
 
     @Transactional
-    public SignatureLibraryRelease parse(Map<String, String> kdatFileData, Resource resource) throws IOException {
-        if (resource == null) {
+    public SignatureLibraryRelease parse() throws IOException {
+
+        if (kdatParser == null) {
+            throw new IllegalStateException("The Pval file data cannot be loaded unless there is a kdat file parser injected.");
+        }
+        Map<String, String> kdatFileData = kdatParser.parse();
+
+        if (modelFile == null) {
             throw new NullPointerException("Resource is null");
         }
-        if (!resource.exists()) {
-            throw new IllegalStateException(resource.getFilename() + " does not exist");
+        if (!modelFile.exists()) {
+            throw new IllegalStateException(modelFile.getFilename() + " does not exist");
         }
-        if (!resource.isReadable()) {
-            throw new IllegalStateException(resource.getFilename() + " is not readable");
+        if (!modelFile.isReadable()) {
+            throw new IllegalStateException(modelFile.getFilename() + " is not readable");
         }
 
-        SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, releaseVersion);
+        SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
 
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
             String line, sigAcc = null, sigName = null, sigDescription = null;
-            Integer modelCount = null;
             while ((line = reader.readLine()) != null) {
                 if (LOGGER.isDebugEnabled()) {
                     if (line.indexOf(';') > -1) {
@@ -72,12 +77,8 @@ public class PvalParser implements Serializable {
                     sigName = extractLineContent(line);
                     sigAcc = null;
                     sigDescription = null;
-                    modelCount = null;
                 } else if (line.startsWith(LINE_SIG_ACCESSION)) {
                     sigAcc = extractLineContent(line);
-                } else if (line.startsWith(LINE_SIG_MODEL_COUNT)) {
-                    String modelCountString = extractLineContent(line);
-                    modelCount = Integer.parseInt(modelCountString);
                 } else if (line.startsWith(LINE_SIG_DESCRIPTION)) {
                     sigDescription = extractLineContent(line);
                 }
@@ -113,4 +114,6 @@ public class PvalParser implements Serializable {
             );
         }
     }
+
+
 }

@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.prints;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.prints.parsemodel.PrintsMotif;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
@@ -21,6 +22,8 @@ import java.util.Set;
  */
 
 public class PrintsMatchParser {
+
+    private static final Logger LOGGER = Logger.getLogger(PrintsMatchParser.class.getName());
 
     public static final String PROTEIN_ID_MARKER = "Sn";
 
@@ -52,12 +55,15 @@ public class PrintsMatchParser {
                 } else if (line.startsWith(PROTEIN_ID_MARKER)) {
                     //Sn; 1
                     proteinIdentifier = line.split("\\s+")[1].trim();
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug("Protein: " + proteinIdentifier);
                 } else if (line.startsWith(FIRST_LEVEL_ANNOTATION)) {
                     //1TBH GLU5KINASE      1.103000e-49   Glutamate 5-kinase family signature     PR00474
                     String[] lineSplit = line.split("\\s+");
                     String motifName = lineSplit[1];
                     String model = lineSplit[lineSplit.length - 1];
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug("Model: " + model);
                     double eValue = Double.parseDouble(lineSplit[2]);
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug("Parsed out evalue: " + eValue);
                     if (proteinIdentifier == null) {
                         throw new ParseException("FingerPrintScan output parsing: Trying to parse raw output but don't appear to have a protein ID.", fileName, line, lineNumber);
                     }
@@ -85,13 +91,15 @@ public class PrintsMatchParser {
                     String[] matchSplit = line.split("\\s+");
                     String motifName = matchSplit[1];
                     if (motifPrintsProteinMap.containsKey(motifName)) {
-                        PrintsMotif protein = motifPrintsProteinMap.get(motifName);
+                        PrintsMotif motifMatch = motifPrintsProteinMap.get(motifName);
                         //TODO - REMOVE: fudge for testing only - in testing so far, no significant hits are found WITHOUT a Prints model id, but just in case.....
-                        if (protein != null) {
+                        if (motifMatch != null) {
                             int motifNumber = Integer.parseInt(matchSplit[2]);
                             int motifCount = Integer.parseInt(matchSplit[4]);
                             double score = Double.parseDouble(matchSplit[5]);
                             double pvalue = Double.parseDouble((matchSplit[7]));
+                            if (LOGGER.isDebugEnabled()) LOGGER.debug("Parsed out pvalue: " + pvalue);
+
                             int seqLength = Integer.parseInt(matchSplit[9]);
                             // Inherited from Onion:
                             // The hack below is here because of The FingerPrintScan, for starting positions that are in
@@ -116,10 +124,17 @@ public class PrintsMatchParser {
                                 rawResults.put(proteinIdentifier, sequenceIdentifier);
                             }
 
-                            final PrintsRawMatch match = new PrintsRawMatch(proteinIdentifier, protein.getModelId(), signatureReleaseLibrary, locationStart,
-                                    locationEnd, protein.geteValue(), protein.getGraphScan(), motifCount, motifNumber,
+                            if (LOGGER.isDebugEnabled())
+                                LOGGER.debug("PrintsMotif.getEvalue(): " + motifMatch.geteValue());
+
+                            final PrintsRawMatch match = new PrintsRawMatch(proteinIdentifier, motifMatch.getModelId(), signatureReleaseLibrary, locationStart,
+                                    locationEnd, motifMatch.geteValue(), motifMatch.getGraphScan(), motifCount, motifNumber,
                                     pvalue, score);//, motifName);
 
+                            if (LOGGER.isDebugEnabled())
+                                LOGGER.debug("Evalue from PrintsRawMatch object: " + match.getEvalue());
+                            if (LOGGER.isDebugEnabled())
+                                LOGGER.debug("Pvalue from PrintsRawMatch object: " + match.getPvalue());
                             sequenceIdentifier.addMatch(match);
                         }
                     }

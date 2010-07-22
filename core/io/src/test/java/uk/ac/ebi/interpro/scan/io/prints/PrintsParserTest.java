@@ -36,7 +36,8 @@ public class PrintsParserTest extends TestCase {
     public void testKdatParser() throws IOException {
         KdatParser kdatParser = new KdatParser();
         Resource kdatResource = new ClassPathResource(kdatFileName);
-        Map<String, String> accessionToAbstract = kdatParser.parse(kdatResource);
+        kdatParser.setKdatFileResource(kdatResource);
+        Map<String, String> accessionToAbstract = kdatParser.parse();
         assertEquals(testAccessions.length, accessionToAbstract.size());
         for (String testAccession : testAccessions) {
             assertTrue("Accession missing from final Map: " + testAccession, accessionToAbstract.keySet().contains(testAccession));
@@ -55,11 +56,15 @@ public class PrintsParserTest extends TestCase {
     public void testPvalParser() throws IOException {
         KdatParser kdatParser = new KdatParser();
         Resource kdatResource = new ClassPathResource(kdatFileName);
-        Map<String, String> accessionToAbstract = kdatParser.parse(kdatResource);
+        kdatParser.setKdatFileResource(kdatResource);
 
-        PvalParser pvalParser = new PvalParser(TEST_RELEASE_VERSION);
+        PvalParser pvalParser = new PvalParser();
+        pvalParser.setSignatureLibrary(SignatureLibrary.PRINTS);
+        pvalParser.setReleaseVersionNumber(TEST_RELEASE_VERSION);
+        pvalParser.setKdatParser(kdatParser);
         Resource pvalResource = new ClassPathResource(pvalFileName);
-        SignatureLibraryRelease release = pvalParser.parse(accessionToAbstract, pvalResource);
+        pvalParser.setModelFile(pvalResource);
+        SignatureLibraryRelease release = pvalParser.parse();
 
         assertNotNull(release);
         assertEquals(SignatureLibrary.PRINTS, release.getLibrary());
