@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: HAMAP ############################  -->
+    <bean id="jobHAMAP" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="High-quality Automated and Manual Annotation of Microbial Proteomes"/>
+        <property name="analysis" value="true"/>
+    </bean>
+
+    <bean id="abstractHamapStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobHAMAP"/>
+        <property name="maxProteins" value="5000"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepHamapWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractHamapStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepHamapRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
+          parent="abstractHamapStep">
+        <!-- /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/production/interpro/data/members/hamap/180510/hamap.prf -pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -l -1 -o gff
+          (PROSITE for comparison:)
+          Prosite Profiles:
+          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.52/prosite.dat -pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
+          Prosite Patterns:
+          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.52/prosite.dat -pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.52/evaluator.dat -s -o ipro -->
+        <property name="dependsUpon" ref="stepHamapWriteFastaFile"/>
+        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        <property name="binarySwitches" value="-l -1 -o gff"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
+        <property name="modelFile" value="${hamap.profile.models.path}"/>
+        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
+    </bean>
+
+    <bean id="stepHamapDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractHamapStep">
+        <property name="dependsUpon" ref="stepHamapRunBinary"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!-- STEP 3 -->
+    <!--<bean id="stepHamapParseRawOutput"-->
+    <!--class=""-->
+    <!--parent="abstractHamapStep">-->
+    <!--<property name="dependsUpon" ref="stepHamapRunBinary"/>-->
+    <!--<property name="stepDescription" value="Parse the output from the Prosite binary"/>-->
+    <!--<property name="serialGroup" value="PARSE_HAMAP"/>-->
+    <!--<property name="retries" value="3"/>-->
+    <!--</bean>-->
+
+
+    <!--<bean id="stepHamapDeleteRawOutput"-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
+    <!--parent="abstractHamapStep">-->
+    <!--<property name="dependsUpon" ref="stepHamapParseRawOutput"/>-->
+    <!--<property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>-->
+    <!--<property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--</bean>-->
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: HAMAP !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

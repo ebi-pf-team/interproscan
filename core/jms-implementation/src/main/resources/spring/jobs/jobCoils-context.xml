@@ -16,7 +16,7 @@
 
     <!-- ######################## JOB: Coils ############################  -->
     <bean id="jobCoils" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="Coils Raw Analysis and Persistence"/>
+        <property name="description" value="Prediction of Coiled Coil Regions in Proteins"/>
         <property name="analysis" value="true"/>
     </bean>
 
@@ -25,6 +25,7 @@
         <property name="maxProteins" value="5000"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
     <!-- STEP 1 -->

@@ -32,7 +32,5 @@ public class TestInstaller {
     @Test
     public void testInstaller() {
         installer.run();
-
-
     }
 }
