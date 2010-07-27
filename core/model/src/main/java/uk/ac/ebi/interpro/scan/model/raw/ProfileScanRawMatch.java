@@ -2,41 +2,42 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
-import javax.persistence.Entity;
 import javax.persistence.Column;
-import javax.persistence.Table;
+import javax.persistence.Entity;
 
 /**
  * <a href="http://myhits.isb-sib.ch/cgi-bin/motif_scan">ProfileScan</a> raw match.
  *
- * @author  Antony Quinn
- * @author  Phil Jones
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
 @Entity
 //@Table(name="profile_scan_raw_match")
-public abstract class ProfileScanRawMatch extends RawMatch {
+public abstract class ProfileScanRawMatch extends PfScanRawMatch {
 
-    @Column
-    private double score; // location.score
+    protected ProfileScanRawMatch() {
+    }
 
-    protected ProfileScanRawMatch() { }
+    @Column(name = "raw_score")
+    private double rawScore;
 
-    /* TODO - Perhaps don't need to pass in SignatureLIbrary?  Just set to SignatureLibrary.PROSITE_PROFILES ? */
+    @Column(name = "profile_level")
+    private byte level;
+
     protected ProfileScanRawMatch(String sequenceIdentifier, String model,
                                   SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                                   int locationStart, int locationEnd,
-                                  double score) {
-        super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd);
-        this.score = score;
+                                  String cigarAlignment, double rawScore) {
+        super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd, cigarAlignment);
+        setRawScore(rawScore);
     }
 
-    public double getScore() {
-        return score;
+    public double getRawScore() {
+        return rawScore;
     }
 
-    private void setScore(double score) {
-        this.score = score;
+    private void setRawScore(double rawScore) {
+        this.rawScore = rawScore;
     }
-    
 }
