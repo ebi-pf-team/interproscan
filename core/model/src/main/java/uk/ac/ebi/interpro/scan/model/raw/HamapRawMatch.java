@@ -8,19 +8,20 @@ import javax.persistence.Table;
 /**
  * <a href="http://www.expasy.ch/sprot/hamap/">HAMAP</a> raw match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @Entity
-@Table(name="hamap_raw_match")
+@Table(name = "hamap_raw_match")
 public class HamapRawMatch extends ProfileScanRawMatch {
 
-    protected HamapRawMatch() { }
+    protected HamapRawMatch() {
+    }
 
     public HamapRawMatch(String sequenceIdentifier, String model,
                          String signatureLibraryRelease,
-                         int locationStart, int locationEnd, double score) {
+                         int locationStart, int locationEnd, String cigarAlignment, double score) {
         super(sequenceIdentifier, model, SignatureLibrary.HAMAP, signatureLibraryRelease,
-              locationStart, locationEnd, score);
+                locationStart, locationEnd, cigarAlignment, score);
     }
 }
