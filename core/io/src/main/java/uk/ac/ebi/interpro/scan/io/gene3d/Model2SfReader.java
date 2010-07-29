@@ -63,9 +63,10 @@ public final class Model2SfReader extends AbstractModelFileParser {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
-            while (reader.ready()) {
-                String line[] = reader.readLine().split(",");
-                records.put(line[0], prefix + line[1]);  // model - signature
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] splitLine = line.split(",");
+                records.put(splitLine[0], prefix + splitLine[1]);  // model - signature
             }
         }
         finally {
