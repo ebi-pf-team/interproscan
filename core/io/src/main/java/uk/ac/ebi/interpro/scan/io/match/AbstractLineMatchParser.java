@@ -14,8 +14,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This implementation parses match data on a line-by-line basis, and can be used to parse,
- * for example, ProDom and Phobius results.
+ * This implementation parses match data, where one record is on a single line.
+ * <p/>
+ * This is useful for (for example) Prosite & HAMAP GFF output and any other binaries
+ * that output TSV, CSV output such as ProDom.
  *
  * @author Antony Quinn
  * @author Phil Jones
