@@ -100,16 +100,16 @@ public class PrintsMatchParserTest extends TestCase {
     }
 
     public static Map<String, Object> readPrintsParsingFile(InputStream is, float defaultCutOff) throws IOException {
-        BufferedReader fReader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String printsFileCommentCharacter = "#";
-        String in;
+        String line;
         Map<String, Object> ret = new HashMap<String, Object>();
-        while ((in = fReader.readLine()) != null) {
-            if (!in.startsWith(printsFileCommentCharacter)) {
-                String[] line = in.split("\\|");
-                double checkCutoff = Math.log10(Double.parseDouble(line[2]));
+        while ((line = reader.readLine()) != null) {
+            if (!line.startsWith(printsFileCommentCharacter)) {
+                String[] splitLine = line.split("\\|");
+                double checkCutoff = Math.log10(Double.parseDouble(splitLine[2]));
                 if (checkCutoff != defaultCutOff) {
-                    ret.put(line[0], checkCutoff);
+                    ret.put(splitLine[0], checkCutoff);
                 }
             }
         }
