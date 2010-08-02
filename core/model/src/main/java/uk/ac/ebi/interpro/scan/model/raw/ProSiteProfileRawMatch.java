@@ -20,8 +20,8 @@ public class ProSiteProfileRawMatch extends ProfileScanRawMatch {
 
     public ProSiteProfileRawMatch(String sequenceIdentifier, String model,
                                   String signatureLibraryRelease,
-                                  int locationStart, int locationEnd, String cigarAlignment, double score) {
+                                  int locationStart, int locationEnd, String cigarAlignment, double score, Level level) {
         super(sequenceIdentifier, model, SignatureLibrary.PROSITE_PROFILES, signatureLibraryRelease,
-                locationStart, locationEnd, cigarAlignment, score);
+                locationStart, locationEnd, cigarAlignment, score, level);
     }
 }

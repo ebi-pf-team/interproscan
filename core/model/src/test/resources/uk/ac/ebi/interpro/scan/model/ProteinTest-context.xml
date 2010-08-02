@@ -657,6 +657,8 @@
                                 <!--End-->
                                 <constructor-arg value="STRONG"
                                                  type="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation$Level"/>
+                                <!-- Cigar alignment -->
+                                <constructor-arg value="CIGARALIGN"/>
                             </bean>
                         </util:set>
                     </constructor-arg>
@@ -714,6 +716,8 @@
                                 <constructor-arg value="275"/>
                                 <!--End-->
                                 <constructor-arg value="24.202"/>
+
+                                <constructor-arg value="CIGARALIGN"/>
                                 <!--Score-->
                             </bean>
                         </util:set>
@@ -735,6 +739,7 @@
                                 <!--End-->
                                 <constructor-arg value="15.158"/>
                                 <!--Score-->
+                                <constructor-arg value="CIGARALIGN"/>
                             </bean>
                         </util:set>
                     </constructor-arg>

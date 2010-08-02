@@ -19,28 +19,27 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.ManyToOne;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.util.Set;
 
 /**
  * ProfileScan filtered match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 @Entity
-@Table(name="profile_scan_match")
-@XmlType(name="ProfileScanMatchType")
+@Table(name = "profile_scan_match")
+@XmlType(name = "ProfileScanMatchType")
 public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation> {
 
-    protected ProfileScanMatch() {}
+    protected ProfileScanMatch() {
+    }
 
     public ProfileScanMatch(Signature signature, Set<ProfileScanLocation> locations) {
         super(signature, locations);
@@ -49,27 +48,32 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
     /**
      * Location(s) of match on protein sequence
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     @Entity
-    @Table(name="profile_scan_location")
-    @XmlType(name="ProfileScanLocationType")
+    @Table(name = "profile_scan_location")
+    @XmlType(name = "ProfileScanLocationType")
     public static class ProfileScanLocation extends Location {
 
         @Column(nullable = false)
         private double score;
 
+        @Column(nullable = false, name = "cigar_align")
+        private String cigarAlignment;
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
-        protected ProfileScanLocation() {}
-
-        public ProfileScanLocation(int start, int end, double score) {
-            super(start, end);
-            setScore(score);
+        protected ProfileScanLocation() {
         }
 
-        @XmlAttribute(required=true)
+        public ProfileScanLocation(int start, int end, double score, String cigarAlignment) {
+            super(start, end);
+            setScore(score);
+            setCigarAlignment(cigarAlignment);
+        }
+
+        @XmlAttribute(required = true)
         public double getScore() {
             return score;
         }
@@ -78,7 +82,19 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
             this.score = score;
         }
 
-        @Override public boolean equals(Object o) {
+        // TODO - add this to the XML?
+//        @XmlAttribute(required=true)
+
+        public String getCigarAlignment() {
+            return cigarAlignment;
+        }
+
+        private void setCigarAlignment(String cigarAlignment) {
+            this.cigarAlignment = cigarAlignment;
+        }
+
+        @Override
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (!(o instanceof ProfileScanLocation))
@@ -90,7 +106,8 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
                     .isEquals();
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return new HashCodeBuilder(19, 81)
                     .appendSuper(super.hashCode())
                     .append(score)

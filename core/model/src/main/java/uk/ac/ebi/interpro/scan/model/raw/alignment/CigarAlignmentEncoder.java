@@ -1,73 +1,73 @@
 package uk.ac.ebi.interpro.scan.model.raw.alignment;
 
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * {@inheritDoc}
- *
+ * <p/>
  * <p>This implementation encodes alignments using the
  * <a href="http://www.ensembl.org/Help/Results?_referer=;result=glossary_13">CIGAR format</a>, a simple
  * type of data compression based on
  * <a href="http://en.wikipedia.org/wiki/Run-length_encoding">run-length encoding</a>.
- *
+ * <p/>
  * <p>CIGAR alignments can be found at SIB's ProSite DAS server, for example:
  * <a href="http://proserver.vital-it.ch/das/prositealign/alignment?query=PS50808">PS50808</a>.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public final class CigarAlignmentEncoder implements AlignmentEncoder {
 
-    public static final char MATCH_CHAR   = 'M';
-    public static final char INSERT_CHAR  = 'I';
-    public static final char DELETE_CHAR  = 'D';
+    public static final char MATCH_CHAR = 'M';
+    public static final char INSERT_CHAR = 'I';
+    public static final char DELETE_CHAR = 'D';
 
-    private static final String MATCH_STR   = Character.toString(MATCH_CHAR);
-    private static final String INSERT_STR  = Character.toString(INSERT_CHAR);
-    private static final String DELETE_STR  = Character.toString(DELETE_CHAR);
+    private static final String MATCH_STR = Character.toString(MATCH_CHAR);
+    private static final String INSERT_STR = Character.toString(INSERT_CHAR);
+    private static final String DELETE_STR = Character.toString(DELETE_CHAR);
 
     public CigarAlignmentEncoder() {
     }
 
     /**
      * Returns alignment in CIGAR format. For example, "QEFHRK-----KDgnfGAD" is encoded as "6M5D2M3I3M".
-     *
+     * <p/>
      * From <a href="http://www.cs.bris.ac.uk/~gough/book/">Hidden Markov models</a>:
      * <ul>
-     *  <li>Upper case letters are aligned to a segment of the model</li>
-     *  <li>Lower case letters are not aligned</li>
-     *  <li>Deletions with respect to the model are marked by the '-' character</li>
+     * <li>Upper case letters are aligned to a segment of the model</li>
+     * <li>Lower case letters are not aligned</li>
+     * <li>Deletions with respect to the model are marked by the '-' character</li>
      * <ul>
      *
-     * @param  alignment Sequence alignment
+     * @param alignment Sequence alignment
      * @return Alignment in CIGAR format
      */
-    public String encode(String alignment)  {
-        if (alignment == null)  {
+    public String encode(String alignment) {
+        if (alignment == null) {
             throw new NullPointerException("Alignment must not be null");
         }
-        if (alignment.length() == 0)  {
+        if (alignment.length() == 0) {
             throw new IllegalArgumentException("Alignment must not be empty");
         }
         StringBuilder sb = new StringBuilder();
-        for (char c : alignment.toCharArray())    {
-                String s;
-                if (Character.isUpperCase(c))   {
-                    s = MATCH_STR;
-                }
-                else if (Character.isLowerCase(c))   {
-                    s = INSERT_STR;
-                }
-                else if (c == '-')   {
-                    s = DELETE_STR;
-                }
-                else    {
-                    throw new IllegalArgumentException("Alignment contains unrecognised characters " +
-                            "(must contain letters or " + DELETE_STR + "): " + alignment);
-                }
+        for (char c : alignment.toCharArray()) {
+            String s;
+            if (Character.isUpperCase(c)) {
+                s = MATCH_STR;
+            } else if (Character.isLowerCase(c)) {
+                s = INSERT_STR;
+            } else if (c == '-') {
+                s = DELETE_STR;
+            } else if (c == '.') {
+                s = null;
+            } else {
+                throw new IllegalArgumentException("Alignment contains unrecognised characters " +
+                        "(must contain letters or " + DELETE_STR + "): " + alignment);
+            }
+            if (s != null) {
                 sb.append(s);
+            }
         }
         // Encode
         return RunLengthEncoding.encode(sb.toString());
@@ -76,7 +76,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
     /**
      * Provides information about the CIGAR-formatted alignment
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     public final static class Parser implements AlignmentEncoder.Parser {
 
@@ -100,14 +100,23 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
             // Decode, for example convert "4M2D" to "MMMMDD"
             char[] decoded = RunLengthEncoding.decode(encoding).toCharArray();
             // Count number of match, insert and delete characters
-            for (char c : decoded)    {
-                switch (c)  {
-                    case MATCH_CHAR:  {mc++; break;}
-                    case INSERT_CHAR: {ic++; break;}
-                    case DELETE_CHAR: {dc++; break;}
+            for (char c : decoded) {
+                switch (c) {
+                    case MATCH_CHAR: {
+                        mc++;
+                        break;
+                    }
+                    case INSERT_CHAR: {
+                        ic++;
+                        break;
+                    }
+                    case DELETE_CHAR: {
+                        dc++;
+                        break;
+                    }
                 }
             }
-            matchCount  = mc;
+            matchCount = mc;
             insertCount = ic;
             deleteCount = dc;
         }
@@ -117,7 +126,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
          *
          * @return Number of matches
          */
-        public int getMatchCount()  {
+        public int getMatchCount() {
             return matchCount;
         }
 
@@ -126,7 +135,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
          *
          * @return Number of inserts
          */
-        public int getInsertCount()  {
+        public int getInsertCount() {
             return insertCount;
         }
 
@@ -135,7 +144,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
          *
          * @return Number of deletes
          */
-        public int getDeleteCount()  {
+        public int getDeleteCount() {
             return deleteCount;
         }
 
@@ -150,7 +159,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
      */
     private final static class RunLengthEncoding {
 
-        private static final Pattern ENCODED_PATTERN  = Pattern.compile("[0-9]+|[a-zA-Z]");
+        private static final Pattern ENCODED_PATTERN = Pattern.compile("[0-9]+|[a-zA-Z]");
 
         /**
          * Returns encoded string. For example, converts "WWWWWWWWWWWWBWWWWWWWWWWWWBBB" to "12W1B12W3B"
@@ -164,7 +173,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
             for (int i = 0; i < sourceLen; i++) {
                 int runLength = 1;
                 final char currentChar = source.charAt(i);
-                while( i+1 < sourceLen && currentChar == source.charAt(i+1) ) {
+                while (i + 1 < sourceLen && currentChar == source.charAt(i + 1)) {
                     runLength++;
                     i++;
                 }
