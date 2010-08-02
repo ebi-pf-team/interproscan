@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser;
+import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
@@ -21,19 +21,20 @@ import java.util.Set;
  * @author Antony Quinn
  * @version $Id$
  */
-abstract class ParseStep<T extends RawMatch> extends Step {
+public abstract class ParseStep<T extends RawMatch> extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(ParseStep.class.getName());
 
     private String outputFileTemplate;
-    private Hmmer3SearchMatchParser<T> parser;
+    private MatchParser<T> parser;
     private RawMatchDAO<T> rawMatchDAO;
 
-    public Hmmer3SearchMatchParser<T> getParser() {
+    public MatchParser<T> getParser() {
         return parser;
     }
 
-    public void setParser(Hmmer3SearchMatchParser<T> parser) {
+    @Required
+    public void setParser(MatchParser<T> parser) {
         this.parser = parser;
     }
 
@@ -53,6 +54,7 @@ abstract class ParseStep<T extends RawMatch> extends Step {
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        delayForNfs();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Running ParseStep for proteins " + stepInstance.getBottomProtein() +
                     " to " + stepInstance.getTopProtein());
