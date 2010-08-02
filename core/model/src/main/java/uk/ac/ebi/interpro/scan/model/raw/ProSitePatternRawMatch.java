@@ -1,40 +1,43 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
-import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 /**
  * <a href="http://www.expasy.ch/prosite/">PROSITE</a> Pattern raw match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
 @Entity
-@Table(name="prosite_pattern_raw_match")
-public class ProSitePatternRawMatch extends RawMatch {
+@Table(name = "prosite_pattern_raw_match")
+public class ProSitePatternRawMatch extends PfScanRawMatch {
 
-    // TODO: Should we use enum for level? See PatternScanMatch.Level
-    @Column (name="pro_site_level")
-    private String level;
+    protected ProSitePatternRawMatch() {
+    }
 
-    protected ProSitePatternRawMatch() { }
+    @Enumerated(javax.persistence.EnumType.STRING)
+    @Column(nullable = false)
+    private PatternScanMatch.PatternScanLocation.Level patternLevel;
 
     public ProSitePatternRawMatch(String sequenceIdentifier, String model,
                                   String signatureLibraryRelease,
-                                  int locationStart, int locationEnd, String level) {
-        super(sequenceIdentifier, model, SignatureLibrary.PROSITE_PATTERNS, signatureLibraryRelease, locationStart, locationEnd);
-        this.level = level;
+                                  int locationStart, int locationEnd, String cigarAlignment, PatternScanMatch.PatternScanLocation.Level patternLevel) {
+        super(sequenceIdentifier, model, SignatureLibrary.PROSITE_PATTERNS, signatureLibraryRelease, locationStart, locationEnd, cigarAlignment);
+        setPatternLevel(patternLevel);
     }
 
-    public String getLevel() {
-        return level;
+    public void setPatternLevel(PatternScanMatch.PatternScanLocation.Level patternLevel) {
+        this.patternLevel = patternLevel;
     }
 
-    private void setLevel(String level) {
-        this.level = level;
+    public PatternScanMatch.PatternScanLocation.Level getPatternLevel() {
+        return patternLevel;
     }
-    
 }

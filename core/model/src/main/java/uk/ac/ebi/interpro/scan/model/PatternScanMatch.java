@@ -19,28 +19,29 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import javax.persistence.Entity;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.ManyToOne;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * PatternScan filtered match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 @Entity
-@Table(name="pattern_scan_match")
-@XmlType(name="PatternScanMatchType")
+@Table(name = "pattern_scan_match")
+@XmlType(name = "PatternScanMatchType")
 public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation> {
 
-    protected PatternScanMatch() {}
+    protected PatternScanMatch() {
+    }
 
     public PatternScanMatch(Signature signature, Set<PatternScanLocation> locations) {
         super(signature, locations);
@@ -49,27 +50,32 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
     /**
      * Location(s) of match on protein sequence
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     @Entity
-    @Table(name="pattern_scan_location")
-    @XmlType(name="PatternScanLocationType")
+    @Table(name = "pattern_scan_location")
+    @XmlType(name = "PatternScanLocationType")
     public static class PatternScanLocation extends Location {
 
-        @Column(nullable = false, name="location_level")
+        @Column(nullable = false, name = "location_level")
         private Level level;
+
+        @Column(nullable = false, name = "cigar_align")
+        private String cigarAlignment;
 
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
-        protected PatternScanLocation() {}
-
-        public PatternScanLocation(int start, int end, Level level) {
-            super(start, end);
-            setLevel(level);
+        protected PatternScanLocation() {
         }
 
-        @XmlAttribute(required=true)
+        public PatternScanLocation(int start, int end, Level level, String cigarAlignment) {
+            super(start, end);
+            setLevel(level);
+            setCigarAlignment(cigarAlignment);
+        }
+
+        @XmlAttribute(required = true)
         public Level getLevel() {
             return level;
         }
@@ -78,27 +84,47 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
             this.level = level;
         }
 
+        // TODO - add this to the XML?
+//        @XmlAttribute(required=true)
+
+        public String getCigarAlignment() {
+            return cigarAlignment;
+        }
+
+        private void setCigarAlignment(String cigarAlignment) {
+            this.cigarAlignment = cigarAlignment;
+        }
+
         /**
          * ProSite cut-off level
          * (see <a href="http://www.expasy.ch/prosite/prosuser.html#convent37">PROSITE User Manual</a>)
          *
          * @author Antony Quinn
+         * @author Phil Jones
          */
-        @XmlType(name="LevelType")
+        @XmlType(name = "LevelType")
         public static enum Level {
 
-            STRONG(0, "!"),
-            WEAK(-1, "?");
+            STRONG("(0)", "!"),
+            WEAK("(-1)", "?");
 
-            private final int    tag;
+            private static final Map<String, Level> TAG_TO_LEVEL = new HashMap<String, Level>(Level.values().length);
+
+            static {
+                for (Level level : Level.values()) {
+                    TAG_TO_LEVEL.put(level.tag, level);
+                }
+            }
+
+            private final String tag;
             private final String symbol;
 
-            private Level(int tag, String symbol) {
-                this.tag    = tag;
+            private Level(String tag, String symbol) {
+                this.tag = tag;
                 this.symbol = symbol;
             }
 
-            public int getTag() {
+            public String getTag() {
                 return tag;
             }
 
@@ -106,29 +132,25 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
                 return symbol;
             }
 
-            @Override public String toString() {
+            @Override
+            public String toString() {
                 return symbol;
             }
 
             /**
              * Returns enum corresponding to tag.
              *
-             * @param   tag Tag, for example 0 or -1.
-             * @return  Enum corresponding to tag
+             * @param tag Tag, for example (0) or (-1).
+             * @return Enum corresponding to tag
              */
-            // TODO: This needs testing
-            public static Level parseTag(int tag)  {
-                for (Level level : Level.values()) {
-                    if (tag == level.getTag())   {
-                        return level;
-                    }
-                }
-                throw new IllegalArgumentException("Unrecognised tag: " + String.valueOf(tag));
+            public static Level getLevelByTag(String tag) {
+                return TAG_TO_LEVEL.get(tag);
             }
 
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (!(o instanceof PatternScanLocation))
@@ -140,7 +162,8 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
                     .isEquals();
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return new HashCodeBuilder(19, 85)
                     .appendSuper(super.hashCode())
                     .append(level)
