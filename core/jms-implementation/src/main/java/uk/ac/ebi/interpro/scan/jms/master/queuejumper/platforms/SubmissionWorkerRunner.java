@@ -36,8 +36,9 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     public void startupNewWorker(int priority) {
         try {
             String command = submissionCommand;
-            command = command.replaceAll("%config%", System.getProperty("config"));
+//            command = command.replaceAll("%config%", System.getProperty("config"));
 
+            command += " --mode=amqworker";
             if (priority > 0) {
                 command = command + " --priority=" + priority;
             }

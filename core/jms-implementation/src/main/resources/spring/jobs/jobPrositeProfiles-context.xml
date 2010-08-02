@@ -14,14 +14,15 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: HAMAP ############################  -->
-    <bean id="jobHAMAP" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="High-quality Automated and Manual Annotation of Microbial Proteomes"/>
+    <!-- ######################## JOB: PrositeProfiles ############################  -->
+    <bean id="jobPrositeProfiles" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="PROSITE consists of documentation entries describing protein domains, families and functional sites as well as associated patterns and profiles to identify them"/>
         <property name="analysis" value="true"/>
     </bean>
 
-    <bean id="abstractHamapStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobHAMAP"/>
+    <bean id="abstractPrositeProfileStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobPrositeProfiles"/>
         <property name="maxProteins" value="500"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
@@ -29,9 +30,9 @@
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="stepHamapWriteFastaFile"
+    <bean id="stepPrositeProfilesWriteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstractHamapStep">
+          parent="abstractPrositeProfileStep">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create fasta file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -40,90 +41,93 @@
     </bean>
 
     <!-- STEP 2 -->
-    <bean id="stepHamapRunBinary"
+    <bean id="stepPrositeProfilesRunBinary"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
-          parent="abstractHamapStep">
+          parent="abstractPrositeProfileStep">
         <!-- /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/production/interpro/data/members/hamap/180510/hamap.prf -pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -l -1 -o gff
           (PROSITE for comparison:)
           Prosite Profiles:
           /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.52/prosite.dat -pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
           Prosite Patterns:
           /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.52/prosite.dat -pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.52/evaluator.dat -s -o ipro -->
-        <property name="dependsUpon" ref="stepHamapWriteFastaFile"/>
-        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
-        <property name="binarySwitches" value="-l -1 -o gff"/>
+        <property name="dependsUpon" ref="stepPrositeProfilesWriteFastaFile"/>
+        <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
+        <property name="binarySwitches" value="-s -m -o gff"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
-        <property name="modelFile" value="${hamap.profile.models.path}"/>
+        <property name="modelFile" value="${prosite.models.path}"/>
         <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
     </bean>
 
-    <bean id="stepHamapDeleteFastaFile"
+    <bean id="stepPrositeProfilesDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractHamapStep">
-        <property name="dependsUpon" ref="stepHamapRunBinary"/>
-        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+          parent="abstractPrositeProfileStep">
+        <property name="dependsUpon" ref="stepPrositeProfilesRunBinary"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of Prosite Profiles."/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
     <!-- STEP 3 -->
-    <bean id="stepHamapParseRawOutput"
+    <bean id="stepPrositeProfilesParseRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParsePrositeGffOutputStep"
-          parent="abstractHamapStep">
-        <property name="dependsUpon" ref="stepHamapRunBinary"/>
+          parent="abstractPrositeProfileStep">
+        <property name="dependsUpon" ref="stepPrositeProfilesRunBinary"/>
         <property name="stepDescription" value="Parse the output from the Prosite binary"/>
-        <property name="serialGroup" value="PARSE_HAMAP"/>
+        <property name="serialGroup" value="PARSE_PROSITE_PROFILES"/>
         <property name="retries" value="3"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
-        <property name="parser" ref="hamapRawOutputParser"/>
+        <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
+        <property name="parser" ref="prositeProfilesRawOutputParser"/>
     </bean>
 
 
-    <bean id="stepHamapDeleteRawOutput"
+    <bean id="stepPrositeProfilesDeleteRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractHamapStep">
-        <property name="dependsUpon" ref="stepHamapParseRawOutput"/>
+          parent="abstractPrositeProfileStep">
+        <property name="dependsUpon" ref="stepPrositeProfilesParseRawOutput"/>
         <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <bean id="stepHamapPostProcessing"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hamap.HamapPostProcessingStep"
-          parent="abstractHamapStep">
+    <bean id="stepPrositeProfilesPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.PrositeProfilesPostProcessingStep"
+          parent="abstractPrositeProfileStep">
 
-        <property name="dependsUpon" ref="stepHamapParseRawOutput"/>
-        <property name="serialGroup" value="HAMAP_POST_PROCESSING"/>
-        <property name="stepDescription" value="Filter HAMAP matches and persist filtered results"/>
-        <property name="signatureLibraryRelease" value="180510"/>
-        <property name="postProcessor" ref="hamapPostProcessor"/>
-        <property name="filteredMatchDAO" ref="hamapFilteredMatchDAO"/>
-        <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
+        <property name="dependsUpon" ref="stepPrositeProfilesParseRawOutput"/>
+        <property name="serialGroup" value="PROSITE_PROFILES_POST_PROCESSING"/>
+        <property name="stepDescription" value="Filter Prosite Profiles matches and persist filtered results"/>
+        <property name="signatureLibraryRelease" value="20.52"/>
+        <property name="postProcessor" ref="prositeProfilesPostProcessor"/>
+        <property name="filteredMatchDAO" ref="prositeProfilesFilteredMatchDAO"/>
+        <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
     </bean>
 
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: HAMAP !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PrositeProfiles !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <bean id="hamapRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch"/>
+    <bean id="prositeProfilesRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch"/>
     </bean>
 
-    <bean id="hamapFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.HamapFilteredMatchDAOImpl"/>
+    <bean id="prositeProfilesFilteredMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchDAOImpl"/>
 
-    <bean id="hamapPostProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing">
+    <bean id="prositeProfilesPostProcessor"
+          class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing">
         <property name="passLevels">
             <list>
                 <value>ONE</value>
                 <value>ZERO</value>
+                <value>MINUS_ONE</value>
             </list>
         </property>
     </bean>
 
-    <bean id="hamapRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeMatchParser">
-        <constructor-arg index="0" value="HAMAP"/>
-        <constructor-arg index="1" value="180510"/>
+    <bean id="prositeProfilesRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeMatchParser">
+        <constructor-arg index="0" value="PROSITE_PROFILES"/>
+        <constructor-arg index="1" value="20.52"/>
         <property name="cigarEncoder" ref="cigarEncoder"/>
     </bean>
 

@@ -14,6 +14,7 @@
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match</class>
         <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch</class>
 
         <!-- Concrete Locations. -->
@@ -23,6 +24,7 @@
         <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch$PhobiusLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch$CoilsLocation</class>
 
         <!-- Raw Matches -->
