@@ -23,7 +23,7 @@ import java.util.Set;
  * @author Phil Jones
  * @version $Id$
  */
-abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParser<T> {
+public abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParser<T> {
 
     private final SignatureLibrary signatureLibrary;
     private final String signatureLibraryRelease;
@@ -59,7 +59,7 @@ abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParse
             reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
-                T match = createMatch(signatureLibrary, signatureLibraryRelease, line);
+                T match = createMatch(line);
                 if (match != null) {
                     String id = match.getSequenceIdentifier();
                     RawProtein<T> protein;
@@ -84,12 +84,8 @@ abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParse
     /**
      * Returns {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters.
      *
-     * @param signatureLibrary
-     * @param signatureLibraryRelease Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
-     * @param line                    Line read from input file.   @return {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters
+     * @param line Line read from input file.   @return {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters
      */
-    protected abstract T createMatch(SignatureLibrary signatureLibrary,
-                                     String signatureLibraryRelease,
-                                     String line);
+    protected abstract T createMatch(String line);
 
 }
