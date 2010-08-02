@@ -5,9 +5,10 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.prints.PrintsPostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAO;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class PrintsPostProcessingStep extends Step {
 
     private PrintsRawMatchDAO rawMatchDAO;
 
-    private PrintsFilteredMatchDAO filteredMatchDAO;
+    private FilteredMatchDAO<PrintsRawMatch, FingerPrintsMatch> filteredMatchDAO;
 
     @Required
     public void setPostProcessor(PrintsPostProcessing postProcessor) {
@@ -47,7 +48,7 @@ public class PrintsPostProcessingStep extends Step {
     }
 
     @Required
-    public void setFilteredMatchDAO(PrintsFilteredMatchDAO filteredMatchDAO) {
+    public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
@@ -73,7 +74,7 @@ public class PrintsPostProcessingStep extends Step {
         // Post process
         try {
             Map<String, RawProtein<PrintsRawMatch>> filteredMatches = postProcessor.process(rawMatches);
-            filteredMatchDAO.persistFilteredMatches(filteredMatches.values());
+            filteredMatchDAO.persist(filteredMatches.values());
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered PRINTS matches.", e);
         }

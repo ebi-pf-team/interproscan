@@ -8,7 +8,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class Pfam_A_PostProcessingStep extends Step {
 
     private PfamHmmer3RawMatchDAO rawMatchDAO;
 
-    private PfamFilteredMatchDAO filteredMatchDAO;
+    private FilteredMatchDAO filteredMatchDAO;
 
     @Required
     public void setSignatureLibrary(SignatureLibrary signatureLibrary) {
@@ -69,7 +69,7 @@ public class Pfam_A_PostProcessingStep extends Step {
     }
 
     @Required
-    public void setFilteredMatchDAO(PfamFilteredMatchDAO filteredMatchDAO) {
+    public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
@@ -92,7 +92,7 @@ public class Pfam_A_PostProcessingStep extends Step {
         // Post process
         try {
             Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = getPostProcessor().process(rawMatches);
-            filteredMatchDAO.persistFilteredMatches(filteredMatches.values());
+            filteredMatchDAO.persist(filteredMatches.values());
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attemptin to post process filtered matches.", e);
         }
