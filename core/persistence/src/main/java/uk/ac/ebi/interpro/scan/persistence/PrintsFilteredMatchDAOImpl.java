@@ -1,17 +1,16 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import javax.persistence.Query;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -19,7 +18,7 @@ import java.util.*;
  * @since 1.0
  */
 
-public class PrintsFilteredMatchDAOImpl extends GenericDAOImpl<FingerPrintsMatch, Long> implements PrintsFilteredMatchDAO {
+public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMatch, FingerPrintsMatch> {
 
     private static final Logger LOGGER = Logger.getLogger(PrintsFilteredMatchDAOImpl.class.getName());
 
@@ -37,44 +36,16 @@ public class PrintsFilteredMatchDAOImpl extends GenericDAOImpl<FingerPrintsMatch
     }
 
     /**
-     * Persists filtered matches to the database that are referenced
-     * from a RawProtein<PrintsRawMatch> object.
+     * This is the method that should be implemented by specific FilteredMatchDAOImpl's to
+     * persist filtered matches.
      *
-     * @param rawProteins containing a Collection of filtered PrintsRawMatch objects
+     * @param filteredProteins      being the Collection of filtered RawProtein objects to persist
+     * @param modelIdToSignatureMap a Map of signature accessions to Signature objects.
+     * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Override
-    public void persistFilteredMatches(Collection<RawProtein<PrintsRawMatch>> rawProteins) {
-
-
-        if (rawProteins == null || rawProteins.size() == 0) {
-            LOGGER.debug("No RawProtein objects have been passed into the persistFilteredMatches method, so exiting.");
-            return;
-        }
-
-        String signatureLibraryVersion = null;
-        int rawMatchCount = 0;
-        for (RawProtein<PrintsRawMatch> rawProtein : rawProteins) {
-            for (PrintsRawMatch rawMatch : rawProtein.getMatches()) {
-                rawMatchCount++;
-                if (signatureLibraryVersion == null) {
-                    signatureLibraryVersion = rawMatch.getSignatureLibraryRelease();
-                    if (signatureLibraryVersion == null) {
-                        throw new IllegalStateException("Found a PRINTS raw match record that does not include the release version");
-                    }
-                } else if (!signatureLibraryVersion.equals(rawMatch.getSignatureLibraryRelease())) {
-                    throw new IllegalStateException("Attempting to persist a collection of PRINTS matches for more than one SignatureLibraryRelease.   Not implemented.");
-                }
-            }
-        }
-        LOGGER.debug(rawMatchCount + " filtered matches have been passed in to the persistFilteredMatches method");
-        if (signatureLibraryVersion == null) {
-            LOGGER.debug("There are no raw matches to filter.");
-            return;
-        }
-
-        Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(rawProteins);
-        Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(rawProteins, signatureLibraryVersion);
-        for (RawProtein<PrintsRawMatch> rawProtein : rawProteins) {
+    protected void persist(Collection<RawProtein<PrintsRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+        for (RawProtein<PrintsRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
@@ -117,64 +88,5 @@ public class PrintsFilteredMatchDAOImpl extends GenericDAOImpl<FingerPrintsMatch
             }
             entityManager.persist(protein);
         }
-    }
-
-    private Map<String, Signature> getModelAccessionToSignatureMap(Collection<RawProtein<PrintsRawMatch>> rawProteins, String signatureLibraryVersion) {
-        // Check that all the PrintsRawMatches passed in are for the same PRINTS release, then get
-        // all of the Signatures.
-
-        final Query signatureQuery = entityManager.createQuery(
-                "select s from Signature s " +
-                        "where s.signatureLibraryRelease.version = :signatureLibraryVersion " +
-                        "and s.signatureLibraryRelease.library = :signatureLibrary");
-        signatureQuery.setParameter("signatureLibrary", SignatureLibrary.PRINTS);
-        signatureQuery.setParameter("signatureLibraryVersion", signatureLibraryVersion);
-
-        @SuppressWarnings("unchecked") List<Signature> signatures = signatureQuery.getResultList();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Number of signatures retrieved: " + signatures.size());
-        }
-        Map<String, Signature> signatureAccessionToSignatureMap = new HashMap<String, Signature>(signatures.size());
-        for (Signature signature : signatures) {
-            signatureAccessionToSignatureMap.put(signature.getAccession(), signature);
-        }
-        return signatureAccessionToSignatureMap;
-
-    }
-
-    /**
-     * Helper method that converts a List of Protein objects retrieved from a JQL query
-     * into a Map of protein IDs to Protein objects.
-     *
-     * @param rawProteins being the Set of PhobiusProteins containing the IDs of the Protein objects
-     *                    required.
-     * @return a Map of protein IDs to Protein objects.
-     */
-    @Transactional
-    private Map<String, Protein> getProteinIdToProteinMap(Collection<RawProtein<PrintsRawMatch>> rawProteins) {
-        final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(rawProteins.size());
-
-        final List<Long> proteinIds = new ArrayList<Long>(rawProteins.size());
-        for (RawProtein<PrintsRawMatch> rawProtein : rawProteins) {
-            String proteinIdAsString = rawProtein.getProteinIdentifier();
-            proteinIds.add(new Long(proteinIdAsString));
-        }
-
-        for (int index = 0; index < proteinIds.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
-            int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
-            if (endIndex > proteinIds.size()) {
-                endIndex = proteinIds.size();
-            }
-            final List<Long> proteinIdSlice = proteinIds.subList(index, endIndex);
-            final Query proteinQuery = entityManager.createQuery(
-                    "select p from Protein p where p.id in (:proteinId)"
-            );
-            proteinQuery.setParameter("proteinId", proteinIdSlice);
-            @SuppressWarnings("unchecked") List<Protein> proteins = proteinQuery.getResultList();
-            for (Protein protein : proteins) {
-                proteinIdToProteinMap.put(protein.getId().toString(), protein);
-            }
-        }
-        return proteinIdToProteinMap;
     }
 }
