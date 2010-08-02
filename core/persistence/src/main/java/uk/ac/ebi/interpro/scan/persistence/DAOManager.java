@@ -1,16 +1,10 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
-import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Model;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.model.Signature;
-
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 
 /**
  * Convenience class to hold DAO objects.
@@ -33,7 +27,7 @@ public class DAOManager {
 
     private PfamHmmer3RawMatchDAO pfamRawMatchDAO;
 
-    private PfamFilteredMatchDAO pfamFilteredMatchDAO;
+    private FilteredMatchDAO pfamFilteredMatchDAO;
 
 
     public ProteinDAO getProteinDAO() {
@@ -90,12 +84,12 @@ public class DAOManager {
         this.pfamRawMatchDAO = pfamRawMatchDAO;
     }
 
-    public PfamFilteredMatchDAO getPfamFilteredMatchDAO() {
+    public FilteredMatchDAO getPfamFilteredMatchDAO() {
         return pfamFilteredMatchDAO;
     }
 
     @Required
-    public void setPfamFilteredMatchDAO(PfamFilteredMatchDAO pfamFilteredMatchDAO) {
+    public void setPfamFilteredMatchDAO(FilteredMatchDAO pfamFilteredMatchDAO) {
         this.pfamFilteredMatchDAO = pfamFilteredMatchDAO;
     }
 }
