@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -24,6 +25,8 @@ import java.util.Set;
  * @version $Id$
  */
 public abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParser<T> {
+
+    private static final Logger LOGGER = Logger.getLogger(AbstractLineMatchParser.class.getName());
 
     private final SignatureLibrary signatureLibrary;
     private final String signatureLibraryRelease;
@@ -53,21 +56,23 @@ public abstract class AbstractLineMatchParser<T extends RawMatch> implements Mat
         if (is == null) {
             throw new NullPointerException("InputStream is null");
         }
-        Map<String, RawProtein<T>> proteins = new HashMap<String, RawProtein<T>>();
+        final Map<String, RawProtein<T>> proteins = new HashMap<String, RawProtein<T>>();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
+                if (LOGGER.isDebugEnabled()) LOGGER.debug("Line to parse: " + line);
                 T match = createMatch(line);
+                if (LOGGER.isDebugEnabled()) LOGGER.debug("Resulting match: " + match);
                 if (match != null) {
-                    String id = match.getSequenceIdentifier();
+                    final String sequenceIdentifier = match.getSequenceIdentifier();
                     RawProtein<T> protein;
-                    if (proteins.containsKey(id)) {
-                        protein = proteins.get(id);
+                    if (proteins.containsKey(sequenceIdentifier)) {
+                        protein = proteins.get(sequenceIdentifier);
                     } else {
-                        protein = new RawProtein<T>(id);
-                        proteins.put(id, new RawProtein<T>(id));
+                        protein = new RawProtein<T>(sequenceIdentifier);
+                        proteins.put(sequenceIdentifier, protein);
                     }
                     protein.addMatch(match);
                 }
