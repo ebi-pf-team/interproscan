@@ -15,19 +15,26 @@
  */
 package uk.ac.ebi.interpro.scan.business.binary;
 
+import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 /**
  * Default implementation.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 abstract class AbstractBinaryRunner implements BinaryRunner {
+
+    private static final Logger LOGGER = Logger.getLogger(AbstractBinaryRunner.class.getName());
+
 
     private CommandLineConversation commandLineConversation;
     private String binary;
@@ -36,70 +43,83 @@ abstract class AbstractBinaryRunner implements BinaryRunner {
     private String temporaryFilePath = null;
     private boolean deleteTemporaryFiles = true;
 
-    @Override public CommandLineConversation getCommandLineConversation() {
+    @Override
+    public CommandLineConversation getCommandLineConversation() {
         return commandLineConversation;
     }
 
-    @Override public void setCommandLineConversation(CommandLineConversation commandLineConversation) {
+    @Override
+    public void setCommandLineConversation(CommandLineConversation commandLineConversation) {
         this.commandLineConversation = commandLineConversation;
     }
 
-    @Override public String getBinary() {
+    @Override
+    public String getBinary() {
         return binary;
     }
 
-    @Override public void setBinary(String binary) {
+    @Override
+    public void setBinary(String binary) {
         this.binary = binary;
     }
 
-    @Override public Resource getBinaryPath() {
+    @Override
+    public Resource getBinaryPath() {
         return binaryPath;
     }
 
-    @Override public void setBinaryPath(Resource binaryPath) {
+    @Override
+    public void setBinaryPath(Resource binaryPath) {
         this.binaryPath = binaryPath;
     }
 
-    @Override public String getArguments() {
+    @Override
+    public String getArguments() {
         return arguments;
     }
 
-    @Override public void setArguments(String arguments) {
+    @Override
+    public void setArguments(String arguments) {
         this.arguments = arguments;
     }
 
-    @Override public boolean isDeleteTemporaryFiles() {
+    @Override
+    public boolean isDeleteTemporaryFiles() {
         return deleteTemporaryFiles;
     }
 
-    @Override public void setDeleteTemporaryFiles(boolean deleteTemporaryFiles) {
+    @Override
+    public void setDeleteTemporaryFiles(boolean deleteTemporaryFiles) {
         this.deleteTemporaryFiles = deleteTemporaryFiles;
     }
 
-    @Override public String getTemporaryFilePath() {
+    @Override
+    public String getTemporaryFilePath() {
         return temporaryFilePath;
     }
 
-    @Override public void setTemporaryFilePath(String temporaryFilePath) {
+    @Override
+    public void setTemporaryFilePath(String temporaryFilePath) {
         this.temporaryFilePath = temporaryFilePath;
     }
 
-    @Override public InputStream run() throws IOException  {
+    @Override
+    public InputStream run() throws IOException {
         return runCommand(buildCommand(null));
-    }    
+    }
 
-    @Override public InputStream run(String additionalArguments) throws IOException  {
+    @Override
+    public InputStream run(String additionalArguments) throws IOException {
         return runCommand(buildCommand(additionalArguments));
     }
 
     private InputStream runCommand(String command) throws IOException {
         // Store results in temporary file
         File file;
-        if (temporaryFilePath == null)  {
+        if (temporaryFilePath == null) {
             // TODO: This is fine if running on single box, but will not work if next step runs on different machine
             file = File.createTempFile("ipr-", ".out");
-        }
-        else    {
+        } else {
             file = new File(temporaryFilePath);
         }
         commandLineConversation.setOutputPathToFile(file.getAbsolutePath(), true, false);
@@ -115,15 +135,17 @@ abstract class AbstractBinaryRunner implements BinaryRunner {
             command = binaryPath.getFile().getCanonicalPath() + File.separator + command;
         }
 
-        if (arguments != null)  {
+        if (arguments != null) {
             command = command + " " + arguments;
         }
 
-        if (additionalArguments != null)    {
+        if (additionalArguments != null) {
             command = command + " " + additionalArguments;
         }
 
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("Command being run (not including single quotes): '" + command + "'");
+
         return command;
-    }    
+    }
 
 }
