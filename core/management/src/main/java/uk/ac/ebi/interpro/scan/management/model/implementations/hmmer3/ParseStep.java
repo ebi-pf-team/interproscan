@@ -64,6 +64,14 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
         try {
             is = new FileInputStream(fileName);
             final Set<RawProtein<T>> results = getParser().parse(is);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parsed out " + results.size() + " proteins with matches from file " + fileName);
+                int count = 0;
+                for (RawProtein<T> rawProtein : results) {
+                    count += rawProtein.getMatches().size();
+                }
+                LOGGER.debug("A total of " + count + " matches from file " + fileName);
+            }
             rawMatchDAO.insertProteinMatches(results);
         }
         catch (IOException e) {

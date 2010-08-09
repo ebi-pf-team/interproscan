@@ -1,16 +1,16 @@
-package uk.ac.ebi.interpro.scan.io.match.hmmer3;
+package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomainMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.HmmSearchRecord;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
 
 /**
  * Support class to parse HMMER3 output into {@link Gene3dHmmer3RawMatch}es.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3dHmmer3RawMatch> {
@@ -22,10 +22,11 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
         this.alignmentEncoder = alignmentEncoder;
     }
 
-    @Override protected Gene3dHmmer3RawMatch createMatch(final String signatureLibraryRelease,
-                                                         final HmmSearchRecord hmmSearchRecord,
-                                                         final SequenceMatch sequenceMatch,
-                                                         final DomainMatch domainMatch) {
+    @Override
+    protected Gene3dHmmer3RawMatch createMatch(final String signatureLibraryRelease,
+                                               final HmmSearchRecord hmmSearchRecord,
+                                               final SequenceMatch sequenceMatch,
+                                               final DomainMatch domainMatch) {
         // TODO: Store model length? (required by DF3) -- see HmmSearchRecord.getModelLength()
         return new Gene3dHmmer3RawMatch(
                 sequenceMatch.getSequenceIdentifier(),
@@ -47,7 +48,7 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
                 domainMatch.getIEvalue(),
                 domainMatch.getBias(),
                 alignmentEncoder.encode(domainMatch.getAlignment())
-        );        
+        );
     }
 
     /**
@@ -55,7 +56,8 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
      *
      * @return true to indicate Gene3D requires alignments be parsed from the HMMER output.
      */
-    @Override public boolean parseAlignments() {
+    @Override
+    public boolean parseAlignments() {
         return true;
     }
 

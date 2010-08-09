@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: Coils ############################  -->
+    <bean id="jobTIGRFAM" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="TIGRFAMs are protein families based on Hidden Markov Models or HMMs"/>
+        <property name="analysis" value="true"/>
+    </bean>
+
+    <bean id="abstractTIGRFAMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobTIGRFAM"/>
+        <property name="maxProteins" value="1000"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepTIGRFAMWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractTIGRFAMStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+
+    <!--TODO - The run binary step for HMMER should choose between search or scan, depending
+        TODO - upon the number of proteins being searched.  True for both HMMER2 & 3.
+        TODO - PROBLEM - HMMER2 hmmsearch ONLY ACCEPTS ONE MODEL AT A TIME. -->
+
+    <!-- STEP 2 -->
+    <bean id="stepTIGRFAMRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractTIGRFAMStep">
+        <!-- In example command line below, replace _ with -
+        
+        /ebi/production/interpro/binaries/64_bit_Linux/hmmpfam  _-cpu 1 _-acc -E 20 -A 0 _-cut_tc /ebi/sp/pro1/interpro/data/members/tigrfam/9.0/TIGRFAMs_9.0_HMM.LIB.bin  -->
+        <property name="dependsUpon" ref="stepTIGRFAMWriteFastaFile"/>
+        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
+        <property name="binarySwitches" value="--cpu 1 --acc -E 20 -A 0 --cut_tc"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="fullPathToHmmFile" value="${tigrfam.hmm.path}"/>
+    </bean>
+
+    <bean id="stepTIGRFAMDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractTIGRFAMStep">
+        <property name="dependsUpon" ref="stepTIGRFAMRunBinary"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!--<bean id="stepTIGRFAMStoreFilteredMatches"-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.coils.ParseCoilsOutputStep"-->
+    <!--parent="abstractTIGRFAMStep">-->
+    <!--<property name="dependsUpon" ref="stepTIGRFAMRunBinary"/>-->
+    <!--<property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>-->
+    <!--<property name="coilsOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--<property name="parser" ref="TIGRFAMParser"/>-->
+    <!--<property name="matchDAO" ref="TIGRFAMMatchDAO"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="stepTIGRFAMDeleteRawOutput"-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
+    <!--parent="abstractTIGRFAMStep">-->
+    <!--<property name="dependsUpon" ref="stepTIGRFAMStoreFilteredMatches"/>-->
+    <!--<property name="stepDescription"-->
+    <!--value="Delete the raw output file following successful parsing and persistence"/>-->
+    <!--<property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--</bean>-->
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <!--<bean id="TIGRFAMParser"-->
+    <!--class="uk.ac.ebi.interpro.scan.io.match.coils.CoilsMatchParser"/>-->
+
+    <!--<bean id="TIGRFAMMatchDAO"-->
+    <!--class="uk.ac.ebi.interpro.scan.persistence.CoilsFilteredMatchDAOImpl">-->
+    <!--<constructor-arg value="1.0"/>-->
+    <!--</bean>-->
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

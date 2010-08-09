@@ -1,11 +1,11 @@
-package uk.ac.ebi.interpro.scan.io.match.hmmer3;
+package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomainMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.HmmSearchRecord;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;

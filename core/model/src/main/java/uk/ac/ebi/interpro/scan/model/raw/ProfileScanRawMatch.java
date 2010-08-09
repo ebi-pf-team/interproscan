@@ -77,4 +77,28 @@ public abstract class ProfileScanRawMatch extends PfScanRawMatch {
     private void setLevel(Level level) {
         this.level = level;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProfileScanRawMatch)) return false;
+        if (!super.equals(o)) return false;
+
+        ProfileScanRawMatch that = (ProfileScanRawMatch) o;
+
+        if (Double.compare(that.score, score) != 0) return false;
+        if (level != that.level) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        long temp;
+        temp = score != +0.0d ? Double.doubleToLongBits(score) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + level.hashCode();
+        return result;
+    }
 }

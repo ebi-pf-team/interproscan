@@ -3,10 +3,7 @@ package uk.ac.ebi.interpro.scan.io.match.coils;
 
 import uk.ac.ebi.interpro.scan.io.ParseException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -31,7 +28,7 @@ import java.util.regex.Pattern;
  * @version $Id: CoilsMatchParser.java,v 1.1 2009/11/25 14:01:17 pjones Exp $
  * @since 1.0-SNAPSHOT
  */
-public class CoilsMatchParser {
+public class CoilsMatchParser implements Serializable {
 
     private static final String END_OF_RECORD_MARKER = "//";
 

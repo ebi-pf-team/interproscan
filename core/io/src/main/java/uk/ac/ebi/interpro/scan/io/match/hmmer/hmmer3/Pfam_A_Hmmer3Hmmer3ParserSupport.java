@@ -1,25 +1,24 @@
-package uk.ac.ebi.interpro.scan.io.match.hmmer3;
+package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
-import uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomainMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.HmmSearchRecord;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
+import uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.util.Map;
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Required;
-
 /**
  * For:  HMMER 3
- *       Pfam-A
- *
+ * Pfam-A
+ * <p/>
  * This implementation of MatchConverter is responsible for taking the raw results parsed out
  * from the hmmsearch format and creating the correct type of RawProtein,
  * at the same time as correctly filtering the raw results using a
@@ -75,7 +74,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
         return null;
     }
 
-    private static final Pattern MODEL_ACCESSION_LINE_PATTERN = Pattern.compile ("^[^:]*:\\s+(\\w+).*$" );
+    private static final Pattern MODEL_ACCESSION_LINE_PATTERN = Pattern.compile("^[^:]*:\\s+(\\w+).*$");
 
     /**
      * As the regular expressions required to parse the 'ID' or 'Accession' lines appear
@@ -89,21 +88,21 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
     }
 
     public void addMatch(HmmSearchRecord methodMatches, Map<String, RawProtein<PfamHmmer3RawMatch>> rawResults) throws IOException {
-        try{
-            for (SequenceMatch sequenceMatch : methodMatches.getSequenceMatches().values()){
-                for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()){
+        try {
+            for (SequenceMatch sequenceMatch : methodMatches.getSequenceMatches().values()) {
+                for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()) {
 
                     // Find out if the sequence match / domain match pass the GA cutoff.
-                    if ((sequenceMatch.getScore() >=  gaValuesRetriever.getSequenceGAForAccession(methodMatches.getModelAccession()))
+                    if ((sequenceMatch.getScore() >= gaValuesRetriever.getSequenceGAForAccession(methodMatches.getModelAccession()))
                             &&
-                            (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getModelAccession()))){
+                            (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getModelAccession()))) {
 
                         // Good sequence / domain match, so add to the rawResults.
 
                         // Either retrieve the correct RawSequenceIdentifer, or create a new one
                         // and add it to the Map.
                         RawProtein<PfamHmmer3RawMatch> sequenceIdentifier = rawResults.get(sequenceMatch.getSequenceIdentifier());
-                        if (sequenceIdentifier == null){
+                        if (sequenceIdentifier == null) {
                             sequenceIdentifier = new RawProtein<PfamHmmer3RawMatch>(sequenceMatch.getSequenceIdentifier());
                             rawResults.put(sequenceMatch.getSequenceIdentifier(), sequenceIdentifier);
                         }
@@ -134,12 +133,13 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
                 } // End of looping over domain matches
             } // End of looping over sequence matches
         } catch (ParseException e) {
-            throw new IllegalStateException ("Unable to parse the GA values from the HMM library.", e);
+            throw new IllegalStateException("Unable to parse the GA values from the HMM library.", e);
         }
     }
 
     /**
      * Pfam-A parsing does not require the alignments.
+     *
      * @return false to indicate that Pfam-A parsing does not require the alignments.
      */
     public boolean parseAlignments() {
@@ -149,6 +149,6 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
     @Override
     public HmmKey getHmmKey() {
         return HmmKey.ACCESSION;
-        
+
     }
 }
