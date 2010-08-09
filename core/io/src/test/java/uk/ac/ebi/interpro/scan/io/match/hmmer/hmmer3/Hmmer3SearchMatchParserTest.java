@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.io.match.hmmer3;
+package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
 import org.apache.log4j.Logger;
 import org.junit.Ignore;

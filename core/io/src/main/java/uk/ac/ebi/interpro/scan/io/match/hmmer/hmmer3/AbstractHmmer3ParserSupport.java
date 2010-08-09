@@ -1,12 +1,11 @@
-package uk.ac.ebi.interpro.scan.io.match.hmmer3;
+package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.DomainMatch;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.HmmSearchRecord;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel.SequenceMatch;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomainMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.HmmSearchRecord;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -15,18 +14,19 @@ import java.util.regex.Pattern;
 /**
  * Support class to parse HMMER3 output into {@link uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch}es.
  *
- * @author  Antony Quinn
- * @author  Phil Jones
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
-abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements Hmmer3ParserSupport<T> {
+abstract class AbstractHmmer3ParserSupport<T extends Hmmer3RawMatch> implements Hmmer3ParserSupport<T> {
 
     private static final Pattern MODEL_ACCESSION_LINE_PATTERN
-            = Pattern.compile ("^[^:]*:\\s+(\\w+)\\s+\\[M=(\\d+)\\].*$" );
+            = Pattern.compile("^[^:]*:\\s+(\\w+)\\s+\\[M=(\\d+)\\].*$");
 
     private String signatureLibraryRelease;
 
-    @Override public HmmKey getHmmKey() {
+    @Override
+    public HmmKey getHmmKey() {
         return HmmKey.NAME;  //TODO: Inject value for HmmKey through Spring for flexibility
     }
 
@@ -37,7 +37,8 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
      *
      * @return Pattern object to parse the accession line.
      */
-    @Override public Pattern getModelIdentLinePattern() {
+    @Override
+    public Pattern getModelIdentLinePattern() {
         return MODEL_ACCESSION_LINE_PATTERN;
     }
 
@@ -46,11 +47,13 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    @Override public String getModelId(Matcher modelIdentLinePatternMatcher) {
+    @Override
+    public String getModelId(Matcher modelIdentLinePatternMatcher) {
         return modelIdentLinePatternMatcher.group(1);
     }
 
-    @Override public Integer getModelLength(Matcher modelIdentLinePatternMatcher) {
+    @Override
+    public Integer getModelLength(Matcher modelIdentLinePatternMatcher) {
         return Integer.parseInt(modelIdentLinePatternMatcher.group(2));
     }
 
@@ -62,12 +65,12 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
      */
     public void addMatch(final HmmSearchRecord hmmSearchRecord,
                          final Map<String, RawProtein<T>> rawResults) {
-        for (SequenceMatch sequenceMatch : hmmSearchRecord.getSequenceMatches().values()){
-            for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()){
+        for (SequenceMatch sequenceMatch : hmmSearchRecord.getSequenceMatches().values()) {
+            for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()) {
                 // Get existing protein or add new one
                 String id = sequenceMatch.getSequenceIdentifier();
                 RawProtein<T> protein = rawResults.get(id);
-                if (protein == null){
+                if (protein == null) {
                     protein = new RawProtein<T>(id);
                     rawResults.put(id, protein);
                 }
@@ -81,12 +84,12 @@ abstract class AbstractHmmer3ParserSupport <T extends Hmmer3RawMatch> implements
     /**
      * Returns {@link uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch} instance using values from parameters.
      *
-     * @param signatureLibraryRelease   Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
-     * @param hmmSearchRecord           Single record in the hmmsearch output
-     * @param sequenceMatch             Sequence match
-     * @param domainMatch               Domain match     
+     * @param signatureLibraryRelease Corresponds to {@link uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
+     * @param hmmSearchRecord         Single record in the hmmsearch output
+     * @param sequenceMatch           Sequence match
+     * @param domainMatch             Domain match
      * @return Hmmer3RawMatch instance using values from parameters.
-     */    
+     */
     protected abstract T createMatch(final String signatureLibraryRelease,
                                      final HmmSearchRecord hmmSearchRecord,
                                      final SequenceMatch sequenceMatch,

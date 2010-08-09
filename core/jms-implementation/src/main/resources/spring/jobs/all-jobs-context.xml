@@ -14,6 +14,7 @@
     <import resource="jobHAMAP-context.xml"/>
     <import resource="jobPrositeProfiles-context.xml"/>
     <import resource="jobPrositePatterns-context.xml"/>
+    <import resource="jobTIGRFAM-context.xml"/>
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <import resource="../uapro-db-access-context.xml"/>
@@ -35,6 +36,7 @@
                 <ref bean="jobHAMAP"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
+                <!--<ref bean="jobTIGRFAM"/>-->
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>

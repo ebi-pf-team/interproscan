@@ -10,21 +10,21 @@
                            http://www.springframework.org/schema/lang
                            http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
 
-    <bean id="pfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
+    <bean id="pfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
         <property name="parserSupport">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
                 <property name="gaValuesRetriever">
                     <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
-                        <constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm" />
+                        <constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm"/>
                         <!--<constructor-arg>-->
-                            <!--<bean class="org.springframework.core.io.ClassPathResource">-->
-                                <!--<constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm" />-->
-                            <!--</bean>-->
+                        <!--<bean class="org.springframework.core.io.ClassPathResource">-->
+                        <!--<constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm" />-->
+                        <!--</bean>-->
                         <!--</constructor-arg>-->
                     </bean>
                 </property>
                 <property name="signatureLibraryRelease" value="24.0"/>
-                <property name="signatureLibrary"    value="PFAM"/>
+                <property name="signatureLibrary" value="PFAM"/>
             </bean>
         </property>
     </bean>
@@ -36,9 +36,9 @@
         <constructor-arg value="data/hmmer3/hmmsearch/CELR2-PF12003.txt"/>
     </bean>
 
-    <bean id="gene3dParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
+    <bean id="gene3dParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
         <property name="parserSupport">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Gene3DHmmer3ParserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Gene3DHmmer3ParserSupport">
                 <property name="signatureLibraryRelease" value="3.3.0"/>
                 <property name="alignmentEncoder">
                     <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
@@ -51,7 +51,7 @@
         <constructor-arg value="data/hmmer3/hmmsearch/2hxsA00.out"/>
     </bean>
 
-    <!--Email from Sead Eddy: "HMMER3 should only keep highest scoring domain"-->    
+    <!--Email from Sead Eddy: "HMMER3 should only keep highest scoring domain"-->
     <bean id="highestScoringDomainFile" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="data/hmmer3/hmmsearch/Q5HDF6-1aopA02.txt"/>
     </bean>
@@ -59,5 +59,5 @@
     <bean id="emptyAlignmentLineFile" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="data/hmmer3/hmmsearch/empty-alignment-line.txt"/>
     </bean>
-    
+
 </beans>

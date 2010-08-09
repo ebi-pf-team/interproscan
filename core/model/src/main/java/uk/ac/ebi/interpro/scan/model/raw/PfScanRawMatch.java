@@ -39,4 +39,24 @@ public abstract class PfScanRawMatch extends RawMatch {
     public String getCigarAlignment() {
         return cigarAlignment;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PfScanRawMatch)) return false;
+        if (!super.equals(o)) return false;
+
+        PfScanRawMatch that = (PfScanRawMatch) o;
+
+        if (!cigarAlignment.equals(that.cigarAlignment)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + cigarAlignment.hashCode();
+        return result;
+    }
 }

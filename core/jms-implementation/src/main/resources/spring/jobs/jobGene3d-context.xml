@@ -63,9 +63,9 @@
         <property name="serialGroup" value="PARSE_HMMER_3"/>
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
         <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
                 <property name="parserSupport">
-                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer3.Gene3DHmmer3ParserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Gene3DHmmer3ParserSupport">
                         <!--TODO: We need to pass in or look up release number-->
                         <property name="signatureLibraryRelease" value="3.3.0"/>
                         <property name="alignmentEncoder">

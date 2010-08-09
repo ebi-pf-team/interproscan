@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.coils;
 
+import java.io.Serializable;
+
 /**
  * Model class representing a single coils match.
  *
@@ -7,7 +9,7 @@ package uk.ac.ebi.interpro.scan.io.match.coils;
  * @version $Id: ParseCoilsMatch.java,v 1.1 2009/11/25 14:01:17 pjones Exp $
  * @since 1.0-SNAPSHOT
  */
-public class ParseCoilsMatch {
+public class ParseCoilsMatch implements Serializable {
 
     private String proteinDatabaseIdentifier;
 

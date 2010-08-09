@@ -24,4 +24,5 @@ public class ProSiteProfileRawMatch extends ProfileScanRawMatch {
         super(sequenceIdentifier, model, SignatureLibrary.PROSITE_PROFILES, signatureLibraryRelease,
                 locationStart, locationEnd, cigarAlignment, score, level);
     }
+
 }

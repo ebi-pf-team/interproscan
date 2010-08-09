@@ -1,20 +1,20 @@
-package uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel;
+package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This model object accepts the data parsed from a sequence match line in the hmmsearch output format.
  *
- * @author  Phil Jones
- * @author  Antony Quinn
- * @version $Id$
- * @since   1.0-SNAPSHOT
+ * @author Phil Jones
+ * @author Antony Quinn
+ * @version $Id: Hmmer2SequenceMatch.java 558 2010-04-22 10:24:53Z aquinn.ebi $
+ * @since 1.0-SNAPSHOT
  */
-public class SequenceMatch implements Serializable {
+public class Hmmer2SequenceMatch implements Serializable {
 
     /**
      * Group 1: Sequence E-value
@@ -40,9 +40,9 @@ public class SequenceMatch implements Serializable {
 
     private double bias;
 
-    private List<DomainMatch> domainMatches = new ArrayList<DomainMatch>();
+    private List<Hmmer2DomainMatch> hmmer2DomainMatches = new ArrayList<Hmmer2DomainMatch>();
 
-    public SequenceMatch(Matcher domainLineMatcher) {
+    public Hmmer2SequenceMatch(Matcher domainLineMatcher) {
         this.eValue = Double.parseDouble(domainLineMatcher.group(EVALUE_GROUP));
         this.score = Double.parseDouble(domainLineMatcher.group(SCORE_GROUP));
         this.bias = Double.parseDouble(domainLineMatcher.group(BIAS_GROUP));
@@ -66,17 +66,17 @@ public class SequenceMatch implements Serializable {
         return bias;
     }
 
-    void addDomainMatch(DomainMatch domainMatch){
-        this.domainMatches.add (domainMatch);
+    void addDomainMatch(Hmmer2DomainMatch hmmer2DomainMatch) {
+        this.hmmer2DomainMatches.add(hmmer2DomainMatch);
     }
 
-    void removeDomainMatch(DomainMatch domainMatch){
-        this.domainMatches.remove(domainMatch);
+    void removeDomainMatch(Hmmer2DomainMatch hmmer2DomainMatch) {
+        this.hmmer2DomainMatches.remove(hmmer2DomainMatch);
     }
 
-    public List<DomainMatch> getDomainMatches() {
-        return domainMatches;
+    public List<Hmmer2DomainMatch> getDomainMatches() {
+        return hmmer2DomainMatches;
     }
 
-   
+
 }

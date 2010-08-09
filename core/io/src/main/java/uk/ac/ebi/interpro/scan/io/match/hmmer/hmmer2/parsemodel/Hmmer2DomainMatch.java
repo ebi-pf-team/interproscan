@@ -1,17 +1,17 @@
-package uk.ac.ebi.interpro.scan.io.match.hmmer3.parsemodel;
+package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Provides a match for a Domain line in hmmsearch output format.
  *
  * @author Phil Jones
- * @version $Id$
+ * @version $Id: Hmmer2DomainMatch.java 503 2010-03-15 16:56:14Z dwbinns $
  * @since 1.0-SNAPSHOT
  */
-public class DomainMatch implements Serializable {
+public class Hmmer2DomainMatch implements Serializable {
 
     /**
      * Group[1] Score (float)
@@ -35,7 +35,7 @@ public class DomainMatch implements Serializable {
     // TODO: and letters only, but UniProt FASTA ID lines contain "|", for example "tr|Q9U4N3|Q9U4N3_TOXGO"
     public static final Pattern ALIGNMENT_SEQUENCE_PATTERN = Pattern.compile("^\\s+(\\w+)\\s+(\\S+)\\s+([-a-zA-Z]+)\\s+(\\S+)\\s*$");
 
-   //entered by Manjula for Gene3D parser
+    //entered by Manjula for Gene3D parser
     //private final int domainNumber;
 
     private final double score;
@@ -54,7 +54,7 @@ public class DomainMatch implements Serializable {
 
     private final int aliFrom;
 
-    private final  int aliTo;
+    private final int aliTo;
 
     private final int envFrom;
 
@@ -64,7 +64,7 @@ public class DomainMatch implements Serializable {
 
     private String alignment;
 
-    public DomainMatch(Matcher domainLineMatcher) {
+    public Hmmer2DomainMatch(Matcher domainLineMatcher) {
         this.score = Double.parseDouble(domainLineMatcher.group(2));
         this.bias = Double.parseDouble(domainLineMatcher.group(3));
         this.cEvalue = Double.parseDouble(domainLineMatcher.group(4));
@@ -77,14 +77,13 @@ public class DomainMatch implements Serializable {
         this.envFrom = Integer.parseInt(domainLineMatcher.group(11));
         this.envTo = Integer.parseInt(domainLineMatcher.group(12));
         this.acc = Double.parseDouble(domainLineMatcher.group(13));
-        
-    }
 
+    }
 
 
     public String getAlignment() {
         return alignment;
-    }    
+    }
 
     public double getScore() {
         return score;
@@ -133,9 +132,10 @@ public class DomainMatch implements Serializable {
     public double getAcc() {
         return acc;
     }
-     public void setAlignment(String alignment) {
+
+    public void setAlignment(String alignment) {
         this.alignment = alignment;
     }
 
-    
+
 }

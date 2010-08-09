@@ -40,4 +40,24 @@ public class ProSitePatternRawMatch extends PfScanRawMatch {
     public PatternScanMatch.PatternScanLocation.Level getPatternLevel() {
         return patternLevel;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProSitePatternRawMatch)) return false;
+        if (!super.equals(o)) return false;
+
+        ProSitePatternRawMatch that = (ProSitePatternRawMatch) o;
+
+        if (patternLevel != that.patternLevel) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + patternLevel.hashCode();
+        return result;
+    }
 }

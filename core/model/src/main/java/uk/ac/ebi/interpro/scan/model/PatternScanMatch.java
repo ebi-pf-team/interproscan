@@ -106,7 +106,8 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
         public static enum Level {
 
             STRONG("(0)", "!"),
-            WEAK("(-1)", "?");
+            WEAK("(-1)", "?"),
+            ABSENT(null, "-");
 
             private static final Map<String, Level> TAG_TO_LEVEL = new HashMap<String, Level>(Level.values().length);
 

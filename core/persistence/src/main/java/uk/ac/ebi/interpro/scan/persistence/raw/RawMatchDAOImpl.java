@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
+import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
@@ -19,6 +20,8 @@ public class RawMatchDAOImpl<T extends RawMatch>
         extends GenericDAOImpl<T, Long>
         implements RawMatchDAO<T> {
 
+    private static final Logger LOGGER = Logger.getLogger(RawMatchDAOImpl.class.getName());
+
     public RawMatchDAOImpl(Class<T> modelClass) {
         super(modelClass);
     }
@@ -27,6 +30,9 @@ public class RawMatchDAOImpl<T extends RawMatch>
     @Override
     public void insertProteinMatches(Set<RawProtein<T>> rawProteins) {
         for (RawProtein<T> rawProtein : rawProteins) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Persisting " + rawProtein.getMatches().size() + " raw matches.");
+            }
             insert(new HashSet<T>(rawProtein.getMatches()));
         }
     }

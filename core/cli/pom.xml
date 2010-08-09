@@ -43,7 +43,7 @@
             <artifactId>interproscan-persistence</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
@@ -67,7 +67,7 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.5.2</version>
         </dependency>
-        
+
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
@@ -87,7 +87,10 @@
         <plugins>
             <!--See http://acs.lbl.gov/~ksb/Scratch/Maven_notes.html#assemble-->
             <!--Run: mvn clean package assembly:assembly-->
-            <!--TODO: See http://acs.lbl.gov/~ksb/Scratch/Maven_notes.html#lifecycle for how to run assembly automatically-->
+            <!--TODO: See http://acs.lbl.gov/~ksb/Scratch/Maven_notes.html#lifecycle for how to run assembly automatically
+
+            .. I would suggest not - assembly takes a long time in comparison with test / package, so I would only
+            want this to run as required... -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -105,7 +108,7 @@
                         <manifest>
                             <mainClass>uk.ac.ebi.interpro.scan.cli.EntryPoint</mainClass>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib</classpathPrefix>                            
+                            <classpathPrefix>lib</classpathPrefix>
                         </manifest>
                     </archive>
                 </configuration>

@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.match.hmmer3.Hmmer3SearchMatchParser;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
