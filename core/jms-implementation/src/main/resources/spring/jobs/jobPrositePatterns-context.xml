@@ -83,7 +83,6 @@
         <property name="parser" ref="prositePatternRawOutputParser"/>
     </bean>
 
-
     <bean id="stepPrositePatternDeleteRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPrositePatternStep">
@@ -120,14 +119,12 @@
         <property name="passLevels">
             <list>
                 <value>STRONG</value>
-                <value>WEAK</value>
             </list>
         </property>
     </bean>
 
-    <bean id="prositePatternRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeMatchParser">
-        <constructor-arg index="0" value="PROSITE_PATTERNS"/>
-        <constructor-arg index="1" value="20.52"/>
+    <bean id="prositePatternRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositePatternMatchParser">
+        <constructor-arg value="20.52"/>
         <property name="cigarEncoder" ref="cigarEncoder"/>
     </bean>
 

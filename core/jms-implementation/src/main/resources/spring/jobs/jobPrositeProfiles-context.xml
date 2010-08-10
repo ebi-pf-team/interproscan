@@ -82,7 +82,6 @@
         <property name="parser" ref="prositeProfilesRawOutputParser"/>
     </bean>
 
-
     <bean id="stepPrositeProfilesDeleteRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPrositeProfileStep">
@@ -125,9 +124,9 @@
         </property>
     </bean>
 
-    <bean id="prositeProfilesRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeMatchParser">
-        <constructor-arg index="0" value="PROSITE_PROFILES"/>
-        <constructor-arg index="1" value="20.52"/>
+    <bean id="prositeProfilesRawOutputParser"
+          class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeProfileMatchParser">
+        <constructor-arg value="20.52"/>
         <property name="cigarEncoder" ref="cigarEncoder"/>
     </bean>
 
