@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.*;
+import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 
 import java.util.HashMap;
@@ -41,7 +42,7 @@ import java.util.Map;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PrositeMatchParser extends AbstractLineMatchParser<PfScanRawMatch> {
+public abstract class PrositeMatchParser extends AbstractLineMatchParser<PfScanRawMatch> {
 
     private static final Logger LOGGER = Logger.getLogger(PrositeMatchParser.class.getName());
 
@@ -66,59 +67,50 @@ public class PrositeMatchParser extends AbstractLineMatchParser<PfScanRawMatch> 
     protected PfScanRawMatch createMatch(String line) {
         final String[] splitLine = line.split("\\t");
         if (splitLine.length < 9) return null;
-        final String sequenceId = splitLine[0].trim();
-        final String model = splitLine[2].trim();
-        final int seqStart = Integer.parseInt(splitLine[3].trim());
-        int seqEnd = Integer.parseInt(splitLine[4].trim());
+
         Double score = null;
         final String scoreString = splitLine[5].trim();
         if (scoreString.length() > 0 && !".".equals(scoreString)) {
             score = new Double(scoreString);
         }
-        Map<String, String> gffAttributes = extractAttributes(splitLine[8]);
-        final String cigarAlign = cigarEncoder.encode(gffAttributes.get("Sequence"));
-        final ProfileScanRawMatch.Level profileLevel = ProfileScanRawMatch.Level.byLevelString(gffAttributes.get("Level"));
-        final String patternLevelTag = gffAttributes.get("LevelTag");
-        final PatternScanMatch.PatternScanLocation.Level patternLevel = PatternScanMatch.PatternScanLocation.Level.getLevelByTag(patternLevelTag);
+        final Map<String, String> gffAttributes = extractAttributes(splitLine[8]);
 
-        switch (this.getSignatureLibrary()) {
-            case HAMAP:
-                return new HamapRawMatch(
-                        sequenceId,
-                        model,
-                        this.getSignatureLibraryRelease(),
-                        seqStart,
-                        seqEnd,
-                        cigarAlign,
-                        score,
-                        profileLevel
-                );
-            case PROSITE_PROFILES:
-                return new ProSiteProfileRawMatch(
-                        sequenceId,
-                        model,
-                        this.getSignatureLibraryRelease(),
-                        seqStart,
-                        seqEnd,
-                        cigarAlign,
-                        score,
-                        profileLevel
-                );
-            case PROSITE_PATTERNS:
-                return new ProSitePatternRawMatch(
-                        sequenceId,
-                        model,
-                        this.getSignatureLibraryRelease(),
-                        seqStart,
-                        seqEnd,
-                        cigarAlign,
-                        patternLevel
-                );
-
-            default:
-                throw new IllegalStateException("The PrositeMatchParser currently only handles HAMAP and Prosite output.");
-        }
+        return buildMatchObject(
+                splitLine[0].trim(),
+                splitLine[2].trim(),
+                this.getSignatureLibraryRelease(),
+                Integer.parseInt(splitLine[3].trim()),
+                Integer.parseInt(splitLine[4].trim()),
+                cigarEncoder.encode(gffAttributes.get("Sequence")),
+                score,
+                ProfileScanRawMatch.Level.byLevelString(gffAttributes.get("Level")),
+                PatternScanMatch.PatternScanLocation.Level.getLevelByTag(gffAttributes.get("LevelTag"))
+        );
     }
+
+    /**
+     * Method to be implemented that builds the correct kind of PfScanRawMatch.
+     *
+     * @param sequenceIdentifier      protein sequence identifier
+     * @param model                   the accession / ID of the model
+     * @param signatureLibraryRelease the current release number
+     * @param seqStart                sequence match start coordinate
+     * @param seqEnd                  sequence match stop coordinate
+     * @param cigarAlign              cigar alignment String
+     * @param score                   the score for the match
+     * @param profileLevel            optional level for a Profile match
+     * @param patternLevel            optional level for a Pattern match
+     * @return an implementation of a PfScanRawMatch object.
+     */
+    protected abstract PfScanRawMatch buildMatchObject(String sequenceIdentifier,
+                                                       String model,
+                                                       String signatureLibraryRelease,
+                                                       int seqStart,
+                                                       int seqEnd,
+                                                       String cigarAlign,
+                                                       Double score,
+                                                       ProfileScanRawMatch.Level profileLevel,
+                                                       PatternScanMatch.PatternScanLocation.Level patternLevel);
 
     /**
      * Helper method to grab the attributes from the end of the gff line.

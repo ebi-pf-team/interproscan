@@ -107,12 +107,13 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
 
             STRONG("(0)", "!"),
             WEAK("(-1)", "?"),
-            ABSENT(null, "-");
+            NONE(null, "?");
 
             private static final Map<String, Level> TAG_TO_LEVEL = new HashMap<String, Level>(Level.values().length);
 
             static {
                 for (Level level : Level.values()) {
+                    // Note that HashMap DOES support null keys, as required for the NONE Level.
                     TAG_TO_LEVEL.put(level.tag, level);
                 }
             }
@@ -141,7 +142,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
             /**
              * Returns enum corresponding to tag.
              *
-             * @param tag Tag, for example (0) or (-1).
+             * @param tag Tag, for example null, (0) or (-1).
              * @return Enum corresponding to tag
              */
             public static Level getLevelByTag(String tag) {
