@@ -73,14 +73,13 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParsePrositeGffOutputStep"
           parent="abstractHamapStep">
         <property name="dependsUpon" ref="stepHamapRunBinary"/>
-        <property name="stepDescription" value="Parse the output from the Prosite binary"/>
+        <property name="stepDescription" value="Parse the output from the ProSite binary"/>
         <property name="serialGroup" value="PARSE_HAMAP"/>
         <property name="retries" value="3"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
         <property name="parser" ref="hamapRawOutputParser"/>
     </bean>
-
 
     <bean id="stepHamapDeleteRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
@@ -121,9 +120,8 @@
         </property>
     </bean>
 
-    <bean id="hamapRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeMatchParser">
-        <constructor-arg index="0" value="HAMAP"/>
-        <constructor-arg index="1" value="180510"/>
+    <bean id="hamapRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapMatchParser">
+        <constructor-arg value="180510"/>
         <property name="cigarEncoder" ref="cigarEncoder"/>
     </bean>
 
