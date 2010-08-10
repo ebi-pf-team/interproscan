@@ -18,9 +18,8 @@
         <constructor-arg value="data/hamap/hamap_hitters.gff"/>
     </bean>
 
-    <bean id="hamapMatchParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeMatchParser">
-        <constructor-arg index="0" value="HAMAP"/>
-        <constructor-arg index="1" ref="signatureLibraryRelease"/>
+    <bean id="hamapMatchParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapMatchParser">
+        <constructor-arg ref="signatureLibraryRelease"/>
         <property name="cigarEncoder" ref="cigarEncoder"/>
     </bean>
 

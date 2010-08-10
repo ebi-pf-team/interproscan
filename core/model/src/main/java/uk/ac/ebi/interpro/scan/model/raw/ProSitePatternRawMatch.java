@@ -57,7 +57,7 @@ public class ProSitePatternRawMatch extends PfScanRawMatch {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (patternLevel != null ? patternLevel.hashCode() : 0);
+        result = 31 * result + patternLevel.hashCode();
         return result;
     }
 }
