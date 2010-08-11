@@ -1,8 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2;
 
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2SearchRecord;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch;
 
 import java.io.IOException;
 import java.util.Map;
@@ -10,13 +11,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * TODO: Description
+ * Parser support class for TIGRFam.
  *
  * @author Phil Jones
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class TigrfarHmmer2ParserSupport<T extends RawMatch> implements Hmmer2ParserSupport<T> {
+public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamRawMatch> {
     /**
      * Implemented for specific member databases.  Different databases use different specific model classes
      * and may need to filter the matches at this point, based upon different criteria.
@@ -30,8 +31,10 @@ public class TigrfarHmmer2ParserSupport<T extends RawMatch> implements Hmmer2Par
      * @throws java.io.IOException in the event of an IO problem.
      */
     @Override
-    public void addMatch(Hmmer2SearchRecord methodMatches, Map<String, RawProtein<T>> rawResults) throws IOException {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void addMatch(Hmmer2SearchRecord methodMatches, Map<String, RawProtein<TigrFamRawMatch>> rawResults) throws IOException {
+        for (String sequenceId : methodMatches.getSequenceMatches().keySet()) {
+            Hmmer2SequenceMatch sequenceMatch = methodMatches.getSequenceMatches().get(sequenceId);
+        }
     }
 
     /**
