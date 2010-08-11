@@ -3,24 +3,26 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-
-import javax.persistence.Entity;
-
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 /**
  * <a href="http://hmmer.janelia.org/">HMMER 2</a> raw match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @Entity
 public abstract class Hmmer2RawMatch extends HmmerRawMatch {
 
-    private double locationEvalue;    
+    @Column(name = "location_evalue")
+    private double locationEvalue;
 
-    protected Hmmer2RawMatch() { }    
+    protected Hmmer2RawMatch() {
+    }
 
     protected Hmmer2RawMatch(String sequenceIdentifier, String model,
                              SignatureLibrary signatureLibrary, String signatureLibraryRelease,
@@ -29,7 +31,7 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
                              int hmmStart, int hmmEnd, String hmmBounds,
                              double locationEvalue, double locationScore) {
         super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd,
-              evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore);
+                evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore);
         setLocationEvalue(locationEvalue);
     }
 
@@ -41,7 +43,8 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
         this.locationEvalue = PersistenceConversion.set(locationEvalue);
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Hmmer2RawMatch))
@@ -53,15 +56,17 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(53, 57)
                 .appendSuper(super.hashCode())
                 .append(locationEvalue)
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-    
+
 }
