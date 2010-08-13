@@ -52,10 +52,10 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
     }
 
     /**
-     * Based upon a match to the Pattern retrieved by the getModelIdentLinePattern method,
+     * Based upon a match to the Pattern retrieved by the getSequenceIdentLinePattern method,
      * returns the ID / accession of the method.
      *
-     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getSequenceIdentLinePattern method
      * @return the ID or accession of the method.
      */
     @Override
@@ -66,7 +66,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
     /**
      * Returns the model accession length, or null if this value is not available.
      *
-     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getSequenceIdentLinePattern method
      * @return the model accession length, or null if this value is not available.
      */
     @Override
@@ -101,10 +101,10 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
 
                         // Either retrieve the correct RawSequenceIdentifer, or create a new one
                         // and add it to the Map.
-                        RawProtein<PfamHmmer3RawMatch> sequenceIdentifier = rawResults.get(sequenceMatch.getSequenceIdentifier());
-                        if (sequenceIdentifier == null) {
-                            sequenceIdentifier = new RawProtein<PfamHmmer3RawMatch>(sequenceMatch.getSequenceIdentifier());
-                            rawResults.put(sequenceMatch.getSequenceIdentifier(), sequenceIdentifier);
+                        RawProtein<PfamHmmer3RawMatch> rawProtein = rawResults.get(sequenceMatch.getSequenceIdentifier());
+                        if (rawProtein == null) {
+                            rawProtein = new RawProtein<PfamHmmer3RawMatch>(sequenceMatch.getSequenceIdentifier());
+                            rawResults.put(sequenceMatch.getSequenceIdentifier(), rawProtein);
                         }
 
                         final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
@@ -128,7 +128,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
                                 domainMatch.getIEvalue(),
                                 domainMatch.getBias()
                         );
-                        sequenceIdentifier.addMatch(match);
+                        rawProtein.addMatch(match);
                     } // End of testing if pass GA cutoff.
                 } // End of looping over domain matches
             } // End of looping over sequence matches
