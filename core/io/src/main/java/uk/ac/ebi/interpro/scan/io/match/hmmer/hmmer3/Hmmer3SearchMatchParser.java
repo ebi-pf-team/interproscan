@@ -155,7 +155,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
-            HmmSearchRecord method = null;
+            HmmSearchRecord searchRecord = null;
             String currentSequenceIdentifier = null;
             Map<String, DomainMatch> domains = new HashMap<String, DomainMatch>();
             StringBuilder alignSeq = new StringBuilder();
@@ -171,13 +171,13 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                 if (line.startsWith(END_OF_RECORD)) {
                     // Process a complete record - store all sequence / domain scores
                     // for the method.
-                    if (method == null) {
+                    if (searchRecord == null) {
                         throw new ParseException("Got to the end of a hmmscan full output file section without finding any details of a method.", null, line, lineNumber);
                     }
                     // Store the matches to the method.
-                    hmmer3ParserSupport.addMatch(method, rawResults);
+                    hmmer3ParserSupport.addMatch(searchRecord, rawResults);
 
-                    method = null;  // Will check if method is not null after finishing the file, and store it if so.
+                    searchRecord = null;  // Will check if method is not null after finishing the file, and store it if so.
                     stage = ParsingStage.LOOKING_FOR_METHOD_ACCESSION;
                 } else {   // Trying to be efficient - only look for EXPECTED lines in the entry.
                     switch (stage) {
@@ -188,8 +188,8 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
                                 Matcher modelIdentLinePatternMatcher = hmmer3ParserSupport.getModelIdentLinePattern().matcher(line);
                                 if (modelIdentLinePatternMatcher.matches()) {
-                                    method = new HmmSearchRecord(hmmer3ParserSupport.getModelId(modelIdentLinePatternMatcher));
-                                    method.setModelLength(hmmer3ParserSupport.getModelLength(modelIdentLinePatternMatcher));
+                                    searchRecord = new HmmSearchRecord(hmmer3ParserSupport.getModelId(modelIdentLinePatternMatcher));
+                                    searchRecord.setModelLength(hmmer3ParserSupport.getModelLength(modelIdentLinePatternMatcher));
                                 } else {
                                     throw new ParseException("Found a line starting with " + hmmer3ParserSupport.getHmmKey().getPrefix() + " but cannot parse it with the MODEL_ACCESSION_LINE regex.", null, line, lineNumber);
                                 }
@@ -198,7 +198,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
 
                         case LOOKING_FOR_SEQUENCE_MATCHES:
                             // Sanity check.
-                            if (method == null) {
+                            if (searchRecord == null) {
                                 throw new ParseException("The parse stage is 'looking for sequence matches' however there is no method in memory.", null, line, lineNumber);
                             }
                             // Got to the end of the sequence matches that pass?
@@ -207,7 +207,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                             // Original code left in comments in case we can ever put it back
                             if (/*line.contains(END_OF_GOOD_SEQUENCE_MATCHES) || */ line.trim().length() == 0) {
                                 // If there are no good sequence matches, completely stop searching this record.
-                                stage = (method.getSequenceMatches().size() == 0)
+                                stage = (searchRecord.getSequenceMatches().size() == 0)
                                         ? ParsingStage.FINISHED_SEARCHING_RECORD
                                         : ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
                                 currentSequenceIdentifier = null;
@@ -220,7 +220,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                     // Make a record of the UPI.
 //                                    String upi = sequenceMatchLineMatcher.group(SequenceMatch.SEQUENCE_ID_GROUP);
                                     SequenceMatch sequenceMatch = new SequenceMatch(sequenceMatchLineMatcher);
-                                    method.addSequenceMatch(sequenceMatch);
+                                    searchRecord.addSequenceMatch(sequenceMatch);
                                 }
                             }
                             break;
@@ -297,7 +297,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                             if (domainMatch.getScore() > m.getScore()) {
                                                 add = true;
                                                 // Remove match with lower score
-                                                method.removeDomainMatch(currentSequenceIdentifier, domainMatch);
+                                                searchRecord.removeDomainMatch(currentSequenceIdentifier, domainMatch);
                                                 domains.remove(domainLineId);
                                             } else {
                                                 add = false;
@@ -307,7 +307,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 }
                                 // Account for bug in HMMER 3.0b2 (IBU-1133) -- END
                                 if (add) {
-                                    method.addDomainMatch(currentSequenceIdentifier, domainMatch);
+                                    searchRecord.addDomainMatch(currentSequenceIdentifier, domainMatch);
                                     //before start of next sequence match store the method in ssf file
                                     //send the parsed domain details to ssf file generation
                                     //dfiw.writeMethodToFile(method,currentSequenceIdentifier,domainDataLineMatcher.group(1));
@@ -319,9 +319,9 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                     }
                 }
             }
-            if (method != null) {
+            if (searchRecord != null) {
 
-                hmmer3ParserSupport.addMatch(method, rawResults);
+                hmmer3ParserSupport.addMatch(searchRecord, rawResults);
             }
 
         } finally {
