@@ -7,16 +7,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This model object accepts the data parsed from a sequence match line in the hmmsearch output format.
+ * This model object accepts the data parsed from a sequence match line in the hmmpfam output format.
  *
  * @author Phil Jones
- * @author Antony Quinn
  * @version $Id: Hmmer2SequenceMatch.java 558 2010-04-22 10:24:53Z aquinn.ebi $
  * @since 1.0-SNAPSHOT
  */
 public class Hmmer2SequenceMatch implements Serializable {
 
     /**
+     * Scores for sequence family classification (score includes all domains):
+     * Model           Description                             Score    E-value  N
+     * --------        -----------                             -----    ------- ---
+     * TIGR03593       yidC_nterm: membrane protein insertas   513.0   1.4e-151   1
+     * TIGR03592       yidC_oxa1_cterm: membrane protein ins   398.7   3.5e-117   1
+     * <p/>
      * Group 1: Sequence E-value
      * Group 2: Sequence Score
      * Group 3: Sequence Bias
@@ -29,7 +34,6 @@ public class Hmmer2SequenceMatch implements Serializable {
     // The following four ints are to help with extracting data from the Pattern above - KEEP THEM IN SYNC!
     public static final int EVALUE_GROUP = 1;
     public static final int SCORE_GROUP = 2;
-    public static final int BIAS_GROUP = 3;
     public static final int SEQUENCE_ID_GROUP = 4;
 
     private String sequenceIdentifier;
@@ -38,14 +42,12 @@ public class Hmmer2SequenceMatch implements Serializable {
 
     private double score;
 
-    private double bias;
 
     private List<Hmmer2DomainMatch> hmmer2DomainMatches = new ArrayList<Hmmer2DomainMatch>();
 
     public Hmmer2SequenceMatch(Matcher domainLineMatcher) {
         this.eValue = Double.parseDouble(domainLineMatcher.group(EVALUE_GROUP));
         this.score = Double.parseDouble(domainLineMatcher.group(SCORE_GROUP));
-        this.bias = Double.parseDouble(domainLineMatcher.group(BIAS_GROUP));
         this.sequenceIdentifier = domainLineMatcher.group(SEQUENCE_ID_GROUP);
 
     }
@@ -60,10 +62,6 @@ public class Hmmer2SequenceMatch implements Serializable {
 
     public double getScore() {
         return score;
-    }
-
-    public double getBias() {
-        return bias;
     }
 
     void addDomainMatch(Hmmer2DomainMatch hmmer2DomainMatch) {
