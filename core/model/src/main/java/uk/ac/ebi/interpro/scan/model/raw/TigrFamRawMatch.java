@@ -2,6 +2,9 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
  * Specific raw match class for Tigrfam.
  * Only required to ensure it gets it's own table.
@@ -10,6 +13,8 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
+@Entity
+@Table(name = "tigrfam_raw_match")
 public class TigrFamRawMatch extends Hmmer2RawMatch {
 
     protected TigrFamRawMatch() {

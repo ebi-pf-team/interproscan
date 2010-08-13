@@ -2,6 +2,9 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
  * TODO: Description
  *
@@ -9,6 +12,8 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
+@Entity
+@Table(name = "smart_raw_match")
 public class SmartRawMatch extends Hmmer2RawMatch {
 
     protected SmartRawMatch() {

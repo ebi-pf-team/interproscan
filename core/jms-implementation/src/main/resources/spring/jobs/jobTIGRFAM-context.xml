@@ -68,34 +68,35 @@
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <!--<bean id="stepTIGRFAMStoreFilteredMatches"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.coils.ParseCoilsOutputStep"-->
-    <!--parent="abstractTIGRFAMStep">-->
-    <!--<property name="dependsUpon" ref="stepTIGRFAMRunBinary"/>-->
-    <!--<property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>-->
-    <!--<property name="coilsOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--<property name="parser" ref="TIGRFAMParser"/>-->
-    <!--<property name="matchDAO" ref="TIGRFAMMatchDAO"/>-->
-    <!--</bean>-->
+    <bean id="stepTIGRFAMStoreRawMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.tigrfam.ParseTigrFamHmmpfamOutputStep"
+          parent="abstractTIGRFAMStep">
+        <property name="dependsUpon" ref="stepTIGRFAMRunBinary"/>
+        <property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>
+        <property name="hmmerOutputFileNameTemplate" value="rawAnalaysisOutputFileTemplate"/>
+        <property name="tigrfamRawMatchDAO" ref="tigrfamRawMatchDAO"/>
+    </bean>
 
-    <!--<bean id="stepTIGRFAMDeleteRawOutput"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-    <!--parent="abstractTIGRFAMStep">-->
-    <!--<property name="dependsUpon" ref="stepTIGRFAMStoreFilteredMatches"/>-->
-    <!--<property name="stepDescription"-->
-    <!--value="Delete the raw output file following successful parsing and persistence"/>-->
-    <!--<property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--</bean>-->
+    <bean id="stepTIGRFAMDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractTIGRFAMStep">
+        <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches"/>
+        <property name="stepDescription"
+                  value="Delete the raw output file following successful parsing and persistence"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <!--<bean id="TIGRFAMParser"-->
-    <!--class="uk.ac.ebi.interpro.scan.io.match.coils.CoilsMatchParser"/>-->
 
-    <!--<bean id="TIGRFAMMatchDAO"-->
-    <!--class="uk.ac.ebi.interpro.scan.persistence.CoilsFilteredMatchDAOImpl">-->
-    <!--<constructor-arg value="1.0"/>-->
-    <!--</bean>-->
+    <bean id="tigrfamRawMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch"/>
+    </bean>
+
+    <bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>
+    </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

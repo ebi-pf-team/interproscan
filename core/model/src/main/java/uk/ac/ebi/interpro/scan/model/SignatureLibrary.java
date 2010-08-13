@@ -21,29 +21,30 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Signature library, for example Pfam or PRINTS.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @author Phil Jones
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
-@XmlType(name="SignatureLibraryType")
+@XmlType(name = "SignatureLibraryType")
 public enum SignatureLibrary {
 
     //TODO - complete descriptions of member database libraries.
-    PHOBIUS             ("Phobius",             "Prediction of signal peptides and trans-membrane regions"),
-    GENE3D              ("Gene3D",              "Description to be added"),
-    PFAM                ("Pfam",                "Description to be added"),
-    PFAM_B              ("Pfam B",              "Description to be added"),
-    SMART               ("SMART",               "Description to be added"),
-    SUPERFAMILY         ("SUPERFAMILY",         "Description to be added"),
-    PIRSF               ("PIRSF",               "Family classification system at the Protein Information Resource"),
-    PRINTS              ("PRINTS",              "Description to be added"),
-    PRODOM              ("ProDom",              "Description to be added"),
-    PROSITE_PATTERNS    ("ProSitePatterns",     "Description to be added"),
-    PROSITE_PROFILES    ("ProSiteProfiles",     "Description to be added"),
-    COILS               ("Coils",               "Description to be added"),
-    COMPARA             ("Compara",             "Description to be added"),
-    HAMAP               ("Hamap",               "Description to be added");
+    PHOBIUS("Phobius", "Prediction of signal peptides and trans-membrane regions"),
+    GENE3D("Gene3D", "Description to be added"),
+    PFAM("Pfam", "Description to be added"),
+    PFAM_B("Pfam B", "Description to be added"),
+    SMART("SMART", "Description to be added"),
+    SUPERFAMILY("SUPERFAMILY", "Description to be added"),
+    PIRSF("PIRSF", "Family classification system at the Protein Information Resource"),
+    PRINTS("PRINTS", "Description to be added"),
+    PRODOM("ProDom", "Description to be added"),
+    PROSITE_PATTERNS("ProSitePatterns", "Description to be added"),
+    PROSITE_PROFILES("ProSiteProfiles", "Description to be added"),
+    COILS("Coils", "Description to be added"),
+    COMPARA("Compara", "Description to be added"),
+    HAMAP("Hamap", "Description to be added"),
+    TIGRFAM("TIGRFAM", "Description to be added");
 
     private String name;
 

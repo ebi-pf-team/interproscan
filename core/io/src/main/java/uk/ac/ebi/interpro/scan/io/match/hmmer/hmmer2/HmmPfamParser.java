@@ -2,7 +2,11 @@ package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamDomainMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamSearchRecord;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamSequenceMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -15,9 +19,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 /**
  * Parser for HMMER 2 hmmpfam binary output.
+ * <p/>
+ * TODO Does not parse alignment section yet. (Not needed for TIGRFAM or SMART)
  *
  * @author Phil Jones
  * @version $Id$
@@ -87,24 +94,28 @@ public class HmmPfamParser<T extends RawMatch> implements MatchParser {
 
     private static final String END_OF_RECORD = "//";
 
-    private static final String DOMAIN_SECTION_START = "Parsed for domains:";
+    private static final String START_OF_SEQUENCE_MATCH_SECTION = "Scores for sequence family classification";
+
+    private static final String START_OF_DOMAIN_MATCH_SECTION = "Parsed for domains:";
+
+    private static final String END_OF_GOOD_SEQUENCE_MATCHES = "[no hits above thresholds]";
 
     /**
      * Enum of states that the parser may be in - used to minimise parsing time.
      */
     private enum ParsingStage {
-        LOOKING_FOR_METHOD_ACCESSION,
-        LOOKING_FOR_SEQUENCE_MATCHES,
+        LOOKING_FOR_SEQUENCE_ACCESSION,
+        LOOKING_FOR_SEQUENCE_MATCH_SECTION,
         LOOKING_FOR_DOMAIN_SECTION,
-        LOOKING_FOR_DOMAIN_DATA_LINE,
-        PARSING_DOMAIN_ALIGNMENTS,
-        FINISHED_SEARCHING_RECORD
+        IN_SEQUENCE_MATCH_SECTION, IN_DOMAIN_MATCH_SECTION, FINISHED_SEARCHING_RECORD
 
     }
 
     private SignatureLibrary signatureLibrary;
 
     private String signatureLibraryRelease;
+
+    private Hmmer2ParserSupport<T> hmmer2ParserSupport;
 
     public SignatureLibrary getSignatureLibrary() {
         return signatureLibrary;
@@ -124,12 +135,19 @@ public class HmmPfamParser<T extends RawMatch> implements MatchParser {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
+    @Required
+    public void setHmmer2ParserSupport(Hmmer2ParserSupport<T> hmmer2ParserSupport) {
+        this.hmmer2ParserSupport = hmmer2ParserSupport;
+    }
+
     @Override
     public Set<RawProtein<T>> parse(InputStream is) throws IOException {
         Map<String, RawProtein<T>> rawResults = new HashMap<String, RawProtein<T>>();
         BufferedReader reader = null;
+        ParsingStage stage = ParsingStage.LOOKING_FOR_SEQUENCE_ACCESSION;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
+            Hmmer2HmmPfamSearchRecord searchRecord = null;
             int lineNumber = 0;
             String line;
             while ((line = reader.readLine()) != null) {
@@ -137,7 +155,78 @@ public class HmmPfamParser<T extends RawMatch> implements MatchParser {
                 if (line.startsWith(END_OF_RECORD)) {
                     // Process a complete record - store all sequence / domain scores
                     // for the method.
+                    if (searchRecord == null) {
+                        throw new ParseException("Got to the end of a hmmpfam full output file section without finding any details of a method.", null, line, lineNumber);
+                    }
+
+                    hmmer2ParserSupport.addMatch(searchRecord, rawResults);
+                    searchRecord = null; // Reset, so can check for last record after the loop.
+                    stage = ParsingStage.LOOKING_FOR_SEQUENCE_ACCESSION;
+                } else {
+                    switch (stage) {
+                        case LOOKING_FOR_SEQUENCE_ACCESSION:
+                            if (line.startsWith(hmmer2ParserSupport.getHmmKey().getPrefix())) {
+                                stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCH_SECTION;
+
+                                Matcher sequenceIdentLinePatternMatcher = hmmer2ParserSupport.getSequenceIdentLinePattern().matcher(line);
+                                if (sequenceIdentLinePatternMatcher.matches()) {
+                                    searchRecord = new Hmmer2HmmPfamSearchRecord(hmmer2ParserSupport.getSequenceId(sequenceIdentLinePatternMatcher));
+                                } else {
+                                    throw new ParseException("Found a line starting with " + hmmer2ParserSupport.getHmmKey().getPrefix() + " but cannot parse it with the SEQUENCE_ACCESSION_LINE regex.", null, line, lineNumber);
+                                }
+                            }
+                            break;
+
+                        case LOOKING_FOR_SEQUENCE_MATCH_SECTION:
+                            if (line.startsWith(START_OF_SEQUENCE_MATCH_SECTION)) {
+                                stage = ParsingStage.IN_SEQUENCE_MATCH_SECTION;
+                            }
+                            break;
+
+                        case IN_SEQUENCE_MATCH_SECTION:
+                            // Sanity check.
+                            if (searchRecord == null) {
+                                throw new ParseException("The parse stage is 'looking for sequence matches' however there is no sequence in memory.", null, line, lineNumber);
+                            }
+
+                            if (line.contains(END_OF_GOOD_SEQUENCE_MATCHES) || line.trim().length() == 0) {
+                                stage = (searchRecord.getSequenceMatches().size() == 0)
+                                        ? ParsingStage.FINISHED_SEARCHING_RECORD
+                                        : ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
+                            } else {
+
+                                Matcher sequenceMatchLineMatcher = Hmmer2HmmPfamSequenceMatch.SEQUENCE_LINE_PATTERN.matcher(line);
+                                if (sequenceMatchLineMatcher.matches()) {
+                                    // Found a sequence match line above the threshold.
+                                    Hmmer2HmmPfamSequenceMatch sequenceMatch = new Hmmer2HmmPfamSequenceMatch(sequenceMatchLineMatcher);
+                                    searchRecord.addSequenceMatch(sequenceMatch);
+                                }
+                            }
+                            break;
+
+                        case LOOKING_FOR_DOMAIN_SECTION:
+                            if (line.startsWith(START_OF_DOMAIN_MATCH_SECTION)) {
+                                stage = ParsingStage.IN_DOMAIN_MATCH_SECTION;
+                            }
+                            break;
+
+                        case IN_DOMAIN_MATCH_SECTION:
+
+                            if (!(line.trim().length() == 0 ||
+                                    line.startsWith("Model") ||
+                                    line.startsWith("--------") ||
+                                    line.contains(END_OF_GOOD_SEQUENCE_MATCHES))) {
+                                // Should be a proper domain line.
+                                Hmmer2HmmPfamDomainMatch domainMatch = new Hmmer2HmmPfamDomainMatch(line);
+                                searchRecord.addDomainMatch(domainMatch);
+                            }
+                    }
                 }
+            }
+
+            // Just in case the last record does not end with //
+            if (searchRecord != null) {
+                hmmer2ParserSupport.addMatch(searchRecord, rawResults);
             }
         } finally {
             if (reader != null) {
