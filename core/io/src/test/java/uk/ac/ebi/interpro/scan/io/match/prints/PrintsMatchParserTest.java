@@ -68,7 +68,7 @@ public class PrintsMatchParserTest extends TestCase {
         logMemUsage("After parse: ");
         LOGGER.debug("Protein count: " + results.size());
         for (PrintsProtein protein : results){
-            LOGGER.debug(protein.getMotifName() + " | " + protein.geteValue().toString() + " | " + protein.getGraphScan() + " | " + protein.getSeqEndPos() + " | " + protein.getSeqStartPos());
+            LOGGER.debug(protein.getMotifName() + " | " + protein.getEValue().toString() + " | " + protein.getGraphScan() + " | " + protein.getSeqEndPos() + " | " + protein.getSeqStartPos());
         }
         */
     }

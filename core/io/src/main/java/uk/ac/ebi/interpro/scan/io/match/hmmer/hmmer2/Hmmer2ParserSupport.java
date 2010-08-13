@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2;
 
-import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2SearchRecord;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamSearchRecord;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -32,7 +32,7 @@ public interface Hmmer2ParserSupport<T extends RawMatch> extends Serializable {
      *                      that the raw results should be added to.
      * @throws java.io.IOException in the event of an IO problem.
      */
-    void addMatch(Hmmer2SearchRecord methodMatches, Map<String, RawProtein<T>> rawResults)
+    void addMatch(Hmmer2HmmPfamSearchRecord methodMatches, Map<String, RawProtein<T>> rawResults)
             throws IOException;
 
     /**
@@ -49,15 +49,15 @@ public interface Hmmer2ParserSupport<T extends RawMatch> extends Serializable {
     /**
      * Returns the model ID or model accession.
      *
-     * @param modelIdentLinePatternMatcher Matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @param modelIdentLinePatternMatcher Matcher to the Pattern retrieved by the getSequenceIdentLinePattern method
      * @return the ID or accession of the method.
      */
-    String getModelId(Matcher modelIdentLinePatternMatcher);
+    String getSequenceId(Matcher modelIdentLinePatternMatcher);
 
     /**
      * Returns the model length, or null if this value is not available.
      *
-     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getSequenceIdentLinePattern method
      * @return the model accession length, or null if this value is not available.
      */
     Integer getModelLength(Matcher modelIdentLinePatternMatcher);
@@ -90,5 +90,5 @@ public interface Hmmer2ParserSupport<T extends RawMatch> extends Serializable {
      *
      * @return a Pattern object to parse the ID / accession line.
      */
-    Pattern getModelIdentLinePattern();
+    Pattern getSequenceIdentLinePattern();
 }

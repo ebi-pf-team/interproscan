@@ -1,7 +1,10 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2;
 
-import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2SearchRecord;
-import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2SequenceMatch;
+import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamDomainMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamSearchRecord;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamSequenceMatch;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch;
 
@@ -18,6 +21,14 @@ import java.util.regex.Pattern;
  * @since 1.0-SNAPSHOT
  */
 public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamRawMatch> {
+
+    private String signatureLibraryRelease;
+
+    @Required
+    public void setSignatureLibraryRelease(String signatureLibraryRelease) {
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
     /**
      * Implemented for specific member databases.  Different databases use different specific model classes
      * and may need to filter the matches at this point, based upon different criteria.
@@ -31,9 +42,35 @@ public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamRa
      * @throws java.io.IOException in the event of an IO problem.
      */
     @Override
-    public void addMatch(Hmmer2SearchRecord methodMatches, Map<String, RawProtein<TigrFamRawMatch>> rawResults) throws IOException {
+    public void addMatch(Hmmer2HmmPfamSearchRecord methodMatches, Map<String, RawProtein<TigrFamRawMatch>> rawResults) throws IOException {
         for (String sequenceId : methodMatches.getSequenceMatches().keySet()) {
-            Hmmer2SequenceMatch sequenceMatch = methodMatches.getSequenceMatches().get(sequenceId);
+            Hmmer2HmmPfamSequenceMatch sequenceMatch = methodMatches.getSequenceMatches().get(sequenceId);
+            for (Hmmer2HmmPfamDomainMatch domainMatch : sequenceMatch.getDomainMatches()) {
+                final RawProtein<TigrFamRawMatch> rawProtein;
+                if (rawResults.keySet().contains(methodMatches.getSequenceId())) {
+                    rawProtein = rawResults.get(methodMatches.getSequenceId());
+                } else {
+                    rawProtein = new RawProtein<TigrFamRawMatch>(methodMatches.getSequenceId());
+                    rawResults.put(methodMatches.getSequenceId(), rawProtein);
+                }
+                rawProtein.addMatch(
+                        new TigrFamRawMatch(
+                                methodMatches.getSequenceId(),
+                                sequenceMatch.getModelAccession(),
+                                SignatureLibrary.TIGRFAM,
+                                signatureLibraryRelease,
+                                domainMatch.getSeqFrom(),
+                                domainMatch.getSeqTo(),
+                                sequenceMatch.getEValue(),
+                                sequenceMatch.getSequenceScore(),
+                                domainMatch.getHmmFrom(),
+                                domainMatch.getHmmTo(),
+                                domainMatch.getHmmBounds(),
+                                domainMatch.getEValue(),
+                                domainMatch.getScore()
+                        )
+                );
+            }
         }
     }
 
@@ -53,18 +90,18 @@ public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamRa
     /**
      * Returns the model ID or model accession.
      *
-     * @param modelIdentLinePatternMatcher Matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @param modelIdentLinePatternMatcher Matcher to the Pattern retrieved by the getSequenceIdentLinePattern method
      * @return the ID or accession of the method.
      */
     @Override
-    public String getModelId(Matcher modelIdentLinePatternMatcher) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public String getSequenceId(Matcher modelIdentLinePatternMatcher) {
+        return modelIdentLinePatternMatcher.group(1);
     }
 
     /**
      * Returns the model length, or null if this value is not available.
      *
-     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getModelIdentLinePattern method
+     * @param modelIdentLinePatternMatcher matcher to the Pattern retrieved by the getSequenceIdentLinePattern method
      * @return the model accession length, or null if this value is not available.
      */
     @Override
@@ -77,6 +114,8 @@ public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamRa
         return HmmKey.QUERY;
     }
 
+    private static final Pattern MODEL_IDENT_LINE_PATTERN = Pattern.compile("^Query\\ssequence:\\s+(.+)\\s*$");
+
     /**
      * As the regular expressions required to parse the 'ID' or 'Accession' lines appear
      * to differ from one member database to another, factored out here.
@@ -84,7 +123,7 @@ public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamRa
      * @return a Pattern object to parse the ID / accession line.
      */
     @Override
-    public Pattern getModelIdentLinePattern() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public Pattern getSequenceIdentLinePattern() {
+        return MODEL_IDENT_LINE_PATTERN;
     }
 }
