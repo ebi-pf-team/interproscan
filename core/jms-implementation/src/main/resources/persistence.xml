@@ -29,6 +29,8 @@
 
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch</class>
