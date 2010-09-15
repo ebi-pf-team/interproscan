@@ -7,7 +7,7 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch;
-import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl;
+import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class ParseTigrFamHmmpfamOutputStep extends Step {
 
     private HmmPfamParser<TigrFamRawMatch> parser = new HmmPfamParser<TigrFamRawMatch>();
 
-    private RawMatchDAOImpl<TigrFamRawMatch> tigrfamRawMatchDAO;
+    private RawMatchDAO<TigrFamRawMatch> tigrfamRawMatchDAO;
 
     @Required
     public void setHmmerOutputFileNameTemplate(String hmmerOutputFilePathTemplate) {
@@ -37,7 +37,7 @@ public class ParseTigrFamHmmpfamOutputStep extends Step {
     }
 
     @Required
-    public void setTigrfamRawMatchDAO(RawMatchDAOImpl<TigrFamRawMatch> tigrfamRawMatchDAO) {
+    public void setTigrfamRawMatchDAO(RawMatchDAO<TigrFamRawMatch> tigrfamRawMatchDAO) {
         this.tigrfamRawMatchDAO = tigrfamRawMatchDAO;
     }
 
