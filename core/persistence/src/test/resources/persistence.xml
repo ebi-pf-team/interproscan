@@ -2,7 +2,7 @@
 
     <!-- JPA Persistence unit for local testing in HSQLDB - current in-memory database, but may change. -->
     <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
-        
+
         <description>
             Test persistence-unit that uses an in-memory HSQLDB database.
         </description>
@@ -30,6 +30,8 @@
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch</class>
@@ -47,14 +49,14 @@
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
         <properties>
-            <property name="hibernate.show_sql"         value="${mvn.hibernate.show_sql}" />
-            <property name="hibernate.format_sql"       value="${mvn.hibernate.format_sql}" />
-            <property name="hibernate.connection.driver_class" value="${mvn.i5.database.driver}" />
-            <property name="hibernate.connection.url"   value="${mvn.i5.database.connection.url}" />
-            <property name="hibernate.connection.username" value="${mvn.i5.database.username}" />
-            <property name="hibernate.connection.password" value="${mvn.i5.database.password}" />
-            <property name="hibernate.dialect"          value="${mvn.hibernate.dialect}" />
-            <property name="hibernate.hbm2ddl.auto"     value="${mvn.hibernate.hbm2ddl.auto}" />
+            <property name="hibernate.show_sql" value="${mvn.hibernate.show_sql}"/>
+            <property name="hibernate.format_sql" value="${mvn.hibernate.format_sql}"/>
+            <property name="hibernate.connection.driver_class" value="${mvn.i5.database.driver}"/>
+            <property name="hibernate.connection.url" value="${mvn.i5.database.connection.url}"/>
+            <property name="hibernate.connection.username" value="${mvn.i5.database.username}"/>
+            <property name="hibernate.connection.password" value="${mvn.i5.database.password}"/>
+            <property name="hibernate.dialect" value="${mvn.hibernate.dialect}"/>
+            <property name="hibernate.hbm2ddl.auto" value="${mvn.hibernate.hbm2ddl.auto}"/>
         </properties>
 
     </persistence-unit>
