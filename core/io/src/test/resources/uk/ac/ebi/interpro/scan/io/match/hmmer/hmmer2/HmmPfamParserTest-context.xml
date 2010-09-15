@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/lang
+                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+
+    <bean id="tigrMatchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+        <property name="signatureLibrary" value="TIGRFAM"/>
+        <property name="signatureLibraryRelease" value="9.0"/>
+        <property name="hmmer2ParserSupport" ref="tigrParserSupport"/>
+    </bean>
+
+    <bean id="tigrParserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.TigrfamHmmer2ParserSupport">
+        <property name="signatureLibraryRelease" value="9.0"/>
+    </bean>
+
+    <bean id="tigrMatchFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/tigrfam/tigr_ecoli.raw.out"/>
+    </bean>
+
+    <bean id="smartMatchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+        <property name="signatureLibrary" value="SMART"/>
+        <property name="signatureLibraryRelease" value="6.1"/>
+        <property name="hmmer2ParserSupport" ref="smartParserSupport"/>
+    </bean>
+
+    <bean id="smartParserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.SmartHmmer2ParserSupport">
+        <property name="signatureLibraryRelease" value="6.1"/>
+    </bean>
+
+    <bean id="smartMatchFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/smart/smart_match_output"/>
+    </bean>
+
+
+</beans>
