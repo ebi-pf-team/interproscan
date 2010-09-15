@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * TODO: Description
+ * Class to capture raw match data for SMART
  *
  * @author Phil Jones
  * @version $Id$
