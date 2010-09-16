@@ -3,8 +3,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
