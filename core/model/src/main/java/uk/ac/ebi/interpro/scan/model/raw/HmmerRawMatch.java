@@ -18,7 +18,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
  * @version $Id$
  */
 @Entity
-abstract class HmmerRawMatch extends RawMatch  {
+public abstract class HmmerRawMatch extends RawMatch  {
 
     @Column(name="EVALUE",  nullable = false, updatable = false)
     private double evalue;

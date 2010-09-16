@@ -45,8 +45,8 @@ public class PhobiusFilteredMatchDAOTest {
             "ABC",
             "DEF",
             "GHI",
-            "JKL",
-            "MNO"
+            "KLM",
+            "NPQ"
     };
 
     private static final String[][] XREFS = new String[][]{

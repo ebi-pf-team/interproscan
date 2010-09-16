@@ -53,7 +53,7 @@ public class Protein implements Serializable {
     // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>
 
     @Transient
-    private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-Z]+$");
+    private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-I|K-N|P-Z-*]+$");    
 
     @Transient
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);

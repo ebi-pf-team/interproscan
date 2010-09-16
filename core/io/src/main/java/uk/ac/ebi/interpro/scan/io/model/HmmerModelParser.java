@@ -21,9 +21,9 @@ import java.util.regex.Pattern;
  * Date: 11-Nov-2009
  * Time: 20:35:32
  */
-public class Hmmer3ModelParser extends AbstractModelFileParser {
+public class HmmerModelParser extends AbstractModelFileParser {
 
-    private static final Logger LOGGER = Logger.getLogger(Hmmer3ModelParser.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(HmmerModelParser.class.getName());
 
     /**
      * Matches the name line.

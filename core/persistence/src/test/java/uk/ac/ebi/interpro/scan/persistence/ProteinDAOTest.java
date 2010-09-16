@@ -205,7 +205,7 @@ public class ProteinDAOTest {
     @Test
     public void testMaximumPrimaryKeyCount() {
         emptyProteinTable();
-        String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLOPPY", "GHGHGHGHG", "GRUFF"};
+        String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLQPPY*", "GHGHGHGHG", "GRUFF"};
         Long maxPrimaryKey = 0l;
         for (String sequence : proteinSequences) {
             Protein protein = new Protein(sequence);
@@ -223,7 +223,7 @@ public class ProteinDAOTest {
     @Test
     public void testGetProteinsInTransactionSlice() {
         emptyProteinTable();
-        String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLOPPY", "GHGHGHGHG", "GRUFF", "SPLOD", "QUQUQUQU"};
+        String[] proteinSequences = new String[]{"ABCD", "QWERTY", "PLQQPY*", "GHGHGHGHG", "GRUFF", "SPLQD", "QUQUQUQU"};
         Long maxPrimaryKey = Long.MIN_VALUE;
         Long minPrimaryKey = Long.MAX_VALUE;
         for (String sequence : proteinSequences) {

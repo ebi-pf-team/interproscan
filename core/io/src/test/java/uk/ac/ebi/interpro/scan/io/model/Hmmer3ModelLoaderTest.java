@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Tests {@link Hmmer3ModelParser}.
+ * Tests {@link HmmerModelParser}.
  *
  * @author Phil Jones
  * @version $Id$
@@ -32,7 +32,7 @@ public class Hmmer3ModelLoaderTest {
     @Test
     public void testParse() throws IOException {
         Resource modelFileResource = new ClassPathResource(TEST_MODEL_FILE);
-        Hmmer3ModelParser parser = new Hmmer3ModelParser();
+        HmmerModelParser parser = new HmmerModelParser();
         parser.setSignatureLibrary(TEST_LIBRARY);
         parser.setReleaseVersionNumber(TEST_RELEASE_VERSION);
         parser.setModelFile(modelFileResource);
