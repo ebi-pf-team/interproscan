@@ -57,7 +57,7 @@ public class SmartHmmer2ParserSupport implements Hmmer2ParserSupport<SmartRawMat
                         new SmartRawMatch(
                                 methodMatches.getSequenceId(),
                                 sequenceMatch.getModelAccession(),
-                                SignatureLibrary.TIGRFAM,
+                                SignatureLibrary.SMART,                               
                                 signatureLibraryRelease,
                                 domainMatch.getSeqFrom(),
                                 domainMatch.getSeqTo(),
