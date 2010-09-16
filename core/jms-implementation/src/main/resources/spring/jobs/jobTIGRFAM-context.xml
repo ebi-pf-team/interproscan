@@ -73,18 +73,19 @@
           parent="abstractTIGRFAMStep">
         <property name="dependsUpon" ref="stepTIGRFAMRunBinary"/>
         <property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>
-        <property name="hmmerOutputFileNameTemplate" value="rawAnalaysisOutputFileTemplate"/>
+        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="tigrfamRawMatchDAO" ref="tigrfamRawMatchDAO"/>
+        <property name="parser" ref="hmmPfamParser"/>
     </bean>
 
-    <bean id="stepTIGRFAMDeleteRawOutput"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractTIGRFAMStep">
-        <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches"/>
-        <property name="stepDescription"
-                  value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-    </bean>
+    <!--<bean id="stepTIGRFAMDeleteRawOutput"-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
+    <!--parent="abstractTIGRFAMStep">-->
+    <!--<property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches"/>-->
+    <!--<property name="stepDescription"-->
+    <!--value="Delete the raw output file following successful parsing and persistence"/>-->
+    <!--<property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--</bean>-->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
@@ -97,6 +98,16 @@
 
     <bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>
+    </bean>
+
+    <bean id="hmmPfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+        <property name="signatureLibrary" value="TIGRFAM"/>
+        <property name="signatureLibraryRelease" value="9.0"/>
+        <property name="hmmer2ParserSupport" ref="tigrFamParserSupport"/>
+    </bean>
+
+    <bean id="tigrFamParserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.TigrfamHmmer2ParserSupport">
+        <property name="signatureLibraryRelease" value="9.0"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

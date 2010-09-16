@@ -36,7 +36,7 @@
                 <ref bean="jobHAMAP"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
-                <!--<ref bean="jobTIGRFAM"/>-->
+                <ref bean="jobTIGRFAM"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
