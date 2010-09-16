@@ -22,11 +22,13 @@
                 <ref bean="gene3DParser"/>
                 <ref bean="pfamModelLoader"/>
                 <ref bean="printsModelLoader"/>
+                <ref bean="tigrFamModelLoader"/>
+                <ref bean="smartModelLoader"/>
             </list>
         </property>
     </bean>
 
-    <bean id="pfamModelLoader" class="uk.ac.ebi.interpro.scan.io.model.Hmmer3ModelParser">
+    <bean id="pfamModelLoader" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
         <property name="signatureLibrary" value="PFAM"/>
         <property name="modelFile" value="file:${Pfam-A.hmm.path}"/>
         <property name="releaseVersionNumber" value="24.0"/>
@@ -70,6 +72,17 @@
         <property name="prositeModelType" value="PROFILES"/>
     </bean>
 
+    <bean id="tigrFamModelLoader" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+        <property name="signatureLibrary" value="TIGRFAM"/>
+        <property name="modelFile" value="file:${tigrfam.hmm.path}"/>
+        <property name="releaseVersionNumber" value="9.0"/>
+    </bean>
+
+    <bean id="smartModelLoader" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+        <property name="signatureLibrary" value="SMART"/>
+        <property name="modelFile" value="file:${smart.hmm.path}"/>
+        <property name="releaseVersionNumber" value="6.1"/>
+    </bean>
 
 </beans>
 

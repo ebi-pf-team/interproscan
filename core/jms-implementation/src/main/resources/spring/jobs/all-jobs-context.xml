@@ -16,6 +16,7 @@
     <import resource="jobPrositePatterns-context.xml"/>
     <import resource="jobSMART-context.xml"/>
     <import resource="jobTIGRFAM-context.xml"/>
+
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <import resource="../uapro-db-access-context.xml"/>

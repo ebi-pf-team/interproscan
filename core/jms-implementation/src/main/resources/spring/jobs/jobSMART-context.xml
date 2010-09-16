@@ -16,7 +16,8 @@
 
     <!-- ######################## JOB: SMART ############################  -->
     <bean id="jobSMART" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="SMART allows the identification and analysis of domain architectures based on Hidden Markov Models or HMMs"/>
+        <property name="description"
+                  value="SMART allows the identification and analysis of domain architectures based on Hidden Markov Models or HMMs"/>
         <property name="analysis" value="true"/>
     </bean>
 
@@ -30,7 +31,7 @@
 
     <!-- STEP 1 -->
     <bean id="stepSMARTWriteFastaFile"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"         T
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractSMARTStep">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create fasta file."/>
@@ -58,7 +59,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToHmmFile" value="${smart.hmm.path}"/>
+        <property name="fullPathToHmmFile" value="${smart.hmm.bin.path}"/>
     </bean>
 
     <bean id="stepSMARTDeleteFastaFile"
@@ -74,12 +75,13 @@
           parent="abstractSMARTStep">
         <property name="dependsUpon" ref="stepSMARTRunBinary"/>
         <property name="stepDescription" value="Parse the HMMER2 output and store as Filtered matches."/>
-        <property name="hmmerOutputFileNameTemplate" value="rawAnalaysisOutputFileTemplate"/>
+        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="smartRawMatchDAO" ref="smartRawMatchDAO"/>
         <property name="serialGroup" value="PARSE_SMART"/>
+        <property name="parser" ref="smartHmmPfamParser"/>
     </bean>
 
-    <bean id="stepTIGRFAMDeleteRawOutput"
+    <bean id="stepSMARTDeleteRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractSMARTStep">
         <property name="dependsUpon" ref="stepSMARTStoreRawMatches"/>
@@ -88,12 +90,22 @@
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SMART !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
 
     <bean id="smartRawMatchDAO"
           class="uk.ac.ebi.interpro.scan.persistence.raw.SmartHmmer2RawMatchDAOImpl">
+    </bean>
+
+    <bean id="smartHmmPfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+        <property name="signatureLibrary" value="SMART"/>
+        <property name="signatureLibraryRelease" value="6.1"/>
+        <property name="hmmer2ParserSupport" ref="smartParserSupport"/>
+    </bean>
+
+    <bean id="smartParserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.SmartHmmer2ParserSupport">
+        <property name="signatureLibraryRelease" value="6.1"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

@@ -57,7 +57,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToHmmFile" value="${tigrfam.hmm.path}"/>
+        <property name="fullPathToHmmFile" value="${tigrfam.hmm.bin.path}"/>
     </bean>
 
     <bean id="stepTIGRFAMDeleteFastaFile"
@@ -75,7 +75,8 @@
         <property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="tigrfamRawMatchDAO" ref="tigrfamRawMatchDAO"/>
-        <property name="parser" ref="hmmPfamParser"/>
+        <property name="serialGroup" value="PARSE_TIGRFAM"/>
+        <property name="parser" ref="tigrfamHmmPfamParser"/>
     </bean>
 
     <bean id="stepTIGRFAMDeleteRawOutput"
@@ -96,11 +97,11 @@
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch"/>
     </bean>
 
-    <bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>
-    </bean>
+    <!--<bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">-->
+    <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>-->
+    <!--</bean>-->
 
-    <bean id="hmmPfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+    <bean id="tigrfamHmmPfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
         <property name="signatureLibrary" value="TIGRFAM"/>
         <property name="signatureLibraryRelease" value="9.0"/>
         <property name="hmmer2ParserSupport" ref="tigrFamParserSupport"/>
