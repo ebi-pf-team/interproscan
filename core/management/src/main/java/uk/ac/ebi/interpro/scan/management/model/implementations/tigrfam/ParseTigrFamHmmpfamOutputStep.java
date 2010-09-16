@@ -27,7 +27,7 @@ public class ParseTigrFamHmmpfamOutputStep extends Step {
 
     private String hmmerOutputFilePathTemplate;
 
-    private HmmPfamParser<TigrFamRawMatch> parser = new HmmPfamParser<TigrFamRawMatch>();
+    private HmmPfamParser<TigrFamRawMatch> parser;
 
     private RawMatchDAO<TigrFamRawMatch> tigrfamRawMatchDAO;
 
@@ -39,6 +39,11 @@ public class ParseTigrFamHmmpfamOutputStep extends Step {
     @Required
     public void setTigrfamRawMatchDAO(RawMatchDAO<TigrFamRawMatch> tigrfamRawMatchDAO) {
         this.tigrfamRawMatchDAO = tigrfamRawMatchDAO;
+    }
+
+    @Required
+    public void setParser(HmmPfamParser<TigrFamRawMatch> parser) {
+        this.parser = parser;
     }
 
     /**
