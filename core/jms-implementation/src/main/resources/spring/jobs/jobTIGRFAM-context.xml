@@ -88,6 +88,17 @@
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
+    <bean id="stepTIGRFamPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.tigrfam.TigrFamPostProcessingStep"
+          parent="abstractTIGRFAMStep">
+        <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches"/>
+        <property name="signatureLibraryRelease" value="9.0"/>
+        <property name="stepDescription" value="Stores raw matches as filtered matches."/>
+        <property name="filteredMatchDAO" ref="tigrfamFilteredMatchDAO"/>
+        <property name="serialGroup" value="TIGRFAM_POST_PROCESSING"/>
+        <property name="rawMatchDAO" ref="tigrfamRawMatchDAO"/>
+    </bean>
+
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
@@ -96,6 +107,9 @@
           class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch"/>
     </bean>
+
+    <bean id="tigrfamFilteredMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.TigrFamFilteredMatchDAOImpl"/>
 
     <!--<bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">-->
     <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>-->
