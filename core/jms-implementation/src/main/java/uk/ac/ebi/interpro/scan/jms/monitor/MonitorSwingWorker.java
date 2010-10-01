@@ -1,13 +1,10 @@
 package uk.ac.ebi.interpro.scan.jms.monitor;
 
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.jms.hornetq.HornetQSessionHandler;
-import uk.ac.ebi.interpro.scan.jms.worker.WorkerMonitor;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 
-import javax.jms.*;
+import javax.jms.ConnectionFactory;
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +44,7 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
 
     /**
      * Allows the GUI controller to change the refresh interval.
+     *
      * @param refreshInterval
      */
     public void setRefreshInterval(long refreshInterval) {
@@ -75,66 +73,83 @@ public class MonitorSwingWorker extends SwingWorker<Void, List<WorkerState>> {
      * @return the computed result
      * @throws Exception if unable to compute a result
      */
+//    @Override
+//    protected Void doInBackground() throws Exception {
+//
+//        HornetQSessionHandler hornetQSessionHandler = null;
+//        try{
+//            hornetQSessionHandler = new HornetQSessionHandler(connectionFactory);
+//            hornetQSessionHandler.start();
+//            MessageProducer requestStatusMessageProducer = hornetQSessionHandler.getMessageProducer(workerManagerTopicName);
+//
+//
+//            // Work out a receive timeout - set to (fairly arbitrarily) one twentieth of the refresh interval.
+//            // This should give the user a faily consistent experience.
+//            final long recieveTimeout = (refreshInterval / 20L == 0) ? 1 : refreshInterval / 20L;
+//
+//            // Keep going until the Worker thread is explicitly stopped.
+//            while (! isCancelled()){
+//
+//                // Unique identifier for THIS REQUEST.
+////            final String requestId = monitorID.toString() + '_' + UUID.randomUUID();
+//                final String requestId = UUID.randomUUID().toString();
+//
+//                String selector = new StringBuilder()
+//                        .append('(')
+//                        .append(WorkerMonitor.REQUESTEE_PROPERTY)
+//                        .append(" = '")
+//                        .append(requestId)
+//                        .append("')")
+//                        .toString();
+//                // The selector ensures that this monitor application instance only receives messages in response
+//                // to its own monitor requests.
+//                final MessageConsumer workerResponsemessageConsumer = hornetQSessionHandler.getMessageConsumer(workerManagerResponseQueueName, selector);
+//
+//                List<WorkerState> workerStates = new ArrayList<WorkerState>();
+//
+//                // Send the status request to the workerManagerTopic.
+//                TextMessage statusRequestMessage =  hornetQSessionHandler.createTextMessage("status");
+//                statusRequestMessage.setStringProperty(WorkerMonitor.REQUESTEE_PROPERTY, requestId);
+//                requestStatusMessageProducer.send(statusRequestMessage);
+//
+//                final long listenUntil = System.currentTimeMillis() + refreshInterval;
+//                // Take results of the workerManagerResponseQueue for the period of the refreshInterval.
+//                while (System.currentTimeMillis() < listenUntil){
+//                    // Take messages of the workerManagerResponseQueue
+//                    // and add the WorkerState to the Collection..
+//                    ObjectMessage responseMessage = (ObjectMessage) workerResponsemessageConsumer.receive(recieveTimeout);
+//                    if (responseMessage != null){
+//                        workerStates.add ((WorkerState) responseMessage.getObject());
+//                        responseMessage.acknowledge();
+//                    }
+//                }
+//                // Stick out the current Collection of WorkerState objects to the GUI
+//                // for display.
+//                controller.setStatus(workerStates);
+//            }
+//            return null;
+//        }
+//        finally {
+//            if (hornetQSessionHandler != null){
+//                hornetQSessionHandler.close();
+//            }
+//        }
+//    }
+
+    /**
+     * Computes a result, or throws an exception if unable to do so.
+     * <p/>
+     * <p/>
+     * Note that this method is executed only once.
+     * <p/>
+     * <p/>
+     * Note: this method is executed in a background thread.
+     *
+     * @return the computed result
+     * @throws Exception if unable to compute a result
+     */
     @Override
     protected Void doInBackground() throws Exception {
-
-        HornetQSessionHandler hornetQSessionHandler = null;
-        try{
-            hornetQSessionHandler = new HornetQSessionHandler(connectionFactory);
-            hornetQSessionHandler.start();
-            MessageProducer requestStatusMessageProducer = hornetQSessionHandler.getMessageProducer(workerManagerTopicName);
-
-
-            // Work out a receive timeout - set to (fairly arbitrarily) one twentieth of the refresh interval.
-            // This should give the user a faily consistent experience.
-            final long recieveTimeout = (refreshInterval / 20L == 0) ? 1 : refreshInterval / 20L;
-
-            // Keep going until the Worker thread is explicitly stopped.
-            while (! isCancelled()){
-
-                // Unique identifier for THIS REQUEST.
-//            final String requestId = monitorID.toString() + '_' + UUID.randomUUID();
-                final String requestId = UUID.randomUUID().toString();
-
-                String selector = new StringBuilder()
-                        .append('(')
-                        .append(WorkerMonitor.REQUESTEE_PROPERTY)
-                        .append(" = '")
-                        .append(requestId)
-                        .append("')")
-                        .toString();
-                // The selector ensures that this monitor application instance only receives messages in response
-                // to its own monitor requests.
-                final MessageConsumer workerResponsemessageConsumer = hornetQSessionHandler.getMessageConsumer(workerManagerResponseQueueName, selector);
-
-                List<WorkerState> workerStates = new ArrayList<WorkerState>();
-
-                // Send the status request to the workerManagerTopic.
-                TextMessage statusRequestMessage =  hornetQSessionHandler.createTextMessage("status");
-                statusRequestMessage.setStringProperty(WorkerMonitor.REQUESTEE_PROPERTY, requestId);
-                requestStatusMessageProducer.send(statusRequestMessage);
-
-                final long listenUntil = System.currentTimeMillis() + refreshInterval;
-                // Take results of the workerManagerResponseQueue for the period of the refreshInterval.
-                while (System.currentTimeMillis() < listenUntil){
-                    // Take messages of the workerManagerResponseQueue
-                    // and add the WorkerState to the Collection..
-                    ObjectMessage responseMessage = (ObjectMessage) workerResponsemessageConsumer.receive(recieveTimeout);
-                    if (responseMessage != null){
-                        workerStates.add ((WorkerState) responseMessage.getObject());
-                        responseMessage.acknowledge();
-                    }
-                }
-                // Stick out the current Collection of WorkerState objects to the GUI
-                // for display.
-                controller.setStatus(workerStates);
-            }
-            return null;
-        }
-        finally {
-            if (hornetQSessionHandler != null){
-                hornetQSessionHandler.close();
-            }
-        }
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

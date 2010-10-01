@@ -35,6 +35,13 @@ public class Run {
 
     private static final int MEGA = 1024 * 1024;
 
+    /*
+    Additional options:
+    -iprlookup    Switch on look up of corresponding InterPro annotation
+
+       -goterms      Switch on look up of corresponding Gene Ontology
+                     annotation (requires -iprlookup option to be used too)
+     */
 
     private enum I5Option {
         MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
@@ -42,7 +49,9 @@ public class Run {
         OUTPUT_FORMAT("format", "F", false, "Optional output format. One of: tsv (tab separated values)", "OUTPUT-FORMAT", false),
         OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH", false),
         ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true),
-        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false);
+        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false),
+        IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation", null, false),
+        GOTERMS("goterms", "goterms", false, "Switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false);
 
         private String longOpt;
 
@@ -235,6 +244,9 @@ public class Run {
                     if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                         master.setAnalyses(parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt()));
                     }
+                    final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
+                    master.setMapToInterProEntries(mapToGo || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
+                    master.setMapToGOAnnotations(mapToGo);
                 }
 
                 if (runnable instanceof DistributedWorkerController) {

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
-import uk.ac.ebi.interpro.scan.jms.worker.EmbeddedWorkerFactory;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.*;
@@ -49,7 +48,7 @@ public class AmqInterProScanMaster implements Master {
 
     private WorkerRunner parallelWorkerRunner;
 
-    private EmbeddedWorkerFactory embeddedWorkerFactory;
+//    private EmbeddedWorkerFactory embeddedWorkerFactory;
 
     private Integer numberOfEmbeddedWorkers;
 
@@ -74,15 +73,8 @@ public class AmqInterProScanMaster implements Master {
     private CleanRunDatabase databaseCleaner;
 
     private boolean cleanDatabase = false;
-
-    /**
-     * This OPTIONAL bean method allows an embedded Worker to be injected.
-     *
-     * @param embeddedWorkerFactory to do all the work!?
-     */
-    public void setEmbeddedWorkerFactory(EmbeddedWorkerFactory embeddedWorkerFactory) {
-        this.embeddedWorkerFactory = embeddedWorkerFactory;
-    }
+    private boolean mapToInterPro = false;
+    private boolean mapToGO = false;
 
     public void setEmbeddedWorkerCount(Integer numberOfEmbeddedWorkers) {
         this.numberOfEmbeddedWorkers = numberOfEmbeddedWorkers;
@@ -135,7 +127,6 @@ public class AmqInterProScanMaster implements Master {
                 databaseCleaner.run();
             }
 
-            startUpEmbeddedWorkers();
             createFastaFileLoadStepInstance();
 
 
@@ -213,6 +204,8 @@ public class AmqInterProScanMaster implements Master {
             }
             params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
             params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat);
+            params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
+            params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
 
             createStepInstancesForJob("jobLoadFromFasta", params);
             LOGGER.info("Fasta file load step instance has been created.");
@@ -232,31 +225,6 @@ public class AmqInterProScanMaster implements Master {
             StepInstance stepInstance = new StepInstance(step);
             stepInstance.addStepParameters(stepParameters);
             stepInstanceDAO.insert(stepInstance);
-        }
-    }
-
-    private void startUpEmbeddedWorkers() {
-        if (embeddedWorkerFactory != null) {
-            if (workerThreads == null) {
-                workerThreads = new ArrayList<Thread>(numberOfEmbeddedWorkers);
-            }
-            // Has the number of embedded workers been set?
-            final int processorCount = Runtime.getRuntime().availableProcessors();
-            if (numberOfEmbeddedWorkers == null) {
-                // Default to the number of processors on this box.
-                numberOfEmbeddedWorkers = processorCount;
-                LOGGER.info("Embedded worker count defaulting to processor count: " + numberOfEmbeddedWorkers);
-            } else {
-                if (numberOfEmbeddedWorkers > processorCount) {
-                    LOGGER.warn("WARNING: This stand-alone I5 installation has been configured to start up " + numberOfEmbeddedWorkers + " workers, however there are only " + numberOfEmbeddedWorkers + " available on this machine.  This is likely to be detrimental to performance.  Consider reducing the number of workers.");
-                }
-            }
-            for (int i = 0; i < numberOfEmbeddedWorkers; i++) {
-                Thread workerThread = new Thread(embeddedWorkerFactory.getInstance());
-                workerThreads.add(workerThread);
-                workerThread.start();
-                LOGGER.info("Worker thread started.");
-            }
         }
     }
 
@@ -335,6 +303,16 @@ public class AmqInterProScanMaster implements Master {
     @Override
     public void setAnalyses(String[] analyses) {
         this.analyses = analyses;
+    }
+
+    @Override
+    public void setMapToInterProEntries(boolean mapToInterPro) {
+        this.mapToInterPro = mapToInterPro;
+    }
+
+    @Override
+    public void setMapToGOAnnotations(boolean mapToGO) {
+        this.mapToGO = mapToGO;
     }
 
     public void setCleanDatabase(boolean clean) {
