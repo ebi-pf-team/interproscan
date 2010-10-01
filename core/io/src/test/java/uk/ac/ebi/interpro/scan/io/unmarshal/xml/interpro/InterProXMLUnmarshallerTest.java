@@ -5,11 +5,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.annotation.Resource;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
@@ -29,15 +31,16 @@ public class InterProXMLUnmarshallerTest {
     private org.springframework.core.io.Resource interproXmlFile;
 
     @Resource
-    private String serializedDataFileName;
+    private InterProXMLUnmarshaller unmarshaller;
+
+    @Resource
+    private ObjectSerializerDeserializer<Map<SignatureLibrary, SignatureLibraryIntegratedMethods>> serializerDeserializer;
 
 
     @Test
     public void testUnmarshallerAndSerialization()
             throws IOException, XMLStreamException, ClassNotFoundException {
         BufferedInputStream bis = null;
-        ObjectOutputStream oos = null;
-        ObjectInputStream ois = null;
         try {
 
             if (interproXmlFile.getFilename().endsWith("gz")) {
@@ -48,26 +51,19 @@ public class InterProXMLUnmarshallerTest {
                 bis = new BufferedInputStream(interproXmlFile.getInputStream());
             }
 
-            InterProXMLUnmarshaller unmarshaller = new InterProXMLUnmarshaller();
             Map<SignatureLibrary, SignatureLibraryIntegratedMethods> unmarshalledData = unmarshaller.unmarshal(bis);
 
             // Serialize out un-marshaled data
-            oos = new ObjectOutputStream(new FileOutputStream(serializedDataFileName));
-            oos.writeObject(unmarshalledData);
-            oos.flush();
-            oos.close();
+            serializerDeserializer.serialize(unmarshalledData);
 
             // Serialize back in and cheque for equality.
-            ois = new ObjectInputStream(new FileInputStream(serializedDataFileName));
-            Map<SignatureLibrary, SignatureLibraryIntegratedMethods> retrievedData = (Map<SignatureLibrary, SignatureLibraryIntegratedMethods>) ois.readObject();
+            Map<SignatureLibrary, SignatureLibraryIntegratedMethods> retrievedData = serializerDeserializer.deserialize();
 
             Assert.assertTrue(unmarshalledData.equals(retrievedData));
 
         }
         finally {
             if (bis != null) bis.close();
-            if (oos != null) oos.close();
-            if (ois != null) ois.close();
         }
     }
 
