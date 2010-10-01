@@ -16,5 +16,9 @@ public interface Master extends Runnable {
 
     void setAnalyses(String[] analyses);
 
+    void setMapToInterProEntries(boolean mapToInterPro);
+
+    void setMapToGOAnnotations(boolean mapToGO);
+
     public void setCleanDatabase(boolean clean);
 }

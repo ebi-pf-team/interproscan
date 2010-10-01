@@ -116,12 +116,19 @@
         <property name="retries" value="0"/>
         <!--<property name="serialGroup"                        value="LOAD_PROTEINS"/>-->
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="serializerDeserializer" ref="serializerDeserializer"/>
     </bean>
 
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
+    <bean id="serializerDeserializer" class="uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer">
+        <property name="compressedUsingGzip" value="true"/>
+        <property name="fileName" value="${interpro.entry.go.mapping.path}"/>
+        <property name="overWrite" value="false"/>
+    </bean>
+
     <bean id="fastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
         <property name="proteinLoader" ref="proteinLoader"/>
     </bean>
