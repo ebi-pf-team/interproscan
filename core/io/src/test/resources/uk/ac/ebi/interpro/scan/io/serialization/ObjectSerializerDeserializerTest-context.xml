@@ -7,17 +7,16 @@
                            http://www.springframework.org/schema/tx
                            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-    <bean id="interproXmlFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/interpro.xml.gz"/>
+    <bean id="serializerDeserializer" class="uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer">
+        <property name="fileName" value="target/serializedString"/>
+        <property name="overWrite" value="false"/>
+        <property name="compressedUsingGzip" value="false"/>
     </bean>
 
-    <bean id="unmarshaller" class="uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.InterProXMLUnmarshaller"/>
-
-    <bean id="serializerDeserializer" class="uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer">
-
-        <property name="compressedUsingGzip" value="true"/>
-        <property name="fileName" value="target/interproEntryGoMapping.gz"/>
+    <bean id="serializerDeserializerGzip" class="uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer">
+        <property name="fileName" value="target/serializedString.gz"/>
         <property name="overWrite" value="false"/>
+        <property name="compressedUsingGzip" value="true"/>
     </bean>
 
 </beans>
