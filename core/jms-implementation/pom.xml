@@ -128,45 +128,6 @@
             <version>3.2</version>
         </dependency>
 
-        <!-- TODO - decide between hornetQ and activeMQ. -->
-
-        <!-- HornetQ broker dependencies -->
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core</artifactId>
-            <version>${hornetq.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-jms</artifactId>
-            <version>${hornetq.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-logging</artifactId>
-            <version>${hornetq.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-transports</artifactId>
-            <version>${hornetq.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.netty</groupId>
-            <artifactId>netty</artifactId>
-            <version>3.1.5.GA</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.javaee</groupId>
-            <artifactId>jboss-jms-api</artifactId>
-            <version>1.1.0.GA</version>
-        </dependency>
-
         <!-- ActiveMQ broker dependencies -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
