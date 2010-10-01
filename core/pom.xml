@@ -83,7 +83,6 @@
         <hibernate.entity.manager.version>3.4.0.GA</hibernate.entity.manager.version>
         <cglib.version>2.2</cglib.version>
         <groovy.version>1.6.3</groovy.version>
-        <hornetq.version>2.0.0.GA</hornetq.version>
         <hsqldb.version>1.8.0.10</hsqldb.version>
         <mysql.version>5.1.12</mysql.version>
         <slf4j.version>1.5.2</slf4j.version>
