@@ -16,10 +16,7 @@ public class NoopProteinLoadListener implements ProteinLoadListener {
      * Implementations of this method will create StepInstances for the
      * range of proteins passed in as parameters.  If either of these
      * values are null, then no action is taken.
-     *
-     * @param bottomProteinId bottom protein primary key, inclusive.
-     * @param topProteinId    top protein primary key, inclusive.
-     */    
+     */
 
     @Override
     public void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId, Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId) {

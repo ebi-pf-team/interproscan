@@ -58,6 +58,14 @@
             <url>http://repository.jboss.org/maven2</url>
         </repository>
 
+        <!-- Required for sleepycat (BerkelyDB) -->
+        <repository>
+            <id>oracleReleases</id>
+            <name>Oracle Released Java Packages</name>
+            <url>http://download.oracle.com/maven</url>
+            <layout>default</layout>
+        </repository>
+
     </repositories>
 
     <licenses>
@@ -97,6 +105,7 @@
         <module>management</module>
         <module>jms-implementation</module>
         <module>cli</module>
+        <module>precalcmatches</module>
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->

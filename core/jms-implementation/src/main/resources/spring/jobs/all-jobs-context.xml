@@ -133,7 +133,7 @@
         <property name="proteinLoader" ref="proteinLoader"/>
     </bean>
 
-    <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.PrecalculatedProteinLookup">
+    <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.ZipFilePrecalculatedProteinLookup">
         <constructor-arg value="data/precalculated.zip"/>
     </bean>
 
