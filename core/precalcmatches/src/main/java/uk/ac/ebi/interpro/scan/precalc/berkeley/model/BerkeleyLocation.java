@@ -15,7 +15,7 @@ import com.sleepycat.persist.model.Persistent;
  * @since 1.0-SNAPSHOT
  */
 @Persistent
-public class BK_Location {
+public class BerkeleyLocation {
 
     private Integer start;
 
@@ -43,7 +43,7 @@ public class BK_Location {
 
     private String cigarAlignment;
 
-    public BK_Location() {
+    public BerkeleyLocation() {
     }
 
     public Integer getStart() {
@@ -155,7 +155,7 @@ public class BK_Location {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BK_Location that = (BK_Location) o;
+        BerkeleyLocation that = (BerkeleyLocation) o;
 
         if (cigarAlignment != null ? !cigarAlignment.equals(that.cigarAlignment) : that.cigarAlignment != null)
             return false;
@@ -196,7 +196,7 @@ public class BK_Location {
 
     @Override
     public String toString() {
-        return "BK_Location{" +
+        return "BerkeleyLocation{" +
                 "start=" + start +
                 ", end=" + end +
                 '}';

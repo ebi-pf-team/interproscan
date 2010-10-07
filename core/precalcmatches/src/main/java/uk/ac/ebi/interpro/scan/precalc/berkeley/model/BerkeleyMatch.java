@@ -25,7 +25,7 @@ import static com.sleepycat.persist.model.Relationship.MANY_TO_ONE;
  */
 
 @Entity
-public class BK_Match {
+public class BerkeleyMatch {
 
     @PrimaryKey(sequence = "match_unique_index_sequence")
     private Long matchId;
@@ -45,12 +45,12 @@ public class BK_Match {
 
     private String graphScan;
 
-    private Set<BK_Location> locations;
+    private Set<BerkeleyLocation> locations;
 
     /**
      * Required by BerkeleyDB
      */
-    public BK_Match() {
+    public BerkeleyMatch() {
 
     }
 
@@ -118,17 +118,17 @@ public class BK_Match {
         this.graphScan = graphScan;
     }
 
-    public Set<BK_Location> getLocations() {
+    public Set<BerkeleyLocation> getLocations() {
         return locations;
     }
 
-    public void setLocations(Set<BK_Location> locations) {
+    public void setLocations(Set<BerkeleyLocation> locations) {
         this.locations = locations;
     }
 
-    public void addLocation(BK_Location location) {
+    public void addLocation(BerkeleyLocation location) {
         if (this.locations == null) {
-            this.locations = new HashSet<BK_Location>();
+            this.locations = new HashSet<BerkeleyLocation>();
         }
         locations.add(location);
     }
@@ -138,19 +138,21 @@ public class BK_Match {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BK_Match bk_match = (BK_Match) o;
+        BerkeleyMatch berkeley_match = (BerkeleyMatch) o;
 
-        if (graphScan != null ? !graphScan.equals(bk_match.graphScan) : bk_match.graphScan != null) return false;
-        if (locations != null ? !locations.equals(bk_match.locations) : bk_match.locations != null) return false;
-        if (sequenceEValue != null ? !sequenceEValue.equals(bk_match.sequenceEValue) : bk_match.sequenceEValue != null)
+        if (graphScan != null ? !graphScan.equals(berkeley_match.graphScan) : berkeley_match.graphScan != null)
             return false;
-        if (sequenceScore != null ? !sequenceScore.equals(bk_match.sequenceScore) : bk_match.sequenceScore != null)
+        if (locations != null ? !locations.equals(berkeley_match.locations) : berkeley_match.locations != null)
             return false;
-        if (signatureAccession != null ? !signatureAccession.equals(bk_match.signatureAccession) : bk_match.signatureAccession != null)
+        if (sequenceEValue != null ? !sequenceEValue.equals(berkeley_match.sequenceEValue) : berkeley_match.sequenceEValue != null)
             return false;
-        if (signatureLibrary != null ? !signatureLibrary.equals(bk_match.signatureLibrary) : bk_match.signatureLibrary != null)
+        if (sequenceScore != null ? !sequenceScore.equals(berkeley_match.sequenceScore) : berkeley_match.sequenceScore != null)
             return false;
-        if (signatureLibraryRelease != null ? !signatureLibraryRelease.equals(bk_match.signatureLibraryRelease) : bk_match.signatureLibraryRelease != null)
+        if (signatureAccession != null ? !signatureAccession.equals(berkeley_match.signatureAccession) : berkeley_match.signatureAccession != null)
+            return false;
+        if (signatureLibrary != null ? !signatureLibrary.equals(berkeley_match.signatureLibrary) : berkeley_match.signatureLibrary != null)
+            return false;
+        if (signatureLibraryRelease != null ? !signatureLibraryRelease.equals(berkeley_match.signatureLibraryRelease) : berkeley_match.signatureLibraryRelease != null)
             return false;
 
         return true;
@@ -170,7 +172,7 @@ public class BK_Match {
 
     @Override
     public String toString() {
-        return "BK_Match{" +
+        return "BerkeleyMatch{" +
                 "proteinMD5='" + proteinMD5 + '\'' +
                 ", locations=" + locations +
                 ", matchId=" + matchId +
