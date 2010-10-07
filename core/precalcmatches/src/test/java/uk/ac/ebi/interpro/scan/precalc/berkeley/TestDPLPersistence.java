@@ -4,8 +4,8 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.*;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BK_Location;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BK_Match;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -23,9 +23,10 @@ import java.util.UUID;
 public class TestDPLPersistence {
 
 
-    private static final int MATCH_NUMBER = 1000 * 1000 * 182;
+//    private static final int MATCH_NUMBER = 1000 * 1000 * 182;
+    private static final int MATCH_NUMBER = 1000;
 
-    private static final int SELECT_INTERVAL = 100 * 1000;
+    private static final int SELECT_INTERVAL = 100;
 
     private static final int MATCHES_PER_PROTEIN = 4;
 
@@ -36,7 +37,7 @@ public class TestDPLPersistence {
 
         Environment myEnv = null;
         EntityStore store = null;
-        EntityCursor<BK_Match> matchCursor = null;
+        EntityCursor<BerkeleyMatch> matchCursor = null;
 
         try {
             EnvironmentConfig myEnvConfig = new EnvironmentConfig();
@@ -53,8 +54,8 @@ public class TestDPLPersistence {
             store = new EntityStore(myEnv, "EntityStore", storeConfig);
 
 
-            PrimaryIndex<Long, BK_Match> primIDX = store.getPrimaryIndex(Long.class, BK_Match.class);
-            SecondaryIndex<String, Long, BK_Match> secIDX = store.getSecondaryIndex(primIDX, String.class, "proteinMD5");
+            PrimaryIndex<Long, BerkeleyMatch> primIDX = store.getPrimaryIndex(Long.class, BerkeleyMatch.class);
+            SecondaryIndex<String, Long, BerkeleyMatch> secIDX = store.getSecondaryIndex(primIDX, String.class, "proteinMD5");
 
             String proteinMD5 = UUID.randomUUID().toString();
 
@@ -72,13 +73,13 @@ public class TestDPLPersistence {
                 if (i == randomValue) {
                     randomlySelectedProteinMD5 = proteinMD5;
                 }
-                BK_Match match = new BK_Match();
+                BerkeleyMatch match = new BerkeleyMatch();
                 match.setProteinMD5(proteinMD5);
                 match.setSignatureAccession(UUID.randomUUID().toString().substring(0, 6));
                 match.setSequenceEValue(randomizer.nextDouble());
                 match.setSequenceScore(randomizer.nextDouble());
                 for (int j = 0; j < 4; j++) {
-                    BK_Location location = new BK_Location();
+                    BerkeleyLocation location = new BerkeleyLocation();
                     if (i % 50 == 0) {
                         location.setCigarAlignment(UUID.randomUUID().toString());
                     }
@@ -98,7 +99,7 @@ public class TestDPLPersistence {
                     long startTimeMilli = System.currentTimeMillis();
 
                     matchCursor = secIDX.entities(randomlySelectedProteinMD5, true, randomlySelectedProteinMD5, true);
-                    BK_Match currentMatch;
+                    BerkeleyMatch currentMatch;
 
                     while ((currentMatch = matchCursor.next()) != null) {
                         System.out.println("currentMatch = " + currentMatch);
@@ -144,6 +145,5 @@ public class TestDPLPersistence {
                 }
             }
         }
-
     }
 }
