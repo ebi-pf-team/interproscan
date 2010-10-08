@@ -23,10 +23,10 @@ import java.util.UUID;
 public class TestDPLPersistence {
 
 
-//    private static final int MATCH_NUMBER = 1000 * 1000 * 182;
-    private static final int MATCH_NUMBER = 1000;
+    private static final int MATCH_NUMBER = 20 * 1000 * 1000; // The number of matches currently in Onion.
+//    private static final int MATCH_NUMBER = 1000;
 
-    private static final int SELECT_INTERVAL = 100;
+    private static final int SELECT_INTERVAL = 100 * 1000;
 
     private static final int MATCHES_PER_PROTEIN = 4;
 
@@ -47,7 +47,7 @@ public class TestDPLPersistence {
             storeConfig.setAllowCreate(true);
             storeConfig.setTransactional(false);
 
-            File file = new File("./target/" + UUID.randomUUID().toString());
+            File file = new File("./target/BIG");
             file.mkdirs();
             // Open the environment and entity store
             myEnv = new Environment(file, myEnvConfig);

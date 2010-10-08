@@ -33,7 +33,7 @@ public class BerkeleyMatch {
     @SecondaryKey(relate = MANY_TO_ONE)
     private String proteinMD5;
 
-    private String signatureLibrary;
+    private String signatureLibraryName;
 
     private String signatureLibraryRelease;
 
@@ -70,12 +70,12 @@ public class BerkeleyMatch {
         this.proteinMD5 = proteinMD5;
     }
 
-    public String getSignatureLibrary() {
-        return signatureLibrary;
+    public String getSignatureLibraryName() {
+        return signatureLibraryName;
     }
 
-    public void setSignatureLibrary(String signatureLibrary) {
-        this.signatureLibrary = signatureLibrary;
+    public void setSignatureLibraryName(String signatureLibraryName) {
+        this.signatureLibraryName = signatureLibraryName;
     }
 
     public String getSignatureLibraryRelease() {
@@ -150,7 +150,7 @@ public class BerkeleyMatch {
             return false;
         if (signatureAccession != null ? !signatureAccession.equals(berkeley_match.signatureAccession) : berkeley_match.signatureAccession != null)
             return false;
-        if (signatureLibrary != null ? !signatureLibrary.equals(berkeley_match.signatureLibrary) : berkeley_match.signatureLibrary != null)
+        if (signatureLibraryName != null ? !signatureLibraryName.equals(berkeley_match.signatureLibraryName) : berkeley_match.signatureLibraryName != null)
             return false;
         if (signatureLibraryRelease != null ? !signatureLibraryRelease.equals(berkeley_match.signatureLibraryRelease) : berkeley_match.signatureLibraryRelease != null)
             return false;
@@ -160,7 +160,7 @@ public class BerkeleyMatch {
 
     @Override
     public int hashCode() {
-        int result = signatureLibrary != null ? signatureLibrary.hashCode() : 0;
+        int result = signatureLibraryName != null ? signatureLibraryName.hashCode() : 0;
         result = 31 * result + (signatureLibraryRelease != null ? signatureLibraryRelease.hashCode() : 0);
         result = 31 * result + (signatureAccession != null ? signatureAccession.hashCode() : 0);
         result = 31 * result + (sequenceScore != null ? sequenceScore.hashCode() : 0);
