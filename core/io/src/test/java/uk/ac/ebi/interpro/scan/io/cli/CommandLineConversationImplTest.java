@@ -67,8 +67,8 @@ public class CommandLineConversationImplTest extends TestCase {
         testCommand.add("-version");
         CommandLineConversation clc = new CommandLineConversationImpl();
         try {
-            clc.setOutputPathToFile("command_output", false, true);
-            clc.setErrorPathToFile("command_error", false, true);
+            clc.setOutputPathToFile("target/command_output", false, true);
+            clc.setErrorPathToFile("target/command_error", false, true);
             clc.setWorkingDirectory(System.getProperty(USER_HOME));
             int outcome = clc.runCommand(false, testCommand);
             Assert.assertEquals("Outcome of " + testCommand.toString() + " should be 0.", 0, outcome);
