@@ -32,31 +32,38 @@ public final class SignatureLibraryLookup {
         // And here add any other mappings, e.g. those used in Onion.
         // ALL SHOULD BE LOWER CASE. (Any queries will be converted to lower case.)
         libraryNameToSignatureLibrary.put("pfama", SignatureLibrary.PFAM);
+        libraryNameToSignatureLibrary.put("pfam_hmmer3", SignatureLibrary.PFAM);
         libraryNameToSignatureLibrary.put("pfam-a", SignatureLibrary.PFAM);
         libraryNameToSignatureLibrary.put("pfam_a", SignatureLibrary.PFAM);
         libraryNameToSignatureLibrary.put("pfam a", SignatureLibrary.PFAM);
 
         libraryNameToSignatureLibrary.put("pfamb", SignatureLibrary.PFAM_B);
+        libraryNameToSignatureLibrary.put("pfam_b_hmmer3", SignatureLibrary.PFAM_B);
         libraryNameToSignatureLibrary.put("pfam-b", SignatureLibrary.PFAM_B);
         libraryNameToSignatureLibrary.put("pfam b", SignatureLibrary.PFAM_B);
 
         libraryNameToSignatureLibrary.put("gene-3d", SignatureLibrary.GENE3D);
         libraryNameToSignatureLibrary.put("gene 3d", SignatureLibrary.GENE3D);
         libraryNameToSignatureLibrary.put("gene_3d", SignatureLibrary.GENE3D);
+        libraryNameToSignatureLibrary.put("gene_3d_hmmer3", SignatureLibrary.GENE3D);
 
         libraryNameToSignatureLibrary.put("prosite_patterns", SignatureLibrary.PROSITE_PATTERNS);
         libraryNameToSignatureLibrary.put("prosite-patterns", SignatureLibrary.PROSITE_PATTERNS);
         libraryNameToSignatureLibrary.put("prosite patterns", SignatureLibrary.PROSITE_PATTERNS);
+        libraryNameToSignatureLibrary.put("prosite_pt", SignatureLibrary.PROSITE_PATTERNS);
 
         libraryNameToSignatureLibrary.put("prosite_profiles", SignatureLibrary.PROSITE_PROFILES);
         libraryNameToSignatureLibrary.put("prosite-profiles", SignatureLibrary.PROSITE_PROFILES);
         libraryNameToSignatureLibrary.put("prosite profiles", SignatureLibrary.PROSITE_PROFILES);
+        libraryNameToSignatureLibrary.put("prosite_pf", SignatureLibrary.PROSITE_PROFILES);
 
         libraryNameToSignatureLibrary.put("tigrfams", SignatureLibrary.TIGRFAM);
         libraryNameToSignatureLibrary.put("tigr-fam", SignatureLibrary.TIGRFAM);
         libraryNameToSignatureLibrary.put("tigr-fams", SignatureLibrary.TIGRFAM);
         libraryNameToSignatureLibrary.put("tigr_fam", SignatureLibrary.TIGRFAM);
         libraryNameToSignatureLibrary.put("tigr_fams", SignatureLibrary.TIGRFAM);
+
+        libraryNameToSignatureLibrary.put("ssf", SignatureLibrary.SUPERFAMILY);
     }
 
     public static SignatureLibrary lookupSignatureLibrary(String signatureLibraryName) {

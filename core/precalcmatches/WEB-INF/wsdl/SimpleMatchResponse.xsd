@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema elementFormDefault="qualified"
-           targetNamespace="http://www.ebi.ac.uk/interpro/interproscan/schemas/simplematch"
+           targetNamespace="http://www.ebi.ac.uk/interpro/interproscan/schemas/precalc/response"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="Matches" type="sim:MatchesType"
-                xmlns:sim="http://www.ebi.ac.uk/interpro/interproscan/schemas/simplematch"/>
+    <xs:element name="Matches" type="MatchesType"
+                xmlns:sim="SimpleMatchResponse.xsd"/>
     <xs:complexType name="BerkeleyLocationType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -25,14 +25,14 @@
     </xs:complexType>
     <xs:complexType name="MatchesType">
         <xs:sequence>
-            <xs:element type="sim:BerkeleyMatchType" name="BerkeleyMatch" maxOccurs="unbounded" minOccurs="0"
-                        xmlns:sim="http://www.ebi.ac.uk/interpro/interproscan/schemas/simplematch"/>
+            <xs:element type="BerkeleyMatchType" name="BerkeleyMatch" maxOccurs="unbounded" minOccurs="0"
+                        xmlns:sim="SimpleMatchResponse.xsd"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="BerkeleyMatchType">
         <xs:sequence>
-            <xs:element type="sim:BerkeleyLocationType" name="BerkeleyLocation" maxOccurs="unbounded" minOccurs="1"
-                        xmlns:sim="http://www.ebi.ac.uk/interpro/interproscan/schemas/simplematch"/>
+            <xs:element type="BerkeleyLocationType" name="BerkeleyLocation" maxOccurs="unbounded" minOccurs="1"
+                        xmlns:sim="SimpleMatchResponse.xsd"/>
         </xs:sequence>
         <xs:attribute type="xs:long" name="matchId" use="optional"/>
         <xs:attribute type="xs:string" name="proteinMD5" use="required"/>
