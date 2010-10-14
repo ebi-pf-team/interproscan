@@ -35,15 +35,15 @@ import java.util.regex.Pattern;
 /**
  * Protein.
  *
- * @author  Antony Quinn
- * @author  Phil Jones
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 
 @Entity
-@XmlRootElement(name="protein")
-@XmlType(name="ProteinType", propOrder={"sequence", "crossReferences", "matches"})
+@XmlRootElement(name = "protein")
+@XmlType(name = "ProteinType", propOrder = {"sequence", "crossReferences", "matches"})
 public class Protein implements Serializable {
 
     @Transient
@@ -52,27 +52,31 @@ public class Protein implements Serializable {
     // TODO: Consider public static inner Sequence class so can implement Formatter interface
     // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>
 
+    /**
+     * TODO - remove this - every now and then new amino acids appear from UniProt
+     */
     @Transient
-    private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-I|K-N|P-Z-*]+$");    
+    private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-I|K-N|P-Z-*]+$");
 
     @Transient
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator="PROT_IDGEN")
-    @TableGenerator(name="PROT_IDGEN", table="KEYGEN", pkColumnValue="protein", initialValue = 0, allocationSize = 100)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PROT_IDGEN")
+    @TableGenerator(name = "PROT_IDGEN", table = "KEYGEN", pkColumnValue = "protein", initialValue = 0, allocationSize = 100)
     protected Long id;
 
-    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable (name="protein_sequence_chunk")
-    @IndexColumn(name="chunk_index")
-    @Column (name="sequence_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @CollectionOfElements(fetch = FetchType.EAGER)
+    // Hibernate specific annotation.
+    @JoinTable(name = "protein_sequence_chunk")
+    @IndexColumn(name = "chunk_index")
+    @Column(name = "sequence_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> sequenceChunks;
 
-    @Column(nullable = false, updatable = false, length = Chunker.CHUNK_SIZE, name="sequence_first_chunk")
+    @Column(nullable = false, updatable = false, length = Chunker.CHUNK_SIZE, name = "sequence_first_chunk")
     @XmlTransient
     private String sequenceFirstChunk;
-    
+
     @Transient
     private String sequence;
 
@@ -80,16 +84,18 @@ public class Protein implements Serializable {
     private String md5;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Match> matches = new HashSet<Match>();    
+    private Set<Match> matches = new HashSet<Match>();
 
-    @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "protein")
-    @XmlElement(name="xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "protein")
+    @XmlElement(name = "xref")
+    // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<Xref> crossReferences = new HashSet<Xref>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected Protein() {}
+    protected Protein() {
+    }
 
     public Protein(String sequence) {
         setSequenceAndMd5(sequence);
@@ -98,7 +104,7 @@ public class Protein implements Serializable {
     public Protein(String sequence, Set<Match> matches) {
         setMatches(matches);
         setSequenceAndMd5(sequence);
-    }        
+    }
 
     public Protein(String sequence, Set<Match> matches, Set<Xref> crossReferences) {
         setMatches(matches);
@@ -108,10 +114,11 @@ public class Protein implements Serializable {
 
     /**
      * Utility method to add a List of cross references
+     *
      * @param crossReferences
      */
     public void addCrossReferences(String... crossReferences) {
-        for (String xrefName : crossReferences){
+        for (String xrefName : crossReferences) {
             addCrossReference(new Xref(xrefName));
         }
     }
@@ -119,7 +126,7 @@ public class Protein implements Serializable {
     /**
      * Builder pattern (see Josh Bloch "Effective Java" 2nd edition)
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     @XmlTransient
     public static class Builder {
@@ -128,7 +135,7 @@ public class Protein implements Serializable {
         private final String sequence;
 
         // Optional parameters
-        private Set<Match> matches        = new HashSet<Match>();
+        private Set<Match> matches = new HashSet<Match>();
         private Set<Xref> crossReferences = new HashSet<Xref>();
 
         public Builder(String sequence) {
@@ -137,12 +144,12 @@ public class Protein implements Serializable {
 
         public Protein build() {
             Protein protein = new Protein(sequence);
-            if (!matches.isEmpty())    {
+            if (!matches.isEmpty()) {
                 for (Match m : matches) {
                     protein.addMatch(m);
                 }
             }
-            if (!crossReferences.isEmpty())    {
+            if (!crossReferences.isEmpty()) {
                 for (Xref x : crossReferences) {
                     protein.addCrossReference(x);
                 }
@@ -163,14 +170,14 @@ public class Protein implements Serializable {
     }
 
 
-    private void setSequenceAndMd5(String sequence)    {
+    private void setSequenceAndMd5(String sequence) {
         setSequence(sequence);
         setMd5(Md5Helper.calculateMd5(sequence));
     }
 
     /**
      * Returns the unique identifier (e.g. database primary key) for this Protein.
-     * 
+     *
      * @return the unique identifier (e.g. database primary key) for this Protein.
      */
     public Long getId() {
@@ -185,20 +192,20 @@ public class Protein implements Serializable {
     private void setMd5(String md5) {
         this.md5 = md5;
     }
-  
+
     /**
      * Returns {@link Match}es
      *
      * @return {@link Match}es
      */
-    @XmlElement(name="matches", required=true)
+    @XmlElement(name = "matches", required = true)
     @XmlJavaTypeAdapter(Match.MatchAdapter.class)
     public Set<Match> getMatches() {
         return Collections.unmodifiableSet(matches);
     }
 
     private void setMatches(Set<Match> matches) {
-        for (Match m : matches)   {
+        for (Match m : matches) {
             addMatch(m);
         }
     }
@@ -206,7 +213,7 @@ public class Protein implements Serializable {
     /**
      * Adds and returns filtered match to sequence
      *
-     * @param  match Match to add
+     * @param match Match to add
      * @return Match to sequence
      * @throws IllegalArgumentException if match is null
      */
@@ -234,23 +241,24 @@ public class Protein implements Serializable {
 
     @XmlElement
     public String getSequence() {
-        if (sequence == null){
+        if (sequence == null) {
             sequence = CHUNKER.concatenate(sequenceFirstChunk, sequenceChunks);
         }
         return sequence;
     }
 
     // Private for Hibernate (see http://www.javalobby.org/java/forums/t49288.html)
+
     private void setSequence(String sequence) {
         // Check for nulls
-        if (sequence == null)   {
+        if (sequence == null) {
             throw new IllegalArgumentException("'sequence' is null");
         }
         // Remove white space and convert to upper case
         sequence = WHITESPACE_PATTERN.matcher(sequence).replaceAll("");
         sequence = sequence.toUpperCase();
         // Check amino acid
-        if (!AMINO_ACID_PATTERN.matcher(sequence).matches())   {
+        if (!AMINO_ACID_PATTERN.matcher(sequence).matches()) {
             throw new IllegalArgumentException("'sequence' is not an amino acid sequence [" + sequence + "]");
         }
         this.sequence = sequence;
@@ -264,8 +272,8 @@ public class Protein implements Serializable {
      *
      * @return cross-references
      */
-     // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
-     // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
+    // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
+    // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
     /*
      java.lang.UnsupportedOperationException
         at java.util.Collections$UnmodifiableCollection.clear(Collections.java:1037)
@@ -285,7 +293,7 @@ public class Protein implements Serializable {
     }
 
     private void setCrossReferences(Set<Xref> crossReferences) {
-        for (Xref xref : crossReferences)    {
+        for (Xref xref : crossReferences) {
             addCrossReference(xref);
         }
     }
@@ -302,7 +310,7 @@ public class Protein implements Serializable {
             throw new IllegalArgumentException("'xref' must not be null");
         }
         crossReferences.add(xref);
-        xref.setProtein (this);
+        xref.setProtein(this);
         return xref;
     }
 
@@ -315,7 +323,8 @@ public class Protein implements Serializable {
         crossReferences.remove(xref);
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Protein))
@@ -329,7 +338,8 @@ public class Protein implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 47)
                 .append(sequence)
                 .append(md5)
@@ -338,15 +348,16 @@ public class Protein implements Serializable {
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
     /**
      * MD5 helper class.
      *
-     * @author  Phil Jones
-     * @author  Antony Quinn
+     * @author Phil Jones
+     * @author Antony Quinn
      */
     @XmlTransient
     private static class Md5Helper {
@@ -358,20 +369,20 @@ public class Protein implements Serializable {
         private static final int HEXADECIMAL_RADIX = 16;
 
         static {
-            try{
+            try {
                 m = MessageDigest.getInstance("MD5");
             }
             catch (NoSuchAlgorithmException e) {
-                throw new IllegalStateException ("Cannot find MD5 algorithm", e);
+                throw new IllegalStateException("Cannot find MD5 algorithm", e);
             }
         }
-        
-        static String calculateMd5(String sequence)   {
+
+        static String calculateMd5(String sequence) {
             String md5;
             // As using single instance of MessageDigest, make thread safe.
             // This should be much faster than creating a new MessageDigest object
             // each time this method is called.
-            synchronized (m){
+            synchronized (m) {
                 m.reset();
                 m.update(sequence.getBytes(), 0, sequence.length());
                 md5 = new BigInteger(1, m.digest()).toString(HEXADECIMAL_RADIX);
