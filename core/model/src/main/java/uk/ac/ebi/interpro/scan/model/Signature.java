@@ -48,9 +48,6 @@ public class Signature implements Serializable {
 
     // TODO: IMPACT XML: Handle Pfam Clans, FingerPrints Hierachiesm SMART thresholds ...etc [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
 
-    // TODO: Add xrefs (inc. GO terms) and InterPro entry [http://www.ebi.ac.uk/seqdb/jira/browse/IBU-894]
-    // TODO: See http://www.ebi.ac.uk/seqdb/confluence/x/DYAg#ND3.3StandardXMLformatforallcommondatatypes-SMART
-
     /**
      * Used as unique identifier of the record, e.g. for JPA persistence.
      */
@@ -116,6 +113,11 @@ public class Signature implements Serializable {
     @MapKey (name= "accession")
     private Map<String, Model> models = new HashMap<String, Model>();
 
+    @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "signature")
+    //@XmlElementWrapper(name = "xrefs")
+    @XmlElement(name="xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
+    private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -165,6 +167,7 @@ public class Signature implements Serializable {
         private String abstractText;
         private SignatureLibraryRelease signatureLibraryRelease;
         Set<Model> models;
+        private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
         public Builder(String accession) {
             this.accession = accession;
@@ -179,6 +182,11 @@ public class Signature implements Serializable {
             signature.setSignatureLibraryRelease(signatureLibraryRelease);
             if (models != null) {
                 signature.setModels(models);
+            }
+            if (!crossReferences.isEmpty())    {
+                for (SignatureXref x : crossReferences) {
+                    signature.addCrossReference(x);
+                }
             }
             return signature;
         }
@@ -226,7 +234,13 @@ public class Signature implements Serializable {
         public Builder models(Set<Model> models) {
             this.models = models;
             return this;
-        }        
+        }
+
+        public Builder crossReference(SignatureXref xref) {
+            this.crossReferences.add(xref);
+            return this;
+        }
+
     }
 
     public Long getId() {
@@ -428,7 +442,59 @@ public class Signature implements Serializable {
             return models;
         }
 
-    }        
+    }
+
+    /**
+     * Returns cross-references.
+     *
+     * @return cross-references
+     */
+    public Set<SignatureXref> getCrossReferences() {
+         // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
+         // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
+        /*
+         java.lang.UnsupportedOperationException
+            at java.util.Collections$UnmodifiableCollection.clear(Collections.java:1037)
+            at com.sun.xml.bind.v2.runtime.reflect.Lister$CollectionLister.startPacking(Lister.java:296)
+                ...
+            at javax.xml.bind.helpers.AbstractUnmarshallerImpl.unmarshal(AbstractUnmarshallerImpl.java:105)
+                ...
+            at uk.ac.ebi.interpro.scan.model.AbstractTest.unmarshal(AbstractTest.java:150)
+         */
+        //@XmlElement(name="xref")
+        // TODO: Example: Expected: Xref[protein=uk.ac.ebi.interpro.scan.model.Protein@1f49969]
+        // TODO: Example: Actual:   Xref[protein=<null>]
+        // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
+        // TODO: JAXB or do we have to use an XmlAdapter?
+        return Collections.unmodifiableSet(crossReferences);
+    }
+
+    private void setCrossReferences(Set<SignatureXref> crossReferences) {
+        for (SignatureXref xref : crossReferences)    {
+            addCrossReference(xref);
+        }
+    }
+
+    /**
+     * Adds and returns cross-reference
+     *
+     * @param xref Cross-reference to add
+     * @return Cross-reference
+     * @throws IllegalArgumentException if xref is null
+     */
+    public SignatureXref addCrossReference(SignatureXref xref) throws IllegalArgumentException {
+        if (xref == null) {
+            throw new IllegalArgumentException("'xref' must not be null");
+        }
+        crossReferences.add(xref);
+        xref.setSignature(this);
+        return xref;
+    }
+
+    public void removeCrossReference(SignatureXref xref) {
+        crossReferences.remove(xref);
+    }
+    
 
     @Override public boolean equals(Object o) {
         if (this == o)
@@ -447,6 +513,7 @@ public class Signature implements Serializable {
                 .append(getAbstract(), s.getAbstract())
                 .append(signatureLibraryRelease, s.signatureLibraryRelease)
                 .append(models, s.models)
+                .append(crossReferences, s.crossReferences)
                 .isEquals();
     }
 
@@ -462,6 +529,7 @@ public class Signature implements Serializable {
                 .append(getAbstract())
                 .append(signatureLibraryRelease)
                 .append(models)
+                .append(crossReferences)
                 .toHashCode();
     }
 

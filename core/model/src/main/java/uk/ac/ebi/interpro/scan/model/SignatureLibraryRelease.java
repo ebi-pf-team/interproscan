@@ -31,8 +31,9 @@ import java.util.Set;
  * Signature library release.
  *
  * @author  Antony Quinn
+ * @author  Phil Jones
+ * @author  David Binns
  * @version $Id$
- * @since   1.0
  */
 @Entity
 @Table(name="signature_library_release", uniqueConstraints =

@@ -89,7 +89,7 @@ public class Protein implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "protein")
     @XmlElement(name = "xref")
     // TODO: This should not be here (so TODO comments on getCrossReferences)
-    private Set<Xref> crossReferences = new HashSet<Xref>();
+    private Set<ProteinXref> crossReferences = new HashSet<ProteinXref>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -106,7 +106,7 @@ public class Protein implements Serializable {
         setSequenceAndMd5(sequence);
     }
 
-    public Protein(String sequence, Set<Match> matches, Set<Xref> crossReferences) {
+    public Protein(String sequence, Set<Match> matches, Set<ProteinXref> crossReferences) {
         setMatches(matches);
         setSequenceAndMd5(sequence);
         setCrossReferences(crossReferences);
@@ -115,11 +115,11 @@ public class Protein implements Serializable {
     /**
      * Utility method to add a List of cross references
      *
-     * @param crossReferences
+     * @param accessions
      */
-    public void addCrossReferences(String... crossReferences) {
-        for (String xrefName : crossReferences) {
-            addCrossReference(new Xref(xrefName));
+    public void addCrossReferences(String... accessions) {
+        for (String accession : accessions) {
+            addCrossReference(new ProteinXref(accession));
         }
     }
 
@@ -136,7 +136,7 @@ public class Protein implements Serializable {
 
         // Optional parameters
         private Set<Match> matches = new HashSet<Match>();
-        private Set<Xref> crossReferences = new HashSet<Xref>();
+        private Set<ProteinXref> crossReferences = new HashSet<ProteinXref>();
 
         public Builder(String sequence) {
             this.sequence = sequence;
@@ -150,15 +150,15 @@ public class Protein implements Serializable {
                 }
             }
             if (!crossReferences.isEmpty()) {
-                for (Xref x : crossReferences) {
+                for (ProteinXref x : crossReferences) {
                     protein.addCrossReference(x);
                 }
             }
             return protein;
         }
 
-        public Builder crossReference(Xref xref) {
-            this.crossReferences.add(xref);
+        public Builder crossReference(ProteinXref ProteinXref) {
+            this.crossReferences.add(ProteinXref);
             return this;
         }
 
@@ -283,44 +283,44 @@ public class Protein implements Serializable {
             ...
         at uk.ac.ebi.interpro.scan.model.AbstractTest.unmarshal(AbstractTest.java:150)
      */
-    //@XmlElement(name="xref")
-    // TODO: Example: Expected: Xref[protein=uk.ac.ebi.interpro.scan.model.Protein@1f49969]
-    // TODO: Example: Actual:   Xref[protein=<null>]
+    //@XmlElement(name="ProteinXref")
+    // TODO: Example: Expected: ProteinXref[protein=uk.ac.ebi.interpro.scan.model.Protein@1f49969]
+    // TODO: Example: Actual:   ProteinXref[protein=<null>]
     // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
     // TODO: JAXB or do we have to use an XmlAdapter?
-    public Set<Xref> getCrossReferences() {
+    public Set<ProteinXref> getCrossReferences() {
         return Collections.unmodifiableSet(crossReferences);
     }
 
-    private void setCrossReferences(Set<Xref> crossReferences) {
-        for (Xref xref : crossReferences) {
-            addCrossReference(xref);
+    private void setCrossReferences(Set<ProteinXref> crossReferences) {
+        for (ProteinXref ProteinXref : crossReferences) {
+            addCrossReference(ProteinXref);
         }
     }
 
     /**
      * Adds and returns cross-reference
      *
-     * @param xref Cross-reference to add
+     * @param ProteinXref Cross-reference to add
      * @return Cross-reference
-     * @throws IllegalArgumentException if xref is null
+     * @throws IllegalArgumentException if ProteinXref is null
      */
-    public Xref addCrossReference(Xref xref) throws IllegalArgumentException {
-        if (xref == null) {
-            throw new IllegalArgumentException("'xref' must not be null");
+    public ProteinXref addCrossReference(ProteinXref ProteinXref) throws IllegalArgumentException {
+        if (ProteinXref == null) {
+            throw new IllegalArgumentException("'ProteinXref' must not be null");
         }
-        crossReferences.add(xref);
-        xref.setProtein(this);
-        return xref;
+        crossReferences.add(ProteinXref);
+        ProteinXref.setProtein(this);
+        return ProteinXref;
     }
 
     /**
      * Removes match from sequence
      *
-     * @param xref Cross-reference to remove
+     * @param ProteinXref Cross-reference to remove
      */
-    public void removeCrossReference(Xref xref) {
-        crossReferences.remove(xref);
+    public void removeCrossReference(ProteinXref ProteinXref) {
+        crossReferences.remove(ProteinXref);
     }
 
     @Override

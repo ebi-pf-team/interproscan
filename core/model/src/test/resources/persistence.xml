@@ -33,9 +33,11 @@
 
         <class>uk.ac.ebi.interpro.scan.model.Protein</class>
         <class>uk.ac.ebi.interpro.scan.model.Model</class>
-        <class>uk.ac.ebi.interpro.scan.model.Xref</class>
         <class>uk.ac.ebi.interpro.scan.model.Signature</class>
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
+        <class>uk.ac.ebi.interpro.scan.model.Xref</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProteinXref</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignatureXref</class>
 
         <properties>
             <property name="hibernate.show_sql" value="${mvn.hibernate.show_sql}"/>
