@@ -21,10 +21,9 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Signature library, for example Pfam or PRINTS.
  *
- * @author Antony Quinn
- * @author Phil Jones
+ * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
- * @since 1.0
  */
 @XmlType(name = "SignatureLibraryType")
 public enum SignatureLibrary {

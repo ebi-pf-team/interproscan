@@ -83,7 +83,7 @@
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
                 Protein p = new Protein("MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG");
-                p.addCrossReference(new Xref("A0A314"));
+                p.addCrossReference(new ProteinXref("A0A314"));
                 Signature signature = new Signature("G3DSA:2.40.50.140", "Nucleic acid-binding proteins");                
                 Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
                 locations.add(new Hmmer3Match.Hmmer3Location(74, 93, -8.9, 0.28, 63, 82, HmmBounds.INCOMPLETE, 73, 94));
@@ -98,7 +98,7 @@
                 <![CDATA[
             <protein md5="1de2cf633901ff1f00785735c8ce7e70" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
-                <xref id="A0A314"/>
+                <xref ac="A0A314"/>
                 <matches>
                     <hmmer3-match score="-8.9" evalue="0.28">
                         <signature ac="G3DSA:2.40.50.140" name="Nucleic acid-binding proteins" />
@@ -150,7 +150,7 @@
                 import uk.ac.ebi.interpro.scan.model.*
                 Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI");
                 Signature signature = new Signature("PF02310", "B12-binding");
-                p.addCrossReference(new Xref("A0A000_9ACTO"));
+                p.addCrossReference(new ProteinXref("A0A000_9ACTO"));
                 Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
                 locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE, 2, 108));
                 p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
@@ -165,7 +165,7 @@
                 <![CDATA[
             <protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
-                <xref id="A0A000_9ACTO"/>
+                <xref ac="A0A000_9ACTO"/>
                 <matches>
                     <hmmer3-match score="0.035" evalue="3.7E-9">
                         <signature ac="PF02310" name="B12-binding" />
@@ -199,7 +199,7 @@
                     "MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKA" +
                     "RYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLN" +
                     "YMTDLWKSQGRM");
-                p.addCrossReference(new Xref("UPI0001C4B400"));
+                p.addCrossReference(new ProteinXref("UPI0001C4B400"));
                 Signature signature = new Signature("PIRSF000743", "RPO19");
                 Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
                 locations.add(new Hmmer2Match.Hmmer2Location(7, 172, 294.5, 6.3E-86, 1, 186, HmmBounds.COMPLETE));
@@ -214,7 +214,7 @@
                 <![CDATA[
             <protein md5="58F1C327155B01E0EE4C95CE0067973C" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKARYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLNYMTDLWKSQGRM</sequence>
-                <xref id="UPI0001C4B400"/>
+                <xref ac="UPI0001C4B400"/>
                 <matches>
                     <hmmer2-match score="294.5" evalue="6.3E-86">
                         <signature ac="PIRSF000743" name="RPO19"/>
@@ -271,8 +271,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
-                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.ProteinXref">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
                     <constructor-arg value="GAP2_CAEEL"/>
                 </bean>
             </util:set>
@@ -314,7 +314,7 @@
                 <![CDATA[
             <protein md5="829339ede4627f6a6bf9166f3e9526d9" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
-                <xref id="GAP2_CAEEL"/>
+                <xref ac="GAP2_CAEEL"/>
                 <matches>
                     <hmmer2-match score="543.4" evalue="2.7E-164">
                         <signature ac="SM00323" name="RasGAP_2"/>
@@ -370,8 +370,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
-                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.ProteinXref">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
                     <constructor-arg value="A6Q974"/>
                 </bean>
             </util:set>
@@ -413,7 +413,7 @@
                 <![CDATA[
             <protein md5="992407d4eb2062c4e4b90ae12b568311" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
-                <xref id="A6Q974"/>
+                <xref ac="A6Q974"/>
                 <matches>
                     <hmmer2-match score="93.8" evalue="2.4E-32">
                         <signature ac="SSF53098" name="Ribonuclease H-like"/>
@@ -500,11 +500,11 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
-                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.ProteinXref">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
                     <constructor-arg value="P02700"/>
                 </bean>
-                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
                     <constructor-arg value="OPSD_SHEEP"/>
                 </bean>
             </util:set>
@@ -535,8 +535,8 @@
                 <![CDATA[
                 <protein md5="ae2f4d0c928c8017da2df2d5cf15f01" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
-                    <xref id="P02700"/>
-                    <xref id="OPSD_SHEEP"/>
+                    <xref ac="P02700"/>
+                    <xref ac="OPSD_SHEEP"/>
                     <matches>
                         <fingerprints-match graphscan="IIIIII" evalue="2.2E-64">
                             <signature ac="PR00579" name="RHODOPSIN" />
@@ -598,8 +598,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
-                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.ProteinXref">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
                     <constructor-arg value="UPI000048E726"/>
                 </bean>
             </util:set>
@@ -616,7 +616,7 @@
                 <![CDATA[
             <protein md5="daa9d1290a78528c68605d254f9ba358" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
-                <xref id="UPI000048E726"/>
+                <xref ac="UPI000048E726"/>
                 <matches>
                     <blastprodom-match>
                         <signature ac="PD001061"/>
@@ -666,8 +666,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
-                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.ProteinXref">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
                     <constructor-arg value="UPI0001AFC88D"/>
                 </bean>
             </util:set>
@@ -682,7 +682,7 @@
                 <![CDATA[
                 <protein md5="386964a0a573631d643f2a7e7de03066" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
-                    <xref id="UPI0001AFC88D"/>
+                    <xref ac="UPI0001AFC88D"/>
                     <matches>
                         <patternscan-match>
                             <signature ac="PS00675" name="SIGMA54_INTERACT_1"/>
@@ -747,8 +747,8 @@
             </util:set>
         </constructor-arg>
         <constructor-arg>
-            <util:set value-type="uk.ac.ebi.interpro.scan.model.Xref">
-                <bean class="uk.ac.ebi.interpro.scan.model.Xref">
+            <util:set value-type="uk.ac.ebi.interpro.scan.model.ProteinXref">
+                <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
                     <constructor-arg value="UPI0001AF8DCD"/>
                 </bean>
             </util:set>
@@ -764,20 +764,20 @@
                 <![CDATA[
                 <protein md5="de25966e66a6340eed9d837b05ffc58b" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
-                    <xref id="UPI0001AF8DCD"/>
+                    <xref ac="UPI0001AF8DCD"/>
                     <matches>
+                        <profilescan-match>
+                            <signature name="RHODANESE_3" ac="PS50206"/>
+                            <locations>
+                                <profilescan-location start="292" end="370" score="15.158"/>
+                            </locations>
+                        </profilescan-match>                    
                         <profilescan-match>
                             <signature name="CNMP_BINDING_3" ac="PS50042"/>
                             <locations>
                                 <profilescan-location start="171" end="275" score="24.202"/>
                             </locations>
                         </profilescan-match>
-                        <profilescan-match>
-                            <signature name="RHODANESE_3" ac="PS50206"/>
-                            <locations>
-                                <profilescan-location start="292" end="370" score="15.158"/>
-                            </locations>
-                        </profilescan-match>                        
                     </matches>
                 </protein>
                 ]]>

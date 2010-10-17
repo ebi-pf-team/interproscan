@@ -73,6 +73,23 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
     }
 
     @Test
+    public void testXrefs() throws IOException {
+        SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
+        Signature signature = release.addSignature(
+                new Signature.Builder("PR00579")
+                        .name("RHODOPSIN")
+                        .type("family")
+                        .abstractText("Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).")
+                        .crossReference(new SignatureXref("PRINTS", "PR00268", "NGF"))
+                        .crossReference(new SignatureXref("PRINTS", "PR01913", "NGFBETA"))
+                        .crossReference(new SignatureXref("INTERPRO", "IPR020433", "Nerve growth factor conserved site"))
+                        .build());
+        // Should be OK
+        assertEquals("Should have 3 xrefs", 3, release.getSignatures().iterator().next().getCrossReferences().size());
+//        System.out.println(super.marshal(release));
+    }
+
+    @Test
     public void testXml() throws IOException, SAXException {
         super.testSupportsMarshalling(SignatureLibraryRelease.class);
         super.testXmlRoundTrip();

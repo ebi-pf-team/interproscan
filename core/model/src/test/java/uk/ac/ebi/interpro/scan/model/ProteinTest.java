@@ -36,9 +36,8 @@ import static org.junit.Assert.*;
 /**
  * Tests cases for {@link Protein}.
  *
- * @author Antony Quinn
+ * @author  Antony Quinn
  * @version $Id$
- * @since 1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -91,12 +90,12 @@ public class ProteinTest extends AbstractTest<Protein> {
 
     @Test
     public void testCrossReferences() {
-        final String id = "test";
+        final String AC = "test";
         Protein protein = new Protein(GOOD);
-        Xref xref = protein.addCrossReference(new Xref(id));
+        ProteinXref xref = protein.addCrossReference(new ProteinXref(AC));
         assertEquals(1, protein.getCrossReferences().size());
         assertNotNull(xref);
-        assertEquals(id, xref.getIdentifier());
+        assertEquals(AC, xref.getAccession());
         protein.removeCrossReference(xref);
         assertEquals(0, protein.getCrossReferences().size());
     }
@@ -113,10 +112,10 @@ public class ProteinTest extends AbstractTest<Protein> {
         // Original and copy should be equal
         assertEquals(original, copy);
         // Original and copy should not be equal
-        Xref xref = original.addCrossReference(new Xref("A0A000_9ACTO"));
+        ProteinXref ProteinXref = original.addCrossReference(new ProteinXref("A0A000_9ACTO"));
         assertFalse("Original and copy should not be equal", original.equals(copy));
         //  Original and copy should be equal again
-        copy.addCrossReference((Xref) SerializationUtils.clone(xref));
+        copy.addCrossReference((ProteinXref) SerializationUtils.clone(ProteinXref));
         assertEquals(original, copy);
         // Try with locations
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
@@ -131,11 +130,11 @@ public class ProteinTest extends AbstractTest<Protein> {
      * Tests the serialization and de-serialization works.
      */
     @Test
-    public void testSerization() throws IOException {
+    public void testSerialization() throws IOException {
 
         Protein original = new Protein(GOOD);
-        Xref xref = original.addCrossReference(new Xref("A0A000_9ACTO"));
-        original.addCrossReference(xref);
+        ProteinXref ProteinXref = original.addCrossReference(new ProteinXref("A0A000_9ACTO"));
+        original.addCrossReference(ProteinXref);
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
         locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
         Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));

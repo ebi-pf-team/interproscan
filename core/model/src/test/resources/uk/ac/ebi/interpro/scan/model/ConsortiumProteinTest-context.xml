@@ -91,7 +91,7 @@
                         "RRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAP" +
                         "SAVHETEEIHRFVDALDGIWSELGAARRV");
                 // p.addCrossReference(new Xref("A0A000", "A0A000_9ACTO"));
-                p.addCrossReference(new Xref("A0A000"));
+                p.addCrossReference(new ProteinXref("A0A000"));
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "14");
                 Signature signature = new Signature.Builder("PF00155")
                                         .name("Aminotran_1_2").type("DOMAIN").signatureLibraryRelease(release).build();
