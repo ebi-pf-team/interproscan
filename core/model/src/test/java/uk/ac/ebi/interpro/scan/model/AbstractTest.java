@@ -17,20 +17,13 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.Unmarshaller;
 import org.custommonkey.xmlunit.*;
-import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 import org.xml.sax.SAXException;
-import org.w3c.dom.Element;
 
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.Source;
 import javax.annotation.Resource;
 import java.io.*;
 import java.util.Map;
@@ -45,37 +38,17 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
  * @since   1.0
  * @see     org.custommonkey.xmlunit.XMLUnit
  */
-abstract class AbstractTest<T> {
+abstract class AbstractTest<T> extends AbstractXmlTest<T> {
 
     private static final Log LOGGER = LogFactory.getLog(AbstractTest.class);
 
     private static final Long LONG_ZERO = 0L;
 
     @Resource
-    private Marshaller marshaller;
-
-    @Resource
-    private Unmarshaller unmarshaller;
-
-    @Resource
-    private org.springframework.core.io.Resource schema;
-
-    @Resource
     private Map<String, ObjectXmlPair<T>> objectXmlMap;
 
     @Resource
     private GenericDAO<T, Long> dao;
-
-    static {
-        // Ignore comments and whitespace when comparing XML
-        XMLUnit.setIgnoreComments(true);
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setIgnoreAttributeOrder(true);
-        XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
-        XMLUnit.setNormalizeWhitespace(true);
-    } 
-
-    // TODO: Add method that tests non-XML objects (so can test with @XmlTransient data)
 
     private void initJpa()   {
         assertNotNull(dao);
@@ -118,11 +91,6 @@ abstract class AbstractTest<T> {
         }
     }
 
-    protected void testSupportsMarshalling(Class c) {
-        assertTrue(marshaller.supports(c));
-        assertTrue(unmarshaller.supports(c));
-    }
-
     /**
      * Performs XML round-trip using {@link java.util.Map} of {@link uk.ac.ebi.interpro.scan.model.ObjectXmlPair}.
      *
@@ -152,81 +120,5 @@ abstract class AbstractTest<T> {
             validate(actualXml);
         }
     }
-
-    protected void assertXmlEquals(String key, String expectedXml, String actualXml) throws IOException, SAXException {
-        Diff diff = new Diff(expectedXml, actualXml);
-        // Order of attributes and elements is not important
-        diff.overrideElementQualifier(new RecursiveElementNameAndAttributeQualifier());
-        String message = key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml;
-        assertTrue(message, diff.similar());
-    }
-
-    protected String marshal(T object) throws IOException  {
-        Writer writer = new StringWriter();
-        marshaller.marshal(object, new StreamResult(writer));
-        return writer.toString();
-    }
-
-    protected T unmarshal(String xml) throws IOException  {
-        return unmarshal(new StreamSource(new StringReader(xml)));
-    }
-
-    protected T unmarshal(Source source) throws IOException  {
-        // There's no guarantee that this cast is correct, but it's test code so let's not clutter the compiler output
-        @SuppressWarnings("unchecked") T result = (T) unmarshaller.unmarshal(source);
-        return result;
-    }
-
-    private void validate(String xml) throws SAXException, IOException {
-        Validator v = new Validator(xml);
-        v.useXMLSchema(true);
-        v.setJAXP12SchemaSource(schema.getInputStream());
-        v.assertIsValid();
-    }
-
-    /**
-     * Tests two elements for tag name and attribute name comparability, ignoring the order of elements and the order
-     * of attributes
-     */
-    private static final class RecursiveElementNameAndAttributeQualifier extends ElementNameAndAttributeQualifier {
-
-        private final ElementQualifier recursiveElementQualifier = new RecursiveElementNameAndTextQualifier();
-
-        /**
-         * Determine whether two elements qualify for further Difference comparison.
-         * 
-         * @param  control an Element from the control XML NodeList
-         * @param  test    an Element from the test XML NodeList
-         * @return true    if the elements are comparable, false otherwise
-         */
-        @Override public boolean qualifyForComparison(Element control, Element test) {
-            // TODO: This should ensure the order of attributes and elements is not important, BUT...
-            // TODO: sometimes it does not work. Perhaps best solution is to order elements in normalised form
-            // TODO: using XSLT before using Diff()
-            boolean isElementsComparable = recursiveElementQualifier.qualifyForComparison(control, test);
-            boolean isAttributesComparable = super.areAttributesComparable(control, test);
-            return (isElementsComparable && isAttributesComparable);
-        }
-
-    }
-
-//        Tried following in testUnmarshal() but will not work because no public setter methods in model!
-//        T expectedCopy = (T) SerializationUtils.clone(expected);
-//        for (Method m : expectedCopy.getClass().getMethods())   {
-//            for (Annotation a : m.getDeclaredAnnotations()) {
-//                if (a instanceof XmlTransient)    {
-//                    if (m.getName().startsWith("get"))  {
-//                        // Find corresponding "set" method
-//                        for (Method mm : expectedCopy.getClass().getMethods())   {
-//                            if (mm.getName().startsWith("set")) {
-//                                if (m.getName().substring(3).equivalent(mm.getName().substring(3))) {
-//                                    // Call "set<Method.Name>(null)"
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
 }

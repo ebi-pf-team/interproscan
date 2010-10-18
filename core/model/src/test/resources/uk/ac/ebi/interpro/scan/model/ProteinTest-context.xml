@@ -98,7 +98,7 @@
                 <![CDATA[
             <protein md5="1de2cf633901ff1f00785735c8ce7e70" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
-                <xref ac="A0A314"/>
+                <xref id="A0A314"/>
                 <matches>
                     <hmmer3-match score="-8.9" evalue="0.28">
                         <signature ac="G3DSA:2.40.50.140" name="Nucleic acid-binding proteins" />
@@ -165,7 +165,7 @@
                 <![CDATA[
             <protein md5="5ab17489095dd2836122eec0e91db82d" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
-                <xref ac="A0A000_9ACTO"/>
+                <xref id="A0A000_9ACTO"/>
                 <matches>
                     <hmmer3-match score="0.035" evalue="3.7E-9">
                         <signature ac="PF02310" name="B12-binding" />
@@ -214,7 +214,7 @@
                 <![CDATA[
             <protein md5="58F1C327155B01E0EE4C95CE0067973C" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKARYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLNYMTDLWKSQGRM</sequence>
-                <xref ac="UPI0001C4B400"/>
+                <xref id="UPI0001C4B400"/>
                 <matches>
                     <hmmer2-match score="294.5" evalue="6.3E-86">
                         <signature ac="PIRSF000743" name="RPO19"/>
@@ -314,7 +314,7 @@
                 <![CDATA[
             <protein md5="829339ede4627f6a6bf9166f3e9526d9" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
-                <xref ac="GAP2_CAEEL"/>
+                <xref id="GAP2_CAEEL"/>
                 <matches>
                     <hmmer2-match score="543.4" evalue="2.7E-164">
                         <signature ac="SM00323" name="RasGAP_2"/>
@@ -413,7 +413,7 @@
                 <![CDATA[
             <protein md5="992407d4eb2062c4e4b90ae12b568311" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
-                <xref ac="A6Q974"/>
+                <xref id="A6Q974"/>
                 <matches>
                     <hmmer2-match score="93.8" evalue="2.4E-32">
                         <signature ac="SSF53098" name="Ribonuclease H-like"/>
@@ -535,8 +535,8 @@
                 <![CDATA[
                 <protein md5="ae2f4d0c928c8017da2df2d5cf15f01" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
-                    <xref ac="P02700"/>
-                    <xref ac="OPSD_SHEEP"/>
+                    <xref id="P02700"/>
+                    <xref id="OPSD_SHEEP"/>
                     <matches>
                         <fingerprints-match graphscan="IIIIII" evalue="2.2E-64">
                             <signature ac="PR00579" name="RHODOPSIN" />
@@ -616,7 +616,7 @@
                 <![CDATA[
             <protein md5="daa9d1290a78528c68605d254f9ba358" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                 <sequence>MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
-                <xref ac="UPI000048E726"/>
+                <xref id="UPI000048E726"/>
                 <matches>
                     <blastprodom-match>
                         <signature ac="PD001061"/>
@@ -682,7 +682,7 @@
                 <![CDATA[
                 <protein md5="386964a0a573631d643f2a7e7de03066" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
-                    <xref ac="UPI0001AFC88D"/>
+                    <xref id="UPI0001AFC88D"/>
                     <matches>
                         <patternscan-match>
                             <signature ac="PS00675" name="SIGMA54_INTERACT_1"/>
@@ -764,7 +764,7 @@
                 <![CDATA[
                 <protein md5="de25966e66a6340eed9d837b05ffc58b" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
-                    <xref ac="UPI0001AF8DCD"/>
+                    <xref id="UPI0001AF8DCD"/>
                     <matches>
                         <profilescan-match>
                             <signature name="RHODANESE_3" ac="PS50206"/>

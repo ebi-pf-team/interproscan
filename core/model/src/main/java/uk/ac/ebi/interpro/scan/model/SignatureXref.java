@@ -41,12 +41,12 @@ public class SignatureXref extends Xref implements Serializable {
     /** Zero arguments constructor for Hibernate. */
     protected SignatureXref() { }
 
-    public SignatureXref(String accession){
-        super(accession);
+    public SignatureXref(String identifier){
+        super(identifier);
     }
 
-    public SignatureXref(String databaseName, String accession, String name){
-        super(databaseName, accession, name);
+    public SignatureXref(String databaseName, String identifier, String name){
+        super(databaseName, identifier, name);
     }
 
     @XmlTransient

@@ -95,7 +95,7 @@ public class ProteinTest extends AbstractTest<Protein> {
         ProteinXref xref = protein.addCrossReference(new ProteinXref(AC));
         assertEquals(1, protein.getCrossReferences().size());
         assertNotNull(xref);
-        assertEquals(AC, xref.getAccession());
+        assertEquals(AC, xref.getIdentifier());
         protein.removeCrossReference(xref);
         assertEquals(0, protein.getCrossReferences().size());
     }

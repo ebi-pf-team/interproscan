@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,6 +39,7 @@ public class InterProXMLUnmarshallerTest {
 
 
     @Test
+    //@Ignore("Causes OutOfMemory error")
     public void testUnmarshallerAndSerialization()
             throws IOException, XMLStreamException, ClassNotFoundException {
         BufferedInputStream bis = null;

@@ -10,9 +10,9 @@ import java.util.Set;
 /**
  * Test cases for {@link Match} implementations
  *
- * @author Antony Quinn
+ * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
- * @since 1.0
  */
 public class MatchTest extends TestCase {
 

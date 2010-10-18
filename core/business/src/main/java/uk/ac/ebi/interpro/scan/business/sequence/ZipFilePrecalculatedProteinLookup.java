@@ -28,7 +28,7 @@ public class ZipFilePrecalculatedProteinLookup implements PrecalculatedProteinLo
         } catch (IOException e) {
             throw new IllegalStateException("Unable to deserialize protein for MD5:" + md5);
         }
-        //for (Xref xref : protein.getCrossReferences()) precalculated.addCrossReferences(xref.getIdentifier());
+        //for (ProteinXref xref : protein.getCrossReferences()) precalculated.addCrossReferences(xref.getIdentifier());
         //for (Match match:precalculated.getMatches()) protein.addMatch(match);
         return precalculated;
     }

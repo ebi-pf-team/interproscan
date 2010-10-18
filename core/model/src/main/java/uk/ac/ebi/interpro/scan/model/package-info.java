@@ -15,7 +15,7 @@
  */
 
 /**
- * Provides model classes for InterProScan.
+ * Provides data model classes for InterProScan.
  *
  * @author  Antony Quinn
  * @author  Phil Jones
@@ -25,6 +25,9 @@
 
 @XmlSchema(namespace = "http://www.ebi.ac.uk/schema/interpro/scan/model", elementFormDefault = XmlNsForm.QUALIFIED)
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL) // TODO: @XmlAccessorOrder seems to have no effect
+@XmlJavaTypeAdapter(value = DateAdapter.class, type = Date.class)        
 package uk.ac.ebi.interpro.scan.model;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Date;

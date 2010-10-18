@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
-import uk.ac.ebi.interpro.scan.model.Xref;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import javax.persistence.Query;
 
@@ -15,7 +15,7 @@ import javax.persistence.Query;
  * @version $Id$
  * @since 1.0
  */
-public class XrefDAOImpl extends GenericDAOImpl<Xref, Long> implements XrefDAO {
+public class ProteinXrefDAOImpl extends GenericDAOImpl<ProteinXref, Long> implements ProteinXrefDAO {
 
     private static final String UPI_ZERO = "UPI0000000000";
 
@@ -29,8 +29,8 @@ public class XrefDAOImpl extends GenericDAOImpl<Xref, Long> implements XrefDAO {
      * that calls this constructor with the appropriate class.
      *
      */
-    public XrefDAOImpl() {
-        super(Xref.class);
+    public ProteinXrefDAOImpl() {
+        super(ProteinXref.class);
     }
 
     /**
@@ -44,7 +44,7 @@ public class XrefDAOImpl extends GenericDAOImpl<Xref, Long> implements XrefDAO {
     @Transactional (readOnly = true)
     public String getMaxUniparcId() {
         Query query = entityManager.createQuery(
-                "select max(x.identifier) from Xref x where x.identifier like ('UPI__________') "
+                "select max(x.identifier) from ProteinXref x where x.identifier like ('UPI__________') "
         );
         final String upi = (String) query.getSingleResult();
         if (upi == null || upi.length() == 0){

@@ -75,7 +75,7 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
     @Test
     public void testXrefs() throws IOException {
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
-        Signature signature = release.addSignature(
+        release.addSignature(
                 new Signature.Builder("PR00579")
                         .name("RHODOPSIN")
                         .type("family")

@@ -16,33 +16,65 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
 import org.junit.Test;
 import org.apache.commons.lang.SerializationUtils;
-import junit.framework.TestCase;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Set;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests cases for {@link Hmmer3Match}.
  *
  * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
  */
-public class Hmmer3MatchTest extends TestCase {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
+public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
+
+    private static final Log LOGGER = LogFactory.getLog(Hmmer3MatchTest.class);
+
+    private Hmmer3Match originalMatch;
+    private HmmerLocation originalLocation;
+
+    @Before
+    public void init() {
+        originalLocation = 
+                new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2);
+        originalMatch = new Hmmer3Match(
+                new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9,
+                new HashSet<Hmmer3Match.Hmmer3Location>(Arrays.asList(
+                        new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2)
+                ))
+        );
+    }
+
+    @Test
+    public void testMarshal() throws IOException {
+        if (LOGGER.isDebugEnabled()) {
+            Protein p = new Protein("MGAAASIQTTVNTL");
+            p.addMatch(originalMatch);
+            LOGGER.debug(super.marshal(p));
+        }
+    }
 
     /**
      * Tests the equivalent() method works as expected
      */
     @Test
     public void testMatchEquals() {
-        Hmmer3Match original = new Hmmer3Match(
-                new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9,
-                new HashSet<Hmmer3Match.Hmmer3Location>(Arrays.asList(
-                        new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2)
-                ))
-        );
+        Hmmer3Match original = originalMatch;
         Hmmer3Match copy = (Hmmer3Match)SerializationUtils.clone(original);
         assertEquals("Original should equal itself", original, original);
         assertEquals("Original and copy should be equal", original, copy);
@@ -65,8 +97,7 @@ public class Hmmer3MatchTest extends TestCase {
      */
     @Test
     public void testLocationEquals() {
-        HmmerLocation original = 
-                new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2);
+        HmmerLocation original = originalLocation;
         HmmerLocation copy = (HmmerLocation)SerializationUtils.clone(original);
         assertEquals("Original should equal itself", original, original);
         assertEquals("Original and copy should be equal", original, copy);
