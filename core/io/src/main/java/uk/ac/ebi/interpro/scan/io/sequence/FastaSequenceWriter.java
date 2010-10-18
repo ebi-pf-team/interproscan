@@ -1,8 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.sequence;
 
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Xref;
-import uk.ac.ebi.interpro.scan.io.sequence.SequenceWriter;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import java.io.*;
 import java.util.Collection;
@@ -110,7 +109,7 @@ public final class FastaSequenceWriter implements SequenceWriter {
         // Add xrefs        
         if (addXrefs && p.getCrossReferences().size() > 0)  {
             record.append(ID_LINE_SEPARATOR);
-            for (Xref xref : p.getCrossReferences())    {
+            for (ProteinXref xref : p.getCrossReferences())    {
                 record.append(xref.getIdentifier());
                 record.append(" ");
             }

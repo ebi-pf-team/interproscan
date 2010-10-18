@@ -145,7 +145,7 @@ public class Gene3dRunner {
                 new SequenceReader.Listener() {
                     @Override public void mapRecord(SequenceRecord record) {
                         proteins.add(new Protein.Builder(record.getSequence())
-                                                .crossReference(new Xref(record.getId()))
+                                                .crossReference(new ProteinXref(record.getId()))
                                                 .build());
                     }
                 }

@@ -10,7 +10,7 @@ import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
 import uk.ac.ebi.interpro.scan.model.Location;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Xref;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -182,7 +182,7 @@ public class PhobiusFilteredMatchDAOTest {
         for (Protein retrieved : retrievedProteins){
             LOGGER.info ("Protein ID: " + retrieved.getId());
             LOGGER.info ("Number of Xrefs: " + retrieved.getCrossReferences().size());
-            for (Xref xref : retrieved.getCrossReferences()){
+            for (ProteinXref xref : retrieved.getCrossReferences()){
                 LOGGER.info ("\tXref: " + xref.getIdentifier());
             }
             LOGGER.info ("Number of Matches " + retrieved.getMatches().size());

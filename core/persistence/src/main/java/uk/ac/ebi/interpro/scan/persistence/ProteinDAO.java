@@ -38,7 +38,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated cross references.
      * @param id being the primary key of the required Protein.
-     * @return The Protein, with cross references loaded. (Xrefs are LAZY by default) or null if the
+     * @return The Protein, with cross references loaded. (ProteinXrefs are LAZY by default) or null if the
      * primary key is not present in the database.
      */
     public Protein getProteinAndCrossReferencesByProteinId(Long id);
@@ -63,8 +63,8 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * If there are Protein objects with the same MD5 / sequence in the database,
      * this method updates these proteins, rather than inserting the new ones.
      *
-     * Note that this method inserts the new Protein objects AND and new Xrefs
-     * (possibly updating an existing Protein object if necessary with the new Xref.)
+     * Note that this method inserts the new Protein objects AND and new ProteinXrefs
+     * (possibly updating an existing Protein object if necessary with the new ProteinXref.)
      * @param newProteins being a List of new Protein objects to insert
      * @return a new List<Protein> containing all of the inserted / updated Protein objects.
      * (Allows the caller to retrieve the primary keys for the proteins).

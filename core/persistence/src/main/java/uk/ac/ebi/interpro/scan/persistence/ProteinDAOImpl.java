@@ -19,7 +19,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Xref;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -174,7 +174,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
                     Protein existingProtein = md5ToExistingProtein.get(candidate.getMd5());
                     boolean updateRequired = false;
                     if (candidate.getCrossReferences() != null){
-                        for (Xref xref : candidate.getCrossReferences()){
+                        for (ProteinXref xref : candidate.getCrossReferences()){
                             // Add any NEW cross references.
                             if (! existingProtein.getCrossReferences().contains(xref)){
                                 existingProtein.addCrossReference(xref);

@@ -42,12 +42,12 @@ public class ProteinXref extends Xref implements Serializable {
     /** Zero arguments constructor just for Hibernate. */
     protected ProteinXref() { }
 
-    public ProteinXref(String accession){
-        super(accession);
+    public ProteinXref(String identifier){
+        super(identifier);
     }
     
-    public ProteinXref(String databaseName, String accession, String name){
-        super(databaseName, accession, name);
+    public ProteinXref(String databaseName, String identifier, String name){
+        super(databaseName, identifier, name);
     }
 
     @XmlTransient

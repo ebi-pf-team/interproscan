@@ -44,28 +44,26 @@ abstract class Xref implements Serializable {
     @TableGenerator(name="XREF_IDGEN", table="KEYGEN", pkColumnValue="xref", initialValue = 0, allocationSize = 50)
     protected Long id;
 
-    @Column (name = "ac", nullable = false, unique = false, updatable = false)
-    @Index (name="xref_accession_idx")
-    private String accession;
+    @Column (name = "identifier", nullable = false, unique = false, updatable = false)
+    @Index (name="xref_identifier_idx")
+    private String identifier;
 
-    @Column (name = "name", nullable = false, unique = false, updatable = false)
+    @Column (name = "name", nullable = true)
     private String name;
 
-    @Column (name = "db", nullable = false, unique = false, updatable = false)
+    @Column (name = "db", nullable = true)
     private String databaseName;
 
-    /**
-     * Zero arguments constructor for Hibernate.
-     */
+    /** Zero arguments constructor for Hibernate. */
     protected Xref() { }
 
-    public Xref(String accession){
-        this.accession = accession;
+    public Xref(String identifier){
+        this.identifier = identifier;
     }
 
-    public Xref(String databaseName, String accession, String name) {
+    public Xref(String databaseName, String identifier, String name) {
         this.databaseName = databaseName;
-        this.accession    = accession;
+        this.identifier = identifier;
         this.name         = name;
     }
 
@@ -79,13 +77,13 @@ abstract class Xref implements Serializable {
         this.id = id;
     }
 
-    @XmlAttribute(name="ac", required=true)
-    public String getAccession() {
-        return accession;
+    @XmlAttribute(name="id", required=true)
+    public String getIdentifier() {
+        return identifier;
     }
 
-    private void setAccession(String accession) {
-        this.accession = accession;
+    private void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     @XmlAttribute(name="name")
@@ -113,7 +111,7 @@ abstract class Xref implements Serializable {
             return false;
         final Xref x = (Xref) o;
         return new EqualsBuilder()
-                .append(accession, x.accession)
+                .append(identifier, x.identifier)
                 .append(name, x.name)
                 .append(databaseName, x.databaseName)
                 .isEquals();
@@ -121,7 +119,7 @@ abstract class Xref implements Serializable {
 
     @Override public int hashCode() {
         return new HashCodeBuilder(15, 37)
-                .append(accession)
+                .append(identifier)
                 .append(name)
                 .append(databaseName)
                 .toHashCode();

@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Xref;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import java.io.Serializable;
@@ -64,7 +64,7 @@ public class ProteinLoader implements Serializable {
             Protein protein = new Protein(sequence);
             if (crossReferences != null) {
                 for (String crossReference : crossReferences) {
-                    Xref xref = new Xref(crossReference);
+                    ProteinXref xref = new ProteinXref(crossReference);
                     protein.addCrossReference(xref);
                 }
             }

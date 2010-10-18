@@ -53,6 +53,6 @@
           class="uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAOImpl"/>
 
     <bean id="xrefDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.XrefDAOImpl"/>
+          class="uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAOImpl"/>
 
 </beans>

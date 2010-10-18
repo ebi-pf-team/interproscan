@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
-import uk.ac.ebi.interpro.scan.model.Xref;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 /**
  * DAO Interface for data access to the Xref table
@@ -12,7 +12,7 @@ import uk.ac.ebi.interpro.scan.model.Xref;
  * @version $Id$
  * @since 1.0
  */
-public interface XrefDAO extends GenericDAO<Xref, Long>  {
+public interface ProteinXrefDAO extends GenericDAO<ProteinXref, Long> {
 
     /**
      * Method to return the maximum UPI stored in the database.

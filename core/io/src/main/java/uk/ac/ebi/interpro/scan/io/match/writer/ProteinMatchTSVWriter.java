@@ -118,8 +118,8 @@ public class ProteinMatchTSVWriter implements ProteinWriter {
 
     private String makeProteinAc(Protein protein) {
         StringBuilder proteinXRef = new StringBuilder();
-        Set<Xref> crossReferences = protein.getCrossReferences();
-        for (Xref crossReference : crossReferences) {
+        Set<ProteinXref> crossReferences = protein.getCrossReferences();
+        for (ProteinXref crossReference : crossReferences) {
             if (proteinXRef.length() > 0) proteinXRef.append("|");
             proteinXRef.append(crossReference.getIdentifier());
         }

@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Xref;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -127,12 +127,12 @@ public class ProteinDAOTest {
         assertEquals("The protein ID of the retrieved object should be the same as after the initial insert", id, firstRetrievedProtein.getId());
 
         // Check the number and content of the cross references.
-        Set<Xref> retrievedXRefs = firstRetrievedProtein.getCrossReferences();
+        Set<ProteinXref> retrievedXRefs = firstRetrievedProtein.getCrossReferences();
         assertNotNull("The cross reference collection should not be null", retrievedXRefs);
         assertEquals("There should be " + ACCESSIONS.length + " cross references.", ACCESSIONS.length, retrievedXRefs.size());
         for (String accession : ACCESSIONS) {
             boolean foundAccession = false;
-            for (Xref ident : retrievedXRefs) {
+            for (ProteinXref ident : retrievedXRefs) {
                 if (accession != null && accession.equals(ident.getIdentifier())) {
                     foundAccession = true;
                 }
@@ -143,7 +143,7 @@ public class ProteinDAOTest {
         }
 
         // Now add an additional cross references and update the Protein.
-        firstRetrievedProtein.addCrossReference(new Xref("EXTRA"));
+        firstRetrievedProtein.addCrossReference(new ProteinXref("EXTRA"));
         dao.update(firstRetrievedProtein);
 
         // Retrieve the protein from the database again and check it has no Xrefs.
@@ -179,7 +179,7 @@ public class ProteinDAOTest {
 
     private void addXrefsToProtein(Protein protein1, final String[] accessions) {
         for (String accession : accessions) {
-            Xref xref = new Xref(accession);
+            ProteinXref xref = new ProteinXref(accession);
             protein1.addCrossReference(xref);
         }
     }

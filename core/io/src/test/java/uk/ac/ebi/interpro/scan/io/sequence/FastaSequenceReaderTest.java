@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Xref;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 /**
  * Tests {@link FastaSequenceReader}.
@@ -76,7 +76,7 @@ public class FastaSequenceReaderTest {
         SequenceReader reader = new FastaSequenceReader(
                 new SequenceReader.Listener() {
                     @Override public void mapRecord(SequenceRecord r) {
-                        Protein p = new Protein.Builder(r.getSequence()).crossReference(new Xref(r.getId())).build();
+                        Protein p = new Protein.Builder(r.getSequence()).crossReference(new ProteinXref(r.getId())).build();
                         proteins.put(p.getMd5(), p); // Use MD5 as key
                     }
                 }

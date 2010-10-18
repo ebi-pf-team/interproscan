@@ -34,10 +34,9 @@ import java.util.*;
  * Signature, for example SSF53098 [http://supfam.mrc-lmb.cam.ac.uk/SUPERFAMILY/cgi-bin/models_list.cgi?sf=53098]
  *
  * @author  Antony Quinn
+ * @author  Phil Jones
  * @version $Id$
- * @since   1.0
  */
-
 @Entity
 @XmlRootElement(name="signature")
 @XmlType(name="SignatureType")
@@ -84,7 +83,10 @@ public class Signature implements Serializable {
     @Index (name="signature_type_idx")
     private String type;
 
+    @Column(nullable = true)
     private Date created;
+    
+    @Column(nullable = true)
     private Date updated;
     
     @Index (name="signature_md5_idx")
@@ -180,6 +182,9 @@ public class Signature implements Serializable {
             signature.setType(type);
             signature.setAbstract(abstractText);
             signature.setSignatureLibraryRelease(signatureLibraryRelease);
+            signature.setCreated(created);
+            signature.setUpdated(updated);
+            signature.setMd5(md5);
             if (models != null) {
                 signature.setModels(models);
             }
@@ -333,6 +338,7 @@ public class Signature implements Serializable {
         abstractChunks = CHUNKER.latterChunks(chunks);
     }
 
+    @XmlAttribute
     public Date getCreated() {
         return created;
     }
@@ -341,6 +347,7 @@ public class Signature implements Serializable {
         this.created = created;
     }
 
+    @XmlAttribute
     public Date getUpdated() {
         return updated;
     }

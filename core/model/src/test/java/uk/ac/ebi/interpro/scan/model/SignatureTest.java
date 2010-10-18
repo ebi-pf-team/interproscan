@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -103,12 +104,15 @@ public class SignatureTest extends AbstractTest<Signature> {
 
     }
 
-    @Test public void testBuilder()   {                       
+    @Test
+    public void testBuilder() throws IOException {
         final String AC       = "SIG001";
         final String NAME     = "test";
         final String TYPE     = "domain";
         final String DESC     = NAME;
         final String ABSTRACT = NAME;
+        final Date CREATED    = new Date(1);                 // 1 January 1970
+        final Date UPDATED    = new Date(Integer.MAX_VALUE); // 25 January 1970
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PHOBIUS, "1.0");
         Set<Model> models = new HashSet<Model>();
         models.add(new Model("MOD001"));
@@ -121,14 +125,22 @@ public class SignatureTest extends AbstractTest<Signature> {
                 .abstractText(ABSTRACT)
                 .signatureLibraryRelease(release)
                 .models(models)
+                .created(CREATED)
+                .updated(UPDATED)
                 .build();
         assertEquals(AC, signature.getAccession());
         assertEquals(NAME, signature.getName());
         assertEquals(TYPE, signature.getType());
         assertEquals(DESC, signature.getDescription());
         assertEquals(ABSTRACT, signature.getAbstract());
+        assertEquals(CREATED, signature.getCreated());
+        assertEquals(UPDATED, signature.getUpdated());
         assertEquals(release, signature.getSignatureLibraryRelease());
         assertEquals(numModels, signature.getModels().size());
+        if (LOGGER.isDebugEnabled())    {
+            LOGGER.debug(signature);
+            LOGGER.debug(super.marshal(signature));
+        }
     }       
 
     @Test public void testRemoveModel()   {
