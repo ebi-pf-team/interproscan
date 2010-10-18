@@ -16,6 +16,7 @@ public abstract class AbstractModelFileParser implements ModelFileParser {
     protected Resource modelFile;
     protected String releaseVersion;
     protected SignatureLibrary library;
+    protected boolean storeAbstract = true;
 
     /**
      * Method to set the io.Resource that is the model file being loaded.
@@ -63,5 +64,16 @@ public abstract class AbstractModelFileParser implements ModelFileParser {
      */
     public SignatureLibrary getSignatureLibrary() {
         return library;
+    }
+
+    /**
+     * Allows the model loader to avoid storing the abstract
+     * in the database if not required (e.g. for InterProScan mode)
+     *
+     * @param storeAbstract to indicate if the abstract should be stored.
+     */
+    @Override
+    public void setStoreAbstract(boolean storeAbstract) {
+        this.storeAbstract = storeAbstract;
     }
 }

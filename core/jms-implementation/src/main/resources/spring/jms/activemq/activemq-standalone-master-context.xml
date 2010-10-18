@@ -22,7 +22,7 @@
         </amq:transportConnectors>
     </amq:broker>
 
-    <bean id="amqstandalone" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
+    <bean id="standalone" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
         <property name="jobs" ref="jobs"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>

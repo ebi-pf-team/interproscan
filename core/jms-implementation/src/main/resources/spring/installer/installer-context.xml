@@ -32,6 +32,7 @@
         <property name="signatureLibrary" value="PFAM"/>
         <property name="modelFile" value="file:${Pfam-A.hmm.path}"/>
         <property name="releaseVersionNumber" value="24.0"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
     </bean>
 
     <bean id="printsModelLoader" class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
@@ -39,6 +40,7 @@
         <property name="modelFile" value="file:${prints.pval.path}"/>
         <property name="kdatParser" ref="kdatParser"/>
         <property name="releaseVersionNumber" value="40.0"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
     </bean>
 
     <bean id="kdatParser" class="uk.ac.ebi.interpro.scan.io.prints.KdatParser">
@@ -49,6 +51,7 @@
         <property name="signatureLibrary" value="GENE3D"/>
         <property name="modelFile" value="file:${gene3d.model2sf_map.path}"/>
         <property name="releaseVersionNumber" value="3.3.0"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
     </bean>
 
     <bean id="HAMAPParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
@@ -56,6 +59,7 @@
         <property name="modelFile" value="file:${hamap.profile.models.path}"/>
         <property name="releaseVersionNumber" value="180510"/>
         <property name="prositeModelType" value="ALL"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
     </bean>
 
     <bean id="PrositePatternsParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
@@ -63,6 +67,7 @@
         <property name="modelFile" value="file:${prosite.models.path}"/>
         <property name="releaseVersionNumber" value="20.52"/>
         <property name="prositeModelType" value="PATTERNS"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
     </bean>
 
     <bean id="PrositeProfilesParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
@@ -70,18 +75,21 @@
         <property name="modelFile" value="file:${prosite.models.path}"/>
         <property name="releaseVersionNumber" value="20.52"/>
         <property name="prositeModelType" value="PROFILES"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
     </bean>
 
     <bean id="tigrFamModelLoader" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
         <property name="signatureLibrary" value="TIGRFAM"/>
         <property name="modelFile" value="file:${tigrfam.hmm.path}"/>
         <property name="releaseVersionNumber" value="9.0"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
     </bean>
 
     <bean id="smartModelLoader" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
         <property name="signatureLibrary" value="SMART"/>
         <property name="modelFile" value="file:${smart.hmm.path}"/>
         <property name="releaseVersionNumber" value="6.1"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
     </bean>
 
 </beans>

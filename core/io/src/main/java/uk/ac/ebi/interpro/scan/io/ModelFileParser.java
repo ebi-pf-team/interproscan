@@ -57,6 +57,14 @@ public interface ModelFileParser extends Serializable {
     public SignatureLibrary getSignatureLibrary();
 
     /**
+     * Allows the model loader to avoid storing the abstract
+     * in the database if not required (e.g. for InterProScan mode)
+     *
+     * @param storeAbstract to indicate if the abstract should be stored.
+     */
+    public void setStoreAbstract(boolean storeAbstract);
+
+    /**
      * Method to parse a model file and return a SignatureLibraryRelease.
      *
      * @return a complete SignatureLibraryRelease object

@@ -47,9 +47,9 @@
         <!-- /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/production/interpro/data/members/hamap/180510/hamap.prf -pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -l -1 -o gff
           (PROSITE for comparison:)
           Prosite Profiles:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.52/prosite.dat -pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
+          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.66/prosite.dat -pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
           Prosite Patterns:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.52/prosite.dat -pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.52/evaluator.dat -s -o ipro -->
+          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.66/prosite.dat -pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.66/evaluator.dat -s -o ipro -->
         <property name="dependsUpon" ref="stepPrositeProfilesWriteFastaFile"/>
         <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
         <property name="binarySwitches" value="-s -m -o gff"/>
@@ -97,7 +97,7 @@
         <property name="dependsUpon" ref="stepPrositeProfilesParseRawOutput"/>
         <property name="serialGroup" value="PROSITE_PROFILES_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter Prosite Profiles matches and persist filtered results"/>
-        <property name="signatureLibraryRelease" value="20.52"/>
+        <property name="signatureLibraryRelease" value="20.66"/>
         <property name="postProcessor" ref="prositeProfilesPostProcessor"/>
         <property name="filteredMatchDAO" ref="prositeProfilesFilteredMatchDAO"/>
         <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
@@ -126,7 +126,7 @@
 
     <bean id="prositeProfilesRawOutputParser"
           class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeProfileMatchParser">
-        <constructor-arg value="20.52"/>
+        <constructor-arg value="20.66"/>
         <property name="cigarEncoder" ref="cigarEncoder"/>
     </bean>
 

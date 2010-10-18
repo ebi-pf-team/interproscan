@@ -50,7 +50,7 @@ public abstract class ProfileScanRawMatch extends PfScanRawMatch {
     private double score;
 
     @Enumerated(javax.persistence.EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "pf_scan_level", nullable = false)
     private Level level;
 
     protected ProfileScanRawMatch(String sequenceIdentifier, String model,
