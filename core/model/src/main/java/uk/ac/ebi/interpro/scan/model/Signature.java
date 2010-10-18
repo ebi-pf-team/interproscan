@@ -134,7 +134,6 @@ public class Signature implements Serializable {
         setName(name);
     }
 
-    // TODO: Add created, updated and md5 here?
     public Signature(String accession,
                      String name,
                      String type,                     

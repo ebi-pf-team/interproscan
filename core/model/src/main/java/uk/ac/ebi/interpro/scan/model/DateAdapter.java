@@ -43,9 +43,13 @@ final class DateAdapter extends XmlAdapter<String, Date> {
     }
 
     public Date unmarshal(String date) throws ParseException {
+        return toDate(date);
+    }
+
+    public static Date toDate(String date) throws ParseException {
         if (date == null) {
             return null;
-        }        
+        }
         return SDF.parse(date);
     }
 

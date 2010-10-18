@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,7 +44,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class SignatureTest extends AbstractTest<Signature> {
+public class SignatureTest extends AbstractXmlTest<Signature> {
 
     // TODO: Add Xrefs and Entry to Signature
     // TODO: Add Model MD5?
@@ -105,14 +106,14 @@ public class SignatureTest extends AbstractTest<Signature> {
     }
 
     @Test
-    public void testBuilder() throws IOException {
+    public void testBuilder() throws IOException, ParseException {
         final String AC       = "SIG001";
         final String NAME     = "test";
         final String TYPE     = "domain";
         final String DESC     = NAME;
         final String ABSTRACT = NAME;
-        final Date CREATED    = new Date(1);                 // 1 January 1970
-        final Date UPDATED    = new Date(Integer.MAX_VALUE); // 25 January 1970
+        final Date CREATED    = DateAdapter.toDate("2005-12-25");
+        final Date UPDATED    = DateAdapter.toDate("2010-10-18");
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PHOBIUS, "1.0");
         Set<Model> models = new HashSet<Model>();
         models.add(new Model("MOD001"));
@@ -164,38 +165,6 @@ public class SignatureTest extends AbstractTest<Signature> {
         assertEquals(1, signature.getModels().size());
         signature.removeModel(m2);
         assertEquals(0, signature.getModels().size());
-    }
-
-    @Test public void testXml() throws IOException, SAXException {
-        super.testSupportsMarshalling(Signature.class);
-        super.testXmlRoundTrip();
-    }
-
-    // TODO: Re-enable test when fixed "org.hibernate.exception.GenericJDBCException: Could not execute JDBC batch update"
-    /**
-     * This test is currently not correct.  It can be made to work be setting CascadeType.DELETE (or CascadeType.ALL)
-     * on Signature.models.  This would not be correct however, as Models can have an independent life
-     * to Signatures, so should not be cascade-deleted when a Signature is deleted.  The
-     * testJpaXmlObjects() method that this test calls is attempting to delete both the Signature and
-     * its Models in one go. (However, I do not understand why this is causing the error:
-     *
-     * Could not synchronize database state with session [org.hibernate.event.def.AbstractFlushingEventListener]
-     * org.hibernate.exception.GenericJDBCException: Could not execute JDBC batch update
-     *
-     * PJ.
-     */
-    @Test
-    @Ignore ("This test is currently failing, and in its current form, should fail.  See comment on test method.")
-    public void testJpa() {
-        super.testJpaXmlObjects(new ObjectRetriever<Signature>(){
-            public Signature getObjectByPrimaryKey(GenericDAO<Signature, Long> dao, Long primaryKey) {
-                return dao.readDeep(primaryKey, "models");
-            }
-
-            public Long getPrimaryKey(Signature signature) {
-                return signature.getId();
-            }
-        });
     }
 
 }
