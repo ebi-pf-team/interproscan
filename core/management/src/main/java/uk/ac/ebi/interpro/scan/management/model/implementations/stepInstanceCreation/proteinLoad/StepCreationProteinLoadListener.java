@@ -91,10 +91,14 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
 
             List<StepInstance> completionStepInstances = new ArrayList<StepInstance>();
 
-            LOGGER.debug("Completion Job:" + completionJob);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Completion Job:" + completionJob);
 
-            for (String key : stepParameters.keySet()) {
-                LOGGER.debug("setparameter:" + key + " " + stepParameters.get(key));
+                if (stepParameters != null) {
+                    for (String key : stepParameters.keySet()) {
+                        LOGGER.debug("setparameter:" + key + " " + stepParameters.get(key));
+                    }
+                }
             }
 
             if (completionJob != null) {
@@ -105,7 +109,9 @@ public class StepCreationProteinLoadListener implements ProteinLoadListener {
                 }
             }
 
-            LOGGER.debug("Completion Steps:" + completionStepInstances.size());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Completion Steps:" + completionStepInstances.size());
+            }
 
             // Instantiate the StepInstances - no dependencies yet.
             for (Job job : jobs.getJobList()) {

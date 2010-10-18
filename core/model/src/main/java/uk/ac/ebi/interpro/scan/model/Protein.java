@@ -83,7 +83,7 @@ public class Protein implements Serializable {
     @Column(nullable = false, unique = true, updatable = false, length = 32)
     private String md5;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
     private Set<Match> matches = new HashSet<Match>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "protein")

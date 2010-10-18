@@ -107,16 +107,12 @@ public class Run {
     }
 
     private enum Mode {
-        MASTER("master", "spring/master/master-context.xml"),
-        I5STANDALONE("i5standalone", "spring/master/i5-single-jvm-context.xml"),
-        WORKER("worker", "spring/worker/parallel-worker-context.xml"),
+        MASTER("master", "spring/jms/activemq/activemq-distributed-master-context.xml"),
+        WORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
+        STANDALONE("standalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
+        CLEANRUN("cleanrun", "spring/jms/activemq/activemq-cleanrun-master-context.xml"),
         MONITOR("monitor", "spring/monitor/monitor-context.xml"),
-        INSTALLER("installer", "spring/installer/installer-context.xml"),
-        AMQSTANDALONE("amqstandalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
-        AMQMASTER("amqmaster", "spring/jms/activemq/activemq-distributed-master-context.xml"),
-        AMQWORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
-        AMQCLEANRUN("cleanrun", "spring/jms/activemq/activemq-cleanrun-master-context.xml");
-
+        INSTALLER("installer", "spring/installer/installer-context.xml");
         //
         private String contextXML;
 
@@ -157,7 +153,7 @@ public class Run {
         }
     }
 
-    private static final Mode DEFAULT_MODE = Mode.AMQSTANDALONE;
+    private static final Mode DEFAULT_MODE = Mode.STANDALONE;
 
 
     static {

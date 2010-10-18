@@ -99,11 +99,7 @@ public class PvalParser extends AbstractModelFileParser {
 
     private void createSignature(final SignatureLibraryRelease release, Map<String, String> kdatFileData, final String sigAcc, final String sigName, final String sigDescription) {
         if (sigName != null) {   // If sigName is null, this is the very first one in the file, so nothing to do.
-            final String sigAbstract = kdatFileData.get(sigAcc);
-
-            if (sigAbstract == null) {
-                LOGGER.info("There is no abstract available for PRINTS model " + sigAcc + " / " + sigName);
-            }
+            String sigAbstract = (storeAbstract) ? kdatFileData.get(sigAcc) : null;
 
             final Set<Model> model = Collections.singleton(
                     new Model(sigAcc, sigName, sigDescription)

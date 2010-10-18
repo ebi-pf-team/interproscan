@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.ForeignKey;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,37 +35,44 @@ import java.util.Set;
 /**
  * Location of match on protein sequence.
  *
- * @author  Antony Quinn
- * @author  Phil Jones 
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlType(name="LocationType", propOrder={"start", "end"})
+@XmlType(name = "LocationType", propOrder = {"start", "end"})
 public abstract class Location implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator="LOCN_IDGEN")
-    @TableGenerator(name="LOCN_IDGEN", table="KEYGEN", pkColumnValue="location", initialValue = 0, allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
+    @TableGenerator(name = "LOCN_IDGEN", table = "KEYGEN", pkColumnValue = "location", initialValue = 0, allocationSize = 50)
     private Long id;
 
-    @Column(name="loc_start", nullable = false)    // to match end - 'end' is reserved word in SQL.
+    @Column(name = "loc_start", nullable = false)
+    // to match end - 'end' is reserved word in SQL.
     private int start;
 
-    @Column (name="loc_end", nullable = false)       // 'end' is reserved word in SQL.
+    @Column(name = "loc_end", nullable = false)
+    // 'end' is reserved word in SQL.
     private int end;
-    
+
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @ForeignKey(name = "fk_match")
+    private Match match;
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected Location()   { }
+    protected Location() {
+    }
 
-    public Location(int start, int end)   {
+    public Location(int start, int end) {
         setStart(start);
         setEnd(end);
-    }    
+    }
 
     /**
      * @return the persistence unique identifier for this object.
@@ -82,26 +90,29 @@ public abstract class Location implements Serializable {
 
     /**
      * Returns the start coordinate of this Location.
+     *
      * @return the start coordinate of this Location.
      */
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public int getStart() {
         return start;
     }
 
     /**
-     *  Start coordinate of this Location.
+     * Start coordinate of this Location.
+     *
      * @param start Start coordinate of this Location
-      */
+     */
     private void setStart(int start) {
         this.start = start;
     }
 
     /**
      * Returns the end coordinate of this Location.
-     * @return  the end coordinate of this Location.
+     *
+     * @return the end coordinate of this Location.
      */
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public int getEnd() {
         return end;
     }
@@ -116,50 +127,69 @@ public abstract class Location implements Serializable {
     }
 
     /**
-     *  Ensure sub-classes of AbstractLocation are represented correctly in XML.
+     * This method is called by Match, upon the addition of a Location to a Match.
      *
-     * @author  Antony Quinn
+     * @param match to which this Location is related.
+     */
+    void setMatch(Match match) {
+        this.match = match;
+    }
+
+    /**
+     * Returns the Match that this Location is related to.
+     *
+     * @return
+     */
+    @XmlTransient
+    public Match getMatch() {
+        return match;
+    }
+
+    /**
+     * Ensure sub-classes of AbstractLocation are represented correctly in XML.
+     *
+     * @author Antony Quinn
      */
     @XmlTransient
     static final class LocationAdapter extends XmlAdapter<LocationsType, Set<? extends Location>> {
 
-        /** Map Java to XML type */
-        @Override public LocationsType marshal(Set<? extends Location> locations) {
-            Set<Hmmer2Match.Hmmer2Location> hmmer2Locations                = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
-            Set<Hmmer3Match.Hmmer3Location> hmmer3Locations                = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
+        /**
+         * Map Java to XML type
+         */
+        @Override
+        public LocationsType marshal(Set<? extends Location> locations) {
+            Set<Hmmer2Match.Hmmer2Location> hmmer2Locations = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
+            Set<Hmmer3Match.Hmmer3Location> hmmer3Locations = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
             Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations = new LinkedHashSet<FingerPrintsMatch.FingerPrintsLocation>();
             Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations = new LinkedHashSet<BlastProDomMatch.BlastProDomLocation>();
             Set<PatternScanMatch.PatternScanLocation> patternScanLocations = new LinkedHashSet<PatternScanMatch.PatternScanLocation>();
             Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations = new LinkedHashSet<ProfileScanMatch.ProfileScanLocation>();
             for (Location l : locations) {
                 if (l instanceof Hmmer2Match.Hmmer2Location) {
-                    hmmer2Locations.add((Hmmer2Match.Hmmer2Location)l);
-                }
-                else if (l instanceof Hmmer3Match.Hmmer3Location) {
-                    hmmer3Locations.add((Hmmer3Match.Hmmer3Location)l);
-                }
-                else if (l instanceof FingerPrintsMatch.FingerPrintsLocation) {
-                    fingerPrintsLocations.add((FingerPrintsMatch.FingerPrintsLocation)l);
-                }
-                else if (l instanceof BlastProDomMatch.BlastProDomLocation) {
-                    blastProDomLocations.add((BlastProDomMatch.BlastProDomLocation)l);
-                }
-                else if (l instanceof PatternScanMatch.PatternScanLocation) {
-                    patternScanLocations.add((PatternScanMatch.PatternScanLocation)l);
-                }
-                else if (l instanceof ProfileScanMatch.ProfileScanLocation) {
-                    profileScanLocations.add((ProfileScanMatch.ProfileScanLocation)l);
-                }                
-                else    {
+                    hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
+                } else if (l instanceof Hmmer3Match.Hmmer3Location) {
+                    hmmer3Locations.add((Hmmer3Match.Hmmer3Location) l);
+                } else if (l instanceof FingerPrintsMatch.FingerPrintsLocation) {
+                    fingerPrintsLocations.add((FingerPrintsMatch.FingerPrintsLocation) l);
+                } else if (l instanceof BlastProDomMatch.BlastProDomLocation) {
+                    blastProDomLocations.add((BlastProDomMatch.BlastProDomLocation) l);
+                } else if (l instanceof PatternScanMatch.PatternScanLocation) {
+                    patternScanLocations.add((PatternScanMatch.PatternScanLocation) l);
+                } else if (l instanceof ProfileScanMatch.ProfileScanLocation) {
+                    profileScanLocations.add((ProfileScanMatch.ProfileScanLocation) l);
+                } else {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
-                }                
+                }
             }
             return new LocationsType(hmmer2Locations, hmmer3Locations, fingerPrintsLocations, blastProDomLocations,
-                                     patternScanLocations, profileScanLocations);
+                    patternScanLocations, profileScanLocations);
         }
 
-        /** Map XML type to Java */
-        @Override public Set<Location> unmarshal(LocationsType locationsType) {
+        /**
+         * Map XML type to Java
+         */
+        @Override
+        public Set<Location> unmarshal(LocationsType locationsType) {
             Set<Location> locations = new LinkedHashSet<Location>();
             locations.addAll(locationsType.getHmmer2Locations());
             locations.addAll(locationsType.getHmmer3Locations());
@@ -181,8 +211,8 @@ public abstract class Location implements Serializable {
         private final Set<Hmmer2Match.Hmmer2Location> hmmer2Locations;
 
         @XmlElement(name = "hmmer3-location")
-        private final Set<Hmmer3Match.Hmmer3Location> hmmer3Locations;        
-        
+        private final Set<Hmmer3Match.Hmmer3Location> hmmer3Locations;
+
         @XmlElement(name = "fingerprints-location")
         private final Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations;
 
@@ -196,12 +226,12 @@ public abstract class Location implements Serializable {
         private final Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations;
 
         private LocationsType() {
-            hmmer2Locations       = null;
-            hmmer3Locations       = null;
+            hmmer2Locations = null;
+            hmmer3Locations = null;
             fingerPrintsLocations = null;
-            blastProDomLocations  = null;
-            patternScanLocations  = null;
-            profileScanLocations  = null;
+            blastProDomLocations = null;
+            patternScanLocations = null;
+            profileScanLocations = null;
         }
 
         public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
@@ -210,12 +240,12 @@ public abstract class Location implements Serializable {
                              Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations,
                              Set<PatternScanMatch.PatternScanLocation> patternScanLocations,
                              Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations) {
-            this.hmmer2Locations        = hmmer2Locations;
-            this.hmmer3Locations        = hmmer3Locations;
-            this.fingerPrintsLocations  = fingerPrintsLocations;
-            this.blastProDomLocations   = blastProDomLocations;
-            this.patternScanLocations   = patternScanLocations;
-            this.profileScanLocations   = profileScanLocations;            
+            this.hmmer2Locations = hmmer2Locations;
+            this.hmmer3Locations = hmmer3Locations;
+            this.fingerPrintsLocations = fingerPrintsLocations;
+            this.blastProDomLocations = blastProDomLocations;
+            this.patternScanLocations = patternScanLocations;
+            this.profileScanLocations = profileScanLocations;
         }
 
         public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {
@@ -225,7 +255,7 @@ public abstract class Location implements Serializable {
         public Set<Hmmer3Match.Hmmer3Location> getHmmer3Locations() {
             return (hmmer3Locations == null ? Collections.<Hmmer3Match.Hmmer3Location>emptySet() : hmmer3Locations);
         }
-        
+
         public Set<FingerPrintsMatch.FingerPrintsLocation> getFingerPrintsLocations() {
             return (fingerPrintsLocations == null ? Collections.<FingerPrintsMatch.FingerPrintsLocation>emptySet() : fingerPrintsLocations);
         }
@@ -237,14 +267,15 @@ public abstract class Location implements Serializable {
         public Set<PatternScanMatch.PatternScanLocation> getPatternScanLocations() {
             return (patternScanLocations == null ? Collections.<PatternScanMatch.PatternScanLocation>emptySet() : patternScanLocations);
         }
-        
+
         public Set<ProfileScanMatch.ProfileScanLocation> getProfileScanLocations() {
             return (profileScanLocations == null ? Collections.<ProfileScanMatch.ProfileScanLocation>emptySet() : profileScanLocations);
         }
 
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Location))
@@ -256,15 +287,17 @@ public abstract class Location implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 55)
                 .append(start)
                 .append(end)
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-    
+
 }
