@@ -29,7 +29,7 @@ import java.util.zip.ZipInputStream;
 public class InterProXMLUnmarshallerTest {
 
     @Resource
-    private org.springframework.core.io.PResource interproXmlFile;
+    private org.springframework.core.io.Resource interproXmlFile;
 
     @Resource
     private InterProXMLUnmarshaller unmarshaller;
