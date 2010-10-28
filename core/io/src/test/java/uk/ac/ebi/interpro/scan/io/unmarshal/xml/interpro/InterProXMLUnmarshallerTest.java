@@ -39,7 +39,7 @@ public class InterProXMLUnmarshallerTest {
 
 
     @Test
-    //@Ignore("Causes OutOfMemory error")
+    @Ignore("Causes OutOfMemory error")
     public void testUnmarshallerAndSerialization()
             throws IOException, XMLStreamException, ClassNotFoundException {
         BufferedInputStream bis = null;
