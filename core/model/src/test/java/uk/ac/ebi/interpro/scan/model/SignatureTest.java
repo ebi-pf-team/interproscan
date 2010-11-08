@@ -114,9 +114,11 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
         final String ABSTRACT = NAME;
         final Date CREATED    = DateAdapter.toDate("2005-12-25");
         final Date UPDATED    = DateAdapter.toDate("2010-10-18");
+        final String MD5      = "5ab17489095dd2836122eec0e91db82d";
+        final String COMMENT  = "RELAXIN is a 6-element fingerprint that provides a signature for the relaxins.";
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PHOBIUS, "1.0");
         Set<Model> models = new HashSet<Model>();
-        models.add(new Model("MOD001"));
+        models.add(new Model.Builder("MOD001").md5("6bb17489095dd2836122eec0e91db85f").build());
         models.add(new Model("MOD002"));
         int numModels = models.size();
         Signature signature = new Signature.Builder(AC)
@@ -128,6 +130,8 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
                 .models(models)
                 .created(CREATED)
                 .updated(UPDATED)
+                .md5(MD5)
+                .comment(COMMENT)
                 .build();
         assertEquals(AC, signature.getAccession());
         assertEquals(NAME, signature.getName());
@@ -136,6 +140,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
         assertEquals(ABSTRACT, signature.getAbstract());
         assertEquals(CREATED, signature.getCreated());
         assertEquals(UPDATED, signature.getUpdated());
+        assertEquals(MD5, signature.getMd5());
         assertEquals(release, signature.getSignatureLibraryRelease());
         assertEquals(numModels, signature.getModels().size());
         if (LOGGER.isDebugEnabled())    {

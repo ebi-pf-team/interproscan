@@ -100,6 +100,9 @@ public class Model implements Serializable {
     @Transient
     private String definition;
 
+    @Index (name="model_md5_idx")
+    private String md5;    
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -139,6 +142,7 @@ public class Model implements Serializable {
         private String description;
         private Signature signature;
         private String definition;
+        private String md5;
 
         public Builder(String accession) {
             this.accession = accession;
@@ -147,6 +151,7 @@ public class Model implements Serializable {
         public Model build() {
             Model model = new Model(accession, name, description, definition);
             model.setSignature(signature);
+            model.setMd5(md5);
             return model;
         }
 
@@ -167,6 +172,11 @@ public class Model implements Serializable {
 
         public Builder definition(String definition) {
             this.definition = definition;
+            return this;
+        }
+
+        public Builder md5(String md5) {
+            this.md5 = md5;
             return this;
         }
 
@@ -245,6 +255,15 @@ public class Model implements Serializable {
         this.signature = signature;
     }
 
+    @XmlAttribute
+    public String getMd5() {
+        return md5;
+    }
+
+    private void setMd5(String md5) {
+        this.md5 = md5;
+    }
+
     /**
      * Returns key to use in, for example, HashMap.
      * TODO - Check if it is the correct decision to make this transient.
@@ -258,6 +277,10 @@ public class Model implements Serializable {
         return getAccession();
     }
 
+    private String getSafeMd5(String md5) {
+        return (md5 == null ? "" : md5.toLowerCase());
+    }        
+
     @Override public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -267,6 +290,7 @@ public class Model implements Serializable {
         return new EqualsBuilder()
                 .append(accession, m.accession)
                 .append(name, m.name)
+                .append(getSafeMd5(md5), getSafeMd5(m.md5))
                 .append(getDescription(), m.getDescription())
                 .append(getDefinition(), m.getDefinition())
                 .isEquals();
@@ -276,6 +300,7 @@ public class Model implements Serializable {
         return new HashCodeBuilder(19, 41)
                 .append(accession)
                 .append(name)
+                .append(md5)
                 .append(getDescription())
                 .append(getDefinition())
                 .toHashCode();
@@ -288,6 +313,7 @@ public class Model implements Serializable {
                 .append("description", getDescription())
                 .append("definition", getDefinition())
                 .append("signature-ac", (signature == null ? null : signature.getAccession()))
+                .append("md5", md5)
                 .toString();
     }
 
