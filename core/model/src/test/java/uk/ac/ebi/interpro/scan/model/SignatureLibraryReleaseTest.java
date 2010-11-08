@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -73,7 +74,7 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
     }
 
     @Test
-    public void testXrefs() throws IOException {
+    public void testPrints() throws IOException, ParseException {
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
         release.addSignature(
                 new Signature.Builder("PR00579")
@@ -83,10 +84,15 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
                         .crossReference(new SignatureXref("PRINTS", "PR00268", "NGF"))
                         .crossReference(new SignatureXref("PRINTS", "PR01913", "NGFBETA"))
                         .crossReference(new SignatureXref("INTERPRO", "IPR020433", "Nerve growth factor conserved site"))
+                        .created(DateAdapter.toDate("2005-12-25"))
+                        .updated(DateAdapter.toDate("2010-10-18"))
+                        .md5("5ab17489095dd2836122eec0e91db82d")
                         .build());
-        // Should be OK
         assertEquals("Should have 3 xrefs", 3, release.getSignatures().iterator().next().getCrossReferences().size());
-//        System.out.println(super.marshal(release));
+        if (LOGGER.isDebugEnabled())    {
+            LOGGER.debug(release);
+            LOGGER.debug(super.marshal(release));
+        }
     }
 
     @Test

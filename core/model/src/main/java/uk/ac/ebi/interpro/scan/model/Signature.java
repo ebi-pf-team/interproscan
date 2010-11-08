@@ -120,6 +120,15 @@ public class Signature implements Serializable {
     @XmlElement(name="xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
+//    TODO: Add deprecated signatures
+//    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+//    @JoinTable (name="signature_deprecated_acs")
+//    @Column (name="deprecated_acs", nullable = true)
+//    private Set<String> deprecatedAccessions = Collections.emptySet();
+
+    @Column(nullable = true)
+    private String comment;
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -166,6 +175,7 @@ public class Signature implements Serializable {
         private Date updated;
         private String md5;
         private String abstractText;
+        private String comment;
         private SignatureLibraryRelease signatureLibraryRelease;
         Set<Model> models;
         private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
@@ -184,6 +194,7 @@ public class Signature implements Serializable {
             signature.setCreated(created);
             signature.setUpdated(updated);
             signature.setMd5(md5);
+            signature.setComment(comment);
             if (models != null) {
                 signature.setModels(models);
             }
@@ -227,6 +238,11 @@ public class Signature implements Serializable {
 
         public Builder md5(String md5) {
             this.md5 = md5;
+            return this;
+        }
+
+        public Builder comment(String comment) {
+            this.comment = comment;
             return this;
         }
 
@@ -355,12 +371,22 @@ public class Signature implements Serializable {
         this.updated = updated;
     }
 
+    @XmlAttribute
     public String getMd5() {
         return md5;
     }
 
     private void setMd5(String md5) {
         this.md5 = md5;
+    }
+
+    @XmlElement
+    public String getComment() {
+        return comment;
+    }
+
+    private void setComment(String comment) {
+        this.comment = comment;
     }
 
     @XmlTransient
@@ -500,7 +526,10 @@ public class Signature implements Serializable {
     public void removeCrossReference(SignatureXref xref) {
         crossReferences.remove(xref);
     }
-    
+
+    private String getSafeMd5(String md5) {
+        return (md5 == null ? "" : md5.toLowerCase());
+    }    
 
     @Override public boolean equals(Object o) {
         if (this == o)
@@ -514,9 +543,10 @@ public class Signature implements Serializable {
                 .append(type, s.type)
                 .append(created, s.created)
                 .append(updated, s.updated)
-                .append(md5, s.md5)
+                .append(getSafeMd5(md5), getSafeMd5(s.md5))
                 .append(getDescription(), s.getDescription())
                 .append(getAbstract(), s.getAbstract())
+                .append(getComment(), s.getComment())
                 .append(signatureLibraryRelease, s.signatureLibraryRelease)
                 .append(models, s.models)
                 .append(crossReferences, s.crossReferences)
@@ -533,6 +563,7 @@ public class Signature implements Serializable {
                 .append(md5)
                 .append(getDescription())
                 .append(getAbstract())
+                .append(getComment())
                 .append(signatureLibraryRelease)
                 .append(models)
                 .append(crossReferences)
