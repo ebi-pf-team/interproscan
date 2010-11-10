@@ -27,6 +27,7 @@
             </includes>
         </fileSet>
 
+        
 
         <fileSet>
             <directory>${mvn.ebi.interproscan5.support}</directory>
