@@ -300,7 +300,7 @@ public class Model implements Serializable {
         return new HashCodeBuilder(19, 41)
                 .append(accession)
                 .append(name)
-                .append(md5)
+                .append(getSafeMd5(md5))
                 .append(getDescription())
                 .append(getDefinition())
                 .toHashCode();

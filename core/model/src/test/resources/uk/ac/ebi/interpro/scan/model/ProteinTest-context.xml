@@ -765,17 +765,17 @@
                 <protein md5="de25966e66a6340eed9d837b05ffc58b" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
                     <xref id="UPI0001AF8DCD"/>
-                    <matches>
-                        <profilescan-match>
-                            <signature name="RHODANESE_3" ac="PS50206"/>
-                            <locations>
-                                <profilescan-location start="292" end="370" score="15.158"/>
-                            </locations>
-                        </profilescan-match>                    
+                    <matches>                 
                         <profilescan-match>
                             <signature name="CNMP_BINDING_3" ac="PS50042"/>
                             <locations>
                                 <profilescan-location start="171" end="275" score="24.202"/>
+                            </locations>
+                        </profilescan-match>
+                        <profilescan-match>
+                            <signature name="RHODANESE_3" ac="PS50206"/>
+                            <locations>
+                                <profilescan-location start="292" end="370" score="15.158"/>
                             </locations>
                         </profilescan-match>
                     </matches>
