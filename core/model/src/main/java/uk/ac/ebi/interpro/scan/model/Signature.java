@@ -547,7 +547,6 @@ public class Signature implements Serializable {
                 .append(getDescription(), s.getDescription())
                 .append(getAbstract(), s.getAbstract())
                 .append(getComment(), s.getComment())
-                .append(signatureLibraryRelease, s.signatureLibraryRelease)
                 .append(models, s.models)
                 .append(crossReferences, s.crossReferences)
                 .isEquals();
@@ -564,8 +563,8 @@ public class Signature implements Serializable {
                 .append(getDescription())
                 .append(getAbstract())
                 .append(getComment())
-                .append(signatureLibraryRelease)
-                .append(models)
+                // TODO: Figure out why adding models to hashCode() causes Signature.equals() to fail
+                //.append(models)
                 .append(crossReferences)
                 .toHashCode();
     }

@@ -17,6 +17,7 @@
 package uk.ac.ebi.interpro.scan.model;
 
 
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +49,19 @@ import static org.junit.Assert.assertTrue;
 public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRelease> {
 
     private static final Logger LOGGER = Logger.getLogger(SignatureLibraryReleaseTest.class.getName());
+    
+    @Test
+    public void testEquals() throws ParseException {
+        // Original
+        SignatureLibraryRelease original = getGene3dObject();
+        // Copy
+        SignatureLibraryRelease copy = (SignatureLibraryRelease) SerializationUtils.clone(original);
+        copy.getSignatures().iterator().next().setSignatureLibraryRelease(null);
+        // Should be equal
+        assertEquals("Original and copy models should be equal", original.getSignatures().iterator().next().getModels(), copy.getSignatures().iterator().next().getModels());
+        assertEquals("Original and copy signatures should be equal", original.getSignatures(), copy.getSignatures());
+        assertEquals("Original and copy should be equal", original, copy);
+    }
 
     @Test
     public void testRemoveSignature() {
@@ -75,8 +89,17 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
 
     @Test
     public void testPrints() throws IOException, ParseException {
-        SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
-        release.addSignature(
+        SignatureLibraryRelease release = getPrintsObject();
+        assertEquals("Should have 3 xrefs", 3, release.getSignatures().iterator().next().getCrossReferences().size());
+        if (LOGGER.isDebugEnabled())    {
+            LOGGER.debug(release);
+            LOGGER.debug(super.marshal(release));
+        }
+    }
+
+    private SignatureLibraryRelease getPrintsObject () throws ParseException {
+        SignatureLibraryRelease s = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
+        s.addSignature(
                 new Signature.Builder("PR00579")
                         .name("RHODOPSIN")
                         .type("family")
@@ -88,11 +111,18 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
                         .updated(DateAdapter.toDate("2010-10-18"))
                         .md5("5ab17489095dd2836122eec0e91db82d")
                         .build());
-        assertEquals("Should have 3 xrefs", 3, release.getSignatures().iterator().next().getCrossReferences().size());
-        if (LOGGER.isDebugEnabled())    {
-            LOGGER.debug(release);
-            LOGGER.debug(super.marshal(release));
-        }
+        return s;
+    }
+
+    private SignatureLibraryRelease getGene3dObject() {
+        SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.1.0");
+        Signature signature = release.addSignature(
+                new Signature.Builder("G3DSA:2.40.50.140")
+                        .name("Nucleic acid-binding proteins")
+                        .type("domain")
+                        .build());
+        signature.addModel(new Model("1o7iB00", "1o7iB00", "Nucleic acid-binding proteins"));
+        return release;
     }
 
     @Test

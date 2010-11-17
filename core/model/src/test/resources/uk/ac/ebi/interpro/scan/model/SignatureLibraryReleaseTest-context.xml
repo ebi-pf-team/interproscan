@@ -257,62 +257,6 @@
     
     <!-- Non-HMM databases -->
 
-    <lang:groovy id="printsObject">
-        <lang:inline-script>
-            <![CDATA[
-                import uk.ac.ebi.interpro.scan.model.*
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1")
-                Signature s1 = release.addSignature(
-                        new Signature.Builder("PR00238")
-                                .name("OPSIN")
-                                .type("family")
-                                .description("Opsin signature")
-                                .build())
-                s1.addModel(new Model("PR00238"))
-                Signature s2 = release.addSignature(
-                        new Signature.Builder("PR00579")
-                                .name("RHODOPSIN")
-                                .type("family")
-                                .abstractText("Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).")
-                                .crossReference(new SignatureXref("PRINTS", "PR00268", "NGF"))
-                                .crossReference(new SignatureXref("PRINTS", "PR01913", "NGFBETA"))
-                                .crossReference(new SignatureXref("INTERPRO", "IPR020433", "Nerve growth factor conserved site"))
-                                .created(DateAdapter.toDate("2005-12-25"))
-                                .updated(DateAdapter.toDate("2010-10-18"))       
-                                .md5("5ab17489095dd2836122eec0e91db82d")
-                                .comment("RELAXIN is a 6-element fingerprint that provides a signature for the relaxins.")
-                                .build())
-                s2.addModel(new Model.Builder("PR00579").md5("6bb17489095dd2836122eec0e91db85f").build())
-                return release
-            ]]>
-        </lang:inline-script>
-    </lang:groovy>
-    <bean id="printsXml" class="java.lang.String">
-        <constructor-arg>
-            <value>
-                <![CDATA[
-                <signature-library-release library="PRINTS" version="38.1" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
-                    <signature ac="PR00579" name="RHODOPSIN" type="family" created="2005-12-25" updated="2010-10-18" md5="5ab17489095dd2836122eec0e91db82d">
-                        <abstract>Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).</abstract>
-                        <comment>RELAXIN is a 6-element fingerprint that provides a signature for the relaxins.</comment>
-                        <xref db="PRINTS"   id="PR00268" name="NGF" />
-                        <xref db="PRINTS"   id="PR01913" name="NGFBETA" />
-                        <xref db="INTERPRO" id="IPR020433" name="Nerve growth factor conserved site" />
-                        <models>
-                            <model ac="PR00579" md5="6bb17489095dd2836122eec0e91db85f"/>
-                        </models>
-                    </signature>
-                    <signature ac="PR00238" name="OPSIN" type="family" desc="Opsin signature">
-                        <models>
-                            <model ac="PR00238"/>
-                        </models>
-                    </signature>                    
-                </signature-library-release>
-                ]]>
-            </value>
-        </constructor-arg>
-    </bean>    
-
     <lang:groovy id="proDomObject">
         <lang:inline-script>
             <![CDATA[
@@ -410,6 +354,62 @@
                 ]]>
             </value>
         </constructor-arg>
-    </bean>     
+    </bean>
+
+    <lang:groovy id="printsObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1")
+                Signature s1 = release.addSignature(
+                        new Signature.Builder("PR00238")
+                                .name("OPSIN")
+                                .type("family")
+                                .description("Opsin signature")
+                                .build())
+                s1.addModel(new Model("PR00238"))
+                Signature s2 = release.addSignature(
+                        new Signature.Builder("PR00579")
+                                .name("RHODOPSIN")
+                                .type("family")
+                                .abstractText("Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).")
+                                .crossReference(new SignatureXref("PRINTS", "PR00268", "NGF"))
+                                .crossReference(new SignatureXref("PRINTS", "PR01913", "NGFBETA"))
+                                .crossReference(new SignatureXref("INTERPRO", "IPR020433", "Nerve growth factor conserved site"))
+                                .created(DateAdapter.toDate("2005-12-25"))
+                                .updated(DateAdapter.toDate("2010-10-18"))
+                                .md5("5ab17489095dd2836122eec0e91db82d")
+                                .comment("RELAXIN is a 6-element fingerprint that provides a signature for the relaxins.")
+                                .build())
+                s2.addModel(new Model.Builder("PR00579").md5("6bb17489095dd2836122eec0e91db85f").build())
+                return release
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="printsXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <signature-library-release library="PRINTS" version="38.1" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                    <signature ac="PR00579" name="RHODOPSIN" type="family" created="2005-12-25" updated="2010-10-18" md5="5ab17489095dd2836122eec0e91db82d">
+                        <abstract>Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).</abstract>
+                        <comment>RELAXIN is a 6-element fingerprint that provides a signature for the relaxins.</comment>
+                        <xref db="PRINTS"   id="PR00268" name="NGF" />
+                        <xref db="PRINTS"   id="PR01913" name="NGFBETA" />
+                        <xref db="INTERPRO" id="IPR020433" name="Nerve growth factor conserved site" />
+                        <models>
+                            <model ac="PR00579" md5="6bb17489095dd2836122eec0e91db85f"/>
+                        </models>
+                    </signature>
+                    <signature ac="PR00238" name="OPSIN" type="family" desc="Opsin signature">
+                        <models>
+                            <model ac="PR00238"/>
+                        </models>
+                    </signature>
+                </signature-library-release>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>        
     
 </beans>
