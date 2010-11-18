@@ -361,27 +361,29 @@
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1")
-                Signature s1 = release.addSignature(
+                release.addSignature(
                         new Signature.Builder("PR00238")
                                 .name("OPSIN")
                                 .type("family")
                                 .description("Opsin signature")
+                                .model(new Model("PR00238"))
                                 .build())
-                s1.addModel(new Model("PR00238"))
-                Signature s2 = release.addSignature(
+                release.addSignature(
                         new Signature.Builder("PR00579")
                                 .name("RHODOPSIN")
                                 .type("family")
                                 .abstractText("Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).")
-                                .crossReference(new SignatureXref("PRINTS", "PR00268", "NGF"))
-                                .crossReference(new SignatureXref("PRINTS", "PR01913", "NGFBETA"))
-                                .crossReference(new SignatureXref("INTERPRO", "IPR020433", "Nerve growth factor conserved site"))
                                 .created(DateAdapter.toDate("2005-12-25"))
                                 .updated(DateAdapter.toDate("2010-10-18"))
                                 .md5("5ab17489095dd2836122eec0e91db82d")
                                 .comment("RELAXIN is a 6-element fingerprint that provides a signature for the relaxins.")
+                                .deprecatedAccession("PR00458")
+                                .deprecatedAccession("PR00459")
+                                .crossReference(new SignatureXref("PRINTS", "PR00268", "NGF"))
+                                .crossReference(new SignatureXref("PRINTS", "PR01913", "NGFBETA"))
+                                .crossReference(new SignatureXref("INTERPRO", "IPR020433", "Nerve growth factor conserved site"))
+                                .model(new Model.Builder("PR00579").md5("6bb17489095dd2836122eec0e91db85f").build())
                                 .build())
-                s2.addModel(new Model.Builder("PR00579").md5("6bb17489095dd2836122eec0e91db85f").build())
                 return release
             ]]>
         </lang:inline-script>
@@ -397,6 +399,8 @@
                         <xref db="PRINTS"   id="PR00268" name="NGF" />
                         <xref db="PRINTS"   id="PR01913" name="NGFBETA" />
                         <xref db="INTERPRO" id="IPR020433" name="Nerve growth factor conserved site" />
+                        <deprecated-ac>PR00458</deprecated-ac>
+                        <deprecated-ac>PR00459</deprecated-ac>              
                         <models>
                             <model ac="PR00579" md5="6bb17489095dd2836122eec0e91db85f"/>
                         </models>
