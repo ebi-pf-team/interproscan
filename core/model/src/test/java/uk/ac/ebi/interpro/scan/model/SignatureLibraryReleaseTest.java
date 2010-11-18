@@ -110,6 +110,9 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
                         .created(DateAdapter.toDate("2005-12-25"))
                         .updated(DateAdapter.toDate("2010-10-18"))
                         .md5("5ab17489095dd2836122eec0e91db82d")
+                        .deprecatedAccession("PR00458")
+                        .deprecatedAccession("PR00459")
+                        .comment("RELAXIN is a 6-element fingerprint")
                         .build());
         return s;
     }

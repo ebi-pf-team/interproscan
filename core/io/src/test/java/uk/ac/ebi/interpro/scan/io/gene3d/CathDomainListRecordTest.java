@@ -44,18 +44,9 @@ public class CathDomainListRecordTest {
             new CathDomainListRecord("1ws8C00", 2, 60, 40, 420),
             new CathDomainListRecord("1ws8D00", 2, 60, 40, 420)
         );
-        final Collection<Model> MODELS_1 = Arrays.asList(
-            new Model("1oaiA00"),
-            new Model("1go5A00"),
-            new Model("1oksA00")
-        );
-        final Collection<Model> MODELS_2 = Arrays.asList(
-            new Model("1ws8C00"),
-            new Model("1ws8D00")
-        );
         final Collection<Signature> SIGNATURES = Arrays.asList(
-            new Signature.Builder("G3DSA:1.10.8.10").models(new HashSet<Model>(MODELS_1)).build(),
-            new Signature.Builder("G3DSA:2.60.40.420").models(new HashSet<Model>(MODELS_2)).build()
+            new Signature.Builder("G3DSA:1.10.8.10").model(new Model("1oaiA00")).model(new Model("1go5A00")).model(new Model("1oksA00")).build(),
+            new Signature.Builder("G3DSA:2.60.40.420").model(new Model("1ws8C00")).model(new Model("1ws8D00")).build()
         );
         assertEquals(SIGNATURES, CathDomainListRecord.createSignatures(RECORDS));
     }

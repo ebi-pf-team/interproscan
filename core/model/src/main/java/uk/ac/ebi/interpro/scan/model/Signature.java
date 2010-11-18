@@ -120,11 +120,10 @@ public class Signature implements Serializable {
     @XmlElement(name="xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
-//    TODO: Add deprecated signatures
-//    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-//    @JoinTable (name="signature_deprecated_acs")
-//    @Column (name="deprecated_acs", nullable = true)
-//    private Set<String> deprecatedAccessions = Collections.emptySet();
+    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @JoinTable (name="signature_deprecated_acs")
+    @Column (name="deprecated_acs", nullable = true)
+    private Set<String> deprecatedAccessions = new HashSet<String>();
 
     @Column(nullable = true)
     private String comment;
@@ -177,8 +176,9 @@ public class Signature implements Serializable {
         private String abstractText;
         private String comment;
         private SignatureLibraryRelease signatureLibraryRelease;
-        Set<Model> models;
+        private Set<Model> models = new HashSet<Model>();
         private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
+        private Set<String> deprecatedAccessions = new HashSet<String>();
 
         public Builder(String accession) {
             this.accession = accession;
@@ -202,6 +202,9 @@ public class Signature implements Serializable {
                 for (SignatureXref x : crossReferences) {
                     signature.addCrossReference(x);
                 }
+            }
+            if (deprecatedAccessions != null) {
+                signature.setDeprecatedAccessions(deprecatedAccessions);
             }
             return signature;
         }
@@ -251,13 +254,18 @@ public class Signature implements Serializable {
             return this;
         }
 
-        public Builder models(Set<Model> models) {
-            this.models = models;
+        public Builder model(Model model) {
+            this.models.add(model);
             return this;
         }
 
         public Builder crossReference(SignatureXref xref) {
             this.crossReferences.add(xref);
+            return this;
+        }
+
+        public Builder deprecatedAccession(String ac) {
+            this.deprecatedAccessions.add(ac);
             return this;
         }
 
@@ -396,6 +404,36 @@ public class Signature implements Serializable {
 
     void setSignatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease)  {
         this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
+//    @XmlElementWrapper(name = "history")
+    @XmlElement(name = "deprecated-ac")
+    public Set<String> getDeprecatedAccessions() {
+        return deprecatedAccessions;
+    }
+
+    // Private so can only be set by JAXB, Hibernate ...etc via reflection
+    private void setDeprecatedAccessions(Set<String> deprecatedAccessions) {
+        this.deprecatedAccessions = deprecatedAccessions;
+    }
+
+    /**
+     * Adds and returns deprecated accession
+     *
+     * @param ac Accession
+     * @return Accession
+     * @throws IllegalArgumentException if ac is null
+     */
+    public String addDeprecatedAccession(String ac) throws IllegalArgumentException {
+        if (ac == null) {
+            throw new IllegalArgumentException("'accession' must not be null");
+        }
+        deprecatedAccessions.add(ac);
+        return ac;
+    }
+
+    public void removeDeprecatedAccession(String ac) {
+        deprecatedAccessions.remove(ac);
     }
 
     @XmlJavaTypeAdapter(ModelAdapter.class)
@@ -549,6 +587,7 @@ public class Signature implements Serializable {
                 .append(getComment(), s.getComment())
                 .append(models, s.models)
                 .append(crossReferences, s.crossReferences)
+                .append(deprecatedAccessions, s.deprecatedAccessions)
                 .isEquals();
     }
 
@@ -566,6 +605,7 @@ public class Signature implements Serializable {
                 // TODO: Figure out why adding models to hashCode() causes Signature.equals() to fail
                 //.append(models)
                 .append(crossReferences)
+                .append(deprecatedAccessions)
                 .toHashCode();
     }
 
