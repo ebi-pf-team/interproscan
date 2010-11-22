@@ -502,9 +502,8 @@
         <constructor-arg>
             <util:set value-type="uk.ac.ebi.interpro.scan.model.ProteinXref">
                 <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
+                    <constructor-arg value="UniProt"/>
                     <constructor-arg value="P02700"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.model.ProteinXref">
                     <constructor-arg value="OPSD_SHEEP"/>
                 </bean>
             </util:set>
@@ -535,8 +534,7 @@
                 <![CDATA[
                 <protein md5="ae2f4d0c928c8017da2df2d5cf15f01" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
-                    <xref id="P02700"/>
-                    <xref id="OPSD_SHEEP"/>
+                    <xref id="P02700" name="OPSD_SHEEP" db="UniProt"/>
                     <matches>
                         <fingerprints-match graphscan="IIIIII" evalue="2.2E-64">
                             <signature ac="PR00579" name="RHODOPSIN" />
