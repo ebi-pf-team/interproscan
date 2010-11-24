@@ -18,11 +18,14 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
+import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.Set;
 
@@ -82,8 +85,26 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
             this.score = score;
         }
 
-        // TODO - add this to the XML?
-//        @XmlAttribute(required=true)
+        /**
+         * Returns sequence alignment.
+         *
+         * @return Sequence alignment.
+         */
+        @XmlElement(required=true)
+        public String getAlignment() {
+            if (cigarAlignment == null) {
+                return null;
+            }            
+            AlignmentEncoder encoder = new CigarAlignmentEncoder();
+            return encoder.decode(getMatch().getProtein().getSequence(), cigarAlignment);
+        }
+
+        public void setAlignment(String alignment) {
+            if (alignment != null) {
+                AlignmentEncoder encoder = new CigarAlignmentEncoder();
+                setCigarAlignment(encoder.encode(alignment));
+            }
+        }
 
         public String getCigarAlignment() {
             return cigarAlignment;
@@ -103,6 +124,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
             return new EqualsBuilder()
                     .appendSuper(super.equals(o))
                     .append(score, f.score)
+                    .append(cigarAlignment, f.cigarAlignment)
                     .isEquals();
         }
 
@@ -111,6 +133,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
             return new HashCodeBuilder(19, 81)
                     .appendSuper(super.hashCode())
                     .append(score)
+                    .append(cigarAlignment)
                     .toHashCode();
         }
 

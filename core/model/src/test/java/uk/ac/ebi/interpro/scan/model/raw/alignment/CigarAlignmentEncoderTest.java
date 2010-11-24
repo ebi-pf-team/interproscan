@@ -13,11 +13,29 @@ import static org.junit.Assert.assertEquals;
  */
 public class CigarAlignmentEncoderTest {
 
+    private static final String SEQUENCE       = "QEFHRKPQQPHKDgnfGAD";
+
     private static final String GOOD_ALIGNMENT = "QEFHRK-----KDgnfGAD";
     private static final String GOOD_ALIGNMENT_ENCODING = "6M5D2M3I3M";
 
-    // Contains illegal character (".")
+    // Contains illegal character ("=")
     private static final String BAD_ALIGNMENT = "Q=FHRK-----KDgnfGAD";
+    
+    // Contains illegal character ("T")
+    private static final String BAD_ALIGNMENT_ENCODING = "6T5D2M3I3M";
+
+    @Test
+    public void testDecode() {
+        AlignmentEncoder encoder = new CigarAlignmentEncoder();
+        assertEquals(GOOD_ALIGNMENT, encoder.decode(SEQUENCE, GOOD_ALIGNMENT_ENCODING));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDecodeBadAlignment() {
+        AlignmentEncoder encoder = new CigarAlignmentEncoder();
+        encoder.decode(SEQUENCE, BAD_ALIGNMENT_ENCODING);
+        Assert.fail("IllegalArgumentException expected but not thrown");
+    }
 
     @Test
     public void testEncode() {

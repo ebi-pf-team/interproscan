@@ -9,6 +9,8 @@ package uk.ac.ebi.interpro.scan.model.raw.alignment;
 public interface AlignmentEncoder {
 
     public String encode(String alignment);
+    
+    public String decode(String sequence, String encodedAlignment);
 
     /**
      * Provides information about the encoded alignment

@@ -18,11 +18,14 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
+import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,8 +87,24 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
             this.level = level;
         }
 
-        // TODO - add this to the XML?
-//        @XmlAttribute(required=true)
+        /**
+         * Returns sequence alignment.
+         *
+         * @return Sequence alignment.
+         */
+        @XmlElement(required=true)
+        public String getAlignment() {
+            if (cigarAlignment == null) {
+                return null;
+            }
+            AlignmentEncoder encoder = new CigarAlignmentEncoder();
+            return encoder.decode(getMatch().getProtein().getSequence(), cigarAlignment);
+        }
+
+        public void setAlignment(String alignment) {
+            AlignmentEncoder encoder = new CigarAlignmentEncoder();
+            setCigarAlignment(encoder.encode(alignment));
+        }        
 
         public String getCigarAlignment() {
             return cigarAlignment;
@@ -161,6 +180,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
             return new EqualsBuilder()
                     .appendSuper(super.equals(o))
                     .append(level, f.level)
+                    .append(cigarAlignment, f.cigarAlignment)
                     .isEquals();
         }
 
@@ -169,6 +189,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
             return new HashCodeBuilder(19, 85)
                     .appendSuper(super.hashCode())
                     .append(level)
+                    .append(cigarAlignment)
                     .toHashCode();
         }
 

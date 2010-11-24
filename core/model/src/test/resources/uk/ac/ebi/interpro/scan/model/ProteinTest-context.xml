@@ -650,13 +650,10 @@
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.PatternScanMatch.PatternScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation">
                                 <constructor-arg value="166"/>
-                                <!--Start-->
                                 <constructor-arg value="179"/>
-                                <!--End-->
                                 <constructor-arg value="STRONG"
                                                  type="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation$Level"/>
-                                <!-- Cigar alignment -->
-                                <constructor-arg value="CIGARALIGN"/>
+                                <constructor-arg value="30M10D10I10D"/>
                             </bean>
                         </util:set>
                     </constructor-arg>
@@ -685,7 +682,9 @@
                         <patternscan-match>
                             <signature ac="PS00675" name="SIGMA54_INTERACT_1"/>
                             <locations>
-                                <patternscan-location start="166" end="179" level="STRONG"/>
+                                <patternscan-location level="STRONG" end="179" start="166">
+                                    <alignment>MSKILIIDDEVQIRSLLARMLGLEGYEVCQ----------leiqqpdval----------</alignment>
+                                </patternscan-location>
                             </locations>
                         </patternscan-match>
                     </matches>
@@ -710,13 +709,9 @@
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch.ProfileScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation">
                                 <constructor-arg value="171"/>
-                                <!--Start-->
                                 <constructor-arg value="275"/>
-                                <!--End-->
                                 <constructor-arg value="24.202"/>
-
-                                <constructor-arg value="CIGARALIGN"/>
-                                <!--Score-->
+                                <constructor-arg value="30M10D10I10D"/>
                             </bean>
                         </util:set>
                     </constructor-arg>
@@ -732,12 +727,9 @@
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch.ProfileScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation">
                                 <constructor-arg value="292"/>
-                                <!--Start-->
                                 <constructor-arg value="370"/>
-                                <!--End-->
                                 <constructor-arg value="15.158"/>
-                                <!--Score-->
-                                <constructor-arg value="CIGARALIGN"/>
+                                <constructor-arg value="30M10D10I10D"/>
                             </bean>
                         </util:set>
                     </constructor-arg>
@@ -767,13 +759,17 @@
                         <profilescan-match>
                             <signature name="RHODANESE_3" ac="PS50206"/>
                             <locations>
-                                <profilescan-location start="292" end="370" score="15.158"/>
+                                <profilescan-location start="292" end="370" score="15.158">
+                                    <alignment>MSHNPKLLDTSAQMTTAVLALLNTFEPLAK----------glcfvekvsk----------</alignment>
+                                </profilescan-location>
                             </locations>
                         </profilescan-match>
                         <profilescan-match>
                             <signature name="CNMP_BINDING_3" ac="PS50042"/>
                             <locations>
-                                <profilescan-location start="171" end="275" score="24.202"/>
+                                <profilescan-location start="171" end="275" score="24.202">
+                                    <alignment>MSHNPKLLDTSAQMTTAVLALLNTFEPLAK----------glcfvekvsk----------</alignment>
+                                </profilescan-location>
                             </locations>
                         </profilescan-match>                        
                     </matches>
