@@ -332,7 +332,7 @@
                                 .name("CNMP_BINDING_3")
                                 .type("domain")
                                 .description("cAMP/cGMP binding motif profile")
-                                .abstractText("Proteins that bind cyclic nucleotides (cAMP or cGMP) share a structural domain of about 120 residues [1,2,3]. The best studied of these proteins is the prokaryotic catabolite gene activator (also known as the cAMP receptor protein) (gene crp) where such a domain is known to be composed of three α-helices and a distinctive eight-stranded, antiparallel β-barrel structure.")
+                                .abstractText("Proteins that bind cyclic nucleotides (cAMP or cGMP) share a structural domain of about 120 residues [1,2,3]. The best studied of these proteins is the prokaryotic catabolite gene activator (also known as the cAMP receptor protein) (gene crp) where such a domain is known to be composed of three alpha-helices and a distinctive eight-stranded, antiparallel beta-barrel structure.")
                                 .build())
                 signature.addModel(new Model("PS50042"))
                 return release
@@ -345,7 +345,7 @@
                 <![CDATA[
                 <signature-library-release library="PROSITE_PROFILES" version="20.35" xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature ac="PS50042" type="domain" name="CNMP_BINDING_3" desc="cAMP/cGMP binding motif profile">
-                        <abstract>Proteins that bind cyclic nucleotides (cAMP or cGMP) share a structural domain of about 120 residues [1,2,3]. The best studied of these proteins is the prokaryotic catabolite gene activator (also known as the cAMP receptor protein) (gene crp) where such a domain is known to be composed of three α-helices and a distinctive eight-stranded, antiparallel β-barrel structure.</abstract>
+                        <abstract>Proteins that bind cyclic nucleotides (cAMP or cGMP) share a structural domain of about 120 residues [1,2,3]. The best studied of these proteins is the prokaryotic catabolite gene activator (also known as the cAMP receptor protein) (gene crp) where such a domain is known to be composed of three alpha-helices and a distinctive eight-stranded, antiparallel beta-barrel structure.</abstract>
                         <models>
                             <model ac="PS50042"/>
                         </models>

@@ -19,13 +19,15 @@ import java.util.regex.Pattern;
  */
 public final class CigarAlignmentEncoder implements AlignmentEncoder {
 
-    public static final char MATCH_CHAR = 'M';
+    public static final char MATCH_CHAR  = 'M';
     public static final char INSERT_CHAR = 'I';
     public static final char DELETE_CHAR = 'D';
 
     private static final String MATCH_STR = Character.toString(MATCH_CHAR);
     private static final String INSERT_STR = Character.toString(INSERT_CHAR);
     private static final String DELETE_STR = Character.toString(DELETE_CHAR);
+
+    private static final char DELETE_SYMBOL = '-';
 
     public CigarAlignmentEncoder() {
     }
@@ -43,7 +45,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
      * @param alignment Sequence alignment
      * @return Alignment in CIGAR format
      */
-    public String encode(String alignment) {
+    @Override public String encode(String alignment) {
         if (alignment == null) {
             throw new NullPointerException("Alignment must not be null");
         }
@@ -55,15 +57,19 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
             String s;
             if (Character.isUpperCase(c)) {
                 s = MATCH_STR;
-            } else if (Character.isLowerCase(c)) {
+            }
+            else if (Character.isLowerCase(c)) {
                 s = INSERT_STR;
-            } else if (c == '-') {
+            }
+            else if (c == DELETE_SYMBOL) {
                 s = DELETE_STR;
-            } else if (c == '.') {
+            }
+            else if (c == '.') {
                 s = null;
-            } else {
+            }
+            else {
                 throw new IllegalArgumentException("Alignment contains unrecognised characters " +
-                        "(must contain letters or " + DELETE_STR + "): " + alignment);
+                        "(must contain letters or " + String.valueOf(DELETE_SYMBOL) + "): " + alignment);
             }
             if (s != null) {
                 sb.append(s);
@@ -71,6 +77,61 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
         }
         // Encode
         return RunLengthEncoding.encode(sb.toString());
+    }
+
+    /**
+     * Returns decoded alignment.
+     *
+     * For example, "6M5D2M3I3M" is decoded as "QEFHRK-----KDgnfGAD", given the
+     * sequence "QEFHRKPQPPPKDGNFGAD".
+     * <p/>
+     * From <a href="http://www.cs.bris.ac.uk/~gough/book/">Hidden Markov models</a>:
+     * <ul>
+     * <li>Upper case letters are aligned to a segment of the model</li>
+     * <li>Lower case letters are not aligned</li>
+     * <li>Deletions with respect to the model are marked by the '-' character</li>
+     * <ul>
+     *
+     * @param sequence          Protein sequence
+     * @param encodedAlignment  CIGAR-encoded alignment
+     * @return Decoded alignment
+     */
+    @Override public String decode(String sequence, String encodedAlignment) {
+        if (sequence == null) {
+            throw new NullPointerException("Sequence must not be null");
+        }  
+        if (encodedAlignment == null) {
+            throw new NullPointerException("Alignment must not be null");
+        }
+        // Expand, for example convert "4M2D" to "MMMMDD"
+        String expandedAlignment = RunLengthEncoding.decode(encodedAlignment);
+        if (expandedAlignment.length() != sequence.length()) {
+            throw new IllegalArgumentException("Sequence and alignment should be of equal length");
+        }
+        StringBuffer alignment = new StringBuffer();
+        char[] alignmentArray = expandedAlignment.toCharArray();
+        char[] sequenceArray  = sequence.toCharArray();
+        for (int i = 0; i < alignmentArray.length; i++) {
+            switch (alignmentArray[i]) {
+                case MATCH_CHAR: {
+                    alignment.append(Character.toUpperCase(sequenceArray[i]));
+                    break;
+                }
+                case INSERT_CHAR: {
+                    alignment.append(Character.toLowerCase(sequenceArray[i]));
+                    break;
+                }
+                case DELETE_CHAR: {
+                    alignment.append(DELETE_SYMBOL);
+                    break;
+                }
+                default: {
+                    throw new IllegalArgumentException("Alignment contains unrecognised characters " +
+                                            "(can only contain " + MATCH_STR + ", " + INSERT_STR + " and" + DELETE_STR  + "): " + alignment);
+                }
+            }
+        }
+        return alignment.toString();
     }
 
     /**
