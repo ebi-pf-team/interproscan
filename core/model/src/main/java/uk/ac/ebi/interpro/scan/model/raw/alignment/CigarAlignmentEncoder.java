@@ -94,15 +94,32 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
      *
      * @param sequence          Protein sequence
      * @param encodedAlignment  CIGAR-encoded alignment
+     * @param start             Start position of alignment on sequence
+     * @param end               End position of alignment on sequence
      * @return Decoded alignment
      */
-    @Override public String decode(String sequence, String encodedAlignment) {
+    @Override public String decode(String sequence, String encodedAlignment, int start, int end) {
         if (sequence == null) {
             throw new NullPointerException("Sequence must not be null");
-        }  
+        }
         if (encodedAlignment == null) {
             throw new NullPointerException("Alignment must not be null");
         }
+        if (start < 1) {
+            throw new IllegalArgumentException("Start position must be 1 or greater");
+        }
+        if (end < 1) {
+            throw new IllegalArgumentException("Stop position must be 1 or greater");
+        }
+        if (start > end) {
+            throw new IllegalArgumentException("Start position must be equal to or less than stop position");
+        }
+        // Extract the sequence region to which the alignment applies (use -1 because indexes in Java start from 0)
+        String sequenceRegion = sequence.substring(start - 1, end);
+        return decode(sequenceRegion, encodedAlignment);
+    }
+
+    private String decode(String sequence, String encodedAlignment) {
         // Expand, for example convert "4M2D" to "MMMMDD"
         String expandedAlignment = RunLengthEncoding.decode(encodedAlignment);
         if (expandedAlignment.length() != sequence.length()) {

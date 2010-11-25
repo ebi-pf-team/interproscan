@@ -10,7 +10,7 @@ public interface AlignmentEncoder {
 
     public String encode(String alignment);
     
-    public String decode(String sequence, String encodedAlignment);
+    public String decode(String sequence, String encodedAlignment, int start, int end);
 
     /**
      * Provides information about the encoded alignment

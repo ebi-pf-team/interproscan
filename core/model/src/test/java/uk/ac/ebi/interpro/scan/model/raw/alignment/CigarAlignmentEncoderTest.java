@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class CigarAlignmentEncoderTest {
 
-    private static final String SEQUENCE       = "QEFHRKPQQPHKDgnfGAD";
+    private static final String SEQUENCE       = "QEFHRKPQQPHKDGNFGAD";
 
     private static final String GOOD_ALIGNMENT = "QEFHRK-----KDgnfGAD";
     private static final String GOOD_ALIGNMENT_ENCODING = "6M5D2M3I3M";
@@ -27,13 +27,26 @@ public class CigarAlignmentEncoderTest {
     @Test
     public void testDecode() {
         AlignmentEncoder encoder = new CigarAlignmentEncoder();
-        assertEquals(GOOD_ALIGNMENT, encoder.decode(SEQUENCE, GOOD_ALIGNMENT_ENCODING));
+        assertEquals(GOOD_ALIGNMENT, encoder.decode(SEQUENCE, GOOD_ALIGNMENT_ENCODING, 1, SEQUENCE.length()));
+    }
+
+    @Test
+    public void testDecodeSubSequence() {
+        final int start        = 4;
+        final int end          = 14;
+        final String sequence  = "QEFHRKPQQPHKDGNFGAD";
+        final String alignment =    "HRK-----KDg";
+        //                           ^         ^
+        //                           4         14
+        final String encoding  = "3M5D2M1I";
+        AlignmentEncoder encoder = new CigarAlignmentEncoder();
+        assertEquals(alignment, encoder.decode(sequence, encoding, start, end));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDecodeBadAlignment() {
         AlignmentEncoder encoder = new CigarAlignmentEncoder();
-        encoder.decode(SEQUENCE, BAD_ALIGNMENT_ENCODING);
+        encoder.decode(SEQUENCE, BAD_ALIGNMENT_ENCODING, 1, SEQUENCE.length());
         Assert.fail("IllegalArgumentException expected but not thrown");
     }
 
