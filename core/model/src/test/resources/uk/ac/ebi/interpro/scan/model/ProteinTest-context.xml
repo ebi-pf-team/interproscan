@@ -649,11 +649,11 @@
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.PatternScanMatch.PatternScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation">
-                                <constructor-arg value="166"/>
-                                <constructor-arg value="179"/>
+                                <constructor-arg value="8"/>
+                                <constructor-arg value="43"/>
                                 <constructor-arg value="STRONG"
                                                  type="uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation$Level"/>
-                                <constructor-arg value="30M10D10I10D"/>
+                                <constructor-arg value="23M10D3I"/>
                             </bean>
                         </util:set>
                     </constructor-arg>
@@ -682,8 +682,8 @@
                         <patternscan-match>
                             <signature ac="PS00675" name="SIGMA54_INTERACT_1"/>
                             <locations>
-                                <patternscan-location level="STRONG" end="179" start="166">
-                                    <alignment>MSKILIIDDEVQIRSLLARMLGLEGYEVCQ----------leiqqpdval----------</alignment>
+                                <patternscan-location start="8" end="43" level="STRONG">
+                                    <alignment>DDEVQIRSLLARMLGLEGYEVCQ----------lei</alignment>
                                 </patternscan-location>
                             </locations>
                         </patternscan-match>
@@ -708,10 +708,10 @@
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch.ProfileScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation">
-                                <constructor-arg value="171"/>
-                                <constructor-arg value="275"/>
+                                <constructor-arg value="1"/>
+                                <constructor-arg value="33"/>
                                 <constructor-arg value="24.202"/>
-                                <constructor-arg value="30M10D10I10D"/>
+                                <constructor-arg value="30M3D"/>
                             </bean>
                         </util:set>
                     </constructor-arg>
@@ -726,10 +726,10 @@
                     <constructor-arg>
                         <util:set value-type="uk.ac.ebi.interpro.scan.model.ProfileScanMatch.ProfileScanLocation">
                             <bean class="uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation">
-                                <constructor-arg value="292"/>
-                                <constructor-arg value="370"/>
+                                <constructor-arg value="35"/>
+                                <constructor-arg value="53"/>
                                 <constructor-arg value="15.158"/>
-                                <constructor-arg value="30M10D10I10D"/>
+                                <constructor-arg value="6D10I3D"/>
                             </bean>
                         </util:set>
                     </constructor-arg>
@@ -757,21 +757,21 @@
                     <xref id="UPI0001AF8DCD"/>
                     <matches>
                         <profilescan-match>
-                            <signature name="RHODANESE_3" ac="PS50206"/>
+                            <signature name="CNMP_BINDING_3" ac="PS50042"/>
                             <locations>
-                                <profilescan-location start="292" end="370" score="15.158">
-                                    <alignment>MSHNPKLLDTSAQMTTAVLALLNTFEPLAK----------glcfvekvsk----------</alignment>
+                                <profilescan-location start="1" end="33" score="24.202">
+                                    <alignment>MSHNPKLLDTSAQMTTAVLALLNTFEPLAK---</alignment>
                                 </profilescan-location>
                             </locations>
                         </profilescan-match>
                         <profilescan-match>
-                            <signature name="CNMP_BINDING_3" ac="PS50042"/>
+                            <signature name="RHODANESE_3" ac="PS50206"/>
                             <locations>
-                                <profilescan-location start="171" end="275" score="24.202">
-                                    <alignment>MSHNPKLLDTSAQMTTAVLALLNTFEPLAK----------glcfvekvsk----------</alignment>
+                                <profilescan-location start="35" end="53" score="15.158">
+                                    <alignment>------glcfvekvsk---</alignment>
                                 </profilescan-location>
                             </locations>
-                        </profilescan-match>                        
+                        </profilescan-match>                                                
                     </matches>
                 </protein>
                 ]]>

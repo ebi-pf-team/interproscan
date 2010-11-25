@@ -98,7 +98,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
                 return null;
             }
             AlignmentEncoder encoder = new CigarAlignmentEncoder();
-            return encoder.decode(getMatch().getProtein().getSequence(), cigarAlignment);
+            return encoder.decode(getMatch().getProtein().getSequence(), cigarAlignment, getStart(), getEnd());
         }
 
         public void setAlignment(String alignment) {
