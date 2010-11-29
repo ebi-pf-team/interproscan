@@ -21,7 +21,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
@@ -33,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
-@XmlType(name="HmmerLocationType", propOrder={"score", "evalue", "hmmStart", "hmmEnd", "hmmBounds"})
+@XmlType(name="HmmerLocationType", propOrder={"score", "evalue", "hmmStart", "hmmEnd", "hmmLength"})
 public abstract class HmmerLocation extends Location {
 
     @Column(nullable = false, name="hmm_start")
@@ -53,6 +52,10 @@ public abstract class HmmerLocation extends Location {
      */
     @Column (nullable = false, name="hmm_bounds", length = 2)
     private String hmmBounds;
+
+    // TODO: Make HMM length non-nullable?
+    @Column (name="hmm_length")
+    private int hmmLength;
 
     @Column (nullable = false, name="evalue")
     private double evalue;
@@ -76,6 +79,17 @@ public abstract class HmmerLocation extends Location {
         setScore(score);
     }
 
+    // Don't use Builder pattern because all fields are required
+    public HmmerLocation(int start, int end, double score, double evalue,
+                         int hmmStart, int hmmEnd, int hmmLength) {
+        super(start, end);
+        setHmmStart(hmmStart);
+        setHmmEnd(hmmEnd);
+        setHmmLength(hmmLength);
+        setEvalue(evalue);
+        setScore(score);
+    }
+
     @XmlAttribute(name="hmm-start", required=true)
     public int getHmmStart() {
         return hmmStart;
@@ -94,13 +108,23 @@ public abstract class HmmerLocation extends Location {
         this.hmmEnd = hmmEnd;
     }
 
-    @XmlAttribute(name="hmm-bounds", required=true)
+    // TODO: Remove HMM bounds? Can infer from HMM length
+    //@XmlAttribute(name="hmm-bounds", required=true)
     public HmmBounds getHmmBounds() {
         return HmmBounds.parseSymbol(hmmBounds);
     }
 
     private void setHmmBounds(HmmBounds hmmBounds) {
         this.hmmBounds = hmmBounds.getSymbol();
+    }
+
+    @XmlAttribute(name="hmm-length", required=true)
+    public int getHmmLength() {
+        return hmmLength;
+    }
+
+    private void setHmmLength(int hmmLength) {
+        this.hmmLength = hmmLength;
     }
 
     @XmlAttribute(required=true)
@@ -131,6 +155,7 @@ public abstract class HmmerLocation extends Location {
                 .appendSuper(super.equals(o))
                 .append(hmmStart, h.hmmStart)
                 .append(hmmEnd, h.hmmEnd)
+                .append(hmmLength, h.hmmLength)
                 .append(hmmBounds, h.hmmBounds)
                 .append(score, h.score)
                 .isEquals()
@@ -143,6 +168,7 @@ public abstract class HmmerLocation extends Location {
                 .appendSuper(super.hashCode())
                 .append(hmmStart)
                 .append(hmmEnd)
+                .append(hmmLength)
                 .append(hmmBounds)
                 .append(score)
                 .append(evalue)
