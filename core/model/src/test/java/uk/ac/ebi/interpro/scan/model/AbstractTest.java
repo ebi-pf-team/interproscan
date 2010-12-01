@@ -94,8 +94,8 @@ abstract class AbstractTest<T> extends AbstractXmlTest<T> {
     /**
      * Performs XML round-trip using {@link java.util.Map} of {@link uk.ac.ebi.interpro.scan.model.ObjectXmlPair}.
      *
-     * @throws java.io.IOException   if problem marshalling or unmarshalling
-     * @throws org.xml.sax.SAXException  if cannot parse expected or actual XML
+     * @throws java.io.IOException      if problem marshalling or unmarshalling
+     * @throws org.xml.sax.SAXException if cannot parse expected or actual XML
      */
     protected void testXmlRoundTrip() throws IOException, SAXException {
         XMLUnit.setIgnoreComments(true);
@@ -104,20 +104,25 @@ abstract class AbstractTest<T> extends AbstractXmlTest<T> {
         XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
         XMLUnit.setNormalizeWhitespace(true);        
         for (String key : objectXmlMap.keySet()) {
-            // Get expected object and XML
-            T expectedObject   = objectXmlMap.get(key).getObject();
-            String expectedXml = objectXmlMap.get(key).getXml();
-            LOGGER.debug(key + " (expected object XML):\n" + marshal(expectedObject));
-            // Convert XML to object
-            T actualObject = unmarshal(expectedXml);
-            LOGGER.debug(actualObject);
-            assertEquals(key, expectedObject, actualObject);
-            // ... and back again
-            String actualXml = marshal(actualObject);
-            LOGGER.debug(key + " (actual object XML):\n" + actualXml);
-            assertXmlEquals(key, expectedXml, actualXml);
-            // Validate against XML schema
-            validate(actualXml);
+            try {
+                // Get expected object and XML
+                T expectedObject   = objectXmlMap.get(key).getObject();
+                String expectedXml = objectXmlMap.get(key).getXml();
+                LOGGER.debug(key + " (expected object XML):\n" + marshal(expectedObject));
+                // Convert XML to object
+                T actualObject = unmarshal(expectedXml);
+                LOGGER.debug(actualObject);
+                assertEquals(key, expectedObject, actualObject);
+                // ... and back again
+                String actualXml = marshal(actualObject);
+                LOGGER.debug(key + " (actual object XML):\n" + actualXml);
+                assertXmlEquals(key, expectedXml, actualXml);
+                // Validate against XML schema
+                validate(actualXml);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(key + " error:", e);
+            }
         }
     }
 

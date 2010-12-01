@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import javax.xml.bind.annotation.XmlType;
 import java.util.Map;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Map;
  * @version $Id$
  * @since 1.0
  */
+@XmlType(name = "PhobiusFeatureType")
 public enum PhobiusFeatureType {
 
     SIGNAL_PEPTIDE("SIGNAL_PEPTIDE", "Signal Peptide", 
