@@ -55,8 +55,8 @@
                 <![CDATA[
                 <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
                     <signature-library-release version="23" library="PFAM"/>
-                    <protein md5="5ab17489095dd2836122eec0e91db82d">
-                        <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
+                    <protein>
+                        <sequence md5="5ab17489095dd2836122eec0e91db82d">MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
                         <xref id="A0A000_9ACTO"/>
                         <matches>
                             <hmmer3-match score="0.035" evalue="3.7E-9">

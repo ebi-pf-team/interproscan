@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 
 @Entity
 @XmlRootElement(name = "protein")
-@XmlType(name = "ProteinType", propOrder = {"sequence", "crossReferences", "matches"})
+@XmlType(name = "ProteinType", propOrder = {"sequenceObject", "crossReferences", "matches"})
 public class Protein implements Serializable {
 
     @Transient
@@ -184,7 +184,6 @@ public class Protein implements Serializable {
         return id;
     }
 
-    @XmlAttribute
     public String getMd5() {
         return md5;
     }
@@ -239,7 +238,6 @@ public class Protein implements Serializable {
         match.setProtein(null);
     }
 
-    @XmlElement
     public String getSequence() {
         if (sequence == null) {
             sequence = CHUNKER.concatenate(sequenceFirstChunk, sequenceChunks);
@@ -265,6 +263,52 @@ public class Protein implements Serializable {
         List<String> chunks = CHUNKER.chunkIntoList(sequence);
         this.sequenceFirstChunk = CHUNKER.firstChunk(chunks);
         this.sequenceChunks = CHUNKER.latterChunks(chunks);
+    }
+
+    @XmlElement(name = "sequence")
+    private Sequence getSequenceObject() {
+        return new Sequence(sequence, md5);
+    }
+
+    private void setSequenceObject(Sequence sequence) {
+        setSequence(sequence.getSequence());
+        setMd5(sequence.getMd5());
+    }
+
+    @XmlType(name = "SequenceType")
+    private static final class Sequence {
+
+        private String md5;
+        private String sequence;
+
+        private Sequence() {
+            this.md5      = null;
+            this.sequence = null;
+        }
+
+        public Sequence(String sequence, String md5) {
+            this.md5      = md5;
+            this.sequence = sequence;
+        }
+
+        @XmlAttribute
+        public String getMd5() {
+            return md5;
+        }
+
+        public void setMd5(String md5) {
+            this.md5 = md5;
+        }
+
+        @XmlValue
+        public String getSequence() {
+            return sequence;
+        }
+
+        public void setSequence(String sequence) {
+            this.sequence = sequence;
+        }
+
     }
 
     /**
@@ -391,5 +435,49 @@ public class Protein implements Serializable {
         }
 
     }
+
+//    /**
+//     * Map protein sequence to and from XML representation
+//     */
+//    @XmlTransient
+//    private static class SequenceAdapter extends XmlAdapter<SequenceType, Map<String, Model>> {
+//
+//        /** Map Java to XML type */
+//        @Override public ModelsType marshal(Map<String, Model> map) {
+//            return (map == null || map.isEmpty() ? null : new ModelsType(new HashSet<Model>(map.values())));
+//        }
+//
+//        /** Map XML type to Java */
+//        @Override public Map<String, Model> unmarshal(ModelsType modelsType) {
+//            Map<String, Model> map = new HashMap<String, Model>();
+//            for (Model m : modelsType.getModels())  {
+//                map.put(m.getKey(), m);
+//            }
+//            return map;
+//        }
+//
+//    }
+//
+//    /**
+//     * Helper class for SequenceAdapter
+//     */
+//    private final static class SequenceType {
+//
+//        @XmlElement(name = "model")
+//        private final Set<Model> models;
+//
+//        private SequenceType() {
+//            models = null;
+//        }
+//
+//        public SequenceType(Set<Model> models) {
+//            this.models = models;
+//        }
+//
+//        public Set<Model> getModels() {
+//            return models;
+//        }
+//
+//    }
 
 }

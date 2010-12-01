@@ -104,7 +104,7 @@ public class ProteinTest extends AbstractTest<Protein> {
      * Tests the equivalent() method works as expected
      */
     @Test
-    public void testEquals() {
+    public void testEquals() throws IOException {
         Protein original = new Protein(GOOD);
         Protein copy = (Protein) SerializationUtils.clone(original);
         // Original should equal itself
@@ -124,6 +124,11 @@ public class ProteinTest extends AbstractTest<Protein> {
         assertFalse("Original and copy should not be equal", original.equals(copy));
         copy.addMatch((Hmmer2Match) SerializationUtils.clone(match));
         assertEquals(original, copy);
+        // Print
+        if (LOGGER.isDebugEnabled())    {
+            LOGGER.debug(original);
+            LOGGER.debug(super.marshal(original));
+        }        
     }
 
     /**
