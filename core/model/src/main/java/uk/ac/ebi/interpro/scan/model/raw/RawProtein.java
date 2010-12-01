@@ -14,13 +14,11 @@ import java.util.Set;
  * <p>
  * Stores raw matches associated with a protein sequence identifier.
  * </p>
- * <p/>
  * <p>
  * We cannot associate raw matches with a {@link uk.ac.ebi.interpro.scan.model.Protein} when
  * parsing output files because we do not have the protein sequence and cannot therefore create a Protein
  * object. We must therefore use this class when parsing because all we have is a protein identifier.
  * </p>
- * <p/>
  * <p>
  * Note: Not stored in database, just returned by DAO as a convenience class.
  * </p>

@@ -40,7 +40,6 @@ import java.util.Set;
     @UniqueConstraint(columnNames = {"library", "version"}))
 @XmlRootElement(name="signature-library-release")
 @XmlType(name="SignatureLibraryReleaseType")
-
 public class SignatureLibraryRelease implements Serializable {
 
     @Id
@@ -57,7 +56,7 @@ public class SignatureLibraryRelease implements Serializable {
 
     // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
     @OneToMany (mappedBy = "signatureLibraryRelease", cascade = CascadeType.ALL)
-    @XmlElement(name="signature", required=true)
+    @XmlElement(name="signature")
     private Set<Signature> signatures = new HashSet<Signature>();
 
     /**
