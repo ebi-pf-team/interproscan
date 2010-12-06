@@ -16,15 +16,12 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.custommonkey.xmlunit.*;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 import javax.annotation.Resource;
 import javax.xml.transform.Source;
@@ -34,7 +31,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 

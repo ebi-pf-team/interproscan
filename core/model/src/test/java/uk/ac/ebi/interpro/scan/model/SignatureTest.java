@@ -56,7 +56,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
 
         // Can use \n or XML escape character (&#10;) for new line
         String expectedXml =
-                "<signature ac='PF00001' xmlns='http://www.ebi.ac.uk/schema/interpro/scan/model'>\n" +
+                "<signature ac='PF00001' xmlns='http://www.ebi.ac.uk/schema/interpro'>\n" +
                 "    <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), " +
                 "members of the opsin family, which have been considered to be typical members " +
                 "of the rhodopsin superfamily. " +

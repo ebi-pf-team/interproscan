@@ -54,7 +54,7 @@
         <constructor-arg>
             <value>
             <![CDATA[
-                <protein xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <protein xmlns="http://www.ebi.ac.uk/schema/interpro">
                     <sequence md5="e8872c7a0261b9e88e6ff47eb34e4162">MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGSRNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGIAARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAPSAVHETEEIHRFVDALDGIWSELGAARRV</sequence>
                     <matches/>
                 </protein>
@@ -121,9 +121,12 @@
         <constructor-arg>
             <value>
             <![CDATA[
-                <protein xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model" xmlns:pfam="http://pfam.sanger.ac.uk"
+                <protein xmlns="http://www.ebi.ac.uk/schema/interpro"
+                         xmlns:pfam="http://pfam.sanger.ac.uk"
                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                         xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro/scan/model
+                         xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
+                                             http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd
+                                             http://pfam.sanger.ac.uk
                                              http://pfam.sanger.ac.uk/static/documents/schemas/results.xsd">
                     <sequence md5="e8872c7a0261b9e88e6ff47eb34e4162">MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGSRNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGIAARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAPSAVHETEEIHRFVDALDGIWSELGAARRV</sequence>
                     <xref id="A0A000"/>

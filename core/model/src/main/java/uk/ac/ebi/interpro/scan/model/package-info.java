@@ -23,7 +23,7 @@
  * @since   1.0
  */
 
-@XmlSchema(namespace = "http://www.ebi.ac.uk/schema/interpro/scan/model", elementFormDefault = XmlNsForm.QUALIFIED)
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = "http://www.ebi.ac.uk/schema/interpro")
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL) // TODO: @XmlAccessorOrder seems to have no effect
 @XmlJavaTypeAdapter(value = DateAdapter.class, type = Date.class)        
 package uk.ac.ebi.interpro.scan.model;
