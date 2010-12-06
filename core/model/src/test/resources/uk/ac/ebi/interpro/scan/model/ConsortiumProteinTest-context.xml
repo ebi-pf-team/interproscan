@@ -24,12 +24,6 @@
                 <constructor-arg ref="whiteSpaceSequenceXml"/>
             </bean>
         </entry>
-        <!--<entry key="Pfam">-->
-            <!--<bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">-->
-                <!--<constructor-arg ref="pfamObject"/>-->
-                <!--<constructor-arg ref="pfamXml"/>-->
-            <!--</bean>-->
-        <!--</entry>-->
     </util:map>
 
     <!--Tests whitespace in <sequence> tag-->
@@ -77,118 +71,6 @@
             <!--]]>-->
             <!--</value>-->
         <!--</constructor-arg>-->
-    </bean>
-
-
-    <lang:groovy id="pfamObject">
-        <lang:inline-script>
-            <![CDATA[
-                import uk.ac.ebi.interpro.scan.model.*
-                Protein p = new Protein("MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGS" +
-                        "RNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARK" +
-                        "HVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGI" +
-                        "AARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEER" +
-                        "RRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAP" +
-                        "SAVHETEEIHRFVDALDGIWSELGAARRV");
-                // p.addCrossReference(new Xref("A0A000", "A0A000_9ACTO"));
-                p.addCrossReference(new ProteinXref("A0A000"));
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "14");
-                Signature signature = new Signature.Builder("PF00155")
-                                        .name("Aminotran_1_2").type("DOMAIN").signatureLibraryRelease(release).build();
-                Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-                locations.add(new Hmmer3Match.Hmmer3Location(37, 381, 206.7, 3.7E-67, 6, 363, HmmBounds.N_TERMINAL_COMPLETE, 41, 381));
-                p.addMatch(new Hmmer3Match(signature, 206.7, 3.7E-67, locations));
-                return p;
-            ]]>
-        </lang:inline-script>
-    </lang:groovy>
-    <bean id="pfamXml" class="java.lang.String">
-        <!--
-        Amended version to get working:
-        1. Removed acc from Xref, switched id: <xref id="A0A000_9ACTO" acc="A0A000"/> => <xref id="A0A000"/>
-        2. Stripped whitespace from <sequence> element
-        3. Corrected MD5 (was 5ab17489095dd2836122eec0e91db82d, should be e8872c7a0261b9e88e6ff47eb34e4162)
-        4. Corrected spelling mistake in type attribute (DIMAIN +> DOMAIN)
-
-        To consider:
-        1. Add hmm-length (can still keep hmm-bounds?) - need to read from DB if not available in HMMER output
-        2. Expand Xref to include name (eg. "A0A000_9ACTO") and source DB name (eg. "UniProt")
-        3. XMLUnit will complain about the xmlns:xsi and xmlns:pfam elements - use XSLT to correct?
-        4. XMLUnit will complain if whitespace in <sequence> element - use XSLT to correct?
-        5. Add SignatureLibraryRelease info to <signature> element so we know which release the match belongs to?
-           (Rob added library="PFAM" version="14" to <signature>)
-        -->
-        <constructor-arg>
-            <value>
-            <![CDATA[
-                <protein xmlns="http://www.ebi.ac.uk/schema/interpro"
-                         xmlns:pfam="http://pfam.sanger.ac.uk"
-                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                         xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
-                                             http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd
-                                             http://pfam.sanger.ac.uk
-                                             http://pfam.sanger.ac.uk/static/documents/schemas/results.xsd">
-                    <sequence md5="e8872c7a0261b9e88e6ff47eb34e4162">MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGSRNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGIAARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAPSAVHETEEIHRFVDALDGIWSELGAARRV</sequence>
-                    <xref id="A0A000"/>
-                    <pfam:database release="24.0" name="pfam" release_date="2009-10-07" search_date="2010-05-27"
-                        job_id="ea784d7e-e092-461f-b7b1-5848a4d5ef6f"/>
-                    <matches>
-                        <hmmer3-match score="206.7" evalue="3.7E-61">
-                            <signature ac="PF00155" name="Aminotran_1_2" library="PFAM" type="DOMAIN" version="14"/>
-                            <locations>
-                                <hmmer3-location start="37" end="381" env-start="41" env-end="381" score="206.7"
-                                    evalue="3.7E-67" hmm-start="6" hmm-end="363" hmm-length="363">
-                                    <pfam:raw_output>#HMM       Lgsneylgdsgkptlpevakaeke..galaggtlneygpidglpeleealakflgrseklklkreaavvvgsGagaliealifllklnpgdeilvpdptyasyknilrlsggevvryplyseedfhldlealeealkeapegnkktkvvlvesphNPtGtvatleeleklldlakkynlllfvDeaYagfvfgsldavat.ranveeepnllivgslsKafGlaGeRvGyilgnaavvsqlrklsrpflsssllqaavaaalsdallkqseleemrqrlqkrrkelrdeLaelglkvlasqsgmflltdlsaetakelskkLleevgvyvtpgtsftv...pgrlRitv.Aglteeeleelveal
-                #MATCH     ++sn+ylg++++p + +++k+  +  g ++gg++n  g+++ + +le + a+ +g        +e+av+++sG++a+   l  l+ +  ++++++++ ++as++++lr+sg+  + ++       h d  +lee+l+ a  +++  k++++es+h++ G++a l+e+  l   ak+y++++f+De++a++++g+ +a  + r +v  e   +++g+l+KafG++G   Gy++g a + +++r  +r+f ++++l++avaa + +a ++ +  +e+r+r +++++  +  L+e +++vl+  s ++++ +++    k +s   le++g yv+++  + v   ++ lRi + A + +ee+ ++v+al
-                #PP        9******************************************************........999****************************************************.......************9776666..************************...********************76442223666666665.**************...*************************************99999*******************************************888888889****************************************986
-                #SEQ       WCSNDYLGMGQHPDVLDAMKRSVDeyGGGSGGSRNTGGTNHFHVALEREPAEPHG--------KEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFR-------HKDGRHLEELLAAADRDKP--KFIALESVHSMRGDIALLAEIAGL---AKRYGAVTFLDEVHAVGMYGPGGAGIAaRDGVHCEFT-VVMGTLAKAFGMTG---GYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVpagEEILRIAPsAVHETEEIHRFVDAL
-                                    </pfam:raw_output>
-                                </hmmer3-location>
-                            </locations>
-                        </hmmer3-match>
-                    </matches>
-                </protein>
-            ]]>
-            </value>
-        </constructor-arg>
-        <!--Original:-->
-        <!--https://pfamsvn.sanger.ac.uk/cgi-bin/e8872c7a0261b9e88e6ff47eb34e4162/e8872c7a0261b9e88e6ff47eb34e4162.xml-->
-        <!--<constructor-arg>-->
-            <!--<value>-->
-            <!--<![CDATA[-->
-                <!--<protein md5="5ab17489095dd2836122eec0e91db82d"-->
-                    <!--xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model" xmlns:pfam="http://pfam.sanger.ac.uk"-->
-                    <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
-                    <!--xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro/scan/model-->
-                                        <!--http://pfam.sanger.ac.uk/static/documents/schemas/results.xsd">-->
-                    <!--<sequence>MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGS-->
-                        <!--RNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARK-->
-                        <!--HVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGI-->
-                        <!--AARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEER-->
-                        <!--RRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAP-->
-                        <!--SAVHETEEIHRFVDALDGIWSELGAARRV</sequence>-->
-                    <!--<xref id="A0A000_9ACTO" acc="A0A000"/>-->
-                    <!--<pfam:database release="24.0" name="pfam" release_date="2009-10-07" search_date="2010-05-27"-->
-                        <!--job_id="ea784d7e-e092-461f-b7b1-5848a4d5ef6f"/>-->
-                    <!--<matches>-->
-                        <!--<hmmer3-match score="206.7" evalue="3.7E-61">-->
-                            <!--<signature ac="PF00155" name="Aminotran_1_2" library="PFAM" type="DIMAIN" version="14"/>-->
-                            <!--<locations>-->
-                                <!--<hmmer3-location start="37" end="381" env-start="41" env-end="381" score="206.7"-->
-                                    <!--evalue="3.7E-67" hmm-start="6" hmm-end="363" hmm-length="363">-->
-                                    <!--<pfam:raw_output>#HMM       Lgsneylgdsgkptlpevakaeke..galaggtlneygpidglpeleealakflgrseklklkreaavvvgsGagaliealifllklnpgdeilvpdptyasyknilrlsggevvryplyseedfhldlealeealkeapegnkktkvvlvesphNPtGtvatleeleklldlakkynlllfvDeaYagfvfgsldavat.ranveeepnllivgslsKafGlaGeRvGyilgnaavvsqlrklsrpflsssllqaavaaalsdallkqseleemrqrlqkrrkelrdeLaelglkvlasqsgmflltdlsaetakelskkLleevgvyvtpgtsftv...pgrlRitv.Aglteeeleelveal-->
-                <!--#MATCH     ++sn+ylg++++p + +++k+  +  g ++gg++n  g+++ + +le + a+ +g        +e+av+++sG++a+   l  l+ +  ++++++++ ++as++++lr+sg+  + ++       h d  +lee+l+ a  +++  k++++es+h++ G++a l+e+  l   ak+y++++f+De++a++++g+ +a  + r +v  e   +++g+l+KafG++G   Gy++g a + +++r  +r+f ++++l++avaa + +a ++ +  +e+r+r +++++  +  L+e +++vl+  s ++++ +++    k +s   le++g yv+++  + v   ++ lRi + A + +ee+ ++v+al-->
-                <!--#PP        9******************************************************........999****************************************************.......************9776666..************************...********************76442223666666665.**************...*************************************99999*******************************************888888889****************************************986-->
-                <!--#SEQ       WCSNDYLGMGQHPDVLDAMKRSVDeyGGGSGGSRNTGGTNHFHVALEREPAEPHG________KEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFR_______HKDGRHLEELLAAADRDKP__KFIALESVHSMRGDIALLAEIAGL___AKRYGAVTFLDEVHAVGMYGPGGAGIAaRDGVHCEFT_VVMGTLAKAFGMTG___GYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVpagEEILRIAPsAVHETEEIHRFVDAL-->
-                                    <!--</pfam:raw_output>-->
-                                <!--</hmmer3-location>-->
-                            <!--</locations>-->
-                        <!--</hmmer3-match>-->
-                    <!--</matches>-->
-                <!--</protein>-->
-            <!--]]>-->
-            <!--</value>-->
-        <!--</constructor-arg>        -->
     </bean>
 
 </beans>
