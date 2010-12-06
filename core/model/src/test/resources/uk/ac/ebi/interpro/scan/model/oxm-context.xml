@@ -28,6 +28,21 @@
                     </key>
                 </entry>
             </util:map>
+            <!--To include the schema location, comment out the above util:map and uncomment the following - unfortunately-->
+            <!--they can't be mixed because they're different types (Boolean vs String):-->
+            <!--<protein xmlns="http://www.ebi.ac.uk/schema/interpro" -->
+                     <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+                     <!--xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro -->
+                                         <!--http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd" >-->
+                <!--...-->
+            <!--</protein>-->
+            <!--<util:map value-type="java.lang.String">-->
+                <!--<entry value="http://www.ebi.ac.uk/schema/interpro http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">-->
+                    <!--<key>-->
+                        <!--<util:constant static-field="javax.xml.bind.Marshaller.JAXB_SCHEMA_LOCATION"/>-->
+                    <!--</key>-->
+                <!--</entry>-->
+            <!--</util:map>-->
         </property>
     </bean>
 

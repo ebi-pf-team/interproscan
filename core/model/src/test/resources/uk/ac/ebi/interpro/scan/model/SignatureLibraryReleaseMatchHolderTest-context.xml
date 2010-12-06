@@ -52,8 +52,11 @@
     <bean id="pfamXml" class="java.lang.String">
         <constructor-arg>
             <value>
-                <![CDATA[
-                <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro/scan/model">
+                <![CDATA[                
+                <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                                                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
+                                                                       http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
                     <signature-library-release version="23" library="PFAM"/>
                     <protein>
                         <sequence md5="5ab17489095dd2836122eec0e91db82d">MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
