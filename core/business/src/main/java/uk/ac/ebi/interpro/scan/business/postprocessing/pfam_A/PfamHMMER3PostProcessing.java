@@ -75,7 +75,6 @@ public class PfamHMMER3PostProcessing implements Serializable {
         return proteinIdToRawProteinMap;
     }
 
-
     /**
      * Implementation of Rob Finn's algorithm for post processing, translated from Perl to Java.
      * <p/>
@@ -111,8 +110,10 @@ public class PfamHMMER3PostProcessing implements Serializable {
             }
         }
 
-        // Then iterate over the non-seed raw rawProteinUnfiltered, sorted in order "best (lowest) evalue first"
-        for (final RawMatch rawMatch : rawProteinUnfiltered.getMatches()) {
+        // Then iterate over the non-seed raw rawProteinUnfiltered, sorted in order ievalue ASC score DESC
+        final Set<PfamHmmer3RawMatch> unfilteredByEvalue = new TreeSet<PfamHmmer3RawMatch>(rawProteinUnfiltered.getMatches());
+
+        for (final RawMatch rawMatch : unfilteredByEvalue) {
             final PfamHmmer3RawMatch candidateMatch = (PfamHmmer3RawMatch) rawMatch;
             if (!seedMatches.contains(candidateMatch)) {
                 final PfamClan candidateMatchClan = clanData.getClanByModelAccession(candidateMatch.getModelId());

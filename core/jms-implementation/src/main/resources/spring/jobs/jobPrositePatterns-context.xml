@@ -57,7 +57,7 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
-        <property name="modelFile" value="${prosite.models.path}"/>
+        <property name="modelFile" value="${prosite.models.path.20.66}"/>
         <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
         <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path}"/>
     </bean>
@@ -98,7 +98,7 @@
         <property name="dependsUpon" ref="stepPrositePatternParseRawOutput"/>
         <property name="serialGroup" value="PROSITE_PATTERNS_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter Prosite Patterns matches and persist filtered results"/>
-        <property name="signatureLibraryRelease" value="20.52"/>
+        <property name="signatureLibraryRelease" value="20.66"/>
         <property name="postProcessor" ref="prositePatternPostProcessor"/>
         <property name="filteredMatchDAO" ref="prositePatternFilteredMatchDAO"/>
         <property name="rawMatchDAO" ref="prositePatternRawMatchDAO"/>
@@ -124,7 +124,7 @@
     </bean>
 
     <bean id="prositePatternRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositePatternMatchParser">
-        <constructor-arg value="20.52"/>
+        <constructor-arg value="20.66"/>
         <property name="cigarEncoder" ref="cigarEncoder"/>
     </bean>
 

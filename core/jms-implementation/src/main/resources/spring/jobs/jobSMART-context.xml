@@ -59,7 +59,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToHmmFile" value="${smart.hmm.bin.path}"/>
+        <property name="fullPathToHmmFile" value="${smart.hmm.bin.path.6.1}"/>
     </bean>
 
     <bean id="stepSMARTDeleteFastaFile"

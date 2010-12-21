@@ -49,7 +49,7 @@
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.fingerprintscan.path}"/>
         <property name="binarySwitches" value="-e 0.0001 -d 10 -E 257043 84355444 -fj -o 15"/>
-        <property name="fullPathToHmmFile" value="${prints.pval.path}"/>
+        <property name="fullPathToHmmFile" value="${prints.pval.path.41.1}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
@@ -73,7 +73,7 @@
         <property name="printsRawMatchDAO" ref="printsRawMatchDAO"/>
         <property name="serialGroup" value="PARSE_PRINTS"/>
         <property name="retries" value="3"/>
-        <property name="signatureLibraryRelease" value="40.0"/>
+        <property name="signatureLibraryRelease" value="41.1"/>
         <property name="printsOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
@@ -93,7 +93,7 @@
         <property name="stepDescription" value="Performs post processing and Match persistence on PRINTS data"/>
         <property name="postProcessor" ref="printsPostProcessor"/>
         <property name="serialGroup" value="PRINTS_POST_PROCESSING"/>
-        <property name="signatureLibraryRelease" value="40.0"/>
+        <property name="signatureLibraryRelease" value="41.1"/>
         <property name="rawMatchDAO" ref="printsRawMatchDAO"/>
         <property name="filteredMatchDAO" ref="printsFilteredMatchDAO"/>
     </bean>
@@ -109,7 +109,7 @@
 
     <bean id="printsPostProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.prints.PrintsPostProcessing">
         <property name="hierarchyDBParser" ref="hierarchyDBParser"/>
-        <property name="fingerPRINTSHierarchyDB" value="file:${prints.hierarchy.path}"/>
+        <property name="fingerPRINTSHierarchyDB" value="file:${prints.hierarchy.path.41.1}"/>
     </bean>
 
     <bean id="hierarchyDBParser" class="uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser"></bean>

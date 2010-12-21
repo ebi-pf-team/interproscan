@@ -1,5 +1,8 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import java.io.Serializable;
 
 /**
@@ -15,16 +18,20 @@ public class SeedAlignment implements Serializable {
 
     private final String modelAccession;
 
+    private final String MD5;
+
     private final int alignmentStart;
 
     private final int alignmentEnd;
 
     SeedAlignment(final String modelAccession,
-                             final int alignmentStart,
-                             final int alignmentEnd){
+                  final String MD5,
+                 final int alignmentStart,
+                 final int alignmentEnd){
         this.modelAccession = modelAccession;
         this.alignmentStart = alignmentStart;
         this.alignmentEnd = alignmentEnd;
+        this.MD5 = MD5;
     }
 
     public String getModelAccession() {
@@ -39,55 +46,17 @@ public class SeedAlignment implements Serializable {
         return alignmentEnd;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-              sb.append(modelAccession)
-                .append('_')
-                .append(alignmentStart)
-                .append('_')
-                .append(alignmentEnd);
-        return sb.toString();
+    public String getMD5() {
+        return MD5;
     }
 
-    /**
-     * Simple immutable POJO holding the details of a single Seed alignment.
-     * Use this class to persist seed alignment data to the database.
-     *
-     * @author Phil Jones
-     * @version $Id: SeedAlignment.java,v 1.1 2009/10/23 15:05:00 pjones Exp $
-     * @since 1.0
-     */
-    public static class ForPersistence extends SeedAlignment {
-
-        private final String uniprotAccession;
-
-        private final int proteinVersionNumber;
-
-        private final String releaseNumber;
-
-        ForPersistence(final String modelAccession,
-                             final String uniprotAccession,
-                             final int proteinVersionNumber,
-                             final int alignmentStart,
-                             final int alignmentEnd,
-                             final String releaseNumber) {
-            super(modelAccession, alignmentStart, alignmentEnd);
-            this.uniprotAccession = uniprotAccession;
-            this.proteinVersionNumber = proteinVersionNumber;
-            this.releaseNumber = releaseNumber;
-        }
-
-        public String getUniProtAccession() {
-            return uniprotAccession;
-        }
-
-        public int getProteinVersionNumber() {
-            return proteinVersionNumber;
-        }
-
-        public String getReleaseNumber() {
-            return releaseNumber;
-        }
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+                append("modelAccession", modelAccession).
+                append("MD5", MD5).
+                append("alignmentStart", alignmentStart).
+                append("alignmentEnd", alignmentEnd).
+                toString();
     }
 }
