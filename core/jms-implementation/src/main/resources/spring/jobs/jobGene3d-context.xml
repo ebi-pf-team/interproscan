@@ -38,7 +38,7 @@
         <property name="stepDescription" value="Run HMMER3"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="-Z 100000 --domE 1"/>
-        <property name="fullPathToHmmFile" value="${gene3d.hmm.path}"/>
+        <property name="fullPathToHmmFile" value="${gene3d.hmm.path.3.3.0}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
@@ -59,7 +59,7 @@
         <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
         <property name="stepDescription" value="Parse output from HMMER3"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <!--<property name="fullPath"                       value="${gene3d.hmm.path}"/>-->
+        <!--<property name="fullPath"                       value="${gene3d.hmm.path.3.3.0}"/>-->
         <property name="serialGroup" value="PARSE_HMMER_3"/>
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
         <property name="parser">

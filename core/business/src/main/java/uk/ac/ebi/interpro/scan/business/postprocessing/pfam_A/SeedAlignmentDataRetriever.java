@@ -14,13 +14,12 @@ import java.util.*;
 public class SeedAlignmentDataRetriever implements Serializable {
 
     /**
-     * Retrieves a Map of UPI (protein accession) to List<SeedAlignment> for use in
+     * Retrieves a Map of protein id to List<SeedAlignment> for use in
      * post processing.
      *
      * @param proteinIds for which to return the seed alignment data.
-     * @return a Map of UPI (protein accession) to List<SeedAlignment> for use in
+     * @return a Map of protein id to List<SeedAlignment> for use in
      *         post processing.
-     * @throws java.sql.SQLException in the event of a database problem.
      */
     public SeedAlignmentData retrieveSeedAlignmentData(Set<String> proteinIds) {
         SeedAlignmentData seedAlignmentData = null;
@@ -33,6 +32,9 @@ public class SeedAlignmentDataRetriever implements Serializable {
 
     public class SeedAlignmentData implements Serializable {
 
+        /**
+         * Map of protein ID to a List of SeedAlignment objects.
+         */
         private final Map<String, List<SeedAlignment>> data = new HashMap<String, List<SeedAlignment>>();
 
         private SeedAlignmentData() {

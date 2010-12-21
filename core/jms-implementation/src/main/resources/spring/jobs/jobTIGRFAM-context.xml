@@ -57,7 +57,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToHmmFile" value="${tigrfam.hmm.bin.path}"/>
+        <property name="fullPathToHmmFile" value="${tigrfam.hmm.bin.path.9.0}"/>
     </bean>
 
     <bean id="stepTIGRFAMDeleteFastaFile"

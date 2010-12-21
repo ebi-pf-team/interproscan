@@ -56,7 +56,7 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
-        <property name="modelFile" value="${hamap.profile.models.path}"/>
+        <property name="modelFile" value="${hamap.profile.models.path.180510}"/>
         <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
     </bean>
 
@@ -96,7 +96,7 @@
         <property name="dependsUpon" ref="stepHamapParseRawOutput"/>
         <property name="serialGroup" value="HAMAP_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter HAMAP matches and persist filtered results"/>
-        <property name="signatureLibraryRelease" value="280808"/>
+        <property name="signatureLibraryRelease" value="180510"/>
         <property name="postProcessor" ref="hamapPostProcessor"/>
         <property name="filteredMatchDAO" ref="hamapFilteredMatchDAO"/>
         <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
@@ -121,7 +121,7 @@
     </bean>
 
     <bean id="hamapRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapMatchParser">
-        <constructor-arg value="280808"/>
+        <constructor-arg value="180510"/>
         <property name="cigarEncoder" ref="cigarEncoder"/>
     </bean>
 

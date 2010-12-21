@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @author  Antony Quinn
  * @version $Id$
  */
-@Entity
+@Entity (name="signature_xref")
 @XmlType(name="SignatureXrefType")
 public class SignatureXref extends Xref implements Serializable {
 

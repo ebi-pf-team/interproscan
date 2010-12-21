@@ -32,7 +32,7 @@ import java.io.Serializable;
  * @author  Antony Quinn
  * @version $Id$
  */
-@Entity
+@Entity (name = "protein_xref")
 @XmlType(name="ProteinXrefType")
 public class ProteinXref extends Xref implements Serializable {
 

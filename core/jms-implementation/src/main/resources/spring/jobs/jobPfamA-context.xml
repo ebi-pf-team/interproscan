@@ -48,7 +48,7 @@
         <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="-Z 9421015 --cut_ga"/>
-        <property name="fullPathToHmmFile" value="${Pfam-A.hmm.path}"/>
+        <property name="fullPathToHmmFile" value="${Pfam-A.hmm.path.24.0}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
@@ -69,7 +69,7 @@
         <property name="dependsUpon" ref="stepPfamARunHmmer3"/>
         <property name="stepDescription" value="Parse the output from HMMER3"/>
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="fullPathToHmmFile" value="${Pfam-A.hmm.path}"/>
+        <property name="fullPathToHmmFile" value="${Pfam-A.hmm.path.24.0}"/>
         <property name="parser" ref="pfamAHmmer3SearchParser"/>
         <property name="serialGroup" value="PARSE_HMMER_3"/>
         <property name="pfamRawMatchDAO" ref="pfamRawMatchDAO"/>
@@ -106,8 +106,8 @@
     </bean>
 
     <bean id="pfamAClanFileParser" class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
-        <property name="pfamASeedFile" value="${Pfam-A.seed.path}"/>
-        <property name="pfamCFile" value="${Pfam-C.path}"/>
+        <property name="pfamASeedFile" value="${Pfam-A.seed.path.24.0}"/>
+        <property name="pfamCFile" value="${Pfam-C.path.24.0}"/>
     </bean>
 
     <bean id="pfamAHmmer3SearchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
@@ -115,7 +115,7 @@
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
                 <property name="gaValuesRetriever">
                     <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
-                        <constructor-arg value="${Pfam-A.hmm.path}"/>
+                        <constructor-arg value="${Pfam-A.hmm.path.24.0}"/>
                     </bean>
                 </property>
                 <property name="signatureLibraryRelease" value="24.0"/>
