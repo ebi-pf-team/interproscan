@@ -24,7 +24,7 @@ use FindBin;
 # Modified by Phil Jones, EMBL-EBI to allow the .model and .options files to be
 # located elsewhere.
 my $PHOBIUS_DIR =      "$FindBin::RealBin";
-my $PHOBIUS_DATA_DIR = "$PHOBIUS_DIR/../data/phobius";
+my $PHOBIUS_DATA_DIR = "$PHOBIUS_DIR/../../../data/phobius/1.01";
 my $DECODEANHMM =      "$PHOBIUS_DIR/decodeanhmm";
 my $PHOBIUS_OPT_FILE = "$PHOBIUS_DATA_DIR/phobius.options";
 my $MODELFILE =        "$PHOBIUS_DATA_DIR/phobius.model";
