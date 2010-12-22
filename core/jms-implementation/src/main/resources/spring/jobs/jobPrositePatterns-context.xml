@@ -59,7 +59,7 @@
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
         <property name="modelFile" value="${prosite.models.path.20.66}"/>
         <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
-        <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path}"/>
+        <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path.20.66}"/>
     </bean>
 
     <bean id="stepPrositePatternDeleteFastaFile"
