@@ -14,7 +14,10 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * TODO: Description
+ * This test (just a main class, not a Junit test) has been developed
+ * to test the scalability of BerkeleyDB for precalculated match lookup.
+ *
+ * Creates 20 million random matches and allows the speed of lookup to be tested.
  *
  * @author Phil Jones
  * @version $Id$
