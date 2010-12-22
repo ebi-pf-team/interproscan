@@ -20,6 +20,9 @@ import java.util.zip.ZipInputStream;
 /**
  * Tests the InterPro.xml unmarshaller, used to extract InterPro entry and GO term data.
  *
+ * Note that this test should be turned ON, with xmx set to a high value to generate a new InterPro Entry / GO mapping
+ * file for the build.
+ *
  * @author Phil Jones
  * @version $Id$
  * @since 1.0-SNAPSHOT
@@ -39,7 +42,7 @@ public class InterProXMLUnmarshallerTest {
 
 
     @Test
-    @Ignore("Causes OutOfMemory error")
+    @Ignore("Slow and memory intensive - turn on only to rebuild the InterPro / GO mapping file (each InterPro release)")
     public void testUnmarshallerAndSerialization()
             throws IOException, XMLStreamException, ClassNotFoundException {
         BufferedInputStream bis = null;
