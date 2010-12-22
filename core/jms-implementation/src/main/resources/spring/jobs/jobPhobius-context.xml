@@ -44,7 +44,7 @@
           parent="abstractPhobiusStep">
         <property name="dependsUpon" ref="stepPhobiusWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
-        <property name="fullPathToBinary" value="${binary.phobius.pl.path}"/>
+        <property name="fullPathToBinary" value="${binary.phobius.pl.path.1.01}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="retries" value="3"/>
@@ -83,7 +83,7 @@
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="phobiusMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAOImpl">
-        <constructor-arg value="1.0"/>
+        <constructor-arg value="1.01"/>
     </bean>
 
     <bean id="phobiusParser" class="uk.ac.ebi.interpro.scan.io.match.phobius.PhobiusMatchParser"/>
