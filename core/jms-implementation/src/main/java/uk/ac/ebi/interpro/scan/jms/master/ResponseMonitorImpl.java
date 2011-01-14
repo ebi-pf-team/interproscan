@@ -10,7 +10,7 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 /**
- * This implementation recieves responses on the destinationResponseQueue
+ * This implementation receives responses on the destinationResponseQueue
  * and then delegates to the injected Handler to respond to them.
  *
  * @author Phil Jones
@@ -30,15 +30,18 @@ public class ResponseMonitorImpl implements MessageListener {
     @Override
     public void onMessage(Message message) {
         try {
+            boolean canHandle = false;
             if (message instanceof ObjectMessage) {
                 ObjectMessage objectMessage = (ObjectMessage) message;
                 Object messageContents = objectMessage.getObject();
                 if (messageContents instanceof StepExecution) {
+                    canHandle = true;
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
                 }
-            } else {
-                LOGGER.error("Received message that I don't know how to handle.");
+            }
+            if (! canHandle){
+                LOGGER.error("Master: received a message that I don't know how to handle.");
                 throw new IllegalArgumentException("Don't know how to handle the message: " + message.toString());
             }
         }
