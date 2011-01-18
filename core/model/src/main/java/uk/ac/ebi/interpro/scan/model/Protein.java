@@ -275,6 +275,12 @@ public class Protein implements Serializable {
         setMd5(sequence.getMd5());
     }
 
+    /**
+     * This class is used only for the purposes of JAXB - it is created on the fly
+     * by the getSequenceObject() method and is not persisted.  If an XML is unmarshalled,
+     * the setSequenceObject method retrieves the sequence and MD5 from this object
+     * and sets them on the Protein object directly.
+     */
     @XmlType(name = "SequenceType")
     private static final class Sequence {
 
@@ -282,12 +288,12 @@ public class Protein implements Serializable {
         private String sequence;
 
         private Sequence() {
-            this.md5      = null;
+            this.md5 = null;
             this.sequence = null;
         }
 
         public Sequence(String sequence, String md5) {
-            this.md5      = md5;
+            this.md5 = md5;
             this.sequence = sequence;
         }
 
@@ -415,8 +421,7 @@ public class Protein implements Serializable {
         static {
             try {
                 m = MessageDigest.getInstance("MD5");
-            }
-            catch (NoSuchAlgorithmException e) {
+            } catch (NoSuchAlgorithmException e) {
                 throw new IllegalStateException("Cannot find MD5 algorithm", e);
             }
         }
