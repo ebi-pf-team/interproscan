@@ -33,13 +33,13 @@ import java.util.*;
 /**
  * Signature, for example SSF53098 [http://supfam.mrc-lmb.cam.ac.uk/SUPERFAMILY/cgi-bin/models_list.cgi?sf=53098]
  *
- * @author  Antony Quinn
- * @author  Phil Jones
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
 @Entity
-@XmlRootElement(name="signature")
-@XmlType(name="SignatureType")
+@XmlRootElement(name = "signature")
+@XmlType(name = "SignatureType")
 public class Signature implements Serializable {
 
     @Transient
@@ -51,25 +51,25 @@ public class Signature implements Serializable {
      * Used as unique identifier of the record, e.g. for JPA persistence.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator="SIG_LIB_IDGEN")
-    @TableGenerator(name="SIG_LIB_IDGEN", table="KEYGEN", pkColumnValue="signature", initialValue = 0, allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "SIG_LIB_IDGEN")
+    @TableGenerator(name = "SIG_LIB_IDGEN", table = "KEYGEN", pkColumnValue = "signature", initialValue = 0, allocationSize = 50)
     private Long id;
 
-    @Column (name="accession", nullable = false)
-    @Index (name = "signature_ac_idx")
+    @Column(name = "accession", nullable = false)
+    @Index(name = "signature_ac_idx")
     private String accession;
 
-    @Column (name="name")
-    @Index (name="signature_name_idx")
+    @Column(name = "name")
+    @Index(name = "signature_name_idx")
     private String name;
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable (name="signature_description_chunk")
-    @IndexColumn(name="chunk_index")
-    @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @JoinTable(name = "signature_description_chunk")
+    @IndexColumn(name = "chunk_index")
+    @Column(name = "description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> descriptionChunks = Collections.emptyList();
 
-    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name="description_first_chunk")
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "description_first_chunk")
     @XmlTransient
     private String descriptionFirstChunk;
 
@@ -79,26 +79,26 @@ public class Signature implements Serializable {
     /**
      * Member database specific category for the Signature
      */
-    @Column (name="type")
-    @Index (name="signature_type_idx")
+    @Column(name = "type")
+    @Index(name = "signature_type_idx")
     private String type;
 
     @Column(nullable = true)
     private Date created;
-    
+
     @Column(nullable = true)
     private Date updated;
-    
-    @Index (name="signature_md5_idx")
+
+    @Index(name = "signature_md5_idx")
     private String md5;
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable (name="signature_abstract_chunk")
-    @IndexColumn(name="chunk_index")
-    @Column (name="abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @JoinTable(name = "signature_abstract_chunk")
+    @IndexColumn(name = "chunk_index")
+    @Column(name = "abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> abstractChunks = Collections.emptyList();
 
-    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name="abstract_first_chunk")
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "abstract_first_chunk")
     @XmlTransient
     private String abstractFirstChunk;
 
@@ -111,27 +111,28 @@ public class Signature implements Serializable {
     // TODO: Decide whether to use Map or Set (see ChEBI team)
     // TODO: Use ConcurrentHashMap if need concurrent modification of signatures
     // TODO: Use Hashtable if want to disallow duplicate values
-    @OneToMany (mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @MapKey (name= "accession")
+    @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @MapKey(name = "accession")
     private Map<String, Model> models = new HashMap<String, Model>();
 
-    @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "signature")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
-    @XmlElement(name="xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
+    @XmlElement(name = "xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable (name="signature_deprecated_acs")
-    @Column (name="deprecated_acs", nullable = true)
+    @JoinTable(name = "signature_deprecated_acs")
+    @Column(name = "deprecated_acs", nullable = true)
     private Set<String> deprecatedAccessions = new HashSet<String>();
 
-    @Column(nullable = true)
+    @Column(nullable = true, name = "signature_comment")
     private String comment;
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected Signature() {}
+    protected Signature() {
+    }
 
     public Signature(String accession) {
         setAccession(accession);
@@ -144,7 +145,7 @@ public class Signature implements Serializable {
 
     public Signature(String accession,
                      String name,
-                     String type,                     
+                     String type,
                      String description,
                      String abstractText,
                      SignatureLibraryRelease signatureLibraryRelease,
@@ -161,7 +162,7 @@ public class Signature implements Serializable {
     /**
      * Builder pattern (see Josh Bloch "Effective Java" 2nd edition)
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     @XmlTransient
     public static class Builder {
@@ -198,7 +199,7 @@ public class Signature implements Serializable {
             if (models != null) {
                 signature.setModels(models);
             }
-            if (!crossReferences.isEmpty())    {
+            if (!crossReferences.isEmpty()) {
                 for (SignatureXref x : crossReferences) {
                     signature.addCrossReference(x);
                 }
@@ -280,7 +281,7 @@ public class Signature implements Serializable {
      *
      * @return Signature accession
      */
-    @XmlAttribute(name="ac", required=true)
+    @XmlAttribute(name = "ac", required = true)
     public String getAccession() {
         return accession;
     }
@@ -309,9 +310,9 @@ public class Signature implements Serializable {
      *
      * @return Signature description
      */
-    @XmlAttribute(name="desc")
+    @XmlAttribute(name = "desc")
     public String getDescription() {
-        if (description == null){
+        if (description == null) {
             description = CHUNKER.concatenate(descriptionFirstChunk, descriptionChunks);
         }
         return description;
@@ -346,9 +347,9 @@ public class Signature implements Serializable {
      *
      * @return Signature abstract
      */
-    @XmlElement(name="abstract")
+    @XmlElement(name = "abstract")
     public String getAbstract() {
-        if (abstractText == null){
+        if (abstractText == null) {
             abstractText = CHUNKER.concatenate(abstractFirstChunk, abstractChunks);
         }
         return abstractText;
@@ -398,15 +399,15 @@ public class Signature implements Serializable {
     }
 
     @XmlTransient
-    public SignatureLibraryRelease getSignatureLibraryRelease()    {
+    public SignatureLibraryRelease getSignatureLibraryRelease() {
         return signatureLibraryRelease;
     }
 
-    void setSignatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease)  {
+    void setSignatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-//    @XmlElementWrapper(name = "history")
+    //    @XmlElementWrapper(name = "history")
     @XmlElement(name = "deprecated-ac")
     public Set<String> getDeprecatedAccessions() {
         return deprecatedAccessions;
@@ -448,7 +449,7 @@ public class Signature implements Serializable {
 
     private void setModels(Collection<Model> models) {
         // Ensure Signature reference is set ("this.models = models" won't do)
-        for (Model m : models)  {
+        for (Model m : models) {
             addModel(m);
         }
     }
@@ -476,15 +477,21 @@ public class Signature implements Serializable {
     @XmlTransient
     private static class ModelAdapter extends XmlAdapter<ModelsType, Map<String, Model>> {
 
-        /** Map Java to XML type */
-        @Override public ModelsType marshal(Map<String, Model> map) {
+        /**
+         * Map Java to XML type
+         */
+        @Override
+        public ModelsType marshal(Map<String, Model> map) {
             return (map == null || map.isEmpty() ? null : new ModelsType(new HashSet<Model>(map.values())));
         }
 
-        /** Map XML type to Java */
-        @Override public Map<String, Model> unmarshal(ModelsType modelsType) {
+        /**
+         * Map XML type to Java
+         */
+        @Override
+        public Map<String, Model> unmarshal(ModelsType modelsType) {
             Map<String, Model> map = new HashMap<String, Model>();
-            for (Model m : modelsType.getModels())  {
+            for (Model m : modelsType.getModels()) {
                 map.put(m.getKey(), m);
             }
             return map;
@@ -500,7 +507,7 @@ public class Signature implements Serializable {
         @XmlElement(name = "model")
         private final Set<Model> models;
 
-        private ModelsType() { 
+        private ModelsType() {
             models = null;
         }
 
@@ -520,8 +527,8 @@ public class Signature implements Serializable {
      * @return cross-references
      */
     public Set<SignatureXref> getCrossReferences() {
-         // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
-         // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
+        // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
+        // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
         /*
          java.lang.UnsupportedOperationException
             at java.util.Collections$UnmodifiableCollection.clear(Collections.java:1037)
@@ -540,7 +547,7 @@ public class Signature implements Serializable {
     }
 
     private void setCrossReferences(Set<SignatureXref> crossReferences) {
-        for (SignatureXref xref : crossReferences)    {
+        for (SignatureXref xref : crossReferences) {
             addCrossReference(xref);
         }
     }
@@ -567,9 +574,10 @@ public class Signature implements Serializable {
 
     private String getSafeMd5(String md5) {
         return (md5 == null ? "" : md5.toLowerCase());
-    }    
+    }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Signature))
@@ -591,7 +599,8 @@ public class Signature implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(accession)
                 .append(name)
@@ -602,8 +611,8 @@ public class Signature implements Serializable {
                 .append(getDescription())
                 .append(getAbstract())
                 .append(getComment())
-                // TODO: Figure out why adding models to hashCode() causes Signature.equals() to fail
-                //.append(models)
+                        // TODO: Figure out why adding models to hashCode() causes Signature.equals() to fail
+                        //.append(models)
                 .append(crossReferences)
                 .append(deprecatedAccessions)
                 .toHashCode();
@@ -611,10 +620,11 @@ public class Signature implements Serializable {
 
     /**
      * TODO - this will not work, giving a null value for description or the abstract if the instance is retrieved from the database.
-     * 
+     *
      * @return String representation of this object.
      */
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
