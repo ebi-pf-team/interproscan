@@ -194,30 +194,32 @@ public abstract class Step implements BeanNameAware {
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
-     * <p/>
+     * <p>
      * If an error occurs that cannot be immediately recovered from, the implementation
-     * of this method MUST throw a suitable Exception, as the call
+     * of this method <b>MUST</b> throw a suitable Exception, as the call
      * to execute is performed within a transaction with the reply to the JMSBroker.
-     * <p/>
-     * Implementations of this method MAY call this.delayForNfs() before starting, if, for example,
-     * they are operating of file system resources.
+     * <p>
+     * Implementations of this method MAY call <code>this.delayForNfs()</code> before starting, if, for example,
+     * they are operating on file system resources.
      *
-     * Notes:
+     * <h2>Notes:</h2>
      *
-     * The StepInstance parameter that is passed in provides the following useful methods that you may need to use
+     * <p>The StepInstance parameter that is passed in provides the following useful methods that you may need to use
      * in your implementation:
      *
-     * stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate)
-     * should be used to ensure that temporary files are written to the appropriate location, with file names
+     * <p><code>stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate)</code>
+     * <p>should be used to ensure that temporary files are written to the appropriate location, with file names
      * filtered for the range of proteins / models being analysed.  Note that the parameter to this method
      * temporaryFileDirectory is also passed in to executions of this method.
      *
-     * To determine the range of proteins or models being analysed, call any of:
+     * <p>To determine the range of proteins or models being analysed, call any of:
      *
-     * stepInstance.getBottomProtein()
-     * stepInstance.getTopProtein()
-     * stepInstance.getBottomModel()
-     * stepInstance.getTopModel()
+     * <ul>
+     * <li><code>stepInstance.getBottomProtein()</code></li>
+     * <li><code>stepInstance.getTopProtein()</code></li>
+     * <li><code>stepInstance.getBottomModel()</code></li>
+     * <li><code>stepInstance.getTopModel()</code></li>
+     * </ul>
      *
      * @param stepInstance           containing the parameters for executing. Provides utility methods as described
      * above.
