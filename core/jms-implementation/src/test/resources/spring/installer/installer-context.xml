@@ -11,7 +11,6 @@
     <import resource="installer-entitymanager-context.xml"/>
     <import resource="classpath:/spring/directoryManager/InstallerDirectoryManager-context.xml"/>
 
-
     <bean id="installer" class="uk.ac.ebi.interpro.scan.jms.installer.Installer">
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
         <property name="parsers">
@@ -19,6 +18,7 @@
             </list>
         </property>
     </bean>
+
 
 </beans>
 

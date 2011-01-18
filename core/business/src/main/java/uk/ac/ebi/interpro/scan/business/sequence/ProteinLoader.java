@@ -55,9 +55,14 @@ public class ProteinLoader implements Serializable {
 
     /**
      * This method stores sequences with (optionally) cross references.
+     * The method attempts to store them in batches by calling the addProteinToBatch(Protein protein)
+     * method.  This in turn calls persistBatch(), when the batch size has been reached.
+     * <p/>
+     * TODO - Needs to be refactored - currently does NOT store anything other than the Xref accession.
+     * TODO - needs to be able to store the database name and the protein name too.
      *
-     * @param sequence
-     * @param crossReferences
+     * @param sequence        being the protein sequence to store
+     * @param crossReferences being a set of Cross references.
      */
     public void store(String sequence, String... crossReferences) {
         if (sequence != null && sequence.length() > 0) {
@@ -68,18 +73,34 @@ public class ProteinLoader implements Serializable {
                     protein.addCrossReference(xref);
                 }
             }
-            Protein precalculatedProtein = proteinLookup != null ? proteinLookup.getPrecalculated(protein) : null;
-            if (precalculatedProtein != null) precalculatedProteins.add(precalculatedProtein);
-            else addProteinToBatch(protein);
+            Protein precalculatedProtein = (proteinLookup != null)
+                    ? proteinLookup.getPrecalculated(protein)
+                    : null;
+            if (precalculatedProtein != null) {
+                precalculatedProteins.add(precalculatedProtein);
+            } else {
+                addProteinToBatch(protein);
+            }
         }
-
     }
 
+    /**
+     * Adds a protein to the batch of proteins to be persisted.  If the maximum
+     * batch size is reached, store all these proteins (by calling persistBatch().)
+     *
+     * @param protein being the protein to be stored.
+     */
     private void addProteinToBatch(Protein protein) {
         proteinsAwaitingPersistence.add(protein);
-        if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize) persistBatch();
+        if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize) {
+            persistBatch();
+        }
     }
 
+    /**
+     * Persists all of the proteins in the list of proteinsAwaitingPersistence and empties
+     * this Collection, ready to be used again.
+     */
     private void persistBatch() {
         if (proteinsAwaitingPersistence.size() > 0) {
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
@@ -89,27 +110,45 @@ public class ProteinLoader implements Serializable {
         }
     }
 
+    /**
+     * Following persistence of proteins, calls the ProteinLoadListener with the bounds of the proteins
+     * added, so analyses (StepInstance) can be created appropriately.
+     *
+     * @param proteinLoadListener which handles the creation of StepInstances for the new proteins added.
+     */
     public void persist(ProteinLoadListener proteinLoadListener) {
+        // Persist any remaining proteins (that last batch)
         persistBatch();
 
-        Long bottomNewProteinId = bottomProteinId;
-        Long topNewProteinId = topProteinId;
+        // Grab hold of the lower and upper range of Protein IDs for ALL of the persisted proteins
+        final Long bottomNewProteinId = bottomProteinId;
+        final Long topNewProteinId = topProteinId;
 
+        // Prepare the ProteinLoader for another set of proteins.
         resetBounds();
 
-        for (Protein precalculatedProtein : precalculatedProteins) addProteinToBatch(precalculatedProtein);
+
+        // Now store the precalculated proteins (just updates - these should not be included in the
+        // list of Proteins for the listener.)
+        for (Protein precalculatedProtein : precalculatedProteins) {
+            addProteinToBatch(precalculatedProtein);
+        }
 
         persistBatch();
 
-        Long bottomPrecalcProteinId = bottomProteinId;
-        Long topPrecalcProteinId = topProteinId;
+        final Long bottomPrecalcProteinId = bottomProteinId;
+        final Long topPrecalcProteinId = topProteinId;
 
 
         proteinLoadListener.proteinsLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
 
+        // Prepare the ProteinLoader for another set of proteins.
         resetBounds();
     }
 
+    /**
+     * Helper method that sets the upper and lower bounds to null.
+     */
     private void resetBounds() {
         bottomProteinId = null;
         topProteinId = null;

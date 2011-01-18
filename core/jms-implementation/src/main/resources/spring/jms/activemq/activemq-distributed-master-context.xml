@@ -31,17 +31,30 @@
 
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
         <property name="jobs" ref="jobs"/>
-        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
-        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
-        <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
-        <property name="parallelWorkerRunner" ref="parallelWorkerRunner"/>
         <property name="closeOnCompletion" value="false"/>
+        <property name="messageSender" ref="masterMessageSender"/>
+        <property name="workerRunner" ref="workerRunner"/>
+        <property name="workerRunnerHighMemory" ref="workerRunnerHighMemory"/>
     </bean>
 
-    <bean id="parallelWorkerRunner"
+    <bean id="masterMessageSender" class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
+        <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
+        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
+
+    </bean>
+
+    <bean id="workerRunner"
           class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
         <property name="submissionCommand" value="${worker.command}"/>
+        <property name="highMemory" value="false"/>
+    </bean>
+
+    <bean id="workerRunnerHighMemory"
+          class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+        <property name="submissionCommand" value="${worker.high.memory.command}"/>
+        <property name="highMemory" value="true"/>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
@@ -80,7 +93,7 @@
     <!-- Quartz job to run spare parallel worker.  Currently turned on. -->
     <bean id="startSpareParallelWorkerQuartzJob"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="parallelWorkerRunner"/>
+        <property name="targetObject" ref="workerRunner"/>
         <property name="targetMethod" value="startupNewWorker"/>
     </bean>
 

@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCre
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.Job;
@@ -90,7 +91,9 @@ public class FastaFileLoadStep extends Step {
             }
 
 
-            Jobs analysisJobs = analysisJobNames == null ? jobs.getAnalysisJobs() : jobs.subset(analysisJobNames.split(","));
+            Jobs analysisJobs = analysisJobNames == null
+                    ? jobs.getAnalysisJobs()
+                    : jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
             Job completionJob = jobs.getJobById(completionJobName);
 
             StepCreationProteinLoadListener proteinLoaderListener =

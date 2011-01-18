@@ -2,22 +2,18 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
-import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
-import uk.ac.ebi.interpro.scan.management.model.*;
+import uk.ac.ebi.interpro.scan.management.model.Job;
+import uk.ac.ebi.interpro.scan.management.model.Jobs;
+import uk.ac.ebi.interpro.scan.management.model.Step;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,19 +30,11 @@ public class AmqInterProScanMaster implements Master {
 
     private static final Logger LOGGER = Logger.getLogger(AmqInterProScanMaster.class.getName());
 
-    private JmsTemplate jmsTemplate;
-
-    private final Object jmsTemplateLock = new Object();
-
     private Jobs jobs;
 
     private StepInstanceDAO stepInstanceDAO;
 
-    private StepExecutionDAO stepExecutionDAO;
-
-    private Destination workerJobRequestQueue;
-
-    private WorkerRunner parallelWorkerRunner;
+    private MasterMessageSender messageSender;
 
 //    private EmbeddedWorkerFactory embeddedWorkerFactory;
 
@@ -64,6 +52,18 @@ public class AmqInterProScanMaster implements Master {
 
     private String[] analyses;
 
+    private WorkerRunner workerRunner;
+
+    private WorkerRunner workerRunnerHighMemory;
+
+    public void setWorkerRunner(WorkerRunner workerRunner) {
+        this.workerRunner = workerRunner;
+    }
+
+    public void setWorkerRunnerHighMemory(WorkerRunner workerRunnerHighMemory) {
+        this.workerRunnerHighMemory = workerRunnerHighMemory;
+    }
+
     /**
      * This boolean allows configuration of whether or not the Master closes down when there are no more
      * runnable StepExecutions available.
@@ -80,28 +80,9 @@ public class AmqInterProScanMaster implements Master {
         this.numberOfEmbeddedWorkers = numberOfEmbeddedWorkers;
     }
 
-    public void setParallelWorkerRunner(WorkerRunner workerRunner) {
-        this.parallelWorkerRunner = workerRunner;
-    }
-
-    @Required
-    public void setWorkerJobRequestQueue(Destination workerJobRequestQueue) {
-        this.workerJobRequestQueue = workerJobRequestQueue;
-    }
-
-    @Required
-    public void setJmsTemplate(JmsTemplate jmsTemplate) {
-        this.jmsTemplate = jmsTemplate;
-    }
-
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
         this.stepInstanceDAO = stepInstanceDAO;
-    }
-
-    @Required
-    public void setStepExecutionDAO(StepExecutionDAO stepExecutionDAO) {
-        this.stepExecutionDAO = stepExecutionDAO;
     }
 
     @Required
@@ -116,6 +97,11 @@ public class AmqInterProScanMaster implements Master {
     @Required
     public void setJobs(Jobs jobs) {
         this.jobs = jobs;
+    }
+
+    @Required
+    public void setMessageSender(MasterMessageSender messageSender) {
+        this.messageSender = messageSender;
     }
 
     /**
@@ -140,7 +126,29 @@ public class AmqInterProScanMaster implements Master {
                     completed &= stepInstance.haveFinished(jobs);
                     if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)) {
                         LOGGER.debug("Step submitted:" + stepInstance);
-                        sendMessage(stepInstance);
+                        final boolean resubmission = stepInstance.getExecutions().size() > 0;
+                        if (resubmission) {
+                            LOGGER.warn("StepInstance " + stepInstance.getId() + " is being re-run following a failure.");
+                        }
+                        // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
+                        final boolean highMemory = resubmission && workerRunnerHighMemory != null;
+                        if (highMemory) {
+                            LOGGER.warn("StepInstance " + stepInstance.getId() + " will be re-run in a high-memory worker.");
+                        }
+
+                        final int priority = stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 8;
+
+                        // Performed in a transaction.
+                        messageSender.sendMessage(stepInstance, highMemory, priority);
+
+                        // Start up workers appropriately.
+                        if (highMemory) {
+                            // This execution has failed before so use the high-memory worker runner
+                            LOGGER.warn("Starting a high memory worker.");
+                            workerRunnerHighMemory.startupNewWorker(priority);
+                        } else if (workerRunner != null) { // Not mandatory (e.g. in single-jvm implementation)
+                            workerRunner.startupNewWorker(priority);
+                        }
                     }
                 }
 
@@ -170,7 +178,7 @@ public class AmqInterProScanMaster implements Master {
 */
                 if (closeOnCompletion && completed) break;
 
-                Thread.sleep(2000);  // Every 2 seconds, checks for any runnable StepInstances and runs them.
+                Thread.sleep(500);  // Every half second, checks for any runnable StepInstances and runs them.
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by Master", e);
@@ -225,41 +233,6 @@ public class AmqInterProScanMaster implements Master {
             StepInstance stepInstance = new StepInstance(step);
             stepInstance.addStepParameters(stepParameters);
             stepInstanceDAO.insert(stepInstance);
-        }
-    }
-
-    /**
-     * Creates messages to be sent to Worker nodes.
-     * Does all of this in a transaction, hence in this separate method.
-     *
-     * @param stepInstance to send as a message
-     * @throws JMSException in the event of a failure sending the message to the JMS Broker.
-     *                      TODO - URGENT Need to pull this method out into an Interface & Implementation so the @Transactional works.
-     */
-    @Transactional
-    private void sendMessage(StepInstance stepInstance) throws JMSException {
-        LOGGER.debug("Attempting to send message to queue.");
-        final StepExecution stepExecution = stepInstance.createStepExecution();
-        stepExecutionDAO.insert(stepExecution);
-        stepExecution.submit(stepExecutionDAO);
-        if (!jmsTemplate.isExplicitQosEnabled()) {
-            throw new IllegalStateException("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
-        }
-
-        final int priority = stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 8;
-
-        synchronized (jmsTemplateLock) {
-            jmsTemplate.setPriority(priority);
-            jmsTemplate.send(workerJobRequestQueue, new MessageCreator() {
-                public Message createMessage(Session session) throws JMSException {
-                    return session.createObjectMessage(stepExecution);
-                }
-            });
-        }
-
-
-        if (parallelWorkerRunner != null) { // Not mandatory (e.g. in single-jvm implementation)
-            parallelWorkerRunner.startupNewWorker(priority);
         }
     }
 

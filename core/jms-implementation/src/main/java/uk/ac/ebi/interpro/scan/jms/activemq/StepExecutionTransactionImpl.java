@@ -74,12 +74,16 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
         stepExecution.setToRun();
         final StepInstance stepInstance = stepExecution.getStepInstance();
         final Step step = stepInstance.getStep(jobs);
-        LOGGER.debug("Step ID: " + step.getId());
-        LOGGER.debug("Step instance: " + stepInstance);
-        LOGGER.debug("Step execution id: " + stepExecution.getId());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Step ID: " + step.getId());
+            LOGGER.debug("Step instance: " + stepInstance);
+            LOGGER.debug("Step execution id: " + stepExecution.getId());
+        }
         step.execute(stepInstance, getValidWorkingDirectory(step));
         stepExecution.completeSuccessfully();
-        LOGGER.debug("Successful run of Step.executeInTransaction() method for StepExecution ID: " + stepExecution.getId());
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Successful run of Step.executeInTransaction() method for StepExecution ID: " + stepExecution.getId());
 
         jmsTemplate.send(jobResponseQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
@@ -92,7 +96,9 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
         } catch (JMSException e) {
             throw new IllegalStateException("Unable to acknowledge message.");
         }
-        LOGGER.debug("Followed by successful reply to the JMS Broker and acknowledgement of the message.");
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Followed by successful reply to the JMS Broker and acknowledgement of the message.");
     }
 
     /**
