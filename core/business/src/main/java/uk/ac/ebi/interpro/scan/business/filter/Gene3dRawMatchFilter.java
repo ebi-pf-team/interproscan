@@ -41,7 +41,25 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
 
     private static final Logger LOGGER = Logger.getLogger(Gene3dRawMatchFilter.class.getName());
 
+    /**
+     * Currently required for use in "cli" module, although may review this.
+     */
     private String temporaryFilePath = null;
+
+    /**
+     * For use by I5, to allow I5 to control temporary file locations
+     */
+    private String ssfInputFilePath;
+
+    /**
+     * For use by I5, to allow I5 to control temporary file locations
+     */
+    private String ssfOutputFilePath;
+
+    /**
+     * For use by I5, to allow I5 to control temporary file locations
+     */
+    private String binaryPipedOutputFilePath;
 
     BinaryRunner binaryRunner = new SimpleBinaryRunner();
 
@@ -49,19 +67,40 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         this.binaryRunner = binaryRunner;
     }
 
+    public void setSsfInputFilePath(String ssfInputFilePath) {
+        this.ssfInputFilePath = ssfInputFilePath;
+    }
+
+    public void setSsfOutputFilePath(String ssfOutputFilePath) {
+        this.ssfOutputFilePath = ssfOutputFilePath;
+    }
+
+    public void setBinaryPipedOutputFilePath(String binaryPipedOutputFilePath) {
+        this.binaryPipedOutputFilePath = binaryPipedOutputFilePath;
+    }
+
     @Override
     public Set<RawProtein<Gene3dHmmer3RawMatch>> filter(Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins) {
 
         // Create SSF file
-        Resource ssfInputFile = createSsf(rawProteins);
+        final Resource ssfInputFile = createSsf(rawProteins);
 
         // Run DF3 on SSF file
-        Resource ssfOutputFile = createTemporaryResource(".output.ssf");
-        String additionalArguments;
+        final Resource ssfOutputFile = createTemporaryResource(".output.ssf", ssfOutputFilePath);
+
+        if (binaryPipedOutputFilePath != null){
+            binaryRunner.setTemporaryFilePath(binaryPipedOutputFilePath);
+        }
+
+
+        final StringBuilder additionalArguments = new StringBuilder();
         try {
-            additionalArguments =
-                    "-i " + ssfInputFile.getFile().getAbsolutePath() + " " +
-                            "-o " + ssfOutputFile.getFile().getAbsolutePath();
+            additionalArguments
+                    .append("-i ")
+                    .append(ssfInputFile.getFile().getAbsolutePath())
+                    .append(' ')
+                    .append("-o ")
+                    .append(ssfOutputFile.getFile().getAbsolutePath());
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
@@ -69,7 +108,7 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
 
         // Run command but don't capture output (DF3 writes to a file, not stdout)
         try {
-            binaryRunner.run(additionalArguments);
+            binaryRunner.run(additionalArguments.toString());
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
@@ -105,7 +144,9 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
                 records.add(DomainFinderRecord.valueOf(m));
             }
         }
-        Resource ssfFile = createTemporaryResource(".input.ssf");
+        // Modified to use I5 temporary file location system, if available.
+        Resource ssfFile = createTemporaryResource(".input.ssf", ssfInputFilePath);
+
         DomainFinderResourceWriter writer = new DomainFinderResourceWriter();
         try {
             writer.write(ssfFile, records);
@@ -253,12 +294,25 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         this.temporaryFilePath = temporaryFilePath;
     }
 
-    private Resource createTemporaryResource(String suffix) {
+    /**
+     * This method should ONLY be used outside the scope of I5 - I5 has its own mechanism
+     * for managing temporary files which ensures that they are in a known, managed location
+     * (and provides a mechanism to clean up after they have been used, however this class does that too
+     * so not necessary in this case.).
+     * @param suffix  the suffix for the file name.
+     * @param defaultFullyQualifiedFilePath which, if not null, provides the fully qualified path for the temporary file.
+     * @return  the Resource object
+     */
+    private Resource createTemporaryResource(String suffix, final String defaultFullyQualifiedFilePath) {
         try {
             File file;
-            if (temporaryFilePath == null) {
+            if (defaultFullyQualifiedFilePath != null){
+                file = new File(defaultFullyQualifiedFilePath);
+            }
+            else if (temporaryFilePath == null) {
                 file = File.createTempFile("ipr-", suffix);
-            } else {
+            }
+            else {
                 file = new File(temporaryFilePath + suffix);
             }
             return new FileSystemResource(file);

@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.business.filter.RawMatchFilter;
+import uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -53,7 +53,7 @@ public final class Gene3dHmmer3FilterStepTest {
 //    Gene3dHmmer3FilterStep step;
 
     @Resource
-    RawMatchFilter<Gene3dHmmer3RawMatch> filter;
+    Gene3dRawMatchFilter filter;
 
     @Test
     @Ignore("Relies on DomainFinder binary")
