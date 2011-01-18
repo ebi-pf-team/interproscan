@@ -47,8 +47,12 @@ public final class RawMatchBinaryRunnerImpl<T extends RawMatch>
      */
     public Set<RawProtein<T>> process(Resource fastaFile, Resource modelFile) throws IOException {
 
-        String additionalArguments =
-                modelFile.getFile().getAbsolutePath() + " " + fastaFile.getFile().getAbsolutePath();
+        final String additionalArguments =
+                new StringBuilder()
+                        .append(modelFile.getFile().getAbsolutePath())
+                        .append(' ')
+                        .append(fastaFile.getFile().getAbsolutePath())
+                        .toString();
       
         return parser.parse(run(additionalArguments));
 

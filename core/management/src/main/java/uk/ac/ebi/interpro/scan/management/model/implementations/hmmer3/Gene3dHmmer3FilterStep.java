@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.business.filter.RawMatchFilter;
+import uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
@@ -27,7 +27,12 @@ public class Gene3dHmmer3FilterStep extends Step {
 
     private SignatureLibrary signatureLibrary;
     private String signatureLibraryRelease;
-    private RawMatchFilter<Gene3dHmmer3RawMatch> filter;
+
+    private String ssfOutputFileTemplate;
+    private String ssfInputFileTemplate;
+    private String binaryOutputFileTemplate;
+
+    private Gene3dRawMatchFilter filter;
     private RawMatchDAO<Gene3dHmmer3RawMatch> rawMatchDAO;
     private FilteredMatchDAO<Gene3dHmmer3RawMatch, Hmmer3Match> filteredMatchDAO;
 
@@ -41,13 +46,28 @@ public class Gene3dHmmer3FilterStep extends Step {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    public RawMatchFilter<Gene3dHmmer3RawMatch> getFilter() {
+    public Gene3dRawMatchFilter getFilter() {
         return filter;
     }
 
     @Required
-    public void setFilter(RawMatchFilter<Gene3dHmmer3RawMatch> filter) {
+    public void setFilter(Gene3dRawMatchFilter filter) {
         this.filter = filter;
+    }
+
+    @Required
+    public void setSsfOutputFileTemplate(String ssfOutputFileTemplate) {
+        this.ssfOutputFileTemplate = ssfOutputFileTemplate;
+    }
+
+    @Required
+    public void setSsfInputFileTemplate(String ssfInputFileTemplate) {
+        this.ssfInputFileTemplate = ssfInputFileTemplate;
+    }
+
+    @Required
+    public void setBinaryOutputFileTemplate(String binaryOutputFileTemplate) {
+        this.binaryOutputFileTemplate = binaryOutputFileTemplate;
     }
 
     public SignatureLibrary getSignatureLibrary() {
@@ -80,8 +100,11 @@ public class Gene3dHmmer3FilterStep extends Step {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("DAO returned " + rawProteins.size() + " raw proteins:"); // 4
         }
+        filter.setSsfInputFilePath(stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, ssfInputFileTemplate));
+        filter.setSsfOutputFilePath(stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, ssfOutputFileTemplate));
+        filter.setBinaryPipedOutputFilePath(stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, binaryOutputFileTemplate));
         // Filter
-        Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = getFilter().filter(rawProteins);
+        Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = filter.filter(rawProteins);
         // Persist
         filteredMatchDAO.persist(filteredProteins);
     }

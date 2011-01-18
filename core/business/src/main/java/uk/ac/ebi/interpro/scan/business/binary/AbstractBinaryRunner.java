@@ -116,12 +116,10 @@ abstract class AbstractBinaryRunner implements BinaryRunner {
     private InputStream runCommand(String command) throws IOException {
         // Store results in temporary file
         File file;
-        if (temporaryFilePath == null) {
-            // TODO: This is fine if running on single box, but will not work if next step runs on different machine
-            file = File.createTempFile("ipr-", ".out");
-        } else {
-            file = new File(temporaryFilePath);
-        }
+        file = (temporaryFilePath == null)
+                ? File.createTempFile("ipr-", ".out")
+                : new File(temporaryFilePath);
+
         commandLineConversation.setOutputPathToFile(file.getAbsolutePath(), true, false);
         int exitCode = commandLineConversation.runCommand(command);
         return new FileInputStream(file);

@@ -114,6 +114,17 @@
                 </property>
             </bean>
         </property>
+        <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
+        <property name="ssfOutputFileTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
+        <property name="binaryOutputFileTemplate" value="[PROTSTART]_[PROTEND].bin.out"/>
+    </bean>
+
+    <bean id="stepGene3dDeleteBinaryPipedOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon" ref="stepGene3dFilter"/>
+        <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
+        <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].bin.out"/>
     </bean>
 
     <!-- ######################## Dependencies ############################  -->
