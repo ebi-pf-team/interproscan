@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
     <!-- Import common beans -->
     <import resource="classpath:/spring/spring-properties-context.xml"/>
@@ -11,85 +10,106 @@
     <import resource="installer-entitymanager-context.xml"/>
     <import resource="classpath:/spring/directoryManager/InstallerDirectoryManager-context.xml"/>
 
-
     <bean id="installer" class="uk.ac.ebi.interpro.scan.jms.installer.Installer">
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
         <property name="parsers">
             <list>
-                <ref bean="HAMAPParser"/>
-                <ref bean="PrositePatternsParser"/>
-                <ref bean="PrositeProfilesParser"/>
-                <ref bean="gene3DParser"/>
-                <ref bean="pfamModelLoader"/>
-                <ref bean="printsModelLoader"/>
-                <ref bean="tigrFamModelLoader"/>
-                <ref bean="smartModelLoader"/>
+                <ref bean="HAMAP_180510"/>
+                <ref bean="PrositePatterns_20.66"/>
+                <ref bean="PrositeProfiles_20.66"/>
+                <ref bean="gene3D_3.3.0"/>
+                <ref bean="pfamA_24.0"/>
+                <ref bean="prints_41.1"/>
+                <ref bean="tigrFam_9.0"/>
+                <ref bean="smart_6.1"/>
             </list>
         </property>
     </bean>
 
-    <bean id="pfamModelLoader" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+    <!--
+       HOW TO: Edit this file to add a new member database release.
+
+       1. Create a new bean for the release (below) by copying / pasting the previous releases bean.
+       (DO NOT DELETE THE PREVIOUS RELEASES BEAN.)
+       2. Edit the bean ID for the new release with the correct version number.
+       3. Edit the model files etc. for the new release, with the correct path information.
+       (Use properties in the interproscan.properties file).
+       4. Edit the releaseVersionNumber property.
+       5. Add your new bean to the list of "parsers" on the "installer" bean above.
+       6. Commit your changes.
+
+    -->
+
+    <bean id="pfamA_24.0" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
         <property name="signatureLibrary" value="PFAM"/>
         <property name="modelFile" value="file:${Pfam-A.hmm.path.24.0}"/>
         <property name="releaseVersionNumber" value="24.0"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobPfamA"/>
     </bean>
 
-    <bean id="printsModelLoader" class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
+    <bean id="prints_41.1" class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
         <property name="signatureLibrary" value="PRINTS"/>
         <property name="modelFile" value="file:${prints.pval.path.41.1}"/>
-        <property name="kdatParser" ref="kdatParser"/>
+        <property name="kdatParser" ref="kdat_41.1"/>
         <property name="releaseVersionNumber" value="41.1"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobPRINTS"/>
     </bean>
 
-    <bean id="kdatParser" class="uk.ac.ebi.interpro.scan.io.prints.KdatParser">
+    <bean id="kdat_41.1" class="uk.ac.ebi.interpro.scan.io.prints.KdatParser">
         <property name="kdatFileResource" value="file:${prints.kdat.path.41.1}"/>
     </bean>
 
-    <bean id="gene3DParser" class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
+    <bean id="gene3D_3.3.0" class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
         <property name="signatureLibrary" value="GENE3D"/>
         <property name="modelFile" value="file:${gene3d.model2sf_map.path.3.3.0}"/>
         <property name="releaseVersionNumber" value="3.3.0"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobGene3d"/>
     </bean>
 
-    <bean id="HAMAPParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+    <bean id="HAMAP_180510" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
         <property name="signatureLibrary" value="HAMAP"/>
         <property name="modelFile" value="file:${hamap.profile.models.path.180510}"/>
         <property name="releaseVersionNumber" value="180510"/>
         <property name="prositeModelType" value="ALL"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobHAMAP"/>
     </bean>
 
-    <bean id="PrositePatternsParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+    <bean id="PrositePatterns_20.66" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
         <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
         <property name="modelFile" value="file:${prosite.models.path.20.66}"/>
         <property name="releaseVersionNumber" value="20.66"/>
         <property name="prositeModelType" value="PATTERNS"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobPrositePatterns"/>
     </bean>
 
-    <bean id="PrositeProfilesParser" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+    <bean id="PrositeProfiles_20.66" class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
         <property name="signatureLibrary" value="PROSITE_PROFILES"/>
         <property name="modelFile" value="file:${prosite.models.path.20.66}"/>
         <property name="releaseVersionNumber" value="20.66"/>
         <property name="prositeModelType" value="PROFILES"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobPrositeProfiles"/>
     </bean>
 
-    <bean id="tigrFamModelLoader" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+    <bean id="tigrFam_9.0" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
         <property name="signatureLibrary" value="TIGRFAM"/>
         <property name="modelFile" value="file:${tigrfam.hmm.path.9.0}"/>
         <property name="releaseVersionNumber" value="9.0"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobTIGRFAM"/>
     </bean>
 
-    <bean id="smartModelLoader" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+    <bean id="smart_6.1" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
         <property name="signatureLibrary" value="SMART"/>
         <property name="modelFile" value="file:${smart.hmm.path.6.1}"/>
         <property name="releaseVersionNumber" value="6.1"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobSMART"/>
     </bean>
 
 </beans>

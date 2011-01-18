@@ -18,24 +18,39 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class DistributedWorkerController implements Runnable{
+public class DistributedWorkerController implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(DistributedWorkerController.class.getName());
 
-    private final long startUpTime          = new Date().getTime();
+    private final long startUpTime = new Date().getTime();
 
-    private long lastMessageFinishedTime    = new Date().getTime();
+    private long lastMessageFinishedTime = new Date().getTime();
 
-    private long maximumIdleTimeMillis      = Long.MAX_VALUE;
+    private long maximumIdleTimeMillis = Long.MAX_VALUE;
 
-    private long maximumLifeMillis          = Long.MAX_VALUE;
+    private long maximumLifeMillis = Long.MAX_VALUE;
 
-    private final List<String> runningJobs  = new ArrayList<String>();
+    private final List<String> runningJobs = new ArrayList<String>();
 
-    private final Object jobListLock        = new Object();
+    private final Object jobListLock = new Object();
 
     private DefaultMessageListenerContainer messageListenerContainer;
+
     private int priority;
+
+    private boolean highMemory;
+
+    /**
+     * Constructor that requires a DefaultMessageListenerContainer - this needs to be set before anything else.
+     *
+     * @param messageListenerContainer that must be set before anything else.
+     */
+    public DistributedWorkerController(DefaultMessageListenerContainer messageListenerContainer) {
+        if (messageListenerContainer == null) {
+            throw new IllegalArgumentException("A DistributedWorkerController cannot be instantiated with a null DefaultMessageListenerContainer.");
+        }
+        this.messageListenerContainer = messageListenerContainer;
+    }
 
     public void setMaximumIdleTimeSeconds(Long maximumIdleTime) {
         this.maximumIdleTimeMillis = maximumIdleTime * 1000;
@@ -46,44 +61,43 @@ public class DistributedWorkerController implements Runnable{
     }
 
     @Required
-    public void setMessageListenerContainer(DefaultMessageListenerContainer messageListenerContainer) {
-        this.messageListenerContainer = messageListenerContainer;
-        setListenerMinimumPriority();
+    public void setHighMemory(boolean highMemory) {
+        this.highMemory = highMemory;
+        setMessageSelector();
     }
 
-    public void jobStarted(String jmsMessageId){
-        synchronized (jobListLock){
-            if (LOGGER.isDebugEnabled()){
+    public void jobStarted(String jmsMessageId) {
+        synchronized (jobListLock) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Job " + jmsMessageId + " added to DistributedWorkerController.runningJobs");
             }
             runningJobs.add(jmsMessageId);
         }
     }
 
-    public void jobFinished(String jmsMessageId){
-        synchronized (jobListLock){
-            if (LOGGER.isDebugEnabled()){
+    public void jobFinished(String jmsMessageId) {
+        synchronized (jobListLock) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Job " + jmsMessageId + " removed from DistributedWorkerController.runningJobs");
             }
-            if (! runningJobs.remove(jmsMessageId)){
-                LOGGER.error ("DistributedWorkerController.jobFinished(jmsMessageId) has been called with a message ID that it does not recognise: " + jmsMessageId);
+            if (!runningJobs.remove(jmsMessageId)) {
+                LOGGER.error("DistributedWorkerController.jobFinished(jmsMessageId) has been called with a message ID that it does not recognise: " + jmsMessageId);
             }
             lastMessageFinishedTime = new Date().getTime();
         }
     }
 
-    public boolean stopIfAppropriate(){
-        synchronized (jobListLock){
+    public boolean stopIfAppropriate() {
+        synchronized (jobListLock) {
             final long now = new Date().getTime();
             final boolean exceededLifespan = now - startUpTime > maximumLifeMillis;
             final boolean exceededIdleTime = now - lastMessageFinishedTime > maximumIdleTimeMillis;
-            if (runningJobs.size() == 0 && ( exceededLifespan || exceededIdleTime )){
+            if (runningJobs.size() == 0 && (exceededLifespan || exceededIdleTime)) {
 
-                if (LOGGER.isInfoEnabled()){
-                    if (exceededLifespan){
+                if (LOGGER.isInfoEnabled()) {
+                    if (exceededLifespan) {
                         LOGGER.info("Stopping worker as exceeded maximum life span");
-                    }
-                    else {
+                    } else {
                         LOGGER.info("Stopping worker as idle for longer than max idle time");
                     }
                 }
@@ -108,29 +122,36 @@ public class DistributedWorkerController implements Runnable{
      */
     @Override
     public void run() {
-        try{
-            while(! stopIfAppropriate()){
+        try {
+            while (!stopIfAppropriate()) {
                 Thread.sleep(2000);
             }
         } catch (InterruptedException e) {
-            LOGGER.error ("InterruptedException thrown by DistributedWorkerController.  Stopping now.", e);
+            LOGGER.error("InterruptedException thrown by DistributedWorkerController.  Stopping now.", e);
         }
     }
 
     public void setMinimumJmsPriority(int priority) {
         this.priority = priority;
-        setListenerMinimumPriority();
+        setMessageSelector();
     }
 
     /**
      * Gets called after either the priority of the messageListenerContainer get set,
      * to ensure that the priority being listened for is set (if required).
      */
-    private void setListenerMinimumPriority() {
-        if (this.messageListenerContainer != null && priority > 0){
+    private void setMessageSelector() {
+        StringBuilder messageSelector = new StringBuilder();
+
+        messageSelector.append(MasterMessageSenderImpl.HIGH_MEMORY_PROPERTY)
+                .append(" = ")
+                .append(Boolean.toString(highMemory).toUpperCase());
+
+        if (priority > 0) {
             LOGGER.info("This worker has been set to receive messages with priority >= " + priority);
-            messageListenerContainer.setMessageSelector("JMSPriority >= " + priority);
+            messageSelector.append(" and JMSPriority >= ").append(priority);
         }
+        messageListenerContainer.setMessageSelector(messageSelector.toString());
     }
 }
 

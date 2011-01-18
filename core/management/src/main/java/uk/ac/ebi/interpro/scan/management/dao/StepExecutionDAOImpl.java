@@ -44,13 +44,33 @@ public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> 
             LOGGER.debug("Refreshing StepExecution with ID " + freshStepExecution.getId());
         }
         // Retrieve dirty step execution from the database.
-        StepExecution dirtyStepExec = entityManager.find(StepExecution.class, freshStepExecution.getId());
-        if (dirtyStepExec == null) {
-            throw new IllegalStateException("Attempting to refresh a StepExecution that is not in the database.");
+        StepExecution dirtyStepExec = null;
+
+        // It's quite possible for the worker to reply so quickly (for a simple task like file deletion)
+        // that this refreshStepExecution method is called before the MasterMessageSender has even had a
+        // chance to commit the StepExecution to the database (note it is running in a separate thread.)
+        // This loop makes sure that the StepExecution is committed to the database, before refreshing it.
+        while (dirtyStepExec == null) {
+            dirtyStepExec = entityManager.find(StepExecution.class, freshStepExecution.getId());
+            if (dirtyStepExec == null) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Waiting for StepExecution ID " + freshStepExecution.getId() + " to be committed prior to refreshing it.");
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new IllegalStateException("InterruptedException thrown when waiting for StepExecution to be refreshed.");
+                }
+            }
         }
-        LOGGER.debug("Retrieved Dirty StepExecution.");
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Retrieved Dirty StepExecution.");
+        }
         dirtyStepExec.refresh(freshStepExecution);
         entityManager.merge(dirtyStepExec);
-        LOGGER.debug("Updated Dirty StepExection.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Updated Dirty StepExection.");
+        }
     }
 }

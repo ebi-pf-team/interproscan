@@ -24,13 +24,17 @@
 
     <bean id="standalone" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
         <property name="jobs" ref="jobs"/>
-        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
-        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
-        <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="closeOnCompletion" value="true"/>
         <property name="cleanDatabase" value="true"/>
         <property name="databaseCleaner" ref="databaseCleaner"/>
+        <property name="messageSender" ref="masterMessageSender"/>
+    </bean>
+
+    <bean id="masterMessageSender" class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
+        <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
+        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">

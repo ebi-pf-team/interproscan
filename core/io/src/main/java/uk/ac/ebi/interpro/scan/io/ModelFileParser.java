@@ -71,4 +71,6 @@ public interface ModelFileParser extends Serializable {
      */
     @Transactional
     public SignatureLibraryRelease parse() throws IOException;
+
+    String getAnalysisJobId();
 }

@@ -29,10 +29,18 @@ public class Jobs {
 
     private final Object stepMapLocker = new Object();
 
-
+    /**
+     * Returns all of the jobs of type "analysis".
+     *
+     * @return all of the jobs of type "analysis".
+     */
     public Jobs getAnalysisJobs() {
         List<Job> analysisJobs = new ArrayList<Job>();
-        for (Job job : jobMap.values()) if (job.isAnalysis()) analysisJobs.add(job);
+        for (Job job : jobMap.values()) {
+            if (job.isAnalysis()) {
+                analysisJobs.add(job);
+            }
+        }
         return new Jobs(analysisJobs);
     }
 
@@ -85,10 +93,25 @@ public class Jobs {
         return stepMap.get(stepId);
     }
 
-    public Jobs subset(String[] ids) {
-        List<Job> subsetJobs = new ArrayList<Job>();
-        for (String id : ids) {
-            subsetJobs.add(jobMap.get(id));
+    /**
+     * Returns a subset of all of the defined jobs
+     * that are restricted by the jobIds (bean IDs) passed in.
+     * <p/>
+     * This is done on the basis that the actual jobId contains the id passed in.
+     * <p/>
+     * Allows analyses to be restricted, e.g. by command line arguments.
+     *
+     * @param jobIds being an array of bean IDs to be included.
+     * @return a new Jobs object, containing the restricted set of Jobs.
+     */
+    public Jobs subset(String[] jobIds) {
+        final List<Job> subsetJobs = new ArrayList<Job>();
+        for (String id : jobIds) {
+            for (String candidate : jobMap.keySet()) {
+                if (candidate.contains(id)) {
+                    subsetJobs.add(jobMap.get(candidate));
+                }
+            }
         }
         return new Jobs(subsetJobs);
     }

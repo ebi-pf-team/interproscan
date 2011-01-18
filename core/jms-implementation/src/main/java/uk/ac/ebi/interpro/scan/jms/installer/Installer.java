@@ -3,6 +3,8 @@ package uk.ac.ebi.interpro.scan.jms.installer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ModelFileParser;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.memberDatabaseLoad.StepCreationSignatureDatabaseLoadListener;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAO;
 
@@ -19,6 +21,8 @@ public class Installer implements Runnable {
 
     private SignatureLibraryReleaseDAO signatureLibraryReleaseDAO;
 
+    private StepCreationSignatureDatabaseLoadListener stepCreationSignatureDatabaseLoadListener;
+
     private List<ModelFileParser> parsers;
 
     @Required
@@ -31,6 +35,10 @@ public class Installer implements Runnable {
         this.parsers = parsers;
     }
 
+    public void setStepCreationSignatureDatabaseLoadListener(StepCreationSignatureDatabaseLoadListener stepCreationSignatureDatabaseLoadListener) {
+        this.stepCreationSignatureDatabaseLoadListener = stepCreationSignatureDatabaseLoadListener;
+    }
+
     @Override
     public void run() {
         LOGGER.info("Schema creation");
@@ -41,8 +49,23 @@ public class Installer implements Runnable {
     }
 
     private void loadModels() {
+        loadModels(null, null);
+    }
+
+    private void loadModels(SignatureLibrary library, String versionNumber) {
+        if ((library == null) ^ (versionNumber == null)) {
+            throw new IllegalArgumentException("When calling Installer.loadModels(SignatureLibrary library, String versionNumber) " +
+                    "the two arguments must either both be null, or both be set.");
+        }
+        boolean loadedAtLeastOneLibrary = false;
         if (parsers != null) {
             for (ModelFileParser parser : parsers) {
+                if (library != null) {
+                    // Model loading has been restricted to a single Signature library release.
+                    if ((!library.equals(parser.getSignatureLibrary())) || (!(versionNumber.equals(parser.getReleaseVersionNumber())))) {
+                        continue;
+                    }
+                }
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Loading " + parser.getSignatureLibrary() + " version number " + parser.getReleaseVersionNumber());
                 }
@@ -50,7 +73,7 @@ public class Installer implements Runnable {
                     LOGGER.info(parser.getSignatureLibrary() + " version " + parser.getReleaseVersionNumber() + " is already loaded.");
                     return;
                 }
-                SignatureLibraryRelease release;
+                final SignatureLibraryRelease release;
                 try {
                     release = parser.parse();
                 } catch (IOException e) {
@@ -58,9 +81,26 @@ public class Installer implements Runnable {
                     throw new IllegalStateException("Unable to load " + parser.getSignatureLibrary() + " models.", e);
                 }
 
-                // And store the Models / Signatures to the database.
+                // Store the Models / Signatures to the database.
                 signatureLibraryReleaseDAO.insert(release);
+
+                // Finally, if configured, create StepInstances for any proteins currently in the database.
+                if (stepCreationSignatureDatabaseLoadListener != null) {
+                    stepCreationSignatureDatabaseLoadListener.signatureDatabaseLoaded(release, parser.getAnalysisJobId());
+                }
+                loadedAtLeastOneLibrary = true;
             }
+
+        }
+        if (!loadedAtLeastOneLibrary && library != null) {
+            LOGGER.error(new StringBuilder()
+                    .append("You have requested to load the signatures for ")
+                    .append(library.getName())
+                    .append(" version ")
+                    .append(versionNumber)
+                    .append(" however no configuration has been found.  Please check in the installer-context.xml configuration file.")
+                    .toString()
+            );
         }
     }
 }

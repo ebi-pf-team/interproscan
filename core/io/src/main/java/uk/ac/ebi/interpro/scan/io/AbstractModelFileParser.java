@@ -16,6 +16,10 @@ public abstract class AbstractModelFileParser implements ModelFileParser {
     protected Resource modelFile;
     protected String releaseVersion;
     protected SignatureLibrary library;
+    /**
+     * The ID of the analysis Job, to allow automatic creation of StepInstances for existing proteins.
+     */
+    protected String analysisJobId;
     protected boolean storeAbstract = true;
 
     /**
@@ -46,6 +50,16 @@ public abstract class AbstractModelFileParser implements ModelFileParser {
     @Required
     public void setSignatureLibrary(SignatureLibrary library) {
         this.library = library;
+    }
+
+    @Required
+    public void setAnalysisJobId(String analysisJobId) {
+        this.analysisJobId = analysisJobId;
+    }
+
+    @Override
+    public String getAnalysisJobId() {
+        return analysisJobId;
     }
 
     /**

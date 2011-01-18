@@ -109,6 +109,7 @@ public class Run {
     private enum Mode {
         MASTER("master", "spring/jms/activemq/activemq-distributed-master-context.xml"),
         WORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
+        HIGHMEM_WORKER("highMemDistributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
         STANDALONE("standalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
         CLEANRUN("cleanrun", "spring/jms/activemq/activemq-cleanrun-master-context.xml"),
         MONITOR("monitor", "spring/monitor/monitor-context.xml"),
@@ -193,7 +194,9 @@ public class Run {
 
             modeArgument = parsedCommandLine.getOptionValue(I5Option.MODE.getLongOpt());
 
-            final Mode mode = modeArgument != null ? Mode.valueOf(modeArgument.toUpperCase()) : DEFAULT_MODE;
+            final Mode mode = (modeArgument != null)
+                    ? Mode.valueOf(modeArgument.toUpperCase())
+                    : DEFAULT_MODE;
 
             //String config = System.getProperty("config");
             LOGGER.info("Welcome to InterProScan v5");
@@ -217,6 +220,7 @@ public class Run {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
 
                 for (Job job : jobs.getAnalysisJobs().getJobList()) {
+                    // Print out jobs available
                     System.out.printf("    %20s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
                 }
                 System.exit(1);
@@ -261,13 +265,11 @@ public class Run {
                 runnable.run();
             }
             ctx.close();
-        }
-        catch (ParseException exp) {
+        } catch (ParseException exp) {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
             printHelp();
             System.exit(1);
-        }
-        catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
             System.exit(1);
         }

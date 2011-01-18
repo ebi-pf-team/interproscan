@@ -14,12 +14,18 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private static final Logger LOGGER = Logger.getLogger(SubmissionWorkerRunner.class.getName());
 
-
     private String submissionCommand;
+
+    private boolean highMemory;
 
     @Required
     public void setSubmissionCommand(String submissionCommand) {
         this.submissionCommand = submissionCommand;
+    }
+
+    @Required
+    public void setHighMemory(boolean highMemory) {
+        this.highMemory = highMemory;
     }
 
     /**
@@ -35,16 +41,20 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Override
     public void startupNewWorker(int priority) {
         try {
-            String command = submissionCommand;
+            StringBuilder command = new StringBuilder(submissionCommand);
 //            command = command.replaceAll("%config%", System.getProperty("config"));
 
-            command += " --mode=amqworker";
+            command.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
+
             if (priority > 0) {
-                command = command + " --priority=" + priority;
+                command.append(" --priority=")
+                        .append(priority);
             }
 
-            LOGGER.debug("Submitted Command: " + command);
-            Runtime.getRuntime().exec(command);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Submitted Command: " + command);
+            }
+            Runtime.getRuntime().exec(command.toString());
         } catch (IOException e) {
             throw new IllegalStateException("Cannot run the worker", e);
         }
