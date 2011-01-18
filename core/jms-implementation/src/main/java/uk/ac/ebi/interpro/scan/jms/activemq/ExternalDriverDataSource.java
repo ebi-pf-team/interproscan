@@ -4,7 +4,10 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.AbstractDriverBasedDataSource;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
@@ -27,9 +30,9 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
     private Driver driver;
     private String driverJar;
     private String driverClassName;
-    private final Object driverLoadLock=new Object();
+    private final Object driverLoadLock = new Object();
 
-    private static Map<String,Driver> driverCache=new HashMap<String,Driver>();
+    private static Map<String, Driver> driverCache = new HashMap<String, Driver>();
 
     /**
      * can be used to filter the URL for the database connection.
@@ -38,7 +41,7 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
 
 
     public ExternalDriverDataSource(TemporaryDirectoryManager directoryManager) {
-        if (LOGGER.isDebugEnabled()){
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Directory manager " + directoryManager);
         }
         this.directoryManager = directoryManager;
@@ -52,14 +55,13 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
      */
     @Override
     public void setUrl(String url) {
-        if (LOGGER.isDebugEnabled()){
-            LOGGER.debug("Directory manager "+directoryManager);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Directory manager " + directoryManager);
         }
-        try{
+        try {
             super.setUrl(directoryManager.replacePath(url));
-        }
-        catch (Exception e ){
-            LOGGER.error ("Exception thrown when setting URL ", e);
+        } catch (Exception e) {
+            LOGGER.error("Exception thrown when setting URL ", e);
             throw new IllegalStateException(e);
         }
     }
@@ -68,7 +70,7 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
      * Set location of jar file and optionally the class name of the JDBC driver.
      * path/to/driver.jar
      * path/to/driver.jar:className
-     *
+     * <p/>
      * If the className is not supplied then the driver class will be located from
      * the file META-INF/services/java.sql.Driver in the jar.
      *
@@ -92,7 +94,7 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
 
     /**
      * Get the driver class.
-     *
+     * <p/>
      * Load from the specified jar file,
      * or if not specified,
      * the context class loader of the calling method.
@@ -106,60 +108,64 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
             synchronized (driverLoadLock) {
                 try {
                     loadDriver();
-                } catch (SQLException e) {
-                    failure=e;
+                } catch (SQLException sqle) {
+                    failure = sqle;
                 } catch (Exception e) {
-                    failure=new SQLException("Unable to load driver",e);
+                    failure = new SQLException("Unable to load driver", e);
                 }
-                loaded=true;
+                loaded = true;
             }
         }
 
-        if (failure!=null) throw failure;
+        if (failure != null) {
+            throw failure;
+        }
         return driver;
-
-
     }
 
     private void loadDriver() throws IOException, SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-        driverClassName=setNullIfEmpty(driverClassName);
+        driverClassName = setNullIfEmpty(driverClassName);
 
-        driverJar=setNullIfEmpty(driverJar);
+        driverJar = setNullIfEmpty(driverJar);
 
-        if (driverJar==null && driverClassName==null) {
+        if (driverJar == null && driverClassName == null) {
             throw new IllegalStateException("ExternalDriverDataSource must have a driverJar or a driverClassName set");
         }
 
 
-        String key=driverJar;
-        if (key==null) key=driverClassName;
+        String key = driverJar;
+        if (key == null) {
+            key = driverClassName;
+        }
 
-        driver=driverCache.get(key);
-        if (driver==null) {
+        driver = driverCache.get(key);
+        if (driver == null) {
             ClassLoader driverClassLoader;
             if (driverJar == null) {
                 driverClassLoader = Thread.currentThread().getContextClassLoader();
             } else {
-                String[] parts=driverJar.split(":",2);
-                if (parts.length==1) {
-                    driverClassName=null;
+                String[] parts = driverJar.split(":", 2);
+                if (parts.length == 1) {
+                    driverClassName = null;
                 } else {
-                    driverClassName=parts[1];
+                    driverClassName = parts[1];
                 }
 
-                URL driverFileURL=new File(parts[0]).toURI().toURL();
+                URL driverFileURL = new File(parts[0]).toURI().toURL();
                 URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{driverFileURL});
-                if (driverClassName==null)  {
-                    driverClassName=discoverDriverClassName(urlClassLoader);
+                if (driverClassName == null) {
+                    driverClassName = discoverDriverClassName(urlClassLoader);
                 }
-                driverClassLoader=urlClassLoader;
+                driverClassLoader = urlClassLoader;
             }
 
-            if (driverClassName==null) throw new SQLException("Driver class name not specified or discovered");
-            driver=(Driver) driverClassLoader.loadClass(driverClassName).newInstance();
+            if (driverClassName == null) {
+                throw new SQLException("Driver class name not specified or discovered");
+            }
+            driver = (Driver) driverClassLoader.loadClass(driverClassName).newInstance();
 
-            driverCache.put(key,driver);
+            driverCache.put(key, driver);
         }
     }
 
@@ -171,7 +177,7 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
      * @return null or the input string
      */
     private String setNullIfEmpty(String in) {
-        if (in!=null && in.trim().length()==0) {
+        if (in != null && in.trim().length() == 0) {
             return null;
         }
         return in;
@@ -187,13 +193,18 @@ public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
      * @throws IOException on failure to read
      */
     private String discoverDriverClassName(URLClassLoader urlClassLoader) throws IOException {
-        String className=null;
+        String className = null;
         URL resource = urlClassLoader.findResource("META-INF/services/java.sql.Driver");
-        if (resource!=null) {
-            InputStream is= resource.openStream();
-            BufferedReader br=new BufferedReader(new InputStreamReader(is));
-            className=br.readLine();
-            br.close();
+        if (resource != null) {
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new InputStreamReader(resource.openStream()));
+                className = br.readLine();
+            } finally {
+                if (br != null) {
+                    br.close();
+                }
+            }
         }
         return className;
     }
