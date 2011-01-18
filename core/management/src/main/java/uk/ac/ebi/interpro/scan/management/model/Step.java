@@ -199,11 +199,31 @@ public abstract class Step implements BeanNameAware {
      * of this method MUST throw a suitable Exception, as the call
      * to execute is performed within a transaction with the reply to the JMSBroker.
      * <p/>
-     * Implementations of this method MAY call delayForNfs() before starting, if, for example,
+     * Implementations of this method MAY call this.delayForNfs() before starting, if, for example,
      * they are operating of file system resources.
      *
-     * @param stepInstance           containing the parameters for executing.
-     * @param temporaryFileDirectory
+     * Notes:
+     *
+     * The StepInstance parameter that is passed in provides the following useful methods that you may need to use
+     * in your implementation:
+     *
+     * stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate)
+     * should be used to ensure that temporary files are written to the appropriate location, with file names
+     * filtered for the range of proteins / models being analysed.  Note that the parameter to this method
+     * temporaryFileDirectory is also passed in to executions of this method.
+     *
+     * To determine the range of proteins or models being analysed, call any of:
+     *
+     * stepInstance.getBottomProtein()
+     * stepInstance.getTopProtein()
+     * stepInstance.getBottomModel()
+     * stepInstance.getTopModel()
+     *
+     * @param stepInstance           containing the parameters for executing. Provides utility methods as described
+     * above.
+     * @param temporaryFileDirectory which can be passed into the
+     * stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate) method
+     * to build temporary file paths.
      */
     public abstract void execute(StepInstance stepInstance, String temporaryFileDirectory);
 
