@@ -98,7 +98,7 @@ public abstract class RawMatch implements Serializable {
         return modelId;
     }
 
-    private void setModelId(String modelId) {
+    public void setModelId(String modelId) {
         this.modelId = modelId;
     }
 
