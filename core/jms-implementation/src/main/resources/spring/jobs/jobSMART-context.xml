@@ -90,6 +90,17 @@
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
+    <bean id="stepSmartPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.smart.SmartPostProcessingStep"
+          parent="abstractSMARTStep">
+        <property name="dependsUpon" ref="stepSMARTStoreRawMatches"/>
+        <property name="stepDescription" value="Performs post processing and Match persistence on SMART data"/>
+        <property name="postProcessor" ref="smartPostProcessor"/>
+        <property name="serialGroup" value="SMART_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" value="6.1"/>
+        <property name="rawMatchDAO" ref="smartRawMatchDAO"/>
+        <property name="filteredMatchDAO" ref="smartFilteredMatchDAO"/>
+    </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SMART !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
@@ -97,6 +108,8 @@
     <bean id="smartRawMatchDAO"
           class="uk.ac.ebi.interpro.scan.persistence.raw.SmartHmmer2RawMatchDAOImpl">
     </bean>
+
+    <bean id="smartFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.SmartFilteredMatchDAOImpl"/>
 
     <bean id="smartHmmPfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
         <property name="signatureLibrary" value="SMART"/>
@@ -107,6 +120,16 @@
     <bean id="smartParserSupport" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.SmartHmmer2ParserSupport">
         <property name="signatureLibraryRelease" value="6.1"/>
     </bean>
+
+    <bean id="smartPostProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
+        <property name="overlappingFileParser" ref="overlappingParser"/>
+        <property name="thresholdFileParser" ref="thresholdParser"/>
+        <property name="thresholdFileResource" value="file:${smart.overlapping.path}"/>
+        <property name="overlappingFileResource" value="file:${smart.threshold.path}"/>
+    </bean>
+
+    <bean id="overlappingParser" class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"></bean>
+    <bean id="thresholdParser" class="uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser"></bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
