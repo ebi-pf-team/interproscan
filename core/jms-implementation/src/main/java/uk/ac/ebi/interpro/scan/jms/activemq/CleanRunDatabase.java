@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
@@ -54,10 +55,10 @@ public class CleanRunDatabase implements Runnable {
         File installedFile = new File(filteredDatabasePath);
         LOGGER.debug("original Database path = " + originalDatabasePath);
         File originalFile = new File(originalDatabasePath);
-
-        InputStream in;
-
-        OutputStream out;
+//
+//        InputStream in;
+//
+//        OutputStream out;
 
         if (!originalFile.exists()) {
             LOGGER.fatal("Unable to find original database file: " + originalDatabasePath);
@@ -74,41 +75,62 @@ public class CleanRunDatabase implements Runnable {
         }
 
         try {
-            LOGGER.info("Installed file length = " + installedFile.length());
-            out = new FileOutputStream(installedFile);
-        } catch (FileNotFoundException e) {
-            LOGGER.fatal("Still unable to find file for database overwrite: " + filteredDatabasePath);
-            throw new IllegalStateException("Unable to find installed database file", e);
-        }
-
-
-        try {
-            LOGGER.info("original file length = " + originalFile.length());
-            in = new FileInputStream(originalFile);
-        } catch (FileNotFoundException e) {
-            LOGGER.fatal("Unable to find original database file: " + originalDatabasePath);
-            throw new IllegalStateException("Unable to find original database file", e);
-        }
-
-        byte[] buf = new byte[1024];
-        int len;
-        try {
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
+            FileUtils.copyFile(originalFile, installedFile);
+            while (!FileUtils.contentEquals(installedFile, originalFile)) {
+                try {
+                    Thread.sleep(5000);
+                    LOGGER.debug("Database files are currently being copied.");
+                } catch (InterruptedException e) {
+                    LOGGER.error("InterruptedException when attempting to copy the original database file.");
+                    throw new IllegalStateException("IOException when attempting to copy the original database file.");
+                }
             }
+            Thread.sleep(10000);
+            LOGGER.info("Installed database has been restored to the original.");            
         } catch (IOException e) {
-            LOGGER.fatal("Unable to find original database file: " + originalDatabasePath);
-            throw new IllegalStateException("Unable to find original database file", e);
+                LOGGER.fatal("Unable to copy original database file to installed file location: " + filteredDatabasePath);
+                throw new IllegalStateException("Unable to copy database file", e);
+        } catch (InterruptedException e) {
+                LOGGER.error("InterruptedException when attempting to copy the original database file.");
+                throw new IllegalStateException("IOException when attempting to copy the original database file.");
         }
 
-        try {
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            LOGGER.debug("Error closing database files.");
-        }
+//        try {
+//            LOGGER.info("Installed file length = " + installedFile.length());
+//            out = new FileOutputStream(installedFile);
+//        } catch (FileNotFoundException e) {
+//            LOGGER.fatal("Still unable to find file for database overwrite: " + filteredDatabasePath);
+//            throw new IllegalStateException("Unable to find installed database file", e);
+//        }
+//
+//
+//        try {
+//            LOGGER.info("original file length = " + originalFile.length());
+//            in = new FileInputStream(originalFile);
+//        } catch (FileNotFoundException e) {
+//            LOGGER.fatal("Unable to find original database file: " + originalDatabasePath);
+//            throw new IllegalStateException("Unable to find original database file", e);
+//        }
+//
+//        byte[] buf = new byte[1024];
+//        int len;
+//        try {
+//            while ((len = in.read(buf)) > 0) {
+//                out.write(buf, 0, len);
+//            }
+//        } catch (IOException e) {
+//            LOGGER.fatal("Unable to find original database file: " + originalDatabasePath);
+//            throw new IllegalStateException("Unable to find original database file", e);
+//        }
+//
+//        try {
+//            in.close();
+//            out.close();
+//        } catch (IOException e) {
+//            LOGGER.debug("Error closing database files.");
+//        }
 
-        LOGGER.info("Installed database has been restored to the original.");
+
     }
 
 }
