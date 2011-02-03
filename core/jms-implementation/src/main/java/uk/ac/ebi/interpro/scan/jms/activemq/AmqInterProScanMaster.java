@@ -227,11 +227,11 @@ public class AmqInterProScanMaster implements Master {
         createStepInstancesForJob("jobLoadFromUniParc", null);
     }
 
-    private void createStepInstancesForJob(String jobId, Map<String, String> stepParameters) {
+    private void createStepInstancesForJob(String jobId, Map<String, String> parameters) {
         Job job = jobs.getJobById(jobId);
         for (Step step : job.getSteps()) {
             StepInstance stepInstance = new StepInstance(step);
-            stepInstance.addStepParameters(stepParameters);
+            stepInstance.addParameters(parameters);
             stepInstanceDAO.insert(stepInstance);
         }
     }
