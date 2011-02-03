@@ -7,7 +7,6 @@ import uk.ac.ebi.interpro.scan.model.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.*;
 
 /**
@@ -18,28 +17,27 @@ import java.util.*;
  * @version $Id$
  */
 @Entity
-@Table(name = "hmmer3_raw_match")
 public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
-    @Column(nullable = false, name = "envelope_start")
+    @Column(nullable = false)
     private int envelopeStart;
 
-    @Column(nullable = false, name = "envelope_end")
+    @Column(nullable = false)
     private int envelopeEnd;
 
-    @Column(nullable = false, name = "expected_accuracy")
+    @Column(nullable = false)
     private double expectedAccuracy;
 
-    @Column(nullable = false, name = "full_sequence_bias")
+    @Column(nullable = false)
     private double fullSequenceBias;
 
-    @Column(nullable = false, name = "domain_c_evalue")
+    @Column(nullable = false)
     private double domainCeValue;
 
-    @Column(nullable = false, name = "domain_i_evalue")
+    @Column(nullable = false)
     private double domainIeValue;
 
-    @Column(nullable = false, name = "domain_bias")
+    @Column(nullable = false)
     private double domainBias;
 
     protected Hmmer3RawMatch() {

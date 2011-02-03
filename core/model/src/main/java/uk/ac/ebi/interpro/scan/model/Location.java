@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -48,11 +47,11 @@ public abstract class Location implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
-    @TableGenerator(name = "LOCN_IDGEN", table = "KEYGEN", pkColumnValue = "location", initialValue = 0, allocationSize = 50)
+    @TableGenerator(name = "LOCN_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "location", initialValue = 0, allocationSize = 50)
     private Long id;
 
     @Column(name = "loc_start", nullable = false)
-    // to match end - 'end' is reserved word in SQL.
+    // to match start - 'start' is reserved word in SQL.
     private int start;
 
     @Column(name = "loc_end", nullable = false)
@@ -60,7 +59,6 @@ public abstract class Location implements Serializable {
     private int end;
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
-    @ForeignKey(name = "fk_match")
     private Match match;
 
     /**

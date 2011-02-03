@@ -46,11 +46,11 @@ public abstract class ProfileScanRawMatch extends PfScanRawMatch {
     protected ProfileScanRawMatch() {
     }
 
-    @Column(name = "score")
+    @Column//(name = "score")
     private double score;
 
     @Enumerated(javax.persistence.EnumType.STRING)
-    @Column(name = "pf_scan_level", nullable = false)
+    @Column(name = "pf_scan_level", nullable = false)  // level is an SQL reserved word.
     private Level level;
 
     protected ProfileScanRawMatch(String sequenceIdentifier, String model,

@@ -7,37 +7,58 @@
             Test persistence-unit that uses an in-memory HSQLDB database.
         </description>
 
-        <!-- Abstract classes -->
+        <!-- Interfaces -->
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
 
-        <!-- Concrete Locations. -->
-        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
-        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
-        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch$PhobiusLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation</class>
-        <class>uk.ac.ebi.interpro.scan.model.CoilsMatch$CoilsLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.Protein</class>
+        <class>uk.ac.ebi.interpro.scan.model.Model</class>
+        <class>uk.ac.ebi.interpro.scan.model.Xref</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProteinXref</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignatureXref</class>
+        <class>uk.ac.ebi.interpro.scan.model.Signature</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
         <!-- Concrete Matches -->
         <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.HmmerMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match</class>
-        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch</class>
 
-        <class>uk.ac.ebi.interpro.scan.model.Protein</class>
-        <class>uk.ac.ebi.interpro.scan.model.Model</class>
-        <class>uk.ac.ebi.interpro.scan.model.Signature</class>
-        <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
-        <class>uk.ac.ebi.interpro.scan.model.Xref</class>
-        <class>uk.ac.ebi.interpro.scan.model.ProteinXref</class>
-        <class>uk.ac.ebi.interpro.scan.model.SignatureXref</class>
+        <!-- Concrete Locations. -->
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch$PhobiusLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.CoilsMatch$CoilsLocation</class>
+
+        <!-- Raw Matches -->
+        <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.raw.HmmerRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
 
         <properties>
             <property name="hibernate.show_sql" value="${mvn.hibernate.show_sql}"/>
@@ -48,6 +69,12 @@
             <property name="hibernate.connection.password" value="${mvn.i5.database.password}"/>
             <property name="hibernate.dialect" value="${mvn.hibernate.dialect}"/>
             <property name="hibernate.hbm2ddl.auto" value="${mvn.hibernate.hbm2ddl.auto}"/>
+            <!-- Note - the "oracleNamingStrategy" does the following:
+
+            * guarantees that table / column / index identifiers are no longer than 30 characters.
+            * turns camelHump wording into underscore_spaced
+            Otherwise, it is not Oracle specific in any way, so will work fine with any RDBMS. -->
+            <property name="hibernate.ejb.naming_strategy" value="de.schauderhaft.hibernate.OracleNamingStrategy"/>
         </properties>
 
     </persistence-unit>

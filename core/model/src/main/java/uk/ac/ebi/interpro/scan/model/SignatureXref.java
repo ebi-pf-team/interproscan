@@ -20,7 +20,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -28,24 +29,27 @@ import java.io.Serializable;
 /**
  * Database cross-reference.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
-@Entity (name="signature_xref")
-@XmlType(name="SignatureXrefType")
+@Entity
+@XmlType(name = "SignatureXrefType")
 public class SignatureXref extends Xref implements Serializable {
 
-    @ManyToOne (optional = false)
+    @ManyToOne(optional = false)
     private Signature signature;
 
-    /** Zero arguments constructor for Hibernate. */
-    protected SignatureXref() { }
+    /**
+     * Zero arguments constructor for Hibernate.
+     */
+    protected SignatureXref() {
+    }
 
-    public SignatureXref(String identifier){
+    public SignatureXref(String identifier) {
         super(identifier);
     }
 
-    public SignatureXref(String databaseName, String identifier, String name){
+    public SignatureXref(String databaseName, String identifier, String name) {
         super(databaseName, identifier, name);
     }
 
@@ -58,7 +62,8 @@ public class SignatureXref extends Xref implements Serializable {
         this.signature = signature;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof SignatureXref))
@@ -68,13 +73,15 @@ public class SignatureXref extends Xref implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(15, 47)
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 

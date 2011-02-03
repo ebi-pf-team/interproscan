@@ -17,22 +17,23 @@ import java.util.Set;
  * @since 1.0
  */
 @Entity
-@Table(name="phobius_match")
-@XmlType(name="PhobiusMatchType")
+@XmlType(name = "PhobiusMatchType")
 public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
 
-    protected PhobiusMatch() {}
+    protected PhobiusMatch() {
+    }
 
     public PhobiusMatch(Signature signature, Set<PhobiusLocation> locations) {
         super(signature, locations);
         // TODO - Add runtime check that the Signature being matched
         // has been constructed from the Phobius enum.
-        if (! PhobiusFeatureType.isValidSignature(signature)){
-            throw new IllegalArgumentException ("The Signature object being used for this PhobiusMatch does not appear to be a valid Phobius signature.");
+        if (!PhobiusFeatureType.isValidSignature(signature)) {
+            throw new IllegalArgumentException("The Signature object being used for this PhobiusMatch does not appear to be a valid Phobius signature.");
         }
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof PhobiusMatch))
@@ -42,29 +43,33 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(29, 49)
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
+
     /**
      * Location of Phobius match on a protein sequence
      *
      * @author Phil Jones
      */
     @Entity
-    @Table(name="phobius_location")
-    @XmlType(name="PhobiusLocationType")
+    @Table(name = "phobius_location")
+    @XmlType(name = "PhobiusLocationType")
     public static class PhobiusLocation extends Location {
 
-        protected PhobiusLocation() {}
+        protected PhobiusLocation() {
+        }
 
-        public PhobiusLocation(int start, int end){
+        public PhobiusLocation(int start, int end) {
 
             super(start, end);
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (!(o instanceof PhobiusLocation))
@@ -74,7 +79,8 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
                     .isEquals();
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return new HashCodeBuilder(29, 53)
                     .appendSuper(super.hashCode())
                     .toHashCode();

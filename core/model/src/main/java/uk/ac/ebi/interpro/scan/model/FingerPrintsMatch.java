@@ -34,7 +34,7 @@ import java.util.Set;
  * @since 1.0
  */
 @Entity
-@Table(name = "finger_prints_match")
+//@Table(uniqueConstraints = @UniqueConstraint())
 @XmlType(name = "FingerPrintsMatchType")
 public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocation> {
 

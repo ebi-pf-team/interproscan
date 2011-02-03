@@ -3,43 +3,43 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-
-import javax.persistence.Entity;
-import javax.persistence.Column;
-
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 /**
  * <a href="http://hmmer.janelia.org/">HMMER</a> raw match.
  *
- * @author  Antony Quinn
- * @author  Manjula Primma
+ * @author Antony Quinn
+ * @author Manjula Primma
  * @version $Id$
  */
 @Entity
-public abstract class HmmerRawMatch extends RawMatch  {
+public abstract class HmmerRawMatch extends RawMatch {
 
-    @Column(name="EVALUE",  nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private double evalue;
-    
-    @Column(name="SCORE", nullable = false, updatable = false)
+
+    @Column(nullable = false, updatable = false)
     private double score;
 
-    @Column(name="HMM_START", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private int hmmStart;
 
-    @Column(name="HMM_END", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private int hmmEnd;
 
-    @Column(name="HMM_BOUNDS", length = 2)
+    @Column(length = 2)
     private String hmmBounds;
 
-    @Column(name="SEQ_SCORE", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private double locationScore;
 
-    protected HmmerRawMatch() { }
-    
+    protected HmmerRawMatch() {
+    }
+
     protected HmmerRawMatch(String sequenceIdentifier, String model,
                             SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                             int locationStart, int locationEnd,
@@ -103,7 +103,8 @@ public abstract class HmmerRawMatch extends RawMatch  {
         this.locationScore = locationScore;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof HmmerRawMatch))
@@ -120,7 +121,8 @@ public abstract class HmmerRawMatch extends RawMatch  {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(53, 55)
                 .appendSuper(super.hashCode())
                 .append(evalue)
@@ -132,7 +134,8 @@ public abstract class HmmerRawMatch extends RawMatch  {
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 

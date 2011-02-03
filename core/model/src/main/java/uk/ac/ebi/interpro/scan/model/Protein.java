@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
@@ -63,17 +62,17 @@ public class Protein implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "PROT_IDGEN")
-    @TableGenerator(name = "PROT_IDGEN", table = "KEYGEN", pkColumnValue = "protein", initialValue = 0, allocationSize = 100)
+    @TableGenerator(name = "PROT_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "protein", initialValue = 0, allocationSize = 100)
     protected Long id;
 
-    @CollectionOfElements(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     // Hibernate specific annotation.
     @JoinTable(name = "protein_sequence_chunk")
     @IndexColumn(name = "chunk_index")
-    @Column(name = "sequence_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @Column(length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> sequenceChunks;
 
-    @Column(nullable = false, updatable = false, length = Chunker.CHUNK_SIZE, name = "sequence_first_chunk")
+    @Column(nullable = false, updatable = false, length = Chunker.CHUNK_SIZE)
     @XmlTransient
     private String sequenceFirstChunk;
 

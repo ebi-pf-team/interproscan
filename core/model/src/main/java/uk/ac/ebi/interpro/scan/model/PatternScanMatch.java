@@ -39,7 +39,6 @@ import java.util.Set;
  * @since 1.0
  */
 @Entity
-@Table(name = "pattern_scan_match")
 @XmlType(name = "PatternScanMatchType")
 public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation> {
 
@@ -92,7 +91,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
          *
          * @return Sequence alignment.
          */
-        @XmlElement(required=true)
+        @XmlElement(required = true)
         public String getAlignment() {
             if (cigarAlignment == null) {
                 return null;
@@ -104,7 +103,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
         public void setAlignment(String alignment) {
             AlignmentEncoder encoder = new CigarAlignmentEncoder();
             setCigarAlignment(encoder.encode(alignment));
-        }        
+        }
 
         public String getCigarAlignment() {
             return cigarAlignment;

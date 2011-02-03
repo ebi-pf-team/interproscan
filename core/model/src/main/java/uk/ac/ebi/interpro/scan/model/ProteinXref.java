@@ -20,7 +20,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -28,25 +29,28 @@ import java.io.Serializable;
 /**
  * Protein cross-reference.
  *
- * @author  Phil Jones
- * @author  Antony Quinn
+ * @author Phil Jones
+ * @author Antony Quinn
  * @version $Id$
  */
-@Entity (name = "protein_xref")
-@XmlType(name="ProteinXrefType")
+@Entity
+@XmlType(name = "ProteinXrefType")
 public class ProteinXref extends Xref implements Serializable {
 
-    @ManyToOne (optional = false)
+    @ManyToOne(optional = false)
     private Protein protein;
 
-    /** Zero arguments constructor just for Hibernate. */
-    protected ProteinXref() { }
+    /**
+     * Zero arguments constructor just for Hibernate.
+     */
+    protected ProteinXref() {
+    }
 
-    public ProteinXref(String identifier){
+    public ProteinXref(String identifier) {
         super(identifier);
     }
-    
-    public ProteinXref(String databaseName, String identifier, String name){
+
+    public ProteinXref(String databaseName, String identifier, String name) {
         super(databaseName, identifier, name);
     }
 
@@ -59,7 +63,8 @@ public class ProteinXref extends Xref implements Serializable {
         this.protein = protein;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof ProteinXref))
@@ -69,13 +74,15 @@ public class ProteinXref extends Xref implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(15, 51)
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 

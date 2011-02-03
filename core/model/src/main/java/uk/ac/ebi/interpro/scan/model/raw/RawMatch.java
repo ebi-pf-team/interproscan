@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
+import uk.ac.ebi.interpro.scan.model.KeyGen;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
@@ -24,37 +24,46 @@ public abstract class RawMatch implements Serializable {
 
     private static final Pattern SIMPLE_INTEGER_PATTERN = Pattern.compile("^\\d+$");
 
+    // These column names are referenced to define database indexes in sub-classes.
+    // In upper case to ensure they work with Oracle.
+    public static final String COL_NAME_SEQUENCE_IDENTIFIER = "SEQUENCE_ID";
+    public static final String COL_NAME_MODEL_ID = "MODEL_ID";
+    public static final String COL_NAME_NUMERIC_SEQUENCE_ID = "NUMERIC_SEQUENCE_ID";
+    public static final String COL_NAME_SIGNATURE_LIBRARY = "SIGNATURE_LIBRARY";
+    public static final String COL_NAME_SIGNATURE_LIBRARY_RELEASE = "SIG_LIB_RELEASE";
+
+
     // TODO: Design for "abstract" (Bloch)
     // TODO: Don't need any foreign keys -- just index fields we will search on
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RAW_MATCH_IDGEN")
-    @TableGenerator(name = "RAW_MATCH_IDGEN", table = "KEYGEN", pkColumnValue = "match", initialValue = 0, allocationSize = 100)
+    @TableGenerator(name = "RAW_MATCH_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "match", initialValue = 0, allocationSize = 100)
     private Long id;
 
-    @Column(name = "sequence_id")
+    @Column(name = COL_NAME_SEQUENCE_IDENTIFIER)
+    // Column explicitly named so subclass indexes can reference column.
     private String sequenceIdentifier;      // eg. MD5
 
-    @Index(name = "rawmatch_num_seq_id_idx")
-    @Column(name = "numeric_seq_id")
+    @Column(name = COL_NAME_NUMERIC_SEQUENCE_ID)    // Column explicitly named so subclass indexes can reference column.
     private Long numericSequenceId;
 
-    @Index(name = "rawmatch_model_idx")
-    @Column(name = "model_id")
+    @Column(name = COL_NAME_MODEL_ID)               // Column explicitly named so subclass indexes can reference column.
     private String modelId;                   // eg. PF00001
 
-    @Index(name = "rawmatch_lib_idx")
     @Enumerated(javax.persistence.EnumType.STRING)
+    @Column(name = COL_NAME_SIGNATURE_LIBRARY)
+    // Column explicitly named so subclass indexes can reference column.
     private SignatureLibrary signatureLibrary;    // eg. PFAM
 
-    @Index(name = "rawmatch_release_idx")
-    @Column(name = "sig_lib_release")
+    @Column(name = COL_NAME_SIGNATURE_LIBRARY_RELEASE)
+    // Column explicitly named so subclass indexes can reference column.
     private String signatureLibraryRelease; // eg. 23.0
 
-    @Column(name = "location_start")
+    @Column
     private int locationStart;
 
-    @Column(name = "location_end")
+    @Column
     private int locationEnd;
 
     protected RawMatch() {

@@ -21,30 +21,30 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.Set;
 
 /**
  * HMMER2 match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 @Entity
-@Table(name="hmmer2_match")
-@XmlType(name="Hmmer2MatchType")
+@Table(name = "hmmer2_match")
+@XmlType(name = "Hmmer2MatchType")
 public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
 
-    protected Hmmer2Match() {}
+    protected Hmmer2Match() {
+    }
 
     public Hmmer2Match(Signature signature, double score, double evalue, Set<Hmmer2Match.Hmmer2Location> locations) {
         super(signature, score, evalue, locations);
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Hmmer2Match))
@@ -55,7 +55,8 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(39, 49)
                 .appendSuper(super.hashCode())
                 .toHashCode();
@@ -64,30 +65,32 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
     /**
      * Location(s) of match on protein sequence
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     @Entity
-    @Table(name="hmmer2_location")
-    @XmlType(name="Hmmer2LocationType")//, propOrder={"start", "end"})
+    @Table(name = "hmmer2_location")
+    @XmlType(name = "Hmmer2LocationType")//, propOrder={"start", "end"})
     public static class Hmmer2Location extends HmmerLocation {
 
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
-        protected Hmmer2Location() {}
+        protected Hmmer2Location() {
+        }
 
         // TODO: Remove HMM Bounds?
         public Hmmer2Location(int start, int end, double score, double evalue,
-                             int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
+                              int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
             super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
         }
 
         public Hmmer2Location(int start, int end, double score, double evalue,
-                             int hmmStart, int hmmEnd, int hmmLength) {
+                              int hmmStart, int hmmEnd, int hmmLength) {
             super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength);
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (!(o instanceof HmmerLocation))
@@ -98,7 +101,8 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
                     .isEquals();
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return new HashCodeBuilder(39, 53)
                     .appendSuper(super.hashCode())
                     .toHashCode();

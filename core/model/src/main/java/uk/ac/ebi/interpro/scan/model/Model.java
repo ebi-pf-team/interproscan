@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 
@@ -28,20 +27,19 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Model, for example SuperFamily 0035188 (part of signature SSF53098)
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 
 @Entity
-@XmlType(name="ModelType")
+@XmlType(name = "ModelType")
 public class Model implements Serializable {
 
     @Transient
@@ -51,68 +49,69 @@ public class Model implements Serializable {
      * id as unique identifier of the Model record (e.g. for JPA persistence)
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator="MOD_IDGEN")
-    @TableGenerator(name="MOD_IDGEN", table="KEYGEN", pkColumnValue="model", initialValue = 0, allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "MOD_IDGEN")
+    @TableGenerator(name = "MOD_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "model", initialValue = 0, allocationSize = 50)
     private Long id;
 
     @Column(length = 50, nullable = false)
-    @Index(name="model_ac_idx")
+    @Index(name = "model_ac_idx")
     private String accession;
 
     @Column(length = 100)
-    @Index(name="model_name_idx")
+    @Index(name = "model_name_idx")
     private String name;
 
-    @CollectionOfElements (fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable (name="model_description_chunk")
-    @IndexColumn (name="chunk_index")
-    @Column (name="description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name = "model_description_chunk")
+    @IndexColumn(name = "chunk_index")
+    @Column(name = "description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> descriptionChunks = Collections.emptyList();
 
-    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name="description_first_chunk")
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "description_first_chunk")
     @XmlTransient
     private String descriptionFirstChunk;
 
     @Transient
     private String description;
 
-    @ManyToOne (optional = true)
+    @ManyToOne(optional = true)
     private Signature signature;
 
     /**
      * TODO - Mucking about with Hibernate specific annotation - mapping
      * the pieces of the definition to a CollectionOfElements.
-     *
+     * <p/>
      * This field holds the contents of the model file for this particular Model.  The
      * length of this is indeterminate, so stored in a LOB field.
      */
 //    @Column (nullable = true, length=100000)
-    @CollectionOfElements (fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable (name="model_definition_chunk")
-    @IndexColumn (name="chunk_index")
-    @Column (name="definition_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name = "model_definition_chunk")
+    @IndexColumn(name = "chunk_index")
+    @Column(name = "definition_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> definitionChunks = Collections.emptyList();
 
-    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name="definition_first_chunk")
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "definition_first_chunk")
     @XmlTransient
     private String definitionFirstChunk;
 
     @Transient
     private String definition;
 
-    @Index (name="model_md5_idx")
-    private String md5;    
+    @Index(name = "model_md5_idx")
+    private String md5;
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected Model() {}
+    protected Model() {
+    }
 
     public Model(String accession) {
         setAccession(accession);
     }
 
-    public Model(String accession, String name, String description){
+    public Model(String accession, String name, String description) {
         setAccession(accession);
         setName(name);
         setDescription(description);
@@ -129,7 +128,7 @@ public class Model implements Serializable {
     /**
      * Builder pattern (see Josh Bloch "Effective Java" 2nd edition)
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     @XmlTransient
     public static class Builder {
@@ -187,7 +186,7 @@ public class Model implements Serializable {
      *
      * @return Model accession
      */
-    @XmlAttribute(name="ac", required=true)
+    @XmlAttribute(name = "ac", required = true)
     public String getAccession() {
         return accession;
     }
@@ -202,7 +201,7 @@ public class Model implements Serializable {
      *
      * @return Model name
      */
-    @XmlAttribute(name="name")
+    @XmlAttribute(name = "name")
     public String getName() {
         return name;
     }
@@ -213,7 +212,7 @@ public class Model implements Serializable {
 
     @XmlTransient
     public String getDefinition() {
-        if (definition == null){
+        if (definition == null) {
             definition = CHUNKER.concatenate(definitionFirstChunk, definitionChunks);
         }
         return definition;
@@ -231,9 +230,9 @@ public class Model implements Serializable {
      *
      * @return Model description
      */
-    @XmlAttribute(name="desc")
+    @XmlAttribute(name = "desc")
     public String getDescription() {
-        if (description == null){
+        if (description == null) {
             description = CHUNKER.concatenate(descriptionFirstChunk, descriptionChunks);
         }
         return description;
@@ -247,11 +246,11 @@ public class Model implements Serializable {
     }
 
     @XmlTransient
-    public Signature getSignature()    {
+    public Signature getSignature() {
         return signature;
     }
 
-    void setSignature(Signature signature)  {
+    void setSignature(Signature signature) {
         this.signature = signature;
     }
 
@@ -279,9 +278,10 @@ public class Model implements Serializable {
 
     private String getSafeMd5(String md5) {
         return (md5 == null ? "" : md5.toLowerCase());
-    }        
+    }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Model))
@@ -296,7 +296,8 @@ public class Model implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 41)
                 .append(accession)
                 .append(name)
@@ -306,7 +307,8 @@ public class Model implements Serializable {
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return new ToStringBuilder(this)
                 .append("accession", accession)
                 .append("name", name)
