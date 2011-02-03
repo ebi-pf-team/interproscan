@@ -21,7 +21,10 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,39 +33,40 @@ import java.util.Set;
 /**
  * Signature library release.
  *
- * @author  Antony Quinn
- * @author  Phil Jones
- * @author  David Binns
+ * @author Antony Quinn
+ * @author Phil Jones
+ * @author David Binns
  * @version $Id$
  */
 @Entity
-@Table(name="signature_library_release", uniqueConstraints =
-    @UniqueConstraint(columnNames = {"library", "version"}))
-@XmlRootElement(name="signature-library-release")
-@XmlType(name="SignatureLibraryReleaseType")
+@Table(uniqueConstraints =
+@UniqueConstraint(columnNames = {"library", "version"}))
+@XmlRootElement(name = "signature-library-release")
+@XmlType(name = "SignatureLibraryReleaseType")
 public class SignatureLibraryRelease implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator="SIG_LIB_IDGEN")
-    @TableGenerator(name="SIG_LIB_IDGEN", table="KEYGEN", pkColumnValue="signature_library_release", initialValue = 0, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "SIG_LIB_IDGEN")
+    @TableGenerator(name = "SIG_LIB_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "signature_library_release", initialValue = 0, allocationSize = 1)
     private Long id;
 
     @Enumerated(javax.persistence.EnumType.STRING)
-    @Column (nullable = false)
+    @Column(nullable = false)
     private SignatureLibrary library;
 
-    @Column (length = 255, nullable = false)
+    @Column(length = 255, nullable = false)
     private String version;
 
     // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
-    @OneToMany (mappedBy = "signatureLibraryRelease", cascade = CascadeType.ALL)
-    @XmlElement(name="signature")
+    @OneToMany(mappedBy = "signatureLibraryRelease", cascade = CascadeType.ALL)
+    @XmlElement(name = "signature")
     private Set<Signature> signatures = new HashSet<Signature>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected SignatureLibraryRelease() { }
+    protected SignatureLibraryRelease() {
+    }
 
     public SignatureLibraryRelease(SignatureLibrary library, String version) {
         setLibrary(library);
@@ -79,7 +83,7 @@ public class SignatureLibraryRelease implements Serializable {
         return id;
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
 //    @XmlJavaTypeAdapter(SignatureLibrary.SignatureLibraryAdapter.class)
     public SignatureLibrary getLibrary() {
         return library;
@@ -100,7 +104,7 @@ public class SignatureLibraryRelease implements Serializable {
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
     private void setSignatures(Set<Signature> signatures) {
-        for (Signature s : signatures)  {
+        for (Signature s : signatures) {
             addSignature(s);
         }
     }
@@ -122,7 +126,7 @@ public class SignatureLibraryRelease implements Serializable {
         signature.setSignatureLibraryRelease(null);
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public String getVersion() {
         return version;
     }
@@ -132,7 +136,8 @@ public class SignatureLibraryRelease implements Serializable {
         this.version = version;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof SignatureLibraryRelease))
@@ -145,7 +150,8 @@ public class SignatureLibraryRelease implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 39)
                 .append(library)
                 .append(version)
@@ -153,7 +159,8 @@ public class SignatureLibraryRelease implements Serializable {
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 

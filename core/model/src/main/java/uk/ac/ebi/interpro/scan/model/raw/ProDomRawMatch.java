@@ -2,31 +2,39 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
-import javax.persistence.Entity;
 import javax.persistence.Column;
-import javax.persistence.Table;
+import javax.persistence.Entity;
 import java.io.Serializable;
 
 /**
  * <a href="http://prodom.prabi.fr/">ProDom</a> raw match.
  *
- * @author  Antony Quinn
- * @author  Phil Jones
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
 @Entity
-@Table(name="prodom_raw_match")
+@javax.persistence.Table(name = ProDomRawMatch.TABLE_NAME)
+@org.hibernate.annotations.Table(appliesTo = ProDomRawMatch.TABLE_NAME, indexes = {
+        @Index(name = "PRODOM_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
+        @Index(name = "PRODOM_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
+        @Index(name = "PRODOM_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
+        @Index(name = "PRODOM_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
+        @Index(name = "PRODOM_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+})
 public class ProDomRawMatch extends RawMatch implements Serializable {
+
+    public static final String TABLE_NAME = "PRODOM_RAW_MATCH";
 
     @Column
     private double score;   // location.score
 
-    protected ProDomRawMatch() { }
+    protected ProDomRawMatch() {
+    }
 
-    /* TODO - This is a ProDom match, so why pass in the SignatureLibrary object?  Should just be SignatureLibrary.PRODOM ?
-    * Or want more flexibility?*/
     public ProDomRawMatch(String sequenceIdentifier, String model,
                           String signatureLibraryRelease,
                           int locationStart, int locationEnd, double score) {
@@ -42,7 +50,8 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
         this.score = score;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof ProDomRawMatch))
@@ -54,11 +63,12 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(11, 81)
                 .appendSuper(super.hashCode())
                 .append(score)
                 .toHashCode();
-    }    
+    }
 
 }

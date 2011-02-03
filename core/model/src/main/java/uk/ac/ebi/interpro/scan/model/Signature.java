@@ -52,24 +52,24 @@ public class Signature implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "SIG_LIB_IDGEN")
-    @TableGenerator(name = "SIG_LIB_IDGEN", table = "KEYGEN", pkColumnValue = "signature", initialValue = 0, allocationSize = 50)
+    @TableGenerator(name = "SIG_LIB_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "signature", initialValue = 0, allocationSize = 50)
     private Long id;
 
-    @Column(name = "accession", nullable = false)
+    @Column(nullable = false)
     @Index(name = "signature_ac_idx")
     private String accession;
 
-    @Column(name = "name")
+    @Column
     @Index(name = "signature_name_idx")
     private String name;
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     @JoinTable(name = "signature_description_chunk")
     @IndexColumn(name = "chunk_index")
-    @Column(name = "description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @Column(length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> descriptionChunks = Collections.emptyList();
 
-    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "description_first_chunk")
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE)
     @XmlTransient
     private String descriptionFirstChunk;
 
@@ -79,8 +79,8 @@ public class Signature implements Serializable {
     /**
      * Member database specific category for the Signature
      */
-    @Column(name = "type")
-    @Index(name = "signature_type_idx")
+    @Column
+    @Index(name = "sig_type_idx")
     private String type;
 
     @Column(nullable = true)
@@ -98,7 +98,7 @@ public class Signature implements Serializable {
     @Column(name = "abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> abstractChunks = Collections.emptyList();
 
-    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "abstract_first_chunk")
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE)
     @XmlTransient
     private String abstractFirstChunk;
 
@@ -122,10 +122,10 @@ public class Signature implements Serializable {
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     @JoinTable(name = "signature_deprecated_acs")
-    @Column(name = "deprecated_acs", nullable = true)
+    @Column(nullable = true)
     private Set<String> deprecatedAccessions = new HashSet<String>();
 
-    @Column(nullable = true, name = "signature_comment")
+    @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
     private String comment;
 
     /**

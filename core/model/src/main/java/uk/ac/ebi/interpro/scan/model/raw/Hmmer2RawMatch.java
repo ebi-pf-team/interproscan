@@ -18,7 +18,8 @@ import java.util.*;
 @Entity
 public abstract class Hmmer2RawMatch extends HmmerRawMatch {
 
-    @Column(name = "location_evalue")
+    //    @Column(name = "location_evalue")
+    @Column
     private double locationEvalue;
 
     protected Hmmer2RawMatch() {

@@ -37,7 +37,6 @@ import java.util.Set;
  * @since 1.0
  */
 @Entity
-@Table(name = "profile_scan_match")
 @XmlType(name = "ProfileScanMatchType")
 public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation> {
 
@@ -61,7 +60,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         @Column(nullable = false)
         private double score;
 
-        @Column(nullable = false, name = "cigar_align")
+        @Column(nullable = false)//, name = "cigar_align")
         private String cigarAlignment;
 
         /**
@@ -90,11 +89,11 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
          *
          * @return Sequence alignment.
          */
-        @XmlElement(required=true)
+        @XmlElement(required = true)
         public String getAlignment() {
             if (cigarAlignment == null) {
                 return null;
-            }            
+            }
             AlignmentEncoder encoder = new CigarAlignmentEncoder();
             return encoder.decode(getMatch().getProtein().getSequence(), cigarAlignment, getStart(), getEnd());
         }

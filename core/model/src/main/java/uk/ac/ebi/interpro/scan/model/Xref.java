@@ -30,41 +30,44 @@ import java.io.Serializable;
 /**
  * Database cross-reference.
  *
- * @author  Antony Quinn
- * @author  Phil Jones
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
 @Entity
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
-@XmlType(name="XrefType")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@XmlType(name = "XrefType")
 abstract class Xref implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator="XREF_IDGEN")
-    @TableGenerator(name="XREF_IDGEN", table="KEYGEN", pkColumnValue="xref", initialValue = 0, allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "XREF_IDGEN")
+    @TableGenerator(name = "XREF_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "xref", initialValue = 0, allocationSize = 50)
     protected Long id;
 
-    @Column (name = "identifier", nullable = false, unique = false, updatable = false)
-    @Index (name="xref_identifier_idx")
+    @Column(nullable = false, unique = false, updatable = false)
+    @Index(name = "xrf_idx")
     private String identifier;
 
-    @Column (name = "name", nullable = true)
+    @Column(nullable = true)
     private String name;
 
-    @Column (name = "db", nullable = true)
+    @Column(nullable = true)
     private String databaseName;
 
-    /** Zero arguments constructor for Hibernate. */
-    protected Xref() { }
+    /**
+     * Zero arguments constructor for Hibernate.
+     */
+    protected Xref() {
+    }
 
-    public Xref(String identifier){
+    public Xref(String identifier) {
         this.identifier = identifier;
     }
 
     public Xref(String databaseName, String identifier, String name) {
         this.databaseName = databaseName;
         this.identifier = identifier;
-        this.name         = name;
+        this.name = name;
     }
 
 
@@ -77,7 +80,7 @@ abstract class Xref implements Serializable {
         this.id = id;
     }
 
-    @XmlAttribute(name="id", required=true)
+    @XmlAttribute(name = "id", required = true)
     public String getIdentifier() {
         return identifier;
     }
@@ -86,7 +89,7 @@ abstract class Xref implements Serializable {
         this.identifier = identifier;
     }
 
-    @XmlAttribute(name="name")
+    @XmlAttribute(name = "name")
     public String getName() {
         return name;
     }
@@ -95,7 +98,7 @@ abstract class Xref implements Serializable {
         this.name = name;
     }
 
-    @XmlAttribute(name="db")
+    @XmlAttribute(name = "db")
     public String getDatabaseName() {
         return databaseName;
     }
@@ -104,7 +107,8 @@ abstract class Xref implements Serializable {
         this.databaseName = databaseName;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Xref))
@@ -117,7 +121,8 @@ abstract class Xref implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(15, 37)
                 .append(identifier)
                 .append(name)
@@ -125,7 +130,8 @@ abstract class Xref implements Serializable {
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 

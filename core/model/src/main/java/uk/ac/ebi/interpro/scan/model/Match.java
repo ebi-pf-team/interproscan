@@ -49,7 +49,7 @@ public abstract class Match<T extends Location> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "MATCH_IDGEN")
-    @TableGenerator(name = "MATCH_IDGEN", table = "KEYGEN", pkColumnValue = "match", initialValue = 0, allocationSize = 50)
+    @TableGenerator(name = "MATCH_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "match", initialValue = 0, allocationSize = 50)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)

@@ -17,7 +17,6 @@ import java.util.Set;
  * @since 1.0
  */
 @Entity
-@Table(name = "coils_match")
 @XmlType(name = "CoilsMatchType")
 public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
 

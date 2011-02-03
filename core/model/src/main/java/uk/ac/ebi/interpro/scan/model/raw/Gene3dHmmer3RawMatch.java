@@ -3,26 +3,35 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Entity;
-import javax.persistence.Column;
-import javax.persistence.Table;
 
 /**
  * <a href="http://gene3d.biochem.ucl.ac.uk/Gene3D/">Gene3D</a> raw match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
+ * @author Phil Jones
  * @version $Id$
  */
 @Entity
-@Table(name="gene3d_hmmer3_raw_match")
+@javax.persistence.Table(name = Gene3dHmmer3RawMatch.TABLE_NAME)
+@org.hibernate.annotations.Table(appliesTo = Gene3dHmmer3RawMatch.TABLE_NAME, indexes = {
+        @Index(name = "G3D_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
+        @Index(name = "G3D_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
+        @Index(name = "G3D_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
+        @Index(name = "G3D_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
+        @Index(name = "G3D_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+})
 public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
 
+    public static final String TABLE_NAME = "GENE3D_HMMER3_RAW_MATCH";
     // Sequence alignment in CIGAR format
     private String cigarAlignment;
 
-    protected Gene3dHmmer3RawMatch() { }
+    protected Gene3dHmmer3RawMatch() {
+    }
 
     public Gene3dHmmer3RawMatch(String sequenceIdentifier, String model,
                                 String signatureLibraryRelease,
@@ -35,8 +44,8 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
                                 double domainCeValue, double domainIeValue, double domainBias,
                                 String cigarAlignment) {
         super(sequenceIdentifier, model, SignatureLibrary.GENE3D, signatureLibraryRelease, locationStart, locationEnd,
-              evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
-              fullSequenceBias, domainCeValue, domainIeValue, domainBias);
+                evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
+                fullSequenceBias, domainCeValue, domainIeValue, domainBias);
         this.cigarAlignment = cigarAlignment;
     }
 
@@ -48,7 +57,8 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
         this.cigarAlignment = cigarAlignment;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Gene3dHmmer3RawMatch))
@@ -60,14 +70,16 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(53, 61)
                 .appendSuper(super.hashCode())
                 .append(cigarAlignment)
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
