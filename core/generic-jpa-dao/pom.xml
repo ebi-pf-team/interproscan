@@ -7,7 +7,7 @@
         <artifactId>interproscan</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
@@ -28,25 +28,13 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    
+
     <organization>
         <name>EMBL - European Bioinformatics Institute</name>
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
     <dependencies>
-
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>${jpa.persistence.api.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
 
         <!-- Everything below here is for testing only. -->
 
@@ -55,15 +43,7 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>${hibernate.entity.manager.version}</version>
-            <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>                
 
         <!-- Test database implementation (in memory for Junit tests) -->
         <dependency>
@@ -73,11 +53,5 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>${cglib.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

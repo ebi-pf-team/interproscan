@@ -37,25 +37,9 @@
         </repository>
 
         <repository>
-            <id>spring-releases</id>
-            <name>Spring Maven RELEASE Repository</name>
-            <url>http://s3.amazonaws.com/maven.springframework.org/release</url>
-        </repository>
-
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>interval:10080</updatePolicy>
-            </releases>
-            <id>jboss.release</id>
-
+            <id>JBoss</id>
             <name>JBoss releases</name>
-            <url>http://repository.jboss.org/maven2</url>
+            <url>http://repository.jboss.org/nexus/content/groups/public</url>
         </repository>
 
         <!-- Required for sleepycat (BerkelyDB) -->
@@ -85,15 +69,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependency versions -->
-        <spring.version>2.5.6</spring.version>
-        <spring.oxm.version>1.5.7</spring.oxm.version>
-        <jpa.persistence.api.version>1.0</jpa.persistence.api.version>
-        <hibernate.entity.manager.version>3.4.0.GA</hibernate.entity.manager.version>
-        <cglib.version>2.2</cglib.version>
+        <!--<spring.version>2.5.6</spring.version>-->
+        <!--<spring.version>2.5.6.SEC02</spring.version>-->
+        <spring.version>3.0.5.RELEASE</spring.version>
+        <!--<spring.oxm.version>1.5.7</spring.oxm.version>-->
+        <spring.oxm.version>1.5.9</spring.oxm.version>
+        <hibernate.entity.manager.version>3.6.0.Final</hibernate.entity.manager.version>
+        <!--<cglib.version>2.2</cglib.version>-->
         <groovy.version>1.6.3</groovy.version>
         <hsqldb.version>1.8.0.10</hsqldb.version>
         <mysql.version>5.1.12</mysql.version>
-        <slf4j.version>1.5.2</slf4j.version>
+        <slf4j.version>1.6.1</slf4j.version>
+        <xmlunit.version>1.3</xmlunit.version>
+        <!--<jaxb-api.version>2.1</jaxb-api.version>-->
+        <jaxb-api.version>2.2.2</jaxb-api.version>
+        <h2.database.version>1.2.147</h2.database.version>
     </properties>
 
     <modules>
@@ -110,22 +100,7 @@
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
     <dependencies>
-        <!-- Test scope only -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <!-- Note - cannot go beyond version 4.4 as incompatible with spring-test.
-            (Will be fixed in spring 3)-->
-            <version>4.4</version>
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- Logging -->
         <dependency>
@@ -135,9 +110,56 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
+        </dependency>
+
+        <!-- Spring framework dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Test scope only -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring test integration -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
