@@ -46,9 +46,9 @@ public class StepCreationSignatureDatabaseLoadListener
     public StepCreationSignatureDatabaseLoadListener() {
     }
 
-    public StepCreationSignatureDatabaseLoadListener(Jobs jobs, Map<String, String> stepParameters) {
+    public StepCreationSignatureDatabaseLoadListener(Jobs jobs, Map<String, String> parameters) {
         this.jobs = jobs;
-        this.stepParameters = stepParameters;
+        this.parameters = parameters;
     }
 
     /**

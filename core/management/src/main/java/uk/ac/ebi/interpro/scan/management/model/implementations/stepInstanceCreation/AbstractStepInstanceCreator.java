@@ -22,7 +22,7 @@ public abstract class AbstractStepInstanceCreator {
 
     protected StepInstanceDAO stepInstanceDAO;
     protected Jobs jobs;
-    protected Map<String, String> stepParameters;
+    protected Map<String, String> parameters;
 
     /**
      * Utility method to return the minimum of two Long values,

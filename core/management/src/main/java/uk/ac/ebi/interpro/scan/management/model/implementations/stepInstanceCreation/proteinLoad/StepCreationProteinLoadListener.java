@@ -41,8 +41,8 @@ public class StepCreationProteinLoadListener
     public StepCreationProteinLoadListener() {
     }
 
-    public StepCreationProteinLoadListener(Jobs analysisJobs, Job completionJob, Map<String, String> stepParameters) {
-        this.stepParameters = stepParameters;
+    public StepCreationProteinLoadListener(Jobs analysisJobs, Job completionJob, Map<String, String> parameters) {
+        this.parameters = parameters;
         this.jobs = analysisJobs;
         this.completionJob = completionJob;
     }
@@ -75,9 +75,9 @@ public class StepCreationProteinLoadListener
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Completion Job:" + completionJob);
 
-                if (stepParameters != null) {
-                    for (String key : stepParameters.keySet()) {
-                        LOGGER.debug("setparameter:" + key + " " + stepParameters.get(key));
+                if (parameters != null) {
+                    for (String key : parameters.keySet()) {
+                        LOGGER.debug("setparameter:" + key + " " + parameters.get(key));
                     }
                 }
             }
@@ -85,7 +85,7 @@ public class StepCreationProteinLoadListener
             if (completionJob != null) {
                 for (Step step : completionJob.getSteps()) {
                     StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
-                    stepInstance.addStepParameters(stepParameters);
+                    stepInstance.addParameters(parameters);
                     completionStepInstances.add(stepInstance);
                 }
             }

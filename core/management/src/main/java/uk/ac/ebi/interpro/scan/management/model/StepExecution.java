@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
+import uk.ac.ebi.interpro.scan.model.KeyGen;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -33,7 +34,7 @@ public class StepExecution implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "STEP_EXE_IDGEN")
-    @TableGenerator(name = "STEP_EXE_IDGEN", table = "KEYGEN", pkColumnValue = "step_execution", initialValue = 0, allocationSize = 50)
+    @TableGenerator(name = "STEP_EXE_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "step_execution", initialValue = 0, allocationSize = 50)
     private Long id;
 
     @ManyToOne(targetEntity = StepInstance.class, cascade = {}, optional = false)

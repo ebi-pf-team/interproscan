@@ -71,12 +71,12 @@ public class WriteOutputStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
-        Map<String, String> stepParameters = stepInstance.getStepParameters();
-        final boolean mapToGO = Boolean.TRUE.toString().equals(stepParameters.get(MAP_TO_GO));
-        final boolean mapToInterProEntries = mapToGO || Boolean.TRUE.toString().equals(stepParameters.get(MAP_TO_INTERPRO_ENTRIES));
-        final String outputFilePathName = stepParameters.get(OUTPUT_FILE_PATH_KEY);
+        Map<String, String> parameters = stepInstance.getParameters();
+        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
+        final boolean mapToInterProEntries = mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
+        final String outputFilePathName = parameters.get(OUTPUT_FILE_PATH_KEY);
 
-        Format format = Format.valueOf(stepParameters.get(OUTPUT_FILE_FORMAT).toUpperCase());
+        Format format = Format.valueOf(parameters.get(OUTPUT_FILE_FORMAT).toUpperCase());
         Map<SignatureLibrary, SignatureLibraryIntegratedMethods> interProGoMapping = null;
 
         if (mapToInterProEntries || mapToGO) {
