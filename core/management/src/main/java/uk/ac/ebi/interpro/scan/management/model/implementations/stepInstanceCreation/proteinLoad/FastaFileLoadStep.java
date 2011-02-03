@@ -63,11 +63,15 @@ public class FastaFileLoadStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        LOGGER.debug("FastaFileLoadStep.fastaFileLoader : " + fastaFileLoader);
-        final String providedPath = stepInstance.getStepParameters().get(FASTA_FILE_PATH_KEY);
-        final String analysisJobNames = stepInstance.getStepParameters().get(ANALYSIS_JOB_NAMES_KEY);
-        final String completionJobName = stepInstance.getStepParameters().get(COMPLETION_JOB_NAME_KEY);
-        LOGGER.debug("Fasta file path from step parameters; " + providedPath);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("FastaFileLoadStep.fastaFileLoader : " + fastaFileLoader);
+        }
+        final String providedPath = stepInstance.getParameters().get(FASTA_FILE_PATH_KEY);
+        final String analysisJobNames = stepInstance.getParameters().get(ANALYSIS_JOB_NAMES_KEY);
+        final String completionJobName = stepInstance.getParameters().get(COMPLETION_JOB_NAME_KEY);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Fasta file path from step parameters; " + providedPath);
+        }
         if (providedPath != null) {
             // Try resolving the fasta file as an absolute file path
             InputStream fastaFileInputStream = null;
@@ -97,7 +101,7 @@ public class FastaFileLoadStep extends Step {
             Job completionJob = jobs.getJobById(completionJobName);
 
             StepCreationProteinLoadListener proteinLoaderListener =
-                    new StepCreationProteinLoadListener(analysisJobs, completionJob, stepInstance.getStepParameters());
+                    new StepCreationProteinLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
             proteinLoaderListener.setStepInstanceDAO(stepInstanceDAO);
 
             fastaFileLoader.loadSequences(fastaFileInputStream, proteinLoaderListener);
