@@ -43,13 +43,13 @@ public class SmartPostProcessing implements Serializable {
 
     private Map<String, SmartOverlappingFileParser.SmartOverlap> smartOverlapMap;
 
-    private Map<String, String> familyMap;
+    private Map<String, String> familyMap = new HashMap<String, String>();
 
     private Map<String, String> accessionMap = new HashMap<String, String>();
 
-    private Map<String, String> mergeMap;
+    private Map<String, String> mergeMap = new HashMap<String, String>();
 
-    private Map<String, RawProtein<SmartRawMatch>> allFilteredMatches = null;
+    private Map<String, RawProtein<SmartRawMatch>> allFilteredMatches = new HashMap<String, RawProtein<SmartRawMatch>>();
 
     private List<SmartRawMatch> potentialRepeatMatches = new ArrayList<SmartRawMatch>();
 
@@ -106,15 +106,15 @@ public class SmartPostProcessing implements Serializable {
         populateMergeMap();
 
         for (String s : proteinIdToRawMatchMap.keySet()) {
-            processProtein(proteinIdToRawMatchMap.get(s));
+            processProtein(proteinIdToRawMatchMap.get(s), allFilteredMatches);
         }
 
         return allFilteredMatches;
     }
 
-    private void processProtein (RawProtein<SmartRawMatch> matchRawProtein) {
+    private void processProtein (RawProtein<SmartRawMatch> matchRawProtein, Map<String, RawProtein<SmartRawMatch>> filteredMatches) {
 
-        RawProtein<SmartRawMatch> filteredMatches = new RawProtein<SmartRawMatch>(matchRawProtein.getProteinIdentifier());
+        //RawProtein<SmartRawMatch> filteredMatches = new RawProtein<SmartRawMatch>(matchRawProtein.getProteinIdentifier());
 
         Map<String, Integer> repeatsCntHM = new HashMap<String, Integer>();
 
@@ -122,6 +122,7 @@ public class SmartPostProcessing implements Serializable {
 
         for (SmartRawMatch smartRawMatch : matchRawProtein.getMatches()) {
             String methodAc = smartRawMatch.getModelId();
+            // TODO: Score and seqscore wrong way round?
             Double score = smartRawMatch.getScore();
             Double seqScore = smartRawMatch.getLocationScore();
             SmartThresholdFileParser.SmartThreshold smartThreshold = smartThresholdMap.get(methodAc);
@@ -212,7 +213,16 @@ public class SmartPostProcessing implements Serializable {
                     }
                 } else { // a true positive hit which is neither a kinase nor in a multi-member family -> simply persist it
                     LOGGER.debug("Accepting hit with status 'T' as wholeSeqEVal = " + setEval2NPrec(wholeSeqEVal, getRequiredPrecForComparisonTo(domainCutoff)) + " < domainCutoff = " + domainCutoff);
-                    filteredMatches.addMatch(smartRawMatch);
+                    //filteredMatches.addMatch(smartRawMatch);
+                    String id = smartRawMatch.getSequenceIdentifier();
+                    RawProtein<SmartRawMatch> p;
+                    if (filteredMatches.containsKey(id)) {
+                        p = filteredMatches.get(id);
+                    } else {
+                        p = new RawProtein<SmartRawMatch>(id);
+                        filteredMatches.put(id, p);
+                    }
+                    p.addMatch(smartRawMatch);                    
                 }
             }
 

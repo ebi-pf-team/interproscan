@@ -51,8 +51,7 @@ public abstract class AbstractLineMatchParser<T extends RawMatch> implements Mat
         return signatureLibraryRelease;
     }
 
-    @Override
-    public Set<RawProtein<T>> parse(InputStream is) throws IOException {
+    @Override public Set<RawProtein<T>> parse(InputStream is) throws IOException {
         if (is == null) {
             throw new NullPointerException("InputStream is null");
         }

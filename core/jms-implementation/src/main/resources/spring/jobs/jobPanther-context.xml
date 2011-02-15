@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: PANTHER ############################  -->
+    
+    <bean id="jobPanther" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a
+                  unique resource that classifies genes by their functions, using published scientific experimental
+                  evidence and evolutionary relationships to predict function even in the absence of direct 
+                  experimental evidence"/>
+        <property name="analysis" value="true"/>
+    </bean>
+
+    <bean id="abstractPantherStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job"                    ref="jobPanther"/>
+        <property name="maxProteins"            value="5000"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries"                value="0"/>
+        <property name="nfsDelayMilliseconds"   value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1: Write FASTA file -->
+    <bean id="stepPantherWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractPantherStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create FASTA file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2: Run binary -->
+    <bean id="stepPantherRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherBinaryStep"
+          parent="abstractPantherStep">
+        <!-- /ebi/sp/pro1/interpro/programmers/rpetry/Onion/cvsebi-uniparc/onion/src/runPanther
+                -l /ebi/sp/pro1/interpro/data/members/panther/7.0/
+                -D I -E 1e-3
+                -B /ebi/sp/pro1/interpro/production/iprscan4.3/bin/binaries/blast/blastall
+                -H /ebi/extserv/bin/hmmer-2.3.2/binaries/hmmsearch
+                -T /tmp/ -n -->
+        <property name="dependsUpon"            ref="stepPantherWriteFastaFile"/>
+        <property name="stepDescription"        value="Run PANTHER binary for selected proteins"/>
+        <!--TODO: Add Panther Perl script to support/bin-->
+        <property name="scriptPath"             value="${binary.panther.path}"/>
+        <!--TODO: Add BLAST to support/bin-->
+        <property name="blastPath"              value="${binary.blast.path}"/>
+        <!--TODO: Add HMMER2 hmmsearch to support/bin-->
+        <property name="hmmerPath"              value="${binary.hmmer2.hmmsearch.path}"/>
+        <!--TODO: Add Panther models to support/data-->
+        <property name="modelDirectory"         value="${panther.models.dir.7.0}"/>        
+        <property name="binarySwitches"         value="-D I -E 1e-3 -T /tmp/ -n"/>        
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate"  ref="fastaFileNameTemplate"/>
+        <property name="retries"                value="3"/>
+    </bean>
+    
+    <bean id="stepPantherDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPantherStep">
+        <property name="dependsUpon"        ref="stepPantherRunBinary"/>
+        <property name="stepDescription"    value="Delete the FASTA file following successful run"/>
+        <property name="fileNameTemplate"   ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!-- STEP 3: Parse and persist raw results -->
+    <bean id="stepPantherParseOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherParseStep"
+          parent="abstractPantherStep">
+        <property name="dependsUpon"            ref="stepPantherRunBinary"/>   <!--TODO: Should this be stepPantherDeleteFastaFile? -->
+        <property name="stepDescription"        value="Parse the output from FingerPanthercan"/>
+        <property name="parser"                 ref="PantherParser"/>
+        <property name="PantherRawMatchDAO"     ref="PantherRawMatchDAO"/>
+        <property name="serialGroup"            value="PARSE_PANTHER"/>
+        <property name="retries"                value="3"/>
+        <property name="signatureLibraryRelease" value="7.0"/>
+        <property name="PantherOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+
+    <bean id="stepPantherDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPantherStep">
+        <property name="dependsUpon"        ref="stepPantherParseOutput"/>
+        <property name="stepDescription"    value="Delete the analysis output file following successful parsing"/>
+        <property name="fileNameTemplate"   ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+    <!-- STEP 4: Filter and persist raw results -->
+    <bean id="stepPantherPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherPostProcessingStep"
+          parent="abstractPantherStep">
+        <property name="dependsUpon"        ref="stepPantherParseOutput"/>
+        <property name="stepDescription"    value="Performs post processing and Match persistence on Panther data"/>
+        <property name="postProcessor"      ref="PantherPostProcessor"/>
+        <property name="serialGroup"        value="PANTHER_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" value="7.0"/>
+        <property name="rawMatchDAO"        ref="PantherRawMatchDAO"/>
+        <property name="filteredMatchDAO"   ref="PantherFilteredMatchDAO"/>
+    </bean>
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="PantherParser"            class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser"/>
+    <bean id="PantherPostProcessor"     class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessing"/>
+    <bean id="PantherRawMatchDAO"       class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>
+    <bean id="PantherFilteredMatchDAO"  class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>
+
+</beans>

@@ -8,7 +8,6 @@ import java.util.Set;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import uk.ac.ebi.interpro.scan.io.ParseException;
 
 /**
  * Parser.
