@@ -21,7 +21,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-
+// TODO: Eliminate all code by extending uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseStep
 public class ParseSmartHmmpfamOutputStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(ParseSmartHmmpfamOutputStep.class.getName());

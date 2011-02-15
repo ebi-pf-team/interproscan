@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Map;
 
 
+// TODO: Eliminate all code by extending uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.FilterStep
 public class SmartPostProcessingStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(SmartPostProcessingStep.class.getName());
