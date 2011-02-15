@@ -22,7 +22,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 /**
- * TODO: Add description
+ * Tests {@link SmartPostProcessing}.
  *
  * @author Antony Quinn
  * @version $Id$
