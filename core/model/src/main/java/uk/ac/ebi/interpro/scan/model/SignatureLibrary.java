@@ -31,6 +31,7 @@ public enum SignatureLibrary {
     //TODO - complete descriptions of member database libraries.
     PHOBIUS("Phobius", "Prediction of signal peptides and trans-membrane regions"),
     GENE3D("Gene3D", "Description to be added"),
+    PANTHER("PANTHER", "The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a unique resource that classifies genes by their functions, using published scientific experimental evidence and evolutionary relationships to predict function even in the absence of direct experimental evidence."),
     PFAM("Pfam", "Description to be added"),
     PFAM_B("Pfam B", "Description to be added"),
     SMART("SMART", "Description to be added"),
