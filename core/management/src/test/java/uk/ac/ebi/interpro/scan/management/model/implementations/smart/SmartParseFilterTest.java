@@ -99,7 +99,8 @@ public class SmartParseFilterTest {
         Map<String, RawProtein<SmartRawMatch>> filteredMatches = postProcessor.process(rawMatches);
         assertEquals(expectedFilteredMatches.longValue(), getMatchCount(filteredMatches.values()));
 
-        // TODO: The remainder is only required to test persistence of filtered matches -- need to fix LazyInitializationError first
+        // TODO: The remainder is only required to test persistence of filtered matches -- need to fix LazyInitializationError first:
+        // org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease.signatures, no session or session was closed
 
         // Insert proteins
 //        final Set<Protein> proteins = new HashSet<Protein>();
