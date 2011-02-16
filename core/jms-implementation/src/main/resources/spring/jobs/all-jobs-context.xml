@@ -16,7 +16,7 @@
     <import resource="jobHAMAP-context.xml"/>
     <import resource="jobPrositeProfiles-context.xml"/>
     <import resource="jobPrositePatterns-context.xml"/>
-    <import resource="jobSMART-context.xml"/>
+    <!--<import resource="jobSMART-context.xml"/>-->
     <import resource="jobTIGRFAM-context.xml"/>
 
     <import resource="../persistence/persistence-config-context.xml"/>
@@ -41,7 +41,7 @@
                 <ref bean="jobHAMAP"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
-                <ref bean="jobSMART"/>
+                <!--<ref bean="jobSMART"/>-->
                 <ref bean="jobTIGRFAM"/>
             </list>
         </property>
