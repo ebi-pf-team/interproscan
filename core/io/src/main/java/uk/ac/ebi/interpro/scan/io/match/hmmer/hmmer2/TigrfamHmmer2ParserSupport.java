@@ -6,7 +6,7 @@ import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamSea
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel.Hmmer2HmmPfamSequenceMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch;
 
 import java.io.IOException;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamRawMatch> {
+public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamHmmer2RawMatch> {
 
     private String signatureLibraryRelease;
 
@@ -42,19 +42,19 @@ public class TigrfamHmmer2ParserSupport implements Hmmer2ParserSupport<TigrFamRa
      * @throws java.io.IOException in the event of an IO problem.
      */
     @Override
-    public void addMatch(Hmmer2HmmPfamSearchRecord methodMatches, Map<String, RawProtein<TigrFamRawMatch>> rawResults) throws IOException {
+    public void addMatch(Hmmer2HmmPfamSearchRecord methodMatches, Map<String, RawProtein<TigrFamHmmer2RawMatch>> rawResults) throws IOException {
         for (String sequenceId : methodMatches.getSequenceMatches().keySet()) {
             Hmmer2HmmPfamSequenceMatch sequenceMatch = methodMatches.getSequenceMatches().get(sequenceId);
             for (Hmmer2HmmPfamDomainMatch domainMatch : sequenceMatch.getDomainMatches()) {
-                final RawProtein<TigrFamRawMatch> rawProtein;
+                final RawProtein<TigrFamHmmer2RawMatch> rawProtein;
                 if (rawResults.keySet().contains(methodMatches.getSequenceId())) {
                     rawProtein = rawResults.get(methodMatches.getSequenceId());
                 } else {
-                    rawProtein = new RawProtein<TigrFamRawMatch>(methodMatches.getSequenceId());
+                    rawProtein = new RawProtein<TigrFamHmmer2RawMatch>(methodMatches.getSequenceId());
                     rawResults.put(methodMatches.getSequenceId(), rawProtein);
                 }
                 rawProtein.addMatch(
-                        new TigrFamRawMatch(
+                        new TigrFamHmmer2RawMatch(
                                 methodMatches.getSequenceId(),
                                 sequenceMatch.getModelAccession(),
                                 SignatureLibrary.TIGRFAM,

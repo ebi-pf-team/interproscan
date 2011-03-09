@@ -28,6 +28,9 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
                                                final SequenceMatch sequenceMatch,
                                                final DomainMatch domainMatch) {
         // TODO: Store model length? (required by DF3) -- see HmmSearchRecord.getModelLength()
+        if (domainMatch.getAlignment() == null || domainMatch.getAlignment().trim().length() == 0) {
+            throw new IllegalStateException("Attempting to create a Gene3D match that has no alignment data.");
+        }
         return new Gene3dHmmer3RawMatch(
                 sequenceMatch.getSequenceIdentifier(),
                 hmmSearchRecord.getModelAccession(),
@@ -60,5 +63,6 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
     public boolean parseAlignments() {
         return true;
     }
+
 
 }
