@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
+package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -73,16 +73,14 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                 LOGGER.debug("A total of " + count + " matches from file " + fileName);
             }
             rawMatchDAO.insertProteinMatches(results);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse " + fileName, e);
         } finally {
             try {
                 if (is != null) {
                     is.close();
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 LOGGER.warn("Error closing input stream", e);
             }
         }

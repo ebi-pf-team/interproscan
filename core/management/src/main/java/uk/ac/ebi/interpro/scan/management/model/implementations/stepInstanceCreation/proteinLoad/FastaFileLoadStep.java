@@ -10,10 +10,7 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * Loads a Fasta file into the database, creating new protein instance
@@ -75,36 +72,49 @@ public class FastaFileLoadStep extends Step {
         if (providedPath != null) {
             // Try resolving the fasta file as an absolute file path
             InputStream fastaFileInputStream = null;
-            File file = new File(providedPath);
-            if (file.exists()) {
-                if (file.canRead()) {
-                    try {
-                        fastaFileInputStream = new FileInputStream(file);
-                    } catch (FileNotFoundException e) {
-                        throw new IllegalStateException("FileNotFoundException thrown when attempting to load a fasta file located at " + file.getAbsolutePath(), e);
+            try {
+                File file = new File(providedPath);
+                if (file.exists()) {
+                    if (file.canRead()) {
+                        try {
+                            fastaFileInputStream = new FileInputStream(file);
+                        } catch (FileNotFoundException e) {
+                            throw new IllegalStateException("FileNotFoundException thrown when attempting to load a fasta file located at " + file.getAbsolutePath(), e);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("The fasta file " + providedPath + " is visible but cannot be read.  Please check file permissions.");
                     }
                 } else {
-                    throw new IllegalArgumentException("The fasta file " + providedPath + " is visible but cannot be read.  Please check file permissions.");
+                    // Absolute file path did not resolve, so try using the class loader.
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("The file " + providedPath + " does not exist.  Attempting to access this file using the ClassLoader.");
+                    }
+                    fastaFileInputStream = FastaFileLoadStep.class.getClassLoader().getResourceAsStream(providedPath);
                 }
-            } else {
-                // Absolute file path did not resolve, so try using the class loader.
-                fastaFileInputStream = FastaFileLoadStep.class.getClassLoader().getResourceAsStream(providedPath);
+                if (fastaFileInputStream == null) {
+                    throw new IllegalArgumentException("Cannot find the fasta file located at " + providedPath);
+                }
+
+
+                Jobs analysisJobs = analysisJobNames == null
+                        ? jobs.getAnalysisJobs()
+                        : jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
+                Job completionJob = jobs.getJobById(completionJobName);
+
+                StepCreationProteinLoadListener proteinLoaderListener =
+                        new StepCreationProteinLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
+                proteinLoaderListener.setStepInstanceDAO(stepInstanceDAO);
+
+                fastaFileLoader.loadSequences(fastaFileInputStream, proteinLoaderListener);
+            } finally {
+                if (fastaFileInputStream != null) {
+                    try {
+                        fastaFileInputStream.close();
+                    } catch (IOException e) {
+                        LOGGER.warn("Unable to cleanly close the InputStream from FASTA file " + providedPath);
+                    }
+                }
             }
-            if (fastaFileInputStream == null) {
-                throw new IllegalArgumentException("Cannot find the fasta file located at " + providedPath);
-            }
-
-
-            Jobs analysisJobs = analysisJobNames == null
-                    ? jobs.getAnalysisJobs()
-                    : jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
-            Job completionJob = jobs.getJobById(completionJobName);
-
-            StepCreationProteinLoadListener proteinLoaderListener =
-                    new StepCreationProteinLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
-            proteinLoaderListener.setStepInstanceDAO(stepInstanceDAO);
-
-            fastaFileLoader.loadSequences(fastaFileInputStream, proteinLoaderListener);
         }
     }
 }

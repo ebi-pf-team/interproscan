@@ -6,7 +6,7 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
@@ -24,9 +24,9 @@ public class TigrFamPostProcessingStep extends Step {
 
     private String signatureLibraryRelease;
 
-    private RawMatchDAO<TigrFamRawMatch> rawMatchDAO;
+    private RawMatchDAO<TigrFamHmmer2RawMatch> rawMatchDAO;
 
-    private FilteredMatchDAO<TigrFamRawMatch, Hmmer2Match> filteredMatchDAO;
+    private FilteredMatchDAO<TigrFamHmmer2RawMatch, Hmmer2Match> filteredMatchDAO;
 
     @Required
     public void setSignatureLibraryRelease(String signatureLibraryRelease) {
@@ -34,12 +34,12 @@ public class TigrFamPostProcessingStep extends Step {
     }
 
     @Required
-    public void setRawMatchDAO(RawMatchDAO<TigrFamRawMatch> rawMatchDAO) {
+    public void setRawMatchDAO(RawMatchDAO<TigrFamHmmer2RawMatch> rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
     }
 
     @Required
-    public void setFilteredMatchDAO(FilteredMatchDAO<TigrFamRawMatch, Hmmer2Match> filteredMatchDAO) {
+    public void setFilteredMatchDAO(FilteredMatchDAO<TigrFamHmmer2RawMatch, Hmmer2Match> filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
@@ -59,7 +59,7 @@ public class TigrFamPostProcessingStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Retrieve raw results for protein range.
-        Set<RawProtein<TigrFamRawMatch>> rawMatches = rawMatchDAO.getProteinsByIdRange(
+        Set<RawProtein<TigrFamHmmer2RawMatch>> rawMatches = rawMatchDAO.getProteinsByIdRange(
                 stepInstance.getBottomProtein(),
                 stepInstance.getTopProtein(),
                 signatureLibraryRelease

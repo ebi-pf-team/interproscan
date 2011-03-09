@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad;
 
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
@@ -49,6 +50,7 @@ public class StepCreationProteinLoadListener
 
 
     @Override
+    @Transactional
     public void proteinsLoaded(final Long bottomNewProteinId, final Long topNewProteinId,
                                final Long bottomPrecalculatedProteinId, final Long topPrecalculatedProteinId) {
         try {
@@ -63,10 +65,6 @@ public class StepCreationProteinLoadListener
             if (bottomProteinId == null || topProteinId == null) {
                 return;
             }
-//            if (topProteinId < bottomProteinId){
-//                throw new IllegalArgumentException ("The bounds make no sense - the top bound (" + topProteinId + ") is lower than the bottom bound (" + bottomProteinId + ").  Programming error?");
-//            }
-
 
             final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
 
@@ -80,6 +78,10 @@ public class StepCreationProteinLoadListener
                         LOGGER.debug("setparameter:" + key + " " + parameters.get(key));
                     }
                 }
+
+                LOGGER.debug("Range of protein database IDs for which analysis StepInstances need to be created: " + bottomNewProteinId + " - " + topNewProteinId);
+                LOGGER.debug("Range of protein database IDs for which NO StepInstances need to be created: " + bottomPrecalculatedProteinId + " - " + topPrecalculatedProteinId);
+                LOGGER.debug("Range of protein database IDs for which the COMPLETION StepInstances need to be created: " + bottomProteinId + " - " + topProteinId);
             }
 
             if (completionJob != null) {
@@ -96,8 +98,14 @@ public class StepCreationProteinLoadListener
 
             // Instantiate the StepInstances - no dependencies yet.
             for (Job job : jobs.getJobList()) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Job for which StepInstances are being created: " + job.getId());
+                }
                 for (Step step : job.getSteps()) {
                     if (step.isCreateStepInstancesForNewProteins()) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Creating StepInstance for step " + step.getId() + " protein range " + bottomNewProteinId + " - " + topNewProteinId);
+                        }
                         final List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewProteinId, topNewProteinId);
                         stepToStepInstances.put(step, jobStepInstances);
                         for (StepInstance jobStepInstance : jobStepInstances) {
@@ -111,7 +119,11 @@ public class StepCreationProteinLoadListener
 
             addDependenciesAndStore(stepToStepInstances);
 
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Storing Completion StepInstances");
+            }
             stepInstanceDAO.insert(completionStepInstances);
+            stepInstanceDAO.flush();
         } catch (Exception e) {
             LOGGER.error("Exception thrown in createStepInstances() method: ", e);
             throw new IllegalStateException("Caught and logged Exception, re-thrown so things work properly.", e);

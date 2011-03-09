@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
@@ -19,6 +20,8 @@ import java.util.Map;
  * @since 1.0-SNAPSHOT
  */
 public abstract class AbstractStepInstanceCreator {
+
+    private static final Logger LOGGER = Logger.getLogger(AbstractStepInstanceCreator.class.getName());
 
     protected StepInstanceDAO stepInstanceDAO;
     protected Jobs jobs;
@@ -126,6 +129,9 @@ public abstract class AbstractStepInstanceCreator {
                 }
             }
             // Persist the StepInstances that now have their dependencies added.
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Persisting " + stepToStepInstances.get(step).size() + " StepInstances for Step " + step.getId());
+            }
             stepInstanceDAO.insert(stepToStepInstances.get(step));
         }
     }

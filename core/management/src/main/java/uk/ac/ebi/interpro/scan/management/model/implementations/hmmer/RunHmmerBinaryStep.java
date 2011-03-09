@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class runs HMMER 3 and reports any errors
+ * This class runs HMMER 2 or HMMER 3 and reports any errors
  * spat out if the exit status != 0.
  *
  * @author Phil Jones

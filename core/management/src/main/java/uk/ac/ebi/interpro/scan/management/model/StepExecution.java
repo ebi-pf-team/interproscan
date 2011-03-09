@@ -1,12 +1,18 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.IndexColumn;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
+import uk.ac.ebi.interpro.scan.model.Chunker;
+import uk.ac.ebi.interpro.scan.model.ChunkerSingleton;
 import uk.ac.ebi.interpro.scan.model.KeyGen;
 
 import javax.persistence.*;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Abstract class for executing a StepInstance.
@@ -28,9 +34,13 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "step_execution")
-public class StepExecution implements Serializable {
+public class StepExecution implements Serializable, Comparable<StepExecution> {
 
     protected static final Logger LOGGER = Logger.getLogger(StepExecution.class.getName());
+
+    @Transient
+    private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "STEP_EXE_IDGEN")
@@ -58,6 +68,18 @@ public class StepExecution implements Serializable {
     @Column(nullable = true, name = "proportion_completed")
     private Double proportionCompleted;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name = "exception_chunk")
+    @IndexColumn(name = "chunk_index")
+    @Column(length = Chunker.CHUNK_SIZE, nullable = true)
+    private List<String> exceptionChunks;
+
+    @Column(nullable = true, updatable = true, length = Chunker.CHUNK_SIZE)
+    private String exceptionFirstChunk;
+
+    @Transient
+    private String exception;
+
     protected StepExecution(StepInstance stepInstance) {
         this.stepInstance = stepInstance;
         this.stepInstance.addStepExecution(this);
@@ -68,6 +90,22 @@ public class StepExecution implements Serializable {
      * Don't use! Only here because required by JPA.
      */
     protected StepExecution() {
+    }
+
+    public String getException() {
+        if (exception == null) {
+            exception = CHUNKER.concatenate(exceptionFirstChunk, exceptionChunks);
+        }
+        return exception;
+    }
+
+    // Private for Hibernate (see http://www.javalobby.org/java/forums/t49288.html)
+
+    private void setException(String exception) {
+        this.exception = exception;
+        List<String> chunks = CHUNKER.chunkIntoList(exception);
+        this.exceptionFirstChunk = CHUNKER.firstChunk(chunks);
+        this.exceptionChunks = CHUNKER.latterChunks(chunks);
     }
 
     public void setStepInstance(StepInstance stepInstance) {
@@ -161,8 +199,29 @@ public class StepExecution implements Serializable {
 
     /**
      * Called by the execute() method implementation to indicate a failure of execution.
+     * Logs any Exceptions thrown (StackTrace) to be returned to the Master for recording (and action, if necessary).
+     *
+     * @param throwable if a Throwable (e.g. Exception) has been thrown during execution.  Stores and returns the
+     *                  stack trace.
      */
-    public void fail() {
+    public void fail(Throwable throwable) {
+        if (throwable != null) {
+            PrintWriter pw = null;
+            try {
+                StringWriter sw = new StringWriter();
+                pw = new PrintWriter(new StringWriter());
+                throwable.printStackTrace(pw);
+                pw.flush();
+                this.setException(sw.toString());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Exception StackTrace recorded by the failed StepExecution, to be returned to the Master and stored: " + this.getException());
+                }
+            } finally {
+                if (pw != null) {
+                    pw.close();
+                }
+            }
+        }
         state = StepExecutionState.STEP_EXECUTION_FAILED;
         completedTime = new Date();
     }
@@ -220,5 +279,51 @@ public class StepExecution implements Serializable {
         this.startedRunningTime = freshStepExecution.startedRunningTime;
         this.submittedTime = freshStepExecution.submittedTime;
         this.state = freshStepExecution.state;
+        this.setException(freshStepExecution.getException());
+    }
+
+    /**
+     * The natural order of StepExecutions is the order in which they were created.
+     *
+     * @param that the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     *         is less than, equal to, or greater than the specified object.
+     * @throws ClassCastException if the specified object's type prevents it
+     *                            from being compared to this object.
+     */
+    @Override
+    public int compareTo(StepExecution that) {
+        if (this == that) {
+            return 0;
+        }
+        final long thisTime = this.getCreatedTime().getTime();
+        final long thatTime = that.getCreatedTime().getTime();
+        if (thisTime < thatTime) {
+            return -1;
+        }
+        if (thatTime < thisTime) {
+            return 1;
+        }
+        if (this.getId() != null && that.getId() == null) {
+            return -1;
+        }
+        if (that.getId() != null && this.getId() == null) {
+            return 1;
+        }
+        if (this.getId() != null && that.getId() != null) {
+            if (this.getId() < that.getId()) {
+                return -1;
+            }
+            if (that.getId() < this.getId()) {
+                return 1;
+            }
+        }
+        if (this.hashCode() < that.hashCode()) {
+            return -1;
+        }
+        if (that.hashCode() < this.hashCode()) {
+            return 1;
+        }
+        return 0;
     }
 }

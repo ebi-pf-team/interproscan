@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.prosite;
 
-import uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.ParseStep;
 import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
 
 /**
