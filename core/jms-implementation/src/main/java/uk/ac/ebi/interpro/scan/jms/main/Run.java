@@ -199,10 +199,12 @@ public class Run {
                     : DEFAULT_MODE;
 
             //String config = System.getProperty("config");
-            LOGGER.info("Welcome to InterProScan v5");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Welcome to InterProScan v5");
 
-            LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
-            LOGGER.info("Running as: " + mode);
+                LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+                LOGGER.info("Running as: " + mode);
+            }
 //
 //            if (config == null) {
 //                LOGGER.info("No custom config used. Use java -Dconfig=config/my.properties");

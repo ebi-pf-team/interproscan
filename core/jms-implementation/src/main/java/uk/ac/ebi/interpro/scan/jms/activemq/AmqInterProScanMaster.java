@@ -56,6 +56,8 @@ public class AmqInterProScanMaster implements Master {
 
     private WorkerRunner workerRunnerHighMemory;
 
+    private UnrecoverableErrorStrategy unrecoverableErrorStrategy;
+
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
     }
@@ -105,12 +107,34 @@ public class AmqInterProScanMaster implements Master {
     }
 
     /**
+     * Depending upon the mode of usage, I5 should handle failures appropriately / gracefully.
+     * The black box version for example, should log the error and exit with a non-zero
+     * exit status.  The production pipeline version should send an email, but continue
+     * to operate.
+     *
+     * @param unrecoverableErrorStrategy implementing the correct behaviour when an unrecoverable
+     *                                   error occurs.
+     */
+    @Required
+    public void setUnrecoverableErrorStrategy(UnrecoverableErrorStrategy unrecoverableErrorStrategy) {
+        this.unrecoverableErrorStrategy = unrecoverableErrorStrategy;
+    }
+
+    /**
      * Run the Master Application.
      */
     public void run() {
         try {
             if (cleanDatabase) {
-                databaseCleaner.run();
+                Thread databaseLoaderThread = new Thread(databaseCleaner);
+                LOGGER.debug("Loading database into memory...");
+                databaseLoaderThread.start();
+                // Pause while the database is loaded from the zip backup
+                while (databaseCleaner.stillLoading()) {
+                    // Takes about 1500 ms to load the database
+                    Thread.sleep(200);
+                }
+                LOGGER.debug("Database loaded.");
             }
 
             createFastaFileLoadStepInstance();
@@ -119,13 +143,17 @@ public class AmqInterProScanMaster implements Master {
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             while (!shutdownCalled) {
-                // TODO should be while(running) to allow shutdown.
                 boolean completed = true;
 
                 for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                    if (stepInstance.hasFailedPermanently(jobs)) {
+                        unrecoverableErrorStrategy.failed(stepInstance, jobs);
+                    }
                     completed &= stepInstance.haveFinished(jobs);
                     if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)) {
-                        LOGGER.debug("Step submitted:" + stepInstance);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Step submitted:" + stepInstance);
+                        }
                         final boolean resubmission = stepInstance.getExecutions().size() > 0;
                         if (resubmission) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " is being re-run following a failure.");
@@ -153,37 +181,16 @@ public class AmqInterProScanMaster implements Master {
                 }
 
 
-                /*for (Job job : jobs.getJobList()){
-                    // If the optional list of analyses has been passed in, only run those analyses.
-                    // Otherwise, run all of them.
-
-                    //if (! job.isAnalysis() || analyses == null || analyses.contains(job.getId())){
-                    LOGGER.debug("Finding uncompleted steps");
-
-
-
-
-                    for (Step step : job.getSteps()){
-                        for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances(step)){
-                            completed&=stepInstance.haveFinished(jobs);
-                            LOGGER.debug("Step not yet completed:"+stepInstance+" "+stepInstance.getState()+" "+stepInstance.canBeSubmitted(jobs)+" "+stepInstanceDAO.serialGroupCanRun(stepInstance, jobs));
-                            if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)){
-                                LOGGER.debug("Step submitted:"+stepInstance);
-                                sendMessage(stepInstance);
-                            }
-                        }
-                    }
-                    //} 
-                }
-*/
                 if (closeOnCompletion && completed) break;
-
                 Thread.sleep(500);  // Every half second, checks for any runnable StepInstances and runs them.
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by Master", e);
         } catch (Exception e) {
             LOGGER.error("Exception thrown by Master", e);
+        }
+        if (cleanDatabase) {
+            databaseCleaner.closeDatabaseCleaner();
         }
         LOGGER.debug("Ending");
     }
@@ -194,6 +201,9 @@ public class AmqInterProScanMaster implements Master {
      * for analyses for the loaded proteins.
      */
     private void createFastaFileLoadStepInstance() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Creating FASTA file load step.");
+        }
         if (fastaFilePath != null) {
             Map<String, String> params = new HashMap<String, String>(1);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
@@ -217,6 +227,8 @@ public class AmqInterProScanMaster implements Master {
 
             createStepInstancesForJob("jobLoadFromFasta", params);
             LOGGER.info("Fasta file load step instance has been created.");
+        } else if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("No fasta file path to load.");
         }
     }
 

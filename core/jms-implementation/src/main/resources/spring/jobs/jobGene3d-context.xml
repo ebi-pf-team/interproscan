@@ -32,7 +32,7 @@
 
     <!-- STEP 2 -->
     <bean id="stepGene3dRunHmmer3"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractGene3dStep">
         <property name="dependsUpon" ref="stepGene3dWriteFasta"/>
         <property name="stepDescription" value="Run HMMER3"/>
@@ -71,6 +71,7 @@
                         <property name="alignmentEncoder">
                             <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
                         </property>
+                        <property name="hmmKey" value="NAME"/>
                     </bean>
                 </property>
             </bean>

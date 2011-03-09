@@ -34,10 +34,6 @@
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.Model"/>
     </bean>
 
-    <bean id="blastProdomLocationDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.BlastProDomLocationDAOImpl">
-    </bean>
-
     <bean id="signatureLibraryReleaseDAO"
           class="uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAOImpl"/>
 

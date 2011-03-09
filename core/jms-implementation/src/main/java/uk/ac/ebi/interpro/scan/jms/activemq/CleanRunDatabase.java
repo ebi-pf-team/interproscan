@@ -1,136 +1,125 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 
-import java.io.*;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: maslen
- * Date: May 7, 2010
- * Time: 9:32:05 AM
+ * Restores the in-memory database from a backup file.
+ * <p/>
+ * Only works in its current form with H2.
+ *
+ * @author Phil Jones
+ * @author John Maslen
+ *         Date: May 7, 2010
+ *         Time: 9:32:05 AM
  */
 
-// TODO:  Consider use of org.apache.commons.io Class FileUtils.copyFile(File srcFile, File destFile)  rather than overwriting database file
-
-// TODO:  Or alternatively could use java.nio for very fast (non-blocking) copy.
 
 public class CleanRunDatabase implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(CleanRunDatabase.class.getName());
 
-    private String originalDatabasePath;
+    private String databaseBackupFile;
 
-    private String installedDatabasePath;
+    private boolean stillLoading = true;
 
-    private TemporaryDirectoryManager directoryManager;
+    private boolean parentProcessRunning = true;
+
+    private String inMemoryDatabaseDriverClass;
+
+    private String inMemoryDatabaseURL;
+
+    private String inMemoryDatabaseUsername;
+
+    private String inMemoryDatabasePassword;
 
     @Required
-    public void setOriginalDatabasePath(String originalDatabasePath) {
-        this.originalDatabasePath = originalDatabasePath;
+    public void setDatabaseBackupFile(String databaseBackupFile) {
+        this.databaseBackupFile = databaseBackupFile;
     }
 
     @Required
-    public void setInstalledDatabasePath(String installedDatabasePath) {
-        this.installedDatabasePath = installedDatabasePath;
+    public void setInMemoryDatabaseDriverClass(String inMemoryDatabaseDriverClass) {
+        this.inMemoryDatabaseDriverClass = inMemoryDatabaseDriverClass;
     }
 
     @Required
-    public void setDirectoryManager(TemporaryDirectoryManager directoryManager) {
-        this.directoryManager = directoryManager;
+    public void setInMemoryDatabaseURL(String inMemoryDatabaseURL) {
+        this.inMemoryDatabaseURL = inMemoryDatabaseURL;
     }
+
+    @Required
+    public void setInMemoryDatabaseUsername(String inMemoryDatabaseUsername) {
+        this.inMemoryDatabaseUsername = inMemoryDatabaseUsername;
+    }
+
+    @Required
+    public void setInMemoryDatabasePassword(String inMemoryDatabasePassword) {
+        this.inMemoryDatabasePassword = inMemoryDatabasePassword;
+    }
+
 
     @Override
     public void run() {
-        cleanInstalledDatabase();
+        try {
+            cleanInstalledDatabase();
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("SQLException thrown when attempting to close connection to the in memory database.", sqle);
+        }
     }
 
-    public void cleanInstalledDatabase() {
+    public void closeDatabaseCleaner() {
+        this.parentProcessRunning = false;
+    }
+
+    public void cleanInstalledDatabase() throws SQLException {
         // Filter the path for the database, if necessary.
-        final String filteredDatabasePath = directoryManager.replacePath(installedDatabasePath);
-        LOGGER.debug("installed Database path = " + filteredDatabasePath);
-        File installedFile = new File(filteredDatabasePath);
-        LOGGER.debug("original Database path = " + originalDatabasePath);
-        File originalFile = new File(originalDatabasePath);
-//
-//        InputStream in;
-//
-//        OutputStream out;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("original Database path = " + databaseBackupFile);
+        }
+        File originalFile = new File(databaseBackupFile);
 
         if (!originalFile.exists()) {
-            LOGGER.fatal("Unable to find original database file: " + originalDatabasePath);
+            LOGGER.fatal("Unable to find original database file: " + databaseBackupFile);
             throw new IllegalStateException("Unable to find original database file");
         }
-
-        if (!installedFile.exists()) {
-            try {
-                installedFile.createNewFile();
-            } catch (IOException e) {
-                LOGGER.fatal("Unable to create new file for database overwrite: " + filteredDatabasePath);
-                throw new IllegalStateException("Unable to create new database file", e);
-            }
-        }
-
+        Connection conn = null;
         try {
-            FileUtils.copyFile(originalFile, installedFile);
-            while (!FileUtils.contentEquals(installedFile, originalFile)) {
-                try {
-                    Thread.sleep(5000);
-                    LOGGER.debug("Database files are currently being copied.");
-                } catch (InterruptedException e) {
-                    LOGGER.error("InterruptedException when attempting to copy the original database file.");
-                    throw new IllegalStateException("IOException when attempting to copy the original database file.");
-                }
+            Class.forName(inMemoryDatabaseDriverClass);
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("inMemoryDatabaseURL = " + inMemoryDatabaseURL);
             }
-            Thread.sleep(10000);
-            LOGGER.info("Installed database has been restored to the original.");            
-        } catch (IOException e) {
-                LOGGER.fatal("Unable to copy original database file to installed file location: " + filteredDatabasePath);
-                throw new IllegalStateException("Unable to copy database file", e);
-        } catch (InterruptedException e) {
-                LOGGER.error("InterruptedException when attempting to copy the original database file.");
-                throw new IllegalStateException("IOException when attempting to copy the original database file.");
+
+            conn = DriverManager.getConnection(inMemoryDatabaseURL, inMemoryDatabaseUsername, inMemoryDatabasePassword);
+
+            // TODO - this statement is H2 specific.
+            conn.createStatement().execute("RUNSCRIPT from '" + databaseBackupFile + "' COMPRESSION ZIP");
+            stillLoading = false;
+            while (parentProcessRunning) {
+                // To ensure the in-memory database restored in this method is used by the
+                // parent process, keep this thread alive.
+                Thread.sleep(500);
+            }
+        } catch (ClassNotFoundException cnfe) {
+            throw new IllegalStateException("The CleanRunDatabase class cannot load the database driver.", cnfe);
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("An SQLException has been thrown when attempting to restore the in-memory database.", sqle);
+        } catch (InterruptedException ie) {
+            throw new IllegalStateException("An InterruptedException was thrown by the CleanRunDatabase thread.", ie);
+        } finally {
+            if (conn != null) {
+                conn.close();
+            }
         }
-
-//        try {
-//            LOGGER.info("Installed file length = " + installedFile.length());
-//            out = new FileOutputStream(installedFile);
-//        } catch (FileNotFoundException e) {
-//            LOGGER.fatal("Still unable to find file for database overwrite: " + filteredDatabasePath);
-//            throw new IllegalStateException("Unable to find installed database file", e);
-//        }
-//
-//
-//        try {
-//            LOGGER.info("original file length = " + originalFile.length());
-//            in = new FileInputStream(originalFile);
-//        } catch (FileNotFoundException e) {
-//            LOGGER.fatal("Unable to find original database file: " + originalDatabasePath);
-//            throw new IllegalStateException("Unable to find original database file", e);
-//        }
-//
-//        byte[] buf = new byte[1024];
-//        int len;
-//        try {
-//            while ((len = in.read(buf)) > 0) {
-//                out.write(buf, 0, len);
-//            }
-//        } catch (IOException e) {
-//            LOGGER.fatal("Unable to find original database file: " + originalDatabasePath);
-//            throw new IllegalStateException("Unable to find original database file", e);
-//        }
-//
-//        try {
-//            in.close();
-//            out.close();
-//        } catch (IOException e) {
-//            LOGGER.debug("Error closing database files.");
-//        }
-
-
     }
 
+    public boolean stillLoading() {
+        return stillLoading;
+    }
 }

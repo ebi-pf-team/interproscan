@@ -9,11 +9,11 @@
     <import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>
 
     <bean id="databaseCleaner" class="uk.ac.ebi.interpro.scan.jms.activemq.CleanRunDatabase">
-        <property name="installedDatabasePath" value="${i5.h2.database.installed.location}"/>
-        <property name="originalDatabasePath" value="${i5.h2.database.original.location}"/>
-        <property name="directoryManager" ref="tempDirectoryManager"/>
-        <!--<property name="installedDatabasePath" value="support/interpro.h2.db"/>-->
-        <!--<property name="originalDatabasePath" value="support/clean_database/interpro.h2.db"/>-->
+        <property name="databaseBackupFile" value="${i5.h2.database.original.location}"/>
+        <property name="inMemoryDatabaseURL" value="${i5.database.connection.url}"/>
+        <property name="inMemoryDatabasePassword" value="${i5.database.password}"/>
+        <property name="inMemoryDatabaseDriverClass" value="${i5.database.driverClassName}"/>
+        <property name="inMemoryDatabaseUsername" value="${i5.database.username}"/>
     </bean>
 
 </beans>

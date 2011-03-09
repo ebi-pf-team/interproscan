@@ -21,6 +21,7 @@
                 <ref bean="pfamA_24.0"/>
                 <ref bean="prints_41.1"/>
                 <ref bean="tigrFam_9.0"/>
+                <ref bean="tigrFam_10.1"/>
                 <ref bean="smart_6.1"/>
             </list>
         </property>
@@ -101,7 +102,15 @@
         <property name="modelFile" value="file:${tigrfam.hmm.path.9.0}"/>
         <property name="releaseVersionNumber" value="9.0"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
-        <property name="analysisJobId" value="jobTIGRFAM"/>
+        <property name="analysisJobId" value="jobTIGRFAM-9.0"/>
+    </bean>
+
+    <bean id="tigrFam_10.1" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+        <property name="signatureLibrary" value="TIGRFAM"/>
+        <property name="modelFile" value="file:${tigrfam.hmm.path.10.1}"/>
+        <property name="releaseVersionNumber" value="10.1"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobTIGRFAM-10.1"/>
     </bean>
 
     <bean id="smart_6.1" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
