@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +53,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      *         has been passed in, for sub-classes that check for the pre-existence of the object
      *         in the database.
      */
+    @Transactional
     T insert(T newInstance);
 
     /**
@@ -62,6 +65,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      *         have been passed in, for sub-classes that check for the pre-existence of the object
      *         in the database.
      */
+    @Transactional
     Collection<T> insert(Collection<T> newInstances);
 
     /**
@@ -69,6 +73,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      *
      * @param modifiedInstance being an attached or unattached, persisted object that has been modified.
      */
+    @Transactional
     void update(T modifiedInstance);
 
     /**
@@ -79,6 +84,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      * @return a single instance of the object with the specified primary key,
      *         or null if it does not exist.
      */
+    @Transactional(readOnly = true)
     T read(PK id);
 
     /**
@@ -90,6 +96,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      * @return a single instance of the object with the specified primary key,
      *         or null if it does not exist, with the lazy objects initialised.
      */
+    @Transactional(readOnly = true)
     T readDeep(PK id, String... deepFields);
 
     /**
@@ -97,6 +104,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      *
      * @param persistentObject being the (attached or unattached) object to be deleted.
      */
+    @Transactional
     void delete(T persistentObject);
 
     /**
@@ -105,6 +113,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      *
      * @return a count of all instances of the type.
      */
+    @Transactional(readOnly = true)
     Long count();
 
     /**
@@ -112,6 +121,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      *
      * @return a List of all the instances of T in the database.
      */
+    @Transactional(readOnly = true)
     List<T> retrieveAll();
 
     /**
@@ -119,6 +129,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      *
      * @return the number of rows affected by this operation.
      */
+    @Transactional
     int deleteAll();
 
     /**
@@ -126,5 +137,12 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      *
      * @return the highest primary key value for the Model class.
      */
+    @Transactional(readOnly = true)
     Long getMaximumPrimaryKey();
+
+    /**
+     * Experimental - included to allow explicit flush following DAO transaction.
+     */
+    @Transactional
+    void flush();
 }
