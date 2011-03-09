@@ -52,10 +52,20 @@ public class Protein implements Serializable {
     // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>
 
     /**
-     * TODO - remove this - every now and then new amino acids appear from UniProt
+     * NOTE: Changed to any letter of the alphabet, as some pretty odd codes are allowed in addition
+     * to the 20 standard amino acids:
+     * Selenocysteine	U
+     * Pyrrolysine	O
+     * In addition to the specific amino acid codes, placeholders are used in cases where chemical or crystallographic analysis of a peptide or protein cannot conclusively determine the identity of a residue.
+     * Asparagine or aspartic acid		B
+     * Glutamine or glutamic acid		Z
+     * Leucine or Isoleucine		J
+     * Unspecified or unknown amino acid		X
+     * <p/>
+     * All or any of these may appear in UniParc.
      */
     @Transient
-    private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-I|K-N|P-Z-*]+$");
+    public static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-Z-*]+$");
 
     @Transient
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
