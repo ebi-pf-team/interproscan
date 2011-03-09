@@ -26,6 +26,7 @@ public class TestActiveMQ {
 
 
     @Test
+//    @Ignore("Needs to be reconfigured.")
     public void testEmbeddedSystem() {
         LOGGER.debug("If this test fails, check that the test database located in /src/resources/interpro.h2.db is up-to-date with " +
                 "the current schema.  If not, the easiest way to create a new empty database is to use the installer " +

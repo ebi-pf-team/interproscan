@@ -2,7 +2,7 @@
 
     <!-- JPA Persistence unit for local testing in HSQLDB - current in-memory database, but may change. -->
     <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
-
+        <mapping-file></mapping-file>
         <!-- Interfaces -->
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
@@ -46,7 +46,8 @@
 
         <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch</class>

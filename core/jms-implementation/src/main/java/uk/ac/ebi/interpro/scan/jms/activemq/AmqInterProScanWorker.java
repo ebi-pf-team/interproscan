@@ -101,7 +101,7 @@ public class AmqInterProScanWorker implements MessageListener {
                 // Something went wrong in the execution - try to send back failure
                 // message to the broker.  This in turn may fail if it is the JMS connection
                 // that failed during the execution.
-                stepExecution.fail();
+                stepExecution.fail(e);
 
                 jmsTemplate.send(jobResponseQueue, new MessageCreator() {
                     public Message createMessage(Session session) throws JMSException {
@@ -113,11 +113,9 @@ public class AmqInterProScanWorker implements MessageListener {
                 LOGGER.debug("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
             }
 
-        }
-        catch (JMSException e) {
+        } catch (JMSException e) {
             LOGGER.error("JMSException thrown in MessageListener.", e);
-        }
-        finally {
+        } finally {
             if (controller != null) {
                 controller.jobFinished(messageId);
             }

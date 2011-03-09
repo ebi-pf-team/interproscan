@@ -34,7 +34,7 @@
 
     <!-- STEP 2 -->
     <bean id="stepPfamARunHmmer3"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.RunHmmer3Step"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPfamAStep">
         <property name="dependsUpon" ref="stepPfamAWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
@@ -60,12 +60,14 @@
           parent="abstractPfamAStep">
         <property name="dependsUpon" ref="stepPfamARunHmmer3"/>
         <property name="stepDescription" value="Parse the output from HMMER3"/>
-        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="fullPathToHmmFile" value="${Pfam-A.hmm.path.24.0}"/>
+
+        <!-- TODO - Apparently not being used for anything ... ?  Need to test. -->
+        <!--<property name="fullPathToHmmFile" value="${Pfam-A.hmm.path.24.0}"/>-->
         <property name="parser" ref="pfamAHmmer3SearchParser"/>
         <property name="serialGroup" value="PARSE_HMMER_3"/>
-        <property name="pfamRawMatchDAO" ref="pfamRawMatchDAO"/>
+        <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
         <property name="retries" value="3"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepPfamADeleteHmmerOutput"

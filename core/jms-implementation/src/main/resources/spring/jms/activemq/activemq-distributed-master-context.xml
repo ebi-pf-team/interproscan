@@ -36,7 +36,10 @@
         <property name="messageSender" ref="masterMessageSender"/>
         <property name="workerRunner" ref="workerRunner"/>
         <property name="workerRunnerHighMemory" ref="workerRunnerHighMemory"/>
+        <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
     </bean>
+
+    <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.EmailErrorAndContinueErrorStrategy"/>
 
     <bean id="masterMessageSender" class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
