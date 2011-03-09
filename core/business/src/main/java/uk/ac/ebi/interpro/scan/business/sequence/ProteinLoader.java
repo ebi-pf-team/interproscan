@@ -73,14 +73,16 @@ public class ProteinLoader implements Serializable {
                     protein.addCrossReference(xref);
                 }
             }
-            Protein precalculatedProtein = (proteinLookup != null)
-                    ? proteinLookup.getPrecalculated(protein)
-                    : null;
-            if (precalculatedProtein != null) {
-                precalculatedProteins.add(precalculatedProtein);
-            } else {
-                addProteinToBatch(protein);
-            }
+
+            // TODO - rethink the whole precalculated protein mechanism.
+//            Protein precalculatedProtein = (proteinLookup != null)
+//                    ? proteinLookup.getPrecalculated(protein)
+//                    : null;
+//            if (precalculatedProtein != null) {
+//                precalculatedProteins.add(precalculatedProtein);
+//            } else {
+            addProteinToBatch(protein);
+//            }
         }
     }
 
@@ -102,7 +104,13 @@ public class ProteinLoader implements Serializable {
      * this Collection, ready to be used again.
      */
     private void persistBatch() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("ProteinLoader.persistBatch() method has been called.");
+        }
         if (proteinsAwaitingPersistence.size() > 0) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
+            }
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
@@ -153,6 +161,4 @@ public class ProteinLoader implements Serializable {
         bottomProteinId = null;
         topProteinId = null;
     }
-
-
 }
