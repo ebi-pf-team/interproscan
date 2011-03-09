@@ -88,13 +88,28 @@ public class Pfam_A_PostProcessingStep extends Step {
                 stepInstance.getTopProtein(),
                 getSignatureLibraryRelease()
         );
-
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
+            int matchCount = 0;
+            for (final RawProtein rawProtein : rawMatches.values()) {
+                matchCount += rawProtein.getMatches().size();
+            }
+            LOGGER.debug("PfamA: A total of " + matchCount + " raw matches.");
+        }
         // Post process
         try {
             Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = getPostProcessor().process(rawMatches);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
+                int matchCount = 0;
+                for (final RawProtein rawProtein : filteredMatches.values()) {
+                    matchCount += rawProtein.getMatches().size();
+                }
+                LOGGER.debug("PfamA: A total of " + matchCount + " matches PASSED.");
+            }
             filteredMatchDAO.persist(filteredMatches.values());
         } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when attemptin to post process filtered matches.", e);
+            throw new IllegalStateException("IOException thrown when attempting to post process filtered matches.", e);
         }
     }
 

@@ -95,7 +95,7 @@ public class StepInstance implements Serializable {
      * wire when submitting new StepExecutions to the messaging system.
      */
     @OneToMany(targetEntity = StepExecution.class, fetch = FetchType.EAGER, mappedBy = "stepInstance", cascade = {})
-    private Set<StepExecution> executions = new HashSet<StepExecution>();
+    private Set<StepExecution> executions = new TreeSet<StepExecution>();
 
     public StepInstance(Step step) {
         this(step, null, null, null, null);
@@ -149,13 +149,15 @@ public class StepInstance implements Serializable {
     }
 
     public void addStepExecution(StepExecution stepExecution) {
-        // Sanity check
-        for (StepExecution previousExecutions : executions) {
-            if (previousExecutions.getState() != StepExecutionState.STEP_EXECUTION_FAILED) {
-                throw new IllegalStateException("Attempting to add a new StepExecution to step " + this + " when there is an existing (NON-STEP_EXECUTION_FAILED) step execution.");
+        synchronized (this) {
+            // Sanity check
+            for (StepExecution previousExecutions : executions) {
+                if (previousExecutions.getState() != StepExecutionState.STEP_EXECUTION_FAILED) {
+                    throw new IllegalStateException("Attempting to add a new StepExecution to step " + this + " when there is an existing (NON-STEP_EXECUTION_FAILED) step execution.");
+                }
             }
+            executions.add(stepExecution);
         }
-        executions.add(stepExecution);
     }
 
     /**
@@ -164,22 +166,24 @@ public class StepInstance implements Serializable {
      * @return the state of this StepInstance
      */
     public StepExecutionState getState() {
-        if (executions.size() == 0) {
-            return StepExecutionState.NEW_STEP_INSTANCE;
-        }
-        for (StepExecution exec : executions) {
-            final StepExecutionState executionState = exec.getState();
-            switch (executionState) {
-                case NEW_STEP_EXECUTION:
-                case STEP_EXECUTION_SUBMITTED:
-                case STEP_EXECUTION_RUNNING:
-                case STEP_EXECUTION_SUCCESSFUL:
-                    return executionState;
-                default:
-                    break;
+        synchronized (this) {
+            if (executions.size() == 0) {
+                return StepExecutionState.NEW_STEP_INSTANCE;
             }
+            for (StepExecution exec : executions) {
+                final StepExecutionState executionState = exec.getState();
+                switch (executionState) {
+                    case NEW_STEP_EXECUTION:
+                    case STEP_EXECUTION_SUBMITTED:
+                    case STEP_EXECUTION_RUNNING:
+                    case STEP_EXECUTION_SUCCESSFUL:
+                        return executionState;
+                    default:
+                        break;
+                }
+            }
+            return StepExecutionState.STEP_EXECUTION_FAILED;
         }
-        return StepExecutionState.STEP_EXECUTION_FAILED;
     }
 
     public Long getId() {
@@ -187,12 +191,9 @@ public class StepInstance implements Serializable {
     }
 
     public Step getStep(Jobs jobs) {
-        assert jobs != null;
-        assert stepId != null;
         if (step == null) {
             step = jobs.getStepById(stepId);
         }
-        assert step != null;
         return step;
     }
 
@@ -258,13 +259,14 @@ public class StepInstance implements Serializable {
     }
 
 
-    // todo: check thread safety
     public boolean haveFinished(Jobs jobs) {
-        final StepExecutionState executionState = getState();
-        if (StepExecutionState.STEP_EXECUTION_SUCCESSFUL == executionState) return true;
-        if (StepExecutionState.STEP_EXECUTION_FAILED == executionState && this.getExecutions().size() >= this.getStep(jobs).getRetries())
-            return true;
-        return false;
+        synchronized (this) {
+            final StepExecutionState executionState = getState();
+            if (StepExecutionState.STEP_EXECUTION_SUCCESSFUL == executionState) return true;
+            if (StepExecutionState.STEP_EXECUTION_FAILED == executionState && this.getExecutions().size() >= this.getStep(jobs).getRetries())
+                return true;
+            return false;
+        }
     }
 
 
@@ -274,7 +276,9 @@ public class StepInstance implements Serializable {
 
 
     public StepExecution createStepExecution() {
-        return new StepExecution(this);
+        synchronized (this) {
+            return new StepExecution(this);
+        }
     }
 
 
@@ -310,6 +314,14 @@ public class StepInstance implements Serializable {
      */
     public boolean hasProteinBounds() {
         return this.getBottomProtein() != null && this.getTopProtein() != null;
+    }
+
+    public boolean hasFailedPermanently(Jobs jobs) {
+        synchronized (this) {
+            return StepExecutionState.STEP_EXECUTION_FAILED == this.getState()
+                    &&
+                    haveFinished(jobs);
+        }
     }
 
 

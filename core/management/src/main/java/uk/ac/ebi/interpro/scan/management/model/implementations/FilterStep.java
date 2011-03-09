@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
+package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.filter.RawMatchFilter;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author Antony Quinn
  * @version $Id$
  */
-abstract class FilterStep<T extends RawMatch, U extends Match> extends Step {
+public abstract class FilterStep<T extends RawMatch, U extends Match> extends Step {
 
     private SignatureLibrary signatureLibrary;
     private String signatureLibraryRelease;

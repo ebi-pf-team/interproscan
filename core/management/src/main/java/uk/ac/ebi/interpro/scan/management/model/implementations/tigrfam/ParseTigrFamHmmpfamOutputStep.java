@@ -6,7 +6,7 @@ import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.FileInputStream;
@@ -27,9 +27,9 @@ public class ParseTigrFamHmmpfamOutputStep extends Step {
 
     private String hmmerOutputFilePathTemplate;
 
-    private HmmPfamParser<TigrFamRawMatch> parser;
+    private HmmPfamParser<TigrFamHmmer2RawMatch> parser;
 
-    private RawMatchDAO<TigrFamRawMatch> tigrfamRawMatchDAO;
+    private RawMatchDAO<TigrFamHmmer2RawMatch> tigrfamRawMatchDAO;
 
     @Required
     public void setHmmerOutputFileNameTemplate(String hmmerOutputFilePathTemplate) {
@@ -37,12 +37,12 @@ public class ParseTigrFamHmmpfamOutputStep extends Step {
     }
 
     @Required
-    public void setTigrfamRawMatchDAO(RawMatchDAO<TigrFamRawMatch> tigrfamRawMatchDAO) {
+    public void setTigrfamRawMatchDAO(RawMatchDAO<TigrFamHmmer2RawMatch> tigrfamRawMatchDAO) {
         this.tigrfamRawMatchDAO = tigrfamRawMatchDAO;
     }
 
     @Required
-    public void setParser(HmmPfamParser<TigrFamRawMatch> parser) {
+    public void setParser(HmmPfamParser<TigrFamHmmer2RawMatch> parser) {
         this.parser = parser;
     }
 
@@ -60,11 +60,9 @@ public class ParseTigrFamHmmpfamOutputStep extends Step {
         try {
             final String hmmerOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, hmmerOutputFilePathTemplate);
             is = new FileInputStream(hmmerOutputFilePath);
-            final Set<RawProtein<TigrFamRawMatch>> parsedResults = parser.parse(is);
+            final Set<RawProtein<TigrFamHmmer2RawMatch>> parsedResults = parser.parse(is);
             tigrfamRawMatchDAO.insertProteinMatches(parsedResults);
-        }
-
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to read " + hmmerOutputFilePathTemplate, e);
         } finally {
             if (is != null) {
