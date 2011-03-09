@@ -28,18 +28,18 @@ import java.util.List;
 /**
  * A generic DAO implementation that can be used with any model class.
  * Just need to inject the Model class name to use.
- *
+ * <p/>
  * Provides the basic CRUD methods.
- * 
+ * <p/>
  * T is the model type (e.g. Protein, Model, Signature etc.)
  * PK is the type of the primary key (normally {@link java.lang.Long})
- *
+ * <p/>
  * Based on the pattern described in
  * <a href ="http://www.ibm.com/developerworks/java/library/j-genericdao.html">Don't repeat the DAO!</a>
  * by Per Mellqvist (per@mellqvist.name) in IBM Developer Works Technical Library, 12 May 2006.
  *
- * @author  Phil Jones, EMBL-EBI
- * @author  Antony Quinn
+ * @author Phil Jones, EMBL-EBI
+ * @author Antony Quinn
  */
 
 public class GenericDAOImpl<T, PK extends Serializable>
@@ -60,16 +60,18 @@ public class GenericDAOImpl<T, PK extends Serializable>
     /**
      * Required by Spring.
      */
-    private GenericDAOImpl(){}
+    private GenericDAOImpl() {
+    }
 
     /**
      * Sets the class of the model that the DOA instance handles.
      * Note that this has been set up to use constructor injection
      * because it makes it easy to sub-class GenericDAOImpl in a robust
      * manner.
-     *
+     * <p/>
      * Model class specific sub-classes should define a no-argument constructor
      * that calls this constructor with the appropriate class.
+     *
      * @param modelClass the model that the DOA instance handles.
      */
     public GenericDAOImpl(Class<T> modelClass) {
@@ -80,20 +82,21 @@ public class GenericDAOImpl<T, PK extends Serializable>
     @PersistenceContext
     protected void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
-    }    
+    }
 
     /**
      * Insert a new Model instance.
+     *
      * @param newInstance being a new instance to persist.
      * @return the inserted Instance.  This MAY NOT be the same object as
-     * has been passed in, for sub-classes that check for the pre-existence of the object
-     * in the database.
+     *         has been passed in, for sub-classes that check for the pre-existence of the object
+     *         in the database.
      */
     // TODO: change the propagation. Deliberately broken by David
     @Transactional
     public T insert(T newInstance) {
-        if (entityManager.contains(newInstance)){
-            throw new IllegalArgumentException ("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
+        if (entityManager.contains(newInstance)) {
+            throw new IllegalArgumentException("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
         }
         entityManager.persist(newInstance);
         return newInstance;
@@ -110,9 +113,9 @@ public class GenericDAOImpl<T, PK extends Serializable>
      */
     @Transactional
     public Collection<T> insert(Collection<T> newInstances) {
-        for (T newInstance : newInstances){
-            if (entityManager.contains(newInstance)){
-                throw new IllegalArgumentException ("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
+        for (T newInstance : newInstances) {
+            if (entityManager.contains(newInstance)) {
+                throw new IllegalArgumentException("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
             }
             entityManager.persist(newInstance);
         }
@@ -129,11 +132,13 @@ public class GenericDAOImpl<T, PK extends Serializable>
         entityManager.merge(modifiedInstance);
     }
 
-    /** Retrieve an object that was previously persisted to the database using
-     *  the indicated id as primary key
+    /**
+     * Retrieve an object that was previously persisted to the database using
+     * the indicated id as primary key
+     *
      * @param id being the primary key value of the required object.
      * @return a single instance of the object with the specified primary key,
-     * or null if it does not exist.
+     *         or null if it does not exist.
      */
     @Transactional(readOnly = true)
     public T read(PK id) {
@@ -147,10 +152,9 @@ public class GenericDAOImpl<T, PK extends Serializable>
         // null if there is no matching object.
 
         @SuppressWarnings("unchecked") List<T> results = query.getResultList();
-        if (results.size() == 0){
+        if (results.size() == 0) {
             return null;
-        }
-        else return results.get(0);
+        } else return results.get(0);
     }
 
     @Transactional(readOnly = true)
@@ -165,15 +169,15 @@ public class GenericDAOImpl<T, PK extends Serializable>
         // null if there is no matching object.
 
         @SuppressWarnings("unchecked") List<T> results = query.getResultList();
-        if (results.size() == 0){
+        if (results.size() == 0) {
             return null;
-        }
-        else return results.get(0);
+        } else return results.get(0);
     }
+
     /**
      * Retrieve an object that was previously persisted to the database using
      * the indicated id as primary key and go deep on the fields listed.
-     *
+     * <p/>
      * TODO - Could make use of reflection to determine if the field name passed in is accessible via a public getter.
      *
      * @param id         being the primary key value of the required object.
@@ -184,15 +188,15 @@ public class GenericDAOImpl<T, PK extends Serializable>
     @Transactional(readOnly = true)
     public T readDeep(PK id, String... deepFields) {
         StringBuffer queryString = new StringBuffer("select o from ");
-        queryString .append (unqualifiedModelClassName)
-                    .append (" o ");
+        queryString.append(unqualifiedModelClassName)
+                .append(" o ");
 
-        for (String field : deepFields){
-            queryString .append (" left outer join fetch o.")
-                        .append (field);
+        for (String field : deepFields) {
+            queryString.append(" left outer join fetch o.")
+                    .append(field);
         }
 
-        queryString.append (" where o.id = :id");
+        queryString.append(" where o.id = :id");
 
         Query query = this.entityManager.createQuery(queryString.toString());
         query.setParameter("id", id);
@@ -203,19 +207,19 @@ public class GenericDAOImpl<T, PK extends Serializable>
         // null if there is no matching object.
 
         @SuppressWarnings("unchecked") List<T> results = query.getResultList();
-        if (results.size() == 0){
+        if (results.size() == 0) {
             return null;
-        }
-        else return results.get(0);
+        } else return results.get(0);
     }
 
     /**
      * Remove an object from persistent storage in the database
+     *
      * @param persistentObject being the (attached or unattached) object to be deleted.
      */
     @Transactional
     public void delete(T persistentObject) {
-        if (! entityManager.contains(persistentObject)){
+        if (!entityManager.contains(persistentObject)) {
             persistentObject = entityManager.merge(persistentObject);
         }
         entityManager.remove(persistentObject);
@@ -224,6 +228,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
     /**
      * Returns a count of all instances of the type.  Note that select count(object) JSQL
      * returns a Long object.
+     *
      * @return a count of all instances of the type.
      */
     @Transactional(readOnly = true)
@@ -235,6 +240,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
 
     /**
      * Returns a List of all the instances of T in the database.
+     *
      * @return a List of all the instances of T in the database.
      */
     @Transactional(readOnly = true)
@@ -247,6 +253,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
 
     /**
      * Deletes all instances of class T in the database.
+     *
      * @return the number of rows affected by this operation.
      */
     @Transactional
@@ -255,7 +262,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
 //        Query query = this.entityManager.createQuery(queryString);
 //        return query.executeUpdate();
         List<T> allEntities = retrieveAll();
-        for (T entity : allEntities){
+        for (T entity : allEntities) {
             delete(entity);
         }
         return allEntities.size();
@@ -271,6 +278,14 @@ public class GenericDAOImpl<T, PK extends Serializable>
         String queryString = String.format("select max(id) from %s", unqualifiedModelClassName);
         Query query = entityManager.createQuery(queryString);
         return (Long) query.getSingleResult();
+    }
+
+    /**
+     * Experimental - included to allow explicit flush following DAO transaction.
+     */
+    @Transactional
+    public void flush() {
+        entityManager.flush();
     }
 
 }
