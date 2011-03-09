@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
@@ -24,5 +25,6 @@ public interface SignatureLibraryReleaseDAO extends GenericDAO<SignatureLibraryR
      * @return true if the version of the SignatureLibrary passed in as arguments
      *         is already in the database.
      */
+    @Transactional(readOnly = true)
     public boolean isReleaseAlreadyPersisted(SignatureLibrary library, String version);
 }

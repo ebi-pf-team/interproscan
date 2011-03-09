@@ -6,11 +6,14 @@ package uk.ac.ebi.interpro.scan.persistence;
  * Date: Sep 16, 2010
  */
 
-import uk.ac.ebi.interpro.scan.model.*;
+import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
+import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-
 
 import java.util.Collection;
 import java.util.Map;
@@ -25,6 +28,7 @@ abstract class Hmmer2FilteredMatchDAO<T extends Hmmer2RawMatch>
 
 
     @Override
+    @Transactional
     protected void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
         // Add matches to protein
         for (RawProtein<T> rp : filteredProteins) {
@@ -51,6 +55,7 @@ abstract class Hmmer2FilteredMatchDAO<T extends Hmmer2RawMatch>
             }
             // Store
             entityManager.persist(protein);
+            entityManager.flush();
         }
     }
 }

@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 
@@ -12,8 +13,9 @@ import java.util.Map;
  */
 
 public interface SmartHmmer2RawMatchDAO
-        extends RawMatchDAO<SmartRawMatch>{
+        extends RawMatchDAO<SmartRawMatch> {
 
+    @Transactional(readOnly = true)
     public Map<String, RawProtein<SmartRawMatch>> getRawMatchesForProteinIdsInRange(long bottomId, long topId, String signatureDatabaseRelease);
 
 }

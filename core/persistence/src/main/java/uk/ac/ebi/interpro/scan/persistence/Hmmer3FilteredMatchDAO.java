@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -22,6 +24,8 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
         extends FilteredMatchDAOImpl<T, Hmmer3Match>
         implements FilteredMatchDAO<T, Hmmer3Match> {
 
+    private static final Logger LOGGER = Logger.getLogger(Hmmer3FilteredMatchDAO.class.getName());
+
     public Hmmer3FilteredMatchDAO() {
         super(Hmmer3Match.class);
     }
@@ -34,8 +38,11 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
      * @param modelAccessionToSignatureMap a Map of model accessions to Signature objects.
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
-    @Override
+    @Transactional
     protected void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Persisting Hmmer3 filtered matches.");
+        }
         // Add matches to protein
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());
@@ -51,16 +58,36 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                         public Signature getSignature(String modelAccession,
                                                       SignatureLibrary signatureLibrary,
                                                       String signatureLibraryRelease) {
+                            Signature signature = modelAccessionToSignatureMap.get(modelAccession);
+                            if (signature == null) {
+                                throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
+                            }
                             return modelAccessionToSignatureMap.get(modelAccession);
                         }
                     }
                     );
             // Add matches to protein
+            int count = 0;
             for (Hmmer3Match m : filteredMatches) {
+                if (m == null) {
+                    throw new IllegalStateException("The filteredMatches collection contains a null value.");
+                }
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Adding filtered match to protein object");
+                    count++;
+                }
                 protein.addMatch(m);
+            }
+            if (LOGGER.isDebugEnabled()) {
+                if (count == 0) {
+                    LOGGER.debug("Hmmer3FilteredMatchDAO: No filtered matches to persist to the database.");
+                } else {
+                    LOGGER.debug("Persisting protein following addition of filtered matches.");
+                }
             }
             // Store
             entityManager.persist(protein);
+            entityManager.flush();
         }
     }
 }

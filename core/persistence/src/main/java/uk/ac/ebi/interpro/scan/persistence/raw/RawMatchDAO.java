@@ -32,6 +32,7 @@ public interface RawMatchDAO<T extends RawMatch>
      * @param modelId Corresponds to {@link uk.ac.ebi.interpro.scan.model.Model#getAccession()}
      * @return Matches
      */
+    @Transactional(readOnly = true)
     public T getMatchesByModel(String modelId);
 
     /**
@@ -42,6 +43,7 @@ public interface RawMatchDAO<T extends RawMatch>
      * @param signatureDatabaseRelease Signature database release number.
      * @return Proteins within the given ID range
      */
+    @Transactional(readOnly = true)
     public Set<RawProtein<T>> getProteinsByIdRange(long bottomId, long topId, String signatureDatabaseRelease);
 
 }

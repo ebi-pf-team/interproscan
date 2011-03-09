@@ -35,6 +35,7 @@ public class RawMatchDAOImpl<T extends RawMatch>
             }
             insert(new HashSet<T>(rawProtein.getMatches()));
         }
+        entityManager.flush();
     }
 
     @Transactional(readOnly = true)

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -44,6 +45,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Override
+    @Transactional
     protected void persist(Collection<RawProtein<PrintsRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<PrintsRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
@@ -87,6 +89,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
                 protein.addMatch(new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations));
             }
             entityManager.persist(protein);
+            entityManager.flush();
         }
     }
 }

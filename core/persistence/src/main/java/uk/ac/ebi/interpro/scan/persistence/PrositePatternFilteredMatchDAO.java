@@ -42,6 +42,7 @@ public class PrositePatternFilteredMatchDAO
             }
             entityManager.persist(protein);
         }
+        entityManager.flush();
     }
 
     private PatternScanMatch buildMatch(Signature signature, ProSitePatternRawMatch rawMatch) {

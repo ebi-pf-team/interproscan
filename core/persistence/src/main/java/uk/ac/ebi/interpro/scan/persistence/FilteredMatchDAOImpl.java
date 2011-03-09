@@ -46,6 +46,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      *
      * @param filteredProteins Filtered protein matches.
      */
+    @Transactional
     public void persist(Collection<RawProtein<T>> filteredProteins) {
         if (filteredProteins == null || filteredProteins.size() == 0) {
             LOGGER.debug("No RawProtein objects have been passed into the persistFilteredMatches method, so exiting.");
@@ -108,7 +109,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      * @param signatureLibraryRelease the current version of the signature library in this analysis.
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     private Map<String, Signature> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
         final Query query =
                 entityManager.createQuery(
@@ -145,7 +146,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      *                    required.
      * @return a Map of protein IDs to Protein objects.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     private Map<String, Protein> getProteinIdToProteinMap(Collection<RawProtein<T>> rawProteins) {
         final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(rawProteins.size());
 
