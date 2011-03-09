@@ -236,7 +236,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                     domains.clear();
                                     currentSequenceIdentifier = domainSectionHeaderMatcher.group(1);
                                 } else {
-                                    throw new ParseException("This line looks like a domain section header line, but I cannot parse out the sequence id.", null, line, lineNumber);
+                                    throw new ParseException("This line looks like a domain section header line, but it is not possible to parse out the sequence id.", null, line, lineNumber);
                                 }
                                 stage = ParsingStage.LOOKING_FOR_DOMAIN_DATA_LINE;
                             }
@@ -257,14 +257,13 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                                 }
                                 // getting the actual alignment sequence string
 
-                                if ((currentDomain != null) && (currentSequenceIdentifier != null) && (line.trim().startsWith(currentSequenceIdentifier + " "))) {
+                                if ((currentDomain != null) && (currentSequenceIdentifier != null)) {
                                     Matcher alignmentSequencePattern = DomainMatch.ALIGNMENT_SEQUENCE_PATTERN.matcher(line);
-                                    if (alignmentSequencePattern.matches() && alignmentSequencePattern.group(1).equals(currentSequenceIdentifier)) {
-                                        alignSeq.append(alignmentSequencePattern.group(3));
-                                        currentDomain.setAlignment(alignSeq.toString());
-
-                                    } else {
-                                        throw new ParseException("Unable to parse alignment", null, line, lineNumber);
+                                    if (alignmentSequencePattern.matches()) {
+                                        if (alignmentSequencePattern.group(1).equals(currentSequenceIdentifier)) {
+                                            alignSeq.append(alignmentSequencePattern.group(3));
+                                            currentDomain.setAlignment(alignSeq.toString());
+                                        }
                                     }
                                 }
                             }

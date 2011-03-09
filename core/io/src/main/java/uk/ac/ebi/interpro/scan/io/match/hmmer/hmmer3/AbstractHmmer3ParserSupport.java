@@ -25,9 +25,16 @@ abstract class AbstractHmmer3ParserSupport<T extends Hmmer3RawMatch> implements 
 
     private String signatureLibraryRelease;
 
+    private HmmKey hmmKey;
+
+    @Required
+    public void setHmmKey(HmmKey hmmKey) {
+        this.hmmKey = hmmKey;
+    }
+
     @Override
     public HmmKey getHmmKey() {
-        return HmmKey.NAME;  //TODO: Inject value for HmmKey through Spring for flexibility
+        return hmmKey;
     }
 
     /**

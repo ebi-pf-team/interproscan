@@ -43,6 +43,7 @@
                 <property name="alignmentEncoder">
                     <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
                 </property>
+                <property name="hmmKey" value="NAME"/>
             </bean>
         </property>
     </bean>

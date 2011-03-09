@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.TigrFamRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class HmmPfamParserTest {
 
     // TIGRfam
     @Resource
-    private HmmPfamParser<TigrFamRawMatch> tigrMatchParser;
+    private HmmPfamParser<TigrFamHmmer2RawMatch> tigrMatchParser;
     @Resource
     private org.springframework.core.io.Resource tigrMatchFile;
 
@@ -42,13 +42,13 @@ public class HmmPfamParserTest {
 
     @Test
     public void testHmmPfamParserForTIGR() throws IOException {
-        Set<RawProtein<TigrFamRawMatch>> proteins = parse(tigrMatchParser, tigrMatchFile.getInputStream());
+        Set<RawProtein<TigrFamHmmer2RawMatch>> proteins = parse(tigrMatchParser, tigrMatchFile.getInputStream());
         assertEquals("Unexpected number of proteins parsed out.", 840, proteins.size());
-        for (RawProtein<TigrFamRawMatch> p : proteins) {
+        for (RawProtein<TigrFamHmmer2RawMatch> p : proteins) {
             assertNotNull(p);
             assertNotNull(p.getMatches());
             assertTrue(p.getMatches().size() > 0);
-            for (TigrFamRawMatch m : p.getMatches()) {
+            for (TigrFamHmmer2RawMatch m : p.getMatches()) {
                 assertNotNull(m);
             }
         }
@@ -76,8 +76,7 @@ public class HmmPfamParserTest {
         try {
             proteins = parser.parse(is);
             assertTrue("Must be at least one protein in collection", proteins.size() > 0);
-        }
-        finally {
+        } finally {
             is.close();
         }
         return proteins;
