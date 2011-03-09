@@ -23,8 +23,6 @@ public class DAOManager {
 
     private GenericDAO<SignatureLibraryRelease, Long> SignatureLibraryReleaseDAO;
 
-    private BlastProDomLocationDAO blastProdomLocationDAO;
-
     private PfamHmmer3RawMatchDAO pfamRawMatchDAO;
 
     private FilteredMatchDAO pfamFilteredMatchDAO;
@@ -64,15 +62,6 @@ public class DAOManager {
     @Required
     public void setSignatureLibraryReleaseDAO(GenericDAO<SignatureLibraryRelease, Long> signatureLibraryReleaseDAO) {
         SignatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
-    }
-
-    public BlastProDomLocationDAO getBlastProdomLocationDAO() {
-        return blastProdomLocationDAO;
-    }
-
-    @Required
-    public void setBlastProdomLocationDAO(BlastProDomLocationDAO blastProdomLocationDAO) {
-        this.blastProdomLocationDAO = blastProdomLocationDAO;
     }
 
     public PfamHmmer3RawMatchDAO getPfamRawMatchDAO() {

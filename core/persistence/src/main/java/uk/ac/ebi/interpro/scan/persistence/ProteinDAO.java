@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Protein;
 
@@ -26,7 +27,7 @@ import java.util.Set;
 
 /**
  * Interface that defines additional functionality for Protein Data Access.
- * 
+ * <p/>
  * User: pjones
  * Date: 09-Jul-2009
  * Time: 13:24:50
@@ -37,38 +38,46 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
 
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated cross references.
+     *
      * @param id being the primary key of the required Protein.
      * @return The Protein, with cross references loaded. (ProteinXrefs are LAZY by default) or null if the
-     * primary key is not present in the database.
+     *         primary key is not present in the database.
      */
+    @Transactional(readOnly = true)
     public Protein getProteinAndCrossReferencesByProteinId(Long id);
 
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated matches.
+     *
      * @param id being the primary key of the required Protein.
      * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
-     * primary key is not present in the database.
+     *         primary key is not present in the database.
      */
-    public Protein getProteinAndMatchesById (Long id);
+    @Transactional(readOnly = true)
+    public Protein getProteinAndMatchesById(Long id);
 
     /**
      * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
      * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
+     *
      * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
      */
+    @Transactional(readOnly = true)
     public List<Protein> getProteinsBetweenIds(long bottom, long top);
 
     /**
      * Inserts new Proteins.
      * If there are Protein objects with the same MD5 / sequence in the database,
      * this method updates these proteins, rather than inserting the new ones.
-     *
+     * <p/>
      * Note that this method inserts the new Protein objects AND and new ProteinXrefs
      * (possibly updating an existing Protein object if necessary with the new ProteinXref.)
+     *
      * @param newProteins being a List of new Protein objects to insert
      * @return a new List<Protein> containing all of the inserted / updated Protein objects.
-     * (Allows the caller to retrieve the primary keys for the proteins).
+     *         (Allows the caller to retrieve the primary keys for the proteins).
      */
+    @Transactional
     public PersistedProteins insertNewProteins(Collection<Protein> newProteins);
 
 
@@ -76,11 +85,11 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * Retrieve all proteins with their matches and cross references for a slice or proteins
      *
      * @param bottom
-     * @param top
-//     * @deprecated Doesn't actually work
+     * @param top    //     * @deprecated Doesn't actually work
      * @return
      */
-    public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom,long top);
+    @Transactional(readOnly = true)
+    public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom, long top);
 
     /**
      * Instances of this class are returned from the insert method above.
@@ -95,7 +104,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
             preExistingProteins.add(protein);
         }
 
-        void addNewProtein(Protein protein){
+        void addNewProtein(Protein protein) {
             newProteins.add(protein);
         }
 
@@ -107,18 +116,18 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
             return newProteins;
         }
 
-        public Long updateBottomProteinId(Long bottomProteinId){
-            for (Protein newProtein : newProteins){
-                if (bottomProteinId == null || bottomProteinId > newProtein.getId()){
+        public Long updateBottomProteinId(Long bottomProteinId) {
+            for (Protein newProtein : newProteins) {
+                if (bottomProteinId == null || bottomProteinId > newProtein.getId()) {
                     bottomProteinId = newProtein.getId();
                 }
             }
             return bottomProteinId;
         }
 
-        public Long updateTopProteinId(Long topProteinId){
-            for (Protein newProtein : newProteins){
-                if (topProteinId == null || topProteinId < newProtein.getId()){
+        public Long updateTopProteinId(Long topProteinId) {
+            for (Protein newProtein : newProteins) {
+                if (topProteinId == null || topProteinId < newProtein.getId()) {
                     topProteinId = newProtein.getId();
                 }
             }

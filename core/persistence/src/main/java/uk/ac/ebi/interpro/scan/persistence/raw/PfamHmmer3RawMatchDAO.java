@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -30,6 +31,7 @@ public interface PfamHmmer3RawMatchDAO
      *         PfamHmmer3RawMatch objects for the protein IDs in the range
      *         specified (Database default String ordering)
      */
+    @Transactional(readOnly = true)
     public Map<String, RawProtein<PfamHmmer3RawMatch>> getRawMatchesForProteinIdsInRange(long bottomId, long topId, String signatureDatabaseRelease);
 
 }

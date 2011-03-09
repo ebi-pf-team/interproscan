@@ -52,7 +52,9 @@ public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> 
                     new CoilsMatch.CoilsLocation(parseCoilsMatch.getStartCoordinate(), parseCoilsMatch.getEndCoordinate())
             );
             persistentProtein.addMatch(new CoilsMatch(coilsSignature, locations));
+            entityManager.persist(persistentProtein);
         }
+        entityManager.flush();
     }
 
     /**

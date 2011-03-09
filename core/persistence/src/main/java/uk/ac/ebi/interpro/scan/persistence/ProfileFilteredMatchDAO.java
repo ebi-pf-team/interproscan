@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -33,6 +34,7 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
     @Override
+    @Transactional
     protected void persist(Collection<RawProtein<T>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<T> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
@@ -42,6 +44,7 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
             }
             entityManager.persist(protein);
         }
+        entityManager.flush();
     }
 
     private ProfileScanMatch buildMatch(Signature signature, T rawMatch) {

@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -26,7 +27,7 @@ import java.util.*;
 
 /**
  * Implements additional functionality for Protein Data Access.
- *
+ * <p/>
  * User: pjones
  * Date: 03-Jul-2009
  * Time: 11:21:55
@@ -35,22 +36,25 @@ import java.util.*;
  */
 public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements ProteinDAO {
 
+    private static final Logger LOGGER = Logger.getLogger(ProteinDAOImpl.class.getName());
+
     /**
      * Calls the GenericDAOImpl constructor passing in Protein.class as
      * argument, so that this DAO is set up to handle the correct class of model.
      */
-    public ProteinDAOImpl(){
+    public ProteinDAOImpl() {
         super(Protein.class);
     }
 
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated cross references.
+     *
      * @param id being the primary key of the required Protein.
      * @return The Protein, with cross references loaded. (Xrefs are LAZY by default) or null if the
-     * primary key is not present in the database.
+     *         primary key is not present in the database.
      */
     @Transactional(readOnly = true)
-    public Protein getProteinAndCrossReferencesByProteinId(Long id){
+    public Protein getProteinAndCrossReferencesByProteinId(Long id) {
         Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.crossReferences where p.id = :id");
         query.setParameter("id", id);
         return (Protein) query.getSingleResult();
@@ -74,24 +78,35 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      * Retrieves all Proteins, cross references and matches for a range
      *
      * @param bottom range lower bound (included)
-     * @param top range upper bound (included)
+     * @param top    range upper bound (included)
      * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
      *         primary key is not present in the database.
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom,long top) {
+    @SuppressWarnings("unchecked")
+    public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom, long top) {
         Query query = entityManager.createQuery("select distinct p from Protein p " +
                 "left outer join fetch p.matches " +
                 "left outer join fetch p.crossReferences where p.id >= :bottom and p.id <= :top");
         query.setParameter("bottom", bottom);
         query.setParameter("top", top);
-        return (List<Protein>) query.getResultList(); 
+        List<Protein> matchingProteins = (List<Protein>) query.getResultList();
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Querying proteins with IDs in range: " + bottom + " to " + top);
+            LOGGER.trace("Matching protein count: " + matchingProteins.size());
+            for (Protein protein : matchingProteins) {
+                LOGGER.trace("Protein ID: " + protein.getId() + " MD5: " + protein.getMd5());
+                LOGGER.trace("Has " + protein.getMatches().size() + " matches");
+            }
+        }
+        return matchingProteins;
     }
 
     /**
      * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
      * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
+     *
      * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
      */
     @Transactional(readOnly = true)
@@ -105,6 +120,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
 
     /**
      * Insert a new Protein instance.
+     *
      * @param newInstance being a new instance to persist.
      */
     @Transactional
@@ -113,6 +129,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         Collection<Protein> proteinList = insert(Collections.singleton(newInstance));
         assert proteinList != null;
         assert proteinList.size() == 1;
+        entityManager.flush();
         return proteinList.iterator().next();
     }
 
@@ -131,6 +148,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         final PersistedProteins persistedProteins = insertNewProteins(newInstances);
         Collection<Protein> allProteins = new ArrayList<Protein>(persistedProteins.getNewProteins());
         allProteins.addAll(persistedProteins.getPreExistingProteins());
+        entityManager.flush();
         return allProteins;
     }
 
@@ -138,51 +156,52 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      * Inserts new Proteins.
      * If there are Protein objects with the same MD5 / sequence in the database,
      * this method updates these proteins, rather than inserting the new ones.
-     *
+     * <p/>
      * Note that this method inserts the new Protein objects AND and new Xrefs
      * (possibly updating an existing Protein object if necessary with the new Xref.)
+     *
      * @param newProteins being a List of new Protein objects to insert
      * @return a new List<Protein> containing all of the inserted / updated Protein objects.
-     * (Allows the caller to retrieve the primary keys for the proteins).
+     *         (Allows the caller to retrieve the primary keys for the proteins).
      */
     @Transactional
     @SuppressWarnings("unchecked")
     public PersistedProteins insertNewProteins(Collection<Protein> newProteins) {
         PersistedProteins persistentProteins = new PersistedProteins();
-        if (newProteins.size() > 0){
+        if (newProteins.size() > 0) {
             // Create a List of MD5s (just as Strings) to query the database with
             final List<String> newMd5s = new ArrayList<String>(newProteins.size());
-            for (Protein newProtein : newProteins){
-                newMd5s.add (newProtein.getMd5());
+            for (Protein newProtein : newProteins) {
+                newMd5s.add(newProtein.getMd5());
             }
             // Retrieve any proteins AND associated xrefs that have the same MD5 as one of the 'new' proteins
             // being inserted and place in a Map of MD5 to Protein object.
             final Map<String, Protein> md5ToExistingProtein = new HashMap<String, Protein>();
             final Query query = entityManager.createQuery("select p from Protein p left outer join fetch P.crossReferences where p.md5 in (:md5)");
             query.setParameter("md5", newMd5s);
-            for (Protein existingProtein : (List<Protein>) query.getResultList()){
-                md5ToExistingProtein.put (existingProtein.getMd5(), existingProtein);
+            for (Protein existingProtein : (List<Protein>) query.getResultList()) {
+                md5ToExistingProtein.put(existingProtein.getMd5(), existingProtein);
             }
 
             // Now have the List of 'new' proteins, and a list of existing proteins that match
             // them. Insert / update proteins as appropriate.
-            for (Protein candidate : newProteins){
+            for (Protein candidate : newProteins) {
 
                 // PROTEIN ALREADY EXISTS in the DB. - update cross references and save.
-                if (md5ToExistingProtein.keySet().contains(candidate.getMd5())){
+                if (md5ToExistingProtein.keySet().contains(candidate.getMd5())) {
                     // This protein is already in the database - add any new Xrefs and update.
                     Protein existingProtein = md5ToExistingProtein.get(candidate.getMd5());
                     boolean updateRequired = false;
-                    if (candidate.getCrossReferences() != null){
-                        for (ProteinXref xref : candidate.getCrossReferences()){
+                    if (candidate.getCrossReferences() != null) {
+                        for (ProteinXref xref : candidate.getCrossReferences()) {
                             // Add any NEW cross references.
-                            if (! existingProtein.getCrossReferences().contains(xref)){
+                            if (!existingProtein.getCrossReferences().contains(xref)) {
                                 existingProtein.addCrossReference(xref);
                                 updateRequired = true;
                             }
                         }
                     }
-                    if (updateRequired){
+                    if (updateRequired) {
                         entityManager.persist(existingProtein);
                     }
                     persistentProteins.addPreExistingProtein(existingProtein);
@@ -195,8 +214,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
             }
         }
         // Finally return all the persisted Protein objects (new or existing)
+        entityManager.flush();
         return persistentProteins;
     }
-
-
 }

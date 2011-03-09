@@ -76,7 +76,9 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch, Lo
                 PhobiusMatch match = new PhobiusMatch(signature, locations);
                 persistentProtein.addMatch(match);
             }
+            entityManager.persist(persistentProtein);
         }
+        entityManager.flush();
     }
 
     /**

@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -26,6 +27,7 @@ public interface PrintsRawMatchDAO extends RawMatchDAO<PrintsRawMatch> {
      *         PrintsRawMatch objects for the protein IDs in the range
      *         specified (Database default String ordering)
      */
+    @Transactional(readOnly = true)
     public Map<String, RawProtein<PrintsRawMatch>> getRawMatchesForProteinIdsInRange(long bottomId, long topId, String signatureDatabaseRelease);
 
 

@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.match.coils.ParseCoilsMatch;
 import uk.ac.ebi.interpro.scan.model.CoilsMatch;
@@ -21,5 +22,6 @@ public interface CoilsFilteredMatchDAO extends GenericDAO<CoilsMatch, Long> {
      *
      * @param coilsMatches being a Set of ParseCoilsMatch objects to be persisted.
      */
+    @Transactional
     void persist(Set<ParseCoilsMatch> coilsMatches);
 }
