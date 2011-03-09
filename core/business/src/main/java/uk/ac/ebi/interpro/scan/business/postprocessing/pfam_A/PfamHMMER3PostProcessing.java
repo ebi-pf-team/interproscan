@@ -54,24 +54,33 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return a Map of proteinIds to a List of filtered matches.
      */
     public Map<String, RawProtein<PfamHmmer3RawMatch>> process(Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawMatchMap) throws IOException {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Pfam A Post Processing: Number of proteins being considered: " + ((proteinIdToRawMatchMap == null) ? 0 : proteinIdToRawMatchMap.size()));
+        }
         if (clanData == null) {
             clanData = clanFileParser.getClanData();
         }
         Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<PfamHmmer3RawMatch>>();
-        final long startNanos = System.nanoTime();
+        long startNanos = System.nanoTime();
         // Iterate over UniParc IDs in range and processBatch them
         SeedAlignmentDataRetriever.SeedAlignmentData seedAlignmentData = null;
         if (seedAlignmentDataRetriever != null) {
             seedAlignmentData = seedAlignmentDataRetriever.retrieveSeedAlignmentData(proteinIdToRawMatchMap.keySet());
         }
+
         for (String proteinId : proteinIdToRawMatchMap.keySet()) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Pfam A post processing: processing protein " + proteinId);
+            }
             List<SeedAlignment> seedAlignments = null;
             if (seedAlignmentData != null) {
                 seedAlignments = seedAlignmentData.getSeedAlignments(proteinId);
             }
             proteinIdToRawProteinMap.put(proteinId, processProtein(proteinIdToRawMatchMap.get(proteinId), seedAlignments));
         }
-        LOGGER.debug(new StringBuilder().append("Batch containing").append(proteinIdToRawMatchMap.size()).append(" proteins took ").append(((double) (System.nanoTime() - startNanos)) / 1.0e9d).append(" s to run.").toString());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(new StringBuilder().append("Batch containing").append(proteinIdToRawMatchMap.size()).append(" proteins took ").append(((double) (System.nanoTime() - startNanos)) / 1.0e9d).append(" s to run.").toString());
+        }
         return proteinIdToRawProteinMap;
     }
 
@@ -122,15 +131,14 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
                 if (candidateMatchClan != null) {
                     // Iterate over the filtered rawProteinUnfiltered (so far) to check for passes
-                    for (final RawMatch match : filteredMatches.getMatches()) {           // TODO - RawProtein should be typed for Match type.
-                        final PfamHmmer3RawMatch passedMatch = (PfamHmmer3RawMatch) match;
-                        final PfamClan passedMatchClan = clanData.getClanByModelAccession(passedMatch.getModelId());
+                    for (final PfamHmmer3RawMatch match : filteredMatches.getMatches()) {
+                        final PfamClan passedMatchClan = clanData.getClanByModelAccession(match.getModelId());
                         // Are both the candidate and the passedMatch in the same clan?
                         if (candidateMatchClan.equals(passedMatchClan)) {
                             // Both in the same clan, so check for overlap.  If they overlap
                             // and are NOT nested, then set passes to false and break out of the inner for loop.
-                            if (matchesOverlap(candidateMatch, passedMatch)) {
-                                if (!matchesAreNested(candidateMatch, passedMatch)) {
+                            if (matchesOverlap(candidateMatch, match)) {
+                                if (!matchesAreNested(candidateMatch, match)) {
                                     passes = false;
                                     break;  // out of loop over filtered rawProteinUnfiltered.
                                 }

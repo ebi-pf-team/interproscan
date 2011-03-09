@@ -11,14 +11,14 @@
 
     <!-- Using AspectJ for AOP -->
     <!--<aop:aspectj-autoproxy/>-->
-    
+
     <!-- JPA Configuration -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean" />
-    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
     <!-- JPA Transaction Setup -->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
     <tx:annotation-driven/>
@@ -34,18 +34,15 @@
 
     <bean id="modelDAO"
           class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Model" />
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Model"/>
     </bean>
-    <bean id="blastProdomLocationDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.BlastProDomLocationDAOImpl">
-        
-    </bean>
+
     <bean id="pfamDAO"
           class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl">
     </bean>
 
     <bean id="signatureLibraryReleaseDAO" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" />
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease"/>
     </bean>
 
     <bean id="pfamFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>

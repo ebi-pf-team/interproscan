@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Listener interface allowing an implementation which is
  * responsible for creating StepInstances in response to
@@ -13,17 +15,17 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 public interface ProteinLoadListener {
 
 
-
     /**
      * Proteins have been loaded. These are divided into new proteins (where computations need to be performed) and
      * precalculated proteins (where computations do not need to be performed).
-     *
+     * <p/>
      * These ranges should have no gap between them.
      *
-     * @param bottomNewProteinId bottom protein primary key of new proteins, inclusive.
-     * @param topNewProteinId top protein primary key of new proteins, inclusive.
+     * @param bottomNewProteinId           bottom protein primary key of new proteins, inclusive.
+     * @param topNewProteinId              top protein primary key of new proteins, inclusive.
      * @param bottomPrecalculatedProteinId bottom protein primary key of precalculated proteins, inclusive.
-     * @param topPrecalculatedProteinId top protein primary key of precalculated proteins, inclusive.
+     * @param topPrecalculatedProteinId    top protein primary key of precalculated proteins, inclusive.
      */
-    void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId,Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId);
+    @Transactional
+    void proteinsLoaded(Long bottomNewProteinId, Long topNewProteinId, Long bottomPrecalculatedProteinId, Long topPrecalculatedProteinId);
 }
