@@ -46,7 +46,6 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> cigarChunks;
 
-    // TODO - Confirm that the cigar alignment is mandatory.
     @Column(nullable = false, updatable = false, length = Chunker.CHUNK_SIZE)
     private String cigarFirstChunk;
 
