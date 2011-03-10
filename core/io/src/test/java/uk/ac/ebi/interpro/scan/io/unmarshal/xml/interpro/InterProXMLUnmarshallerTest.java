@@ -19,7 +19,7 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Tests the InterPro.xml unmarshaller, used to extract InterPro entry and GO term data.
- *
+ * <p/>
  * Note that this test should be turned ON, with xmx set to a high value to generate a new InterPro Entry / GO mapping
  * file for the build.
  *
@@ -41,6 +41,25 @@ public class InterProXMLUnmarshallerTest {
     private ObjectSerializerDeserializer<Map<SignatureLibrary, SignatureLibraryIntegratedMethods>> serializerDeserializer;
 
 
+    /**
+     * Run with
+     * <p/>
+     * mvn clean test -Pentry-go,default-test
+     * <p/>
+     * The resulting serialized data will then be in ./target/interproEntryGoMapping.gz
+     * <p/>
+     * This file should then be copied to
+     * <p/>
+     * jms-implementation/support-mini-x86-32/interproEntryGoMapping-NN.N.gz
+     * <p/>
+     * and the version number updated in all properties files.
+     * <p/>
+     * (DON'T overwrite old versions - commit alongside them please).
+     *
+     * @throws IOException
+     * @throws XMLStreamException
+     * @throws ClassNotFoundException
+     */
     @Test
     @Ignore("Slow and memory intensive - turn on only to rebuild the InterPro / GO mapping file (each InterPro release)")
     public void testUnmarshallerAndSerialization()
@@ -66,8 +85,7 @@ public class InterProXMLUnmarshallerTest {
 
             Assert.assertTrue(unmarshalledData.equals(retrievedData));
 
-        }
-        finally {
+        } finally {
             if (bis != null) bis.close();
         }
     }
