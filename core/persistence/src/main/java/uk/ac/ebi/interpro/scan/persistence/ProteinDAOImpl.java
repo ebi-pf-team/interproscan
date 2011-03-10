@@ -173,6 +173,9 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
             final List<String> newMd5s = new ArrayList<String>(newProteins.size());
             for (Protein newProtein : newProteins) {
                 newMd5s.add(newProtein.getMd5());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("MD5 of new protein: " + newProtein.getMd5());
+                }
             }
             // Retrieve any proteins AND associated xrefs that have the same MD5 as one of the 'new' proteins
             // being inserted and place in a Map of MD5 to Protein object.
@@ -180,6 +183,9 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
             final Query query = entityManager.createQuery("select p from Protein p left outer join fetch P.crossReferences where p.md5 in (:md5)");
             query.setParameter("md5", newMd5s);
             for (Protein existingProtein : (List<Protein>) query.getResultList()) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Found 1 existing protein with MD5: " + existingProtein.getMd5());
+                }
                 md5ToExistingProtein.put(existingProtein.getMd5(), existingProtein);
             }
 
@@ -202,14 +208,24 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
                         }
                     }
                     if (updateRequired) {
-                        entityManager.persist(existingProtein);
+                        // PROTEIN is NOT new, but CHANGED (new Xrefs)
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Merging protein with new Xrefs: " + existingProtein);
+                        }
+                        entityManager.merge(existingProtein);
                     }
                     persistentProteins.addPreExistingProtein(existingProtein);
                 }
                 // PROTEIN IS NEW - save it.
                 else {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Saving new protein: " + candidate);
+                    }
                     entityManager.persist(candidate);
                     persistentProteins.addNewProtein(candidate);
+                    // Check for this new protein next time through the loop, just in case the new source of
+                    // proteins is redundant (e.g. a FASTA file with sequences repeated).
+                    md5ToExistingProtein.put(candidate.getMd5(), candidate);
                 }
             }
         }

@@ -107,6 +107,15 @@ abstract class Xref implements Serializable {
         this.databaseName = databaseName;
     }
 
+    /**
+     * This equals method must not change - do NOT add the database id
+     * to this equals method - otherwise the protein loader code will break.
+     * <p/>
+     * Only considers the natural key of the Xref object (as it should!)
+     *
+     * @param o Xref to compare with.
+     * @return true if the two objects have the same natural key.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -121,6 +130,14 @@ abstract class Xref implements Serializable {
                 .isEquals();
     }
 
+    /**
+     * This hashCode method must not change - do NOT add the database id
+     * to this hashCode method - otherwise the protein loader code will break.
+     * <p/>
+     * Only considers the natural key of the Xref object (as it should!)
+     *
+     * @return hashcode for this Xref.
+     */
     @Override
     public int hashCode() {
         return new HashCodeBuilder(15, 37)
