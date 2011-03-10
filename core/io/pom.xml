@@ -56,6 +56,21 @@
                 <logging.interpro.scan.io.max.file.size>2097152</logging.interpro.scan.io.max.file.size>
             </properties>
         </profile>
+
+        <profile>
+            <id>entry-go</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-Xmx2048m</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 </project>
