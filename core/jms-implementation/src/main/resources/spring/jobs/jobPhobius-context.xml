@@ -14,7 +14,7 @@
 
     <bean id="abstractPhobiusStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobPhobius"/>
-        <property name="maxProteins" value="5000"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PHOBIUS}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>

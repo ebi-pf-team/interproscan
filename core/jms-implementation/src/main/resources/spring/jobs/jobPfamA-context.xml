@@ -15,7 +15,7 @@
 
     <bean id="abstractPfamAStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobPfamA"/>
-        <property name="maxProteins" value="5000"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PFAM_A}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
