@@ -14,7 +14,7 @@
 
     <bean id="abstractCoilsStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobCoils"/>
-        <property name="maxProteins" value="${analysis.max.sequence.count.COILS}}"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.COILS}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
