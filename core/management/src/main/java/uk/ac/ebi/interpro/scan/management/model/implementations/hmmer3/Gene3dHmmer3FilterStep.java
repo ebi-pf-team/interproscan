@@ -98,11 +98,13 @@ public class Gene3dHmmer3FilterStep extends Step {
         );
         // Check we have correct data
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("DAO returned " + rawProteins.size() + " raw proteins:"); // 4
+            LOGGER.debug("In execute() method of Gene3dHmmer3FilterStep.java (Gene3D Post Processing.)");
+            LOGGER.debug("DAO returned " + rawProteins.size() + " raw proteins to filter."); // 4
         }
         filter.setSsfInputFilePath(stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, ssfInputFileTemplate));
         filter.setSsfOutputFilePath(stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, ssfOutputFileTemplate));
         filter.setBinaryPipedOutputFilePath(stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, binaryOutputFileTemplate));
+
         // Filter
         Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = filter.filter(rawProteins);
         // Persist

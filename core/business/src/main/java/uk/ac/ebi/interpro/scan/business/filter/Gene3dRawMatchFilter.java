@@ -82,13 +82,21 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
     @Override
     public Set<RawProtein<Gene3dHmmer3RawMatch>> filter(Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins) {
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Gener3dRawMatchFilter.filter() method called.  Parameters for running:");
+            LOGGER.debug("temporaryFilePath = " + temporaryFilePath);
+            LOGGER.debug("ssfInputFilePath = " + ssfInputFilePath);
+            LOGGER.debug("binaryPipedOutputFilePath = " + binaryPipedOutputFilePath);
+            LOGGER.debug("binaryRunner loaded? " + (binaryRunner != null));
+        }
+
         // Create SSF file
         final Resource ssfInputFile = createSsf(rawProteins);
 
         // Run DF3 on SSF file
         final Resource ssfOutputFile = createTemporaryResource(".output.ssf", ssfOutputFilePath);
 
-        if (binaryPipedOutputFilePath != null){
+        if (binaryPipedOutputFilePath != null) {
             binaryRunner.setTemporaryFilePath(binaryPipedOutputFilePath);
         }
 
@@ -101,16 +109,14 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
                     .append(' ')
                     .append("-o ")
                     .append(ssfOutputFile.getFile().getAbsolutePath());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
 
         // Run command but don't capture output (DF3 writes to a file, not stdout)
         try {
             binaryRunner.run(additionalArguments.toString());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
 
@@ -126,8 +132,7 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
                 if (!ssfOutputFile.getFile().delete()) {
                     LOGGER.warn("Could not delete " + ssfOutputFile.getDescription());
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
         }
@@ -150,8 +155,7 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         DomainFinderResourceWriter writer = new DomainFinderResourceWriter();
         try {
             writer.write(ssfFile, records);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
         return ssfFile;
@@ -166,8 +170,7 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         Collection<DomainFinderRecord> domainFinderRecords;
         try {
             domainFinderRecords = resourceReader.read(ssfFile);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
 
@@ -232,7 +235,13 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
             // Track matches that we've added in case there are two raw matches with the same e-value that fall within
             // the greater-than/less-than boundaries but have different start and end positions -- in these cases
             // "just take the first match" (Source: Craig McAnulla, June 2010)
-            String matchKey = m.getSequenceIdentifier() + "-" + m.getModelId() + "-" + r.getSegmentBoundaries();
+            String matchKey = new StringBuilder()
+                    .append(m.getSequenceIdentifier())
+                    .append('-')
+                    .append(m.getModelId())
+                    .append('-')
+                    .append(r.getSegmentBoundaries())
+                    .toString();
             if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
                     m.getModelId().equals(r.getModelId()) &&
                     m.getLocationStart() <= lowestBoundary &&
@@ -299,25 +308,36 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
      * for managing temporary files which ensures that they are in a known, managed location
      * (and provides a mechanism to clean up after they have been used, however this class does that too
      * so not necessary in this case.).
-     * @param suffix  the suffix for the file name.
+     *
+     * @param suffix                        the suffix for the file name.
      * @param defaultFullyQualifiedFilePath which, if not null, provides the fully qualified path for the temporary file.
-     * @return  the Resource object
+     * @return the Resource object
      */
     private Resource createTemporaryResource(String suffix, final String defaultFullyQualifiedFilePath) {
         try {
             File file;
-            if (defaultFullyQualifiedFilePath != null){
+            if (defaultFullyQualifiedFilePath != null) {
                 file = new File(defaultFullyQualifiedFilePath);
-            }
-            else if (temporaryFilePath == null) {
+            } else if (temporaryFilePath == null) {
                 file = File.createTempFile("ipr-", suffix);
-            }
-            else {
+            } else {
                 file = new File(temporaryFilePath + suffix);
             }
+            if (file.exists()) {
+                LOGGER.warn("Temporary file " + file.getAbsolutePath() + " already exists.  Deleting.");
+                if (!file.delete()) {
+                    throw new IllegalStateException("Cannot delete pre-existing file " + file.getAbsolutePath() + ".  Check file permissions. Exiting.");
+                }
+            }
+            if (!file.createNewFile()) {
+                throw new IllegalStateException("Cannot write to path " + file.getAbsolutePath() + ". Unrecoverable error - exiting.");
+            }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Temporary file created OK: " + file.getAbsolutePath());
+            }
+
             return new FileSystemResource(file);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
