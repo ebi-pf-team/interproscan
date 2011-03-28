@@ -168,6 +168,11 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
             String line;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
+                // New code block to handle matches where there is a sequence match with
+                // no corresponding domain matches.
+                if (stage == ParsingStage.LOOKING_FOR_DOMAIN_DATA_LINE && line.startsWith(DOMAIN_SECTION_START)) {
+                    stage = ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
+                }
                 if (line.startsWith(END_OF_RECORD)) {
                     // Process a complete record - store all sequence / domain scores
                     // for the method.
