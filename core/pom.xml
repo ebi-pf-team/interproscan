@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
     <name>InterProScan</name>
     <url>http://www.ebi.ac.uk/interpro/</url>
-
+    <!--Test Maxim-->
     <organization>
         <name>European Bioinformatics Institute</name>
         <url>http://www.ebi.ac.uk/</url>
