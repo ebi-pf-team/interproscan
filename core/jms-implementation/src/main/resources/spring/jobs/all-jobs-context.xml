@@ -16,7 +16,7 @@
     <import resource="jobPrositePatterns-context.xml"/>
     <!--<import resource="jobSMART-context.xml"/>-->
     <import resource="jobTIGRFAM-9.0-context.xml"/>
-    <import resource="jobTIGRFAM-10.1-context.xml"/>
+    <!--<import resource="jobTIGRFAM-10.1-context.xml"/>-->
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
@@ -42,7 +42,7 @@
                 <ref bean="jobPrositePatterns"/>
                 <!--<ref bean="jobSMART"/>-->
                 <ref bean="jobTIGRFAM-9.0"/>
-                <ref bean="jobTIGRFAM-10.1"/>
+                <!--<ref bean="jobTIGRFAM-10.1"/>-->
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
