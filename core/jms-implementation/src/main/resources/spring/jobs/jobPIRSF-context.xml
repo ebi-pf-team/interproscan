@@ -6,66 +6,62 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: Coils ############################  -->
-    <bean id="jobTIGRFAM-9.0" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="TIGRFAMs are protein families based on Hidden Markov Models or HMMs"/>
+    <!-- ######################## JOB: PIRSF version 2.74 ############################  -->
+    <bean id="jobPIRSF" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="Please specify are detailed description for the PIRSF job"/>
         <property name="analysis" value="true"/>
     </bean>
 
-    <bean id="abstractTIGRFAMStep-9.0" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobTIGRFAM-9.0"/>
-        <property name="maxProteins" value="${analysis.max.sequence.count.TIGRFAM_9}"/>
+    <bean id="abstractPIRSFStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobPIRSF"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PIRSF}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="stepTIGRFAMWriteFastaFile-9.0"
+    <bean id="stepPIRSFWriteFasta"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstractTIGRFAMStep-9.0">
-        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
-        <property name="stepDescription" value="Create fasta file."/>
+          parent="abstractPIRSFStep">
+        <property name="stepDescription" value="Create FASTA file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-
-    <!--TODO - The run binary step for HMMER should choose between search or scan, depending
-        TODO - upon the number of proteins being searched.  True for both HMMER2 & 3.
-        TODO - PROBLEM - HMMER2 hmmsearch ONLY ACCEPTS ONE MODEL AT A TIME. -->
-
     <!-- STEP 2 -->
-    <bean id="stepTIGRFAMRunBinary-9.0"
+    <bean id="stepPIRSFRunBinary"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
-          parent="abstractTIGRFAMStep-9.0">
+          parent="abstractPIRSFStep">
         <!-- In example command line below, replace _ with -
 
-        /ebi/production/interpro/binaries/64_bit_Linux/hmmpfam  _-cpu 1 _-acc -E 20 -A 0 _-cut_tc /ebi/sp/pro1/interpro/data/members/tigrfam/9.0/TIGRFAMs_9.0_HMM.LIB.bin  -->
-        <property name="dependsUpon" ref="stepTIGRFAMWriteFastaFile-9.0"/>
-        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        /ebi/production/interpro/binaries/64_bit_Linux/hmmpfam  -A 0 _-cpu 1 _-acc -E 0.01 /ebi/sp/pro1/interpro/data/members/pirsf/274/sf_hmm.bin  -->
+        <property name="dependsUpon" ref="stepPIRSFWriteFasta"/>
+        <property name="stepDescription" value="Run Hmmer2 Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
-        <property name="binarySwitches" value="--cpu 1 --acc -E 20 -A 0 --cut_tc"/>
+        <property name="binarySwitches" value="-A 0 --cpu 1 --acc -E 0.01"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToHmmFile" value="${tigrfam.hmm.bin.path.9.0}"/>
+        <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path}"/>
     </bean>
 
-    <bean id="stepTIGRFAMDeleteFastaFile-9.0"
+    <bean id="stepPIRSFDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractTIGRFAMStep-9.0">
-        <property name="dependsUpon" ref="stepTIGRFAMRunBinary-9.0"/>
+          parent="abstractPIRSFStep">
+        <property name="dependsUpon" ref="stepPIRSFRunBinary"/>
         <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <bean id="stepTIGRFAMStoreRawMatches-9.0"
+    <bean id="stepPIRSFStoreRawMatches"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.tigrfam.ParseTigrFamHmmpfamOutputStep"
-          parent="abstractTIGRFAMStep-9.0">
-        <property name="dependsUpon" ref="stepTIGRFAMRunBinary-9.0"/>
+          parent="abstractPIRSFStep">
+        <property name="dependsUpon" ref="stepPIRSFRunBinary"/>
         <property name="stepDescription" value="Parse the HMMER 2 binary output and store as raw matches."/>
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+
         <property name="tigrfamRawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
         <property name="serialGroup" value="PARSE_TIGRFAM"/>
         <property name="parser" ref="tigrfamHmmPfamParser-9.0"/>
@@ -91,7 +87,7 @@
         <property name="rawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
     </bean>
 
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
 
@@ -118,4 +114,5 @@
         <property name="signatureLibraryRelease" value="9.0"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
 </beans>
