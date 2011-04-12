@@ -168,11 +168,11 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch, Lo
             String proteinIdAsString = phobProt.getProteinIdentifier();
             proteinIds.add(new Long(proteinIdAsString));
         }
-
-        for (int index = 0; index < proteinIds.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
+        final int proteinIdCount = proteinIds.size();
+        for (int index = 0; index < proteinIdCount; index += MAXIMUM_IN_CLAUSE_SIZE) {
             int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
-            if (endIndex > proteinIds.size()) {
-                endIndex = proteinIds.size();
+            if (endIndex > proteinIdCount) {
+                endIndex = proteinIdCount;
             }
             final List<Long> proteinIdSlice = proteinIds.subList(index, endIndex);
             final Query proteinQuery = entityManager.createQuery(

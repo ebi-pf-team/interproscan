@@ -29,7 +29,7 @@ public class PrintsRawMatch extends RawMatch {
 
     @Column
     private double evalue;
-    @Column
+    @Column(nullable = false, length = 25)
     private String graphscan;
     @Column
     private int motifCount;
