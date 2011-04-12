@@ -121,7 +121,16 @@ abstract class AbstractBinaryRunner implements BinaryRunner {
                 : new File(temporaryFilePath);
 
         commandLineConversation.setOutputPathToFile(file.getAbsolutePath(), true, false);
-        int exitCode = commandLineConversation.runCommand(command);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("About to run command line: " + command);
+        }
+        final int exitCode = commandLineConversation.runCommand(command);
+        if (exitCode != 0) {
+            LOGGER.error("Command exited with non-zero exit status.");
+            throw new IllegalStateException("Command " + command + " exited with exit status " + exitCode);
+        } else if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Command COMPLETED SUCCESSFULLY.  Returning FileInputStream on output file.");
+        }
         return new FileInputStream(file);
     }
 

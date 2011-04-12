@@ -18,6 +18,8 @@ import java.util.Set;
  * This class parses and persists the output from hmmpfam using HMMER version 2.
  *
  * @author Phil Jones
+ * @author Matthew Fraser
+ * @author Maxim Scheremetjew
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */

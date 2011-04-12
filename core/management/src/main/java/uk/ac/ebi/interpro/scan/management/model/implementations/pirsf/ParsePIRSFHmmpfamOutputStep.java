@@ -6,7 +6,8 @@ import uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch;
 /**
  * This class parses and persists the output from hmmpfam for TIGRFAM
  *
- * @author Phil Jones
+ * @author Matthew Fraser
+ * @author Maxim Scheremetjew
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */

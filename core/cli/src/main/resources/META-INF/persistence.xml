@@ -60,6 +60,8 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
+
 
         <properties>
             <property name="hibernate.show_sql" value="true"/>
