@@ -7,14 +7,14 @@
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <!-- ######################## JOB: PIRSF version 2.74 ############################  -->
-    <bean id="jobPIRSF" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobPIRSF-2.74" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
                   value="Please specify are detailed description for the PIRSF job"/>
         <property name="analysis" value="true"/>
     </bean>
 
-    <bean id="abstractPIRSFStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobPIRSF"/>
+    <bean id="abstractPIRSFStep-2.74" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobPIRSF-2.74"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.PIRSF}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
@@ -22,97 +22,92 @@
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="stepPIRSFWriteFasta"
+    <bean id="stepPIRSFWriteFasta-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstractPIRSFStep">
+          parent="abstractPIRSFStep-2.74">
         <property name="stepDescription" value="Create FASTA file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
     <!-- STEP 2 -->
-    <bean id="stepPIRSFRunBinary"
+    <bean id="stepPIRSFRunBinary-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
-          parent="abstractPIRSFStep">
+          parent="abstractPIRSFStep-2.74">
         <!-- In example command line below, replace _ with -
-
         /ebi/production/interpro/binaries/64_bit_Linux/hmmpfam  -A 0 _-cpu 1 _-acc -E 0.01 /ebi/sp/pro1/interpro/data/members/pirsf/274/sf_hmm.bin  -->
-        <property name="dependsUpon" ref="stepPIRSFWriteFasta"/>
+        <property name="dependsUpon" ref="stepPIRSFWriteFasta-2.74"/>
         <property name="stepDescription" value="Run Hmmer2 Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
         <property name="binarySwitches" value="-A 0 --cpu 1 --acc -E 0.01"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path}"/>
+        <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path.2.74}"/>
     </bean>
 
-    <bean id="stepPIRSFDeleteFastaFile"
+    <bean id="stepPIRSFDeleteFastaFile-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPIRSFStep">
-        <property name="dependsUpon" ref="stepPIRSFRunBinary"/>
+          parent="abstractPIRSFStep-2.74">
+        <property name="dependsUpon" ref="stepPIRSFRunBinary-2.74"/>
         <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <bean id="stepPIRSFStoreRawMatches"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.tigrfam.ParseTigrFamHmmpfamOutputStep"
-          parent="abstractPIRSFStep">
-        <property name="dependsUpon" ref="stepPIRSFRunBinary"/>
+    <bean id="stepPIRSFStoreRawMatches-2.74"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
+          parent="abstractPIRSFStep-2.74">
+        <property name="dependsUpon" ref="stepPIRSFRunBinary-2.74"/>
         <property name="stepDescription" value="Parse the HMMER 2 binary output and store as raw matches."/>
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-
-        <property name="tigrfamRawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
-        <property name="serialGroup" value="PARSE_TIGRFAM"/>
-        <property name="parser" ref="tigrfamHmmPfamParser-9.0"/>
+        <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
+        <property name="serialGroup" value="PARSE_PIRSF"/>
+        <property name="parser" ref="pirsfHmmPfamParser-2.74"/>
     </bean>
 
-    <bean id="stepTIGRFAMDeleteRawOutput-9.0"
+    <bean id="stepPIRSFDeleteRawOutput-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractTIGRFAMStep-9.0">
-        <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches-9.0"/>
+          parent="abstractPIRSFStep-2.74">
+        <property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.74"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <bean id="stepTIGRFamPostProcessing-9.0"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.tigrfam.TigrFamPostProcessingStep"
-          parent="abstractTIGRFAMStep-9.0">
-        <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches-9.0"/>
-        <property name="signatureLibraryRelease" value="9.0"/>
-        <property name="stepDescription" value="Stores raw matches as filtered matches."/>
-        <property name="filteredMatchDAO" ref="tigrfamFilteredMatchDAO-9.0"/>
-        <property name="serialGroup" value="TIGRFAM_POST_PROCESSING"/>
-        <property name="rawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
-    </bean>
+    <!--<bean id="stepPIRSFPostProcessing-2.74"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.tigrfam.TigrFamPostProcessingStep"-->
+          <!--parent="abstractPIRSFStep-2.74">-->
+        <!--<property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches-9.0"/>-->
+        <!--<property name="signatureLibraryRelease" value="9.0"/>-->
+        <!--<property name="stepDescription" value="Stores raw matches as filtered matches."/>-->
+        <!--<property name="filteredMatchDAO" ref="tigrfamFilteredMatchDAO-9.0"/>-->
+        <!--<property name="serialGroup" value="TIGRFAM_POST_PROCESSING"/>-->
+        <!--<property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>-->
+    <!--</bean>-->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
 
-    <bean id="tigrfamRawMatchDAO-9.0"
+    <bean id="pirsfRawMatchDAO-2.74"
           class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch"/>
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch"/>
     </bean>
 
-    <bean id="tigrfamFilteredMatchDAO-9.0"
-          class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer2FilteredMatchDAOImpl"/>
+    <!--<bean id="tigrfamFilteredMatchDAO-9.0"-->
+          <!--class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer2FilteredMatchDAOImpl"/>-->
 
-    <!--<bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">-->
-    <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>-->
-    <!--</bean>-->
-
-    <bean id="tigrfamHmmPfamParser-9.0" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
-        <property name="signatureLibrary" value="TIGRFAM"/>
-        <property name="signatureLibraryRelease" value="9.0"/>
-        <property name="hmmer2ParserSupport" ref="tigrFamParserSupport-9.0"/>
+    <bean id="pirsfHmmPfamParser-2.74" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+        <property name="signatureLibrary" value="PIRSF"/>
+        <property name="signatureLibraryRelease" value="2.74"/>
+        <property name="hmmer2ParserSupport" ref="pirsfParserSupport-2.74"/>
     </bean>
 
-    <bean id="tigrFamParserSupport-9.0"
-          class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.TigrfamHmmer2ParserSupport">
-        <property name="signatureLibraryRelease" value="9.0"/>
+    <bean id="pirsfParserSupport-2.74"
+          class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.PirsfHmmer2ParserSupport">
+        <property name="signatureLibraryRelease" value="2.74"/>
     </bean>
+
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
 </beans>
