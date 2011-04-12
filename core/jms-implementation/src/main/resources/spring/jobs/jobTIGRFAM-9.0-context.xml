@@ -66,7 +66,7 @@
         <property name="dependsUpon" ref="stepTIGRFAMRunBinary-9.0"/>
         <property name="stepDescription" value="Parse the HMMER 2 binary output and store as raw matches."/>
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="tigrfamRawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
+        <property name="rawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
         <property name="serialGroup" value="PARSE_TIGRFAM"/>
         <property name="parser" ref="tigrfamHmmPfamParser-9.0"/>
     </bean>

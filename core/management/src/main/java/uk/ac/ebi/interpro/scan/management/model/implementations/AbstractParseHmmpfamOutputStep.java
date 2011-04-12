@@ -7,7 +7,6 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.FileInputStream;
@@ -30,7 +29,7 @@ public class AbstractParseHmmpfamOutputStep<T extends Hmmer2RawMatch> extends St
 
     private HmmPfamParser<T> parser;
 
-    private RawMatchDAO<T> tigrfamRawMatchDAO;
+    private RawMatchDAO<T> rawMatchDAO;
 
     @Required
     public void setHmmerOutputFileNameTemplate(String hmmerOutputFilePathTemplate) {
@@ -38,8 +37,8 @@ public class AbstractParseHmmpfamOutputStep<T extends Hmmer2RawMatch> extends St
     }
 
     @Required
-    public void setTigrfamRawMatchDAO(RawMatchDAO<T> tigrfamRawMatchDAO) {
-        this.tigrfamRawMatchDAO = tigrfamRawMatchDAO;
+    public void setRawMatchDAO(RawMatchDAO<T> rawMatchDAO) {
+        this.rawMatchDAO = rawMatchDAO;
     }
 
     @Required
@@ -64,7 +63,7 @@ public class AbstractParseHmmpfamOutputStep<T extends Hmmer2RawMatch> extends St
             final String hmmerOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, hmmerOutputFilePathTemplate);
             is = new FileInputStream(hmmerOutputFilePath);
             final Set<RawProtein<T>> parsedResults = parser.parse(is);
-            tigrfamRawMatchDAO.insertProteinMatches(parsedResults);
+            rawMatchDAO.insertProteinMatches(parsedResults);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to read " + hmmerOutputFilePathTemplate, e);
         } finally {
