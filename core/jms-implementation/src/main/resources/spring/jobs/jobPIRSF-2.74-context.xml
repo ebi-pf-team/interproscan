@@ -91,7 +91,7 @@
         <property name="filteredMatchDAO" ref="pirsfFilteredMatchDAO-2.74"/>
         <property name="serialGroup" value="PIRSF_POST_PROCESSING"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
-        <property name="parser" ref="pirsfDatFileParser"/>
+        <property name="postProcessor" ref="pirsfPostProcessor-2.74"/>
      </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
@@ -108,8 +108,6 @@
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.RawMatch"/>
     </bean>
 
-    <bean id="pirsfDatFileParser" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
-
     <bean id="pirsfFilteredMatchDAO-2.74"
           class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer2FilteredMatchDAOImpl"/>
 
@@ -123,6 +121,14 @@
           class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.PirsfHmmer2ParserSupport">
         <property name="signatureLibraryRelease" value="2.74"/>
     </bean>
+
+    <bean id="pirsfPostProcessor-2.74" class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.PirsfPostProcessing">
+        <property name="pirsfDatFileParser" ref="pirsfDatParser-2.74"/>
+        <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.74}"/>
+    </bean>
+
+    <bean id="pirsfDatParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
+
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 

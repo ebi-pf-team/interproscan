@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.PirsfPostProcessing;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -11,6 +12,8 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -23,13 +26,18 @@ public class PIRSFPostProcessingStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(PIRSFPostProcessingStep.class.getName());
 
+    private PirsfPostProcessing postProcessor;
+
     private String signatureLibraryRelease;
 
     private RawMatchDAO<PIRSFHmmer2RawMatch> rawMatchDAO;
 
     private FilteredMatchDAO<PIRSFHmmer2RawMatch, Hmmer2Match> filteredMatchDAO;
 
-    private PirsfDatFileParser parser;
+    @Required
+    public void setPostProcessor(PirsfPostProcessing postProcessor) {
+        this.postProcessor = postProcessor;
+    }
 
     @Required
     public void setSignatureLibraryRelease(String signatureLibraryRelease) {
@@ -44,11 +52,6 @@ public class PIRSFPostProcessingStep extends Step {
     @Required
     public void setFilteredMatchDAO(FilteredMatchDAO<PIRSFHmmer2RawMatch, Hmmer2Match> filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
-    }
-
-    @Required
-    public void setParser(PirsfDatFileParser parser) {
-        this.parser = parser;
     }
 
     /**
@@ -72,14 +75,31 @@ public class PIRSFPostProcessingStep extends Step {
                 stepInstance.getTopProtein(),
                 signatureLibraryRelease
         );
-        // Read in PIRSF DAT file
-        //TODO
-        //parser.parse();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("PIRSF: Retrieved " + rawMatches.size() + " proteins to post-process.");
+            int matchCount = 0;
+            for (final RawProtein rawProtein : rawMatches) {
+                matchCount += rawProtein.getMatches().size();
+            }
+            LOGGER.debug("PIRSF: A total of " + matchCount + " raw matches.");
+        }
 
-        // Filter the raw matches
-        //TODO
+        try {
+            // Filter the raw matches
+            Map<String, RawProtein<PIRSFHmmer2RawMatch>> filteredMatches = postProcessor.process(rawMatches);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("PIRSF: " + filteredMatches.size() + " proteins passed through post processing.");
+                int matchCount = 0;
+                for (final RawProtein rawProtein : filteredMatches.values()) {
+                    matchCount += rawProtein.getMatches().size();
+                }
+                LOGGER.debug("PIRSF: A total of " + matchCount + " matches PASSED.");
+            }
 
-        // Persist the remaining raw matches
-        filteredMatchDAO.persist(rawMatches);
+            // Persist the remaining (filtered) raw matches
+            filteredMatchDAO.persist(filteredMatches.values());
+        } catch (IOException e) {
+            throw new IllegalStateException("IOException thrown when attempting to post process filtered PIRSF matches.", e);
+        }
     }
 }

@@ -40,20 +40,20 @@ public class PirsfDatFileParser implements Serializable {
 
     private static final Pattern PIRSF_DAT_PATTERN = Pattern.compile("^>PIRSF[0-9]{6}$");
 
-    public Map<String, PirsfDatRecord> parse(Resource thresholdFileResource) throws IOException {
-        if (thresholdFileResource == null) {
+    public Map<String, PirsfDatRecord> parse(Resource pirsfDatFileResource) throws IOException {
+        if (pirsfDatFileResource == null) {
             throw new NullPointerException("Resource is null");
         }
-        if (!thresholdFileResource.exists()) {
-            throw new IllegalStateException(thresholdFileResource.getFilename() + " does not exist");
+        if (!pirsfDatFileResource.exists()) {
+            throw new IllegalStateException(pirsfDatFileResource.getFilename() + " does not exist");
         }
-        if (!thresholdFileResource.isReadable()) {
-            throw new IllegalStateException(thresholdFileResource.getFilename() + " is not readable");
+        if (!pirsfDatFileResource.isReadable()) {
+            throw new IllegalStateException(pirsfDatFileResource.getFilename() + " is not readable");
         }
         final Map<String, PirsfDatRecord> data = new HashMap<String, PirsfDatRecord>();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(thresholdFileResource.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(pirsfDatFileResource.getInputStream()));
             String line = null;
             String modelAccession = null;
             String modelName = null;
