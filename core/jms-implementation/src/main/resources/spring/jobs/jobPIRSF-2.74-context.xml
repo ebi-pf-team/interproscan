@@ -9,7 +9,7 @@
     <!-- ######################## JOB: PIRSF version 2.74 ############################  -->
     <bean id="jobPIRSF-2.74" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="Please specify are detailed description for the PIRSF job"/>
+                  value="The PIRSF concept is being used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships."/>
         <property name="analysis" value="true"/>
     </bean>
 
@@ -125,10 +125,13 @@
     <bean id="pirsfPostProcessor-2.74" class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.PirsfPostProcessing">
         <property name="pirsfDatFileParser" ref="pirsfDatParser-2.74"/>
         <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.74}"/>
+        <property name="sfTbFileParser" ref="sfTbParser-2.74"/>
+        <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.74}"/>
     </bean>
 
     <bean id="pirsfDatParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
 
+    <bean id="sfTbParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
