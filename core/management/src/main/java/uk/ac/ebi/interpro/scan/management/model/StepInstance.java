@@ -149,15 +149,13 @@ public class StepInstance implements Serializable {
     }
 
     public void addStepExecution(StepExecution stepExecution) {
-        synchronized (this) {
-            // Sanity check
-            for (StepExecution previousExecutions : executions) {
-                if (previousExecutions.getState() != StepExecutionState.STEP_EXECUTION_FAILED) {
-                    throw new IllegalStateException("Attempting to add a new StepExecution to step " + this + " when there is an existing (NON-STEP_EXECUTION_FAILED) step execution.");
-                }
+        // Sanity check
+        for (StepExecution previousExecutions : executions) {
+            if (previousExecutions.getState() != StepExecutionState.STEP_EXECUTION_FAILED) {
+                throw new IllegalStateException("Attempting to add a new StepExecution to step " + this + " when there is an existing (NON-STEP_EXECUTION_FAILED) step execution.");
             }
-            executions.add(stepExecution);
         }
+        executions.add(stepExecution);
     }
 
     /**
@@ -165,25 +163,23 @@ public class StepInstance implements Serializable {
      *
      * @return the state of this StepInstance
      */
-    public StepExecutionState getState() {
-        synchronized (this) {
-            if (executions.size() == 0) {
-                return StepExecutionState.NEW_STEP_INSTANCE;
-            }
-            for (StepExecution exec : executions) {
-                final StepExecutionState executionState = exec.getState();
-                switch (executionState) {
-                    case NEW_STEP_EXECUTION:
-                    case STEP_EXECUTION_SUBMITTED:
-                    case STEP_EXECUTION_RUNNING:
-                    case STEP_EXECUTION_SUCCESSFUL:
-                        return executionState;
-                    default:
-                        break;
-                }
-            }
-            return StepExecutionState.STEP_EXECUTION_FAILED;
+    private StepExecutionState getState() {
+        if (executions.size() == 0) {
+            return StepExecutionState.NEW_STEP_INSTANCE;
         }
+        for (StepExecution exec : executions) {
+            final StepExecutionState executionState = exec.getState();
+            switch (executionState) {
+                case NEW_STEP_EXECUTION:
+                case STEP_EXECUTION_SUBMITTED:
+                case STEP_EXECUTION_RUNNING:
+                case STEP_EXECUTION_SUCCESSFUL:
+                    return executionState;
+                default:
+                    break;
+            }
+        }
+        return StepExecutionState.STEP_EXECUTION_FAILED;
     }
 
     public Long getId() {
@@ -258,15 +254,18 @@ public class StepInstance implements Serializable {
         return false;
     }
 
-
+    /**
+     * Called by MASTER (Single thread) and also by this object...?
+     *
+     * @param jobs
+     * @return
+     */
     public boolean haveFinished(Jobs jobs) {
-        synchronized (this) {
-            final StepExecutionState executionState = getState();
-            if (StepExecutionState.STEP_EXECUTION_SUCCESSFUL == executionState) return true;
-            if (StepExecutionState.STEP_EXECUTION_FAILED == executionState && this.getExecutions().size() >= this.getStep(jobs).getRetries())
-                return true;
-            return false;
-        }
+        final StepExecutionState executionState = getState();
+        if (StepExecutionState.STEP_EXECUTION_SUCCESSFUL == executionState) return true;
+        if (StepExecutionState.STEP_EXECUTION_FAILED == executionState && this.getExecutions().size() >= this.getStep(jobs).getRetries())
+            return true;
+        return false;
     }
 
 
@@ -275,10 +274,13 @@ public class StepInstance implements Serializable {
     }
 
 
+    /**
+     * Called by MasterMessageSenderImpl, dependent of Master.
+     *
+     * @return a new StepExecution.
+     */
     public StepExecution createStepExecution() {
-        synchronized (this) {
-            return new StepExecution(this);
-        }
+        return new StepExecution(this);
     }
 
 
@@ -316,12 +318,16 @@ public class StepInstance implements Serializable {
         return this.getBottomProtein() != null && this.getTopProtein() != null;
     }
 
+    /**
+     * Called by MASTER. MASTER runs in single thread... so not synchronized.
+     *
+     * @param jobs set of all Jobs
+     * @return true, if this StepInstance has failed an no chance of any repeats.
+     */
     public boolean hasFailedPermanently(Jobs jobs) {
-        synchronized (this) {
-            return StepExecutionState.STEP_EXECUTION_FAILED == this.getState()
-                    &&
-                    haveFinished(jobs);
-        }
+        return StepExecutionState.STEP_EXECUTION_FAILED == getState()
+                &&
+                haveFinished(jobs);
     }
 
 

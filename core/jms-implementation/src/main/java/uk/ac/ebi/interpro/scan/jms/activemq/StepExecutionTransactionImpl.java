@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: Description
+ * This class performs the execution in a transaction.  This has been factored out of the AmqInterProScanWorker class
+ * to ensure that the transaction semantics work...
  *
  * @author Phil Jones
  * @version $Id$

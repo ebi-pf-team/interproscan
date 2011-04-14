@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 @Entity
 public abstract class PfScanRawMatch extends RawMatch {
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 4000)
     private String cigarAlignment;
 
     protected PfScanRawMatch() {

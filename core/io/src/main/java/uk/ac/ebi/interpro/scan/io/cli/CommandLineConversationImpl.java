@@ -113,8 +113,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                 while ((readLength = commandInputStream.read(buf)) > -1) {
                     bos.write(buf, 0, readLength);
                 }
-            }
-            finally {
+            } finally {
                 commandInputStream.close();
                 if (bos != null) {
                     bos.close();
@@ -124,6 +123,11 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
         // Retrieve status and output from the command.
         exitStatus = process.waitFor();
+
+        while (outputGobbler.isStillRunning() || (!mergeErrorIntoOutput && errorGobbler.isStillRunning())) {
+            LOGGER.warn("The command process " + commands + " is complete, however the output / error 'Gobblers' have not closed their streams yet.  Waiting...");
+            Thread.sleep(100);
+        }
 
         /**
          * Attempt to ensure that any IOExceptions thrown in the Gobbler threads are re-thrown
@@ -159,8 +163,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         int exitStatus;
         try {
             exitStatus = runCommand(false, Arrays.asList(command.split(" ")));
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
         if (exitStatus != 0) {
@@ -298,12 +301,14 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         StringBuffer stringBuffer = new StringBuffer();
         private File gobblerFileHandle;
 
+        private boolean stillRunning = true;
+
         StreamGobbler(InputStream inputStream) {
             this(inputStream, null);
         }
 
         StreamGobbler(InputStream inputStream, File outputFileHandle) {
-            // These stream gobblers really need to run to keep up with the external process.
+            // These stream gobblers really need to run as a high priority to keep up with the external process.
             this.setPriority(Thread.MAX_PRIORITY);
             this.inputStream = inputStream;
             if (outputFileHandle != null) {
@@ -311,14 +316,22 @@ public class CommandLineConversationImpl implements CommandLineConversation {
             }
         }
 
+        public boolean isStillRunning() {
+            return stillRunning;
+        }
+
         /**
-         * Run method than consumes any ouput from the external process as it is produced.
+         * Run method then consumes any output from the external process as it is produced.
          */
         public void run() {
-            if (gobblerFileHandle == null) {
-                outputToString();
-            } else {
-                outputToFile();
+            try {
+                if (gobblerFileHandle == null) {
+                    outputToString();
+                } else {
+                    outputToFile();
+                }
+            } finally {
+                stillRunning = false;
             }
         }
 
@@ -333,12 +346,10 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                             .append(line)
                             .append('\n');
                 }
-            }
-            catch (IOException ioe) {
+            } catch (IOException ioe) {
                 LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
                 exceptionThrownByGobbler = ioe;
-            }
-            finally {
+            } finally {
                 if (bufferedReader != null) {
                     try {
                         bufferedReader.close();
@@ -373,19 +384,16 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                         destinationChannel.write(buffer);
                     }
                 }
-            }
-            catch (IOException ioe) {
+            } catch (IOException ioe) {
                 LOGGER.error("IOException thrown when attempting to read InputStream from external process.", ioe);
                 exceptionThrownByGobbler = ioe;
-            }
-            finally {
+            } finally {
                 try {
                     if (destinationChannel != null) {
                         destinationChannel.close();
                     }
                     inputStream.close();
-                }
-                catch (IOException ioe) {
+                } catch (IOException ioe) {
                     LOGGER.error("IOException thrown when attempting to close " +
                             "BufferedReader from external process.", ioe);
                     exceptionThrownByGobbler = ioe;

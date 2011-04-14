@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: Description
+ * Master Controller for InterProScan 5.
+ * <p/>
+ * This implementation works for both the "Black box" and "Onion mode" versions of InterProScan 5.
+ * <p/>
+ * Manages the scheduling of StepIntances, based upon the pattern of dependencies in the JobXML definitions.
  *
  * @author Phil Jones
  * @version $Id$
@@ -35,12 +39,6 @@ public class AmqInterProScanMaster implements Master {
     private StepInstanceDAO stepInstanceDAO;
 
     private MasterMessageSender messageSender;
-
-//    private EmbeddedWorkerFactory embeddedWorkerFactory;
-
-    private Integer numberOfEmbeddedWorkers;
-
-    private List<Thread> workerThreads;
 
     private boolean shutdownCalled = false;
 
@@ -77,10 +75,6 @@ public class AmqInterProScanMaster implements Master {
     private boolean cleanDatabase = false;
     private boolean mapToInterPro = false;
     private boolean mapToGO = false;
-
-    public void setEmbeddedWorkerCount(Integer numberOfEmbeddedWorkers) {
-        this.numberOfEmbeddedWorkers = numberOfEmbeddedWorkers;
-    }
 
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
