@@ -80,12 +80,14 @@ public class Jobs {
     }
 
     public Step getStepById(String stepId) {
-        synchronized (stepMapLocker) {
-            if (stepMap == null) {
-                this.stepMap = new HashMap<String, Step>();
-                for (Job job : jobMap.values()) {
-                    for (Step step : job.getSteps()) {
-                        stepMap.put(step.getId(), step);
+        if (stepMap == null) {
+            synchronized (stepMapLocker) {
+                if (stepMap == null) {
+                    this.stepMap = new HashMap<String, Step>();
+                    for (Job job : jobMap.values()) {
+                        for (Step step : job.getSteps()) {
+                            stepMap.put(step.getId(), step);
+                        }
                     }
                 }
             }

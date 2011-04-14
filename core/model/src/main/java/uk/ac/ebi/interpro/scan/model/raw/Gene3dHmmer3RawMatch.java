@@ -4,13 +4,11 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
-import uk.ac.ebi.interpro.scan.model.Chunker;
-import uk.ac.ebi.interpro.scan.model.ChunkerSingleton;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * <a href="http://gene3d.biochem.ucl.ac.uk/Gene3D/">Gene3D</a> raw match.
@@ -34,23 +32,9 @@ import java.util.List;
 public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
 
     @Transient
-    private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
-
-    @Transient
     public static final String TABLE_NAME = "GENE3D_HMMER3_RAW_MATCH";
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    // Hibernate specific annotation.
-    @JoinTable(name = "cigar_align_chunk")
-    @IndexColumn(name = "chunk_index")
-    @Column(length = Chunker.CHUNK_SIZE, nullable = true)
-    private List<String> cigarChunks;
-
-    @Column(nullable = false, updatable = false, length = Chunker.CHUNK_SIZE)
-    private String cigarFirstChunk;
-
-    // Sequence alignment in CIGAR format
-    @Transient
+    @Column(nullable = false, length = 4000)
     private String cigarAlignment;
 
     protected Gene3dHmmer3RawMatch() {
@@ -72,18 +56,12 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
         setCigarAlignment(cigarAlignment);
     }
 
-    public String getCigarAlignment() {
-        if (cigarAlignment == null) {
-            cigarAlignment = CHUNKER.concatenate(cigarFirstChunk, cigarChunks);
-        }
-        return cigarAlignment;
-    }
-
     private void setCigarAlignment(String cigarAlignment) {
         this.cigarAlignment = cigarAlignment;
-        List<String> chunks = CHUNKER.chunkIntoList(cigarAlignment);
-        this.cigarFirstChunk = CHUNKER.firstChunk(chunks);
-        this.cigarChunks = CHUNKER.latterChunks(chunks);
+    }
+
+    public String getCigarAlignment() {
+        return cigarAlignment;
     }
 
     @Override

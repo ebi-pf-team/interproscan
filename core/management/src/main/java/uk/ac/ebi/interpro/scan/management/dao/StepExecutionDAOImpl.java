@@ -57,7 +57,7 @@ public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> 
                     LOGGER.debug("Waiting for StepExecution ID " + freshStepExecution.getId() + " to be committed prior to refreshing it.");
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new IllegalStateException("InterruptedException thrown when waiting for StepExecution to be refreshed.");
                 }
