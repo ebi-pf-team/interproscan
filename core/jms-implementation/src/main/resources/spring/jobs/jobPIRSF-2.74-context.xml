@@ -92,6 +92,7 @@
         <property name="serialGroup" value="PIRSF_POST_PROCESSING"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
         <property name="postProcessor" ref="pirsfPostProcessor-2.74"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
      </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

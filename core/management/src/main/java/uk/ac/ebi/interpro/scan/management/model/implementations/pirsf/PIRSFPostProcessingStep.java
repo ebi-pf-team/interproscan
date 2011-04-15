@@ -7,17 +7,21 @@ import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
+import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Phil Jones, EMBL-EBI
+ * @author Matthew Fraser, EMBL-EBI
  * @version $Id$
  * @since 1.0
  */
@@ -33,6 +37,9 @@ public class PIRSFPostProcessingStep extends Step {
     private RawMatchDAO<PIRSFHmmer2RawMatch> rawMatchDAO;
 
     private FilteredMatchDAO<PIRSFHmmer2RawMatch, Hmmer2Match> filteredMatchDAO;
+
+    private ProteinDAO proteinDAO;
+
 
     @Required
     public void setPostProcessor(PirsfPostProcessing postProcessor) {
@@ -54,6 +61,11 @@ public class PIRSFPostProcessingStep extends Step {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
+    @Required
+    public void setProteinDAO(ProteinDAO proteinDAO) {
+        this.proteinDAO = proteinDAO;
+    }
+
     /**
      * This method is called to execute the action that the StepInstance must perform.
      * <p/>
@@ -69,10 +81,16 @@ public class PIRSFPostProcessingStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+
+        // Retrieve protein data (need the sequence length)
+        long bottom = stepInstance.getBottomProtein();
+        long top = stepInstance.getTopProtein();
+        Map<Long, Integer> proteinLengthMap = getProteinSequenceLengths(bottom, top);
+
         // Retrieve raw results for protein range.
         Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches = rawMatchDAO.getProteinsByIdRange(
-                stepInstance.getBottomProtein(),
-                stepInstance.getTopProtein(),
+                bottom,
+                top,
                 signatureLibraryRelease
         );
         if (LOGGER.isDebugEnabled()) {
@@ -84,9 +102,10 @@ public class PIRSFPostProcessingStep extends Step {
             LOGGER.debug("PIRSF: A total of " + matchCount + " raw matches.");
         }
 
+
         try {
             // Filter the raw matches
-            Map<String, RawProtein<PIRSFHmmer2RawMatch>> filteredMatches = postProcessor.process(rawMatches);
+            Map<String, RawProtein<PIRSFHmmer2RawMatch>> filteredMatches = postProcessor.process(rawMatches, proteinLengthMap);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("PIRSF: " + filteredMatches.size() + " proteins passed through post processing.");
                 int matchCount = 0;
@@ -101,5 +120,22 @@ public class PIRSFPostProcessingStep extends Step {
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered PIRSF matches.", e);
         }
+    }
+
+    /**
+     * Build up a list of the protein lengths.
+     * @param bottomProtein Protein Id to start from
+     * @param topProtein Protein Id to end on
+     * @return Map of values
+     */
+    private Map<Long, Integer> getProteinSequenceLengths(long bottomProtein, long topProtein) {
+        Map<Long, Integer> proteinLengthMap = new HashMap<Long, Integer>();
+
+        List<Protein> proteins = proteinDAO.getProteinsBetweenIds(bottomProtein, topProtein);
+        for (Protein protein: proteins) {
+            proteinLengthMap.put(protein.getId(), protein.getSequenceLength());
+        }
+
+        return proteinLengthMap;
     }
 }

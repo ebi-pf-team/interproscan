@@ -133,6 +133,19 @@ public class Protein implements Serializable {
     }
 
     /**
+     * Get the length of the sequence.
+     *
+     * @return The length
+     */
+    public int getSequenceLength() {
+        String seq = getSequence();
+        if (seq == null) {
+            throw new IllegalStateException("Protein sequence was NULL");
+        }
+        return seq.length();
+    }
+
+    /**
      * Builder pattern (see Josh Bloch "Effective Java" 2nd edition)
      *
      * @author Antony Quinn
