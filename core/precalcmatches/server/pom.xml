@@ -11,6 +11,8 @@
 
     <artifactId>server</artifactId>
 
+    <name>Precalculated Match Lookup - Web Service</name>
+
     <repositories>
         <repository>
             <id>spring-ext</id>
@@ -85,35 +87,11 @@
             <version>${spring.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-oxm</artifactId>
-            <!-- Stable version at 15 April, 2011 -->
-            <!--<version>1.5.9</version>-->
-            <version>${spring.version}</version>
-        </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>org.springframework.ws</groupId>-->
-        <!--<artifactId>spring-ws-core</artifactId>-->
-        <!--&lt;!&ndash; Stable version at 15 April, 2011 &ndash;&gt;-->
-        <!--<version>1.5.9</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>org.springframework.ws</groupId>-->
-        <!--<artifactId>spring-ws-support</artifactId>-->
-        <!--&lt;!&ndash; Stable version at 15 April, 2011 &ndash;&gt;-->
-        <!--<version>1.5.9</version>-->
-        <!--<scope>runtime</scope>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
@@ -129,27 +107,6 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <version>2.1</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
-        <!-- This package provides an API for HTTP servlet requests and responses -->
-
-        <!-- Packages for JSTL support -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
-            <version>1.1.2</version>
-        </dependency>
-
 
     </dependencies>
 
