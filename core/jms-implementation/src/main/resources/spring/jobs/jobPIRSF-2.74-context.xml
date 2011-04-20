@@ -46,14 +46,6 @@
         <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path.2.74}"/>
     </bean>
 
-    <bean id="stepPIRSFDeleteFastaFile-2.74"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPIRSFStep-2.74">
-        <property name="dependsUpon" ref="stepPIRSFRunBinary-2.74"/>
-        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
-        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
-    </bean>
-
     <bean id="stepPIRSFStoreRawMatches-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
           parent="abstractPIRSFStep-2.74">
@@ -93,7 +85,16 @@
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
         <property name="postProcessor" ref="pirsfPostProcessor-2.74"/>
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
      </bean>
+
+    <bean id="stepPIRSFDeleteFastaFile-2.74"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPIRSFStep-2.74">
+        <property name="dependsUpon" ref="stepPIRSFPostProcessing-2.74"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
@@ -128,11 +129,38 @@
         <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.74}"/>
         <property name="sfTbFileParser" ref="sfTbParser-2.74"/>
         <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.74}"/>
+        <property name="binaryRunner" ref="blastRunner-2.74"/>
+        <property name="blastDbFileResource" value="file:${pirsf.sf.seq.path.2.74}"/>
     </bean>
 
     <bean id="pirsfDatParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
 
     <bean id="sfTbParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
+
+    <!-- Needed to run PIRSF Blast -->
+    <bean id="blastRunner-2.74" class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">
+         <property name="binary" value="./blastall"/>
+         <property name="deleteTemporaryFiles" value="true"/>
+         <property name="arguments"
+                   value="-p blastp -F F -e 0.0005 -b 300 -v 300 -m 8"/>
+         <property name="commandLineConversation">
+             <bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl">
+             </bean>
+         </property>
+         <property name="binaryPath" ref="blastBinaryPath-2.74"/>
+     </bean>
+
+     <bean id="blastInputFile-2.74" class="org.springframework.core.io.ClassPathResource">
+         <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/test_proteins.fasta"/>
+     </bean>
+
+     <bean id="blastBinaryPath-2.74" class="org.springframework.core.io.ClassPathResource">
+         <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/bin/"/>
+     </bean>
+
+     <bean id="blastDbResource-2.74" class="org.springframework.core.io.ClassPathResource">
+         <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/blastdb/sf.seq"/>
+     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 

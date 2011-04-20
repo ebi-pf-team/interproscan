@@ -32,17 +32,14 @@ public class BlastProgramTest extends TestCase {
     @javax.annotation.Resource(name = "blastDbResource")
     private Resource blastDbResource;
 
-    @javax.annotation.Resource(name = "binaryPath")
-    private Resource binaryPath;
-
     @Before
     public void init() {
         assertNotNull(binRunner);
-        binRunner.setBinaryPath(binaryPath);
     }
 
 
     @Test
+    @Ignore
     public void testBlastProgram() {
         //TODO Finish this test!
 
@@ -52,31 +49,31 @@ public class BlastProgramTest extends TestCase {
             inputFile = inputFileResource.getFile();
             blastDBFile = blastDbResource.getFile();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
 
         StringBuffer additionalArgs = null;
-        InputStream io = null;
+        InputStream is = null;
         if (inputFile != null) {
             additionalArgs = new StringBuffer();
             additionalArgs.append("-i " + inputFile.getAbsolutePath());
             additionalArgs.append(" -d " + blastDBFile.getAbsolutePath());
-            additionalArgs.append(" -o /tmp/blast/test.out");
+//            additionalArgs.append(" -o /tmp/blast/test.out");
 
             try {
-                io = binRunner.run(additionalArgs.toString());
+                is = binRunner.run(additionalArgs.toString());
                 Thread.sleep(1000L);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             } finally {
                 try {
-                    if (io != null)
-                        io.close();
+                    if (is != null)
+                        is.close();
                 } catch (IOException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    e.printStackTrace();
                 }
             }
         }
