@@ -27,7 +27,7 @@
     </bean>
 
     <bean id="marshaller" parent="jaxb2"/>
-    <!--<bean id="unmarshaller" parent="jaxb2"/>-->
+    <bean id="unmarshaller" parent="jaxb2"/>
 
     <!--TODO: Read this from Maven properties-->
     <!--<bean id="schema" class="org.springframework.core.io.FileSystemResource">-->
