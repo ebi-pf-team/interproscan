@@ -6,7 +6,6 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
@@ -37,8 +36,6 @@ public class MatchesController {
 
     private Jaxb2Marshaller marshaller;
 
-    private static final String VIEW_NAME = "matches";
-
     @Autowired
     public MatchesController(MatchesService matchesService, Jaxb2Marshaller marshaller) {
         Assert.notNull(matchesService, "'matchesService' must not be null");
@@ -47,7 +44,7 @@ public class MatchesController {
         this.marshaller = marshaller;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping
     public void getMatches(HttpServletResponse response,
                            @RequestParam(value = "md5", required = true) String[] md5Array) {
         List<BerkeleyMatch> matches = matchesService.getMatches(Arrays.asList(md5Array));
