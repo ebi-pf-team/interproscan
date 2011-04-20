@@ -46,7 +46,7 @@ public interface BinaryRunner {
     void setBinary(String binary);
 
     /**
-     * Retuns location of binary on file system. For example "/usr/bin"
+     * Returns location of binary on file system. For example "/usr/bin"
      *
      * @return location of binary on file system.
      */

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">
+        <property name="binaryPath">
+            <bean class="org.springframework.core.io.FileSystemResource">
+                <constructor-arg
+                        value="/usr/bin/"/>
+            </bean>
+        </property>
+        <property name="binary" value="blastall"/>
+        <property name="deleteTemporaryFiles" value="true"/>
+        <property name="arguments" value="-p blastp -F F -e 0.0005 -b 300 -v 300 -m 8 -d /tmp/blast/test.fasta -i /tmp/blast/test_proteins.fasta -o /tmp/blast/test.out"/>
+        <property name="commandLineConversation">
+            <bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl">
+            </bean>
+        </property>
+    </bean>
+</beans>
