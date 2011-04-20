@@ -13,6 +13,7 @@
             <bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl">
             </bean>
         </property>
+        <property name="binaryPath" ref="binaryPath"/>
     </bean>
 
     <bean name="inputFile" class="org.springframework.core.io.ClassPathResource">

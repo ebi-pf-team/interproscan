@@ -1,8 +1,10 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
+import uk.ac.ebi.interpro.scan.business.binary.BinaryRunner;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
 import uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser;
@@ -10,8 +12,11 @@ import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,6 +68,10 @@ public class PirsfPostProcessing implements Serializable {
 
     private Map<String, RawProtein<PIRSFHmmer2RawMatch>> allFilteredMatches = new HashMap<String, RawProtein<PIRSFHmmer2RawMatch>>();
 
+    private BinaryRunner binaryRunner;
+
+    private Resource     blastDbFileResource;
+
     @Required
     public void setPirsfDatFileParser(PirsfDatFileParser pirsfDatFileParser) {
         this.pirsfDatFileParser = pirsfDatFileParser;
@@ -83,6 +92,16 @@ public class PirsfPostProcessing implements Serializable {
         this.sfTbFileResource = sfTbFileResource;
     }
 
+    @Required
+    public void setBinaryRunner(BinaryRunner binaryRunner) {
+        this.binaryRunner = binaryRunner;
+    }
+
+    @Required
+    public void setBlastDbFileResource(Resource blastDbFileResource) {
+        this.blastDbFileResource = blastDbFileResource;
+    }
+
     /**
      * Perform post processing.
      *
@@ -91,7 +110,8 @@ public class PirsfPostProcessing implements Serializable {
      * @throws IOException If pirsf.dat file could not be read
      */
     public Map<String, RawProtein<PIRSFHmmer2RawMatch>> process(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatchesSet,
-                                                                Map<Long, Integer> proteinLengthsMap) throws IOException {
+                                                                Map<Long, Integer> proteinLengthsMap,
+                                                                final String fastaFilePathName) throws IOException {
 
         // Read in pirsf.dat file
         Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileParser.parse(pirsfDatFileResource);
@@ -106,7 +126,7 @@ public class PirsfPostProcessing implements Serializable {
             long proteinLength = proteinLengthsMap.get(Long.parseLong(proteinId));
 
             // Now do the processing
-            processProtein(rawMatch, allFilteredMatches, pirsfDatRecordMap, proteinLength);
+            processProtein(rawMatch, allFilteredMatches, pirsfDatRecordMap, proteinLength, fastaFilePathName);
         }
 
         return allFilteredMatches;
@@ -115,7 +135,8 @@ public class PirsfPostProcessing implements Serializable {
     private void processProtein(RawProtein<PIRSFHmmer2RawMatch> matchRawProtein,
                                 Map<String, RawProtein<PIRSFHmmer2RawMatch>> filteredMatches,
                                 Map<String, PirsfDatRecord> pirsfDatRecordMap,
-                                long proteinLength) {
+                                long proteinLength,
+                                final String fastaFilePathName) {
 
         // Used to find the model Id with the smallest mean e-value for this protein
         Double minMeanEvalue = null;
@@ -169,7 +190,27 @@ public class PirsfPostProcessing implements Serializable {
                 *
                 * TODO Which is right?
                 */
+                StringBuilder additionalArgs = new StringBuilder();
+                try {
+                    additionalArgs
+                            .append("-i ")
+                            .append(fastaFilePathName)
+                            .append("-d ")
+                            .append(blastDbFileResource.getFile().getAbsolutePath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    InputStream is = binaryRunner.run(additionalArgs.toString());
+                    StringWriter writer = new StringWriter();
+                    String encoding = "UTF-8";
+                    IOUtils.copy(is, writer, encoding);
+                    String binaryResult = writer.toString();
 
+                    List<String> blastHits = parseBlastResult(binaryResult);
+                } catch (IOException e) {
+                    LOGGER.error("Couldn't run BLAST from binary file!", e);
+                }
             }
         }
 
@@ -182,6 +223,10 @@ public class PirsfPostProcessing implements Serializable {
 //            }
 //            p.addMatch(pirsfRawMatch);
 
+    }
+
+    private List<String> parseBlastResult(String binaryResult) {
+        return null;
     }
 
     /**

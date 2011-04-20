@@ -40,6 +40,8 @@ public class PIRSFPostProcessingStep extends Step {
 
     private ProteinDAO proteinDAO;
 
+    private String fastaFileNameTemplate;
+
 
     @Required
     public void setPostProcessor(PirsfPostProcessing postProcessor) {
@@ -64,6 +66,11 @@ public class PIRSFPostProcessingStep extends Step {
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
+    }
+
+    @Required
+    public void setFastaFileNameTemplate(String fastaFilePathNameTemplate) {
+        this.fastaFileNameTemplate = fastaFilePathNameTemplate;
     }
 
     /**
@@ -102,10 +109,12 @@ public class PIRSFPostProcessingStep extends Step {
             LOGGER.debug("PIRSF: A total of " + matchCount + " raw matches.");
         }
 
+        // Get path name to the FASTA formatted protein seq file
+        final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFileNameTemplate);
 
         try {
             // Filter the raw matches
-            Map<String, RawProtein<PIRSFHmmer2RawMatch>> filteredMatches = postProcessor.process(rawMatches, proteinLengthMap);
+            Map<String, RawProtein<PIRSFHmmer2RawMatch>> filteredMatches = postProcessor.process(rawMatches, proteinLengthMap, fastaFilePathName);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("PIRSF: " + filteredMatches.size() + " proteins passed through post processing.");
                 int matchCount = 0;
