@@ -5,18 +5,42 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
     <bean class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">
-        <property name="binaryPath">
-            <bean class="org.springframework.core.io.FileSystemResource">
-                <constructor-arg
-                        value="/usr/bin/"/>
-            </bean>
-        </property>
-        <property name="binary" value="blastall"/>
+        <property name="binary" value="./blastall"/>
         <property name="deleteTemporaryFiles" value="true"/>
-        <property name="arguments" value="-p blastp -F F -e 0.0005 -b 300 -v 300 -m 8 -d /tmp/blast/test.fasta -i /tmp/blast/test_proteins.fasta -o /tmp/blast/test.out"/>
+        <property name="arguments"
+                  value="-p blastp -F F -e 0.0005 -b 300 -v 300 -m 8"/>
         <property name="commandLineConversation">
             <bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl">
             </bean>
         </property>
     </bean>
+
+    <bean name="inputFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/test_proteins.fasta"/>
+    </bean>
+
+    <bean name="binaryPath" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/bin/"/>
+    </bean>
+
+    <bean name="blastDbResource" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/blastdb/sf.seq"/>
+    </bean>
+
+    <!--<bean class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">-->
+    <!--<property name="binaryPath">-->
+    <!--<bean class="org.springframework.core.io.FileSystemResource">-->
+    <!--&lt;!&ndash;<constructor-arg value="/usr/bin/"/>&ndash;&gt;-->
+    <!--<constructor-arg value="/home/maxim/projects/interproscan/core/jms-implementation/support-mini-x86-32/bin/"/>-->
+    <!--</bean>-->
+    <!--</property>-->
+    <!--<property name="binary" value="./blastall"/>-->
+    <!--<property name="deleteTemporaryFiles" value="true"/>-->
+    <!--<property name="arguments"-->
+    <!--value="-p blastp -F F -e 0.0005 -b 300 -v 300 -m 8 -d /tmp/blast/test.fasta -i /tmp/blast/test_proteins.fasta -o /tmp/blast/test.out"/>-->
+    <!--<property name="commandLineConversation">-->
+    <!--<bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl">-->
+    <!--</bean>-->
+    <!--</property>-->
+    <!--</bean>-->
 </beans>
