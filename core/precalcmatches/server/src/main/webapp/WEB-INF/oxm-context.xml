@@ -30,8 +30,8 @@
     <!--<bean id="unmarshaller" parent="jaxb2"/>-->
 
     <!--TODO: Read this from Maven properties-->
-    <bean id="schema" class="org.springframework.core.io.FileSystemResource">
-        <constructor-arg value="target/schemas/interproscan-model.xsd"/>
-    </bean>
+    <!--<bean id="schema" class="org.springframework.core.io.FileSystemResource">-->
+    <!--<constructor-arg value="target/schemas/interproscan-model.xsd"/>-->
+    <!--</bean>-->
 
 </beans>
