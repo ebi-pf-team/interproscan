@@ -2,18 +2,18 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 
 import junit.framework.TestCase;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.business.binary.BinaryRunner;
+import uk.ac.ebi.interpro.scan.io.pirsf.PirsfBlastResultParser;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Matthew Fraser
@@ -37,11 +37,18 @@ public class BlastProgramTest extends TestCase {
         assertNotNull(binRunner);
     }
 
-
     @Test
-    @Ignore
     public void testBlastProgram() {
         //TODO Finish this test!
+
+        String filePath = System.getProperty("user.dir") + "/business/bin/";
+        File f = new File(filePath);
+        if (!f.exists()) {
+            filePath = System.getProperty("user.dir") + "/bin/";
+        }
+        f = new File(filePath);
+        assertTrue("Path to BLAST binary file (" + filePath + ") does not exist!", f.exists());
+        binRunner.setBinaryPath(new FileSystemResource(f.getPath()));
 
         File inputFile = null;
         File blastDBFile = null;
@@ -64,6 +71,12 @@ public class BlastProgramTest extends TestCase {
             try {
                 is = binRunner.run(additionalArgs.toString());
                 Thread.sleep(1000L);
+                Map<String, Integer> result = PirsfBlastResultParser.parseBlastStandardOutput(is);
+                assertNotNull("Expected a non empty list!", result);
+                assertEquals("Expected a list of size 1!", 1, result.size());
+                assertTrue("Expected key SF000729 in the map!", result.containsKey("SF000729"));
+                assertNotNull("Expected a non null value!", result.get("SF000729"));
+                assertEquals("Expected value 1!", new Integer(1).intValue(), result.get("SF000729").intValue());
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             } catch (InterruptedException e) {
@@ -76,23 +89,6 @@ public class BlastProgramTest extends TestCase {
                     e.printStackTrace();
                 }
             }
-        }
-    }
-
-    @Ignore
-    @Test
-    public void testRunSimpleBlastProgram() {
-
-//        try {
-//            File outFile = File.createTempFile("blastout-", ".out");
-//        } catch (IOException e) {
-//            throw new IllegalStateException(e);
-//        }
-
-        try {
-            binRunner.run();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
         }
     }
 }

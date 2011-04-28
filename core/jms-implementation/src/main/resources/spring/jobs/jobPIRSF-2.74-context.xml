@@ -147,20 +147,16 @@
              <bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl">
              </bean>
          </property>
-         <property name="binaryPath" ref="blastBinaryPath-2.74"/>
+         <property name="binaryPath" value="file:bin"/>
      </bean>
 
-     <bean id="blastInputFile-2.74" class="org.springframework.core.io.ClassPathResource">
-         <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/test_proteins.fasta"/>
-     </bean>
+     <!--<bean id="blastInputFile-2.74" class="org.springframework.core.io.ClassPathResource">-->
+         <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/test_proteins.fasta"/>-->
+     <!--</bean>-->
 
-     <bean id="blastBinaryPath-2.74" class="org.springframework.core.io.ClassPathResource">
-         <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/bin/"/>
-     </bean>
-
-     <bean id="blastDbResource-2.74" class="org.springframework.core.io.ClassPathResource">
-         <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/blastdb/sf.seq"/>
-     </bean>
+     <!--<bean id="blastDbResource-2.74" class="org.springframework.core.io.ClassPathResource">-->
+         <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/pirsf/blastdb/sf.seq"/>-->
+     <!--</bean>-->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 

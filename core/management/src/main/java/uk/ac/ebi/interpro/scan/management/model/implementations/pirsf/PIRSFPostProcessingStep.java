@@ -114,18 +114,18 @@ public class PIRSFPostProcessingStep extends Step {
 
         try {
             // Filter the raw matches
-            Map<String, RawProtein<PIRSFHmmer2RawMatch>> filteredMatches = postProcessor.process(rawMatches, proteinLengthMap, fastaFilePathName);
+            Set<RawProtein<PIRSFHmmer2RawMatch>> filteredMatches = postProcessor.process(rawMatches, proteinLengthMap, fastaFilePathName);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("PIRSF: " + filteredMatches.size() + " proteins passed through post processing.");
                 int matchCount = 0;
-                for (final RawProtein rawProtein : filteredMatches.values()) {
+                for (final RawProtein rawProtein : filteredMatches) {
                     matchCount += rawProtein.getMatches().size();
                 }
                 LOGGER.debug("PIRSF: A total of " + matchCount + " matches PASSED.");
             }
 
             // Persist the remaining (filtered) raw matches
-            filteredMatchDAO.persist(filteredMatches.values());
+            filteredMatchDAO.persist(filteredMatches);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered PIRSF matches.", e);
         }
@@ -133,15 +133,16 @@ public class PIRSFPostProcessingStep extends Step {
 
     /**
      * Build up a list of the protein lengths.
+     *
      * @param bottomProtein Protein Id to start from
-     * @param topProtein Protein Id to end on
+     * @param topProtein    Protein Id to end on
      * @return Map of values
      */
     private Map<Long, Integer> getProteinSequenceLengths(long bottomProtein, long topProtein) {
         Map<Long, Integer> proteinLengthMap = new HashMap<Long, Integer>();
 
         List<Protein> proteins = proteinDAO.getProteinsBetweenIds(bottomProtein, topProtein);
-        for (Protein protein: proteins) {
+        for (Protein protein : proteins) {
             proteinLengthMap.put(protein.getId(), protein.getSequenceLength());
         }
 

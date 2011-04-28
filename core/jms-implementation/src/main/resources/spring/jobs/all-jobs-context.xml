@@ -21,6 +21,8 @@
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <import resource="../uapro-db-access-context.xml"/>
+    <!--New PIRSF-->
+    <import resource="jobPIRSF-2.74-context.xml"/>
 
 
     <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
@@ -43,6 +45,8 @@
                 <!--<ref bean="jobSMART"/>-->
                 <ref bean="jobTIGRFAM-9.0"/>
                 <ref bean="jobTIGRFAM-10.1"/>
+                <!--New PIRSF-->
+                <ref bean="jobPIRSF-2.74"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
