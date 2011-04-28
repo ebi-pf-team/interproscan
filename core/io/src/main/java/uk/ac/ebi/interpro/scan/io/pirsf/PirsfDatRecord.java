@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.io.pirsf;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -21,9 +20,9 @@ public class PirsfDatRecord implements Serializable {
     private double minScore;
     private double meanScore;
     private double stdDevScore;
-    private boolean blastReqd = false; // Default to Blast not required for this model
+    private boolean blastRequired = false; // Default to Blast not required for this model
 
-    public PirsfDatRecord(String modelAccession, String modelName, String[] values, String blastReqd) {
+    public PirsfDatRecord(String modelAccession, String modelName, String[] values, boolean blastRequired) {
         this.modelAccession = modelAccession;
         this.modelName = modelName;
         this.meanSeqLen = Double.parseDouble(values[INDEX_MEAN_SEQ_LEN].trim());
@@ -31,12 +30,7 @@ public class PirsfDatRecord implements Serializable {
         this.minScore = Double.parseDouble(values[INDEX_MIN_SCORE].trim());
         this.meanScore = Double.parseDouble(values[INDEX_MEAN_SCORE].trim());
         this.stdDevScore = Double.parseDouble(values[INDEX_STD_DEV_SCORE].trim());
-        if (blastReqd != null) {
-            blastReqd = blastReqd.trim();
-            if (blastReqd.equalsIgnoreCase("YES")) {
-                this.blastReqd = true;
-            }
-        }
+        this.blastRequired = blastRequired;
     }
 
     public String getModelAccession() {
@@ -67,24 +61,56 @@ public class PirsfDatRecord implements Serializable {
         return stdDevScore;
     }
 
-    public boolean isBlastReqd() {
-        return blastReqd;
+    public boolean isBlastRequired() {
+        return blastRequired;
+    }
+
+    public void setModelAccession(String modelAccession) {
+        this.modelAccession = modelAccession;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public void setMeanSeqLen(double meanSeqLen) {
+        this.meanSeqLen = meanSeqLen;
+    }
+
+    public void setStdDevSeqLen(double stdDevSeqLen) {
+        this.stdDevSeqLen = stdDevSeqLen;
+    }
+
+    public void setMinScore(double minScore) {
+        this.minScore = minScore;
+    }
+
+    public void setMeanScore(double meanScore) {
+        this.meanScore = meanScore;
+    }
+
+    public void setStdDevScore(double stdDevScore) {
+        this.stdDevScore = stdDevScore;
+    }
+
+    public void setBlastRequired(boolean blastRequired) {
+        this.blastRequired = blastRequired;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o instanceof PirsfDatRecord)
-        {
+        if (o instanceof PirsfDatRecord) {
             final PirsfDatRecord castedObj = (PirsfDatRecord) o;
-            if(castedObj.getMeanScore()==getMeanScore() &&
-                    castedObj.getMeanSeqLen()==getMeanSeqLen() &&
-                    castedObj.getMinScore()==getMinScore() &&
+            if (castedObj.getMeanScore() == getMeanScore() &&
+                    castedObj.getMeanSeqLen() == getMeanSeqLen() &&
+                    castedObj.getMinScore() == getMinScore() &&
                     castedObj.getModelAccession().equals(getModelAccession()) &&
                     castedObj.getModelName().equals(getModelName()) &&
-                    castedObj.getStdDevScore()==getStdDevScore() &&
-                    castedObj.getStdDevSeqLen()==getStdDevSeqLen()) {
+                    castedObj.getStdDevScore() == getStdDevScore() &&
+                    castedObj.getStdDevSeqLen() == getStdDevSeqLen() &&
+                    castedObj.isBlastRequired() == isBlastRequired()) {
                 return true;
             }
         }
@@ -101,13 +127,13 @@ public class PirsfDatRecord implements Serializable {
                 .append(minScore)
                 .append(meanScore)
                 .append(stdDevScore)
-                .append(blastReqd)
+                .append(blastRequired)
                 .toHashCode();
     }
 
 
     @Override
-    public String toString()  {
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 

@@ -58,37 +58,35 @@ public class PirsfDatFileParser implements Serializable {
             String modelAccession = null;
             String modelName = null;
             String[] values = null;
-            String blastReqd = null;
-            int row = 0;
+            boolean isBlastRequired = false;
+            int row = 1;
             while ((line = reader.readLine()) != null) {
                 Matcher modelStart = PIRSF_DAT_PATTERN.matcher(line);
                 if (modelStart.find()) {
                     // New accession
+                    row = 1;
                     modelAccession = line.substring(1);
                     modelName = null;
                     values = null;
-                    blastReqd = null;
-                    row = 1;
-                }
-                else if(row == 2) {
+                    isBlastRequired = false;
+                } else if (row == 2) {
                     // Model name
                     modelName = line;
                 } else if (row == 3) {
                     values = line.split("\\s+");
-                }
-                else if (row == 4 && line.startsWith("BLAST: ")) {
-                    blastReqd = line;
-                    data.put(modelAccession, new PirsfDatRecord(modelAccession, modelName, values, blastReqd));
-                }
-                else {
+                } else if (row == 4 && line.startsWith("BLAST: ")) {
+                    int index = line.indexOf(":");
+                    if (index > -1 && line.length() >= index + 1) {
+                        line = line.substring(index + 1).trim();
+                    }
+                    isBlastRequired = (true ? line.equalsIgnoreCase("YES") : false);
+                    data.put(modelAccession, new PirsfDatRecord(modelAccession, modelName, values, isBlastRequired));
+                } else {
                     LOGGER.warn("Unexpected line in pirsf.dat: " + line);
                 }
-
                 row++;
-
             }
-        }
-        finally {
+        } finally {
             if (reader != null) {
                 reader.close();
             }
