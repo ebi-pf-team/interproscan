@@ -6,8 +6,7 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: Gene 3D ############################  -->
-    <bean id="jobGene3d" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <!-- ######################## JOB: Gene 3D ############################  --> <bean id="jobGene3d" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
                   value="Structural assignment for whole genes and genomes using the CATH domain structure database"/>
         <property name="analysis" value="true"/>
