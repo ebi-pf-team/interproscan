@@ -3,17 +3,12 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.business.binary.BinaryRunner;
-import uk.ac.ebi.interpro.scan.io.pirsf.PirsfBlastResultParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
-import uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,24 +54,20 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PirsfPostProcessing implements Serializable {
+public class OverlapPostProcessor implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(PirsfPostProcessing.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OverlapPostProcessor.class.getName());
 
     //    File parser
     private PirsfDatFileParser pirsfDatFileParser;
 
-    private SfTbFileParser sfTbFileParser;
-
     //    Resources
     private Resource pirsfDatFileResource;
 
-    private Resource sfTbFileResource;
+    //    Specifies the location where to store the temporary file
+    private String filteredMatchesFileName;
 
-    private Resource blastDbFileResource;
-
-    //    Misc
-    private BinaryRunner binaryRunner;
+    private String blastMatchesFileName;
 
 
     @Required
@@ -90,82 +81,95 @@ public class PirsfPostProcessing implements Serializable {
     }
 
     @Required
-    public void setSfTbFileParser(SfTbFileParser sfTbFileParser) {
-        this.sfTbFileParser = sfTbFileParser;
+    public void setFilteredMatchesFileName(String filteredMatchesFilePathTemplate) {
+        this.filteredMatchesFileName = filteredMatchesFilePathTemplate;
     }
 
     @Required
-    public void setSfTbFileResource(Resource sfTbFileResource) {
-        this.sfTbFileResource = sfTbFileResource;
-    }
-
-    @Required
-    public void setBinaryRunner(BinaryRunner binaryRunner) {
-        this.binaryRunner = binaryRunner;
-    }
-
-    @Required
-    public void setBlastDbFileResource(Resource blastDbFileResource) {
-        this.blastDbFileResource = blastDbFileResource;
+    public void setBlastMatchesFileName(String blastMatchesFilePathTemplate) {
+        this.blastMatchesFileName = blastMatchesFilePathTemplate;
     }
 
     /**
-     * Perform post processing.
+     * Perform overlap post processing.
      *
      * @param rawMatches Raw matches to post process.
      * @return Filtered matches
-     * @throws IOException If pirsf.dat file could not be read
+     * @throws java.io.IOException If pirsf.dat file could not be read
      */
 //    TODO: Intermediate state, finish implementation
     public Set<RawProtein<PIRSFHmmer2RawMatch>> process(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches,
                                                         Map<Long, Integer> proteinLengthsMap,
-                                                        final String fastaFilePathName) throws IOException {
+                                                        String temporaryFileDirectory) throws IOException {
 
         // Read in pirsf.dat file
         Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileParser.parse(pirsfDatFileResource);
 
-        // Read in sf.tb file
-        Map<String, Integer> sfTbMap = sfTbFileParser.parse(sfTbFileResource);
-
         Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet = new HashSet<RawProtein<PIRSFHmmer2RawMatch>>();
-        //Map between a protein and the model ID with MinMeanEvalue
-        Map<RawProtein<PIRSFHmmer2RawMatch>, String> proteinModelIDMap = new HashMap<RawProtein<PIRSFHmmer2RawMatch>, String>();
-        Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatchesNeededBlast = doOverlapStep(rawMatches, resultSet, proteinLengthsMap, pirsfDatRecordMap, proteinModelIDMap);
+        // A Map between protein IDs and model accessions with the minimum e-value
+        Map<String, String> proteinIDModelAccMap = new HashMap<String, String>();
+        Set<RawProtein<PIRSFHmmer2RawMatch>> matchesBlastReqd = doOverlapStep(rawMatches, resultSet, proteinLengthsMap, pirsfDatRecordMap, proteinIDModelAccMap);
 
-//        Set<RawProtein<PIRSFHmmer2RawMatch>> resultOfBlastStep = doBlastStep(rawMatchesNeededBlast, resultSet);
+        writeFilteredRawMatchesToFile(temporaryFileDirectory, resultSet);
+        writeBlastRawMatchesToFile(temporaryFileDirectory, matchesBlastReqd, proteinIDModelAccMap);
 
         return resultSet;
     }
 
-    //    TODO: Intermediate state, finish implementation
-//    private Set<RawProtein<PIRSFHmmer2RawMatch>> doBlastStep(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatchesNeededBlast,
-//                                                             Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet) {
-////        getBlastQuerySequences();
-//
-//        LOGGER.info("Performing BLAST for ? ...");
-//        LOGGER.debug("Setting additional BLAST arguments...");
-//        StringBuilder additionalArgs = getAdditionalBlastArguments(fastaFilePathName);
-//
-//
-//        InputStream is = null;
-//        try {
-//            LOGGER.info("Running BLAST from binary file...");
-//            LOGGER.debug("...using the following arguments: ");
-//            LOGGER.debug(binaryRunner.getArguments());
-//            is = binaryRunner.run(additionalArgs.toString());
-//        } catch (IOException e) {
-//            LOGGER.error("Couldn't run BLAST from binary file!", e);
-//        }
-//
-//        LOGGER.info("Parsing BLAST standard output...");
-//        Map<String, Integer> blastResultMap = PirsfBlastResultParser.parseBlastStandardOutput(is);
-//
-//        LOGGER.info("Checking BLAST criteria...");
-//        if (checkBlastCriterion(blastResultMap, sfTbMap, modelIdWithMinMeanEvalue)) {
-//            filteredMatches.add(protein);
-//        }
-//        return null;
-//    }
+    private void writeFilteredRawMatchesToFile(String temporaryFileDirectory,
+                                               Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet) throws IOException {
+        BufferedWriter writer = null;
+        try {
+            File file = createTmpFile(temporaryFileDirectory, filteredMatchesFileName);
+            if (!file.createNewFile()) {
+                return; // File already exists, so don't try to write it again.
+            }
+            writer = new BufferedWriter(new FileWriter(file));
+            for (RawProtein<PIRSFHmmer2RawMatch> protein : resultSet) {
+                writer.write(protein.getProteinIdentifier());
+                writer.write('\n');
+            }
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    private void writeBlastRawMatchesToFile(String temporaryFileDirectory,
+                                            Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet,
+                                            Map<String, String> proteinIDModelAccMap) throws IOException {
+        BufferedWriter writer = null;
+        try {
+            File file = createTmpFile(temporaryFileDirectory, blastMatchesFileName);
+            if (!file.createNewFile()) {
+                return; // File already exists, so don't try to write it again.
+            }
+            writer = new BufferedWriter(new FileWriter(file));
+            for (RawProtein<PIRSFHmmer2RawMatch> protein : resultSet) {
+                String protID = protein.getProteinIdentifier();
+                writer.write(protID);
+                String modelAccession = proteinIDModelAccMap.get(protID);
+                if (modelAccession != null) {
+                    writer.write('\t');
+                    writer.write(modelAccession);
+                }
+                writer.write('\n');
+            }
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    private File createTmpFile(String temporaryFileDirectory, String filePathName) {
+        StringBuilder pathToFile = new StringBuilder()
+                .append(temporaryFileDirectory)
+                .append('/')
+                .append(filePathName);
+        return new File(pathToFile.toString());
+    }
 
     /**
      * Performs the overlap filtering step of the PIRSF post processing. Protein sequences which keep the overlap criterion will
@@ -177,14 +181,14 @@ public class PirsfPostProcessing implements Serializable {
                                                                Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet,
                                                                Map<Long, Integer> proteinLengthsMap,
                                                                Map<String, PirsfDatRecord> pirsfDatRecordMap,
-                                                               Map<RawProtein<PIRSFHmmer2RawMatch>, String> proteinModelIDMap) {
+                                                               Map<String, String> proteinIDModelAccMap) {
         Set<RawProtein<PIRSFHmmer2RawMatch>> result = new HashSet<RawProtein<PIRSFHmmer2RawMatch>>();
         // Loop through the proteins and see if the matches need to be excluded (filtered) or not
         for (RawProtein<PIRSFHmmer2RawMatch> protein : rawMatches) {
             // Retrieve data necessary to perform filtering on this protein
             String proteinId = protein.getProteinIdentifier();
             int proteinLength = proteinLengthsMap.get(Long.parseLong(proteinId));
-            RawProtein<PIRSFHmmer2RawMatch> resultProtein = doOverlapFiltering(protein, pirsfDatRecordMap, proteinLength, proteinModelIDMap);
+            RawProtein<PIRSFHmmer2RawMatch> resultProtein = doOverlapFiltering(protein, pirsfDatRecordMap, proteinLength, proteinIDModelAccMap);
             if (!doBlastCheck(resultProtein, pirsfDatRecordMap)) {
                 resultSet.add(resultProtein);
             } else {
@@ -222,7 +226,7 @@ public class PirsfPostProcessing implements Serializable {
     private RawProtein<PIRSFHmmer2RawMatch> doOverlapFiltering(RawProtein<PIRSFHmmer2RawMatch> protein,
                                                                Map<String, PirsfDatRecord> pirsfDatRecordMap,
                                                                int proteinLength,
-                                                               Map<RawProtein<PIRSFHmmer2RawMatch>, String> proteinModelIDMap) {
+                                                               Map<String, String> proteinIDModelAccMap) {
         RawProtein<PIRSFHmmer2RawMatch> result = new RawProtein<PIRSFHmmer2RawMatch>(protein.getProteinIdentifier());
         // Used to find the model Id with the smallest mean e-value for this protein
         Double minMeanEvalue = null;
@@ -253,43 +257,11 @@ public class PirsfPostProcessing implements Serializable {
             }
         }
         if (modelIdWithMinMeanEvalue != null) {
-            proteinModelIDMap.put(protein, modelIdWithMinMeanEvalue);
+            proteinIDModelAccMap.put(protein.getProteinIdentifier(), modelIdWithMinMeanEvalue);
         }
         return result;
     }
 
-
-    protected boolean checkBlastCriterion(final Map<String, Integer> blastResultMap,
-                                          final Map<String, Integer> sfTbMap,
-                                          String pirsfModelID) {
-        if (blastResultMap != null && blastResultMap.size() > 0) {
-            pirsfModelID = pirsfModelID.substring(3);
-            Integer numberOfBlastHits = blastResultMap.get(pirsfModelID);
-            Integer sfTbValue = sfTbMap.get(pirsfModelID);
-            if (numberOfBlastHits != null &&
-                    (numberOfBlastHits > 9 ||
-                            sfTbValue != null && ((float) numberOfBlastHits / (float) sfTbValue > 0.3334f))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Creates a set of additional BLAST program arguments.
-     */
-    private StringBuilder getAdditionalBlastArguments(final String fastaFilePathName) {
-        StringBuilder result = new StringBuilder();
-        try {
-            result.append("-i ")
-                    .append(fastaFilePathName + " ")
-                    .append("-d ")
-                    .append(blastDbFileResource.getFile().getAbsolutePath());
-        } catch (IOException e) {
-            LOGGER.error("Couldn't get file resource for BLAST database!", e);
-        }
-        return result;
-    }
 
     /**
      * Initial filter checks for a raw match:
