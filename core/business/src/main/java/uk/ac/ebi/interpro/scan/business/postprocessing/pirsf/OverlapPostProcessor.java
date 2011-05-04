@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
+import uk.ac.ebi.interpro.scan.io.I5FileUtil;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
@@ -120,8 +121,8 @@ public class OverlapPostProcessor implements Serializable {
                                                Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet) throws IOException {
         BufferedWriter writer = null;
         try {
-            File file = createTmpFile(temporaryFileDirectory, filteredMatchesFileName);
-            if (!file.createNewFile()) {
+            File file = I5FileUtil.createTmpFile(temporaryFileDirectory, filteredMatchesFileName);
+            if (!file.exists()) {
                 return; // File already exists, so don't try to write it again.
             }
             writer = new BufferedWriter(new FileWriter(file));
@@ -141,8 +142,8 @@ public class OverlapPostProcessor implements Serializable {
                                             Map<String, String> proteinIDModelAccMap) throws IOException {
         BufferedWriter writer = null;
         try {
-            File file = createTmpFile(temporaryFileDirectory, blastMatchesFileName);
-            if (!file.createNewFile()) {
+            File file = I5FileUtil.createTmpFile(temporaryFileDirectory, blastMatchesFileName);
+            if (!file.exists()) {
                 return; // File already exists, so don't try to write it again.
             }
             writer = new BufferedWriter(new FileWriter(file));
@@ -161,14 +162,6 @@ public class OverlapPostProcessor implements Serializable {
                 writer.close();
             }
         }
-    }
-
-    private File createTmpFile(String temporaryFileDirectory, String filePathName) {
-        StringBuilder pathToFile = new StringBuilder()
-                .append(temporaryFileDirectory)
-                .append('/')
-                .append(filePathName);
-        return new File(pathToFile.toString());
     }
 
     /**

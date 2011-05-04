@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Matthew Fraser, EMBL-EBI
+ * @author Matthew Fraser, EMBL-EBI, InterPro
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0
  */
