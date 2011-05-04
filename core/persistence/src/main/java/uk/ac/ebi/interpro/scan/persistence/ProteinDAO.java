@@ -65,6 +65,9 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
     @Transactional(readOnly = true)
     public List<Protein> getProteinsBetweenIds(long bottom, long top);
 
+    @Transactional(readOnly = true)
+    public List<Protein> getProteinsByIds(Set<Long> proteinIds);
+
     /**
      * Inserts new Proteins.
      * If there are Protein objects with the same MD5 / sequence in the database,

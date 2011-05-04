@@ -46,6 +46,7 @@
         <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path.2.74}"/>
     </bean>
 
+    <!-- STEP 3 -->
     <bean id="stepPIRSFStoreRawMatches-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
           parent="abstractPIRSFStep-2.74">
@@ -57,6 +58,7 @@
         <property name="parser" ref="pirsfHmmPfamParser-2.74"/>
     </bean>
 
+    <!-- STEP 4 -->
     <bean id="stepPIRSFDeleteRawOutput-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPIRSFStep-2.74">
@@ -74,39 +76,45 @@
     <!--<property name="rawMatchDAO" ref="rawMatchDAO_TEST-2.74"/>-->
     <!--</bean>-->
 
+    <!-- STEP 5 -->
     <bean id="stepPIRSFOverlapStep-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.OverlapPostProcessingStep"
           parent="abstractPIRSFStep-2.74">
-        <property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.74"/>
         <property name="stepDescription"
                   value="First step of the post processing. Checks overlap criterion for protein matches."/>
+        <property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.74"/>
+        <property name="signatureLibraryRelease" value="2.74"/>
+
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
         <property name="postProcessor" ref="overlapPostProcessor-2.74"/>
         <property name="proteinDAO" ref="proteinDAO"/>
-        <property name="signatureLibraryRelease" value="2.74"/>
     </bean>
 
+    <!-- STEP 6 -->
     <bean id="stepPIRSFWriteFastaForBlast-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.WriteFastaFileForBlastStep"
           parent="abstractPIRSFStep-2.74">
-        <property name="blastMatchesFileName" ref="blastMatchesFileName"/>
         <property name="stepDescription" value="Create FASTA file for proteins to BLAST."/>
-        <property name="fastaFileNameTemplate" ref="fastaFileToBlastNameTemplate"/>
+        <property name="dependsUpon" ref="stepPIRSFOverlapStep-2.74"/>
+
+        <property name="blastMatchesFileName" ref="blastMatchesFileName"/>
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="fastaFilePathTemplate" ref="fastaFileToBlastNameTemplate"/>
+
     </bean>
 
     <!--<bean id="stepPIRSFPostProcessing-2.74"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PIRSFPostProcessingStep"-->
-          <!--parent="abstractPIRSFStep-2.74">-->
-        <!--<property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.74"/>-->
-        <!--<property name="signatureLibraryRelease" value="2.74"/>-->
-        <!--<property name="stepDescription" value="Stores raw matches as filtered matches."/>-->
-        <!--<property name="filteredMatchDAO" ref="pirsfFilteredMatchDAO-2.74"/>-->
-        <!--<property name="serialGroup" value="PIRSF_POST_PROCESSING"/>-->
-        <!--<property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>-->
-        <!--<property name="postProcessor" ref="pirsfPostProcessor-2.74"/>-->
-        <!--<property name="proteinDAO" ref="proteinDAO"/>-->
-        <!--<property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PIRSFPostProcessingStep"-->
+    <!--parent="abstractPIRSFStep-2.74">-->
+    <!--<property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.74"/>-->
+    <!--<property name="signatureLibraryRelease" value="2.74"/>-->
+    <!--<property name="stepDescription" value="Stores raw matches as filtered matches."/>-->
+    <!--<property name="filteredMatchDAO" ref="pirsfFilteredMatchDAO-2.74"/>-->
+    <!--<property name="serialGroup" value="PIRSF_POST_PROCESSING"/>-->
+    <!--<property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>-->
+    <!--<property name="postProcessor" ref="pirsfPostProcessor-2.74"/>-->
+    <!--<property name="proteinDAO" ref="proteinDAO"/>-->
+    <!--<property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>-->
     <!--</bean>-->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

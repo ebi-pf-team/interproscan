@@ -14,12 +14,13 @@ import javax.persistence.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This Step write Fasta files for the range of proteins requested.
  *
- * @author Phil Jones
- * @author David Binns
+ * @author Matthew Fraser, EMBL-EBI, InterPro
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -47,11 +48,6 @@ public class WriteFastaFileForBlastStep extends Step {
     }
 
     @Required
-    public void setFastaFileNameTemplate(String fastaFilePathTemplate) {
-        this.fastaFilePathTemplate = fastaFilePathTemplate;
-    }
-
-    @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
     }
@@ -66,18 +62,16 @@ public class WriteFastaFileForBlastStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Read in raw matches that need to be blasted
         String blastInputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
+        Map<Long, String> proteinIdMap = null;
         try {
-            BlastMatchesFileParser.parse(blastInputFilePathName);
+            proteinIdMap = BlastMatchesFileParser.parse(blastInputFilePathName);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when parsing blast matches file " + blastInputFilePathName);
         }
 
-        //TODO
-
-
         // Write FASTA file as output, ready for BLAST
         String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
-        List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        List<Protein> proteins = proteinDAO.getProteinsByIds(proteinIdMap.keySet());
         try {
             fastaFile.writeFastaFile(proteins, fastaFilePathName);
         } catch (IOException e) {
