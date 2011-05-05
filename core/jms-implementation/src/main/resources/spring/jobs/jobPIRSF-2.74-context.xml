@@ -100,7 +100,35 @@
         <property name="blastMatchesFileName" ref="blastMatchesFileName"/>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="fastaFilePathTemplate" ref="fastaFileToBlastNameTemplate"/>
+    </bean>
 
+    <!-- STEP 7 BLAST step -->
+    <!--<bean id="runBlastStep-2.74"-->
+    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.RunBlastFromBinaryStep"-->
+    <!--parent="abstractPIRSFStep-2.74">-->
+    <!--<property name="stepDescription" value="Runs Blast from binary and saves standard output to a file."/>-->
+    <!--<property name="dependsUpon" ref="stepPIRSFWriteFastaForBlast-2.74"/>-->
+
+    <!--<property name="fastaFilePathTemplate" ref="fastaFileToBlastNameTemplate"/>-->
+    <!--<property name="binaryRunner" ref="blastRunner-2.74"/>-->
+    <!--<property name="blastDbFileResource" value="file:${pirsf.sf.seq.path.2.74}"/>-->
+    <!--<property name="outputFileNameTemplate" value="blastResult.out"/>-->
+    <!--</bean>-->
+
+    <!-- STEP 2: Run binary -->
+    <bean id="pirsfBlastStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PIRSFBlastStep"
+          parent="abstractPIRSFStep-2.74">
+        <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
+        <property name="dependsUpon" ref="stepPIRSFWriteFastaForBlast-2.74"/>
+
+        <!--Resources properties-->
+        <property name="blastDbFileResource" value="file:${pirsf.sf.seq.path.2.74}"/>
+        <!--String properties-->
+        <property name="binary" value="${binary.blastall.path}"/>
+        <property name="fastaFilePathTemplate" ref="fastaFileToBlastNameTemplate"/>
+        <property name="outputFileNameTemplate" value="blastResult.out"/>
+        <property name="retries" value="3"/>
     </bean>
 
     <!--<bean id="stepPIRSFPostProcessing-2.74"-->

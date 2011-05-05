@@ -13,8 +13,8 @@ import java.io.IOException;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class I5FileUtil {
-    private static final Logger LOGGER = Logger.getLogger(I5FileUtil.class.getName());
+public class I5FileCreatorUtil {
+    private static final Logger LOGGER = Logger.getLogger(I5FileCreatorUtil.class.getName());
 
     public static File createTmpFile(String temporaryFileDirectory, String filePathName) throws IOException {
         StringBuilder pathToFile = new StringBuilder();
