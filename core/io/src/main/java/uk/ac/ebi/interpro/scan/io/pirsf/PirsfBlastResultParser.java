@@ -1,9 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.pirsf;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +53,46 @@ public class PirsfBlastResultParser {
                 }
             }
         }
+        return pirsfIdHitNumberMap;
+    }
+
+    /**
+     * Parses all PIRSF IDs out of the BLAST standard output (line per line) and counts the occurrence of each ID.
+     * The result is stored in a hash map.
+     */
+    public static Map<String, Integer> parseBlastOutputFile(String pathToFile) throws IOException {
+        Map<String, Integer> pirsfIdHitNumberMap = new HashMap<String, Integer>();
+        File blastOutputFile = new File(pathToFile);
+        if (blastOutputFile == null) {
+            throw new NullPointerException("Blast output file resource is null");
+        }
+        if (!blastOutputFile.exists()) {
+            throw new IllegalStateException(blastOutputFile.getName() + " does not exist");
+        }
+        if (!blastOutputFile.canRead()) {
+            throw new IllegalStateException(blastOutputFile.getName() + " is not readable");
+        }
+        final Map<Long, String> data = new HashMap<Long, String>();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(blastOutputFile));
+            String readline = null;
+            while ((readline = reader.readLine()) != null) {
+                String pirsfId = parseBlastResultLine(readline);
+                Integer numberOfHits = pirsfIdHitNumberMap.get(pirsfId);
+                if (numberOfHits != null) {
+                    numberOfHits++;
+                } else {
+                    numberOfHits = 1;
+                }
+                pirsfIdHitNumberMap.put(pirsfId, numberOfHits);
+            }
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+
         return pirsfIdHitNumberMap;
     }
 
