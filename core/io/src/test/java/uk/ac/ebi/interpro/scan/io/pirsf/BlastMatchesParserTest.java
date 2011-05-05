@@ -4,15 +4,13 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Run tests for parsing the sf.tb file.
+ * Run tests for parsing the blastMatches.out temporary file.
  *
  * @author Matthew Fraser
  * @version $Id$
@@ -21,7 +19,7 @@ import java.util.Map;
 public class BlastMatchesParserTest extends TestCase {
     private static final Logger LOGGER = Logger.getLogger(BlastMatchesParserTest.class.getName());
 
-    private static final String TEST_FILE_NAME = "io/src/test/resources/data/pirsf/blastMatches.out";
+    private static final String TEST_FILE_NAME = "src/test/resources/data/pirsf/blastMatches.out";
 
     private static final String TEST_RELEASE_VERSION = "2.74";
 
@@ -38,7 +36,6 @@ public class BlastMatchesParserTest extends TestCase {
 
         // Run test method
         BlastMatchesFileParser parser = new BlastMatchesFileParser();
-//        Resource testFile = new ClassPathResource(TEST_FILE_NAME);
         Map<Long, String> actualResult = parser.parse(TEST_FILE_NAME);
 
         // Compare actual result with expected result

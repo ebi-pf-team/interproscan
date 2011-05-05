@@ -29,7 +29,6 @@ public class BlastMatchesFileParser implements Serializable {
 
     public static Map<Long, String> parse(String pathToFile) throws IOException {
         File blastMatchesFile = new File(pathToFile);
-        String a = blastMatchesFile.getAbsolutePath();
         if (blastMatchesFile == null) {
             throw new NullPointerException("Blast matches file resource is null");
         }
