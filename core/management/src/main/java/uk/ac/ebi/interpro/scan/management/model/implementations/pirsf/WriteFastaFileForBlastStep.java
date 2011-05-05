@@ -61,12 +61,12 @@ public class WriteFastaFileForBlastStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Read in raw matches that need to be blasted
-        String blastInputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
+        final String blastMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
         Map<Long, String> proteinIdMap = null;
         try {
-            proteinIdMap = BlastMatchesFileParser.parse(blastInputFilePathName);
+            proteinIdMap = BlastMatchesFileParser.parse(blastMatchesFilePath);
         } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when parsing blast matches file " + blastInputFilePathName);
+            throw new IllegalStateException("IOException thrown when parsing blast matches file " + blastMatchesFilePath);
         }
 
         // Write FASTA file as output, ready for BLAST

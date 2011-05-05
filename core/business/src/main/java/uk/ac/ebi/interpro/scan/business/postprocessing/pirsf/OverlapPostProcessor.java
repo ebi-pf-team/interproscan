@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.io.I5FileCreatorUtil;
+import uk.ac.ebi.interpro.scan.io.pirsf.PirsfFileUtil;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
@@ -99,42 +99,20 @@ public class OverlapPostProcessor implements Serializable {
      * @throws java.io.IOException If pirsf.dat file could not be read
      */
 //    TODO: Intermediate state, finish implementation
-    public Set<RawProtein<PIRSFHmmer2RawMatch>> process(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches,
-                                                        Map<Long, Integer> proteinLengthsMap,
-                                                        String temporaryFileDirectory) throws IOException {
+    public void process(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches,
+                        Map<Long, Integer> proteinLengthsMap,
+                        String temporaryFileDirectory) throws IOException {
 
         // Read in pirsf.dat file
         Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileParser.parse(pirsfDatFileResource);
 
-        Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet = new HashSet<RawProtein<PIRSFHmmer2RawMatch>>();
+        Set<String> passedProteinIds = new HashSet<String>();
         // A Map between protein IDs and model accessions with the minimum e-value
         Map<String, String> proteinIDModelAccMap = new HashMap<String, String>();
-        Set<RawProtein<PIRSFHmmer2RawMatch>> matchesBlastReqd = doOverlapStep(rawMatches, resultSet, proteinLengthsMap, pirsfDatRecordMap, proteinIDModelAccMap);
+        Set<RawProtein<PIRSFHmmer2RawMatch>> matchesBlastReqd = doOverlapStep(rawMatches, passedProteinIds, proteinLengthsMap, pirsfDatRecordMap, proteinIDModelAccMap);
 
-        writeFilteredRawMatchesToFile(temporaryFileDirectory, resultSet);
+        PirsfFileUtil.writeFilteredRawMatchesToFile(temporaryFileDirectory, filteredMatchesFileName, passedProteinIds);
         writeBlastRawMatchesToFile(temporaryFileDirectory, matchesBlastReqd, proteinIDModelAccMap);
-
-        return resultSet;
-    }
-
-    private void writeFilteredRawMatchesToFile(String temporaryFileDirectory,
-                                               Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet) throws IOException {
-        BufferedWriter writer = null;
-        try {
-            File file = I5FileCreatorUtil.createTmpFile(temporaryFileDirectory, filteredMatchesFileName);
-            if (!file.exists()) {
-                return; // File already exists, so don't try to write it again.
-            }
-            writer = new BufferedWriter(new FileWriter(file));
-            for (RawProtein<PIRSFHmmer2RawMatch> protein : resultSet) {
-                writer.write(protein.getProteinIdentifier());
-                writer.write('\n');
-            }
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-        }
     }
 
     private void writeBlastRawMatchesToFile(String temporaryFileDirectory,
@@ -142,7 +120,7 @@ public class OverlapPostProcessor implements Serializable {
                                             Map<String, String> proteinIDModelAccMap) throws IOException {
         BufferedWriter writer = null;
         try {
-            File file = I5FileCreatorUtil.createTmpFile(temporaryFileDirectory, blastMatchesFileName);
+            File file = PirsfFileUtil.createTmpFile(temporaryFileDirectory, blastMatchesFileName);
             if (!file.exists()) {
                 return; // File already exists, so don't try to write it again.
             }
@@ -171,7 +149,7 @@ public class OverlapPostProcessor implements Serializable {
      * @return Set of matches which need to go through the BLAST step.
      */
     private Set<RawProtein<PIRSFHmmer2RawMatch>> doOverlapStep(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches,
-                                                               Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet,
+                                                               Set<String> proteinIds,
                                                                Map<Long, Integer> proteinLengthsMap,
                                                                Map<String, PirsfDatRecord> pirsfDatRecordMap,
                                                                Map<String, String> proteinIDModelAccMap) {
@@ -183,7 +161,7 @@ public class OverlapPostProcessor implements Serializable {
             int proteinLength = proteinLengthsMap.get(Long.parseLong(proteinId));
             RawProtein<PIRSFHmmer2RawMatch> resultProtein = doOverlapFiltering(protein, pirsfDatRecordMap, proteinLength, proteinIDModelAccMap);
             if (!doBlastCheck(resultProtein, pirsfDatRecordMap)) {
-                resultSet.add(resultProtein);
+                proteinIds.add(resultProtein.getProteinIdentifier());
             } else {
                 result.add(resultProtein);
             }

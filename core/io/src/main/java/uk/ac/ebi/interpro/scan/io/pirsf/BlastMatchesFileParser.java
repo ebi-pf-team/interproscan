@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.pirsf;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.io.I5FileCreatorUtil;
 
 import java.io.*;
 import java.util.HashMap;
