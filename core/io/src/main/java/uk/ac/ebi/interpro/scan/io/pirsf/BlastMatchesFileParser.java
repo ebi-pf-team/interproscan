@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.pirsf;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.io.I5FileUtil;
+import uk.ac.ebi.interpro.scan.io.I5FileCreatorUtil;
 
 import java.io.*;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class BlastMatchesFileParser implements Serializable {
 
 
     public static Map<Long, String> parse(String pathToFile) throws IOException {
-        File blastMatchesFile = I5FileUtil.createTmpFile(pathToFile);
+        File blastMatchesFile = new File(pathToFile);
         if (blastMatchesFile == null) {
             throw new NullPointerException("Resource is null");
         }
