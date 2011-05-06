@@ -21,44 +21,50 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <!-- STEP 1 -->
+    <!-- STEP 1: Writes target protein sequences to a FASTA file with new sequence IDs-->
     <bean id="stepPIRSFWriteFasta-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractPIRSFStep-2.74">
-        <property name="stepDescription" value="Create FASTA file."/>
+        <property name="stepDescription"
+                  value="Creates a FASTA file of target sequences which is necessary for the next steps."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP 2 -->
+    <!-- STEP 2: Runs HMMR from binary and writes the raw result to the specified output file-->
     <bean id="stepPIRSFRunBinary-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPIRSFStep-2.74">
         <!-- In example command line below, replace _ with -
         /ebi/production/interpro/binaries/64_bit_Linux/hmmpfam  -A 0 _-cpu 1 _-acc -E 0.01 /ebi/sp/pro1/interpro/data/members/pirsf/274/sf_hmm.bin  -->
+        <!--General step properties-->
         <property name="dependsUpon" ref="stepPIRSFWriteFasta-2.74"/>
         <property name="stepDescription" value="Run Hmmer2 Binary for selected proteins"/>
+        <property name="retries" value="3"/>
+        <!--More specific properties-->
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
         <property name="binarySwitches" value="-A 0 --cpu 1 --acc -E 0.01"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="retries" value="3"/>
         <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path.2.74}"/>
     </bean>
 
-    <!-- STEP 3 -->
+    <!-- STEP 3: Reads the raw HMMR result output and persists it in the H2 memory database-->
     <bean id="stepPIRSFStoreRawMatches-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
           parent="abstractPIRSFStep-2.74">
+        <!--General step properties-->
         <property name="dependsUpon" ref="stepPIRSFRunBinary-2.74"/>
         <property name="stepDescription" value="Parse the HMMER 2 binary output and store as raw matches."/>
+        <!--More specific properties-->
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
         <property name="serialGroup" value="PARSE_PIRSF"/>
         <property name="parser" ref="pirsfHmmPfamParser-2.74"/>
     </bean>
 
-    <!-- STEP 4 -->
+    <!-- STEP 4: Deletes the raw HMMR 2 result file with the tmp directory-->
+    <!--TODO: This step could be removed if we delete the whole directory at the end of this workflow-->
     <bean id="stepPIRSFDeleteRawOutput-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPIRSFStep-2.74">
@@ -68,6 +74,7 @@
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
+    <!-- TEST STEP: Simple test implementation to check and to print out if all HMMR 2 raw matches are stored in the H2 database-->
     <!--<bean id="stepPIRSFRawData_TEST-2.74"-->
     <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.test.TestRawDataStoredStep"-->
     <!--parent="abstractPIRSFStep-2.74">-->
@@ -76,15 +83,16 @@
     <!--<property name="rawMatchDAO" ref="rawMatchDAO_TEST-2.74"/>-->
     <!--</bean>-->
 
-    <!-- STEP 5 -->
+    <!-- STEP 5: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
     <bean id="stepPIRSFOverlapStep-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.OverlapPostProcessingStep"
           parent="abstractPIRSFStep-2.74">
+        <!--General step properties-->
         <property name="stepDescription"
-                  value="First step of the post processing. Checks overlap criterion for protein matches."/>
+                  value="First step of the Pirsf post processing. Checks overlap criterion for HMMR 2 raw matches."/>
         <property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.74"/>
         <property name="signatureLibraryRelease" value="2.74"/>
-
+        <!--More specific properties-->
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
         <property name="postProcessor" ref="overlapPostProcessor-2.74"/>
         <property name="proteinDAO" ref="proteinDAO"/>
@@ -151,6 +159,8 @@
         <property name="dependsUpon" ref="pirsfPersistStep-2.74"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
+        <property name="deleteTmpDirectory" value="true"/>
+
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

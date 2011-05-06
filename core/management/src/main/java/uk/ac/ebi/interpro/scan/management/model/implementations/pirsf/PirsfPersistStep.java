@@ -17,8 +17,8 @@ import java.util.*;
 /**
  * Represents the persistence step of the filtered raw matches at the end of the post processing workflow.
  *
- * @author Matthew Fraser, EMBL-EBI
- * @author Maxim Scheremetjew, EMBL-EBI
+ * @author Matthew Fraser, EMBL-EBI, InterPro
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0
  */
