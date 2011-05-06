@@ -125,6 +125,7 @@
           parent="abstractPIRSFStep-2.74">
         <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
         <property name="dependsUpon" ref="pirsfBlastStep-2.74"/>
+        <property name="postProcessor" ref="blastPostProcessor-2.74"/>
 
         <!--String properties-->
         <property name="blastResultOutputFileName" ref="blastResultOutputFileName"/>
@@ -173,6 +174,7 @@
         <property name="signatureLibraryRelease" value="2.74"/>
     </bean>
 
+    <!-- TODO Delete this pirsfPostProcessor-2.74 -->
     <bean id="pirsfPostProcessor-2.74"
           class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.PirsfPostProcessing">
         <property name="pirsfDatFileParser" ref="pirsfDatParser-2.74"/>
@@ -222,6 +224,17 @@
 
     <bean id="blastResultOutputFileName" class="java.lang.String">
         <constructor-arg value="blastResult.out"/>
+    </bean>
+
+    <bean id="blastPostProcessor-2.74"
+          class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor">
+        <property name="sfTbFileParser" ref="sfTbParser-2.74"/>
+        <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.74}"/>
+        <property name="blastedMatchesFileName" ref="blastedMatchesFileName"/>
+    </bean>
+
+    <bean id="blastedMatchesFileName" class="java.lang.String">
+        <constructor-arg value="blastedMatches.out"/>
     </bean>
 
 
