@@ -13,13 +13,25 @@ import java.lang.reflect.Field;
 /**
  * Simply deletes a File located at the path provided.
  *
- * @author Phil Jones
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Matthew Fraser, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0
  */
 public class DeleteFilesStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteFilesStep.class.getName());
+
+    private boolean deleteTmpDirectory;
+
+    public boolean isDeleteTmpDirectory() {
+        return deleteTmpDirectory;
+    }
+
+    @Required
+    public void setDeleteTmpDirectory(boolean deleteTmpDirectory) {
+        this.deleteTmpDirectory = deleteTmpDirectory;
+    }
 
     /**
      * Deletes the specified file directory recursively.
@@ -33,10 +45,16 @@ public class DeleteFilesStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        try {
-            FileUtils.deleteDirectory(new File(temporaryFileDirectory));
-        } catch (IOException e) {
-            LOGGER.warn("Could not delete the following directory: " + temporaryFileDirectory, e);
+        if (isDeleteTmpDirectory()) {
+            LOGGER.info("Deletion of temporary directory is activated! Deleting the following directory recursively...");
+            try {
+                FileUtils.deleteDirectory(new File(temporaryFileDirectory));
+                LOGGER.info("Finished deletion successfully.");
+            } catch (IOException e) {
+                LOGGER.warn("Could not delete the following directory: " + temporaryFileDirectory, e);
+            }
+        } else {
+            LOGGER.warn("Could not delete the following directory: ");
         }
     }
 }
