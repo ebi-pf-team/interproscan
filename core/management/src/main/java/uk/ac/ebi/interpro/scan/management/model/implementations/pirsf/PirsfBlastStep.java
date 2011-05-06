@@ -16,7 +16,7 @@ import java.util.List;
  * @author Antony Quinn
  * @version $Id$
  */
-public final class PIRSFBlastStep extends RunBinaryStep {
+public final class PirsfBlastStep extends RunBinaryStep {
 
     private String fastaFilePathTemplate;
 

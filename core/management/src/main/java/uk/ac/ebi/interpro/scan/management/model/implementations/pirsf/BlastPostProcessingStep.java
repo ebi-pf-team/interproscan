@@ -3,24 +3,13 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor;
-import uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.PirsfPostProcessing;
 import uk.ac.ebi.interpro.scan.io.pirsf.BlastMatchesFileParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfBlastResultParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
-import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
-import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Matthew Fraser, EMBL-EBI

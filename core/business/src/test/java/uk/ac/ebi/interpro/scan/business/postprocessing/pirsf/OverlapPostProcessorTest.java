@@ -2,26 +2,18 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.io.pirsf.PirsfBlastResultParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 
-import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Tests {@link PirsfPostProcessing}.
+ * Tests {@link OverlapPostProcessor}.
  *
  * @author Matthew Fraser
  * @author Maxim Scheremetjew
@@ -29,15 +21,15 @@ import static org.junit.Assert.*;
  * @since 1.0-SNAPSHOT
  */
 
-public class PirsfPostProcessingTest {
+public class OverlapPostProcessorTest {
 
-    private static final Logger LOGGER = Logger.getLogger(PirsfPostProcessingTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OverlapPostProcessorTest.class.getName());
 
-    private PirsfPostProcessing instance;
+    private OverlapPostProcessor instance;
 
     @Before
     public void init() {
-        instance = new PirsfPostProcessing();
+        instance = new OverlapPostProcessor();
     }
 
     @Test
@@ -64,26 +56,6 @@ public class PirsfPostProcessingTest {
         assertFalse("Overlap criterion shouldn't be passed!", instance.checkOverlapCriterion(proteinLength, pirsfRawMatch, pirsfDatRecord));
     }
 
-    @Test
-    public void testCheckBlastCriterion() {
-        String pirsfModelID = "PIRSF0000";
-
-        Map<String, Integer> blastResultMap = new HashMap<String, Integer>();
-        blastResultMap.put(pirsfModelID.substring(3) + "1", 1);
-        blastResultMap.put(pirsfModelID.substring(3) + "2", 8);
-        blastResultMap.put(pirsfModelID.substring(3) + "3", 10);
-        Map<String, Integer> sfTbMap = new HashMap<String, Integer>();
-        sfTbMap.put(pirsfModelID.substring(3) + "1", 400);
-        sfTbMap.put(pirsfModelID.substring(3) + "2", 20);
-
-        //shouldn't be passed - because numberOfBlastHits < 9 and numberOfBlastHits / sfTbValue < 0.3334f
-        assertFalse("BLAST criterion shouldn't be passed!", instance.checkBlastCriterion(blastResultMap, sfTbMap, pirsfModelID + "1"));
-        //should be passed - because numberOfBlastHits / sfTbValue > 0.3334f
-        assertTrue("BLAST criterion should be passed!", instance.checkBlastCriterion(blastResultMap, sfTbMap, pirsfModelID + "2"));
-        //should be passed - because numberOfBlastHits > 9
-        assertTrue("BLAST criterion should be passed!", instance.checkBlastCriterion(blastResultMap, sfTbMap, pirsfModelID + "3"));
-    }
-
     private PirsfDatRecord getDefaultPirsfDatRecordObj() {
         String meanSeqLength = "110.136452241715";
         String stdDevSeqLength = "9.11541109440914";
@@ -100,6 +72,4 @@ public class PirsfPostProcessingTest {
                 null, "signatureLibraryRelease", locationStart, locationEnd, 0.0d,
                 0.0d, 0, 0, "hmmBounds", 0.0d, locationScore);
     }
-
-
 }
