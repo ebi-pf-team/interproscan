@@ -65,6 +65,12 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
     @Transactional(readOnly = true)
     public List<Protein> getProteinsBetweenIds(long bottom, long top);
 
+    /**
+     * Queries a list of proteins by the specified protein identifiers. For further information please have a look at
+     * method with name getProteinsBetweenIds().
+     *
+     * @param proteinIds Set of protein identifiers.
+     */
     @Transactional(readOnly = true)
     public List<Protein> getProteinsByIds(Set<Long> proteinIds);
 

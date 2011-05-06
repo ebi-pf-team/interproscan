@@ -46,4 +46,14 @@ public interface RawMatchDAO<T extends RawMatch>
     @Transactional(readOnly = true)
     public Set<RawProtein<T>> getProteinsByIdRange(long bottomId, long topId, String signatureDatabaseRelease);
 
+    /**
+     * Returns proteins with specified IDs.
+     *
+     * @param proteinIds               Set of protein Ids to query
+     * @param signatureDatabaseRelease Signature database release number.
+     * @return Set of proteins with supplied IDs
+     */
+    @Transactional(readOnly = true)
+    public Set<RawProtein<T>> getProteinsByIds(Set<Long> proteinIds, String signatureDatabaseRelease);
+
 }
