@@ -21,7 +21,7 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <!-- STEP 1: Writes target protein sequences to a FASTA file with new sequence IDs-->
+    <!-- STEP: Writes target protein sequences to a FASTA file with new sequence IDs-->
     <bean id="stepPIRSFWriteFasta-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractPIRSFStep-2.74">
@@ -31,7 +31,7 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP 2: Runs HMMR from binary and writes the raw result to the specified output file-->
+    <!-- STEP: Runs HMMR from binary and writes the raw result to the specified output file-->
     <bean id="stepPIRSFRunBinary-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPIRSFStep-2.74">
@@ -49,7 +49,7 @@
         <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path.2.74}"/>
     </bean>
 
-    <!-- STEP 3: Reads the raw HMMR result output and persists it in the H2 memory database-->
+    <!-- STEP: Reads the raw HMMR result output and persists it in the H2 memory database-->
     <bean id="stepPIRSFStoreRawMatches-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
           parent="abstractPIRSFStep-2.74">
@@ -63,17 +63,6 @@
         <property name="parser" ref="pirsfHmmPfamParser-2.74"/>
     </bean>
 
-    <!-- STEP 4: Deletes the raw HMMR 2 result file with the tmp directory-->
-    <!--TODO: This step could be removed if we delete the whole directory at the end of this workflow-->
-    <bean id="stepPIRSFDeleteRawOutput-2.74"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPIRSFStep-2.74">
-        <property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.74"/>
-        <property name="stepDescription"
-                  value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-    </bean>
-
     <!-- TEST STEP: Simple test implementation to check and to print out if all HMMR 2 raw matches are stored in the H2 database-->
     <!--<bean id="stepPIRSFRawData_TEST-2.74"-->
     <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.test.TestRawDataStoredStep"-->
@@ -83,7 +72,7 @@
     <!--<property name="rawMatchDAO" ref="rawMatchDAO_TEST-2.74"/>-->
     <!--</bean>-->
 
-    <!-- STEP 5: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
+    <!-- STEP: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
     <bean id="stepPIRSFOverlapStep-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.OverlapPostProcessingStep"
           parent="abstractPIRSFStep-2.74">
@@ -98,20 +87,20 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP 6: Write blast input file -->
+    <!-- STEP: Write blast input file -->
     <bean id="stepPIRSFWriteFastaForBlast-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.WriteFastaFileForBlastStep"
           parent="abstractPIRSFStep-2.74">
         <property name="stepDescription" value="Create FASTA file for proteins to BLAST."/>
         <property name="dependsUpon" ref="stepPIRSFOverlapStep-2.74"/>
 
-        <property name="blastMatchesFileName" ref="blastMatchesFileName"/>
+        <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
         <property name="proteinDAO" ref="proteinDAO"/>
-        <property name="fastaFilePathTemplate" ref="fastaFileToBlastNameTemplate"/>
+        <property name="fastaFilePathTemplate" ref="fastaToBlastFileName-2.74"/>
     </bean>
 
-    <!-- STEP 7: Run BLAST from binary -->
-    <bean id="pirsfBlastStep-2.74"
+    <!-- STEP: Run BLAST from binary -->
+    <bean id="stepPirsfBlast-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfBlastStep"
           parent="abstractPIRSFStep-2.74">
         <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
@@ -121,46 +110,67 @@
         <property name="blastDbFileResource" value="file:${pirsf.sf.seq.path.2.74}"/>
         <!--String properties-->
         <property name="binary" value="${binary.blastall.path}"/>
-        <property name="fastaFilePathTemplate" ref="fastaFileToBlastNameTemplate"/>
-        <property name="outputFileNameTemplate" ref="blastResultOutputFileName"/>
+        <property name="fastaFilePathTemplate" ref="fastaToBlastFileName-2.74"/>
+        <property name="outputFileNameTemplate" ref="blastResultOutputFileName-2.74"/>
         <property name="retries" value="3"/>
     </bean>
 
 
-    <!-- STEP 8: BLAST post processing step-->
-    <bean id="blastPostProcessingStep-2.74"
+    <!-- STEP: BLAST post processing step-->
+    <bean id="stepBlastPostProcessing-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.BlastPostProcessingStep"
           parent="abstractPIRSFStep-2.74">
         <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
-        <property name="dependsUpon" ref="pirsfBlastStep-2.74"/>
+        <property name="dependsUpon" ref="stepPirsfBlast-2.74"/>
         <property name="postProcessor" ref="blastPostProcessor-2.74"/>
 
         <!--String properties-->
-        <property name="blastResultOutputFileName" ref="blastResultOutputFileName"/>
-        <property name="blastMatchesFileName" ref="blastMatchesFileName"/>
+        <property name="blastResultOutputFileName" ref="blastResultOutputFileName-2.74"/>
+        <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
     </bean>
 
-    <!-- STEP 9: Persist filtered matches step-->
-    <bean id="pirsfPersistStep-2.74"
+    <!-- STEP: Persist filtered matches step-->
+    <bean id="stepPirsfPersist-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfPersistStep"
           parent="abstractPIRSFStep-2.74">
         <property name="stepDescription" value="Persists filtered matches."/>
-        <property name="dependsUpon" ref="blastPostProcessingStep-2.74"/>
+        <property name="dependsUpon" ref="stepBlastPostProcessing-2.74"/>
         <property name="signatureLibraryRelease" value="2.74"/>
-        <property name="blastedMatchesFileName" ref="blastedMatchesFileName"/>
-        <property name="filteredMatchesFileName" ref="filteredMatchesFileName"/>
+        <property name="blastedMatchesFileName" ref="blastedMatchesFileName-2.74"/>
+        <property name="filteredMatchesFileName" ref="filteredMatchesFileName-2.74"/>
         <property name="filteredMatchDAO" ref="pirsfFilteredMatchDAO-2.74"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
     </bean>
 
-    <bean id="pirsfDelete-2.74"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFilesStep"
+    <!-- STEP: Remove temporary files -->
+    <bean id="stepPirsfDeleteTempFiles-2.74"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPIRSFStep-2.74">
-        <property name="dependsUpon" ref="pirsfPersistStep-2.74"/>
+        <property name="dependsUpon" ref="stepPirsfPersist-2.74"/>
+        <property name="stepDescription"
+                  value="Delete the remaining temporary files following successful parsing and persistence"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="filteredMatchesFileName-2.74"/>
+                <ref bean="blastMatchesFileName-2.74"/>
+                <ref bean="fastaToBlastFileName-2.74"/>
+                <ref bean="blastResultOutputFileName-2.74"/>
+                <ref bean="blastedMatchesFileName-2.74"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- STEP: Remove temporary directory (optional, can be deactivated in application config) -->
+    <bean id="stepPirsfDeleteDir-2.74"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteDirectoryStep"
+          parent="abstractPIRSFStep-2.74">
+        <property name="dependsUpon" ref="stepPirsfDeleteTempFiles-2.74"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="deleteTmpDirectory" value="true"/>
-
+        <property name="deleteDirectory" value="${delete.temp.directories}"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
@@ -195,27 +205,27 @@
           class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
         <property name="pirsfDatFileParser" ref="pirsfDatParser-2.74"/>
         <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.74}"/>
-        <property name="filteredMatchesFileName" ref="filteredMatchesFileName"/>
-        <property name="blastMatchesFileName" ref="blastMatchesFileName"/>
+        <property name="filteredMatchesFileName" ref="filteredMatchesFileName-2.74"/>
+        <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
     </bean>
 
     <bean id="pirsfDatParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
 
     <bean id="sfTbParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
 
-    <bean id="filteredMatchesFileName" class="java.lang.String">
+    <bean id="filteredMatchesFileName-2.74" class="java.lang.String">
         <constructor-arg value="filterMatches.out"/>
     </bean>
 
-    <bean id="blastMatchesFileName" class="java.lang.String">
+    <bean id="blastMatchesFileName-2.74" class="java.lang.String">
         <constructor-arg value="blastMatches.out"/>
     </bean>
 
-    <bean id="fastaFileToBlastNameTemplate" class="java.lang.String">
+    <bean id="fastaToBlastFileName-2.74" class="java.lang.String">
         <constructor-arg value="blastInputFile.fasta"/>
     </bean>
 
-    <bean id="blastResultOutputFileName" class="java.lang.String">
+    <bean id="blastResultOutputFileName-2.74" class="java.lang.String">
         <constructor-arg value="blastResult.out"/>
     </bean>
 
@@ -223,10 +233,10 @@
           class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor">
         <property name="sfTbFileParser" ref="sfTbParser-2.74"/>
         <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.74}"/>
-        <property name="blastedMatchesFileName" ref="blastedMatchesFileName"/>
+        <property name="blastedMatchesFileName" ref="blastedMatchesFileName-2.74"/>
     </bean>
 
-    <bean id="blastedMatchesFileName" class="java.lang.String">
+    <bean id="blastedMatchesFileName-2.74" class="java.lang.String">
         <constructor-arg value="blastedMatches.out"/>
     </bean>
 
