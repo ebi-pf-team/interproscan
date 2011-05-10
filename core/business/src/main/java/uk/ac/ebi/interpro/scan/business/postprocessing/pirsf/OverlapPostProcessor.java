@@ -98,7 +98,6 @@ public class OverlapPostProcessor implements Serializable {
      * @return Filtered matches
      * @throws java.io.IOException If pirsf.dat file could not be read
      */
-//    TODO: Intermediate state, finish implementation
     public void process(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches,
                         Map<Long, Integer> proteinLengthsMap,
                         String temporaryFileDirectory) throws IOException {

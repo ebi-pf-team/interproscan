@@ -87,26 +87,31 @@ public class RawMatchDAOImpl<T extends RawMatch>
     @Override
     public Set<RawProtein<T>> getProteinsByIds(Set<Long> proteinIds,
                                                String signatureDatabaseRelease) {
-        // Get raw matches
-        Query query = entityManager
-                .createQuery(String.format("select p from %s p  " +
-                        "where p.numericSequenceId in(:ids)" +
-                        "and   p.signatureLibraryRelease = :sigLibRelease", unqualifiedModelClassName))
-                .setParameter("ids", proteinIds)
-                .setParameter("sigLibRelease", signatureDatabaseRelease);
-        @SuppressWarnings("unchecked") List<T> list = query.getResultList();
-        // Create raw proteins from raw matches
-        Map<String, RawProtein<T>> map = new HashMap<String, RawProtein<T>>();
-        for (T match : list) {
-            String id = match.getSequenceIdentifier();
-            RawProtein<T> rawProtein = map.get(id);
-            if (rawProtein == null) {
-                rawProtein = new RawProtein<T>(id);
-                map.put(id, rawProtein);
+
+        Set<RawProtein<T>> rawProteins = new HashSet<RawProtein<T>>();
+        if (proteinIds != null && proteinIds.size() >0) {
+            // Get raw matches
+            Query query = entityManager
+                    .createQuery(String.format("select p from %s p  " +
+                            "where p.numericSequenceId in(:ids)" +
+                            "and   p.signatureLibraryRelease = :sigLibRelease", unqualifiedModelClassName))
+                    .setParameter("ids", proteinIds)
+                    .setParameter("sigLibRelease", signatureDatabaseRelease);
+            @SuppressWarnings("unchecked") List<T> list = query.getResultList();
+            // Create raw proteins from raw matches
+            Map<String, RawProtein<T>> map = new HashMap<String, RawProtein<T>>();
+            for (T match : list) {
+                String id = match.getSequenceIdentifier();
+                RawProtein<T> rawProtein = map.get(id);
+                if (rawProtein == null) {
+                    rawProtein = new RawProtein<T>(id);
+                    map.put(id, rawProtein);
+                }
+                rawProtein.addMatch(match);
             }
-            rawProtein.addMatch(match);
+            rawProteins =  new HashSet<RawProtein<T>>(map.values());
         }
-        return new HashSet<RawProtein<T>>(map.values());
+        return rawProteins;
     }
 
 }

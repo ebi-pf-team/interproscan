@@ -48,6 +48,7 @@ public interface RawMatchDAO<T extends RawMatch>
 
     /**
      * Returns proteins with specified IDs.
+     * If the protein Id set is null or empty then an empty set of raw proteins shall be returned.
      *
      * @param proteinIds               Set of protein Ids to query
      * @param signatureDatabaseRelease Signature database release number.
