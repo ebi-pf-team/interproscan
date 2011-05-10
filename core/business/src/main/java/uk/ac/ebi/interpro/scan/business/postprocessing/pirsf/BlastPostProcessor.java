@@ -78,9 +78,13 @@ public class BlastPostProcessor implements Serializable {
 
 
     /**
-     * Perform post processing.
+     * Perform post processing, using blast output results to confirm the best match.
      *
-     * @return Filtered matches
+     * @param proteinIdMap Map protein Id to what the algorithm thinks is the best (lowest e-value) model Id for that
+     *                     protein e.g. 2 -> PIRSF000350
+     * @param blastResultMap Map proteinId and best model Id (according to blast) to number of hits in the blast output
+     *                     e.g. 2-PIRSF000350 -> 12
+     * @param temporaryFileDirectory Location for temporary files
      * @throws java.io.IOException If pirsf.dat file could not be read
      */
     public void process(Map<Long, String> proteinIdMap,
@@ -94,9 +98,16 @@ public class BlastPostProcessor implements Serializable {
 
         for (Long proteinId : proteinIdMap.keySet()) {
 
-            String modelAcc = proteinIdMap.get(proteinId);
-            if (checkBlastCriterion(sfTbMap, blastResultMap, modelAcc))
-                passedBlastedProteinIds.add(String.valueOf(proteinId));
+            String modelId = proteinIdMap.get(proteinId);
+            modelId = modelId.substring(3); // E.g. convert "PIRSF000350" to "SF000350"
+            String key = proteinId.toString() + '-' + modelId;
+
+            if (blastResultMap.containsKey(key)) {
+                // Algorithm and blast both agree this is the best model Id match for this protein Id, do final checks
+                if (checkBlastCriterion(sfTbMap, blastResultMap, key)) {
+                    passedBlastedProteinIds.add(String.valueOf(proteinId));
+                }
+            }
         }
 
         PirsfFileUtil.writeFilteredRawMatchesToFile(temporaryFileDirectory, blastedMatchesFileName, passedBlastedProteinIds);
@@ -105,16 +116,24 @@ public class BlastPostProcessor implements Serializable {
 
     protected boolean checkBlastCriterion(final Map<String, Integer> sfTbMap,
                                           final Map<String, Integer> blastResultMap,
-                                          String modelAcc) {
+                                          String proteinIdModelId) {
         if (blastResultMap != null && blastResultMap.size() > 0) {
-            modelAcc = modelAcc.substring(3);
-            Integer numberOfBlastHits = blastResultMap.get(modelAcc);
-            Integer sfTbValue = sfTbMap.get(modelAcc);
+            String[] text = proteinIdModelId.split("-");
+            if (text.length == 2) {
+                Integer numberOfBlastHits = blastResultMap.get(proteinIdModelId);
+                long proteinId = Long.parseLong(text[0]);
+                String modelId = text[1];
+                Integer sfTbValue = sfTbMap.get(modelId);
 
-            if (numberOfBlastHits != null &&
-                    (numberOfBlastHits > 9 ||
-                            sfTbValue != null && ((float) numberOfBlastHits / (float) sfTbValue > 0.3334f))) {
-                return true;
+                if (numberOfBlastHits != null &&
+                        (numberOfBlastHits > 9 ||
+                                sfTbValue != null && ((float) numberOfBlastHits / (float) sfTbValue > 0.3334f))) {
+                    return true;
+                }
+            }
+            else {
+                // Should never happen! Sanity check
+                LOGGER.warn("Problem extracting protein Id and model Id when checking blast criteria");
             }
         }
         return false;

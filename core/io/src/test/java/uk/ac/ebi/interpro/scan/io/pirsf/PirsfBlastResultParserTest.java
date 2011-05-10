@@ -1,45 +1,54 @@
 package uk.ac.ebi.interpro.scan.io.pirsf;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
 import org.junit.Test;
 
-import static junit.framework.Assert.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 
 /**
  * Test class for {@link PirsfBlastResultParser}.
  *
+ * @author Matthew Fraser, EMBL-EBI, InterPro
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PirsfBlastResultParserTest {
+public class PirsfBlastResultParserTest extends TestCase {
+
+    private static final String TEST_FILE_NAME = "src/test/resources/data/pirsf/blastResult.out";
+
+    private static final String TEST_RELEASE_VERSION = "2.74";
 
     @Test
-    public void testParseBlastResultLine() {
-        //  testing  realistic Blast output
-        String resultLine = "Q97R95\tQ97R95-SF000729\t100.00\t369\t0\t0\t1\t369\t1\t369\t0.0\t709.1";
-        String actual = PirsfBlastResultParser.parseBlastResultLine(resultLine);
-        String expected = "SF000729";
-        assertEquals("The parsed value doesn't match the expected value!", expected, actual);
+    public void testParseBlastResults() throws IOException {
 
-        //  testing unexpected Blast output
-        resultLine = "Q97R95\tQ97R95-SF000729\t100.00\t369";
-        actual = PirsfBlastResultParser.parseBlastResultLine(resultLine);
-        assertNull("The parsed value doesn't match the expected value!", actual);
+        // Setup expected result
+        Map<String, Integer> expectedResults = new HashMap<String, Integer>();
+        String key1 = "3-SF000729";
+        int value1 = 242;
+        String key2 = "4-SF000210";
+        int value2 = 207;
+        expectedResults.put(key1, value1);
+        expectedResults.put(key2, value2);
 
-        resultLine = "Q97R95\tQ97R95&SF000729\t100.00\t369";
-        actual = PirsfBlastResultParser.parseBlastResultLine(resultLine);
-        assertNull("The parsed value doesn't match the expected value!", actual);
+        PirsfBlastResultParser parser = new PirsfBlastResultParser();
+        // Run test method
+        Map<String, Integer> actualResults = parser.parseBlastOutputFile(TEST_FILE_NAME);
 
-        resultLine = "Q97R95 Q97R95-SF000729 100.00 369";
-        actual = PirsfBlastResultParser.parseBlastResultLine(resultLine);
-        assertNull("The parsed value doesn't match the expected value!", actual);
+        // Compare actual result with expected result
+        Assert.assertEquals(2, actualResults.size());
+        for (Map.Entry<String, Integer> a : actualResults.entrySet()) {
+            System.out.println(a.getKey() +  ", " + a.getValue());
+        }
+        Assert.assertTrue(actualResults.containsKey(key1));
+        Assert.assertEquals(value1, (int)actualResults.get(key1));
+        Assert.assertTrue(actualResults.containsKey(key2));
+        Assert.assertEquals(value2, (int)actualResults.get(key2));
 
-        resultLine = "";
-        actual = PirsfBlastResultParser.parseBlastResultLine(resultLine);
-        assertNull("The parsed value doesn't match the expected value!", actual);
-
-        resultLine = null;
-        actual = PirsfBlastResultParser.parseBlastResultLine(resultLine);
-        assertNull("The parsed value doesn't match the expected value!", actual);
     }
 }

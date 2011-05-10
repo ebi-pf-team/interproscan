@@ -120,9 +120,13 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
 
     @Transactional(readOnly = true)
     public List<Protein> getProteinsByIds(Set<Long> proteinIds) {
-        Query query = entityManager.createQuery("select p from Protein p where p.id in(:ids)");
-        query.setParameter("ids", proteinIds);
-        return (List<Protein>) query.getResultList();
+        List<Protein> proteins = new ArrayList<Protein>();
+        if (proteinIds != null && proteinIds.size() > 0) {
+            Query query = entityManager.createQuery("select p from Protein p where p.id in(:ids)");
+            query.setParameter("ids", proteinIds);
+            proteins = query.getResultList();
+        }
+        return proteins;
     }
 
     /**

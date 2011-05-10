@@ -68,6 +68,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
     /**
      * Queries a list of proteins by the specified protein identifiers. For further information please have a look at
      * method with name getProteinsBetweenIds().
+     * Note that if the input list is null or empty then an empty list of proteins shall be returned.
      *
      * @param proteinIds Set of protein identifiers.
      */
