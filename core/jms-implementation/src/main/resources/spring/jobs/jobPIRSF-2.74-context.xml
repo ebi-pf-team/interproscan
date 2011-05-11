@@ -142,7 +142,8 @@
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
     </bean>
 
-    <!-- STEP: Remove temporary files -->
+    <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
+               writing to the directory at the same time) -->
     <bean id="stepPirsfDeleteTempFiles-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPIRSFStep-2.74">
@@ -160,17 +161,6 @@
                 <ref bean="blastedMatchesFileName-2.74"/>
             </list>
         </property>
-    </bean>
-
-
-    <!-- STEP: Remove temporary directory (optional, can be deactivated in application config) -->
-    <bean id="stepPirsfDeleteDir-2.74"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteDirectoryStep"
-          parent="abstractPIRSFStep-2.74">
-        <property name="dependsUpon" ref="stepPirsfDeleteTempFiles-2.74"/>
-        <property name="stepDescription"
-                  value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="deleteDirectory" value="${delete.temp.directories}"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
