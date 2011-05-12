@@ -27,6 +27,8 @@ public class BlastPostProcessingStep extends Step {
 
     private String blastMatchesFileName;
 
+    private String blastedMatchesFileName;
+
     @Required
     public void setBlastMatchesFileName(String blastMatchesFileName) {
         this.blastMatchesFileName = blastMatchesFileName;
@@ -40,6 +42,11 @@ public class BlastPostProcessingStep extends Step {
     @Required
     public void setBlastResultOutputFileName(String blastResultOutputFileName) {
         this.blastResultOutputFileName = blastResultOutputFileName;
+    }
+
+    @Required
+    public void setBlastedMatchesFileName(String blastedMatchesFileName) {
+        this.blastedMatchesFileName = blastedMatchesFileName;
     }
 
     /**
@@ -58,22 +65,24 @@ public class BlastPostProcessingStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
+        // Prepare temporary filenames required by this step
         final String blastMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
+        final String blastOutFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastResultOutputFileName);
+        final String blastedMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastedMatchesFileName);
+
         Map<Long, String> proteinIdMap = null;
         try {
             proteinIdMap = BlastMatchesFileParser.parse(blastMatchesFilePath);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IllegalStateException("IOException thrown when parsing blast matches file " + blastMatchesFilePath);
         }
 
-        final String blastOutFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastResultOutputFileName);
         try {
             Map<String, Integer> blastResultMap = PirsfBlastResultParser.parseBlastOutputFile(blastOutFileName);
-
-            postProcessor.process(proteinIdMap, blastResultMap, temporaryFileDirectory);
-
-
-        } catch (IOException e) {
+            postProcessor.process(proteinIdMap, blastResultMap, blastedMatchesFilePath);
+        }
+        catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to read BLAST result output file.", e);
         }
     }

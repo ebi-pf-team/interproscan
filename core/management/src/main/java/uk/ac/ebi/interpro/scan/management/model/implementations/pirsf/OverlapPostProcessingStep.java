@@ -36,6 +36,12 @@ public class OverlapPostProcessingStep extends Step {
 
     private ProteinDAO proteinDAO;
 
+    // Temporary file to hold matches that pass post processing in this step (no blast required)
+    private String filteredMatchesFileName;
+
+    // Matches that passed this post processing but now need to be sent to blast
+    private String blastMatchesFileName;
+
 
     @Required
     public void setPostProcessor(OverlapPostProcessor postProcessor) {
@@ -52,12 +58,20 @@ public class OverlapPostProcessingStep extends Step {
         this.rawMatchDAO = rawMatchDAO;
     }
 
-
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
     }
 
+    @Required
+    public void setFilteredMatchesFileName(String filteredMatchesFileName) {
+        this.filteredMatchesFileName = filteredMatchesFileName;
+    }
+
+    @Required
+    public void setBlastMatchesFileName(String blastMatchesFileName) {
+        this.blastMatchesFileName = blastMatchesFileName;
+    }
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
@@ -95,8 +109,14 @@ public class OverlapPostProcessingStep extends Step {
             LOGGER.debug("PIRSF: A total of " + matchCount + " raw matches.");
         }
 
+
+        // Prepare temporary filenames required by this step
+        final String filteredMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, filteredMatchesFileName);
+        final String blastMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
+
+
         try {
-            postProcessor.process(rawMatches, proteinLengthMap, temporaryFileDirectory);
+            postProcessor.process(rawMatches, proteinLengthMap, filteredMatchesFilePath, blastMatchesFilePath);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to write flat files for filtered matches and " +
                     "matches which have to be BLASTed!", e);

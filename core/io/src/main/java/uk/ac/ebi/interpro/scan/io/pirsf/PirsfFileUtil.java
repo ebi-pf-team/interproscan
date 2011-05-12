@@ -19,33 +19,19 @@ import java.util.Set;
 public class PirsfFileUtil {
     private static final Logger LOGGER = Logger.getLogger(PirsfFileUtil.class.getName());
 
-    public static File createTmpFile(String temporaryFileDirectory, String filePathName) throws IOException {
-        StringBuilder pathToFile = new StringBuilder();
-        if (temporaryFileDirectory != null) {
-            pathToFile
-                    .append(temporaryFileDirectory)
-                    .append('/');
-        }
-        pathToFile.append(filePathName);
-        File result = new File(pathToFile.toString());
-        if (!result.createNewFile()) {
-            LOGGER.warn("Couldn't create new File! Maybe the file " + result.getAbsolutePath() + " already exists!");
-        }
-        return result;
-    }
-
-    public static File createTmpFile(String filePathName) throws IOException {
-        return createTmpFile(null, filePathName);
-    }
-
-    public static void writeFilteredRawMatchesToFile(String temporaryFileDirectory,
-                                                     String fileName,
+    /**
+     * Write a list of protein Ids to a temporary file.
+     * @param filePath The file path and name.
+     * @param passedProteinIds List of protein Ids to write to the file.
+     * @throws IOException If a problem was encountered whilst writing to the file.
+     */
+    public static void writeFilteredRawMatchesToFile(String filePath,
                                                      Set<String> passedProteinIds) throws IOException {
         BufferedWriter writer = null;
         try {
-            File file = PirsfFileUtil.createTmpFile(temporaryFileDirectory, fileName);
+            File file = createTmpFile(filePath);
             if (!file.exists()) {
-                return; // File already exists, so don't try to write it again.
+                throw new IllegalStateException("Could not create file: " + filePath);
             }
             writer = new BufferedWriter(new FileWriter(file));
             for (String proteinId : passedProteinIds) {
@@ -58,4 +44,20 @@ public class PirsfFileUtil {
             }
         }
     }
+
+    /**
+     * Create a new temporary file. If the file already exists a warning is logged but this is not considered a failure.
+     *
+     * @param pathToFile Path and filename
+     * @return The file
+     * @throws IOException If the file could not be created.
+     */
+    public static File createTmpFile(String pathToFile) throws IOException {
+        File result = new File(pathToFile);
+        if (!result.createNewFile()) {
+            LOGGER.warn("Couldn't create new File! Maybe the file " + result.getAbsolutePath() + " already exists!");
+        }
+        return result;
+    }
+
 }
