@@ -73,7 +73,7 @@
     <!--</bean>-->
 
     <!-- STEP: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
-    <bean id="stepPIRSFOverlapStep-2.74"
+    <bean id="stepPirsfOverlapPostProcessing-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.OverlapPostProcessingStep"
           parent="abstractPIRSFStep-2.74">
         <!--General step properties-->
@@ -85,6 +85,8 @@
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
         <property name="postProcessor" ref="overlapPostProcessor-2.74"/>
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
+        <property name="filteredMatchesFileName" ref="filteredMatchesFileName-2.74"/>
     </bean>
 
     <!-- STEP: Write blast input file -->
@@ -92,7 +94,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.WriteFastaFileForBlastStep"
           parent="abstractPIRSFStep-2.74">
         <property name="stepDescription" value="Create FASTA file for proteins to BLAST."/>
-        <property name="dependsUpon" ref="stepPIRSFOverlapStep-2.74"/>
+        <property name="dependsUpon" ref="stepPirsfOverlapPostProcessing-2.74"/>
 
         <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
         <property name="proteinDAO" ref="proteinDAO"/>
@@ -123,10 +125,9 @@
         <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
         <property name="dependsUpon" ref="stepPirsfBlast-2.74"/>
         <property name="postProcessor" ref="blastPostProcessor-2.74"/>
-
-        <!--String properties-->
-        <property name="blastResultOutputFileName" ref="blastResultOutputFileName-2.74"/>
         <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
+        <property name="blastResultOutputFileName" ref="blastResultOutputFileName-2.74"/>
+        <property name="blastedMatchesFileName" ref="blastedMatchesFileName-2.74"/>
     </bean>
 
     <!-- STEP: Persist filtered matches step-->
@@ -195,8 +196,6 @@
           class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
         <property name="pirsfDatFileParser" ref="pirsfDatParser-2.74"/>
         <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.74}"/>
-        <property name="filteredMatchesFileName" ref="filteredMatchesFileName-2.74"/>
-        <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
     </bean>
 
     <bean id="pirsfDatParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
@@ -204,30 +203,29 @@
     <bean id="sfTbParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
 
     <bean id="filteredMatchesFileName-2.74" class="java.lang.String">
-        <constructor-arg value="filterMatches.out"/>
+        <constructor-arg value="[PROTSTART]_[PROTEND].filterMatches.out"/>
     </bean>
 
     <bean id="blastMatchesFileName-2.74" class="java.lang.String">
-        <constructor-arg value="blastMatches.out"/>
+        <constructor-arg value="[PROTSTART]_[PROTEND].blastMatches.out"/>
     </bean>
 
     <bean id="fastaToBlastFileName-2.74" class="java.lang.String">
-        <constructor-arg value="blastInputFile.fasta"/>
+        <constructor-arg value="[PROTSTART]_[PROTEND].blastInputFile.fasta"/>
     </bean>
 
     <bean id="blastResultOutputFileName-2.74" class="java.lang.String">
-        <constructor-arg value="blastResult.out"/>
+        <constructor-arg value="[PROTSTART]_[PROTEND].blastResult.out"/>
     </bean>
 
     <bean id="blastPostProcessor-2.74"
           class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor">
         <property name="sfTbFileParser" ref="sfTbParser-2.74"/>
         <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.74}"/>
-        <property name="blastedMatchesFileName" ref="blastedMatchesFileName-2.74"/>
     </bean>
 
     <bean id="blastedMatchesFileName-2.74" class="java.lang.String">
-        <constructor-arg value="blastedMatches.out"/>
+        <constructor-arg value="[PROTSTART]_[PROTEND].blastedMatches.out"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

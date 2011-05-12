@@ -65,11 +65,6 @@ public class OverlapPostProcessor implements Serializable {
     //    Resources
     private Resource pirsfDatFileResource;
 
-    //    Specifies the location where to store the temporary file
-    private String filteredMatchesFileName;
-
-    private String blastMatchesFileName;
-
 
     @Required
     public void setPirsfDatFileParser(PirsfDatFileParser pirsfDatFileParser) {
@@ -81,26 +76,21 @@ public class OverlapPostProcessor implements Serializable {
         this.pirsfDatFileResource = pirsfDatFileResource;
     }
 
-    @Required
-    public void setFilteredMatchesFileName(String filteredMatchesFilePathTemplate) {
-        this.filteredMatchesFileName = filteredMatchesFilePathTemplate;
-    }
-
-    @Required
-    public void setBlastMatchesFileName(String blastMatchesFilePathTemplate) {
-        this.blastMatchesFileName = blastMatchesFilePathTemplate;
-    }
-
     /**
      * Perform overlap post processing.
      *
      * @param rawMatches Raw matches to post process.
-     * @return Filtered matches
+     * @param proteinLengthsMap Map of protein Id to sequence length.
+     * @param filteredMatchesFilePath Temporary file path and name for recording which protein Ids passed this
+     *                                filtering step and DO NOT need to be blasted.
+     * @param blastMatchesFilePath Temporary file path and name for recording which protein Ids passed this
+     *                             filtering step but also DO need to be blasted next.
      * @throws java.io.IOException If pirsf.dat file could not be read
      */
     public void process(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches,
                         Map<Long, Integer> proteinLengthsMap,
-                        String temporaryFileDirectory) throws IOException {
+                        String filteredMatchesFilePath,
+                        String blastMatchesFilePath) throws IOException {
 
         // Read in pirsf.dat file
         Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileParser.parse(pirsfDatFileResource);
@@ -110,18 +100,18 @@ public class OverlapPostProcessor implements Serializable {
         Map<String, String> proteinIDModelAccMap = new HashMap<String, String>();
         Set<RawProtein<PIRSFHmmer2RawMatch>> matchesBlastReqd = doOverlapStep(rawMatches, passedProteinIds, proteinLengthsMap, pirsfDatRecordMap, proteinIDModelAccMap);
 
-        PirsfFileUtil.writeFilteredRawMatchesToFile(temporaryFileDirectory, filteredMatchesFileName, passedProteinIds);
-        writeBlastRawMatchesToFile(temporaryFileDirectory, matchesBlastReqd, proteinIDModelAccMap);
+        PirsfFileUtil.writeFilteredRawMatchesToFile(filteredMatchesFilePath, passedProteinIds);
+        writeBlastRawMatchesToFile(blastMatchesFilePath, matchesBlastReqd, proteinIDModelAccMap);
     }
 
-    private void writeBlastRawMatchesToFile(String temporaryFileDirectory,
+    private void writeBlastRawMatchesToFile(String blastMatchesFilePath,
                                             Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet,
                                             Map<String, String> proteinIDModelAccMap) throws IOException {
         BufferedWriter writer = null;
         try {
-            File file = PirsfFileUtil.createTmpFile(temporaryFileDirectory, blastMatchesFileName);
+            File file = PirsfFileUtil.createTmpFile(blastMatchesFilePath);
             if (!file.exists()) {
-                return; // File already exists, so don't try to write it again.
+                throw new IllegalStateException("Could not create file: " + blastMatchesFilePath);
             }
             writer = new BufferedWriter(new FileWriter(file));
             for (RawProtein<PIRSFHmmer2RawMatch> protein : resultSet) {
@@ -159,10 +149,14 @@ public class OverlapPostProcessor implements Serializable {
             String proteinId = protein.getProteinIdentifier();
             int proteinLength = proteinLengthsMap.get(Long.parseLong(proteinId));
             RawProtein<PIRSFHmmer2RawMatch> resultProtein = doOverlapFiltering(protein, pirsfDatRecordMap, proteinLength, proteinIDModelAccMap);
-            if (!doBlastCheck(resultProtein, pirsfDatRecordMap)) {
-                proteinIds.add(resultProtein.getProteinIdentifier());
-            } else {
-                result.add(resultProtein);
+            if (resultProtein.getMatches() != null && resultProtein.getMatches().size() > 0) {
+                if (doBlastCheck(resultProtein, pirsfDatRecordMap)) {
+                    // Protein has passed this filtering step but some blast post processing is still required later
+                    result.add(resultProtein);
+                } else {
+                    // Protein has passed this filtering step and blast post processing is not required
+                    proteinIds.add(resultProtein.getProteinIdentifier());
+                }
             }
         }
         return result;
@@ -179,8 +173,10 @@ public class OverlapPostProcessor implements Serializable {
             String modelId = match.getModelId();
             PirsfDatRecord pirsfDatRecord = pirsfDatRecordMap.get(modelId);
             if (pirsfDatRecord != null && pirsfDatRecord.isBlastRequired()) {
-                LOGGER.info("Need to BLAST protein with identifier " + protein.getProteinIdentifier() + " because model Id " + modelId +
-                        " is annotated with BLAST=true.");
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Need to BLAST protein with identifier " + protein.getProteinIdentifier() + " because model Id " + modelId +
+                            " is annotated with BLAST=true.");
+                }
                 return true;
             }
         }
@@ -215,7 +211,9 @@ public class OverlapPostProcessor implements Serializable {
             if (checkOverlapCriterion(proteinLength, match, pirsfDatRecord)) {
                 result.addMatch(match);
             } else {
-                LOGGER.info("Removing PIRSF match with model Id " + modelId + "...");
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Removing PIRSF match with model Id " + modelId + "...");
+                }
                 continue; // Failed so move on to the next raw match
             }
 

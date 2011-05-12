@@ -60,12 +60,6 @@ public class BlastPostProcessor implements Serializable {
 
     private Resource sfTbFileResource;
 
-    private String blastedMatchesFileName;
-
-    public void setBlastedMatchesFileName(String blastedMatchesFileName) {
-        this.blastedMatchesFileName = blastedMatchesFileName;
-    }
-
     @Required
     public void setSfTbFileParser(SfTbFileParser sfTbFileParser) {
         this.sfTbFileParser = sfTbFileParser;
@@ -84,12 +78,13 @@ public class BlastPostProcessor implements Serializable {
      *                     protein e.g. 2 -> PIRSF000350
      * @param blastResultMap Map proteinId and best model Id (according to blast) to number of hits in the blast output
      *                     e.g. 2-PIRSF000350 -> 12
-     * @param temporaryFileDirectory Location for temporary files
+     * @param blastedMatchesFilePath Name and path of temporary file to record a list of proteins that passed this
+     *                               filtering.
      * @throws java.io.IOException If pirsf.dat file could not be read
      */
     public void process(Map<Long, String> proteinIdMap,
                         Map<String, Integer> blastResultMap,
-                        String temporaryFileDirectory) throws IOException {
+                        String blastedMatchesFilePath) throws IOException {
 
         // Read in sf.tb file
         Map<String, Integer> sfTbMap = sfTbFileParser.parse(sfTbFileResource);
@@ -110,7 +105,7 @@ public class BlastPostProcessor implements Serializable {
             }
         }
 
-        PirsfFileUtil.writeFilteredRawMatchesToFile(temporaryFileDirectory, blastedMatchesFileName, passedBlastedProteinIds);
+        PirsfFileUtil.writeFilteredRawMatchesToFile(blastedMatchesFilePath, passedBlastedProteinIds);
     }
 
 
