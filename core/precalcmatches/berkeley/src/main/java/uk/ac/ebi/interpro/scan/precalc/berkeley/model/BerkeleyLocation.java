@@ -15,7 +15,7 @@ import com.sleepycat.persist.model.Persistent;
  * @since 1.0-SNAPSHOT
  */
 @Persistent
-public class BerkeleyLocation {
+public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
 
     private Integer start;
 
@@ -200,5 +200,62 @@ public class BerkeleyLocation {
                 "start=" + start +
                 ", end=" + end +
                 '}';
+    }
+
+    /**
+     * Attempts to sort as follows:
+     * <p/>
+     * If equal (== or .equals) return 0.
+     * Sort on start position
+     * Sort on end position
+     * Sort on envelope start
+     * Sort on envelope end
+     * Sort on HmmStart
+     * Sort on HmmEnd
+     * Sort on Score
+     * Sort on Evalue
+     *
+     * @param that the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     *         is less than, equal to, or greater than the specified object.
+     * @throws ClassCastException if the specified object's type prevents it
+     *                            from being compared to this object.
+     */
+    @Override
+    public int compareTo(BerkeleyLocation that) {
+        if (this == that || this.equals(that)) return 0;
+        if (this.getStart() != null && that.getStart() != null) {
+            if (this.getStart() < that.getStart()) return -1;
+            if (this.getStart() > that.getStart()) return 1;
+        }
+        if (this.getEnd() != null && that.getEnd() != null) {
+            if (this.getEnd() < that.getEnd()) return -1;
+            if (this.getEnd() > that.getEnd()) return 1;
+        }
+        if (this.getEnvelopeStart() != null && that.getEnvelopeStart() != null) {
+            if (this.getEnvelopeStart() < that.getEnvelopeStart()) return -1;
+            if (this.getEnvelopeStart() > that.getEnvelopeStart()) return 1;
+        }
+        if (this.getEnvelopeEnd() != null && that.getEnvelopeEnd() != null) {
+            if (this.getEnvelopeEnd() < that.getEnvelopeEnd()) return -1;
+            if (this.getEnvelopeEnd() > that.getEnvelopeEnd()) return 1;
+        }
+        if (this.getHmmStart() != null && that.getHmmStart() != null) {
+            if (this.getHmmStart() < that.getHmmStart()) return -1;
+            if (this.getHmmStart() > that.getHmmStart()) return 1;
+        }
+        if (this.getHmmEnd() != null && that.getHmmEnd() != null) {
+            if (this.getHmmEnd() < that.getHmmEnd()) return -1;
+            if (this.getHmmEnd() > that.getHmmEnd()) return 1;
+        }
+        if (this.getScore() != null && that.getScore() != null) {
+            if (this.getScore() < that.getScore()) return -1;
+            if (this.getScore() > that.getScore()) return 1;
+        }
+        if (this.geteValue() != null && that.geteValue() != null) {
+            if (this.geteValue() < that.geteValue()) return -1;
+            if (this.geteValue() > that.geteValue()) return 1;
+        }
+        throw new IllegalStateException("Trying to compare a BerkeleyLocation that has no state.  This: " + this + "\n\nThat: " + that);
     }
 }
