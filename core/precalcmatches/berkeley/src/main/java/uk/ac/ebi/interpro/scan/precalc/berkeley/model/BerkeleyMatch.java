@@ -6,8 +6,8 @@ import com.sleepycat.persist.model.SecondaryKey;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static com.sleepycat.persist.model.Relationship.MANY_TO_ONE;
 
@@ -135,7 +135,7 @@ public class BerkeleyMatch {
 
     public void addLocation(BerkeleyLocation location) {
         if (this.locations == null) {
-            this.locations = new HashSet<BerkeleyLocation>();
+            this.locations = new TreeSet<BerkeleyLocation>();
         }
         locations.add(location);
     }
@@ -177,13 +177,14 @@ public class BerkeleyMatch {
         return result;
     }
 
-    @Override
     public String toString() {
-        return "BerkeleyMatch{" +
-                "proteinMD5='" + proteinMD5 + '\'' +
-                ", locations=" + locations +
-                ", matchId=" + matchId +
-                ", signatureAccession='" + signatureAccession + '\'' +
-                '}';
+        final StringBuilder sb = new StringBuilder();
+        sb.append("BerkeleyMatch");
+        sb.append("{SignatureLibrary ").append(signatureLibraryName);
+        sb.append(" Release ").append(signatureLibraryRelease);
+        sb.append(" MD5 ").append(proteinMD5);
+        sb.append(" signatureAc ").append(signatureAccession);
+        sb.append('}');
+        return sb.toString();
     }
 }
