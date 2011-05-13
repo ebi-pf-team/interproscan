@@ -14,6 +14,7 @@ import uk.ac.ebi.interpro.scan.precalc.server.service.MatchesService;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,10 +51,20 @@ public class MatchesController {
         List<BerkeleyMatch> matches = matchesService.getMatches(Arrays.asList(md5Array));
         BerkeleyMatchXML matchXML = new BerkeleyMatchXML(matches);
         response.setContentType("application/xml");
+        Writer out = null;
         try {
-            marshaller.marshal(matchXML, new StreamResult(response.getWriter()));
+            out = response.getWriter();
+            marshaller.marshal(matchXML, new StreamResult(out));
         } catch (IOException e) {
             LOGGER.error("IOException thrown when attempting to output 'BerkeleyMatchXML' in response to query: ");
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    LOGGER.error("Unable to close the response Writer stream.");
+                }
+            }
         }
     }
 }

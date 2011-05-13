@@ -4,14 +4,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="matchesService" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.MatchesServiceImpl">
-        <constructor-arg ref="berkeleyDBService"/>
+    <bean id="matchesService" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.MatchesServiceImpl"/>
+
+    <bean id="berkeleyMatchDBService"
+          class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyMatchDBService">
+        <!-- This constructor argument is the path to the Berkeley DB containing all of the matches.-->
+        <constructor-arg value="/home/pjones/onion_berkeley"/>
     </bean>
 
-    <bean id="berkeleyDBService" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyDBService">
-        <!-- This constructor argument is the path to the Berkeley DB containing all of the matches.
-        -->
-        <constructor-arg value="/home/pjones/onion_berkeley"/>
+    <bean id="berkeleyMD5Service" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyMD5DBService">
+
+        <constructor-arg value="/home/pjones/MD5_berkeley"/>
     </bean>
 
 </beans>
