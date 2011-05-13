@@ -98,9 +98,12 @@ public class PrintsMatchParser {
                             int motifCount = Integer.parseInt(matchSplit[4]);
                             double score = Double.parseDouble(matchSplit[5]);
                             double pvalue = Double.parseDouble((matchSplit[7]));
-                            if (LOGGER.isDebugEnabled()) LOGGER.debug("Parsed out pvalue: " + pvalue);
+                            String motifSequence = matchSplit[8];
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Parsed out pvalue: " + pvalue);
+                            }
 
-                            int seqLength = Integer.parseInt(matchSplit[9]);
+                            int motifLength = Integer.parseInt(matchSplit[9]);
                             // Inherited from Onion:
                             // The hack below is here because of The FingerPrintScan, for starting positions that are in
                             // 5 figures, fails to separate pos and high columns with a space, then we just have to
@@ -112,12 +115,27 @@ public class PrintsMatchParser {
                                 seqStartPosStr = seqStartPosStr.substring(0, 6);
                             }
                             int locationStart = Integer.parseInt(seqStartPosStr);
+
+                            int locationEnd = locationStart + motifLength - 1;
+
+
+                            // If the motif sequence reported ends in #, this means it hangs over the end
+                            // of the sequence.
+                            if (motifSequence.endsWith("#")) {
+                                // Motif hangs over the end of the sequence.  Doh.
+                                // Find out by how far...
+                                int motifSeqLength = motifSequence.length();
+                                int indexCheck = motifSeqLength - 1;
+                                while (motifSequence.charAt(indexCheck) == '#') {
+                                    indexCheck--;
+                                }
+
+                                // Adjust the end appropriately.
+                                locationEnd = locationEnd - (motifSeqLength - indexCheck) + 1;
+                            }
                             if (locationStart < 1) {
                                 locationStart = 1;
                             }
-                            //TODO: see note below on Onion sanity check
-                            int locationEnd = locationStart + seqLength - 1;
-
                             RawProtein<PrintsRawMatch> sequenceIdentifier = rawResults.get(proteinIdentifier);
                             if (sequenceIdentifier == null) {
                                 sequenceIdentifier = new RawProtein<PrintsRawMatch>(proteinIdentifier);
@@ -127,21 +145,30 @@ public class PrintsMatchParser {
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("PrintsMotif.getEvalue(): " + motifMatch.geteValue());
 
-                            final PrintsRawMatch match = new PrintsRawMatch(proteinIdentifier, motifMatch.getModelId(), signatureReleaseLibrary, locationStart,
-                                    locationEnd, motifMatch.geteValue(), motifMatch.getGraphScan(), motifCount, motifNumber,
-                                    pvalue, score);//, motifName);
+                            final PrintsRawMatch match = new PrintsRawMatch(
+                                    proteinIdentifier,
+                                    motifMatch.getModelId(),
+                                    signatureReleaseLibrary,
+                                    locationStart,
+                                    locationEnd,
+                                    motifMatch.geteValue(),
+                                    motifMatch.getGraphScan(),
+                                    motifCount,
+                                    motifNumber,
+                                    pvalue,
+                                    score
+                            );//, motifName);
 
-                            if (LOGGER.isDebugEnabled())
+                            if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("Evalue from PrintsRawMatch object: " + match.getEvalue());
-                            if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("Pvalue from PrintsRawMatch object: " + match.getPvalue());
+                            }
                             sequenceIdentifier.addMatch(match);
                         }
                     }
                 }
             }
-        }
-        finally {
+        } finally {
             if (reader != null) {
                 reader.close();
             }
@@ -149,18 +176,3 @@ public class PrintsMatchParser {
         return new HashSet<RawProtein<PrintsRawMatch>>(rawResults.values());
     }
 }
-
-//      ONION sanity check for sequence start and end positions - end one not yet implemented:
-//
-//                    /** Now the sanity check on the positions - PRINTS motifs can cross the
-//                     * sequence boundary at both N- and C-terminals.
-//                     * If seqEndPos > seq.length, then seqEndPos needs to be set to seq.length
-//                     * If seqStartPos < 1, then it needs to be set to 1.
-//                     */
-//                    if (seqStartPos < 1)
-//                        seqStartPos = 1;
-//                    Integer upiLen = seqLengths.get(upi);
-//                    if (upiLen != null) {
-//                        if (seqEndPos > upiLen)
-//                            seqEndPos = upiLen;
-//                    }

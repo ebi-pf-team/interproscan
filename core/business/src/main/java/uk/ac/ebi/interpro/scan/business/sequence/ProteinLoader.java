@@ -15,9 +15,10 @@ import java.util.Set;
  * <p/>
  * This must be a system-wide Singleton - achieved by ONLY injecting into the
  * SerialWorker JVM, from Spring.
- * User: phil
- * Date: 14-Nov-2009
- * Time: 14:04:59
+ *
+ * @author Phil Jones
+ *         Date: 14-Nov-2009
+ *         Time: 14:04:59
  */
 public class ProteinLoader implements Serializable {
 
@@ -74,15 +75,14 @@ public class ProteinLoader implements Serializable {
                 }
             }
 
-            // TODO - rethink the whole precalculated protein mechanism.
-//            Protein precalculatedProtein = (proteinLookup != null)
-//                    ? proteinLookup.getPrecalculated(protein)
-//                    : null;
-//            if (precalculatedProtein != null) {
-//                precalculatedProteins.add(precalculatedProtein);
-//            } else {
-            addProteinToBatch(protein);
-//            }
+            Protein precalculatedProtein = (proteinLookup != null)
+                    ? proteinLookup.getPrecalculated(protein)
+                    : null;
+            if (precalculatedProtein != null) {
+                precalculatedProteins.add(precalculatedProtein);
+            } else {
+                addProteinToBatch(protein);
+            }
         }
     }
 

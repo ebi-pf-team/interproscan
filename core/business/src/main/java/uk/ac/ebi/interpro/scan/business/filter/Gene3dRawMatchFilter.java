@@ -270,29 +270,31 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
                     else {
                         splitDomainEnd = number;
                         // Create match for each split domain
-                        Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
-                                m.getSequenceIdentifier(),
-                                m.getModelId(),
-                                m.getSignatureLibraryRelease(),
-                                splitDomainStart,
-                                splitDomainEnd,
-                                m.getEvalue(),
-                                m.getScore(),
-                                m.getHmmStart(),       // TODO: What should HMM start and end be for split domains?
-                                m.getHmmEnd(),
-                                m.getHmmBounds(),
-                                m.getLocationScore(),
-                                m.getEnvelopeStart(),  // TODO: What should env start and end be for split domains?
-                                m.getEnvelopeEnd(),
-                                m.getExpectedAccuracy(),
-                                m.getFullSequenceBias(),
-                                m.getDomainCeValue(),
-                                m.getDomainIeValue(),
-                                m.getDomainBias(),
-                                m.getCigarAlignment());
-                        // Add match
-                        filteredProtein.addMatch(match);
-                        matchKeys.add(matchKey);
+                        if (splitDomainEnd > splitDomainStart) {  // Exclude split domain matches where the length is 1.
+                            Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
+                                    m.getSequenceIdentifier(),
+                                    m.getModelId(),
+                                    m.getSignatureLibraryRelease(),
+                                    splitDomainStart,
+                                    splitDomainEnd,
+                                    m.getEvalue(),
+                                    m.getScore(),
+                                    m.getHmmStart(),       // TODO: What should HMM start and end be for split domains?
+                                    m.getHmmEnd(),
+                                    m.getHmmBounds(),
+                                    m.getLocationScore(),
+                                    m.getEnvelopeStart(),  // TODO: What should env start and end be for split domains?
+                                    m.getEnvelopeEnd(),
+                                    m.getExpectedAccuracy(),
+                                    m.getFullSequenceBias(),
+                                    m.getDomainCeValue(),
+                                    m.getDomainIeValue(),
+                                    m.getDomainBias(),
+                                    m.getCigarAlignment());
+                            // Add match
+                            filteredProtein.addMatch(match);
+                            matchKeys.add(matchKey);
+                        }
                     }
                 }
             }
