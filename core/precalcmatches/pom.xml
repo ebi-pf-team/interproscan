@@ -18,7 +18,7 @@
     <modules>
         <module>berkeley</module>
         <module>server</module>
-        <module>client</module>
+        <module>precalc-match-client</module>
     </modules>
 
     <name>InterProScan Precalculated Matches</name>
