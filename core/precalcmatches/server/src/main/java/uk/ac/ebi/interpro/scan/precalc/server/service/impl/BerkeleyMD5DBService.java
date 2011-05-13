@@ -5,12 +5,10 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
-import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyConsideredProtein;
 
 import java.io.File;
 
@@ -21,22 +19,21 @@ import java.io.File;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class BerkeleyDBService {
+public class BerkeleyMD5DBService {
 
-    private static final Logger LOGGER = Logger.getLogger(BerkeleyDBService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BerkeleyMD5DBService.class.getName());
 
     private String databasePath;
 
-    private SecondaryIndex<String, Long, BerkeleyMatch> secIDX = null;
+    private PrimaryIndex<String, BerkeleyConsideredProtein> primIDX = null;
 
     Environment myEnv = null;
     EntityStore store = null;
 
-    @Autowired
-    public BerkeleyDBService(String databasePath) {
+    public BerkeleyMD5DBService(String databasePath) {
         Assert.notNull(databasePath, "The databasePath bean cannot be null.");
         this.databasePath = databasePath;
-        System.out.println("Initializing BerkeleyDB (creating indexes): Please wait...");
+        System.out.println("Initializing BerkeleyDB MD5 Database (creating indexes): Please wait...");
         initializeMD5Index();
     }
 
@@ -67,8 +64,8 @@ public class BerkeleyDBService {
         }
     }
 
-    SecondaryIndex<String, Long, BerkeleyMatch> getMD5Index() {
-        return secIDX;
+    public PrimaryIndex<String, BerkeleyConsideredProtein> getPrimIDX() {
+        return primIDX;
     }
 
     private void initializeMD5Index() {
@@ -85,7 +82,6 @@ public class BerkeleyDBService {
         store = new EntityStore(myEnv, "EntityStore", storeConfig);
 
 
-        PrimaryIndex<Long, BerkeleyMatch> primIDX = store.getPrimaryIndex(Long.class, BerkeleyMatch.class);
-        secIDX = store.getSecondaryIndex(primIDX, String.class, "proteinMD5");
+        primIDX = store.getPrimaryIndex(String.class, BerkeleyConsideredProtein.class);
     }
 }

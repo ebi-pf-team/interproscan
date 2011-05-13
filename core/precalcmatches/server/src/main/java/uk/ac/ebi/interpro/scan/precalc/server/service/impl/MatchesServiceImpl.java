@@ -8,7 +8,6 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.server.service.MatchesService;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,14 +23,22 @@ public class MatchesServiceImpl implements MatchesService {
 
     /**
      * Secondary Index to allow the BerkeleyDB (Sleepycat) to be queried
-     * by MD5. Needs to be configured elsewhere.. (Spring?)
+     * by MD5.
      */
-    private BerkeleyDBService berkeleyDBService;
+    private BerkeleyMatchDBService berkeleyMatchDBService;
+
+    /**
+     * Primary index to allow the BerkeleyDB MD5 database to be
+     * queried by MD5.
+     */
+    private BerkeleyMD5DBService berkeleyMD5Service;
 
     @Autowired
-    public MatchesServiceImpl(BerkeleyDBService berkeleyDBService) {
-        Assert.notNull(berkeleyDBService, "'berkeleyDBService' bean must not be null");
-        this.berkeleyDBService = berkeleyDBService;
+    public MatchesServiceImpl(BerkeleyMatchDBService berkeleyMatchDBService, BerkeleyMD5DBService berkeleyMD5Service) {
+        Assert.notNull(berkeleyMatchDBService, "'berkeleyMatchDBService' bean must not be null");
+        Assert.notNull(berkeleyMD5Service, "'berkeleyMD5Service' bean must not be null");
+        this.berkeleyMatchDBService = berkeleyMatchDBService;
+        this.berkeleyMD5Service = berkeleyMD5Service;
     }
 
     /**
@@ -42,17 +49,15 @@ public class MatchesServiceImpl implements MatchesService {
      * @return a List of matches for these proteins.
      */
     public List<BerkeleyMatch> getMatches(List<String> proteinMD5s) {
-        EntityCursor<BerkeleyMatch> matchCursor = null;
         List<BerkeleyMatch> matches = new ArrayList<BerkeleyMatch>();
 
         for (String md5 : proteinMD5s) {
-            System.out.println("Looking for matches for protein MD5: " + md5);
+            EntityCursor<BerkeleyMatch> matchCursor = null;
             try {
-                matchCursor = berkeleyDBService.getMD5Index().entities(md5, true, md5, true);
+                matchCursor = berkeleyMatchDBService.getMD5Index().entities(md5, true, md5, true);
 
                 BerkeleyMatch currentMatch;
                 while ((currentMatch = matchCursor.next()) != null) {
-                    System.out.println("Found a match...");
                     matches.add(currentMatch);
                 }
             } finally {
@@ -77,7 +82,12 @@ public class MatchesServiceImpl implements MatchesService {
      *         been considered previously.
      */
     public List<String> notPrecalculated(List<String> proteinMD5s) {
-        LOGGER.warn("notPrecalculated method not implemented - just returns an empty List.");
-        return Collections.emptyList();
+        List<String> md5ToCalculate = new ArrayList<String>();
+        for (String md5 : proteinMD5s) {
+            if (berkeleyMD5Service.getPrimIDX().get(md5) == null) {
+                md5ToCalculate.add(md5);
+            }
+        }
+        return md5ToCalculate;
     }
 }
