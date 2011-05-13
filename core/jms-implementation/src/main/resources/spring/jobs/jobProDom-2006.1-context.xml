@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: ProDom ############################  -->
+    <bean id="jobProDom-2006.1" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="ProDom is a comprehensive set of protein domain families automatically generated from the UniProt Knowledge Database."/>
+        <property name="analysis" value="true"/>
+    </bean>
+
+    <bean id="abstractProDomStep-2006.1" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobProDom-2006.1"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PRODOM}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP: Prepare FASTA file for ProDom binary -->
+    <bean id="stepProDomWriteFastaFile-2006.1"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractProDomStep-2006.1">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP: Run the ProDom perl script -->
+    <bean id="stepProDomRunBinary-2006.1"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prodom.RunProDomBlast3iStep"
+          parent="abstractProDomStep-2006.1">
+        <!--
+        Example:
+        /ebi/sp/pro1/Onion/calcs/PRODOM/ProDomBlast3i.pl -P /ebi/production/interpro/Onion/blast/blast-2.2.19/bin/ -p blastp -d /ebi/production/interpro/Onion/prodom/2006.1/prodom.ipr -s SEQUENCE_FILE -t /tmp/ -h 0 -f  > OUTPUT_FILE
+        -->
+        <property name="dependsUpon" ref="stepProDomWriteFastaFile-2006.1"/>
+        <property name="stepDescription" value="Run ProDomBlast3i.pl perl script for selected proteins"/>
+        <property name="binarySwitches" value="-p blastp -h 0 -f"/>
+        <property name="retries" value="3"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fullPathToTempDirectory" value=""/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="fullPathToProDomBlast3iPerlScript" value="${binary.prodom.prodomblast3i.pl.path}"/>
+        <property name="fullPathToProDomIprFile" value="${prodom.ipr.path.2006.1}"/>
+        <property name="fullPathToBlastBinary" value="${binary.blastall.path}"/>
+    </bean>
+
+    <!-- STEP: Parse the ProDom binary output and persist the results in the database. -->
+    <!--<bean id="stepProDomParseRawOutput-2006.1"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.prodom.ParseAndPersistProDomOutputStep"-->
+          <!--parent="abstractProDomStep-2006.1">-->
+        <!--<property name="dependsUpon" ref="stepProDomRunBinary-2006.1"/>-->
+        <!--<property name="stepDescription" value="Parse the output from the ProDom binary"/>-->
+        <!--<property name="serialGroup" value="PARSE_PRODOM"/>-->
+        <!--<property name="retries" value="3"/>-->
+        <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+        <!--<property name="rawMatchDAO" ref="prodomRawMatchDAO-2006.1"/>-->
+        <!--<property name="parser" ref="prodomRawOutputParser-2006.1"/>-->
+    <!--</bean>-->
+
+    <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
+               writing to the directory at the same time) -->
+    <!--<bean id="stepPromDomDeleteTempFiles-2006.1"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
+          <!--parent="abstractProDomStep-2006.1">-->
+        <!--<property name="dependsUpon" ref="stepProDomParseRawOutput-2006.1"/>-->
+        <!--<property name="stepDescription"-->
+                  <!--value="Delete the remaining temporary files following successful parsing and persistence"/>-->
+        <!--<property name="fileNameTemplate">-->
+            <!--<list>-->
+                <!--<ref bean="fastaFileNameTemplate"/>-->
+                <!--<ref bean="rawAnalaysisOutputFileTemplate"/>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PrositeProfiles !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <!--<bean id="prodomRawMatchDAO-2006.1" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">-->
+        <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="prodomRawOutputParser-2006.1"-->
+          <!--class="uk.ac.ebi.interpro.scan.io.match.prodom.ProDomOutputFileParser">-->
+    <!--</bean>-->
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
