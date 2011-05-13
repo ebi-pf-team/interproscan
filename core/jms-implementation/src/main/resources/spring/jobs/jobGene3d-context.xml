@@ -6,7 +6,8 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: Gene 3D ############################  --> <bean id="jobGene3d" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <!-- ######################## JOB: Gene 3D ############################  -->
+    <bean id="jobGene3d" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
                   value="Structural assignment for whole genes and genomes using the CATH domain structure database"/>
         <property name="analysis" value="true"/>
@@ -36,7 +37,7 @@
         <property name="dependsUpon" ref="stepGene3dWriteFasta"/>
         <property name="stepDescription" value="Run HMMER3"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
-        <property name="binarySwitches" value="-Z 100000 --domE 1"/>
+        <property name="binarySwitches" value="-Z 10019 --domE 1"/>
         <property name="fullPathToHmmFile" value="${gene3d.hmm.path.3.3.0}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>

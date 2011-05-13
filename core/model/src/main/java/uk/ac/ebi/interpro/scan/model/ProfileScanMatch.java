@@ -60,7 +60,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         @Column(nullable = false)
         private double score;
 
-        @Column(nullable = false)//, name = "cigar_align")
+        @Column(nullable = false, length = 4000)//, name = "cigar_align")
         private String cigarAlignment;
 
         /**

@@ -56,6 +56,7 @@ public class AmqInterProScanMaster implements Master {
 
     private UnrecoverableErrorStrategy unrecoverableErrorStrategy;
 
+
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
     }
@@ -85,6 +86,7 @@ public class AmqInterProScanMaster implements Master {
     public void setCloseOnCompletion(boolean closeOnCompletion) {
         this.closeOnCompletion = closeOnCompletion;
     }
+
 
     public Jobs getJobs() {
         return jobs;
