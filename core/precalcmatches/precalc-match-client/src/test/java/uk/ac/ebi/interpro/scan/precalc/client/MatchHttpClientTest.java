@@ -19,7 +19,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Tests the web service client using a org.apache.http.localserver.LocalTestServer
@@ -38,7 +38,10 @@ public class MatchHttpClientTest {
     @Resource
     private FileSystemResource servedXml;
 
-    HttpRequestHandler handler = new HttpRequestHandler() {
+    @Resource
+    private FileSystemResource serverTSV;
+
+    HttpRequestHandler matchHandler = new HttpRequestHandler() {
         @Override
         public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
             HttpEntity httpEntity = new FileEntity(servedXml.getFile(), "text/xml");
@@ -46,17 +49,25 @@ public class MatchHttpClientTest {
         }
     };
 
+    HttpRequestHandler md5ToAnalysehandler = new HttpRequestHandler() {
+        @Override
+        public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+            HttpEntity httpEntity = new FileEntity(serverTSV.getFile(), "text/tab-separated-values");
+            response.setEntity(httpEntity);
+        }
+    };
+
     @Resource
     private MatchHttpClient matchClient;
 
-    private static final String HANDLER_PATH = "/matches";
 
     @Before
     public void setUp() throws Exception {
         server = new LocalTestServer(null, null);
-        server.register(HANDLER_PATH, handler);
+        server.register(MatchHttpClient.MATCH_SERVICE_PATH, matchHandler);
+        server.register(MatchHttpClient.PROTEINS_TO_ANALYSE_SERVICE_PATH, md5ToAnalysehandler);
         server.start();
-        final String serverPath = "http:/" + server.getServiceAddress().toString() + HANDLER_PATH;
+        final String serverPath = "http:/" + server.getServiceAddress().toString();
         matchClient.setUrl(serverPath);
     }
 
@@ -67,9 +78,14 @@ public class MatchHttpClientTest {
 
 
     @Test
-    public void testClient() throws IOException {
+    public void testMatchClient() throws IOException {
         // NOTE - this is reading in a static XML file, rather than connecting to a real service.
-        BerkeleyMatchXML matchXML = matchClient.getMatches(Arrays.asList("D000022E87E6B7B84CCCBA9BAF34568A"));
-        System.out.println(matchXML);
+        BerkeleyMatchXML matchXML = matchClient.getMatches("D000022E87E6B7B84CCCBA9BAF34568A");
+    }
+
+    @Test
+    public void testProteinsToAnalyseClient() throws IOException {
+        // NOTE - this is reading in a static file, rather than connecting to a real service.
+        List<String> proteinsToAnalyse = matchClient.getMD5sOfProteinsToAnalyse("D000022E87E6B7B84CCCBA9BAF34568A", "HoHoHo");
     }
 }
