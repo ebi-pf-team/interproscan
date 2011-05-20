@@ -1,21 +1,21 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.smart;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.io.AbstractResourceReader;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser;
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import javax.annotation.Resource;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -35,6 +35,15 @@ public class SmartPostProcessingTest {
     private static final Logger LOGGER = Logger.getLogger(SmartPostProcessingTest.class.getName());
 
     @Resource
+    private org.springframework.core.io.Resource hmmPfamOutput;
+
+    @Resource
+    private HmmPfamParser<SmartRawMatch> hmmPfamParser;
+
+    @Resource
+    private org.springframework.core.io.Resource hmmPfamFilteredMatches;
+
+    @Resource
     private org.springframework.core.io.Resource rawMatches;
 
     @Resource
@@ -43,6 +52,32 @@ public class SmartPostProcessingTest {
     @Resource
     private SmartPostProcessing postProcessor;
 
+    // Parse hmmerOutput using io class then run post-processing
+    @Ignore
+    @Test
+    public void testParseAndFilter() throws IOException {
+
+        // Read raw matches
+        Set<RawProtein<SmartRawMatch>> proteins = hmmPfamParser.parse(hmmPfamOutput.getInputStream());
+        final Map<String, RawProtein<SmartRawMatch>> rawProteins
+                = new HashMap<String, RawProtein<SmartRawMatch>>();
+        for (RawProtein<SmartRawMatch> p : proteins) {
+            rawProteins.put(p.getProteinIdentifier(), p);
+        }
+
+        // Read expected filtered matches
+        final Map<String, RawProtein<SmartRawMatch>> expectedFilteredProteins =
+                new HashMap<String, RawProtein<SmartRawMatch>>(parseRawMatches(false, hmmPfamFilteredMatches));
+
+        // Filter raw matches
+        final Map<String, RawProtein<SmartRawMatch>> filteredProteins = postProcessor.process(rawProteins);
+
+        // Check
+        assertEquals(expectedFilteredProteins.size(), filteredProteins.size());
+        assertEquals(expectedFilteredProteins, filteredProteins);
+
+    }
+
     @Test
     public void testFilter() throws IOException {
 
@@ -50,11 +85,11 @@ public class SmartPostProcessingTest {
         final Map<String, RawProtein<SmartRawMatch>> rawProteins =
                 new HashMap<String, RawProtein<SmartRawMatch>>(parseRawMatches(true, rawMatches));
 
-        // Read filtered matches
+        // Read expected filtered matches
         final Map<String, RawProtein<SmartRawMatch>> expectedFilteredProteins =
                 new HashMap<String, RawProtein<SmartRawMatch>>(parseRawMatches(false, filteredMatches));
 
-        // Parse and filter output from DomainFinder (filtered SSF file)
+        // Filter raw matches
         final Map<String, RawProtein<SmartRawMatch>> filteredProteins = postProcessor.process(rawProteins);
 
         // Check

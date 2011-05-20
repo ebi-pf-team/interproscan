@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--
+    1. Extracted SMART HMM:
+       ~hunter/perl/scripts/to_extract/getSmartEntry.pl SM00327 /nfs/seqdb/production/interpro/data/members/smart/6.1/smart.HMMs
+    2. Created binary file:
+       hmmconvert -b smart.HMMs smart.HMMs.bin
+    3. Ran HmmPfam:
+       bin/hmmpfam - -cpu 1 - -acc -A 0 data/smart/6.1/smart.HMMs.bin business/src/test/resources/uk/ac/ebi/interpro/scan/business/postprocessing/smart/smart.fasta
+    4. Removed SM00025 entries from UPI0000000030-hmmpfam.txt
+
+    -->
+
+    <bean id="hmmPfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+        <property name="signatureLibrary" value="SMART"/>
+        <property name="signatureLibraryRelease" value="6.1"/>
+        <property name="hmmer2ParserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.SmartHmmer2ParserSupport">
+                <property name="signatureLibraryRelease" value="6.1"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="hmmPfamOutput" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-hmmpfam.txt"/>
+    </bean>
+
+    <bean id="hmmPfamFilteredMatches" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-IPRSCAN.tsv"/>
+    </bean>
 
     <bean id="rawMatches" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/SMART_ANALYSIS_C.tsv"/>
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-SMART_ANALYSIS_C.tsv"/>
     </bean>
 
     <bean id="filteredMatches" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/IPRSCAN.tsv"/>
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-IPRSCAN.tsv"/>
     </bean>
    
     <bean id="postProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
@@ -23,13 +48,13 @@
         <property name="thresholdFileParser">
             <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser"/>
         </property>
-        <!--<property name="thresholdFileResource"   value="file:${smart.overlapping.path}"/>-->
+        <!--<property name="thresholdFileResource"   value="file:${smart.threshold.path}"/>-->
         <property name="thresholdFileResource">
             <bean class="org.springframework.core.io.ClassPathResource">
                 <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/THRESHOLDS"/>
             </bean>
         </property>
-        <!--<property name="overlappingFileResource" value="file:${smart.threshold.path}"/>-->
+        <!--<property name="overlappingFileResource" value="file:${smart.overlapping.path}"/>-->
         <property name="overlappingFileResource">
             <bean class="org.springframework.core.io.ClassPathResource">
                 <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/overlapping"/>
