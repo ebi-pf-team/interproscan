@@ -3,22 +3,17 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.smart;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser;
 import uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser;
 import uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Smart post-processing -> requires 2 Smart files for threshold and overlapping data
@@ -31,49 +26,23 @@ public class SmartPostProcessing implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(SmartPostProcessing.class.getName());
 
-    private SmartThresholdFileParser thresholdFileParser;
-
-    private SmartOverlappingFileParser overlappingFileParser;
-
-    private Resource thresholdFileResource;
-
-    private Resource overlappingFileResource;
-
-    private Map<String, SmartThresholdFileParser.SmartThreshold> smartThresholdMap;
-
-    private Map<String, SmartOverlappingFileParser.SmartOverlap> smartOverlapMap;
-
-    private Map<String, String> familyMap = new HashMap<String, String>();
-
-    private Map<String, String> accessionMap = new HashMap<String, String>();
-
-    private Map<String, String> mergeMap = new HashMap<String, String>();
-
-    private Map<String, RawProtein<SmartRawMatch>> allFilteredMatches = new HashMap<String, RawProtein<SmartRawMatch>>();
-
-    private List<SmartRawMatch> potentialRepeatMatches = new ArrayList<SmartRawMatch>();
-
-    private Map<Integer, SmartRawMatch> serThrKinaseMatches = null;
-    private Map<Integer, SmartRawMatch> tyrKinaseMatches = null;
-    private ProteinDAO dao;
-
-    double domainCutoff = Double.NaN;
-    double repeatsCutoff = Double.MAX_VALUE;
-    Double repeatsCutoffDomain = null;
-    String minRepeatsInSeqS = null;
-
-    protected final int SIBLINGS_OVERLAP_THRESHOLD = 10; //AAs
-
     //Kinases are processed separately, and the Smart accessions for the relevant methods are stored here -> are they permanent?
-    private final String SMART_SER_THR_KINASE_METHOD = "SM00220";
-    private final String SMART_TYR_KINASE_METHOD = "SM00219";
-    private final String SMART_MERGE_TAG = "merge";
-    private final String SMART_SPLIT_TAG = "split";
-    private final int SMART_MAX_PRIORITY = 1;
-    private final double DBL_EPSILON = 2.220446049250313E-16;
-    private final int DBL_MAX_10_EXP = 308;
-    private String SMART_TYR_REGEX = ".*HRD[LIV][AR]\\w\\wN.*";
-    private String SMART_SER_THR_REGEX = ".*D[LIVM]K\\w\\wN.*";
+    private final String SMART_SER_THR_KINASE_METHOD    = "SM00220";
+    private final String SMART_TYR_KINASE_METHOD        = "SM00219";
+    private final String SMART_MERGE_TAG                = "merge";
+    private final String SMART_SPLIT_TAG                = "split";
+    private final int SMART_MAX_PRIORITY                = 1;
+    private final double DBL_EPSILON                    = 2.220446049250313E-16;
+    private final int DBL_MAX_10_EXP                    = 308;
+    private final String SMART_TYR_REGEX                = ".*HRD[LIV][AR]\\w\\wN.*";
+    private final String SMART_SER_THR_REGEX            = ".*D[LIVM]K\\w\\wN.*";
+    private final int SIBLINGS_OVERLAP_THRESHOLD        = 10; //AAs
+
+    // Properties
+    private SmartThresholdFileParser thresholdFileParser;
+    private SmartOverlappingFileParser overlappingFileParser;
+    private Resource thresholdFileResource;
+    private Resource overlappingFileResource;
 
     @Required
     public void setThresholdFileParser(SmartThresholdFileParser thresholdFileParser) {
@@ -98,21 +67,35 @@ public class SmartPostProcessing implements Serializable {
     //Map<String, RawProtein<SmartRawMatch>> filteredMatches = postProcessor.process(rawMatches);
     public Map<String, RawProtein<SmartRawMatch>> process(Map<String, RawProtein<SmartRawMatch>> proteinIdToRawMatchMap) throws IOException {
 
+        // FIX: Moved from module level
+        Map<String, SmartThresholdFileParser.SmartThreshold> smartThresholdMap;
+        Map<String, SmartOverlappingFileParser.SmartOverlap> smartOverlapMap;
+        Map<String, String> familyMap = new HashMap<String, String>();
+        Map<String, String> accessionMap = new HashMap<String, String>();
+        Map<String, String> mergeMap = new HashMap<String, String>();
+
         smartThresholdMap = thresholdFileParser.parse(thresholdFileResource);
         smartOverlapMap = overlappingFileParser.parse(overlappingFileResource);
 
         //need hashmap of accession, family name, only where no. family members is > 1 and family name is not serine kinase (other kinase??)
-        populateFamilyMap();
-        populateMergeMap();
+        populateFamilyMap(smartThresholdMap, accessionMap, familyMap);
+        populateMergeMap(smartOverlapMap, accessionMap, mergeMap);
 
+        // Fix: module-level var was keeping previous results!!!
+        Map<String, RawProtein<SmartRawMatch>> allFilteredMatches = new HashMap<String, RawProtein<SmartRawMatch>>();
         for (String s : proteinIdToRawMatchMap.keySet()) {
-            processProtein(proteinIdToRawMatchMap.get(s), allFilteredMatches);
+            processProtein(proteinIdToRawMatchMap.get(s), allFilteredMatches, smartThresholdMap, smartOverlapMap, familyMap, mergeMap);
         }
 
         return allFilteredMatches;
     }
 
-    private void processProtein (RawProtein<SmartRawMatch> matchRawProtein, Map<String, RawProtein<SmartRawMatch>> filteredMatches) {
+    private void processProtein (RawProtein<SmartRawMatch> matchRawProtein,
+                                 Map<String, RawProtein<SmartRawMatch>> filteredMatches,
+                                 Map<String, SmartThresholdFileParser.SmartThreshold> smartThresholdMap,
+                                 Map<String, SmartOverlappingFileParser.SmartOverlap> smartOverlapMap,
+                                 Map<String, String> familyMap,
+                                 Map<String, String> mergeMap) {
 
         //RawProtein<SmartRawMatch> filteredMatches = new RawProtein<SmartRawMatch>(matchRawProtein.getProteinIdentifier());
 
@@ -129,6 +112,15 @@ public class SmartPostProcessing implements Serializable {
             // Create the eValue for the match, according to Smart THRESHOLDS file
             double wholeSeqEVal = hmmerCalcEValue(seqScore.floatValue(), smartThreshold.getMuValue(), smartThreshold.getLambdaValue(), smartThreshold.getDbSize());
             double singleHitEVal =hmmerCalcEValue(score.floatValue(), smartThreshold.getMuValue(), smartThreshold.getLambdaValue(), smartThreshold.getDbSize());
+
+            // FIX: Moved from module level
+            double domainCutoff = Double.NaN;
+            double repeatsCutoff = Double.MAX_VALUE;
+            Double repeatsCutoffDomain = null;
+            String minRepeatsInSeqS = null;
+            List<SmartRawMatch> potentialRepeatMatches = new ArrayList<SmartRawMatch>();
+            Map<Integer, SmartRawMatch> serThrKinaseMatches = null;
+            Map<Integer, SmartRawMatch> tyrKinaseMatches = null;
 
             domainCutoff = smartThreshold.getCutoff();
             repeatsCutoffDomain = smartThreshold.getRepeat_cut();
@@ -206,7 +198,7 @@ public class SmartPostProcessing implements Serializable {
                         LOGGER.debug("Rejecting sibling hit because " + setEval2NPrec(singleHitEVal, getRequiredPrecForComparisonTo(domainCutoff)) + " > " + domainCutoff);
                     } else {
                         try {
-                            checkOverlapsWithSiblings(smartRawMatch, siblingsHits, smartOverlapMap, mergeMap, fam);
+                            checkOverlapsWithSiblings(smartRawMatch, siblingsHits, smartOverlapMap, mergeMap, fam, smartThresholdMap);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -230,7 +222,12 @@ public class SmartPostProcessing implements Serializable {
         }
     }
 
-    private void checkOverlapsWithSiblings(SmartRawMatch match, Map<String, List<SmartRawMatch>> siblingsHits, Map<String, SmartOverlappingFileParser.SmartOverlap> smartOverlapMap, Map<String, String> mergeMap, String family)
+    private void checkOverlapsWithSiblings(SmartRawMatch match,
+                                           Map<String, List<SmartRawMatch>> siblingsHits,
+                                           Map<String, SmartOverlappingFileParser.SmartOverlap> smartOverlapMap,
+                                           Map<String, String> mergeMap,
+                                           String family,
+                                         Map<String, SmartThresholdFileParser.SmartThreshold> smartThresholdMap)
             throws Exception {
 
         boolean overlaps = false;
@@ -480,7 +477,9 @@ public class SmartPostProcessing implements Serializable {
         }
     }
 
-    private void populateFamilyMap () {
+    private void populateFamilyMap (Map<String, SmartThresholdFileParser.SmartThreshold> smartThresholdMap,
+                                    Map<String, String> accessionMap,
+                                    Map<String, String> familyMap) {
         Map<String, List<String>> tempFamilyMap = new HashMap<String, List<String>>();
         for (String s : smartThresholdMap.keySet()) {
             SmartThresholdFileParser.SmartThreshold smartThreshold = smartThresholdMap.get(s);
@@ -503,7 +502,9 @@ public class SmartPostProcessing implements Serializable {
         }
     }
 
-    private void populateMergeMap() {
+    private void populateMergeMap(Map<String, SmartOverlappingFileParser.SmartOverlap> smartOverlapMap,
+                                  Map<String, String> accessionMap,
+                                  Map<String, String> mergeMap) {
         Map<String, String> tempDomainAccMap = new HashMap<String, String>();
         for (String s : smartOverlapMap.keySet()) {
             SmartOverlappingFileParser.SmartOverlap overlap = smartOverlapMap.get(s);

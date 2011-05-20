@@ -114,10 +114,10 @@
     </bean>
 
     <bean id="smartPostProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
-        <property name="overlappingFileParser" ref="overlappingParser"/>
-        <property name="thresholdFileParser" ref="thresholdParser"/>
-        <property name="thresholdFileResource" value="file:${smart.overlapping.path}"/>
-        <property name="overlappingFileResource" value="file:${smart.threshold.path}"/>
+        <property name="overlappingFileParser"      ref="overlappingParser"/>
+        <property name="overlappingFileResource"    value="file:${smart.overlapping.path}"/>
+        <property name="thresholdFileParser"        ref="thresholdParser"/>
+        <property name="thresholdFileResource"      value="file:${smart.threshold.path}"/>
     </bean>
 
     <bean id="overlappingParser" class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"></bean>
