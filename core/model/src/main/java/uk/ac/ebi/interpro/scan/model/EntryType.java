@@ -27,7 +27,7 @@ import java.io.Serializable;
  * @version $Id$
  * @since   1.0
  */
-@XmlType(name="EntryType")
+@XmlType(name="EntryTypeType")
 public enum EntryType implements Serializable {
 
     // TODO: Should this be an enum, or read from the database?
