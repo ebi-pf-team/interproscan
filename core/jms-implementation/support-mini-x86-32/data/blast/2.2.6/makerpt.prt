@@ -1,0 +1,2448 @@
+PrintTemplateSet ::= {
+  {
+    name "StdSeqDesc" ,
+    format {
+      asn1 "Seqdesc" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Seqdesc.mol-type" ,
+              label "Molecule type" ,
+              prefix "\n" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "Seqdesc.modif" ,
+              label "Modifiers" ,
+              prefix "\n" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Seqdesc.modif.E" ,
+                      form
+                        enum {
+                           } } } } } ,
+            {
+              asn1 "Seqdesc.method" ,
+              label "Method" ,
+              prefix "\n" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "Seqdesc.name" ,
+              label "Name" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.title" ,
+              label "Title" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.org" ,
+              label "Organism" ,
+              prefix "\n" ,
+              form
+                use-template "StdOrgRef" } ,
+            {
+              asn1 "Seqdesc.comment" ,
+              label "Comment" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.num" ,
+              label "Numbering" ,
+              prefix "\n" ,
+              form
+                use-template "StdNumbering" } ,
+            {
+              asn1 "Seqdesc.maploc" ,
+              label "Map location" ,
+              prefix "\n" ,
+              form
+                use-template "StdDbtag" } ,
+            {
+              asn1 "Seqdesc.pir" ,
+              label "PIR block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.genbank" ,
+              label "GenBank block" ,
+              prefix "\n" ,
+              form
+                use-template "StdGBBlock" } ,
+            {
+              asn1 "Seqdesc.pub" ,
+              label "Citation" ,
+              prefix "\n" ,
+              form
+                use-template "StdPubdesc" } ,
+            {
+              asn1 "Seqdesc.region" ,
+              label "Region" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.user" ,
+              label "User Type" ,
+              prefix "\n" ,
+              form
+                use-template "StdUserObj" } ,
+            {
+              asn1 "Seqdesc.sp" ,
+              label "SWISS-PROT block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.dbxref" ,
+              label "Cross reference" ,
+              prefix "\n" ,
+              form
+                use-template "StdDbtag" } ,
+            {
+              asn1 "Seqdesc.embl" ,
+              label "EMBL block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.create-date" ,
+              label "Create date" ,
+              prefix "\n" ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } ,
+            {
+              asn1 "Seqdesc.update-date" ,
+              label "Update date" ,
+              prefix "\n" ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } ,
+            {
+              asn1 "Seqdesc.prf" ,
+              label "PRF block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.pdb" ,
+              label "PDB block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.het" ,
+              label "Heterogen" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.source" ,
+              label "Source" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.molinfo" ,
+              label "Mol info" ,
+              prefix "\n" ,
+              form
+                null NULL } } } } } ,
+  {
+    name "StdReportSeqDesc" ,
+    format {
+      asn1 "Seqdesc" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Seqdesc.mol-type" ,
+              label "Molecule type" ,
+              prefix "\n" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "Seqdesc.modif" ,
+              label "Modifiers" ,
+              prefix "\n" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Seqdesc.modif.E" ,
+                      form
+                        enum {
+                           } } } } } ,
+            {
+              asn1 "Seqdesc.method" ,
+              label "Method" ,
+              prefix "\n" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "Seqdesc.name" ,
+              label "Name" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.title" ,
+              label "Title" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.org" ,
+              label "Organism" ,
+              prefix "\n" ,
+              form
+                use-template "StdOrgRef" } ,
+            {
+              asn1 "Seqdesc.comment" ,
+              label "Comment" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.num" ,
+              label "Numbering" ,
+              prefix "\n" ,
+              form
+                use-template "StdNumbering" } ,
+            {
+              asn1 "Seqdesc.maploc" ,
+              label "Map location" ,
+              prefix "\n" ,
+              form
+                use-template "StdDbtag" } ,
+            {
+              asn1 "Seqdesc.pir" ,
+              label "PIR block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.genbank" ,
+              prefix "\n" ,
+              form
+                use-template "StdReportGBBlock" } ,
+            {
+              asn1 "Seqdesc.pub" ,
+              label "Citation" ,
+              prefix "\n" ,
+              form
+                use-template "StdPubdesc" } ,
+            {
+              asn1 "Seqdesc.region" ,
+              label "Region" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.user" ,
+              label "User Type" ,
+              prefix "\n" ,
+              form
+                use-template "StdUserObj" } ,
+            {
+              asn1 "Seqdesc.sp" ,
+              label "SWISS-PROT block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.neighbors" ,
+              label "Neighbors" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.embl" ,
+              label "EMBL block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.create-date" ,
+              label "Create date" ,
+              prefix "\n" ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } ,
+            {
+              asn1 "Seqdesc.update-date" ,
+              label "Update date" ,
+              prefix "\n" ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } ,
+            {
+              asn1 "Seqdesc.prf" ,
+              label "PRF block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.pdb" ,
+              label "PDB block" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.het" ,
+              label "Heterogen" ,
+              prefix "\n" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seqdesc.source" ,
+              label "Source" ,
+              prefix "\n" ,
+              form
+                null NULL } ,
+            {
+              asn1 "Seqdesc.molinfo" ,
+              label "Mol info" ,
+              prefix "\n" ,
+              form
+                null NULL } } } } } ,
+  {
+    name "StdSourceDesc" ,
+    format {
+      asn1 "Seqdesc" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Seqdesc.genbank" ,
+              prefix "\n" ,
+              form
+                use-template "StdSourceInGBBlock" } } } } } ,
+  {
+    name "StdTaxDesc" ,
+    format {
+      asn1 "Seqdesc" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Seqdesc.genbank" ,
+              prefix "\n" ,
+              form
+                use-template "StdTaxInGBBlock" } } } } } ,
+  {
+    name "StdDivDesc" ,
+    format {
+      asn1 "Seqdesc" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Seqdesc.genbank" ,
+              prefix "\n" ,
+              form
+                use-template "StdDivInGBBlock" } } } } } ,
+  {
+    name "StdSequenceId" ,
+    format {
+      asn1 "Seq-id" ,
+      form
+        block {
+          components {
+            {
+               asn1 "Seq-id.gi" ,
+	      label "gi|" ,
+              form
+            	text {
+                	  } } ,
+            {
+              asn1 "Seq-id.genbank" ,
+              form
+                use-template "ReportTextseqId" } ,
+            {
+              asn1 "Seq-id.local" ,
+              form
+                use-template "StdObjectId" } } } } } ,
+  {
+    name "StdPubSeqId" ,
+    format {
+      asn1 "Seq-id" ,
+      label "" ,
+      prefix "; " ,
+      form
+        block {
+          components {
+            {
+               asn1 "Seq-id.gi" ,
+	      label "gi|" ,
+              form
+            	text {
+                	  } } ,
+            {
+              asn1 "Seq-id.local" ,
+              form
+                use-template "StdObjectId" } } } } } ,
+  {
+    name "StartingPubSeqId" ,
+    format {
+      asn1 "Seq-id" ,
+      label "Location:" ,
+      prefix "\t" ,
+      form
+        block {
+          components {
+            {
+               asn1 "Seq-id.gi" ,
+	      label "gi|" ,
+              form
+            	text {
+                	  } } ,
+            {
+              asn1 "Seq-id.local" ,
+              form
+                use-template "StdObjectId" } } } } } ,
+  {
+    name "StdObjectId" ,
+    format {
+      asn1 "Object-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Object-id.id" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Object-id.str" ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdTextseqId" ,
+    format {
+      asn1 "Textseq-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Textseq-id.name" ,
+	      label "locus" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.accession" ,
+	      label "accession" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.release" ,
+	      label "release" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.version" ,
+              form
+                null NULL } ,
+                   } } } } ,
+  {
+    name "ReportTextseqId" ,
+    format {
+      asn1 "Textseq-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Textseq-id.name" ,
+	      label "locus" ,
+	      prefix " " ,
+	      suffix " " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.accession" ,
+	      label "accession" ,
+	      prefix " " ,
+	      suffix " " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.release" ,
+	      label "release" ,
+	      prefix " " ,
+	      suffix " " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.version" ,
+              form
+                null NULL } ,
+                   } } } } ,
+  {
+    name "StdPDBseqId" ,
+    format {
+      asn1 "PDB-seq-id" ,
+      label "PDB Id: " ,
+      form
+        block {
+          components {
+            {
+              asn1 "PDB-seq-id.mol" ,
+	      label "molecule" ,
+	      prefix " " ,
+	      suffix ", " ,
+              form
+                text {
+		  } } ,
+            {
+              asn1 "PDB-seq-id.chain" ,
+	      label "chain" ,
+	      prefix " " ,
+	      suffix ", " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "PDB-seq-id.rel" ,
+	      label "release" ,
+	      prefix " " ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } } } } } ,
+  {
+    name "StdEMBLseqId" ,
+    format {
+      asn1 "Textseq-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Textseq-id.name" ,
+	      label "locus" ,
+	      prefix " " ,
+	      suffix ", " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.accession" ,
+	      label "accession" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.release" ,
+	      label "release" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.version" ,
+              form
+                null NULL } ,
+                   } } } } ,
+  {
+    name "StdPIRseqId" ,
+    format {
+      asn1 "Textseq-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Textseq-id.name" ,
+	      label "locus" ,
+	      prefix " " ,
+	      suffix "" ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.accession" ,
+	      label " accession" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+                   } } } } ,
+  {
+    name "StdPRFseqId" ,
+    format {
+      asn1 "Textseq-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Textseq-id.name" ,
+	      label "locus" ,
+	      prefix " " ,
+	      suffix "" ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.accession" ,
+	      label " accession" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+                   } } } } ,
+  {
+    name "StdPDBseqId" ,
+    format {
+      asn1 "Textseq-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Textseq-id.name" ,
+	      label "locus" ,
+	      prefix " " ,
+	      suffix "" ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.accession" ,
+	      label " accession" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+                   } } } } ,
+  {
+    name "StdSPseqId" ,
+    format {
+      asn1 "Textseq-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Textseq-id.name" ,
+	      label "locus" ,
+	      prefix " " ,
+	      suffix "," ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.accession" ,
+	      label " accession" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+                   } } } } ,
+  {
+    name "StdLocalId" ,
+    format {
+      asn1 "Object-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Object-id.id" ,
+	      prefix " " ,
+	      suffix "" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Object-id.str" ,
+	      prefix " " ,
+	      suffix "" ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdGPseqId" ,
+    format {
+      asn1 "Textseq-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Textseq-id.name" ,
+	      label "locus" ,
+	      prefix " " ,
+	      suffix "," ,
+              form
+                text { 
+		  } } ,
+            {
+              asn1 "Textseq-id.accession" ,
+	      label " accession" ,
+	      prefix " " ,
+              form
+                text { 
+		  } } ,
+                   } } } } ,
+  {
+    name "StdIdPat" ,
+    format {
+      asn1 "Id-pat" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Id-pat.country" ,
+              suffix " " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Id-pat.id.number" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Id-pat.id.app-number" ,
+              prefix "Appl: " ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdPatentSeqId" ,
+    format {
+      asn1 "Patent-seq-id" ,
+      label "patent: " ,
+      form
+        block {
+          components {
+            {
+              asn1 "Patent-seq-id.seqid" ,
+              suffix " " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Patent-seq-id.cit" ,
+              prefix " " ,
+	      form
+             	 use-template "StdIdPat" } } } } } ,
+  {
+    name "StdSeqFeatLocation" ,
+    format {
+      asn1 "Seq-feat.location" ,
+      label "Location" ,
+      prefix "\t" ,
+      form
+        user {
+          printfunc "StdSeqLocPrint" } } } ,
+  {
+    name "StdSeqFeatProduct" ,
+    format {
+      asn1 "Seq-feat.product" ,
+      label "Product" ,
+      prefix "\t" ,
+      form
+        user {
+          printfunc "StdSeqLocPrint" } } } ,
+  {
+    name "EntrySeqFeatData" ,
+    labelfrom "Seq-feat.data" ,
+    format {
+      asn1 "Seq-feat.data" ,
+      prefix "\t" ,
+      form
+        use-template "StdSeqFeatData" } } ,
+  {
+    name "StdSeqFeat" ,
+    labelfrom "Seq-feat.data" ,
+    format {
+      asn1 "Seq-feat" ,
+      prefix "\n" ,
+      suffix "\n" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Seq-feat.data" ,
+              form
+                use-template "StdSeqFeatData" } ,
+            {
+              asn1 "Seq-feat" ,
+              form
+                use-template "StdSeqFeatCommon" } ,
+            {
+              asn1 "Seq-feat.product" ,
+              label "Product" ,
+              prefix " " ,
+              form
+                user {
+                  printfunc "StdSeqLocPrint" } } ,
+            {
+              asn1 "Seq-feat.location" ,
+              label "Location" ,
+              prefix " " ,
+              form
+                user {
+                  printfunc "StdSeqLocPrint" } } ,
+            {
+              asn1 "Seq-feat.cit" ,
+              label "Citations" ,
+              prefix "\n" ,
+              form
+                block {
+                  separator "\n" ,
+                  components {
+                    {
+                      asn1 "Seq-feat.cit.pub.E" ,
+                      form
+                        use-template "StdPub" } } } } ,
+            {
+              asn1 "Seq-feat.xref" ,
+              label "Cross-reference" ,
+              prefix "\n" ,
+              form
+                block {
+                  separator "\n" ,
+                  components {
+                    {
+                      asn1 "Seq-feat.xref.E" ,
+                      form
+                        use-template "StdSeqFeatXref" } } } } } } } } ,
+  {
+    name "StdSeqFeatData" ,
+    format {
+      asn1 "SeqFeatData" ,
+      form
+        block {
+          components {
+            {
+              asn1 "SeqFeatData.gene" ,
+              label "Gene" ,
+              form
+                use-template "StdGeneRef" } ,
+            {
+              asn1 "SeqFeatData.org" ,
+              label "Organism" ,
+              form
+                use-template "StdOrgRef" } ,
+            {
+              asn1 "SeqFeatData.cdregion" ,
+              label "Coding Region" ,
+              form
+                use-template "StdCdRegion" } ,
+            {
+              asn1 "SeqFeatData.prot" ,
+              label "Protein" ,
+              form
+                use-template "StdProtRef" } ,
+            {
+              asn1 "SeqFeatData.rna" ,
+              label "RNA" ,
+              form
+                use-template "StdRNARef" } ,
+            {
+              asn1 "SeqFeatData.pub" ,
+              label "Citation" ,
+              form
+                use-template "StdPubdesc" } ,
+            {
+              asn1 "SeqFeatData.seq" ,
+              label "Sequence" ,
+              form
+                user {
+                  printfunc "StdSeqLocPrint" } } ,
+            {
+              asn1 "SeqFeatData.imp.key" ,
+              label "Import" ,
+              form
+                use-template "StdImpFeat" } ,
+            {
+              asn1 "SeqFeatData.region" ,
+              label "Region" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "SeqFeatData.comment" ,
+              label "Comment" ,
+              form
+                null NULL } ,
+            {
+              asn1 "SeqFeatData.bond" ,
+              label "Bond" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "SeqFeatData.site" ,
+              label "Site" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "SeqFeatData.rsite" ,
+              label "Rest. Site" ,
+              form
+                use-template "StdRsiteRef" } ,
+            {
+              asn1 "SeqFeatData.user" ,
+              label "User Type" ,
+              form
+                use-template "StdUserObj" } ,
+            {
+              asn1 "SeqFeatData.txinit" ,
+              label "TxInit" ,
+              form
+                use-template "StdTxInit" } ,
+            {
+              asn1 "SeqFeatData.num" ,
+              label "Numbering" ,
+              form
+                use-template "StdNumbering" } ,
+            {
+              asn1 "SeqFeatData.psec-str" ,
+              label "Sec. Struct" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "SeqFeatData.non-std-residue" ,
+              label "NonStd Residue" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "SeqFeatData.het" ,
+              label "Heterogen" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "SeqFeatData.biosrc" ,
+              label "BioSource" ,
+              form
+                null NULL } } } } } ,
+  {
+    name "StdGeneRef" ,
+    format {
+      asn1 "Gene-ref" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Gene-ref" ,
+              form
+                block {
+                  components {
+                    {
+                      asn1 "Gene-ref.locus" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Gene-ref.allele" ,
+                      prefix " " ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Gene-ref.desc" ,
+              prefix "[" ,
+              suffix "]" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Gene-ref.pseudo" ,
+              form
+                boolean {
+                  true "This is a pseudogene." } } ,
+            {
+              asn1 "Gene-ref.syn" ,
+              label "Synonyms" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Gene-ref.syn.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Gene-ref.maploc" ,
+              label "Map Location" ,
+              prefix " " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Gene-ref.db" ,
+              label "Cross Reference" ,
+              prefix " " ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Gene-ref.db.E" ,
+                      prefix "(" ,
+                      suffix ")" ,
+                      form
+                        use-template "StdDbtag" } } } } } } } } ,
+  {
+    name "StdUserObj" ,
+    format {
+      asn1 "User-object" ,
+      label "User-object" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "User-object.class" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "User-object.type" ,
+              form
+                use-template "StdObjectId" } } } } } ,
+  {
+    name "StartingPubFeatLocation" ,
+    format {
+      asn1 "Seq-feat.location" ,
+      label "Location:" ,
+      prefix "\t" ,
+      form
+        user {
+          printfunc "StdSeqLocPrint" } } } ,
+  {
+    name "StdPubFeatLocation" ,
+    format {
+      asn1 "Seq-feat.location" ,
+      label "" ,
+      prefix "; " ,
+      form
+        user {
+          printfunc "StdSeqLocPrint" } } } ,
+  {
+    name "StdPubOnFeat" ,
+    format {
+      asn1 "Pub" ,
+      label "Citation" ,
+      prefix "\n" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Pub" ,
+              form
+                use-template "StdPub" } } } } } ,
+  {
+    name "StdPub" ,
+    format {
+      asn1 "Pub" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Pub.gen" ,
+              form
+                use-template "StdCitGen" } ,
+            {
+              asn1 "Pub.sub" ,
+              form
+                use-template "StdCitSub" } ,
+            {
+              asn1 "Pub.medline" ,
+              form
+                use-template "StdMedlineEntry" } ,
+            {
+              asn1 "Pub.muid" ,
+              label "MEDLINE uid: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Pub.article" ,
+              form
+                use-template "StdCitArt" } ,
+            {
+              asn1 "Pub.journal" ,
+              form
+                use-template "StdCitJour" } ,
+            {
+              asn1 "Pub.book" ,
+              form
+                use-template "StdCitBook" } ,
+            {
+              asn1 "Pub.proc" ,
+              form
+                use-template "StdCitProc" } ,
+            {
+              asn1 "Pub.patent" ,
+              form
+                use-template "StdCitPat" } ,
+            {
+              asn1 "Pub.pat-id" ,
+              form
+                use-template "StdIdPat" } ,
+            {
+              asn1 "Pub.man" ,
+              form
+                use-template "StdCitLet" } ,
+            {
+              asn1 "Pub.equiv" ,
+              form
+                use-template "StdPubEquiv" } } } } } ,
+  {
+    name "StdCitGen" ,
+    format {
+      asn1 "Cit-gen" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Cit-gen.serial-number" ,
+              prefix "[" ,
+              suffix "]" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Cit-gen.authors" ,
+              form
+                use-template "StdAuthList" } ,
+            {
+              asn1 "Cit-gen.date" ,
+              prefix "(" ,
+              suffix ")" ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } ,
+            {
+              asn1 "Cit-gen.title" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Cit-gen.cit" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Cit-gen" ,
+              form
+                block {
+                  separator " " ,
+                  components {
+                    {
+                      asn1 "Cit-gen.journal" ,
+                      suffix ":" ,
+                      form
+                        use-template "StdTitle" } ,
+                    {
+                      asn1 "Cit-gen.issue" ,
+                      suffix ";" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Cit-gen.pages" ,
+                      form
+                        text {
+                           } } } } } } } } } ,
+  {
+    name "StdCitSub" ,
+    format {
+      asn1 "Cit-sub" ,
+      prefix "Data Submission " ,
+      form
+        block {
+          components {
+            {
+              asn1 "Cit-sub.medium" ,
+              prefix "on " ,
+              suffix " " ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "Cit-sub.imp.date" ,
+              prefix "(" ,
+              suffix ")" ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } ,
+            {
+              asn1 "Cit-sub.authors" ,
+              prefix "\n" ,
+              form
+                use-template "StdAuthList" } } } } } ,
+  {
+    name "StdMedlineEntry" ,
+    format {
+      asn1 "Medline-entry" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Medline-entry" ,
+              form
+                block {
+                  separator "   " ,
+                  components {
+                    {
+                      asn1 "Medline-entry.uid" ,
+                      label "uid" ,
+                      prefix ": " ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Medline-entry.em" ,
+                      label "entry month" ,
+                      prefix ": " ,
+                      form
+                        user {
+                          printfunc "StdDatePrint" } } } } } ,
+            {
+              asn1 "Medline-entry.cit" ,
+              form
+                use-template "StdCitArt" } ,
+            {
+              asn1 "Medline-entry.abstract" ,
+              label "abstract" ,
+              prefix ": " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Medline-entry.mesh" ,
+              label "Mesh Terms" ,
+              prefix "\n" ,
+              form
+                block {
+                  separator "\n" ,
+                  components {
+                    {
+                      asn1 "Medline-entry.mesh.E" ,
+                      form
+                        block {
+                          components {
+                            {
+                              asn1 "Medline-mesh.term" ,
+                              form
+                                text {
+                                   } } ,
+                            {
+                              asn1 "Medline-mesh.mp" ,
+                              form
+                                boolean {
+                                  true " (Main Point)" } } ,
+                            {
+                              asn1 "Medline-mesh.qual" ,
+                              form
+                                block {
+                                  separator "\n" ,
+                                  components {
+                                    {
+                                      asn1 "Medline-mesh.qual.E" ,
+                                      form
+                                        block {
+                                          components {
+                                            {
+                                              asn1 "Medline-qual.subh" ,
+                                              form
+                                                text {
+                                                   } } ,
+                                            {
+                                              asn1 "Medline-qual.mp" ,
+                                              form
+                                                boolean {
+                                                  true " (Main Point)" } } } } } } } } } } } } } } ,
+            {
+              asn1 "Medline-entry.substance" ,
+              label "Substance" ,
+              prefix "\n" ,
+              form
+                block {
+                  separator "\n" ,
+                  components {
+                    {
+                      asn1 "Medline-entry.substance.E" ,
+                      form
+                        block {
+                          components {
+                            {
+                              asn1 "Medline-rn.name" ,
+                              form
+                                text {
+                                   } } ,
+                            {
+                              asn1 "Medline-rn.type" ,
+                              form
+                                enum {
+                                  values {
+                                    "" ,
+                                    " CAS: " ,
+                                    "EC " } } } ,
+                            {
+                              asn1 "Medline-rn.cit" ,
+                              form
+                                text {
+                                   } } } } } } } } ,
+            {
+              asn1 "Medline-entry.xref" ,
+              label "Cross Reference" ,
+              prefix "\n" ,
+              form
+                block {
+                  separator "\n" ,
+                  components {
+                    {
+                      asn1 "Medline-entry.xref.E" ,
+                      form
+                        block {
+                          separator ": " ,
+                          components {
+                            {
+                              asn1 "Medline-si.type" ,
+                              form
+                                enum {
+                                   } } ,
+                            {
+                              asn1 "Medline-si.cit" ,
+                              form
+                                text {
+                                   } } } } } } } } ,
+            {
+              asn1 "Medline-entry.gene" ,
+              label "Possible Gene Symbols" ,
+              prefix ": " ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Medline-entry.gene.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Medline-entry.idnum" ,
+              label "Support" ,
+              prefix ": " ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Medline-entry.idnum.E" ,
+                      form
+                        text {
+                           } } } } } } } } } ,
+  {
+    name "StdCitArt" ,
+    format {
+      asn1 "Cit-art" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Cit-art.title" ,
+              form
+                use-template "StdTitle" } ,
+            {
+              asn1 "Cit-art.authors" ,
+              form
+                use-template "StdAuthList" } ,
+            {
+              asn1 "Cit-art.from.journal" ,
+              form
+                use-template "StdCitJour" } ,
+            {
+              asn1 "Cit-art.from.book" ,
+              prefix "(in) " ,
+              form
+                use-template "StdCitBook" } ,
+            {
+              asn1 "Cit-art.from.proc" ,
+              prefix "(in) " ,
+              form
+                use-template "StdCitProc" } } } } } ,
+  {
+    name "StdCitJour" ,
+    format {
+      asn1 "Cit-jour" ,
+      form
+        block {
+          separator " " ,
+          components {
+            {
+              asn1 "Cit-jour.title" ,
+              form
+                use-template "StdTitle" } ,
+            {
+              asn1 "Cit-jour.imp" ,
+              form
+                use-template "StdImprint" } } } } } ,
+  {
+    name "StdCitBook" ,
+    format {
+      asn1 "Cit-book" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Cit-book.title" ,
+              form
+                use-template "StdTitle" } ,
+            {
+              asn1 "Cit-book.coll" ,
+              prefix "Collection: " ,
+              form
+                use-template "StdTitle" } ,
+            {
+              asn1 "Cit-book.authors" ,
+              form
+                use-template "StdAuthList" } ,
+            {
+              asn1 "Cit-book.imp" ,
+              form
+                use-template "StdImprint" } } } } } ,
+  {
+    name "StdCitProc" ,
+    format {
+      asn1 "Cit-proc" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Cit-proc.book" ,
+              form
+                use-template "StdCitBook" } ,
+            {
+              asn1 "Cit-proc.meet" ,
+              label "Meeting " ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Meeting.number" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Meeting.date" ,
+                      form
+                        user {
+                          printfunc "StdDatePrint" } } ,
+                    {
+                      asn1 "Meeting.place" ,
+                      form
+                        use-template "StdAffil" } } } } } } } } ,
+  {
+    name "StdCitPat" ,
+    format {
+      asn1 "Cit-pat" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Cit-pat.title" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Cit-pat.authors" ,
+              form
+                use-template "StdAuthList" } ,
+            {
+              asn1 "Cit-pat" ,
+              form
+                block {
+                  components {
+                    {
+                      asn1 "Cit-pat.country" ,
+                      suffix " " ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Cit-pat.doc-type" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Cit-pat.number" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Cit-pat.date-issue" ,
+                      prefix " (" ,
+                      suffix ")" ,
+                      form
+                        user {
+                          printfunc "StdDatePrint" } } ,
+                    {
+                      asn1 "Cit-pat.app-number" ,
+                      prefix " Appl: " ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Cit-pat.app-date" ,
+                      prefix " (" ,
+                      suffix ")" ,
+                      form
+                        user {
+                          printfunc "StdDatePrint" } } } } } } } } } ,
+  {
+    name "StdIdPat" ,
+    format {
+      asn1 "Id-pat" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Id-pat.country" ,
+              suffix " " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Id-pat.id.number" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Id-pat.id.app-number" ,
+              prefix "Appl: " ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdCitLet" ,
+    format {
+      asn1 "Cit-let" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Cit-let.type" ,
+              prefix "[" ,
+              suffix "]" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "Cit-let.man-id" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Cit-let.cit" ,
+              form
+                use-template "StdCitBook" } } } } } ,
+  {
+    name "StdPubEquiv" ,
+    format {
+      asn1 "Pub-equiv" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Pub-equiv.E" ,
+              form
+                use-template "StdPub" } } } } } ,
+  {
+    name "StdTitle" ,
+    format {
+      asn1 "Title" ,
+      form
+        block {
+          separator ", " ,
+          components {
+            {
+              asn1 "Title.E.trans" ,
+              prefix "[" ,
+              suffix "]" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.name" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.tsub" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.abr" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.iso-jta" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.ml-jta" ,
+              label "MEDLINE" ,
+              prefix ": " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.jta" ,
+              label "jta" ,
+              prefix ": " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.issn" ,
+              label "ISSN" ,
+              prefix ": " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.coden" ,
+              label "CODEN" ,
+              prefix ": " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Title.E.isbn" ,
+              label "ISBN" ,
+              prefix ": " ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdAuthList" ,
+    format {
+      asn1 "Auth-list" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Auth-list" ,
+              form
+                user {
+                  printfunc "StdAuthListNamesPrint" } } ,
+            {
+              asn1 "Auth-list.affil" ,
+              form
+                use-template "StdAffil" } } } } } ,
+  {
+    name "StdAffil" ,
+    format {
+      asn1 "Affil" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Affil.str" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Affil.std.affil" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Affil.std.div" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Affil.std.street" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Affil.std" ,
+              form
+                block {
+                  separator " " ,
+                  components {
+                    {
+                      asn1 "Affil.std.city" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Affil.std.sub" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Affil.std.country" ,
+                      form
+                        text {
+                           } } } } } } } } } ,
+  {
+    name "StdImprint" ,
+    format {
+      asn1 "Imprint" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Imprint.date" ,
+              prefix "(" ,
+              suffix ") " ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } ,
+            {
+              asn1 "Imprint.volume" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Imprint.issue" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Imprint.section" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Imprint.part-sup" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Imprint.pages" ,
+              prefix ": " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Imprint.prepub" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "Imprint.pub" ,
+              label "\nPublisher: " ,
+              form
+                use-template "StdAffil" } ,
+            {
+              asn1 "Imprint.cprt" ,
+              label " Copyright: " ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } } } } } ,
+  {
+    name "StdSeqFeatXref" ,
+    format {
+      asn1 "SeqFeatXref" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "SeqFeatXref.id" ,
+              label "Id=" ,
+              form
+                use-template "StdFeatId" } ,
+            {
+              asn1 "SeqFeatXref.data" ,
+              form
+                use-template "StdSeqFeatData" } } } } } ,
+  {
+    name "StdOrgRef" ,
+    format {
+      asn1 "Org-ref" ,
+      label "Org-ref" ,
+      prefix "\n" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Org-ref" ,
+              form
+                block {
+                  separator " " ,
+                  components {
+                    {
+                      asn1 "Org-ref.taxname" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Org-ref.common" ,
+                      prefix "(" ,
+                      suffix ")" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Org-ref.mod" ,
+              label "Modifiers" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Org-ref.mod.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Org-ref.db" ,
+              label "Cross Reference" ,
+              prefix " " ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Org-ref.db.E" ,
+                      prefix "(" ,
+                      suffix ")" ,
+                      form
+                        use-template "StdDbtag" } } } } ,
+            {
+              asn1 "Org-ref.syn" ,
+              label "Synonyms" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Org-ref.syn.E" ,
+                      form
+                        text {
+                           } } } } } } } } } ,
+  {
+    name "StdCdRegion" ,
+    format {
+      asn1 "Cdregion" ,
+      label "Cdregion" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Cdregion.orf" ,
+              form
+                boolean {
+                  true "Uncharacterized Open Reading Frame" } } ,
+            {
+              asn1 "Cdregion.frame" ,
+              label "Reading Frame = " ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "Cdregion.code" ,
+              label "Genetic Code: " ,
+              suffix ";" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Genetic-code.E.name" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Genetic-code.E.id" ,
+                      label "id= " ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Cdregion.conflict" ,
+              form
+                boolean {
+                  true "Translation conflicts with protein sequence" } } ,
+            {
+              asn1 "Cdregion.stops" ,
+              prefix "Translation contains " ,
+              suffix " stop codons" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Cdregion.gaps" ,
+              prefix "Translation contains " ,
+              suffix " gaps when aligned to protein" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Cdregion.mismatch" ,
+              prefix "Translation contains " ,
+              suffix " mismatches when aligned to protein" ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdProtRef" ,
+    format {
+      asn1 "Prot-ref" ,
+      label "Prot-ref" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Prot-ref.name" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Prot-ref.name.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Prot-ref.desc" ,
+              prefix "[" ,
+              suffix "]" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Prot-ref.ec" ,
+              label "ec" ,
+              prefix ": " ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Prot-ref.ec.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Prot-ref.activity" ,
+              label "activity" ,
+              prefix ": " ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Prot-ref.activity.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "Prot-ref.db" ,
+              form
+                use-template "StdDbtag" } } } } } ,
+  {
+    name "StdRNARef" ,
+    format {
+      asn1 "RNA-ref" ,
+      label "RNA-ref" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "RNA-ref.type" ,
+              form
+                enum {
+                   } } ,
+            {
+              asn1 "RNA-ref.pseudo" ,
+              form
+                boolean {
+                  true "This is an RNA pseudogene." } } ,
+            {
+              asn1 "RNA-ref.ext.name" ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdPubdesc" ,
+    format {
+      asn1 "Pubdesc" ,
+      label "Pubdesc" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Pubdesc.pub" ,
+              form
+                use-template "StdPubEquiv" } ,
+            {
+              asn1 "Pubdesc" ,
+              prefix "In this article:\n" ,
+              form
+                block {
+                  separator "\n" ,
+                  components {
+                    {
+                      asn1 "Pubdesc.name" ,
+                      label "name=" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Pubdesc.fig" ,
+                      label "figure=" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Pubdesc.poly-a" ,
+                      form
+                        boolean {
+                          true "poly(A) shown" } } ,
+                    {
+                      asn1 "Pubdesc.maploc" ,
+                      label "map location=" ,
+                      form
+                        text {
+                           } } ,
+                    {
+                      asn1 "Pubdesc.num" ,
+                      form
+                        use-template "StdNumbering" } ,
+                    {
+                      asn1 "Pubdesc.numexc" ,
+                      form
+                        boolean {
+                          true "numbering inconsistent" } } } } } ,
+            {
+              asn1 "Pubdesc.comment" ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdImpFeat" ,
+    format {
+      asn1 "Imp-feat.key" ,
+      label "Imp-feat" ,
+      form
+        text {
+           } } } ,
+  {
+    name "StdRsiteRef" ,
+    format {
+      asn1 "Rsite-ref" ,
+      label "Rsite-ref" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Rsite-ref.str" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Rsite-ref.std" ,
+              form
+                use-template "StdDbtag" } } } } } ,
+  {
+    name "StdTxInit" ,
+    format {
+      asn1 "Txinit" ,
+      label "TxInit" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Txinit.name" ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdNumbering" ,
+    format {
+      asn1 "Numbering" ,
+      label "Numbering" ,
+      form
+        null NULL } } ,
+  {
+    name "StdGBBlock" ,
+    format {
+      asn1 "GB-block" ,
+      label "GenBank-block" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "GB-block.extra-accessions" ,
+              label "Extra accessions" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "GB-block.extra-accessions.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "GB-block.keywords" ,
+              label "Keywords" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "GB-block.keywords.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "GB-block.source" ,
+              label "Source: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "GB-block.origin" ,
+              label "Origin: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "GB-block.div" ,
+              label "Division: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "GB-block.taxonomy" ,
+              label "Taxonomy: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "GB-block.date" ,
+              label "Date: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "GB-block.entry-date" ,
+              label "Entry date: " ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } } } } } ,
+  {
+    name "StdReportGBBlock" ,
+    format {
+      asn1 "GB-block" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "GB-block.extra-accessions" ,
+              label "Extra accessions" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "GB-block.extra-accessions.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "GB-block.keywords" ,
+              label "Keywords" ,
+              prefix " (" ,
+              suffix ")" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "GB-block.keywords.E" ,
+                      form
+                        text {
+                           } } } } } ,
+            {
+              asn1 "GB-block.origin" ,
+              label "Origin: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "GB-block.date" ,
+              label "Date: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "GB-block.entry-date" ,
+              label "Entry date: " ,
+              form
+                user {
+                  printfunc "StdDatePrint" } } } } } } ,
+  {
+    name "StdSourceInGBBlock" ,
+    format {
+      asn1 "GB-block" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "GB-block.source" ,
+              label "Source: " ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdDivInGBBlock" ,
+    format {
+      asn1 "GB-block" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "GB-block.div" ,
+              label "Division: " ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdTaxInGBBlock" ,
+    format {
+      asn1 "GB-block" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "GB-block.taxonomy" ,
+              label "Taxonomy: " ,
+              form
+                text {
+                   } } } } } } ,
+  {
+    name "StdFeatId" ,
+    format {
+      asn1 "Feat-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Feat-id.gibb" ,
+              label "GenInfo Backbone: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Feat-id.giim.id" ,
+              label "GenInfo Import Id: " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Feat-id.local" ,
+              label "Local: " ,
+              form
+                use-template "StdObjectId" } ,
+            {
+              asn1 "Feat-id.general" ,
+              form
+                use-template "StdDbtag" } } } } } ,
+  {
+    name "StdSeqFeatCommon" ,
+    format {
+      asn1 "Seq-feat" ,
+      form
+        block {
+          separator "\n" ,
+          components {
+            {
+              asn1 "Seq-feat.id" ,
+              label "Id=" ,
+              form
+                use-template "StdFeatId" } ,
+            {
+              asn1 "Seq-feat.title" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seq-feat" ,
+              suffix ";" ,
+              form
+                block {
+                  separator ", " ,
+                  components {
+                    {
+                      asn1 "Seq-feat.partial" ,
+                      form
+                        boolean {
+                          true "Partial" } } ,
+                    {
+                      asn1 "Seq-feat.except" ,
+                      form
+                        boolean {
+                          true "Biological Exception" } } ,
+                    {
+                      asn1 "Seq-feat.exp-ev" ,
+                      label "Evidence" ,
+                      prefix " is " ,
+                      form
+                        enum {
+                           } } } } } ,
+            {
+              asn1 "Seq-feat.comment" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Seq-feat.ext" ,
+              form
+                use-template "StdUserObj" } ,
+            {
+              asn1 "Seq-feat.qual" ,
+              label "Qualifiers" ,
+              prefix "\n" ,
+              form
+                block {
+                  separator "\n" ,
+                  components {
+                    {
+                      asn1 "Seq-feat.qual.E" ,
+                      prefix "/" ,
+                      form
+                        block {
+                          separator "= " ,
+                          components {
+                            {
+                              asn1 "Gb-qual.qual" ,
+                              form
+                                text {
+                                   } } ,
+                            {
+                              asn1 "Gb-qual.val" ,
+                              form
+                                text {
+                                   } } } } } } } } } } } } ,
+  {
+    name "StdDbtag" ,
+    format {
+      asn1 "Dbtag" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Dbtag.db" ,
+              suffix ": " ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Dbtag.tag" ,
+              form
+                use-template "StdObjectId" } } } } } ,
+  {
+    name "StdObjectId" ,
+    format {
+      asn1 "Object-id" ,
+      form
+        block {
+          components {
+            {
+              asn1 "Object-id.id" ,
+              form
+                text {
+                   } } ,
+            {
+              asn1 "Object-id.str" ,
+              form
+                text {
+                   } } } } } } }
