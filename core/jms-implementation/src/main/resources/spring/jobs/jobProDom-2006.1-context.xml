@@ -39,6 +39,9 @@
         <!--
         Example:
         /ebi/sp/pro1/Onion/calcs/PRODOM/ProDomBlast3i.pl -P /ebi/production/interpro/Onion/blast/blast-2.2.19/bin/ -p blastp -d /ebi/production/interpro/Onion/prodom/2006.1/prodom.ipr -s SEQUENCE_FILE -t /tmp/ -h 0 -f  > OUTPUT_FILE
+
+        Example (relative URLs):
+        perl ProDomBlast3i.pl -P ../../blast/2.2.19 -p blastp -d ../../../data/prodom/2006.1/prodom.ipr -s ../../../data/prodom/prodom_test.seqs -t /tmp/prodom -h 0 -f -o test.out
         -->
         <property name="dependsUpon" ref="stepProDomWriteFastaFile-2006.1"/>
         <property name="stepDescription" value="Run ProDomBlast3i.pl perl script for selected proteins"/>
@@ -47,9 +50,9 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fullPathToTempDirectory" value=""/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="fullPathToProDomBlast3iPerlScript" value="${binary.prodom.prodomblast3i.pl.path}"/>
+        <property name="fullPathToProDomBlast3iPerlScript" value="${binary.prodom.2006.1.prodomblast3i.pl.path}"/>
         <property name="fullPathToProDomIprFile" value="${prodom.ipr.path.2006.1}"/>
-        <property name="fullPathToBlastBinary" value="${binary.blastall.path}"/>
+        <property name="fullPathToBlastBinary" value="${binary.blastall.2.2.19.path}"/>
     </bean>
 
     <!-- STEP: Parse the ProDom binary output and persist the results in the database. -->

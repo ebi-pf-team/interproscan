@@ -111,7 +111,7 @@
         <!--Resources properties-->
         <property name="blastDbFileResource" value="file:${pirsf.sf.seq.path.2.74}"/>
         <!--String properties-->
-        <property name="binary" value="${binary.blastall.path}"/>
+        <property name="binary" value="${binary.blastall.2.2.6.path}"/>
         <property name="fastaFilePathTemplate" ref="fastaToBlastFileName-2.74"/>
         <property name="outputFileNameTemplate" ref="blastResultOutputFileName-2.74"/>
         <property name="retries" value="3"/>
