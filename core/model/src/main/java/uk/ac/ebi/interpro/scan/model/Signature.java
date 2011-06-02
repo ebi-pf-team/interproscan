@@ -128,6 +128,9 @@ public class Signature implements Serializable {
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
     private String comment;
 
+    @ManyToOne(optional = true)
+    private Entry entry;
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -171,6 +174,7 @@ public class Signature implements Serializable {
         private String name;
         private String description;
         private String type;
+        private Entry entry;
         private Date created;
         private Date updated;
         private String md5;
@@ -181,6 +185,7 @@ public class Signature implements Serializable {
         private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
         private Set<String> deprecatedAccessions = new HashSet<String>();
 
+
         public Builder(String accession) {
             this.accession = accession;
         }
@@ -189,6 +194,7 @@ public class Signature implements Serializable {
             Signature signature = new Signature(accession);
             signature.setName(name);
             signature.setDescription(description);
+            signature.setEntry(entry);
             signature.setType(type);
             signature.setAbstract(abstractText);
             signature.setSignatureLibraryRelease(signatureLibraryRelease);
@@ -222,6 +228,11 @@ public class Signature implements Serializable {
 
         public Builder description(String description) {
             this.description = description;
+            return this;
+        }
+
+        public Builder entry(Entry entry) {
+            this.entry = entry;
             return this;
         }
 
@@ -570,6 +581,15 @@ public class Signature implements Serializable {
 
     public void removeCrossReference(SignatureXref xref) {
         crossReferences.remove(xref);
+    }
+
+    @XmlTransient
+    public Entry getEntry() {
+        return entry;
+    }
+
+    void setEntry(Entry entry) {
+        this.entry = entry;
     }
 
     private String getSafeMd5(String md5) {

@@ -13,6 +13,7 @@
     <bean id="jaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="classesToBeBound">
             <list>
+                <value>uk.ac.ebi.interpro.scan.model.Entry</value>
                 <value>uk.ac.ebi.interpro.scan.model.Protein</value>
                 <value>uk.ac.ebi.interpro.scan.model.Signature</value>
                 <value>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</value>
