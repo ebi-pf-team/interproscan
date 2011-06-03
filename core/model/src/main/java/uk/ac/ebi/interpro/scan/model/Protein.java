@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since 1.0
  */
-
+// TODO: Class should really be called "Peptide"
 @Entity
 @XmlRootElement(name = "protein")
 @XmlType(name = "ProteinType", propOrder = {"sequenceObject", "crossReferences", "matches"})
@@ -47,9 +47,6 @@ public class Protein implements Serializable {
 
     @Transient
     private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
-
-    // TODO: Consider public static inner Sequence class so can implement Formatter interface
-    // TODO: Consider moving md5 attribute to Sequence element: <sequence md5="hd83">AJGDW</sequence>
 
     /**
      * NOTE: Changed to any letter of the alphabet, as some pretty odd codes are allowed in addition

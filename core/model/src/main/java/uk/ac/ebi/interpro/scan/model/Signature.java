@@ -128,7 +128,8 @@ public class Signature implements Serializable {
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
     private String comment;
 
-    @ManyToOne(optional = true)
+    @Transient
+    //@ManyToOne(optional = true)
     private Entry entry;
 
     /**
