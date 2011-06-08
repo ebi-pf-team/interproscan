@@ -50,8 +50,6 @@ public class ProDomModelParser extends AbstractModelFileParser {
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
         BufferedReader reader = null;
         try {
-            String accession = null;
-            String description = null;
             StringBuffer modelBuffer = new StringBuffer();
 
             reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
@@ -65,6 +63,9 @@ public class ProDomModelParser extends AbstractModelFileParser {
 
                 Matcher data = LINE_PATTERN.matcher(line);
                 if (data.find()) {
+                    String accession = null;
+                    String description = null;
+
                     // Load the model line by line into a temporary buffer.
                     line = line.trim();
                     modelBuffer.append(line);
@@ -139,7 +140,6 @@ public class ProDomModelParser extends AbstractModelFileParser {
     }
 
     protected Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release, StringBuffer modelBuffer) {
-//        Model model = new Model(accession, name, description, modelBuf.toString());
         Model model = new Model(accession, name, description, null);
         modelBuffer.delete(0, modelBuffer.length());
         return new Signature(accession, name, null, description, null, release, Collections.singleton(model));
