@@ -29,25 +29,122 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
 
     public static final String TABLE_NAME = "PRODOM_RAW_MATCH";
 
+    // Example ProDom output file:
+    // UPI00004BBFB1      1    198 //  pd_PD400414;sp_U689_HUMAN_Q6UX39;       1    206 // S=426    E=1e-41  //  (3)  PRECURSOR SIGNAL UNQ689/PRO1329 HOMOLOG DIRECT SEQUENCING EO-017 SECRETED 	 Length = 206
+
     @Column
-    private double score;   // location.score
+    private String spId; // e.g. sp_U689_HUMAN_Q6UX39
+
+    @Column
+    private int sigMatchLocationStart;
+
+    @Column
+    private int sigMatchLocationEnd;
+
+    @Column
+    private int score;
+
+    @Column
+    private double evalue;
+
+    @Column
+    private int numDomainsInFamily;
+
+    @Column
+    private String methodName;
+
+    @Column
+    private int seqLength;
 
     protected ProDomRawMatch() {
     }
 
-    public ProDomRawMatch(String sequenceIdentifier, String model,
+    public ProDomRawMatch(String sequenceIdentifier,
+                          String model,
                           String signatureLibraryRelease,
-                          int locationStart, int locationEnd, double score) {
+                          int locationStart,
+                          int locationEnd,
+                          String spId,
+                          int sigMatchLocationStart,
+                          int sigMatchLocationEnd,
+                          int score,
+                          double evalue,
+                          int numDomainsInFamily,
+                          String methodName,
+                          int seqLength) {
         super(sequenceIdentifier, model, SignatureLibrary.PRODOM, signatureLibraryRelease, locationStart, locationEnd);
+        this.spId = spId;
+        this.sigMatchLocationStart = sigMatchLocationStart;
+        this.sigMatchLocationEnd = sigMatchLocationEnd;
         this.score = score;
+        this.evalue = evalue;
+        this.numDomainsInFamily = numDomainsInFamily;
+        this.methodName = methodName;
+        this.seqLength = seqLength;
     }
 
-    public double getScore() {
+    public String getSpId() {
+        return spId;
+    }
+
+    public void setSpId(String spId) {
+        this.spId = spId;
+    }
+
+    public int getSigMatchLocationStart() {
+        return sigMatchLocationStart;
+    }
+
+    public void setSigMatchLocationStart(int sigMatchLocationStart) {
+        this.sigMatchLocationStart = sigMatchLocationStart;
+    }
+
+    public int getSigMatchLocationEnd() {
+        return sigMatchLocationEnd;
+    }
+
+    public void setSigMatchLocationEnd(int sigMatchLocationEnd) {
+        this.sigMatchLocationEnd = sigMatchLocationEnd;
+    }
+
+    public int getScore() {
         return score;
     }
 
-    private void setScore(double score) {
+    public void setScore(int score) {
         this.score = score;
+    }
+
+    public double getEvalue() {
+        return evalue;
+    }
+
+    public void setEvalue(double evalue) {
+        this.evalue = evalue;
+    }
+
+    public int getNumDomainsInFamily() {
+        return numDomainsInFamily;
+    }
+
+    public void setNumDomainsInFamily(int numDomainsInFamily) {
+        this.numDomainsInFamily = numDomainsInFamily;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public int getSeqLength() {
+        return seqLength;
+    }
+
+    public void setSeqLength(int seqLength) {
+        this.seqLength = seqLength;
     }
 
     @Override
@@ -59,7 +156,14 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
         final ProDomRawMatch m = (ProDomRawMatch) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
+                .append(spId, m.spId)
+                .append(sigMatchLocationStart, m.sigMatchLocationStart)
+                .append(sigMatchLocationEnd, m.sigMatchLocationEnd)
                 .append(score, m.score)
+                .append(evalue, m.evalue)
+                .append(numDomainsInFamily, m.numDomainsInFamily)
+                .append(methodName, m.methodName)
+                .append(seqLength, m.seqLength)
                 .isEquals();
     }
 
@@ -67,7 +171,14 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder(11, 81)
                 .appendSuper(super.hashCode())
+                .append(spId)
+                .append(sigMatchLocationStart)
+                .append(sigMatchLocationEnd)
                 .append(score)
+                .append(evalue)
+                .append(numDomainsInFamily)
+                .append(methodName)
+                .append(seqLength)
                 .toHashCode();
     }
 

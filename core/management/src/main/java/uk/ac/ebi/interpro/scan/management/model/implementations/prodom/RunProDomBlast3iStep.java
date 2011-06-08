@@ -59,6 +59,10 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
      * Current command line from Onion:
      * <p/>
      * /ebi/sp/pro1/Onion/calcs/PRODOM/ProDomBlast3i.pl -P /ebi/production/interpro/Onion/blast/blast-2.2.19/bin/ -p blastp -d /ebi/production/interpro/Onion/prodom/2006.1/prodom.ipr -s SEQUENCE_FILE -t /tmp/ -h 0 -f  > OUTPUT_FILE
+     * <p/>
+     * Example (relative URLs):
+     * <p/>
+     * perl ProDomBlast3i.pl -P ../../blast/2.2.19 -p blastp -d ../../../data/prodom/2006.1/prodom.ipr -s ../../../data/prodom/prodom_test.seqs -t /tmp/prodom -h 0 -f -o test.out
      *
      * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory is the relative path in which files are stored.
@@ -74,8 +78,8 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
         command.add(this.fullPathToBlastBinary);
         command.add("-d");
         command.add(this.fullPathToProDomIprFile);
-//        command.add("-s");
-//        command.add(fastaFilePathName);
+        command.add("-s");
+        command.add(fastaFilePathName);
         command.add("-t");
         command.add(this.fullPathToTempDirectory);
         command.addAll(this.getBinarySwitchesAsList());

@@ -51,8 +51,8 @@
         <property name="fullPathToTempDirectory" value=""/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToProDomBlast3iPerlScript" value="${binary.prodom.2006.1.prodomblast3i.pl.path}"/>
-        <property name="fullPathToProDomIprFile" value="${prodom.ipr.path.2006.1}"/>
         <property name="fullPathToBlastBinary" value="${binary.blastall.2.2.19.path}"/>
+        <property name="fullPathToProDomIprFile" value="${prodom.ipr.path.2006.1}"/>
     </bean>
 
     <!-- STEP: Parse the ProDom binary output and persist the results in the database. -->
@@ -93,7 +93,7 @@
     <!--</bean>-->
 
     <!--<bean id="prodomRawOutputParser-2006.1"-->
-          <!--class="uk.ac.ebi.interpro.scan.io.match.prodom.ProDomOutputFileParser">-->
+          <!--class="uk.ac.ebi.interpro.scan.io.prodom.match.ProDomMatchParser">-->
     <!--</bean>-->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
