@@ -1,11 +1,6 @@
-package uk.ac.ebi.interpro.scan.io.match.prodom;
+package uk.ac.ebi.interpro.scan.io.prodom.match;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
-import uk.ac.ebi.interpro.scan.io.match.MatchParser;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
