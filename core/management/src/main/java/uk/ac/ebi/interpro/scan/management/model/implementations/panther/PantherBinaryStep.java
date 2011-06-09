@@ -11,6 +11,7 @@ import java.util.List;
  * Runs PANTHER binary.
  *
  * @author Antony Quinn
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  */
 public final class PantherBinaryStep extends RunBinaryStep {
@@ -20,6 +21,8 @@ public final class PantherBinaryStep extends RunBinaryStep {
     private String blastPath;
     private String hmmerPath;
     private String fastaFileNameTemplate;
+    private String perlCommand;
+    private String perlLibrary;
 
     public String getFastaFileNameTemplate() {
         return fastaFileNameTemplate;
@@ -66,27 +69,52 @@ public final class PantherBinaryStep extends RunBinaryStep {
         this.hmmerPath = hmmerPath;
     }
 
+    public String getPerlCommand() {
+        return perlCommand;
+    }
+
+    @Required
+    public void setPerlCommand(String perlCommand) {
+        this.perlCommand = perlCommand;
+    }
+
+    public String getPerlLibrary() {
+        return perlLibrary;
+    }
+
+    @Required
+    public void setPerlLibrary(String perlLibrary) {
+        this.perlLibrary = perlLibrary;
+    }
+
     /**
      * Returns command line for runPanther
-     *
-     * Example: 
-     * /ebi/sp/pro1/interpro/programmers/rpetry/Onion/cvsebi-uniparc/onion/src/runPanther
-                -l /ebi/sp/pro1/interpro/data/members/panther/7.0/
-                -D I 
-                -E 1e-3
-                -B /ebi/sp/pro1/interpro/production/iprscan4.3/bin/binaries/blast/blastall
-                -H /ebi/extserv/bin/hmmer-2.3.2/binaries/hmmsearch
-                -T /tmp/
-                -n
+     * <p/>
+     * Example:
+     * perl -I data/panther/7.0/lib bin/panther/7.0/pantherScore.pl
+     * -l path to the Panther model directory
+     * -D I
+     * -E 1e-3
+     * -B bin/blast/2.2.6/blastall
+     * -H bin/hmmsearch2
+     * -T temp/
+     * -n
+     * -i UPI000000004D.fasta
      *
      * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory is the relative path in which files are stored.
      * @return Command line.
      */
-    @Override protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
+    @Override
+    protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePath
                 = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         List<String> command = new ArrayList<String>();
+        //Add command
+        command.add(this.getPerlCommand());
+        //Add Perl parameter
+        command.add("-I");
+        command.add(this.getPerlLibrary());
         // Panther script
         command.add(this.getScriptPath());
         // Models
@@ -103,8 +131,6 @@ public final class PantherBinaryStep extends RunBinaryStep {
         // FASTA file
         command.add("-i");
         command.add(fastaFilePath);
-        // 
         return command;
     }
-
 }
