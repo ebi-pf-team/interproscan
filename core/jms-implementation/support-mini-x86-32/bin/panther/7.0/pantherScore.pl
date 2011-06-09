@@ -29,7 +29,6 @@
 #####
 
 # necessary libraries
-use lib "data/panther/7.0/lib";
 use FamLibBuilder;
 use Algs::Hmmer;
 use FastaFile;
