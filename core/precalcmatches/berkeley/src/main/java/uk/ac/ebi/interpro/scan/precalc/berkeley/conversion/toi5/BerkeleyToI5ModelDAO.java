@@ -4,6 +4,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * TODO: Description
@@ -16,4 +17,5 @@ public interface BerkeleyToI5ModelDAO {
 
     void populateProteinMatches(Protein nonPersistedProtein, List<BerkeleyMatch> berkeleyMatches);
 
+    void populateProteinMatches(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> matches);
 }

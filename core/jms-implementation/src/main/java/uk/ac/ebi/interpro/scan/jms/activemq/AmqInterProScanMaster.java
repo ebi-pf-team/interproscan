@@ -178,7 +178,7 @@ public class AmqInterProScanMaster implements Master {
 
 
                 if (closeOnCompletion && completed) break;
-                Thread.sleep(500);  // Every half second, checks for any runnable StepInstances and runs them.
+                Thread.sleep(200);  // Every half second, checks for any runnable StepInstances and runs them.
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by Master", e);

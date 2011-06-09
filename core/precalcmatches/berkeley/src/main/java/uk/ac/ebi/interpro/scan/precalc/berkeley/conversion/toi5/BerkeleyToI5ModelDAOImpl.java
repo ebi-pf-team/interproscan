@@ -12,8 +12,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -46,9 +45,19 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
      * @param berkeleyMatches     being a Set of BerkeleyMatch objects, retrieved / unmarshalled from
      *                            the Berekeley Match web service.
      */
-    @Override
     @Transactional(readOnly = true)
     public void populateProteinMatches(Protein nonPersistedProtein, List<BerkeleyMatch> berkeleyMatches) {
+        populateProteinMatches(Collections.singleton(nonPersistedProtein), berkeleyMatches);
+    }
+
+    @Transactional(readOnly = true)
+    public void populateProteinMatches(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches) {
+
+        final Map<String, Protein> md5ToProteinMap = new HashMap<String, Protein>(preCalculatedProteins.size());
+        // Populate the lookup map.
+        for (Protein protein : preCalculatedProteins) {
+            md5ToProteinMap.put(protein.getMd5().toUpperCase(), protein);
+        }
 
         // Collection of BerkeleyMatches of different kinds.
         // Iterate over them,
@@ -75,10 +84,23 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             // Retrieve the appropriate converter to turn the BerkeleyMatch into an I5 match
             // Type is based upon the member database type.
 
+            if (signatureLibraryToMatchConverter == null) {
+                throw new IllegalStateException("The match converter map has not been populated.");
+            }
             BerkeleyMatchConverter matchConverter = signatureLibraryToMatchConverter.get(sigLib);
             if (matchConverter != null) {
                 Match i5Match = matchConverter.convertMatch(berkeleyMatch, signatures.get(0));
-                nonPersistedProtein.addMatch(i5Match);
+                if (i5Match != null) {
+                    // Lookup up the right protein
+                    final Protein prot = md5ToProteinMap.get(berkeleyMatch.getProteinMD5().toUpperCase());
+                    if (prot != null) {
+                        prot.addMatch(i5Match);
+                    } else {
+                        LOGGER.warn("Attempted to store a match in a Protein, but cannot find the protein??? This makes no sense. Possible coding error.");
+                    }
+                }
+            } else {
+                LOGGER.warn("Unable to persist match " + berkeleyMatch + " as there is no available conversion for signature libarary " + sigLib);
             }
         }
     }

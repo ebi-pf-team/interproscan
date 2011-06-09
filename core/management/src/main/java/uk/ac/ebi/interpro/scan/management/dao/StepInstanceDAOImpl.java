@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.management.model.*;
@@ -22,6 +23,8 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
 
     private Map<SerialGroup, List<String>> serialGroupToStepIdMap = new HashMap<SerialGroup, List<String>>();
 
+    private Object lockObject;
+
     /**
      * Sets the class of the model that the DOA instance handles.
      * Note that this has been set up to use constructor injection
@@ -33,6 +36,11 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
      */
     public StepInstanceDAOImpl() {
         super(StepInstance.class);
+    }
+
+    @Required
+    public void setLockObject(Object lockObject) {
+        this.lockObject = lockObject;
     }
 
     /**
@@ -63,7 +71,9 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
 
         query.setParameter("stepId", step.getId());
         query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
-        return query.getResultList();
+        synchronized (lockObject) {
+            return query.getResultList();
+        }
     }
 
     /**
@@ -84,7 +94,9 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
                         ") order by i.id desc");
 
         query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
-        return query.getResultList();
+        synchronized (lockObject) {
+            return query.getResultList();
+        }
     }
 
     /**

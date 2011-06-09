@@ -63,6 +63,7 @@ public class StepCreationProteinLoadListener
             final Long topProteinId = max(topNewProteinId, topPrecalculatedProteinId);
 
             if (bottomProteinId == null || topProteinId == null) {
+                LOGGER.debug("Appear to be no proteins being analysed in this process - but this may be a bug.");
                 return;
             }
 
@@ -85,6 +86,7 @@ public class StepCreationProteinLoadListener
             }
 
             if (completionJob != null) {
+                LOGGER.warn("Have a completion Job.");
                 for (Step step : completionJob.getSteps()) {
                     StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
                     stepInstance.addParameters(parameters);
@@ -95,29 +97,29 @@ public class StepCreationProteinLoadListener
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Completion Steps:" + completionStepInstances.size());
             }
-
-            // Instantiate the StepInstances - no dependencies yet.
-            for (Job job : jobs.getJobList()) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Job for which StepInstances are being created: " + job.getId());
-                }
-                for (Step step : job.getSteps()) {
-                    if (step.isCreateStepInstancesForNewProteins()) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Creating StepInstance for step " + step.getId() + " protein range " + bottomNewProteinId + " - " + topNewProteinId);
-                        }
-                        final List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewProteinId, topNewProteinId);
-                        stepToStepInstances.put(step, jobStepInstances);
-                        for (StepInstance jobStepInstance : jobStepInstances) {
-                            for (StepInstance completionStepInstance : completionStepInstances) {
-                                completionStepInstance.addDependentStepInstance(jobStepInstance);
+            if (bottomNewProteinId != null && topNewProteinId != null) {
+                // Instantiate the StepInstances - no dependencies yet.
+                for (Job job : jobs.getJobList()) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Job for which StepInstances are being created: " + job.getId());
+                    }
+                    for (Step step : job.getSteps()) {
+                        if (step.isCreateStepInstancesForNewProteins()) {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Creating StepInstance for step " + step.getId() + " protein range " + bottomNewProteinId + " - " + topNewProteinId);
+                            }
+                            final List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewProteinId, topNewProteinId);
+                            stepToStepInstances.put(step, jobStepInstances);
+                            for (StepInstance jobStepInstance : jobStepInstances) {
+                                for (StepInstance completionStepInstance : completionStepInstances) {
+                                    completionStepInstance.addDependentStepInstance(jobStepInstance);
+                                }
                             }
                         }
                     }
                 }
+                addDependenciesAndStore(stepToStepInstances);
             }
-
-            addDependenciesAndStore(stepToStepInstances);
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Storing Completion StepInstances");

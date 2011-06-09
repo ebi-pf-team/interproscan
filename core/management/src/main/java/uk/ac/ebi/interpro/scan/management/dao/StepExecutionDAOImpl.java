@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
@@ -16,6 +17,8 @@ public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> 
 
     private static final Logger LOGGER = Logger.getLogger(StepExecutionDAOImpl.class.getName());
 
+    private Object lockObject;
+
     /**
      * Sets the class of the model that the DOA instance handles.
      * Note that this has been set up to use constructor injection
@@ -27,6 +30,38 @@ public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> 
      */
     public StepExecutionDAOImpl() {
         super(StepExecution.class);
+    }
+
+    @Required
+    public void setLockObject(Object lockObject) {
+        this.lockObject = lockObject;
+    }
+
+    /**
+     * Insert a new Model instance.
+     *
+     * @param newInstance being a new instance to persist.
+     * @return the inserted Instance.  This MAY NOT be the same object as
+     *         has been passed in, for sub-classes that check for the pre-existence of the object
+     *         in the database.
+     */
+    @Transactional
+    public StepExecution insert(StepExecution newInstance) {
+        synchronized (lockObject) {
+            return super.insert(newInstance);
+        }
+    }
+
+    /**
+     * Update the instance into the database
+     *
+     * @param modifiedInstance being an attached or unattached, persisted object that has been modified.
+     */
+    @Override
+    public void update(StepExecution modifiedInstance) {
+        synchronized (lockObject) {
+            super.update(modifiedInstance);
+        }
     }
 
     /**
@@ -51,7 +86,9 @@ public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> 
         // chance to commit the StepExecution to the database (note it is running in a separate thread.)
         // This loop makes sure that the StepExecution is committed to the database, before refreshing it.
         while (dirtyStepExec == null) {
-            dirtyStepExec = entityManager.find(StepExecution.class, freshStepExecution.getId());
+            synchronized (lockObject) {
+                dirtyStepExec = entityManager.find(StepExecution.class, freshStepExecution.getId());
+            }
             if (dirtyStepExec == null) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Waiting for StepExecution ID " + freshStepExecution.getId() + " to be committed prior to refreshing it.");

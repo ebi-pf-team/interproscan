@@ -129,7 +129,6 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
                 } else if (!file.canWrite()) {
                     throw new IllegalStateException("Unable to write to the directory " + directory);
                 }
-                validatedDirectories.add(directory);
             }
         }
         return directory;

@@ -9,6 +9,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
 
@@ -30,6 +31,8 @@ import java.util.List;
  */
 public class MatchHttpClient {
 
+    private static final Logger LOG = Logger.getLogger(MatchHttpClient.class.getName());
+
     private static final String MD5_PARAMETER = "md5";
 
     private String url;
@@ -38,7 +41,7 @@ public class MatchHttpClient {
 
     public static final String MATCH_SERVICE_PATH = "/matches";
 
-    public static final String PROTEINS_TO_ANALYSE_SERVICE_PATH = "/notCalculated";
+    public static final String PROTEINS_TO_ANALYSE_SERVICE_PATH = "/isPrecalculated";
 
     public MatchHttpClient(Jaxb2Marshaller unmarshaller) {
         this.unmarshaller = unmarshaller;
@@ -54,8 +57,15 @@ public class MatchHttpClient {
     }
 
     public BerkeleyMatchXML getMatches(String... md5s) throws IOException {
-        if (url == null) {
-            throw new IllegalStateException("The url must be set for the MatchHttpClient to function");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Call to MatchHttpClient.getMatches:");
+            for (String md5 : md5s) {
+                LOG.debug("Protein match requested for MD5: " + md5);
+            }
+        }
+
+        if (url == null || url.isEmpty()) {
+            throw new IllegalStateException("The url must be set for the MatchHttpClient.getMatches method to function");
         }
         HttpClient httpclient = new DefaultHttpClient();
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
@@ -77,25 +87,29 @@ public class MatchHttpClient {
                 if (responseEntity != null) {
                     // Stream in the response to the unmarshaller
                     BufferedInputStream bis = null;
+
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
                         return (BerkeleyMatchXML) unmarshaller.unmarshal(new StreamSource(bis));
-                    } finally {
+                    }
+//                    }
+                    finally {
                         if (bis != null) {
                             bis.close();
                         }
                     }
-                } else {
-                    return null;
                 }
+                return null;
             }
         };
-        return httpclient.execute(post, handler);
+        BerkeleyMatchXML matchXML = httpclient.execute(post, handler);
+        httpclient.getConnectionManager().shutdown();
+        return matchXML;
     }
 
-    public List<String> getMD5sOfProteinsToAnalyse(String... md5s) throws IOException {
-        if (url == null) {
-            throw new IllegalStateException("The url must be set for the MatchHttpClient to function");
+    public List<String> getMD5sOfProteinsAlreadyAnalysed(String... md5s) throws IOException {
+        if (url == null || url.isEmpty()) {
+            throw new IllegalStateException("The url must be set for the MatchHttpClient.getMD5sOfProteinsAlreadyAnalysed method to function");
         }
         HttpClient httpclient = new DefaultHttpClient();
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
@@ -114,7 +128,7 @@ public class MatchHttpClient {
             public List<String> handleResponse(
                     HttpResponse response) throws IOException {
                 HttpEntity responseEntity = response.getEntity();
-                List<String> md5sToAnalyse = new ArrayList<String>();
+                List<String> md5sAlreadyAnalysed = new ArrayList<String>();
                 if (responseEntity != null) {
                     // Stream in the response
                     BufferedReader reader = null;
@@ -124,7 +138,7 @@ public class MatchHttpClient {
                         while ((line = reader.readLine()) != null) {
                             line = line.trim();
                             if (!line.isEmpty()) {
-                                md5sToAnalyse.add(line);
+                                md5sAlreadyAnalysed.add(line);
                             }
                         }
                     } finally {
@@ -133,9 +147,20 @@ public class MatchHttpClient {
                         }
                     }
                 }
-                return md5sToAnalyse;
+                return md5sAlreadyAnalysed;
             }
         };
-        return httpclient.execute(post, handler);
+        List<String> response = httpclient.execute(post, handler);
+        httpclient.getConnectionManager().shutdown();
+        return response;
+    }
+
+    /**
+     * Method to quickly indicate if the service is not configured.
+     *
+     * @return
+     */
+    public boolean isConfigured() {
+        return url != null && !url.isEmpty();
     }
 }

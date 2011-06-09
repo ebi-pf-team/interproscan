@@ -33,6 +33,12 @@ public class WriteOutputStep extends Step {
 
     private ProteinDAO proteinDAO;
 
+    private boolean deleteWorkingDirectoryOnCompletion;
+
+    @Required
+    public void setDeleteWorkingDirectoryOnCompletion(String deleteWorkingDirectoryOnCompletion) {
+        this.deleteWorkingDirectoryOnCompletion = "true".equalsIgnoreCase(deleteWorkingDirectoryOnCompletion);
+    }
 
     enum Format {
         TSV {
@@ -102,5 +108,20 @@ public class WriteOutputStep extends Step {
             throw new IllegalStateException("IOException thrown when attempting to write a fasta file to " + outputFilePathName, e);
         }
 
+        if (deleteWorkingDirectoryOnCompletion) {
+            // Clean up empty working directory.
+            final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf('/'));
+            File file = new File(workingDirectory);
+            if (file.exists()) {
+                for (File subDir : file.listFiles()) {
+                    if (!subDir.delete()) {
+                        LOGGER.warn("At run completion, unable to delete temporary directory " + subDir.getAbsolutePath());
+                    }
+                }
+            }
+            if (!file.delete()) {
+                LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Looks up precalculated matches from the Berkeley WebService.
@@ -63,28 +64,91 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      */
     @Override
     public Protein getPrecalculated(Protein protein) {
+        // Check if the precalc service is configure and available.
+        if (!preCalcMatchClient.isConfigured()) {
+            return null;
+        }
+
         // First, check if the MD5 needs to be reanalyzed
 
         try {
             final String upperMD5 = protein.getMd5().toUpperCase();
-            if (preCalcMatchClient.getMD5sOfProteinsToAnalyse(upperMD5).contains(upperMD5)) {
+
+            if (!preCalcMatchClient.getMD5sOfProteinsAlreadyAnalysed(upperMD5).contains(upperMD5)) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Protein with MD5 " + upperMD5 + " has been returned from the web service, so needs to be analysed.");
+                    LOGGER.debug("Protein with MD5 " + upperMD5 + " has been analysed previously, so needs to be analysed.");
                 }
                 return null;  // Needs to be analysed.
             }
-            Protein precalcProtein = null;
             // Now retrieve the Matches and add to the protein.
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(upperMD5);
-            berkeleyToI5DAO.populateProteinMatches(precalcProtein, berkeleyMatchXML.getMatches());
-            return precalcProtein;
+            if (berkeleyMatchXML != null) {
+                berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches());
+            }
+            return protein;
         } catch (IOException e) {
             /* Don't overreact,  just log the error - I5 can continue and analyse the proteins
              even if the precalc lookup service is not working / configured correctly. */
             LOGGER.error("Non-fatal error - the pre-calculated match lookup service is not correctly configured and has thrown an IOException.  " +
                     "InterProScan 5 will continue to analyse the proteins.  You may wish to check your configuration for more efficient " +
                     "match calculation, or to disable the use of this service.", e);
+        } catch (IllegalStateException ise) {
+            LOGGER.error("The precalculated match lookup service has not been configured correctly and has thrown an " +
+                    "IllegalStateException.  This is NOT fatal however - InterProScan 5 will continue to " +
+                    "analyse the proteins.  You may wish to check your configuration for more efficient match " +
+                    "calculation, or to disable the use of this service." + ise);
         }
         return null;
+    }
+
+    @Override
+    public Set<Protein> getPrecalculated(Set<Protein> proteins) {
+        // Check if the precalc service is configure and available.
+        if (!preCalcMatchClient.isConfigured()) {
+            return null;
+        }
+
+        try {
+            // First, check if the MD5s have been precalculated
+            String[] md5s = new String[proteins.size()];
+            // Map for looking up proteins by MD5 efficiently.
+            final Map<String, Protein> md5ToProteinMap = new HashMap<String, Protein>(proteins.size());
+            int i = 0;
+            // Both populate the lookup map and also create the array of MD5s to query the service.
+            for (Protein protein : proteins) {
+                md5ToProteinMap.put(protein.getMd5().toUpperCase(), protein);
+                md5s[i++] = protein.getMd5().toUpperCase();
+            }
+            final List<String> analysedMd5s = preCalcMatchClient.getMD5sOfProteinsAlreadyAnalysed(md5s);
+
+            // Check if NONE have been pre-calculated - if so, return empty set.
+            if (analysedMd5s == null || analysedMd5s.size() == 0) {
+                return Collections.emptySet();
+            }
+
+            // Create a Set of proteins that have been precalculated - this is what will end up being returned.
+            final Set<Protein> precalculatedProteins = new HashSet<Protein>(analysedMd5s.size());
+
+            // For the MD5s of proteins that have been pre-calculated, retrieve match data and populate the proteins.
+            md5s = new String[analysedMd5s.size()];
+            i = 0;
+            for (String md5 : analysedMd5s) {
+                final String md5Upper = md5.toUpperCase();
+                md5s[i++] = md5Upper;
+                precalculatedProteins.add(md5ToProteinMap.get(md5Upper));
+            }
+            final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(md5s);
+            if (berkeleyMatchXML != null) {
+                berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches());
+            }
+            return precalculatedProteins;
+        } catch (IOException e) {
+            /* Don't overreact,  just log the error - I5 can continue and analyse the proteins
+             even if the precalc lookup service is not working / configured correctly. */
+            LOGGER.error("Non-fatal error - the pre-calculated match lookup service is not correctly configured and has thrown an IOException.  " +
+                    "InterProScan 5 will continue to analyse the proteins.  You may wish to check your configuration for more efficient " +
+                    "match calculation, or to disable the use of this service.", e);
+            return Collections.emptySet();
+        }
     }
 }

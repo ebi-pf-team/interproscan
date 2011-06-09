@@ -15,14 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * TODO: Description
+ * Controller for simple service that kicks back the MD5 checksums of any sequences
+ * that have already been run through the analysis pipeline and therefore do not require
+ * reanalysis.
  *
  * @author Phil Jones
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
 @Controller
-@RequestMapping("/notCalculated")
+@RequestMapping("/isPrecalculated")
 public class NewProteinsController {
 
     private MatchesService matchesService;
@@ -38,18 +40,18 @@ public class NewProteinsController {
     @RequestMapping
     public void getProteinsToAnalyse(HttpServletResponse response,
                                      @RequestParam(value = "md5", required = true) String[] md5Array) {
-        List<String> md5sToCalculate = matchesService.notPrecalculated(Arrays.asList(md5Array));
+        List<String> precalculatedMD5s = matchesService.isPrecalculated(Arrays.asList(md5Array));
         response.setContentType("text/tab-separated-values");
         Writer out = null;
         try {
             out = response.getWriter();
-            for (String md5 : md5sToCalculate) {
+            for (String md5 : precalculatedMD5s) {
                 out.write(md5);
                 out.write('\n');
             }
 
         } catch (IOException e) {
-            LOGGER.error("IOException thrown when attempting to output MD5s to run through analysis.");
+            LOGGER.error("IOException thrown when attempting to output precalculated MD5s.");
         } finally {
             if (out != null) {
                 try {

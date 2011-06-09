@@ -8,13 +8,11 @@
 
     <bean id="berkeleyMatchDBService"
           class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyMatchDBService">
-        <!-- This constructor argument is the path to the Berkeley DB containing all of the matches.-->
-        <constructor-arg value="/home/pjones/onion_berkeley"/>
+        <constructor-arg value="${berkeleydb.path.matches}"/>
     </bean>
 
     <bean id="berkeleyMD5Service" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyMD5DBService">
-
-        <constructor-arg value="/home/pjones/MD5_berkeley"/>
+        <constructor-arg value="${berkeleydb.path.md5}"/>
     </bean>
 
 </beans>

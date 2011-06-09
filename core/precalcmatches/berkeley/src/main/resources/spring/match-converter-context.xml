@@ -13,15 +13,24 @@
                 <entry key="PIRSF" value-ref="hmmer2BerkeleyMatchConverter"/>
                 <entry key="PRINTS" value-ref="fingerPrintsBerkeleyMatchConverter"/>
                 <entry key="TIGRFAM" value-ref="hmmer3BerkeleyMatchConverter"/>
+                <entry key="COILS" value-ref="coilsBerkeleyMatchConverter"/>
+                <entry key="PROSITE_PATTERNS" value-ref="prositePatternsMatchConverter"/>
+                <entry key="PROSITE_PROFILES" value-ref="prositeProfilesMatchConverter"/>
             </map>
         </property>
     </bean>
 
     <bean id="fingerPrintsBerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.impl.FingerPrintsBerkeleyMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.FingerPrintsBerkeleyMatchConverter"/>
     <bean id="hmmer2BerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.impl.Hmmer2BerkeleyMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.Hmmer2BerkeleyMatchConverter"/>
     <bean id="hmmer3BerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.impl.Hmmer3BerkeleyMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.Hmmer3BerkeleyMatchConverter"/>
+    <bean id="coilsBerkeleyMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.CoilsBerkeleyMatchConverter"/>
+    <bean id="prositeProfilesMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.PrositeProfilesBerkeleyMatchConverter"/>
+    <bean id="prositePatternsMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.PrositePatternsBerkeleyMatchConverter"/>
 
 </beans>

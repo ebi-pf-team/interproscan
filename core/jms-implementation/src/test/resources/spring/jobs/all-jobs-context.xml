@@ -64,6 +64,7 @@
         <property name="proteinInsertBatchSize" value="500"/>
         <!-- MUST NOT EXCEED 1000 -->
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="proteinPrecalcLookupBatchSize" value="50"/>
     </bean>
 
 

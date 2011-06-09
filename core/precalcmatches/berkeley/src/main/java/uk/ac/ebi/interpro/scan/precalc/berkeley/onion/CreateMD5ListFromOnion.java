@@ -31,20 +31,34 @@ public class CreateMD5ListFromOnion {
 
     private static final String MD5_QUERY =
             "select p.md5 as protein_md5 " +
-                    "  from uniparc.protein@UAREAD p " +
+                    "  from onion.uniparc_protein p " +
+                    "  where p.UPI <= ? " +
                     "  order by p.md5";
 
 
     public static void main(String[] args) {
 
-        if (args.length < 4) {
-            throw new IllegalArgumentException("Please provide the following arguments:\n\npath to berkeleyDB directory\nOnion DB URL (jdbc:oracle:thin:@host:port:SID)\nOnion DB username\nOnion DB password");
+        if (args.length < 5) {
+            throw new IllegalArgumentException("Please provide the following arguments:\n\npath to berkeleyDB directory\nOnion DB URL (jdbc:oracle:thin:@host:port:SID)\nOnion DB username\nOnion DB password\nMaximum UPI");
         }
         String directoryPath = args[0];
         String onionDBUrl = args[1];
         String onionUsername = args[2];
         String onionPassword = args[3];
+        String maxUPI = args[4];
+        CreateMD5ListFromOnion instance = new CreateMD5ListFromOnion();
 
+        instance.buildDatabase(directoryPath,
+                onionDBUrl,
+                onionUsername,
+                onionPassword,
+                maxUPI
+        );
+
+
+    }
+
+    void buildDatabase(String directoryPath, String onionDBUrl, String onionUsername, String onionPassword, String maxUPI) {
         Environment myEnv = null;
         EntityStore store = null;
         Connection onionConn = null;
@@ -85,6 +99,7 @@ public class CreateMD5ListFromOnion {
             onionConn = DriverManager.getConnection(onionDBUrl, onionUsername, onionPassword);
 
             PreparedStatement ps = onionConn.prepareStatement(MD5_QUERY);
+            ps.setString(1, maxUPI);
             ResultSet rs = ps.executeQuery();
 
             int proteinCount = 0;
@@ -98,7 +113,7 @@ public class CreateMD5ListFromOnion {
                 // Store last protein
                 primIDX.put(protein);
                 proteinCount++;
-                if (proteinCount % 10000 == 0) {
+                if (proteinCount % 100000 == 0) {
                     System.out.println("Stored " + proteinCount + " considered proteins.");
                 }
             }

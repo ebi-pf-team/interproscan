@@ -35,10 +35,12 @@ public final class PersistenceConversion {
      * @return antilog(x)
      */
     public static double get(double x) {
+        if (Double.isNaN(x) || Double.isInfinite(x)) {
+            return x;
+        }
         BigDecimal bd = new BigDecimal(Math.pow(10, x));
         bd = bd.round(ROUND_PRECISION_10);
         return bd.doubleValue();
-//        return Math.pow(10,x);
     }
 
     /**

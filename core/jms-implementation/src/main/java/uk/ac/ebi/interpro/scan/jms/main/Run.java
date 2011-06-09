@@ -214,7 +214,7 @@ public class Run {
 
             AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
 
-            ctx.registerShutdownHook();
+//            ctx.registerShutdownHook();    // Removed as explicitly calling close at the end of a successful run.
 
             if (args.length == 0) {
                 printHelp();
@@ -266,7 +266,9 @@ public class Run {
 
                 runnable.run();
             }
-            ctx.close();
+//            ctx.close();
+            System.exit(0);
+
         } catch (ParseException exp) {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
             printHelp();

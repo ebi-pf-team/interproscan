@@ -86,6 +86,6 @@ public class MatchHttpClientTest {
     @Test
     public void testProteinsToAnalyseClient() throws IOException {
         // NOTE - this is reading in a static file, rather than connecting to a real service.
-        List<String> proteinsToAnalyse = matchClient.getMD5sOfProteinsToAnalyse("D000022E87E6B7B84CCCBA9BAF34568A", "HoHoHo");
+        List<String> proteinsToAnalyse = matchClient.getMD5sOfProteinsAlreadyAnalysed("D000022E87E6B7B84CCCBA9BAF34568A", "HoHoHo");
     }
 }

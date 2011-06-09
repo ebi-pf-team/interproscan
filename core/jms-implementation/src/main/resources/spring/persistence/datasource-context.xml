@@ -38,12 +38,18 @@
           class="uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAOImpl"/>
 
     <bean id="stepInstanceDAO"
-          class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl"/>
+          class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl">
+        <property name="lockObject" value="lockObject"/>
+    </bean>
 
     <bean id="stepExecutionDAO"
-          class="uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAOImpl"/>
+          class="uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAOImpl">
+        <property name="lockObject" value="lockObject"/>
+    </bean>
 
     <bean id="xrefDAO"
           class="uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAOImpl"/>
+
+    <bean id="lockObject" class="java.lang.Object"/>
 
 </beans>
