@@ -6,6 +6,7 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
@@ -47,7 +48,7 @@ public class CreateMatchDBFromOnion {
                     "       m.relno_major || '.' || m.relno_minor as signature_library_release, " +
                     "       m.method_ac as signature_accession, " +
                     "       m.seqscore as sequence_score, " +
-                    "       m.evalue, " +
+                    "       m.evalue, " +            // Log10
                     "       m.seq_start, " +
                     "       m.seq_end, " +
                     "       m.hmm_start, " +
@@ -57,27 +58,38 @@ public class CreateMatchDBFromOnion {
                     "       inner join " +
                     "       onion.iprscan m  " +
                     "       on analt.analysis_type_id = m.analysis_type_id " +
-                    "       inner join uniparc.protein@UAREAD p " +
+                    "       inner join onion.uniparc_protein p " +
                     "       on m.upi = p.upi " +
                     " where m.status = 'T' " +
-                    "       and analt.name not like ('COMPARA%') " +
-                    "       and analt.name not like ('%ENV') " +
-                    "       and analt.name not like ('%NEW') " +
-                    "       and analt.name not like ('SIGNALP%') " +
-                    "       and analt.name not in ('SWMC','TMHMM','PIRSFBLAST','GENE3D','PFAM_FS','PFAM_LS','PRODOM') " +
+                    "       and analt.name in ('PANTHER', 'SMART', 'PRINTS', 'PROSITE_PF', 'PROSITE_PT', 'PIRSF', 'PRODOM', 'SSF', 'HAMAP', 'PFAM_HMMER3', 'COILS', 'GENE3D_HMMER3', 'TIGRFAM_HMMER3') " +
+                    "       and m.UPI <= ? " +
                     "order by p.md5, analt.name, m.relno_major, m.method_ac, m.seqscore";
 
 
     public static void main(String[] args) {
 
         if (args.length < 4) {
-            throw new IllegalArgumentException("Please provide the following arguments:\n\npath to berkeleyDB directory\nOnion DB URL (jdbc:oracle:thin:@host:port:SID)\nOnion DB username\nOnion DB password");
+            throw new IllegalArgumentException("Please provide the following arguments:\n\npath to berkeleyDB directory\nOnion DB URL (jdbc:oracle:thin:@host:port:SID)\nOnion DB username\nOnion DB password\nMaximum UPI");
         }
         String directoryPath = args[0];
         String onionDBUrl = args[1];
         String onionUsername = args[2];
         String onionPassword = args[3];
+        String maxUPI = args[4];
 
+        CreateMatchDBFromOnion instance = new CreateMatchDBFromOnion();
+
+        instance.buildDatabase(directoryPath,
+                onionDBUrl,
+                onionUsername,
+                onionPassword,
+                maxUPI
+        );
+
+
+    }
+
+    void buildDatabase(String directoryPath, String onionDBUrl, String onionUsername, String onionPassword, String maxUPI) {
         Environment myEnv = null;
         EntityStore store = null;
         Connection onionConn = null;
@@ -120,6 +132,7 @@ public class CreateMatchDBFromOnion {
             onionConn = DriverManager.getConnection(onionDBUrl, onionUsername, onionPassword);
 
             PreparedStatement ps = onionConn.prepareStatement(MATCH_QUERY);
+            ps.setString(1, maxUPI);
             ResultSet rs = ps.executeQuery();
 
             BerkeleyMatch match = null;
@@ -160,7 +173,13 @@ public class CreateMatchDBFromOnion {
                 if (rs.wasNull()) sequenceScore = null;
 
                 Double eValue = rs.getDouble(COL_IDX_EVALUE);
-                if (rs.wasNull()) eValue = null;
+                if (rs.wasNull()) {
+                    eValue = null;
+                } else {
+                    // Stored in Onion as Log Base 10.  Convert back...
+                    eValue = PersistenceConversion.get(eValue);
+                }
+
 
                 /// arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmmBounds column...
 
@@ -186,7 +205,7 @@ public class CreateMatchDBFromOnion {
                         // Store last match
                         primIDX.put(match);
                         matchCount++;
-                        if (matchCount % 10000 == 0) {
+                        if (matchCount % 100000 == 0) {
                             System.out.println("Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
                         }
 
@@ -219,7 +238,7 @@ public class CreateMatchDBFromOnion {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Unable to load the oracle.jdbc.OracleDriver class", e);
         } catch (SQLException e) {
-            throw new IllegalStateException("Unable to connect to the Onion database", e);
+            throw new IllegalStateException("SQLException thrown by Onion", e);
         } finally {
             if (store != null) {
                 try {

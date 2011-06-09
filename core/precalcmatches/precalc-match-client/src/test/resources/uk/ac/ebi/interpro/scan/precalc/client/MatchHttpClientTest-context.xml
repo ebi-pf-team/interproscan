@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <import resource="classpath:oxm-context.xml"/>
+    <import resource="classpath:spring/oxm-context.xml"/>
 
     <bean id="matchClient" class="uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient">
         <constructor-arg index="0" ref="unmarshaller"/>

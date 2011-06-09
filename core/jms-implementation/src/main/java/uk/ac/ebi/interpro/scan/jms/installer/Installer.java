@@ -66,11 +66,9 @@ public class Installer implements Runnable {
                         continue;
                     }
                 }
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Loading " + parser.getSignatureLibrary() + " version number " + parser.getReleaseVersionNumber());
-                }
+                LOGGER.warn("Loading " + parser.getSignatureLibrary() + " version number " + parser.getReleaseVersionNumber());
                 if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(parser.getSignatureLibrary(), parser.getReleaseVersionNumber())) {
-                    LOGGER.info(parser.getSignatureLibrary() + " version " + parser.getReleaseVersionNumber() + " is already loaded.");
+                    LOGGER.warn(parser.getSignatureLibrary() + " version " + parser.getReleaseVersionNumber() + " is already loaded.");
                     return;
                 }
                 final SignatureLibraryRelease release;

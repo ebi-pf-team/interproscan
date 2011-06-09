@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.impl;
+package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
@@ -17,7 +17,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class Hmmer3BerkeleyMatchConverter implements BerkeleyMatchConverter<Hmmer3Match> {
+public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3Match> {
 
     public Hmmer3Match convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
 
@@ -33,12 +33,12 @@ public class Hmmer3BerkeleyMatchConverter implements BerkeleyMatchConverter<Hmme
             }
 
             locations.add(new Hmmer3Match.Hmmer3Location(
-                    location.getStart() == null ? 0 : location.getStart(),
-                    location.getEnd() == null ? 0 : location.getEnd(),
-                    location.getScore() == null ? 0 : location.getScore(),
-                    location.geteValue() == null ? 0 : location.geteValue(),
-                    location.getHmmStart() == null ? 0 : location.getHmmStart(),
-                    location.getHmmEnd() == null ? 0 : location.getHmmEnd(),
+                    valueOrZero(location.getStart()),
+                    valueOrZero(location.getEnd()),
+                    valueOrZero(location.getScore()),
+                    valueOrZero(location.geteValue()),
+                    valueOrZero(location.getHmmStart()),
+                    valueOrZero(location.getHmmEnd()),
                     bounds,
                     location.getEnvelopeStart() == null
                             ? (location.getStart() == null ? 0 : location.getStart())
@@ -51,8 +51,8 @@ public class Hmmer3BerkeleyMatchConverter implements BerkeleyMatchConverter<Hmme
 
         return new Hmmer3Match(
                 signature,
-                berkeleyMatch.getSequenceScore() == null ? 0 : berkeleyMatch.getSequenceScore(),
-                berkeleyMatch.getSequenceEValue() == null ? 0 : berkeleyMatch.getSequenceEValue(),
+                valueOrZero(berkeleyMatch.getSequenceScore()),
+                valueOrZero(berkeleyMatch.getSequenceEValue()),
                 locations
         );
     }

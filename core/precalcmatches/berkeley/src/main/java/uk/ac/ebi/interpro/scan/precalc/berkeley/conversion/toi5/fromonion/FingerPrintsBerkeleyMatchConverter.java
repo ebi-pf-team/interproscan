@@ -1,5 +1,6 @@
-package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.impl;
+package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
@@ -16,7 +17,9 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class FingerPrintsBerkeleyMatchConverter implements BerkeleyMatchConverter<FingerPrintsMatch> {
+public class FingerPrintsBerkeleyMatchConverter extends BerkeleyMatchConverter<FingerPrintsMatch> {
+
+    private static final Logger LOG = Logger.getLogger(FingerPrintsBerkeleyMatchConverter.class.getName());
 
     public FingerPrintsMatch convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
 
@@ -32,20 +35,21 @@ public class FingerPrintsBerkeleyMatchConverter implements BerkeleyMatchConverte
                 locationIndex++;
             }
             locations.add(new FingerPrintsMatch.FingerPrintsLocation(
-                    location.getStart() == null ? 0 : location.getStart(),
-                    location.getEnd() == null ? 0 : location.getEnd(),
-                    location.getpValue() == null ? 0 : location.getpValue(),
-                    location.getScore() == null ? 0 : location.getScore(),
+                    valueOrZero(location.getStart()),
+                    valueOrZero(location.getEnd()),
+                    valueOrZero(location.getpValue()),
+                    valueOrZero(location.getScore()),
                     locationIndex + 1   // Motif number is 1 indexed.
             ));
         }
         if (firstLocation == null) {
+            LOG.warn("The precalculated match lookup service has returned a PRINTS match with no locations:\n" + berkeleyMatch);
             return null;
         }
 
         return new FingerPrintsMatch(
                 signature,
-                firstLocation.geteValue() == null ? 0 : firstLocation.geteValue(),
+                valueOrZero(firstLocation.geteValue()),
                 firstLocation.getHmmBounds() == null ? "" : firstLocation.getHmmBounds(),     // Note - Onion stores the graphscan in the HmmBounds column.
                 locations
         );

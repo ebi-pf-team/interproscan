@@ -7,7 +7,9 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,6 +31,10 @@ public class ProteinLoader implements Serializable {
     private ProteinDAO proteinDAO;
 
     private int proteinInsertBatchSize;
+
+    private int proteinPrecalcLookupBatchSize;
+
+    private Set<Protein> proteinsAwaitingPrecalcLookup;
 
     private Set<Protein> proteinsAwaitingPersistence;
 
@@ -53,6 +59,11 @@ public class ProteinLoader implements Serializable {
         this.proteinDAO = proteinDAO;
     }
 
+    @Required
+    public void setProteinPrecalcLookupBatchSize(int proteinPrecalcLookupBatchSize) {
+        this.proteinPrecalcLookupBatchSize = proteinPrecalcLookupBatchSize;
+        proteinsAwaitingPrecalcLookup = new HashSet<Protein>(proteinPrecalcLookupBatchSize);
+    }
 
     /**
      * This method stores sequences with (optionally) cross references.
@@ -74,15 +85,47 @@ public class ProteinLoader implements Serializable {
                     protein.addCrossReference(xref);
                 }
             }
-
-            Protein precalculatedProtein = (proteinLookup != null)
-                    ? proteinLookup.getPrecalculated(protein)
-                    : null;
-            if (precalculatedProtein != null) {
-                precalculatedProteins.add(precalculatedProtein);
-            } else {
-                addProteinToBatch(protein);
+            proteinsAwaitingPrecalcLookup.add(protein);
+            if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
+                lookupProteins();
             }
+//            Protein precalculatedProtein = (proteinLookup != null)
+//                    ? proteinLookup.getPrecalculated(protein)
+//                    : null;
+//            if (precalculatedProtein != null) {
+//                precalculatedProteins.add(precalculatedProtein);
+//            } else {
+//                addProteinToBatch(protein);
+//            }
+        }
+    }
+
+    private void lookupProteins() {
+        if (proteinsAwaitingPrecalcLookup.size() > 0) {
+            Set<Protein> localPrecalculatedProteins = (proteinLookup != null)
+                    ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup)
+                    : null;
+            // Put precalculated proteins into a Map of MD5 to Protein;
+            if (localPrecalculatedProteins != null) {
+                final Map<String, Protein> md5ToPrecalcProtein = new HashMap<String, Protein>(localPrecalculatedProteins.size());
+                for (Protein precalc : localPrecalculatedProteins) {
+                    md5ToPrecalcProtein.put(precalc.getMd5(), precalc);
+                }
+
+                for (Protein protein : proteinsAwaitingPrecalcLookup) {
+                    if (md5ToPrecalcProtein.keySet().contains(protein.getMd5())) {
+                        precalculatedProteins.add(md5ToPrecalcProtein.get(protein.getMd5()));
+                    } else {
+                        addProteinToBatch(protein);
+                    }
+                }
+            } else {
+                for (Protein protein : proteinsAwaitingPrecalcLookup) {
+                    addProteinToBatch(protein);
+                }
+            }
+            // All dealt with, so clear.
+            proteinsAwaitingPrecalcLookup.clear();
         }
     }
 
@@ -125,6 +168,9 @@ public class ProteinLoader implements Serializable {
      * @param proteinLoadListener which handles the creation of StepInstances for the new proteins added.
      */
     public void persist(ProteinLoadListener proteinLoadListener) {
+        // Check any remaining proteins awaiting lookup
+        lookupProteins();
+
         // Persist any remaining proteins (that last batch)
         persistBatch();
 
@@ -147,6 +193,13 @@ public class ProteinLoader implements Serializable {
         final Long bottomPrecalcProteinId = bottomProteinId;
         final Long topPrecalcProteinId = topProteinId;
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Protein ID ranges:");
+            LOGGER.debug("Bottom new protein: " + bottomNewProteinId);
+            LOGGER.debug("Top new protein:" + topNewProteinId);
+            LOGGER.debug("Bottom precalc protein: " + bottomPrecalcProteinId);
+            LOGGER.debug("Top precalc protein: " + topPrecalcProteinId);
+        }
 
         proteinLoadListener.proteinsLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
 

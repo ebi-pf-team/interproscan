@@ -188,6 +188,7 @@
 
                 <configuration>
                     <archive>
+                        <!--<index>true</index>-->
                         <manifest>
                             <mainClass>uk.ac.ebi.interpro.scan.jms.main.Run</mainClass>
                             <addClasspath>true</addClasspath>

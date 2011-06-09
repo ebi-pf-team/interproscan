@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.impl;
+package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
@@ -17,7 +17,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class Hmmer2BerkeleyMatchConverter implements BerkeleyMatchConverter<Hmmer2Match> {
+public class Hmmer2BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer2Match> {
 
     public Hmmer2Match convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
 
@@ -33,20 +33,20 @@ public class Hmmer2BerkeleyMatchConverter implements BerkeleyMatchConverter<Hmme
             }
 
             locations.add(new Hmmer2Match.Hmmer2Location(
-                    location.getStart() == null ? 0 : location.getStart(),
-                    location.getEnd() == null ? 0 : location.getEnd(),
-                    location.getScore() == null ? 0 : location.getScore(),
-                    location.geteValue() == null ? 0 : location.geteValue(),
-                    location.getHmmStart() == null ? 0 : location.getHmmStart(),
-                    location.getHmmEnd() == null ? 0 : location.getHmmEnd(),
+                    valueOrZero(location.getStart()),
+                    valueOrZero(location.getEnd()),
+                    valueOrZero(location.getScore()),
+                    valueOrZero(location.geteValue()),
+                    valueOrZero(location.getHmmStart()),
+                    valueOrZero(location.getHmmEnd()),
                     bounds
             ));
         }
 
         return new Hmmer2Match(
                 signature,
-                berkeleyMatch.getSequenceScore() == null ? 0 : berkeleyMatch.getSequenceScore(),
-                berkeleyMatch.getSequenceEValue() == null ? 0 : berkeleyMatch.getSequenceEValue(),
+                valueOrZero(berkeleyMatch.getSequenceScore()),
+                valueOrZero(berkeleyMatch.getSequenceEValue()),
                 locations
         );
     }

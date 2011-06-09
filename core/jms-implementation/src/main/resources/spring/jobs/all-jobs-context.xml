@@ -20,11 +20,11 @@
     <import resource="jobPIRSF-2.74-context.xml"/>
     <!--<import resource="jobProDom-2006.1-context.xml"/>-->
 
-    <import resource="../persistence/persistence-config-context.xml"/>
+    <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
 
-    <import resource="../uapro-db-access-context.xml"/>
-    <import resource="classpath:match-converter-context.xml"/>
-    <import resource="classpath:oxm-context.xml"/>
+    <import resource="classpath:/spring/uapro-db-access-context.xml"/>
+    <import resource="classpath:/spring/match-converter-context.xml"/>
+    <import resource="classpath:/spring/oxm-context.xml"/>
 
     <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
         <property name="jobList">
@@ -124,6 +124,7 @@
         <!--<property name="serialGroup"                        value="LOAD_PROTEINS"/>-->
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="serializerDeserializer" ref="serializerDeserializer"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
 
@@ -147,16 +148,17 @@
 
     <bean id="preCalcMatchClient" class="uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient">
         <constructor-arg ref="unmarshaller"/>
-        <property name="url" value="http://localhost:8082/i5"/>
+        <property name="url" value="${precalculated.match.lookup.service.url}"/>
     </bean>
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
+        <property name="proteinPrecalcLookupBatchSize" value="500"/>
         <!-- MUST NOT EXCEED 1000 -->
         <property name="proteinInsertBatchSize" value="500"/>
         <property name="proteinDAO" ref="proteinDAO"/>
 
         <!-- TODO - Turn this back on and get it working! -->
-        <!--<property name="proteinLookup" ref="precalculatedLookup"/>-->
+        <property name="proteinLookup" ref="precalculatedLookup"/>
     </bean>
 
     <bean id="proteinLoadListener"

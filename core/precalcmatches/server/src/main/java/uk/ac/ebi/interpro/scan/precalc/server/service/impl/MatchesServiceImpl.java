@@ -72,19 +72,18 @@ public class MatchesServiceImpl implements MatchesService {
 
     /**
      * Web service request for a List of protein sequence MD5
-     * checksums where the protein sequence is not
-     * considered in the source of precalculated matches
-     * (i.e. any returned MD5s should be run against
+     * checksums where the protein sequence has been run through
+     * the analysis pipeline and so should NOT be recalculated
+     * (i.e. any returned MD5s should NOT be run against
      * the models).
      *
      * @param proteinMD5s md5 checksum of sequences.
-     * @return a List of MD5s for proteins that have not
-     *         been considered previously.
+     * @return a List of MD5s for proteins that have been calculated previously.
      */
-    public List<String> notPrecalculated(List<String> proteinMD5s) {
+    public List<String> isPrecalculated(List<String> proteinMD5s) {
         List<String> md5ToCalculate = new ArrayList<String>();
         for (String md5 : proteinMD5s) {
-            if (berkeleyMD5Service.getPrimIDX().get(md5) == null) {
+            if (berkeleyMD5Service.getPrimIDX().get(md5) != null) {
                 md5ToCalculate.add(md5);
             }
         }

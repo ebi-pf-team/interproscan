@@ -63,6 +63,11 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("tigr_fam", SignatureLibrary.TIGRFAM);
         libraryNameToSignatureLibrary.put("tigr_fams", SignatureLibrary.TIGRFAM);
 
+        libraryNameToSignatureLibrary.put("coils", SignatureLibrary.COILS);
+        libraryNameToSignatureLibrary.put("coil", SignatureLibrary.COILS);
+        libraryNameToSignatureLibrary.put("phobius", SignatureLibrary.PHOBIUS);
+        libraryNameToSignatureLibrary.put("pirsf", SignatureLibrary.PIRSF);
+
         libraryNameToSignatureLibrary.put("ssf", SignatureLibrary.SUPERFAMILY);
     }
 
