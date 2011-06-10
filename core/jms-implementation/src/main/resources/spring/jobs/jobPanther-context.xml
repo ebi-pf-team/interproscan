@@ -54,20 +54,20 @@
         <property name="dependsUpon" ref="stepPantherWriteFastaFile"/>
         <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
         <!--Add Perl command-->
-        <property name="perlCommand" value="perl"/>
+        <property name="perlCommand" value="${panther.perl.command}"/>
         <!--Add Perl parameter (in this case the Perl PERL5LIB)-->
-        <property name="perlLibrary" value="data/panther/7.0/perllib"/>
+        <property name="perlLibrary" value="${data/panther/7.0/perllib}"/>
         <!--Panther Perl script-->
         <property name="scriptPath" value="${binary.panther.path}"/>
         <!--Add Panther models-->
-        <property name="modelDirectory" value="/home/maxim/tmp/panther/7.0/model"/>
-        <!--<property name="modelDirectory"         value="${panther.models.dir.7.0}"/>-->
+        <property name="modelDirectory" value="${panther.models.dir.7.0}"/>
         <!--Add path to (B)last binary-->
         <property name="blastPath" value="${binary.blastall.2.2.6.path}"/>
         <!--Add path to (H)mmsearch binary-->
         <property name="hmmerPath" value="${binary.hmmer2.hmmsearch.path}"/>
         <!--Add additional arguments/parameter-->
-        <property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>
+        <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
+        <property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
