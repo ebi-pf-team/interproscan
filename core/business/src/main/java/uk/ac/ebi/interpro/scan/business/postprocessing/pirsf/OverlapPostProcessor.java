@@ -11,7 +11,6 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,11 +43,11 @@ import java.util.Set;
  * <p/>
  * STEP 3:
  * -------
- * Find the model Id with the smallest mean e-value in this protein
+ * Find the match with the smallest e-value in this protein (a model Id will have 0 or 1 match)
  * <p/>
  * STEP 4:
  * -------
- * Run blast (if required - check pirsf.dat file)
+ * Run blast (if required - check pirsf.dat file) to check Blast agrees that this model Id is the best match
  *
  * @author Matthew Fraser, EMBL-EBI, InterPro
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
@@ -95,71 +94,33 @@ public class OverlapPostProcessor implements Serializable {
         // Read in pirsf.dat file
         Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileParser.parse(pirsfDatFileResource);
 
-        Set<String> passedProteinIds = new HashSet<String>();
-        // A Map between protein IDs and model accessions with the minimum e-value
-        Map<String, String> proteinIDModelAccMap = new HashMap<String, String>();
-        Set<RawProtein<PIRSFHmmer2RawMatch>> matchesBlastReqd = doOverlapStep(rawMatches, passedProteinIds, proteinLengthsMap, pirsfDatRecordMap, proteinIDModelAccMap);
+        // A Map between protein IDs and the match with the best match (smallest e-value)
+        Map<String, PIRSFHmmer2RawMatch> proteinIdBestMatchMap = new HashMap<String, PIRSFHmmer2RawMatch>(); // Blast not required
+        Map<String, PIRSFHmmer2RawMatch> proteinIdBestMatchToBeBlastedMap = new HashMap<String, PIRSFHmmer2RawMatch>(); // Blast required
 
-        PirsfFileUtil.writeFilteredRawMatchesToFile(filteredMatchesFilePath, passedProteinIds);
-        writeBlastRawMatchesToFile(blastMatchesFilePath, matchesBlastReqd, proteinIDModelAccMap);
-    }
-
-    private void writeBlastRawMatchesToFile(String blastMatchesFilePath,
-                                            Set<RawProtein<PIRSFHmmer2RawMatch>> resultSet,
-                                            Map<String, String> proteinIDModelAccMap) throws IOException {
-        BufferedWriter writer = null;
-        try {
-            File file = PirsfFileUtil.createTmpFile(blastMatchesFilePath);
-            if (!file.exists()) {
-                throw new IllegalStateException("Could not create file: " + blastMatchesFilePath);
-            }
-            writer = new BufferedWriter(new FileWriter(file));
-            for (RawProtein<PIRSFHmmer2RawMatch> protein : resultSet) {
-                String protID = protein.getProteinIdentifier();
-                writer.write(protID);
-                String modelAccession = proteinIDModelAccMap.get(protID);
-                if (modelAccession != null) {
-                    writer.write('\t');
-                    writer.write(modelAccession);
-                }
-                writer.write('\n');
-            }
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-        }
-    }
-
-    /**
-     * Performs the overlap filtering step of the PIRSF post processing. Protein sequences which keep the overlap criterion will
-     * be added to the result set. Protein sequences which need to go through the BLAST step will be returned.
-     *
-     * @return Set of matches which need to go through the BLAST step.
-     */
-    private Set<RawProtein<PIRSFHmmer2RawMatch>> doOverlapStep(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches,
-                                                               Set<String> proteinIds,
-                                                               Map<Long, Integer> proteinLengthsMap,
-                                                               Map<String, PirsfDatRecord> pirsfDatRecordMap,
-                                                               Map<String, String> proteinIDModelAccMap) {
-        Set<RawProtein<PIRSFHmmer2RawMatch>> result = new HashSet<RawProtein<PIRSFHmmer2RawMatch>>();
         // Loop through the proteins and see if the matches need to be excluded (filtered) or not
         for (RawProtein<PIRSFHmmer2RawMatch> protein : rawMatches) {
             // Retrieve data necessary to perform filtering on this protein
             String proteinId = protein.getProteinIdentifier();
             int proteinLength = proteinLengthsMap.get(Long.parseLong(proteinId));
-            RawProtein<PIRSFHmmer2RawMatch> resultProtein = doOverlapFiltering(protein, pirsfDatRecordMap, proteinLength, proteinIDModelAccMap);
-            if (resultProtein.getMatches() != null && resultProtein.getMatches().size() > 0) {
-                if (doBlastCheck(resultProtein, pirsfDatRecordMap)) {
+            PIRSFHmmer2RawMatch bestMatch = doOverlapFiltering(protein, pirsfDatRecordMap, proteinLength);
+            if (bestMatch != null) {
+                if (doBlastCheck(proteinId, bestMatch, pirsfDatRecordMap)) {
                     // Protein has passed this filtering step but some blast post processing is still required later
-                    result.add(resultProtein);
+                    proteinIdBestMatchToBeBlastedMap.put(proteinId, bestMatch);
                 } else {
                     // Protein has passed this filtering step and blast post processing is not required
-                    proteinIds.add(resultProtein.getProteinIdentifier());
+                    proteinIdBestMatchMap.put(proteinId, bestMatch);
                 }
             }
+            // Else no matches survived the filtering stage so nothing to record
         }
-        return result;
+
+        // Ready for persistence now - no blast check required
+        PirsfFileUtil.writeProteinBestMatchesToFile(filteredMatchesFilePath, proteinIdBestMatchMap);
+
+        // Need to be blasted in final filtering step
+        PirsfFileUtil.writeProteinBestMatchesToFile(blastMatchesFilePath, proteinIdBestMatchToBeBlastedMap);
     }
 
     /**
@@ -167,36 +128,33 @@ public class OverlapPostProcessor implements Serializable {
      *
      * @return FALSE if not.
      */
-    private boolean doBlastCheck(RawProtein<PIRSFHmmer2RawMatch> protein, Map<String, PirsfDatRecord> pirsfDatRecordMap) {
+    private boolean doBlastCheck(String proteinId, PIRSFHmmer2RawMatch match, Map<String, PirsfDatRecord> pirsfDatRecordMap) {
         // Loop through the proteins and see if the matches need to be excluded (filtered) or not
-        for (PIRSFHmmer2RawMatch match : protein.getMatches()) {
-            String modelId = match.getModelId();
-            PirsfDatRecord pirsfDatRecord = pirsfDatRecordMap.get(modelId);
-            if (pirsfDatRecord != null && pirsfDatRecord.isBlastRequired()) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Need to BLAST protein with identifier " + protein.getProteinIdentifier() + " because model Id " + modelId +
-                            " is annotated with BLAST=true.");
-                }
-                return true;
+        String modelId = match.getModelId();
+        PirsfDatRecord pirsfDatRecord = pirsfDatRecordMap.get(modelId);
+        if (pirsfDatRecord != null && pirsfDatRecord.isBlastRequired()) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Need to BLAST protein with identifier " + proteinId + " because model Id " + modelId +
+                        " is annotated with BLAST=true.");
             }
+            return true;
         }
         return false;
     }
 
 
     /**
-     * Performs the overlap filtering for all HMMR matches of the specified protein.
+     * Performs the overlap filtering for all HMMER2 matches of the specified protein and then decides on the best
+     * match of those that remain (smallest e-value).
      *
-     * @return A set of filtered raw matches associated to the specified protein identifier.
+     * @return The best match for this protein (smallest e-value), or NULL if no matches passed the filtering.
      */
-    private RawProtein<PIRSFHmmer2RawMatch> doOverlapFiltering(RawProtein<PIRSFHmmer2RawMatch> protein,
-                                                               Map<String, PirsfDatRecord> pirsfDatRecordMap,
-                                                               int proteinLength,
-                                                               Map<String, String> proteinIDModelAccMap) {
-        RawProtein<PIRSFHmmer2RawMatch> result = new RawProtein<PIRSFHmmer2RawMatch>(protein.getProteinIdentifier());
-        // Used to find the model Id with the smallest mean e-value for this protein
-        Double minMeanEvalue = null;
-        String modelIdWithMinMeanEvalue = null;
+    private PIRSFHmmer2RawMatch doOverlapFiltering(RawProtein<PIRSFHmmer2RawMatch> protein,
+                                                   Map<String, PirsfDatRecord> pirsfDatRecordMap,
+                                                   int proteinLength) {
+
+        Double minEvalue = null;
+        PIRSFHmmer2RawMatch matchWithMinEvalue = null;
 
         for (PIRSFHmmer2RawMatch match : protein.getMatches()) {
             String modelId = match.getModelId();
@@ -208,9 +166,7 @@ public class OverlapPostProcessor implements Serializable {
             }
 
             // Perform first filtering check
-            if (checkOverlapCriterion(proteinLength, match, pirsfDatRecord)) {
-                result.addMatch(match);
-            } else {
+            if (!checkOverlapCriterion(proteinLength, match, pirsfDatRecord)) {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Removing PIRSF match with model Id " + modelId + "...");
                 }
@@ -218,16 +174,13 @@ public class OverlapPostProcessor implements Serializable {
             }
 
             double eValue = match.getLocationEvalue();
-            if ((minMeanEvalue == null && modelIdWithMinMeanEvalue == null) || (eValue < minMeanEvalue)) {
+            if ((minEvalue == null && matchWithMinEvalue == null) || (eValue < minEvalue)) {
                 // Can reduce the minimum mean e-value for this protein
-                minMeanEvalue = eValue;
-                modelIdWithMinMeanEvalue = modelId;
+                minEvalue = eValue;
+                matchWithMinEvalue = match;
             }
         }
-        if (modelIdWithMinMeanEvalue != null) {
-            proteinIDModelAccMap.put(protein.getProteinIdentifier(), modelIdWithMinMeanEvalue);
-        }
-        return result;
+        return matchWithMinEvalue; // Could still be NULL if no matches passed the filtering
     }
 
 

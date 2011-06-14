@@ -3,15 +3,20 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor;
-import uk.ac.ebi.interpro.scan.io.pirsf.BlastMatchesFileParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfBlastResultParser;
+import uk.ac.ebi.interpro.scan.io.pirsf.PirsfMatchTempParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 /**
+ * Perform second post processing match filtering step.
+ *
  * @author Matthew Fraser, EMBL-EBI
  * @version $Id$
  * @since 1.0
@@ -66,21 +71,22 @@ public class BlastPostProcessingStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
         // Prepare temporary filenames required by this step
-        final String blastMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
-        final String blastOutFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastResultOutputFileName);
-        final String blastedMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastedMatchesFileName);
+        final String matchesToBlastFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName); // Matches to blast
+        final String blastOutputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastResultOutputFileName); // Blast output
+        final String blastedMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastedMatchesFileName); // Matches that passed the blast filtering step
 
-        Map<Long, String> proteinIdMap = null;
+        Set<RawProtein<PIRSFHmmer2RawMatch>> proteinsToBlast = null;
         try {
-            proteinIdMap = BlastMatchesFileParser.parse(blastMatchesFilePath);
+            // Matches to blast
+            proteinsToBlast = PirsfMatchTempParser.parse(matchesToBlastFilePath);
         }
         catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when parsing blast matches file " + blastMatchesFilePath);
+            throw new IllegalStateException("IOException thrown when parsing blast matches file " + matchesToBlastFilePath);
         }
 
         try {
-            Map<String, Integer> blastResultMap = PirsfBlastResultParser.parseBlastOutputFile(blastOutFileName);
-            postProcessor.process(proteinIdMap, blastResultMap, blastedMatchesFilePath);
+            Map<String, Integer> blastResultMap = PirsfBlastResultParser.parseBlastOutputFile(blastOutputFileName);
+            postProcessor.process(proteinsToBlast, blastResultMap, blastedMatchesFilePath);
         }
         catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to read BLAST result output file.", e);

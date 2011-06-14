@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.pirsf.FilteredMatchesFileParser;
+import uk.ac.ebi.interpro.scan.io.pirsf.PirsfMatchTempParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
@@ -80,24 +80,25 @@ public class PirsfPersistStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
-        // Retrieve list of filtered protein Ids from temporary files
+        Set<RawProtein<PIRSFHmmer2RawMatch>> filteredRawMatches = new HashSet<RawProtein<PIRSFHmmer2RawMatch>>();
 
+        // Retrieve list of filtered matches from temporary file - blast wasn't required for these
         final String filteredMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, filteredMatchesFileName);
-        Set<Long> filteredProteinIds = new HashSet<Long>();
         try {
-            filteredProteinIds.addAll(FilteredMatchesFileParser.parse(filteredMatchesFilePath));
+            Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches =  PirsfMatchTempParser.parse(filteredMatchesFilePath);
+            filteredRawMatches.addAll(rawMatches);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when parsing filtered matches file " + filteredMatchesFilePath);
         }
 
+        // Retrieve list of filtered matches from temporary file - blast WAS required for these
         final String blastedMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastedMatchesFileName);
         try {
-            filteredProteinIds.addAll(FilteredMatchesFileParser.parse(blastedMatchesFilePath));
+            Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches =  PirsfMatchTempParser.parse(blastedMatchesFilePath);
+            filteredRawMatches.addAll(rawMatches);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when parsing blasted matches file " + blastedMatchesFilePath);
         }
-
-        Set<RawProtein<PIRSFHmmer2RawMatch>> filteredRawMatches = rawMatchDAO.getProteinsByIds(filteredProteinIds, signatureLibraryRelease);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("PIRSF: Retrieved " + filteredRawMatches.size() + " proteins.");

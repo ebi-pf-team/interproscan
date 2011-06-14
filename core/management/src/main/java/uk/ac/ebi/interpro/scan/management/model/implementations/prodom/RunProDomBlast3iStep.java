@@ -50,7 +50,11 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
         this.fullPathToProDomIprFile = fullPathToProDomIprFile;
     }
 
-    @Required
+    /**
+     * Optional - ProDom uses /tmp by default
+     *
+     * @param fullPathToTempDirectory
+     */
     public void setFullPathToTempDirectory(String fullPathToTempDirectory) {
         this.fullPathToTempDirectory = fullPathToTempDirectory;
     }
@@ -73,6 +77,12 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.fastaFileNameTemplate);
         List<String> command = new ArrayList<String>();
+        command.add("perl"); // Run the perl script using installed version of Perl
+        command.add("-I");
+        command.add("bin/prodom/2006.1");
+        command.add("bin/prodom/2006.1/calcs");
+        command.add("bin/prodom/2006.1/calcs/XML_BLAST");
+        command.add("data/prodom/2006.1");
         command.add(this.fullPathToProDomBlast3iPerlScript);
         command.add("-P");
         command.add(this.fullPathToBlastBinary);
@@ -80,8 +90,8 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
         command.add(this.fullPathToProDomIprFile);
         command.add("-s");
         command.add(fastaFilePathName);
-        command.add("-t");
-        command.add(this.fullPathToTempDirectory);
+//        command.add("-t");
+//        command.add(this.fullPathToTempDirectory);
         command.addAll(this.getBinarySwitchesAsList());
         return command;
     }

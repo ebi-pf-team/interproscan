@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Perform first post processing match filtering step.
+ *
  * @author Matthew Fraser, EMBL-EBI, InterPro
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
