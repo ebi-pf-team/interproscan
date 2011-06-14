@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfFileUtil;
 import uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser;
+import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * PIRSF post-processing.
@@ -74,7 +74,7 @@ public class BlastPostProcessor implements Serializable {
     /**
      * Perform post processing, using blast output results to confirm the best match.
      *
-     * @param proteinIdMap Map protein Id to what the algorithm thinks is the best (lowest e-value) model Id for that
+     * @param blastedRawProteins Map protein Id to what the algorithm thinks is the best (lowest e-value) model Id for that
      *                     protein e.g. 2 -> PIRSF000350
      * @param blastResultMap Map proteinId and best model Id (according to blast) to number of hits in the blast output
      *                     e.g. 2-PIRSF000350 -> 12
@@ -82,30 +82,51 @@ public class BlastPostProcessor implements Serializable {
      *                               filtering.
      * @throws java.io.IOException If pirsf.dat file could not be read
      */
-    public void process(Map<Long, String> proteinIdMap,
+    public void process(Set<RawProtein<PIRSFHmmer2RawMatch>> blastedRawProteins,
                         Map<String, Integer> blastResultMap,
                         String blastedMatchesFilePath) throws IOException {
 
         // Read in sf.tb file
         Map<String, Integer> sfTbMap = sfTbFileParser.parse(sfTbFileResource);
 
-        Set<String> passedBlastedProteinIds = new HashSet<String>();
+        Map<String, PIRSFHmmer2RawMatch> blastedProteinIdBestMatchMap = new HashMap<String, PIRSFHmmer2RawMatch>();
 
-        for (Long proteinId : proteinIdMap.keySet()) {
+        for (RawProtein<PIRSFHmmer2RawMatch> protein : blastedRawProteins) {
 
-            String modelId = proteinIdMap.get(proteinId);
-            modelId = modelId.substring(3); // E.g. convert "PIRSF000350" to "SF000350"
-            String key = proteinId.toString() + '-' + modelId;
+            String proteinId = protein.getProteinIdentifier();
 
-            if (blastResultMap.containsKey(key)) {
-                // Algorithm and blast both agree this is the best model Id match for this protein Id, do final checks
-                if (checkBlastCriterion(sfTbMap, blastResultMap, key)) {
-                    passedBlastedProteinIds.add(String.valueOf(proteinId));
+            Collection<PIRSFHmmer2RawMatch> bestMatches = protein.getMatches();
+            if (bestMatches == null || bestMatches.size() != 1) {
+                LOGGER.warn("Protein Id: " + proteinId + " does not have 1 'best' match - ignoring");
+            }
+            else {
+                Iterator<PIRSFHmmer2RawMatch> i = bestMatches.iterator();
+                if (!i.hasNext()) {
+                    // Should never happen - sanity check!
+                    LOGGER.warn("Protein Id: " + proteinId + " does not have 1 'best' match - ignoring");
+                }
+                PIRSFHmmer2RawMatch bestMatch = i.next(); // Get the first and only match from the collection
+
+                String modelId = bestMatch.getModelId();
+                modelId = modelId.substring(3); // E.g. convert "PIRSF000350" to "SF000350"
+                String key = proteinId + '-' + modelId;
+
+                if (blastResultMap.containsKey(key)) {
+                    // Algorithm and blast both agree this is the best model Id match for this protein Id, do final checks
+                    if (checkBlastCriterion(sfTbMap, blastResultMap, key)) {
+                        if (blastedProteinIdBestMatchMap.containsKey(String.valueOf(proteinId))) {
+                            // Should never happen.
+                            // The same model Id should not appear more than once for the same protein Id in blast results
+                            LOGGER.warn("Protein Id: " + proteinId + ", model Id: " + modelId +
+                                    " already present in passed blasted proteins map - ignored");
+                        }
+                        blastedProteinIdBestMatchMap.put(proteinId, bestMatch);
+                    }
                 }
             }
         }
 
-        PirsfFileUtil.writeFilteredRawMatchesToFile(blastedMatchesFilePath, passedBlastedProteinIds);
+        PirsfFileUtil.writeProteinBestMatchesToFile(blastedMatchesFilePath, blastedProteinIdBestMatchMap);
     }
 
 

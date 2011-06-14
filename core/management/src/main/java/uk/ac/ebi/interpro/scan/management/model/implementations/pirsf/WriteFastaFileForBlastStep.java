@@ -3,18 +3,17 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
-import uk.ac.ebi.interpro.scan.io.pirsf.BlastMatchesFileParser;
+import uk.ac.ebi.interpro.scan.io.pirsf.PirsfMatchTempParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
-import javax.annotation.Resource;
 import javax.persistence.Transient;
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This Step write Fasta files for the range of proteins requested.
@@ -62,16 +61,27 @@ public class WriteFastaFileForBlastStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Read in raw matches that need to be blasted
         final String blastMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
-        Map<Long, String> proteinIdMap = null;
+        Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches = null;
         try {
-            proteinIdMap = BlastMatchesFileParser.parse(blastMatchesFilePath);
+            rawMatches = PirsfMatchTempParser.parse(blastMatchesFilePath);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when parsing blast matches file " + blastMatchesFilePath);
         }
 
+        // Build a list of protein Ids which will need to be included in the FASTA file to send to Blast
+        Set<Long> proteinIds = new HashSet<Long>();
+        Iterator<RawProtein<PIRSFHmmer2RawMatch>> i = rawMatches.iterator();
+        RawProtein<PIRSFHmmer2RawMatch> rawProtein = null;
+        Long proteinId = null;
+        while (i.hasNext()) {
+            rawProtein = i.next();
+            proteinId = Long.parseLong(rawProtein.getProteinIdentifier());
+            proteinIds.add(proteinId);
+        }
+
         // Write FASTA file as output, ready for BLAST
         String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
-        List<Protein> proteins = proteinDAO.getProteinsByIds(proteinIdMap.keySet());
+        List<Protein> proteins = proteinDAO.getProteinsByIds(proteinIds);
         try {
             fastaFile.writeFastaFile(proteins, fastaFilePathName);
         } catch (IOException e) {
