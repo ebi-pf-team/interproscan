@@ -16,7 +16,6 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
