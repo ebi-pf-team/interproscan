@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="writer" class="uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderResourceWriter"/>
+    <bean id="xmlWriter" class="uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderResourceWriter"/>
 
     <bean id="file" class="org.springframework.core.io.FileSystemResource">
         <constructor-arg value="target/DomainFinderResourceWriter.ssf"/>
@@ -15,4 +15,4 @@
         <constructor-arg value="data/gene3d/2hxsA00-sorted.ssf"/>
     </bean>
 
- </beans>
+</beans>

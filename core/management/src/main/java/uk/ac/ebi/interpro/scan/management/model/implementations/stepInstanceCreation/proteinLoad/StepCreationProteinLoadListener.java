@@ -86,7 +86,7 @@ public class StepCreationProteinLoadListener
             }
 
             if (completionJob != null) {
-                LOGGER.warn("Have a completion Job.");
+                LOGGER.debug("Have a completion Job.");
                 for (Step step : completionJob.getSteps()) {
                     StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
                     stepInstance.addParameters(parameters);

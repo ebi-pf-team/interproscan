@@ -125,7 +125,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         exitStatus = process.waitFor();
 
         while (outputGobbler.isStillRunning() || (!mergeErrorIntoOutput && errorGobbler.isStillRunning())) {
-            LOGGER.warn("The command process " + commands + " is complete, however the output / error 'Gobblers' have not closed their streams yet.  Waiting...");
+            LOGGER.debug("The command process " + commands + " is complete, however the output / error 'Gobblers' have not closed their streams yet.  Waiting...");
             Thread.sleep(100);
         }
 

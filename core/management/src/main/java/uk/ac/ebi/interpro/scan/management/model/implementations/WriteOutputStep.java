@@ -2,13 +2,13 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.XmlWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchTSVWriter;
-import uk.ac.ebi.interpro.scan.io.match.writer.ProteinWriter;
-import uk.ac.ebi.interpro.scan.io.match.writer.ZipWriter;
 import uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer;
 import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.SignatureLibraryIntegratedMethods;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.MatchesHolder;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
@@ -35,27 +35,16 @@ public class WriteOutputStep extends Step {
 
     private boolean deleteWorkingDirectoryOnCompletion;
 
+    private XmlWriter xmlWriter;
+
+    @Required
+    public void setXmlWriter(XmlWriter xmlWriter) {
+        this.xmlWriter = xmlWriter;
+    }
+
     @Required
     public void setDeleteWorkingDirectoryOnCompletion(String deleteWorkingDirectoryOnCompletion) {
         this.deleteWorkingDirectoryOnCompletion = "true".equalsIgnoreCase(deleteWorkingDirectoryOnCompletion);
-    }
-
-    enum Format {
-        TSV {
-            public ProteinWriter makeWriter(File file) throws IOException {
-                return new ProteinMatchTSVWriter(file);
-            }
-        },
-        ZIP {
-            @Override
-            public ProteinWriter makeWriter(File file) throws IOException {
-                return new ZipWriter(file);
-            }
-        };
-
-
-        public abstract ProteinWriter makeWriter(File file) throws IOException;
-
     }
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
@@ -77,36 +66,21 @@ public class WriteOutputStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
-        Map<String, String> parameters = stepInstance.getParameters();
-        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
-        final boolean mapToInterProEntries = mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
-        final String outputFilePathName = parameters.get(OUTPUT_FILE_PATH_KEY);
-
-        Format format = Format.valueOf(parameters.get(OUTPUT_FILE_FORMAT).toUpperCase());
-        Map<SignatureLibrary, SignatureLibraryIntegratedMethods> interProGoMapping = null;
-
-        if (mapToInterProEntries || mapToGO) {
-            interProGoMapping = serializerDeserializer.deserialize();
-        }
-
-        //David says: this might be more efficient, but doesn't work at the moment
-        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        //List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final String outputFormat = parameters.get(OUTPUT_FILE_FORMAT);
+        final File outputFile = new File(parameters.get(OUTPUT_FILE_PATH_KEY));
         try {
-            ProteinWriter writer = format.makeWriter(new File(outputFilePathName));
-            writer.setMapToInterProEntries(mapToInterProEntries);
-            writer.setMapToGo(mapToGO);
-            writer.setInterProGoMapping(interProGoMapping);
-            LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
-            for (Protein protein : proteins) {
-                writer.write(protein);
+            if ("tsv".equalsIgnoreCase(outputFormat)) {
+                LOGGER.info("Writing out TSV file");
+                outputToTSV(outputFile, stepInstance);
+            } else if ("xml".equalsIgnoreCase(outputFormat)) {
+                LOGGER.info("Writing out XML file");
+                outputToXML(outputFile, stepInstance);
             }
-            writer.close();
-
-        } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when attempting to write a fasta file to " + outputFilePathName, e);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("IOException thrown when attempting to write output from InterProScan", ioe);
         }
+
 
         if (deleteWorkingDirectoryOnCompletion) {
             // Clean up empty working directory.
@@ -121,6 +95,37 @@ public class WriteOutputStep extends Step {
             }
             if (!file.delete()) {
                 LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
+            }
+        }
+    }
+
+    private void outputToXML(File outputFile, StepInstance stepInstance) throws IOException {
+        final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        MatchesHolder matches = new MatchesHolder();
+        matches.addProteins(proteins);
+        xmlWriter.writeMatches(outputFile, matches);
+    }
+
+    private void outputToTSV(File file, StepInstance stepInstance) throws IOException {
+        ProteinMatchTSVWriter writer = null;
+        try {
+            writer = new ProteinMatchTSVWriter(file);
+            final Map<String, String> parameters = stepInstance.getParameters();
+            final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
+            final boolean mapToInterProEntries = mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
+            if (mapToInterProEntries || mapToGO) {
+                writer.setInterProGoMapping(serializerDeserializer.deserialize());
+            }
+            final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            writer.setMapToInterProEntries(mapToInterProEntries);
+            writer.setMapToGo(mapToGO);
+            LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
+            for (Protein protein : proteins) {
+                writer.write(protein);
+            }
+        } finally {
+            if (writer != null) {
+                writer.close();
             }
         }
     }

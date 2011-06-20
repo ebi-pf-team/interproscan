@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public final class CigarAlignmentEncoder implements AlignmentEncoder {
 
-    public static final char MATCH_CHAR  = 'M';
+    public static final char MATCH_CHAR = 'M';
     public static final char INSERT_CHAR = 'I';
     public static final char DELETE_CHAR = 'D';
 
@@ -45,7 +45,8 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
      * @param alignment Sequence alignment
      * @return Alignment in CIGAR format
      */
-    @Override public String encode(String alignment) {
+    @Override
+    public String encode(String alignment) {
         if (alignment == null) {
             throw new NullPointerException("Alignment must not be null");
         }
@@ -57,17 +58,13 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
             String s;
             if (Character.isUpperCase(c)) {
                 s = MATCH_STR;
-            }
-            else if (Character.isLowerCase(c)) {
+            } else if (Character.isLowerCase(c)) {
                 s = INSERT_STR;
-            }
-            else if (c == DELETE_SYMBOL) {
+            } else if (c == DELETE_SYMBOL) {
                 s = DELETE_STR;
-            }
-            else if (c == '.') {
+            } else if (c == '.') {
                 s = null;
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Alignment contains unrecognised characters " +
                         "(must contain letters or " + String.valueOf(DELETE_SYMBOL) + "): " + alignment);
             }
@@ -81,7 +78,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
 
     /**
      * Returns decoded alignment.
-     *
+     * <p/>
      * For example, "6M5D2M3I3M" is decoded as "QEFHRK-----KDgnfGAD", given the
      * sequence "QEFHRKPQPPPKDGNFGAD".
      * <p/>
@@ -92,13 +89,14 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
      * <li>Deletions with respect to the model are marked by the '-' character</li>
      * <ul>
      *
-     * @param sequence          Protein sequence
-     * @param encodedAlignment  CIGAR-encoded alignment
-     * @param start             Start position of alignment on sequence
-     * @param end               End position of alignment on sequence
+     * @param sequence         Protein sequence
+     * @param encodedAlignment CIGAR-encoded alignment
+     * @param start            Start position of alignment on sequence
+     * @param end              End position of alignment on sequence
      * @return Decoded alignment
      */
-    @Override public String decode(String sequence, String encodedAlignment, int start, int end) {
+    @Override
+    public String decode(String sequence, String encodedAlignment, int start, int end) {
         if (sequence == null) {
             throw new NullPointerException("Sequence must not be null");
         }
@@ -120,31 +118,37 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
     }
 
     private String decode(String sequence, String encodedAlignment) {
+        // Handle "Not available" for alignments returned from Onion pre-calculated matches.
+        if ("Not available".equals(encodedAlignment)) {
+            return encodedAlignment;
+        }
         // Expand, for example convert "4M2D" to "MMMMDD"
         String expandedAlignment = RunLengthEncoding.decode(encodedAlignment);
-        if (expandedAlignment.length() != sequence.length()) {
-            throw new IllegalArgumentException("Sequence and alignment should be of equal length");
-        }
+        final boolean deletionMarkersIncludedInSequence = expandedAlignment.length() == sequence.length();
         StringBuffer alignment = new StringBuffer();
         char[] alignmentArray = expandedAlignment.toCharArray();
-        char[] sequenceArray  = sequence.toCharArray();
+        char[] sequenceArray = sequence.toCharArray();
+        int deletionCount = 0;
         for (int i = 0; i < alignmentArray.length; i++) {
             switch (alignmentArray[i]) {
                 case MATCH_CHAR: {
-                    alignment.append(Character.toUpperCase(sequenceArray[i]));
+                    alignment.append(Character.toUpperCase(sequenceArray[i - deletionCount]));
                     break;
                 }
                 case INSERT_CHAR: {
-                    alignment.append(Character.toLowerCase(sequenceArray[i]));
+                    alignment.append(Character.toLowerCase(sequenceArray[i - deletionCount]));
                     break;
                 }
                 case DELETE_CHAR: {
                     alignment.append(DELETE_SYMBOL);
+                    if (!deletionMarkersIncludedInSequence) {
+                        deletionCount++;
+                    }
                     break;
                 }
                 default: {
                     throw new IllegalArgumentException("Alignment contains unrecognised characters " +
-                                            "(can only contain " + MATCH_STR + ", " + INSERT_STR + " and" + DELETE_STR  + "): " + alignment);
+                            "(can only contain " + MATCH_STR + ", " + INSERT_STR + " and " + DELETE_STR + "): " + alignment);
                 }
             }
         }
@@ -174,6 +178,7 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
          * @param encoding CIGAR-encoded alignment
          */
         public Parser(String encoding) {
+
             int mc = 0, ic = 0, dc = 0;
             // Decode, for example convert "4M2D" to "MMMMDD"
             char[] decoded = RunLengthEncoding.decode(encoding).toCharArray();
@@ -271,7 +276,12 @@ public final class CigarAlignmentEncoder implements AlignmentEncoder {
             StringBuffer dest = new StringBuffer();
             Matcher matcher = ENCODED_PATTERN.matcher(source);
             while (matcher.find()) {
-                int number = Integer.parseInt(matcher.group());
+                int number;
+                try {
+                    number = Integer.parseInt(matcher.group());
+                } catch (NumberFormatException nfe) {
+                    throw new IllegalArgumentException("Unable to decode the cigar string '" + source + "'.  Attempting to convert the substring '" + matcher.group() + "' to a number.  Thrown a NumberFormatException (appended).", nfe);
+                }
                 matcher.find();
                 while (number-- != 0) {
                     dest.append(matcher.group());

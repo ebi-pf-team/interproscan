@@ -60,7 +60,7 @@ public class SignatureLibraryRelease implements Serializable {
     // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
     @OneToMany(mappedBy = "signatureLibraryRelease", cascade = CascadeType.ALL)
     @XmlElement(name = "signature")
-    private Set<Signature> signatures = new HashSet<Signature>();
+    protected Set<Signature> signatures = new HashSet<Signature>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -202,4 +202,11 @@ public class SignatureLibraryRelease implements Serializable {
 //
 //    }    
 
+    /**
+     * TEST METHOD - this is here to prevent circular XML marshalling, if
+     * marshalling from Proteins outwards.
+     */
+    public void clearReferences() {
+        this.signatures = Collections.emptySet();
+    }
 }
