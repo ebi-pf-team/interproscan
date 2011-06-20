@@ -56,7 +56,7 @@
         <!--Add Perl command-->
         <property name="perlCommand" value="${panther.perl.command}"/>
         <!--Add Perl parameter (in this case the Perl PERL5LIB)-->
-        <property name="perlLibrary" value="${data/panther/7.0/perllib}"/>
+        <property name="perlLibrary" value="${panther.perl.library}"/>
         <!--Panther Perl script-->
         <property name="scriptPath" value="${binary.panther.path}"/>
         <!--Add Panther models-->
