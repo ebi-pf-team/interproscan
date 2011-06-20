@@ -164,6 +164,8 @@ public abstract class Match<T extends Location> implements Serializable {
             Set<BlastProDomMatch> proDomMatches = new LinkedHashSet<BlastProDomMatch>();
             Set<PatternScanMatch> patternScanMatches = new LinkedHashSet<PatternScanMatch>();
             Set<ProfileScanMatch> profileScanMatches = new LinkedHashSet<ProfileScanMatch>();
+            Set<PhobiusMatch> phobiusMatches = new LinkedHashSet<PhobiusMatch>();
+            Set<CoilsMatch> coilsMatches = new LinkedHashSet<CoilsMatch>();
             for (Match m : matches) {
                 if (m instanceof Hmmer2Match) {
                     hmmer2Matches.add((Hmmer2Match) m);
@@ -177,12 +179,16 @@ public abstract class Match<T extends Location> implements Serializable {
                     patternScanMatches.add((PatternScanMatch) m);
                 } else if (m instanceof ProfileScanMatch) {
                     profileScanMatches.add((ProfileScanMatch) m);
+                } else if (m instanceof PhobiusMatch) {
+                    phobiusMatches.add((PhobiusMatch) m);
+                } else if (m instanceof CoilsMatch) {
+                    coilsMatches.add((CoilsMatch) m);
                 } else {
                     throw new IllegalArgumentException("Unrecognised Match class: " + m);
                 }
             }
             return new MatchesType(hmmer2Matches, hmmer3Matches, fingerPrintsMatches, proDomMatches,
-                    patternScanMatches, profileScanMatches);
+                    patternScanMatches, profileScanMatches, phobiusMatches, coilsMatches);
         }
 
         /**
@@ -197,6 +203,8 @@ public abstract class Match<T extends Location> implements Serializable {
             matches.addAll(matchTypes.getProDomMatches());
             matches.addAll(matchTypes.getPatternScanMatches());
             matches.addAll(matchTypes.getProfileScanMatches());
+            matches.addAll(matchTypes.getPhobiusMatches());
+            matches.addAll(matchTypes.getCoilsMatches());
             return matches;
         }
 
@@ -225,6 +233,13 @@ public abstract class Match<T extends Location> implements Serializable {
         @XmlElement(name = "profilescan-match")
         private final Set<ProfileScanMatch> profileScanMatches;
 
+        @XmlElement(name = "phobius-match")
+        private final Set<PhobiusMatch> phobiusMatches;
+
+        @XmlElement(name = "coils-match")
+        private final Set<CoilsMatch> coilsMatches;
+
+
         private MatchesType() {
             hmmer2Matches = null;
             hmmer3Matches = null;
@@ -232,6 +247,8 @@ public abstract class Match<T extends Location> implements Serializable {
             proDomMatches = null;
             patternScanMatches = null;
             profileScanMatches = null;
+            phobiusMatches = null;
+            coilsMatches = null;
         }
 
         public MatchesType(Set<Hmmer2Match> hmmer2Matches,
@@ -239,13 +256,17 @@ public abstract class Match<T extends Location> implements Serializable {
                            Set<FingerPrintsMatch> fingerPrintsMatches,
                            Set<BlastProDomMatch> proDomMatches,
                            Set<PatternScanMatch> patternScanMatches,
-                           Set<ProfileScanMatch> profileScanMatches) {
+                           Set<ProfileScanMatch> profileScanMatches,
+                           Set<PhobiusMatch> phobiusMatches,
+                           Set<CoilsMatch> coilsMatches) {
             this.hmmer2Matches = hmmer2Matches;
             this.hmmer3Matches = hmmer3Matches;
             this.fingerPrintsMatches = fingerPrintsMatches;
             this.proDomMatches = proDomMatches;
             this.patternScanMatches = patternScanMatches;
             this.profileScanMatches = profileScanMatches;
+            this.phobiusMatches = phobiusMatches;
+            this.coilsMatches = coilsMatches;
         }
 
         public Set<Hmmer2Match> getHmmer2Matches() {
@@ -270,6 +291,14 @@ public abstract class Match<T extends Location> implements Serializable {
 
         public Set<ProfileScanMatch> getProfileScanMatches() {
             return (profileScanMatches == null ? Collections.<ProfileScanMatch>emptySet() : profileScanMatches);
+        }
+
+        public Set<PhobiusMatch> getPhobiusMatches() {
+            return (phobiusMatches == null ? Collections.<PhobiusMatch>emptySet() : phobiusMatches);
+        }
+
+        public Set<CoilsMatch> getCoilsMatches() {
+            return (coilsMatches == null ? Collections.<CoilsMatch>emptySet() : coilsMatches);
         }
 
     }

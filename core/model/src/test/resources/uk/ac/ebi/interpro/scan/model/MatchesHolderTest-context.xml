@@ -14,7 +14,7 @@
     <import resource="oxm-context.xml"/>
 
     <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureLibraryReleaseMatchHolder" />
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.MatchesHolder"/>
     </bean>
 
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
@@ -79,15 +79,15 @@
                 Protein p = new Protein("MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG");
                 p.addCrossReference(new ProteinXref("UniProt", "A0A314", "RR12_COFAR"));
                 Signature signature = new Signature("G3DSA:2.40.50.140", "Nucleic acid-binding proteins");
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.1.0");
+                signature.setSignatureLibraryRelease(release);
                 Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
                 locations.add(new Hmmer3Match.Hmmer3Location(74, 93, -8.9, 0.28, 63, 82, 114, 73, 94));
                 p.addMatch(new Hmmer3Match(signature, -8.9, 0.28, locations));
 
-                // Create release
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.1.0");
-
                 // Create holder
-                SignatureLibraryReleaseMatchHolder holder = new SignatureLibraryReleaseMatchHolder(release);
+                MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
                 return holder;
@@ -98,17 +98,18 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                                    xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
                                                                        http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
-                    <signature-library-release library="GENE3D" version="3.1.0"/>
                     <protein>
                         <sequence md5="1de2cf633901ff1f00785735c8ce7e70">MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
                         <xref db="UniProt" id="A0A314" name="RR12_COFAR"/>
                         <matches>
                             <hmmer3-match score="-8.9" evalue="0.28">
-                                <signature ac="G3DSA:2.40.50.140" name="Nucleic acid-binding proteins" />
+                                <signature ac="G3DSA:2.40.50.140" name="Nucleic acid-binding proteins">
+                                    <signature-library-release library="GENE3D" version="3.1.0"/>
+                                </signature>
                                 <locations>
                                     <hmmer3-location start="74" end="93"
                                                      env-start="73" env-end="94"
@@ -118,7 +119,7 @@
                             </hmmer3-match>
                         </matches>
                     </protein>
-                </signature-library-release-matches>
+                </protein-matches>
                 ]]>
             </value>
         </constructor-arg>
@@ -139,13 +140,14 @@
                 p.addCrossReference(new ProteinXref("UniProt", "A0A000", "A0A000_9ACTO"));
                 Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
                 locations.add(new Hmmer3Match.Hmmer3Location(37, 381, 206.7, 3.7E-67, 6, 363, 363, 41, 381));
-                p.addMatch(new Hmmer3Match(new Signature("PF00155", "Aminotran_1_2"), 206.7, 3.7E-67, locations));
-
+                Signature signature = new Signature("PF00155", "Aminotran_1_2");
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
+                signature.setSignatureLibraryRelease(release);
+                p.addMatch(new Hmmer3Match(signature, 206.7, 3.7E-67, locations));
 
                 // Create holder
-                SignatureLibraryReleaseMatchHolder holder = new SignatureLibraryReleaseMatchHolder(release);
+                MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
                 return holder;                
@@ -156,20 +158,21 @@
         <constructor-arg>
             <value>
                 <![CDATA[                
-                    <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                    <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                                        xmlns:pfam="http://pfam.sanger.ac.uk"
                                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                                        xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
                                                                            http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd
                                                                            http://pfam.sanger.ac.uk
                                                                            http://pfam.sanger.ac.uk/static/documents/schemas/results.xsd">
-                        <signature-library-release library="PFAM" version="23" />                                                                            
                         <protein>
                             <sequence md5="e8872c7a0261b9e88e6ff47eb34e4162">MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGSRNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGIAARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAPSAVHETEEIHRFVDALDGIWSELGAARRV</sequence>
                             <xref db="UniProt" id="A0A000" name="A0A000_9ACTO"/>
                             <matches>
                                 <hmmer3-match score="206.7" evalue="3.7E-67">
-                                    <signature ac="PF00155" name="Aminotran_1_2" />
+                                    <signature ac="PF00155" name="Aminotran_1_2">
+                                        <signature-library-release library="PFAM" version="23" />
+                                    </signature>
                                     <locations>
                                         <hmmer3-location start="37" end="381"
                                                          env-start="41" env-end="381"
@@ -179,7 +182,7 @@
                                 </hmmer3-match>
                             </matches>
                         </protein>
-                    </signature-library-release-matches>
+                    </protein-matches>
                 ]]>
             </value>
         </constructor-arg>
@@ -200,9 +203,9 @@
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SMART, "5.1");
-
+                signature.setSignatureLibraryRelease(release);
                 // Create holder
-                SignatureLibraryReleaseMatchHolder holder = new SignatureLibraryReleaseMatchHolder(release);
+                MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
                 return holder;
@@ -213,17 +216,18 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
                                                http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
-                    <signature-library-release library="SMART" version="5.1" />
                     <protein>
                         <sequence md5="829339ede4627f6a6bf9166f3e9526d9">MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
                         <xref db="UniProt" id="Q8MLZ5" name="GAP2_CAEEL"/>
                         <matches>
                             <hmmer2-match score="543.4" evalue="2.7E-164">
-                                <signature ac="SM00323" name="RasGAP_2"/>
+                                <signature ac="SM00323" name="RasGAP_2">
+                                    <signature-library-release library="SMART" version="5.1" />
+                                </signature>
                                 <locations>
                                     <hmmer2-location start="512" end="857"
                                                      score="543.4" evalue="2.7E-164"
@@ -232,7 +236,7 @@
                             </hmmer2-match>
                         </matches>
                     </protein>
-                </signature-library-release-matches>
+                </protein-matches>
                 ]]>
             </value>
         </constructor-arg>
@@ -253,30 +257,31 @@
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.73");
-
+                signature.setSignatureLibraryRelease(release);
                 // Create holder
-                SignatureLibraryReleaseMatchHolder holder = new SignatureLibraryReleaseMatchHolder(release);
+                MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
                 return holder;
             ]]>
         </lang:inline-script>
-    </lang:groovy>    
+    </lang:groovy>
     <bean id="superfamilyXml" class="java.lang.String">
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
                                                http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
-                    <signature-library-release library="SUPERFAMILY" version="1.73" />
                     <protein>
                         <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                         <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
                         <matches>
                             <hmmer2-match score="93.8" evalue="2.4E-32">
-                                <signature ac="SSF53098" name="Ribonuclease H-like"/>
+                                <signature ac="SSF53098" name="Ribonuclease H-like">
+                                    <signature-library-release library="SUPERFAMILY" version="1.73" />
+                                </signature>
                                 <locations>
                                     <hmmer2-location start="1" end="237"
                                                      score="93.8" evalue="2.4E-32"
@@ -285,7 +290,7 @@
                             </hmmer2-match>
                         </matches>
                     </protein>
-                </signature-library-release-matches>
+                </protein-matches>
                 ]]>
             </value>
         </constructor-arg>
@@ -311,9 +316,9 @@
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
-
+                signature.setSignatureLibraryRelease(release);
                 // Create holder
-                SignatureLibraryReleaseMatchHolder holder = new SignatureLibraryReleaseMatchHolder(release);
+                MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
                 return holder;
@@ -324,17 +329,18 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                    <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                    <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
                                                    http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
-                        <signature-library-release library="PRINTS" version="38.1" />
                         <protein>
                             <sequence md5="ae2f4d0c928c8017da2df2d5cf15f01">MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
                             <xref db="UniProt" id="P02700" name="OPSD_SHEEP"/>
                             <matches>
                             <fingerprints-match graphscan="IIIIII" evalue="2.2E-64">
-                                <signature ac="PR00579" name="RHODOPSIN" />
+                                <signature ac="PR00579" name="RHODOPSIN">
+                                    <signature-library-release library="PRINTS" version="38.1" />
+                                </signature>
                                 <locations>
                                     <fingerprints-location motifNumber="1" start="3"   end="21"  score="86.94" pvalue="1.45E-14" />
                                     <fingerprints-location motifNumber="2" start="22"  end="38"  score="80.2"  pvalue="2.06E-10" />
@@ -346,7 +352,7 @@
                             </fingerprints-match>
                             </matches>
                         </protein>
-                    </signature-library-release-matches>
+                    </protein-matches>
                 ]]>
             </value>
         </constructor-arg>
@@ -368,7 +374,7 @@
             3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194
             3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274
             3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322
-        -->        
+        -->
     </bean>
 
     <lang:groovy id="proDomObject">
@@ -386,9 +392,9 @@
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRODOM, "2006.1");
-
+                signature.setSignatureLibraryRelease(release);
                 // Create holder
-                SignatureLibraryReleaseMatchHolder holder = new SignatureLibraryReleaseMatchHolder(release);
+                MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
                 return holder;
@@ -399,17 +405,18 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
                                                http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
-                    <signature-library-release library="PRODOM" version="2006.1" />
                     <protein>
                         <sequence md5="daa9d1290a78528c68605d254f9ba358">MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
                         <xref db="UniParc" id="UPI000048E726" name="UPI000048E726"/>
                         <matches>
                             <blastprodom-match>
-                                <signature ac="PD001061"/>
+                                <signature ac="PD001061">
+                                    <signature-library-release library="PRODOM" version="2006.1" />
+                                </signature>
                                 <locations>
                                     <blastprodom-location start="9" end="150" score="763.0" />
                                 </locations>
@@ -422,7 +429,7 @@
                             <!--</blastprodom-match>-->
                         </matches>
                     </protein>
-                </signature-library-release-matches>
+                </protein-matches>
             ]]>
             </value>
         </constructor-arg>
@@ -430,7 +437,7 @@
             UPI000048E726      9    150 //  pd_PD001061;sp_Q5Q175_9INFA_Q5Q175;       0      0 // S=763    E=1e-80  //  (1503)  MATRIX VIRAL M1 MEMBRANE RNA-BINDING SPLICING ALTERNATIVE NUCLEAR STRUCTURAL M 	 Length = 142
             UPI000048E726    151    245 //  pd_PD596253;sp_Q5DXV0_9INFA_Q5DXV0;       0      0 // S=496    E=1e-49  //  (1503)  MATRIX VIRAL M1 MEMBRANE ALTERNATIVE SPLICING RNA-BINDING STRUCTURAL NUCLEAR M 	 Length = 95
             //
-        -->        
+        -->
     </bean>
 
     <lang:groovy id="proSitePatternsObject">
@@ -448,9 +455,9 @@
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PATTERNS, "20.35");
-
+                signature.setSignatureLibraryRelease(release);
                 // Create holder
-                SignatureLibraryReleaseMatchHolder holder = new SignatureLibraryReleaseMatchHolder(release);
+                MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
                 return holder;
@@ -461,17 +468,18 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                    <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                    <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
                                                    http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
-                        <signature-library-release library="PROSITE_PATTERNS" version="20.35" />
                         <protein>
                             <sequence md5="386964a0a573631d643f2a7e7de03066">MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
                             <xref db="UniParc" id="UPI0001AFC88D" name="UPI0001AFC88D"/>
                             <matches>
                             <patternscan-match>
-                                <signature ac="PS00675" name="SIGMA54_INTERACT_1"/>
+                                <signature ac="PS00675" name="SIGMA54_INTERACT_1">
+                                    <signature-library-release library="PROSITE_PATTERNS" version="20.35" />
+                                </signature>
                                 <locations>
                                     <patternscan-location start="8" end="43" level="STRONG">
                                         <alignment>DDEVQIRSLLARMLGLEGYEVCQ----------lei</alignment>
@@ -480,13 +488,13 @@
                             </patternscan-match>
                             </matches>
                         </protein>
-                    </signature-library-release-matches>
+                    </protein-matches>
                 ]]>
             </value>
         </constructor-arg>
         <!--
             UPI0001AFC88D	ps_scan|v1.57	PS00675	166	179	.	.	.	Name "SIGMA54_INTERACT_1" ; LevelTag "(0)" ; Sequence "VLLtGETGTGKevF" ; SequenceDescription "UPI0001AFC88D" ; KnownFalsePos 209
-        -->        
+        -->
     </bean>
 
     <lang:groovy id="proSiteProfilesObject">
@@ -512,7 +520,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PROFILES, "20.35");
 
                 // Create holder
-                SignatureLibraryReleaseMatchHolder holder = new SignatureLibraryReleaseMatchHolder(release);
+                MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
                 return holder;
@@ -523,11 +531,11 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                    <signature-library-release-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                    <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
                                                    http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
-                        <signature-library-release library="PROSITE_PROFILES" version="20.35" />
+                        <!--<signature-library-release library="PROSITE_PROFILES" version="20.35" />-->
                         <protein>
                             <sequence md5="de25966e66a6340eed9d837b05ffc58b">MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
                             <xref db="UniParc" id="UPI0001AF8DCD" name="UPI0001AF8DCD"/>
@@ -550,14 +558,14 @@
                             </profilescan-match>
                             </matches>
                         </protein>
-                    </signature-library-release-matches>
+                    </protein-matches>
                 ]]>
             </value>
         </constructor-arg>
         <!-- Note: dash ("-") replaced by hyphen ("–") so HTML comments not messed up:
             UPI0001AF8DCD	ps_scan|v1.57	PS50042	171	275	24.202	.	.	Name "CNMP_BINDING_3" ; Level 1 ; RawScore 1207 ; FeatureFrom 1 ; FeatureTo –18 ; Sequence "VFSKVPVANIEAMFQRMERINTVAGQVIIQQGAAGDYYYLIESGTVLVTRADGVnaHPLLVAELQSGDAFGEEALVSDNKRNATVAMKTDGQLLRLNKHDFVALL–––––––––––––––––" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 5
             UPI0001AF8DCD	ps_scan|v1.57	PS50206	292	370	15.158	.	.	Name "RHODANESE_3" ; Level 0 ; RawScore 60203 ; FeatureFrom 1 ; FeatureTo –1 ; Sequence "IaDGAIWVDAR––––––––––––––––––LPSEYQYDHIDGAINLPLNEIR–––––––––––––QKLLeLDYRKSHVVYCQT–GRRSSAAAFILAQNGF–DVVVLK––––––––GGARAN" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 0
-        -->        
-    </bean>    
+        -->
+    </bean>
 
 </beans>

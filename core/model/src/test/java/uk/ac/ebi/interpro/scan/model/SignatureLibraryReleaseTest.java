@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRelease> {
 
     private static final Logger LOGGER = Logger.getLogger(SignatureLibraryReleaseTest.class.getName());
-    
+
     @Test
     public void testEquals() throws ParseException {
         // Original
@@ -76,8 +76,7 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
         // Should fail
         try {
             sdr.removeSignature(null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             assertTrue("Should be NullPointerException", e instanceof NullPointerException);
         }
         // Should be OK
@@ -91,13 +90,13 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
     public void testPrints() throws IOException, ParseException {
         SignatureLibraryRelease release = getPrintsObject();
         assertEquals("Should have 3 xrefs", 3, release.getSignatures().iterator().next().getCrossReferences().size());
-        if (LOGGER.isDebugEnabled())    {
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(release);
             LOGGER.debug(super.marshal(release));
         }
     }
 
-    private SignatureLibraryRelease getPrintsObject () throws ParseException {
+    private SignatureLibraryRelease getPrintsObject() throws ParseException {
         SignatureLibraryRelease s = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
         s.addSignature(
                 new Signature.Builder("PR00579")

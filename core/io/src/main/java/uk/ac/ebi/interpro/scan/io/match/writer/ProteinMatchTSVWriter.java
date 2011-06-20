@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * Write matches as output for InterProScan user.
  */
-public class ProteinMatchTSVWriter implements ProteinWriter {
+public class ProteinMatchTSVWriter {
 
 
     private TSVWriter tsvWriter;
@@ -101,17 +101,14 @@ public class ProteinMatchTSVWriter implements ProteinWriter {
 
     }
 
-    @Override
     public void setMapToInterProEntries(boolean mapToInterProEntries) {
         this.mapToInterProEntries = mapToInterProEntries;
     }
 
-    @Override
     public void setMapToGo(boolean mapToGO) {
         this.mapToGO = mapToGO;
     }
 
-    @Override
     public void setInterProGoMapping(Map<SignatureLibrary, SignatureLibraryIntegratedMethods> interProGoMapping) {
         this.interProGoMapping = interProGoMapping;
     }
@@ -126,7 +123,6 @@ public class ProteinMatchTSVWriter implements ProteinWriter {
         return proteinXRef.toString();
     }
 
-    @Override
     public void close() throws IOException {
         tsvWriter.close();
     }

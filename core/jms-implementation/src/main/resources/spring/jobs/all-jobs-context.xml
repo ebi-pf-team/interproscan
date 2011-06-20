@@ -24,7 +24,8 @@
 
     <import resource="classpath:/spring/uapro-db-access-context.xml"/>
     <import resource="classpath:/spring/match-converter-context.xml"/>
-    <import resource="classpath:/spring/oxm-context.xml"/>
+    <import resource="classpath:/spring/berkeley-oxm-context.xml"/>
+    <import resource="oxm-context.xml"/>
 
     <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
         <property name="jobList">
@@ -125,6 +126,11 @@
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="serializerDeserializer" ref="serializerDeserializer"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
+        <property name="xmlWriter" ref="xmlWriter"/>
+    </bean>
+
+    <bean id="xmlWriter" class="uk.ac.ebi.interpro.scan.io.XmlWriter">
+        <property name="marshaller" ref="interproMarshaller"/>
     </bean>
 
 
@@ -147,7 +153,7 @@
     </bean>
 
     <bean id="preCalcMatchClient" class="uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient">
-        <constructor-arg ref="unmarshaller"/>
+        <constructor-arg ref="berkeleyUnmarshaller"/>
         <property name="url" value="${precalculated.match.lookup.service.url}"/>
     </bean>
 

@@ -13,5 +13,5 @@
     <!-- Test stuff - move to a different spring-config.xml file. -->
     <bean id="loadFastaFileTest" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFileTest"/>
 
-    <bean id="writer" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile"/>
+    <bean id="xmlWriter" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile"/>
 </beans>

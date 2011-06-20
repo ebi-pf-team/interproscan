@@ -162,6 +162,8 @@ public abstract class Location implements Serializable {
             Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations = new LinkedHashSet<BlastProDomMatch.BlastProDomLocation>();
             Set<PatternScanMatch.PatternScanLocation> patternScanLocations = new LinkedHashSet<PatternScanMatch.PatternScanLocation>();
             Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations = new LinkedHashSet<ProfileScanMatch.ProfileScanLocation>();
+            Set<PhobiusMatch.PhobiusLocation> phobiusLocations = new LinkedHashSet<PhobiusMatch.PhobiusLocation>();
+            Set<CoilsMatch.CoilsLocation> coilsLocations = new LinkedHashSet<CoilsMatch.CoilsLocation>();
             for (Location l : locations) {
                 if (l instanceof Hmmer2Match.Hmmer2Location) {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
@@ -175,12 +177,16 @@ public abstract class Location implements Serializable {
                     patternScanLocations.add((PatternScanMatch.PatternScanLocation) l);
                 } else if (l instanceof ProfileScanMatch.ProfileScanLocation) {
                     profileScanLocations.add((ProfileScanMatch.ProfileScanLocation) l);
+                } else if (l instanceof PhobiusMatch.PhobiusLocation) {
+                    phobiusLocations.add((PhobiusMatch.PhobiusLocation) l);
+                } else if (l instanceof CoilsMatch.CoilsLocation) {
+                    coilsLocations.add((CoilsMatch.CoilsLocation) l);
                 } else {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
             return new LocationsType(hmmer2Locations, hmmer3Locations, fingerPrintsLocations, blastProDomLocations,
-                    patternScanLocations, profileScanLocations);
+                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations);
         }
 
         /**
@@ -195,6 +201,8 @@ public abstract class Location implements Serializable {
             locations.addAll(locationsType.getBlastProDomLocations());
             locations.addAll(locationsType.getPatternScanLocations());
             locations.addAll(locationsType.getProfileScanLocations());
+            locations.addAll(locationsType.getPhobiusLocations());
+            locations.addAll(locationsType.getCoilsLocations());
             return locations;
         }
 
@@ -223,6 +231,12 @@ public abstract class Location implements Serializable {
         @XmlElement(name = "profilescan-location")
         private final Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations;
 
+        @XmlElement(name = "phobius-location")
+        private final Set<PhobiusMatch.PhobiusLocation> phobiusLocations;
+
+        @XmlElement(name = "coils-location")
+        private final Set<CoilsMatch.CoilsLocation> coilsLocations;
+
         private LocationsType() {
             hmmer2Locations = null;
             hmmer3Locations = null;
@@ -230,6 +244,8 @@ public abstract class Location implements Serializable {
             blastProDomLocations = null;
             patternScanLocations = null;
             profileScanLocations = null;
+            phobiusLocations = null;
+            coilsLocations = null;
         }
 
         public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
@@ -237,13 +253,17 @@ public abstract class Location implements Serializable {
                              Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations,
                              Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations,
                              Set<PatternScanMatch.PatternScanLocation> patternScanLocations,
-                             Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations) {
+                             Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations,
+                             Set<PhobiusMatch.PhobiusLocation> phobiusLocations,
+                             Set<CoilsMatch.CoilsLocation> coilsLocations) {
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
             this.fingerPrintsLocations = fingerPrintsLocations;
             this.blastProDomLocations = blastProDomLocations;
             this.patternScanLocations = patternScanLocations;
             this.profileScanLocations = profileScanLocations;
+            this.phobiusLocations = phobiusLocations;
+            this.coilsLocations = coilsLocations;
         }
 
         public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {
@@ -268,6 +288,14 @@ public abstract class Location implements Serializable {
 
         public Set<ProfileScanMatch.ProfileScanLocation> getProfileScanLocations() {
             return (profileScanLocations == null ? Collections.<ProfileScanMatch.ProfileScanLocation>emptySet() : profileScanLocations);
+        }
+
+        public Set<PhobiusMatch.PhobiusLocation> getPhobiusLocations() {
+            return (phobiusLocations == null ? Collections.<PhobiusMatch.PhobiusLocation>emptySet() : phobiusLocations);
+        }
+
+        public Set<CoilsMatch.CoilsLocation> getCoilsLocations() {
+            return (coilsLocations == null ? Collections.<CoilsMatch.CoilsLocation>emptySet() : coilsLocations);
         }
 
     }

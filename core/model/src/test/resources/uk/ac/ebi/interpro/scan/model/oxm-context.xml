@@ -15,7 +15,7 @@
                 <value>uk.ac.ebi.interpro.scan.model.Protein</value>
                 <value>uk.ac.ebi.interpro.scan.model.Signature</value>
                 <value>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</value>
-                <value>uk.ac.ebi.interpro.scan.model.SignatureLibraryReleaseMatchHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.MatchesHolder</value>
                 <value>uk.ac.ebi.interpro.scan.model.Xref</value>
             </list>
         </property>
@@ -30,22 +30,22 @@
             <!--To include the schema location, comment out the above util:map and uncomment the following - unfortunately-->
             <!--they can't be mixed because they're different types (Boolean vs String):-->
             <!--<protein xmlns="http://www.ebi.ac.uk/schema/interpro" -->
-                     <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
-                     <!--xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro -->
-                                         <!--http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd" >-->
-                <!--...-->
+            <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+            <!--xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro -->
+            <!--http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd" >-->
+            <!--...-->
             <!--</protein>-->
             <!--<util:map value-type="java.lang.String">-->
-                <!--<entry value="http://www.ebi.ac.uk/schema/interpro http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">-->
-                    <!--<key>-->
-                        <!--<util:constant static-field="javax.xml.bind.Marshaller.JAXB_SCHEMA_LOCATION"/>-->
-                    <!--</key>-->
-                <!--</entry>-->
+            <!--<entry value="http://www.ebi.ac.uk/schema/interpro http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">-->
+            <!--<key>-->
+            <!--<util:constant static-field="javax.xml.bind.Marshaller.JAXB_SCHEMA_LOCATION"/>-->
+            <!--</key>-->
+            <!--</entry>-->
             <!--</util:map>-->
         </property>
     </bean>
 
-    <bean id="marshaller"   parent="jaxb2"/>
+    <bean id="marshaller" parent="jaxb2"/>
     <bean id="unmarshaller" parent="jaxb2"/>
 
     <!--TODO: Read this from Maven properties-->
@@ -57,6 +57,6 @@
     <oxm:jaxb2-marshaller id="marshaller">
         <oxm:class-to-be-bound name="uk.ac.ebi.interpro.scan.model.Signature"/>
     </oxm:jaxb2-marshaller>
-    -->    
+    -->
 
 </beans>

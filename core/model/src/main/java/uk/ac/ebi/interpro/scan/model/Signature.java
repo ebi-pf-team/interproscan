@@ -105,7 +105,8 @@ public class Signature implements Serializable {
     @Transient
     private String abstractText;
 
-    @ManyToOne // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
+    @ManyToOne(fetch = FetchType.EAGER)
+    // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
     private SignatureLibraryRelease signatureLibraryRelease;
 
     // TODO: Decide whether to use Map or Set (see ChEBI team)
@@ -413,6 +414,14 @@ public class Signature implements Serializable {
     @XmlTransient
     public SignatureLibraryRelease getSignatureLibraryRelease() {
         return signatureLibraryRelease;
+    }
+
+    @XmlElement(name = "signature-library-release")
+    private SignatureLibraryRelease getSignatureLibraryReleaseShallow() {
+        if (this.signatureLibraryRelease == null) {
+            return null;
+        }
+        return new SignatureLibraryRelease(this.signatureLibraryRelease.getLibrary(), this.signatureLibraryRelease.getVersion());
     }
 
     void setSignatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease) {
