@@ -61,7 +61,8 @@ public abstract class PrositeMatchParser extends AbstractLineMatchParser<PfScanR
     /**
      * Returns {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters.
      *
-     * @param line Line read from input file.   @return {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters
+     * @param line Line read from input file.
+     * @return {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters
      */
     @Override
     protected PfScanRawMatch createMatch(String line) {
@@ -117,7 +118,7 @@ public abstract class PrositeMatchParser extends AbstractLineMatchParser<PfScanR
      * Pretty horrible format, hence pretty horrible code!
      *
      * @param attributes semi-colon separated attributes to be parsed into key-value pairs.
-     * @return a Map of key-value pairs extraced from the attributes String.
+     * @return a Map of key-value pairs extracted from the attributes String.
      */
     private Map<String, String> extractAttributes(String attributes) {
         Map<String, String> attributeMap = new HashMap<String, String>();
