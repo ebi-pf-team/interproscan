@@ -73,57 +73,60 @@
         <property name="retries" value="3"/>
     </bean>
 
-    <!--<bean id="stepPantherDeleteFastaFile"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-    <!--parent="abstractPantherStep">-->
-    <!--<property name="dependsUpon"        ref="stepPantherRunBinary"/>-->
-    <!--<property name="stepDescription"    value="Delete the FASTA file following successful run"/>-->
-    <!--<property name="fileNameTemplate"   ref="fastaFileNameTemplate"/>-->
-    <!--</bean>-->
+    <bean id="stepPantherDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep" parent="abstractPantherStep">
+        <property name="dependsUpon" ref="stepPantherRunBinary"/>
+        <property name="stepDescription" value="Delete the FASTA file following successful run"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
 
     <!-- STEP 3: Parse and persist raw results -->
-    <!--<bean id="stepPantherParseOutput"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherParseStep"-->
-    <!--parent="abstractPantherStep">-->
-    <!--<property name="dependsUpon" ref="stepPantherRunBinary"/>-->
-    <!--<property name="stepDescription" value="Parse the output from Panther"/>-->
-    <!--<property name="parser" ref="pantherParser"/>-->
-    <!--<property name="rawMatchDAO" ref="PantherRawMatchDAO"/>-->
-    <!--<property name="serialGroup" value="PARSE_PANTHER"/>-->
-    <!--<property name="retries" value="3"/>-->
-    <!--<property name="signatureLibraryRelease" value="7.0"/>-->
-    <!--<property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--</bean>-->
+    <bean id="stepPantherParseOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherParseStep"
+          parent="abstractPantherStep">
+        <property name="dependsUpon" ref="stepPantherRunBinary"/>
+        <property name="stepDescription" value="Parse the output from Panther"/>
+        <property name="parser" ref="pantherParser"/>
+        <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
+        <property name="serialGroup" value="PARSE_PANTHER"/>
+        <property name="retries" value="3"/>
+        <property name="signatureLibraryRelease" value="7.0"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
 
-    <!--<bean id="stepPantherDeleteRawOutput"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-    <!--parent="abstractPantherStep">-->
-    <!--<property name="dependsUpon" ref="stepPantherParseOutput"/>-->
-    <!--<property name="stepDescription" value="Delete the analysis output file following successful parsing"/>-->
-    <!--<property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--</bean>-->
+    <bean id="stepPantherDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPantherStep">
+        <property name="dependsUpon" ref="stepPantherParseOutput"/>
+        <property name="stepDescription" value="Delete the analysis output file following successful parsing"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
 
     <!-- STEP 4: Filter and persist raw results -->
-    <!--<bean id="stepPantherPostProcessing"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherPostProcessingStep"-->
-    <!--parent="abstractPantherStep">-->
-    <!--<property name="dependsUpon" ref="stepPantherParseOutput"/>-->
-    <!--<property name="stepDescription" value="Performs post processing and Match persistence on Panther data"/>-->
-    <!--<property name="postProcessor" ref="PantherPostProcessor"/>-->
-    <!--<property name="serialGroup" value="PANTHER_POST_PROCESSING"/>-->
-    <!--<property name="signatureLibraryRelease" value="7.0"/>-->
-    <!--<property name="rawMatchDAO" ref="PantherRawMatchDAO"/>-->
-    <!--<property name="filteredMatchDAO" ref="PantherFilteredMatchDAO"/>-->
-    <!--</bean>-->
+    <bean id="stepPantherPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherPostProcessingStep"
+          parent="abstractPantherStep">
+        <property name="dependsUpon" ref="stepPantherParseOutput"/>
+        <property name="stepDescription" value="Performs post processing and match persistence on Panther data"/>
+        <property name="serialGroup" value="PANTHER_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" value="7.0"/>
+        <property name="postProcessor" ref="pantherPostProcessor"/>
+        <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
+        <property name="filteredMatchDAO" ref="pantherFilteredMatchDAO"/>
+    </bean>
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="pantherParser" class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser">
         <!--TODO: Figure out how to handle signature library release-->
         <constructor-arg value="180510"/>
     </bean>
-    <!--<bean id="PantherPostProcessor"-->
-    <!--class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessing"/>-->
-    <!--<bean id="PantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>-->
-    <!--<bean id="PantherFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>-->
 
+    <bean id="pantherPostProcessor"
+          class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">
+        <constructor-arg value="-11.0"/>
+    </bean>
+
+    <bean id="pantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>
+
+    <bean id="pantherFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>
 </beans>
