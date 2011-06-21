@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 
+import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +21,6 @@ import static org.junit.Assert.assertTrue;
  */
 
 public class BlastPostProcessorTest {
-
-    private static final Logger LOGGER = Logger.getLogger(BlastPostProcessorTest.class.getName());
 
     private BlastPostProcessor blastPostProcessor;
 
