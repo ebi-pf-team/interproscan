@@ -20,7 +20,7 @@ public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> 
     private String coilsReleaseVersion;
 
     /**
-     * Sets the class of the model that the DOA instance handles.
+     * Sets the class of the model that the DAO instance handles.
      * Note that this has been set up to use constructor injection
      * because it makes it easy to sub-class GenericDAOImpl in a robust
      * manner.
