@@ -93,6 +93,11 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
 //        command.add("-t");
 //        command.add(this.fullPathToTempDirectory);
         command.addAll(this.getBinarySwitchesAsList());
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(command.toString());
+        }
+
         return command;
     }
 }

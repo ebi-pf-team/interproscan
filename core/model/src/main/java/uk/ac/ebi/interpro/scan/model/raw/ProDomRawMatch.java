@@ -53,9 +53,6 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
     @Column
     private String methodName;
 
-    @Column
-    private int seqLength;
-
     protected ProDomRawMatch() {
     }
 
@@ -70,8 +67,7 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
                           int score,
                           double evalue,
                           int numDomainsInFamily,
-                          String methodName,
-                          int seqLength) {
+                          String methodName) {
         super(sequenceIdentifier, model, SignatureLibrary.PRODOM, signatureLibraryRelease, locationStart, locationEnd);
         this.spId = spId;
         this.sigMatchLocationStart = sigMatchLocationStart;
@@ -80,7 +76,6 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
         this.evalue = evalue;
         this.numDomainsInFamily = numDomainsInFamily;
         this.methodName = methodName;
-        this.seqLength = seqLength;
     }
 
     public String getSpId() {
@@ -139,14 +134,6 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
         this.methodName = methodName;
     }
 
-    public int getSeqLength() {
-        return seqLength;
-    }
-
-    public void setSeqLength(int seqLength) {
-        this.seqLength = seqLength;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -163,7 +150,6 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
                 .append(evalue, m.evalue)
                 .append(numDomainsInFamily, m.numDomainsInFamily)
                 .append(methodName, m.methodName)
-                .append(seqLength, m.seqLength)
                 .isEquals();
     }
 
@@ -178,7 +164,6 @@ public class ProDomRawMatch extends RawMatch implements Serializable {
                 .append(evalue)
                 .append(numDomainsInFamily)
                 .append(methodName)
-                .append(seqLength)
                 .toHashCode();
     }
 
