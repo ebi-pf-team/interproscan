@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 // TODO: Class should really be called "Peptide"
 @Entity
 @XmlRootElement(name = "protein")
-@XmlType(name = "ProteinType", propOrder = {"sequenceObject", "crossReferences", "matches"})
+@XmlType(name = "ProteinType", propOrder = {"sequenceObject", "crossReferences", "superMatches", "matches"})
 public class Protein implements Serializable {
 
     @Transient
@@ -91,6 +91,10 @@ public class Protein implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
     private Set<Match> matches = new HashSet<Match>();
+
+    @Transient
+    //@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
+    private final Set<SuperMatch> superMatches = new HashSet<SuperMatch>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "protein")
     @XmlElement(name = "xref")
@@ -254,6 +258,35 @@ public class Protein implements Serializable {
      */
     public <T extends Match> void removeMatch(T match) {
         matches.remove(match);
+        match.setProtein(null);
+    }
+
+    //@XmlElementWrapper(name = "super-matches")
+    @XmlElement(name = "super-match")
+    public Set<SuperMatch> getSuperMatches() {
+        return superMatches;
+    }
+
+    private void setSuperMatches(Set<SuperMatch> matches) {
+        for (SuperMatch m : matches) {
+            addSuperMatch(m);
+        }
+    }
+
+    public SuperMatch addSuperMatch(SuperMatch match) throws IllegalArgumentException {
+        if (match == null) {
+            throw new IllegalArgumentException("'match' must not be null");
+        }
+        if (match.getProtein() != null) {
+            match.getProtein().removeSuperMatch(match);
+        }
+        match.setProtein(this);
+        superMatches.add(match);
+        return match;
+    }
+
+    public void removeSuperMatch(SuperMatch match) {
+        superMatches.remove(match);
         match.setProtein(null);
     }
 
