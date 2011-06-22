@@ -100,9 +100,10 @@ public class Entry implements Serializable {
         setAccession(accession);
     }
 
-    public Entry(String accession, String name) {
+    public Entry(String accession, String name, EntryType type) {
         setAccession(accession);
         setName(name);
+        setType(type);
     }
 
     public Entry(String accession,
