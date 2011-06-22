@@ -69,6 +69,8 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("pirsf", SignatureLibrary.PIRSF);
 
         libraryNameToSignatureLibrary.put("ssf", SignatureLibrary.SUPERFAMILY);
+
+        libraryNameToSignatureLibrary.put("panther", SignatureLibrary.PANTHER);
     }
 
     public static SignatureLibrary lookupSignatureLibrary(String signatureLibraryName) {
