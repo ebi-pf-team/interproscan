@@ -23,7 +23,7 @@ public class ProDomMatchParserTest extends TestCase {
     @Test
     public void testParse() throws IOException {
         InputStream is = getClass().getClassLoader().getResourceAsStream("data/prodom/prodom_output.txt");
-        MatchParser<ProDomRawMatch> parser = new ProDomMatchParser(SignatureLibrary.PRODOM, "2006.1");
+        MatchParser<ProDomRawMatch> parser = new ProDomMatchParser("2006.1");
         Set<RawProtein<ProDomRawMatch>> proteins = parser.parse(is);
         assertNotNull(proteins);
         assertTrue(proteins.size() == 3);

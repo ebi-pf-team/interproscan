@@ -36,21 +36,21 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
      * 2. Sequence match start coordinate (Integer)
      * 3. Sequence match end coordinate (Integer)
      * 4. Prodom signature accession (String)
-     * 5. Signature match start coordinate (Integer) TODO Check this is the correct assignment.
-     * 6. Signature match stop coordinate (Integer) TODO Check this is the correct assignment.
-     * 7. Score (Integer????) TODO Check this - currently using regex for any real number - may be able to simplify
+     * 5. Signature match start coordinate (Integer)
+     * 6. Signature match stop coordinate (Integer)
+     * 7. Score (Integer)
      * 8. E value (Floating point - could be exponent)
      * 9. Number of domains in this family (Integer)
      * 10. Protein description (String)
-     * 11. Signature match length (Integer)
+     * (11. Sequence match length - not required, can be derived)
      */
 
     private static final Pattern LINE_PATTERN = Pattern.compile("^(\\S+)\\s+\\d+\\s+\\d+\\s+//"); // E.g. line starts with "1 1 198 //"...
 
     private static final Pattern RECORD_END_PATTERN = Pattern.compile("^//$");
 
-    public ProDomMatchParser(SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
-        super(signatureLibrary, signatureLibraryRelease);
+    public ProDomMatchParser(String signatureLibraryRelease) {
+        super(SignatureLibrary.PRODOM, signatureLibraryRelease);
     }
 
     @Override
@@ -90,7 +90,6 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
         int numDomainsInFamily = 0;
         StringBuilder descAndLength = new StringBuilder();
         String description = null;
-        int sequenceLength = 0;
 
         String[] values = line.split("\\s+");
         int i = 0;
@@ -193,7 +192,8 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
         if (description.contains(key)) {
             int keyPos = description.indexOf(key);
             if (keyPos > 0) {
-                sequenceLength = Integer.parseInt(description.substring(keyPos + key.length()));
+                // NOTE: Match length can be derived so no need to store it
+                //matchLength = Integer.parseInt(description.substring(keyPos + key.length()));
                 description = description.substring(0, description.indexOf(key) - 1);
             }
             else {
@@ -211,7 +211,7 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
         }
 
         return new ProDomRawMatch(sequenceIdentifier, modelId, this.getSignatureLibraryRelease(),
-                sequenceStart, sequenceEnd, spId, modelStart, modelEnd, score, evalue, numDomainsInFamily, description, sequenceLength);
+                sequenceStart, sequenceEnd, spId, modelStart, modelEnd, score, evalue, numDomainsInFamily, description);
     }
 
 }

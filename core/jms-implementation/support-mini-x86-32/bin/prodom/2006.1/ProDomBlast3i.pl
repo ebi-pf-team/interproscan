@@ -162,7 +162,13 @@ MAIN:
       ## other jobs' output. doh!!!
 
       s/^>//;
-      $_ =~ /^(UPI[0-9A-Fa-f]{10})/; ## rpetry - 07/08/2006 - specific to Onion
+
+      # Example ProDom protein Id: UPI000196C5BF
+      #$_ =~ /^(UPI[0-9A-Fa-f]{10})/; ## rpetry - 07/08/2006 - specific to Onion
+
+      # Example i5 protein Id: 1
+      $_ =~ /^(\d+)/; ## rpetry - 07/08/2006 - specific to Onion
+
       my $curUpi = $1; ## rpetry - 07/08/2006 - specific to Onion
 
       $tmpfile = $h_parameter{'tmp_path'} . "/BLAST_PRODOM_TMP_${curUpi}_" . time() . $$ . ".$nseq";  ## rpetry - 07/08/2006 - specific to Onion

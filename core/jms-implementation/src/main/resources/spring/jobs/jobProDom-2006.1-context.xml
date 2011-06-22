@@ -48,25 +48,25 @@
         <property name="binarySwitches" value="-p blastp -h 0 -f"/>
         <property name="retries" value="3"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="fullPathToTempDirectory" value=""/>
+        <!--<property name="fullPathToTempDirectory" value="${???}"/>-->
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToProDomBlast3iPerlScript" value="${binary.prodom.2006.1.prodomblast3i.pl.path}"/>
         <property name="fullPathToBlastBinary" value="${binary.blastall.2.2.19.path}"/>
         <property name="fullPathToProDomIprFile" value="${prodom.ipr.path.2006.1}"/>
     </bean>
 
-    <!-- STEP: Parse the ProDom binary output and persist the results in the database. -->
-    <!--<bean id="stepProDomParseRawOutput-2006.1"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.prodom.ParseAndPersistProDomOutputStep"-->
-          <!--parent="abstractProDomStep-2006.1">-->
-        <!--<property name="dependsUpon" ref="stepProDomRunBinary-2006.1"/>-->
-        <!--<property name="stepDescription" value="Parse the output from the ProDom binary"/>-->
-        <!--<property name="serialGroup" value="PARSE_PRODOM"/>-->
-        <!--<property name="retries" value="3"/>-->
-        <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-        <!--<property name="rawMatchDAO" ref="prodomRawMatchDAO-2006.1"/>-->
-        <!--<property name="parser" ref="prodomRawOutputParser-2006.1"/>-->
-    <!--</bean>-->
+    <!-- STEP: Parse the ProDom binary output and persist the results in the database. No post processing required. -->
+    <bean id="stepProDomParseAndPersistOutput-2006.1"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prodom.ParseAndPersistProDomOutputStep"
+          parent="abstractProDomStep-2006.1">
+        <property name="dependsUpon" ref="stepProDomRunBinary-2006.1"/>
+        <property name="stepDescription" value="Parse the output from the ProDom binary and persist as filtered matches"/>
+        <property name="serialGroup" value="PARSE_PRODOM"/>
+        <property name="retries" value="3"/>
+        <property name="proDomBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="rawMatchDAO" ref="prodomMatchDAO-2006.1"/>
+        <property name="parser" ref="prodomRawOutputParser-2006.1"/>
+    </bean>
 
     <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
                writing to the directory at the same time) -->
@@ -88,13 +88,16 @@
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PrositeProfiles !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <!--<bean id="prodomRawMatchDAO-2006.1" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">-->
-        <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch"/>-->
-    <!--</bean>-->
 
-    <!--<bean id="prodomRawOutputParser-2006.1"-->
-          <!--class="uk.ac.ebi.interpro.scan.io.prodom.match.ProDomMatchParser">-->
-    <!--</bean>-->
+    <bean id="prodomRawOutputParser-2006.1"
+          class="uk.ac.ebi.interpro.scan.io.prodom.match.ProDomMatchParser">
+        <constructor-arg value="2006.1"/>
+    </bean>
+
+        <bean id="prodomMatchDAO-2006.1"
+          class="uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAOImpl">
+        <constructor-arg value="2006.1"/>
+    </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
