@@ -38,10 +38,7 @@
           parent="abstractProDomStep-2006.1">
         <!--
         Example:
-        /ebi/sp/pro1/Onion/calcs/PRODOM/ProDomBlast3i.pl -P /ebi/production/interpro/Onion/blast/blast-2.2.19/bin/ -p blastp -d /ebi/production/interpro/Onion/prodom/2006.1/prodom.ipr -s SEQUENCE_FILE -t /tmp/ -h 0 -f  > OUTPUT_FILE
-
-        Example (relative URLs):
-        perl ProDomBlast3i.pl -P ../../blast/2.2.19 -p blastp -d ../../../data/prodom/2006.1/prodom.ipr -s ../../../data/prodom/prodom_test.seqs -t /tmp/prodom -h 0 -f -o test.out
+        perl -I bin/prodom/2006.1 bin/prodom/2006.1/ProDomBlast3i.pl -P bin/blast/2.2.19 -d data/prodom/temp/prodom.ipr -s temp/x/jobProDom-2006.1/000000000001_000000000006.fasta -p blastp -h 0 -f
         -->
         <property name="dependsUpon" ref="stepProDomWriteFastaFile-2006.1"/>
         <property name="stepDescription" value="Run ProDomBlast3i.pl perl script for selected proteins"/>
