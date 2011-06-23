@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.prodom;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.prodom.match.ProDomMatchParser;
+import uk.ac.ebi.interpro.scan.io.prodom.match.BlastProDomMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
@@ -30,7 +30,7 @@ public class ParseAndPersistProDomOutputStep extends Step {
 
     private String proDomBinaryOutputFileName;
 
-    private ProDomMatchParser parser;
+    private BlastProDomMatchParser parser;
 
     private ProDomFilteredMatchDAO rawMatchDAO;
 
@@ -40,7 +40,7 @@ public class ParseAndPersistProDomOutputStep extends Step {
     }
 
     @Required
-    public void setParser(ProDomMatchParser parser) {
+    public void setParser(BlastProDomMatchParser parser) {
         this.parser = parser;
     }
 

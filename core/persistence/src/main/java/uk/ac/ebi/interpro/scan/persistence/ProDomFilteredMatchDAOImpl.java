@@ -1,10 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
-import uk.ac.ebi.interpro.scan.io.match.coils.ParseCoilsMatch;
 import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -17,7 +14,7 @@ import java.util.*;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMatch, ProDomMatch> implements ProDomFilteredMatchDAO {
+public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMatch, BlastProDomMatch> implements ProDomFilteredMatchDAO {
 
     private String proDomReleaseVersion;
 
@@ -31,7 +28,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
      * that calls this constructor with the appropriate class.
      */
     public ProDomFilteredMatchDAOImpl(String version) {
-        super(ProDomMatch.class);
+        super(BlastProDomMatch.class);
         this.proDomReleaseVersion = version;
     }
 
@@ -51,7 +48,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
-            Set<ProDomMatch.ProDomLocation> locations = null;
+            Set<BlastProDomMatch.BlastProDomLocation> locations = null;
             String currentSignatureAc = null;
             Signature currentSignature = null;
             ProDomRawMatch lastRawMatch = null;
@@ -61,27 +58,28 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
                 if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
                     if (currentSignatureAc != null) {
                         // Not the first...
-                        protein.addMatch(new ProDomMatch(currentSignature, locations));
+                        protein.addMatch(new BlastProDomMatch(currentSignature, locations));
                     }
                     // Reset everything
-                    locations = new HashSet<ProDomMatch.ProDomLocation>();
+                    locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
                     currentSignatureAc = rawMatch.getModelId();
                     currentSignature = modelIdToSignatureMap.get(currentSignatureAc);
                     if (currentSignature == null) {
-                        throw new IllegalStateException("Cannot find PRINTS signature " + currentSignatureAc + " in the database.");
+                        throw new IllegalStateException("Cannot find ProDom signature " + currentSignatureAc + " in the database.");
                     }
                 }
                 locations.add(
-                        new ProDomMatch.ProDomLocation(
+                        new BlastProDomMatch.BlastProDomLocation(
                                 rawMatch.getLocationStart(),
-                                rawMatch.getLocationEnd()
+                                rawMatch.getLocationEnd(),
+                                rawMatch.getScore()
                         )
                 );
                 lastRawMatch = rawMatch;
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
-                protein.addMatch(new ProDomMatch(currentSignature, locations));
+                protein.addMatch(new BlastProDomMatch(currentSignature, locations));
             }
             entityManager.persist(protein);
             entityManager.flush();

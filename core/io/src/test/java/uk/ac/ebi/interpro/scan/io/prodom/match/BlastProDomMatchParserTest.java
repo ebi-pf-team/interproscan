@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.io.prodom.match;
 import junit.framework.TestCase;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -18,12 +17,12 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ProDomMatchParserTest extends TestCase {
+public class BlastProDomMatchParserTest extends TestCase {
 
     @Test
     public void testParse() throws IOException {
         InputStream is = getClass().getClassLoader().getResourceAsStream("data/prodom/prodom_output.txt");
-        MatchParser<ProDomRawMatch> parser = new ProDomMatchParser("2006.1");
+        MatchParser<ProDomRawMatch> parser = new BlastProDomMatchParser("2006.1");
         Set<RawProtein<ProDomRawMatch>> proteins = parser.parse(is);
         assertNotNull(proteins);
         assertTrue(proteins.size() == 3);

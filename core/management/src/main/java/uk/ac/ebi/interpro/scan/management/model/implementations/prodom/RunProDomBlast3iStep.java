@@ -22,7 +22,7 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
 
     private String fullPathToProDomBlast3iPerlScript;
 
-    private String fullPathToBlastBinary;
+    private String fullPathToBlast;
 
     private String fastaFileNameTemplate;
 
@@ -41,8 +41,8 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
     }
 
     @Required
-    public void setFullPathToBlastBinary(String fullPathToBlastBinary) {
-        this.fullPathToBlastBinary = fullPathToBlastBinary;
+    public void setFullPathToBlast(String fullPathToBlast) {
+        this.fullPathToBlast = fullPathToBlast;
     }
 
     @Required
@@ -62,17 +62,13 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
     /**
      * Current command line from Onion:
      * <p/>
-     * /ebi/sp/pro1/Onion/calcs/PRODOM/ProDomBlast3i.pl -P /ebi/production/interpro/Onion/blast/blast-2.2.19/bin/ -p blastp -d /ebi/production/interpro/Onion/prodom/2006.1/prodom.ipr -s SEQUENCE_FILE -t /tmp/ -h 0 -f  > OUTPUT_FILE
+     * Example:
      * <p/>
-     * Example (relative URLs):
-     * <p/>
-     * perl ProDomBlast3i.pl -P ../../blast/2.2.19 -p blastp -d ../../../data/prodom/2006.1/prodom.ipr -s ../../../data/prodom/prodom_test.seqs -t /tmp/prodom -h 0 -f -o test.out
-     *
+     * perl -I bin/prodom/2006.1 -I data/prodom/2006.1 bin/prodom/2006.1/ProDomBlast3i.pl -P bin/blast/2.2.19 -d data/prodom/2006.1/prodom.ipr -s temp/x/jobProDom-2006.1/000000000001_000000000006.fasta -p blastp -h 0 -f
      * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory is the relative path in which files are stored.
-     * @return
+     * @return The command
      */
-
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.fastaFileNameTemplate);
@@ -80,18 +76,17 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
         command.add("perl"); // Run the perl script using installed version of Perl
         command.add("-I");
         command.add("bin/prodom/2006.1");
-        command.add("bin/prodom/2006.1/calcs");
-        command.add("bin/prodom/2006.1/calcs/XML_BLAST");
-        command.add("data/prodom/2006.1");
         command.add(this.fullPathToProDomBlast3iPerlScript);
         command.add("-P");
-        command.add(this.fullPathToBlastBinary);
+        command.add(this.fullPathToBlast);
         command.add("-d");
         command.add(this.fullPathToProDomIprFile);
         command.add("-s");
         command.add(fastaFilePathName);
-//        command.add("-t");
-//        command.add(this.fullPathToTempDirectory);
+        if (this.fullPathToTempDirectory != null && !this.fullPathToTempDirectory.equals("")) {
+            command.add("-t");
+            command.add(this.fullPathToTempDirectory);
+        }
         command.addAll(this.getBinarySwitchesAsList());
 
         if (LOGGER.isDebugEnabled()) {
