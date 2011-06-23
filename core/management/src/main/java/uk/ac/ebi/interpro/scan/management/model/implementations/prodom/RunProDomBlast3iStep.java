@@ -60,11 +60,12 @@ public class RunProDomBlast3iStep extends RunBinaryStep {
     }
 
     /**
-     * Current command line from Onion:
+     * Create the command ready to run the binary.
      * <p/>
      * Example:
      * <p/>
-     * perl -I bin/prodom/2006.1 -I data/prodom/2006.1 bin/prodom/2006.1/ProDomBlast3i.pl -P bin/blast/2.2.19 -d data/prodom/2006.1/prodom.ipr -s temp/x/jobProDom-2006.1/000000000001_000000000006.fasta -p blastp -h 0 -f
+     * perl -I bin/prodom/2006.1 bin/prodom/2006.1/ProDomBlast3i.pl -P bin/blast/2.2.19 -d data/prodom/temp/prodom.ipr -s temp/x/jobProDom-2006.1/000000000001_000000000006.fasta -p blastp -h 0 -f
+     * 
      * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory is the relative path in which files are stored.
      * @return The command
