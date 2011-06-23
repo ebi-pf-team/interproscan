@@ -131,6 +131,15 @@
         <property name="analysisJobId" value="jobPrositeProfiles"/>
     </bean>
 
+    <bean id="Panther_7.0" class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
+        <property name="signatureLibrary" value="PANTHER"/>
+        <property name="releaseVersionNumber" value="7.0"/>
+        <property name="analysisJobId" value="jobPanther"/>
+        <property name="modelFile" value="file:${panther.models.path.7.0}"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="namesTabFile" value="names.tab"/>
+    </bean>
+
     <bean id="tigrFam_9.0" class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
         <property name="signatureLibrary" value="TIGRFAM"/>
         <property name="modelFile" value="file:${tigrfam.hmm.path.9.0}"/>
