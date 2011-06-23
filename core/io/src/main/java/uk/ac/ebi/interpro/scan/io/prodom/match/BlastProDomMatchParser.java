@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
+public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
 
     /*
      * Example file content:
@@ -29,7 +29,7 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
      *
      */
 
-    private static final Logger LOGGER = Logger.getLogger(ProDomMatchParser.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BlastProDomMatchParser.class.getName());
 
     /*
      * 1. Protein Accession (as in Fasta File) (String)
@@ -49,7 +49,7 @@ public class ProDomMatchParser extends AbstractLineMatchParser<ProDomRawMatch> {
 
     private static final Pattern RECORD_END_PATTERN = Pattern.compile("^//$");
 
-    public ProDomMatchParser(String signatureLibraryRelease) {
+    public BlastProDomMatchParser(String signatureLibraryRelease) {
         super(SignatureLibrary.PRODOM, signatureLibraryRelease);
     }
 

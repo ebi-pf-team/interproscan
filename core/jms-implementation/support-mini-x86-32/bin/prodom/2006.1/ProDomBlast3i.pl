@@ -99,11 +99,15 @@ ProDomBlast3i.pl
 
 BEGIN
 {
-# Relative path to ParseBlastXmlReport binary (matthew)
-$ENV{IPRSCAN_HOME}='.';
+
+# TODO It would be better if the paths to IPRSCAN_HOME and IPRSCAN_LIB were relative paths, or
+# could be configured as a parameter and passed into this perl script.
+
+# IPRSCAN_HOME = Path to ParseBlastXmlReport binary
+$ENV{IPRSCAN_HOME} = "bin/prodom/2006.1";
   unless($ENV{IPRSCAN_LIB}){
-    # Relative location of the "calcs" directory (matthew)
-    $ENV{IPRSCAN_LIB} = "./calcs";
+    # IPRSCAN_LIB = Location of the "calcs" directory
+    $ENV{IPRSCAN_LIB} = "bin/prodom/2006.1/calcs";
   }
 }
 

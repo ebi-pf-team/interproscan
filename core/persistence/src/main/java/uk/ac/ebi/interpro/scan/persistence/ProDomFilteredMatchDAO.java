@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
-import uk.ac.ebi.interpro.scan.model.ProDomMatch;
+import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
@@ -19,7 +19,7 @@ import java.util.Set;
 * @version $Id$
 * @since 1.0-SNAPSHOT
 */
-public interface ProDomFilteredMatchDAO extends FilteredMatchDAO<ProDomRawMatch, ProDomMatch> {
+public interface ProDomFilteredMatchDAO extends FilteredMatchDAO<ProDomRawMatch, BlastProDomMatch> {
 
     /**
      * Persists a set of parsed ProDom match objects as filtered matches.
