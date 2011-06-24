@@ -118,7 +118,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
     }
 
     /**
-     * Handles parse process of the specified file resource.
+     * Handles parsing process of the specified file resource.
      *
      * @param modelFile Tab separated file resource with 2 columns (headers: accession, names).
      * @return A map of signature accessions and names.
