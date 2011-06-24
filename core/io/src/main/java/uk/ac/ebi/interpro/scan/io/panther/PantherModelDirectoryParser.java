@@ -93,19 +93,27 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
         File subFamilyDir = new File(modelFile.getFile().getPath() + "/books/" + dirName);
         if (subFamilyDir.exists() && subFamilyDir.getAbsoluteFile() != null) {
             //TODO: Implement a file filter for a more memory save implementation
-            String[] children = subFamilyDir.getAbsoluteFile().list();
+            String[] children = subFamilyDir.getAbsoluteFile().list(new DirectoryFilenameFilter());
             if (children != null) {
                 for (String signatureAcc : children) {
-                    if (signatureAcc.startsWith("SF")) {
-                        signatureAcc = dirName + ":" + signatureAcc;
-                        String signatureName = familyIdFamilyNameMap.get(signatureAcc);
-                        //Create super family signatures
-                        release.addSignature(createSignature(signatureAcc, signatureName, release));
-                    }
+                    signatureAcc = dirName + ":" + signatureAcc;
+                    String signatureName = familyIdFamilyNameMap.get(signatureAcc);
+                    //Create super family signatures
+                    release.addSignature(createSignature(signatureAcc, signatureName, release));
                 }
             } else {
                 LOGGER.debug("Either dir does not exist or is not a directory.");
             }
+        }
+    }
+
+    /**
+     * This filter only returns directories
+     */
+    class DirectoryFilenameFilter implements FilenameFilter {
+
+        public boolean accept(File dir, String name) {
+            return name.startsWith("SF");
         }
     }
 
