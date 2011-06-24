@@ -27,6 +27,9 @@ public class PirsfMatchTempParserTest extends TestCase {
     @Test
     public void testPirsfMatchTempParser() throws IOException {
 
+        LOGGER.warn("Note that some inputs are deliberately wrong, so errors/warnings may be thrown by this test! " +
+                "Does it pass?");
+        
         // Setup expected result
         String proteinId = "1";
         String modelId = "PIRSF001500";
