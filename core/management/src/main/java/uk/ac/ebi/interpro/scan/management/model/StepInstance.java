@@ -77,7 +77,7 @@ public class StepInstance implements Serializable {
     @Column(nullable = true, name = "top_model")
     private Long topModel;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     private List<StepInstance> dependsUpon = new ArrayList<StepInstance>();
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)

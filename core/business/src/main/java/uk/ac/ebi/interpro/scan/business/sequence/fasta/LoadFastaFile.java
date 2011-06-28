@@ -1,10 +1,9 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
-import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
+import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
+import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -18,8 +17,8 @@ import java.io.Serializable;
  */
 public interface LoadFastaFile extends Serializable {
     @Required
-    void setProteinLoader(ProteinLoader proteinLoader);
+    void setSequenceLoader(SequenceLoader sequenceLoader);
 
     @Transactional
-    void loadSequences(InputStream fastaFileInputStream, ProteinLoadListener proteinLoadListener);
+    void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoadListener);
 }

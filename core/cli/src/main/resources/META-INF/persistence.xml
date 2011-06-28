@@ -19,6 +19,10 @@
         <class>uk.ac.ebi.interpro.scan.model.Signature</class>
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
+        <class>uk.ac.ebi.interpro.scan.model.OpenReadingFrame</class>
+        <class>uk.ac.ebi.interpro.scan.model.NucleotideSequence</class>
+        <class>uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref</class>
+
         <!-- Concrete Matches -->
         <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>

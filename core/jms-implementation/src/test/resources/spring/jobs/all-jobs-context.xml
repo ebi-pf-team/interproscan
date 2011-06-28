@@ -56,7 +56,7 @@
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="fastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
-        <property name="proteinLoader" ref="proteinLoader"/>
+        <property name="sequenceLoader" ref="proteinLoader"/>
 
     </bean>
 
@@ -65,6 +65,7 @@
         <!-- MUST NOT EXCEED 1000 -->
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="proteinPrecalcLookupBatchSize" value="50"/>
+        <property name="getOrfOutput" value="false"/>
     </bean>
 
 

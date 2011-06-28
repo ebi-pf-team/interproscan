@@ -59,7 +59,7 @@ public class Signature implements Serializable {
     @Index(name = "signature_ac_idx")
     private String accession;
 
-    @Column
+    @Column(length = 4000, name = "sig_name")
     @Index(name = "signature_name_idx")
     private String name;
 

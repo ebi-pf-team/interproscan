@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +35,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test cases for {@link NucleotideSequence}
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,7 +43,7 @@ import static org.junit.Assert.assertEquals;
 public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
 
     private static final Logger LOGGER = Logger.getLogger(NucleotideSequenceTest.class.getName());
-    
+
     @Test
     public void testEquals() throws IOException, ParseException {
         // Original
@@ -54,7 +53,7 @@ public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
         // Should be equal
         assertEquals("Original and copy should be equal", original, copy);
         // Print
-        if (LOGGER.isDebugEnabled())    {
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(original);
             LOGGER.debug(super.marshal(original));
         }
@@ -64,14 +63,14 @@ public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
     public void testXml() throws IOException, SAXException {
         super.testSupportsMarshalling(NucleotideSequence.class);
         super.testXmlRoundTrip();
-    }    
+    }
 
     private NucleotideSequence getPfamObject() {
-        // Create ORF
-        OpenReadingFrame orf = new OpenReadingFrame(3, 63, NucleotideSequenceStrand.SENSE);
-        orf.addProtein(getPfamProtein());
         // Create nucleotide sequence
         NucleotideSequence ns = new NucleotideSequence("CCGGAAGTTATTCACATTTATATGCGGAACCTCATATAAAATGTGAAAAGAAGGAATGCATGGAATGAATATTGGACAAAAAGTACTGTTCGAACTTAAAA");
+        // Create ORF
+        OpenReadingFrame orf = new OpenReadingFrame(3, 63, NucleotideSequenceStrand.SENSE);
+        orf.setProtein(getPfamProtein());
         ns.addCrossReference(new NucleotideSequenceXref("ENA", "AP009179", "AP009179.1"));
         ns.addOpenReadingFrame(orf);
         return ns;

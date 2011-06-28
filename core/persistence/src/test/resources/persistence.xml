@@ -36,6 +36,10 @@
         <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch</class>
 
+        <class>uk.ac.ebi.interpro.scan.model.OpenReadingFrame</class>
+        <class>uk.ac.ebi.interpro.scan.model.NucleotideSequence</class>
+        <class>uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref</class>
+
         <!-- Concrete Locations. -->
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>

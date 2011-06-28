@@ -23,18 +23,20 @@ import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
  * Represents a nucleotide sequence (DNA or RNA).
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @Entity
@@ -44,9 +46,12 @@ public class NucleotideSequence implements Serializable {
 
     // TODO: Refactor code that can be shared with Protein class
 
-    @Transient private static final Pattern SEQUENCE_PATTERN    = Pattern.compile("^[atcgu]+$");
-    @Transient private static final Pattern WHITESPACE_PATTERN  = Pattern.compile("\\s+", Pattern.MULTILINE);
-    @Transient private static final Chunker CHUNKER             = ChunkerSingleton.getInstance();
+    @Transient
+    private static final Pattern SEQUENCE_PATTERN = Pattern.compile("^[atcgu]+$");
+    @Transient
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
+    @Transient
+    private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "NUC_IDGEN")
@@ -69,10 +74,10 @@ public class NucleotideSequence implements Serializable {
     @Column(nullable = false, unique = true, updatable = false, length = 32)
     private String md5;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "nucleotide")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "nucleotideSequence")
     private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "nucleotide")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sequence")
     private final Set<NucleotideSequenceXref> xrefs = new HashSet<NucleotideSequenceXref>();
 
     /**
@@ -105,7 +110,11 @@ public class NucleotideSequence implements Serializable {
     // ORFs...
 
     public void addOpenReadingFrame(OpenReadingFrame orf) {
+        if (orf == null) {
+            throw new IllegalStateException("the orf argument cannot be null.");
+        }
         orfs.add(orf);
+        orf.setNucleotideSequence(this);
     }
 
     public void removeOpenReadingFrame(OpenReadingFrame orf) {
@@ -129,7 +138,11 @@ public class NucleotideSequence implements Serializable {
     // xrefs...
 
     public void addCrossReference(NucleotideSequenceXref xref) {
+        if (xref == null) {
+            throw new IllegalArgumentException("The xref argument cannot be null.");
+        }
         xrefs.add(xref);
+        xref.setNucleotideSequence(this);
     }
 
     public void removeCrossReference(NucleotideSequenceXref xref) {
@@ -164,14 +177,21 @@ public class NucleotideSequence implements Serializable {
             throw new IllegalArgumentException("'sequence' is not a nucleotide sequence [" + sequence + "]");
         }
         this.sequence = sequence;
-        List<String> chunks     = CHUNKER.chunkIntoList(sequence);
+        List<String> chunks = CHUNKER.chunkIntoList(sequence);
         this.sequenceFirstChunk = CHUNKER.firstChunk(chunks);
-        this.sequenceChunks     = CHUNKER.latterChunks(chunks);
+        this.sequenceChunks = CHUNKER.latterChunks(chunks);
+    }
+
+    public String getSequence() {
+        if (sequence == null) {
+            sequence = CHUNKER.concatenate(sequenceFirstChunk, sequenceChunks);
+        }
+        return sequence;
     }
 
     @XmlElement(name = "sequence")
     private Sequence getSequenceObject() {
-        return new Sequence(sequence, md5);
+        return new Sequence(getSequence(), getMd5());
     }
 
     private void setSequenceObject(Sequence sequence) {
@@ -226,7 +246,8 @@ public class NucleotideSequence implements Serializable {
 
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof NucleotideSequence))
@@ -240,7 +261,8 @@ public class NucleotideSequence implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(39, 47)
                 .append(sequence)
                 .append(md5)
@@ -249,7 +271,8 @@ public class NucleotideSequence implements Serializable {
                 .toHashCode();
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
@@ -269,8 +292,7 @@ public class NucleotideSequence implements Serializable {
         static {
             try {
                 m = MessageDigest.getInstance("MD5");
-            }
-            catch (NoSuchAlgorithmException e) {
+            } catch (NoSuchAlgorithmException e) {
                 throw new IllegalStateException("Cannot find MD5 algorithm", e);
             }
         }

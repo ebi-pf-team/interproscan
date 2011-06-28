@@ -11,6 +11,8 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepCreatingStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep;
 
 import javax.jms.JMSException;
@@ -55,6 +57,7 @@ public class AmqInterProScanMaster implements Master {
     private WorkerRunner workerRunnerHighMemory;
 
     private UnrecoverableErrorStrategy unrecoverableErrorStrategy;
+    private String sequenceType;
 
 
     public void setWorkerRunner(WorkerRunner workerRunner) {
@@ -133,7 +136,11 @@ public class AmqInterProScanMaster implements Master {
                 LOGGER.debug("Database loaded.");
             }
 
-            createFastaFileLoadStepInstance();
+            if ("n".equalsIgnoreCase(this.sequenceType)) {
+                createNucleicAcidLoadStepInstance();
+            } else {
+                createFastaFileLoadStepInstance();
+            }
 
 
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
@@ -201,31 +208,49 @@ public class AmqInterProScanMaster implements Master {
             LOGGER.debug("Creating FASTA file load step.");
         }
         if (fastaFilePath != null) {
-            Map<String, String> params = new HashMap<String, String>(1);
+            Map<String, String> params = new HashMap<String, String>();
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
-            if (analyses != null) {
-                List<String> jobNameList = new ArrayList<String>();
-                for (String analysisName : analyses) {
-                    jobNameList.add("job" + analysisName);
-                }
-                params.put(FastaFileLoadStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
-            }
-            params.put(FastaFileLoadStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
-
-            String outputFilePath = outputFile;
-            if (outputFilePath == null) {
-                outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + "." + outputFormat.toLowerCase();
-            }
-            params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
-            params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat);
-            params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
-            params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
-
+            createBlackBoxParams(params);
             createStepInstancesForJob("jobLoadFromFasta", params);
             LOGGER.info("Fasta file load step instance has been created.");
         } else if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("No fasta file path to load.");
         }
+    }
+
+    private void createNucleicAcidLoadStepInstance() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("creating nucleic acid load step.");
+        }
+        if (fastaFilePath != null) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(RunGetOrfStep.SEQUENCE_FILE_PATH_KEY, fastaFilePath);
+            params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
+            createBlackBoxParams(params);
+            createStepInstancesForJob("jobLoadNucleicAcidSequence", params);
+        } else {
+            LOGGER.error("No nucleic acid sequence file path has been provided to load.");
+        }
+    }
+
+    private void createBlackBoxParams(final Map<String, String> params) {
+        if (analyses != null) {
+            List<String> jobNameList = new ArrayList<String>();
+            for (String analysisName : analyses) {
+                jobNameList.add("job" + analysisName);
+            }
+            params.put(StepCreatingStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
+        }
+        params.put(StepCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
+
+        String outputFilePath = outputFile;
+        if (outputFilePath == null) {
+            outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + "." + outputFormat.toLowerCase();
+        }
+        params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
+        params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat);
+        params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
+        params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
     }
 
     /**
@@ -237,10 +262,52 @@ public class AmqInterProScanMaster implements Master {
 
     private void createStepInstancesForJob(String jobId, Map<String, String> parameters) {
         Job job = jobs.getJobById(jobId);
+        final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
         for (Step step : job.getSteps()) {
             StepInstance stepInstance = new StepInstance(step);
             stepInstance.addParameters(parameters);
-            stepInstanceDAO.insert(stepInstance);
+            List<StepInstance> mappedStepInstance = stepToStepInstances.get(step);
+            if (mappedStepInstance == null) {
+                mappedStepInstance = new ArrayList<StepInstance>();
+                stepToStepInstances.put(step, mappedStepInstance);
+            }
+            mappedStepInstance.add(stepInstance);
+        }
+        addDependenciesAndStore(stepToStepInstances);
+    }
+
+    /**
+     * Takes a list of newly created StepInstance objects in a Map<Step, List<StepInstance>>
+     * and sets up the dependencies between them.  Then stores the StepInstance objects to the database.
+     *
+     * @param stepToStepInstances a Map<Step, List<StepInstance>> to allow the dependencies to be efficiently set up.
+     */
+    private void addDependenciesAndStore(Map<Step, List<StepInstance>> stepToStepInstances) {
+        // Add the dependencies to the StepInstances.
+        for (Step step : stepToStepInstances.keySet()) {
+            for (StepInstance stepInstance : stepToStepInstances.get(step)) {
+                final List<Step> dependsUpon = stepInstance.getStep(jobs).getDependsUpon();
+                if (dependsUpon != null) {
+                    for (Step stepRequired : dependsUpon) {
+                        List<StepInstance> candidateStepInstances = stepToStepInstances.get(stepRequired);
+                        if (candidateStepInstances != null) {
+                            for (StepInstance candidate : candidateStepInstances) {
+                                if (stepInstance.proteinBoundsOverlap(candidate)) {
+                                    stepInstance.addDependentStepInstance(candidate);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Persist the StepInstances that now have their dependencies added.
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Persisting " + stepToStepInstances.get(step).size() + " StepInstances for Step " + step.getId());
+                for (StepInstance stepInstance : stepToStepInstances.get(step)) {
+                    LOGGER.debug("About to attempt to persist stepInstance: " + stepInstance.getId() + " with " + stepInstance.stepInstanceDependsUpon().size() + " dependent steps.");
+                }
+            }
+            stepInstanceDAO.insert(stepToStepInstances.get(step));
         }
     }
 
@@ -252,6 +319,18 @@ public class AmqInterProScanMaster implements Master {
     @Override
     public void setFastaFilePath(String fastaFilePath) {
         this.fastaFilePath = fastaFilePath;
+    }
+
+    /**
+     * Parameter passed in on command line to set kind of input sequence
+     * p: Protein
+     * n: nucleic acid (DNA or RNA)
+     *
+     * @param sequenceType the kind of input sequence
+     */
+    @Override
+    public void setSequenceType(String sequenceType) {
+        this.sequenceType = sequenceType;
     }
 
     /**

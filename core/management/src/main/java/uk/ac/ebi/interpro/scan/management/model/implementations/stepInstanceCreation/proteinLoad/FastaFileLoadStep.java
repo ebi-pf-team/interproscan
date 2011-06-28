@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepCreatingStep;
 
 import java.io.*;
 
@@ -21,36 +22,43 @@ import java.io.*;
  * @version $Id$
  * @since 1.0
  */
-public class FastaFileLoadStep extends Step {
+public class FastaFileLoadStep extends Step implements StepCreatingStep {
 
     public static final String FASTA_FILE_PATH_KEY = "FASTA_FILE_PATH";
-    public static final String ANALYSIS_JOB_NAMES_KEY = "ANALYSIS_JOB_NAMES";
-    public static final String COMPLETION_JOB_NAME_KEY = "COMPLETION_JOB_NAME";
 
     private static final Logger LOGGER = Logger.getLogger(FastaFileLoadStep.class.getName());
 
     private LoadFastaFile fastaFileLoader;
 
-    @Required
-    public void setFastaFileLoader(LoadFastaFile fastaFileLoader) {
-        this.fastaFileLoader = fastaFileLoader;
-    }
+    /**
+     * If this is set, this file name will override that passed in by the user as
+     * a parameteter.  This is for use in the genomics sequence analysis pipeline,
+     * where this Step loads a generated protein sequence file, rather than the
+     * nucleic acid sequence file passed in by the user.
+     */
+    private String overridingFastaFileName;
 
-    private Jobs jobs;
+    protected Jobs jobs;
+    protected StepInstanceDAO stepInstanceDAO;
 
     @Required
     public void setJobs(Jobs jobs) {
         this.jobs = jobs;
     }
 
-    private StepInstanceDAO stepInstanceDAO;
-
-
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
         this.stepInstanceDAO = stepInstanceDAO;
     }
 
+    @Required
+    public void setFastaFileLoader(LoadFastaFile fastaFileLoader) {
+        this.fastaFileLoader = fastaFileLoader;
+    }
+
+    public void setOverridingFastaFileName(String overridingFastaFileName) {
+        this.overridingFastaFileName = overridingFastaFileName;
+    }
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
@@ -63,11 +71,16 @@ public class FastaFileLoadStep extends Step {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("FastaFileLoadStep.fastaFileLoader : " + fastaFileLoader);
         }
-        final String providedPath = stepInstance.getParameters().get(FASTA_FILE_PATH_KEY);
+        String providedPath;
+        if (overridingFastaFileName == null || overridingFastaFileName.isEmpty()) {
+            providedPath = stepInstance.getParameters().get(FASTA_FILE_PATH_KEY);
+        } else {
+            providedPath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, overridingFastaFileName);
+        }
         final String analysisJobNames = stepInstance.getParameters().get(ANALYSIS_JOB_NAMES_KEY);
         final String completionJobName = stepInstance.getParameters().get(COMPLETION_JOB_NAME_KEY);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Fasta file path from step parameters; " + providedPath);
+            LOGGER.debug("Fasta file path to be loaded: " + providedPath);
         }
         if (providedPath != null) {
             // Try resolving the fasta file as an absolute file path
@@ -95,17 +108,22 @@ public class FastaFileLoadStep extends Step {
                     throw new IllegalArgumentException("Cannot find the fasta file located at " + providedPath);
                 }
 
-
-                Jobs analysisJobs = analysisJobNames == null
-                        ? jobs.getAnalysisJobs()
-                        : jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("FastaFileLoaderStep.jobs is null? " + jobs == null);
+                }
+                Jobs analysisJobs;
+                if (analysisJobNames == null) {
+                    analysisJobs = jobs.getAnalysisJobs();
+                } else {
+                    analysisJobs = jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
+                }
                 Job completionJob = jobs.getJobById(completionJobName);
 
-                StepCreationProteinLoadListener proteinLoaderListener =
-                        new StepCreationProteinLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
-                proteinLoaderListener.setStepInstanceDAO(stepInstanceDAO);
+                StepCreationSequenceLoadListener sequenceLoadListener =
+                        new StepCreationSequenceLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
+                sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
-                fastaFileLoader.loadSequences(fastaFileInputStream, proteinLoaderListener);
+                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener);
             } finally {
                 if (fastaFileInputStream != null) {
                     try {

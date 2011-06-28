@@ -53,11 +53,11 @@ public class Model implements Serializable {
     @TableGenerator(name = "MOD_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "model", initialValue = 0, allocationSize = 50)
     private Long id;
 
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false)
     @Index(name = "model_ac_idx")
     private String accession;
 
-    @Column(length = 100)
+    @Column(length = 4000, name = "model_name")
     @Index(name = "model_name_idx")
     private String name;
 

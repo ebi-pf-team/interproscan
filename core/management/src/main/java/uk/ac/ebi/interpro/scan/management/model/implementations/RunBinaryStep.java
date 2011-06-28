@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -44,7 +43,7 @@ abstract public class RunBinaryStep extends Step {
         return outputFileNameTemplate;
     }
 
-    @Required
+    //    @Required
     public void setOutputFileNameTemplate(String hmmerOutputFilePathTemplate) {
         this.outputFileNameTemplate = hmmerOutputFilePathTemplate;
     }
