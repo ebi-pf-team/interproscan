@@ -4,16 +4,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
+import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
+import uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * This abstract class knows how to store protein sequences and cross references
+ * This class knows how to store protein sequences and cross references
  * <p/>
  * This must be a system-wide Singleton - achieved by ONLY injecting into the
  * SerialWorker JVM, from Spring.
@@ -22,13 +23,17 @@ import java.util.Set;
  *         Date: 14-Nov-2009
  *         Time: 14:04:59
  */
-public class ProteinLoader implements Serializable {
+public class ProteinLoader implements SequenceLoader {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinLoader.class.getName());
 
     private PrecalculatedProteinLookup proteinLookup;
 
     private ProteinDAO proteinDAO;
+
+    private NucleotideSequenceDAO nucleotideSequenceDAO;
+
+    private OpenReadingFrameDAO openReadingFrameDAO;
 
     private int proteinInsertBatchSize;
 
@@ -44,6 +49,8 @@ public class ProteinLoader implements Serializable {
 
     private Long topProteinId;
 
+    private boolean isGetOrfOutput;
+
     public void setProteinLookup(PrecalculatedProteinLookup proteinLookup) {
         this.proteinLookup = proteinLookup;
     }
@@ -52,6 +59,11 @@ public class ProteinLoader implements Serializable {
     public void setProteinInsertBatchSize(int proteinInsertBatchSize) {
         this.proteinInsertBatchSize = proteinInsertBatchSize;
         proteinsAwaitingPersistence = new HashSet<Protein>(proteinInsertBatchSize);
+    }
+
+    @Required
+    public void setGetOrfOutput(boolean getOrfOutput) {
+        isGetOrfOutput = getOrfOutput;
     }
 
     @Required
@@ -65,6 +77,14 @@ public class ProteinLoader implements Serializable {
         proteinsAwaitingPrecalcLookup = new HashSet<Protein>(proteinPrecalcLookupBatchSize);
     }
 
+    public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
+        this.nucleotideSequenceDAO = nucleotideSequenceDAO;
+    }
+
+    public void setOpenReadingFrameDAO(OpenReadingFrameDAO openReadingFrameDAO) {
+        this.openReadingFrameDAO = openReadingFrameDAO;
+    }
+
     /**
      * This method stores sequences with (optionally) cross references.
      * The method attempts to store them in batches by calling the addProteinToBatch(Protein protein)
@@ -76,6 +96,7 @@ public class ProteinLoader implements Serializable {
      * @param sequence        being the protein sequence to store
      * @param crossReferences being a set of Cross references.
      */
+    @Override
     public void store(String sequence, String... crossReferences) {
         if (sequence != null && sequence.length() > 0) {
             Protein protein = new Protein(sequence);
@@ -83,20 +104,17 @@ public class ProteinLoader implements Serializable {
                 for (String crossReference : crossReferences) {
                     ProteinXref xref = new ProteinXref(crossReference);
                     protein.addCrossReference(xref);
+
+                    // TODO - At this point, if this is the output of GetOrf being parsed, need to
+                    // parse out the start and end coordinates relative to the nucleic acid,
+                    // retrieve the correct nucleic acid and create an OpenReadingFrame object
+                    // to relate the Protein to the NucleicAcid.
                 }
             }
             proteinsAwaitingPrecalcLookup.add(protein);
             if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
                 lookupProteins();
             }
-//            Protein precalculatedProtein = (proteinLookup != null)
-//                    ? proteinLookup.getPrecalculated(protein)
-//                    : null;
-//            if (precalculatedProtein != null) {
-//                precalculatedProteins.add(precalculatedProtein);
-//            } else {
-//                addProteinToBatch(protein);
-//            }
         }
     }
 
@@ -162,12 +180,13 @@ public class ProteinLoader implements Serializable {
     }
 
     /**
-     * Following persistence of proteins, calls the ProteinLoadListener with the bounds of the proteins
+     * Following persistence of proteins, calls the SequenceLoadListener with the bounds of the proteins
      * added, so analyses (StepInstance) can be created appropriately.
      *
-     * @param proteinLoadListener which handles the creation of StepInstances for the new proteins added.
+     * @param sequenceLoadListener which handles the creation of StepInstances for the new proteins added.
      */
-    public void persist(ProteinLoadListener proteinLoadListener) {
+    @Override
+    public void persist(SequenceLoadListener sequenceLoadListener) {
         // Check any remaining proteins awaiting lookup
         lookupProteins();
 
@@ -201,7 +220,7 @@ public class ProteinLoader implements Serializable {
             LOGGER.debug("Top precalc protein: " + topPrecalcProteinId);
         }
 
-        proteinLoadListener.proteinsLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
+        sequenceLoadListener.sequencesLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
 
         // Prepare the ProteinLoader for another set of proteins.
         resetBounds();

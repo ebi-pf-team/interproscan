@@ -3,8 +3,8 @@ package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoadListener;
-import uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader;
+import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
+import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
 import uk.ac.ebi.interpro.scan.model.Protein;
 
 import java.io.BufferedReader;
@@ -14,26 +14,28 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 
 /**
- * Created by IntelliJ IDEA.
- * User: phil
- * Date: 14-Nov-2009
- * Time: 09:27:14
+ * @author Phil Jones
+ *         Date: 14-Nov-2009
+ *         Time: 09:27:14
+ *         <p/>
+ *         Parses Fasta file (Protein or nucleic acid) and uses a SequenceLoader to load the sequences
+ *         into the database.
  */
 public class LoadFastaFileImpl implements LoadFastaFile {
 
     private static final Logger LOGGER = Logger.getLogger(LoadFastaFileImpl.class.getName());
 
-    private ProteinLoader proteinLoader;
+    private SequenceLoader sequenceLoader;
 
     @Override
     @Required
-    public void setProteinLoader(ProteinLoader proteinLoader) {
-        this.proteinLoader = proteinLoader;
+    public void setSequenceLoader(SequenceLoader sequenceLoader) {
+        this.sequenceLoader = sequenceLoader;
     }
 
     @Override
     @Transactional
-    public void loadSequences(InputStream fastaFileInputStream, ProteinLoadListener proteinLoaderListener) {
+    public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener) {
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         BufferedReader reader = null;
         int sequencesParsed = 0;
@@ -63,13 +65,15 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                             }
                             final String seq = currentSequence.toString();
                             if (seq.trim().length() > 0) {
-                                proteinLoader.store(seq.replaceAll("\\s+", ""), currentId);
+                                sequenceLoader.store(seq.replaceAll("\\s+", ""), currentId);
                             }
                             currentSequence.delete(0, currentSequence.length());
                         }
                         if (line.length() > 1) {
                             currentId = line.substring(1).trim();
-                        } else {
+                        }
+
+                        if (currentId == null || currentId.isEmpty()) {
                             LOGGER.error("Found an empty ID line in the FASTA file on line " + lineNumber);
                             currentId = null;
                         }
@@ -82,10 +86,10 @@ public class LoadFastaFileImpl implements LoadFastaFile {
             }
             // Store the final record (if there were any at all!)
             if (currentId != null) {
-                proteinLoader.store(currentSequence.toString(), currentId);
-                LOGGER.debug("About to call ProteinLoader.persist().");
+                sequenceLoader.store(currentSequence.toString(), currentId);
+                LOGGER.debug("About to call SequenceLoader.persist().");
             }
-            proteinLoader.persist(proteinLoaderListener);
+            sequenceLoader.persist(sequenceLoaderListener);
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
         } finally {
@@ -98,6 +102,4 @@ public class LoadFastaFileImpl implements LoadFastaFile {
             }
         }
     }
-
-
 }

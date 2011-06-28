@@ -319,7 +319,7 @@ public class Protein implements Serializable {
 
     @XmlElement(name = "sequence")
     private Sequence getSequenceObject() {
-        return new Sequence(sequence, md5);
+        return new Sequence(getSequence(), getMd5());
     }
 
     private void setSequenceObject(Sequence sequence) {

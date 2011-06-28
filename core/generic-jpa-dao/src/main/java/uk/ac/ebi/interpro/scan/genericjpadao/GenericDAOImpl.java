@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
+import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -44,6 +45,8 @@ import java.util.List;
 
 public class GenericDAOImpl<T, PK extends Serializable>
         implements GenericDAO<T, PK> {
+
+    private static final Logger LOGGER = Logger.getLogger(GenericDAOImpl.class.getName());
 
     protected EntityManager entityManager;
 
@@ -96,7 +99,8 @@ public class GenericDAOImpl<T, PK extends Serializable>
     @Transactional
     public T insert(T newInstance) {
         if (entityManager.contains(newInstance)) {
-            throw new IllegalArgumentException("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
+            LOGGER.debug("The Entity that you are attempting to store has already been persisted.");
+            return newInstance;
         }
         entityManager.persist(newInstance);
         return newInstance;
@@ -115,7 +119,8 @@ public class GenericDAOImpl<T, PK extends Serializable>
     public Collection<T> insert(Collection<T> newInstances) {
         for (T newInstance : newInstances) {
             if (entityManager.contains(newInstance)) {
-                throw new IllegalArgumentException("EntityManager.insert has been called on an entity " + newInstance + " that has already been persisted.");
+                LOGGER.debug("The Entity that you are attempting to store has already been persisted.");
+                continue;
             }
             entityManager.persist(newInstance);
         }

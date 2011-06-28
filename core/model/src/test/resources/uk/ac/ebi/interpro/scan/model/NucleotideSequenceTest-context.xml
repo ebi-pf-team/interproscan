@@ -14,7 +14,7 @@
     <import resource="oxm-context.xml"/>
 
     <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.NucleotideSequence" />
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.NucleotideSequence"/>
     </bean>
 
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
@@ -41,12 +41,15 @@
                 locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 121, 2, 108));
                 p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
 
-                // Create ORF
-                OpenReadingFrame orf = new OpenReadingFrame(3, 63, NucleotideSequenceStrand.SENSE);
-                orf.addProtein(p);
+
 
                 // Create nucleotide sequence
                 NucleotideSequence ns = new NucleotideSequence("CCGGAAGTTATTCACATTTATATGCGGAACCTCATATAAAATGTGAAAAGAAGGAATGCATGGAATGAATATTGGACAAAAAGTACTGTTCGAACTTAAAA");
+
+                // Create ORF
+                OpenReadingFrame orf = new OpenReadingFrame(3, 63, NucleotideSequenceStrand.SENSE);
+                orf.setProtein(p);
+
                 ns.addCrossReference(new NucleotideSequenceXref("ENA", "AP009179", "AP009179.1"));
                 ns.addOpenReadingFrame(orf);
                 return ns;

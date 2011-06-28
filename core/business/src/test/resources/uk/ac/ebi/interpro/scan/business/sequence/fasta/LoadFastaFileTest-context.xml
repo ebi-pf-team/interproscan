@@ -9,7 +9,7 @@
     <!-- Test stuff - move to a different spring-config.xml file. -->
 
     <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
-        <property name="proteinLoader" ref="proteinLoader"/>
+        <property name="sequenceLoader" ref="proteinLoader"/>
     </bean>
 
     <bean id="fastaFile" class="org.springframework.core.io.ClassPathResource">
@@ -20,8 +20,9 @@
         <property name="proteinInsertBatchSize" value="200"/>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="proteinPrecalcLookupBatchSize" value="1"/>
+        <property name="getOrfOutput" value="false"/>
     </bean>
 
-    <bean id="proteinLoadListener" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.NoopProteinLoadListener"/>
+    <bean id="sequenceLoadListener" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.NoopSequenceLoadListener"/>
 
 </beans>

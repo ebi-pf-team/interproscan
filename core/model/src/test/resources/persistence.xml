@@ -36,6 +36,10 @@
         <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch</class>
 
+        <class>uk.ac.ebi.interpro.scan.model.OpenReadingFrame</class>
+        <class>uk.ac.ebi.interpro.scan.model.NucleotideSequence</class>
+        <class>uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref</class>
+
         <!-- Concrete Locations. -->
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
@@ -69,14 +73,14 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
 
         <properties>
-            <property name="hibernate.show_sql"             value="${mvn.hibernate.show_sql}"/>
-            <property name="hibernate.format_sql"           value="${mvn.hibernate.format_sql}"/>
+            <property name="hibernate.show_sql" value="${mvn.hibernate.show_sql}"/>
+            <property name="hibernate.format_sql" value="${mvn.hibernate.format_sql}"/>
             <property name="hibernate.connection.driver_class" value="${mvn.i5.database.driver}"/>
-            <property name="hibernate.connection.url"       value="${mvn.i5.database.connection.url}"/>
-            <property name="hibernate.connection.username"  value="${mvn.i5.database.username}"/>
-            <property name="hibernate.connection.password"  value="${mvn.i5.database.password}"/>
-            <property name="hibernate.dialect"              value="${mvn.hibernate.dialect}"/>
-            <property name="hibernate.hbm2ddl.auto"         value="${mvn.hibernate.hbm2ddl.auto}"/>
+            <property name="hibernate.connection.url" value="${mvn.i5.database.connection.url}"/>
+            <property name="hibernate.connection.username" value="${mvn.i5.database.username}"/>
+            <property name="hibernate.connection.password" value="${mvn.i5.database.password}"/>
+            <property name="hibernate.dialect" value="${mvn.hibernate.dialect}"/>
+            <property name="hibernate.hbm2ddl.auto" value="${mvn.hibernate.hbm2ddl.auto}"/>
             <!-- Note - the "oracleNamingStrategy" does the following:
 
             * guarantees that table / column / index identifiers are no longer than 30 characters.

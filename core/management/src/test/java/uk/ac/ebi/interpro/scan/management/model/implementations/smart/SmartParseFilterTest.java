@@ -6,10 +6,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser;
-import uk.ac.ebi.interpro.scan.io.sequence.FastaSequenceReader;
-import uk.ac.ebi.interpro.scan.io.sequence.SequenceReader;
-import uk.ac.ebi.interpro.scan.io.sequence.SequenceRecord;
-import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
@@ -21,7 +18,6 @@ import uk.ac.ebi.interpro.scan.persistence.raw.SmartHmmer2RawMatchDAO;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,7 +26,7 @@ import static junit.framework.Assert.assertEquals;
 /**
  * Tests {@link HmmPfamParser<SmartRawMatch>} and {@link SmartPostProcessing}.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 
@@ -48,7 +44,7 @@ public class SmartParseFilterTest {
     private SignatureLibraryReleaseDAO signatureLibraryReleaseDAO;
 
     @Resource
-    private SignatureDAO signatureDAO;    
+    private SignatureDAO signatureDAO;
 
     @Resource
     private SmartHmmer2RawMatchDAO rawMatchDAO;
@@ -72,7 +68,7 @@ public class SmartParseFilterTest {
     private Long topProtein;
 
     @Resource
-    private Long expectedProteins;    
+    private Long expectedProteins;
 
     @Resource
     private Long expectedRawMatches;
@@ -114,8 +110,8 @@ public class SmartParseFilterTest {
 //                }
 //        );
 //        reader.read(fastaFile);
-//        ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteins);
-//        assertEquals(expectedProteins.longValue(), persistedProteins.getNewProteins().size());        
+//        ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewNucleotideSequences(proteins);
+//        assertEquals(expectedProteins.longValue(), persistedProteins.getNewSequences().size());
 
         // Insert signatures -- we're saving time and memory by only inserting the signatures we need
 //        SignatureLibraryRelease release =
@@ -130,7 +126,7 @@ public class SmartParseFilterTest {
 //        signatureLibraryReleaseDAO.insert(release);
 //        signatureDAO.insert(release.getSignatures());
 //        filteredMatchDAO.persist(filteredMatches.values());
-        
+
     }
 
     private long getMatchCount(Collection<RawProtein<SmartRawMatch>> proteins) {

@@ -145,7 +145,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     }
 
     /**
-     * Insert a List of new Model instances.
+     * Insert a List of new Protein instances.
      *
      * @param newInstances being a List of instances to persist.
      * @return the Collection of persisted instances.
