@@ -102,7 +102,7 @@
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <!-- STEP 4: Filter and persist raw results -->
+    <!-- STEP 4: Filter and persist filtered results -->
     <bean id="stepPantherPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherPostProcessingStep"
           parent="abstractPantherStep">
@@ -118,12 +118,12 @@
     <!-- ######################## Dependencies ############################  -->
     <bean id="pantherParser" class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser">
         <!--TODO: Figure out how to handle signature library release-->
-        <constructor-arg value="180510"/>
+        <constructor-arg value="7.0"/>
     </bean>
 
     <bean id="pantherPostProcessor"
           class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">
-        <constructor-arg value="-11.0"/>
+        <constructor-arg value="10e-11"/>
     </bean>
 
     <bean id="pantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>
