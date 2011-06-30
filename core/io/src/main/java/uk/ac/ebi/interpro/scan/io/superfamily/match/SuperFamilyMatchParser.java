@@ -1,11 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.superfamily.match;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 
 import java.io.*;
 import java.util.*;
@@ -55,7 +52,7 @@ public class SuperFamilyMatchParser {
      * @return The set of raw protein objects described within the file
      * @throws java.io.IOException
      */
-    public Map<String, RawProtein<SuperFamilyRawMatch>> parse(InputStream is) throws IOException {
+    public Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> parse(InputStream is) throws IOException {
 //        File file = new File(pathToFile);
 //        if (file == null) {
 //            throw new NullPointerException("SuperFamily binary output file resource is null");
@@ -67,25 +64,25 @@ public class SuperFamilyMatchParser {
 //            throw new IllegalStateException(file.getName() + " is not readable");
 //        }
 
-        final Map<String, RawProtein<SuperFamilyRawMatch>> data = new HashMap<String, RawProtein<SuperFamilyRawMatch>>();
+        final Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> data = new HashMap<String, RawProtein<SuperFamilyHmmer3RawMatch>>();
 
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
             String line = null;
             while ((line = reader.readLine()) != null) {
-                Set<SuperFamilyRawMatch> rawMatches = parseLine(line);
-                SuperFamilyRawMatch rawMatch = null;
-                Iterator<SuperFamilyRawMatch> i = rawMatches.iterator();
+                Set<SuperFamilyHmmer3RawMatch> rawMatches = parseLine(line);
+                SuperFamilyHmmer3RawMatch rawMatch = null;
+                Iterator<SuperFamilyHmmer3RawMatch> i = rawMatches.iterator();
                 while (i.hasNext()) {
                     rawMatch = i.next();
                     String sequenceId = rawMatch.getSequenceIdentifier();
                     if (data.containsKey(sequenceId)) {
-                        RawProtein<SuperFamilyRawMatch> rawProtein = data.get(sequenceId);
+                        RawProtein<SuperFamilyHmmer3RawMatch> rawProtein = data.get(sequenceId);
                         rawProtein.addMatch(rawMatch);
                     }
                     else {
-                        RawProtein<SuperFamilyRawMatch> rawProtein = new RawProtein<SuperFamilyRawMatch>(sequenceId);
+                        RawProtein<SuperFamilyHmmer3RawMatch> rawProtein = new RawProtein<SuperFamilyHmmer3RawMatch>(sequenceId);
                         rawProtein.addMatch(rawMatch);
                         data.put(sequenceId, rawProtein);
                     }
@@ -108,9 +105,9 @@ public class SuperFamilyMatchParser {
      * @param line Line read from input file.   @return {@link uk.ac.ebi.interpro.scan.model.raw.RawMatch} instance using values from parameters
      * @return Raw matches
      */
-    private Set<SuperFamilyRawMatch> parseLine(String line) {
+    private Set<SuperFamilyHmmer3RawMatch> parseLine(String line) {
 
-        Set<SuperFamilyRawMatch> rawMatches = new HashSet<SuperFamilyRawMatch>();
+        Set<SuperFamilyHmmer3RawMatch> rawMatches = new HashSet<SuperFamilyHmmer3RawMatch>();
 
         if (line == null || line.equals("")) {
             LOGGER.warn("Ignoring null or empty line!");
@@ -212,7 +209,7 @@ public class SuperFamilyMatchParser {
                         LOGGER.warn("Ignoring line with unexpected format (of match region): " + line);
                         continue; // Raw matches will therefore be empty or incomplete
                     }
-                    SuperFamilyRawMatch match = new SuperFamilyRawMatch(sequenceId, ssfModelId,
+                    SuperFamilyHmmer3RawMatch match = new SuperFamilyHmmer3RawMatch(sequenceId, ssfModelId,
                             "1.75", from, to, evalue, modelMatchStartPos,
                             aligmentToModel, familyEvalue, scopDomainId, scopFamilyId);
                     rawMatches.add(match);
