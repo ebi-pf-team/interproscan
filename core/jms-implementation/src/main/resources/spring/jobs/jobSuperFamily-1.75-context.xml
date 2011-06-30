@@ -43,7 +43,7 @@
         <property name="stepDescription" value="Run HMMER 3.0"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="-E 10 -Z 15438"/>
-        <property name="fullPathToHmmFile" value="${superFamily.hmm.path.3.0}"/>
+        <property name="fullPathToHmmFile" value="${superfamily.hmm.path.3.0}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
@@ -78,7 +78,7 @@
     <!--parent="abstractSuperFamilyStep-1.75">-->
     <!--<property name="dependsUpon" ref="stepSuperFamilyRunBinary-1.75"/>-->
     <!--<property name="stepDescription" value="Parse the output from the SuperFamily binary and persist as filtered matches"/>-->
-    <!--<property name="serialGroup" value="PARSE_PRODOM"/>-->
+    <!--<property name="serialGroup" value="PARSE_SUPERFAMILY"/>-->
     <!--<property name="retries" value="3"/>-->
     <!--<property name="proDomBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>-->
     <!--<property name="rawMatchDAO" ref="superfamilyMatchDAO-1.75"/>-->
