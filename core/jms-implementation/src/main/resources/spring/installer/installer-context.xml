@@ -28,6 +28,7 @@
                 <ref bean="tigrFam_10.1"/>
                 <ref bean="smart_6.1"/>
                 <ref bean="Panther_7.0"/>
+                <ref bean="SuperFamily_1.75"/>
             </list>
         </property>
     </bean>
@@ -163,6 +164,14 @@
         <property name="releaseVersionNumber" value="6.1"/>
         <property name="storeAbstract" value="${signature.store.abstracts}"/>
         <property name="analysisJobId" value="jobSMART"/>
+    </bean>
+
+    <bean id="SuperFamily_1.75" class="uk.ac.ebi.interpro.scan.io.superfamily.model.SuperFamilyModelParserTest">
+        <property name="signatureLibrary" value="SUPERFAMILY"/>
+        <property name="modelFile" value="file:${superfamily.hmm.path.3.0}"/>
+        <property name="releaseVersionNumber" value="1.75"/>
+        <property name="storeAbstract" value="${signature.store.abstracts}"/>
+        <property name="analysisJobId" value="jobSuperFamily-1.75"/>
     </bean>
 
 </beans>

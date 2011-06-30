@@ -17,33 +17,41 @@ import javax.persistence.Transient;
  * @version $Id$
  */
 @Entity
-@javax.persistence.Table(name = SuperFamilyRawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = SuperFamilyRawMatch.TABLE_NAME, indexes = {
+@javax.persistence.Table(name = SuperFamilyHmmer3RawMatch.TABLE_NAME)
+@org.hibernate.annotations.Table(appliesTo = SuperFamilyHmmer3RawMatch.TABLE_NAME, indexes = {
         @Index(name = "G3D_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
         @Index(name = "G3D_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
         @Index(name = "G3D_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
         @Index(name = "G3D_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
         @Index(name = "G3D_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
 })
-public class SuperFamilyRawMatch extends RawMatch {
+public class SuperFamilyHmmer3RawMatch extends RawMatch {
 
     @Transient
-    public static final String TABLE_NAME = "SUPERFAMILY_RAW_MATCH";
+    public static final String TABLE_NAME = "SUPERFAMILY_HMMER3_RAW_MATCH";
 
+    @Column(nullable = false)
     private double evalue;
+
+    @Column(nullable = false)
     private int modelMatchStartPos;
+
+    @Column(nullable = false, length = 4000)
     private String aligmentToModel;
+
+    @Column(nullable = false)
     private double familyEvalue;
+
+    @Column(nullable = false)
     private int scopDomainId;
+
+    @Column(nullable = false)
     private int scopFamilyId;
 
-//    @Column(nullable = false, length = 4000)
-//    private String cigarAlignment;
-
-    protected SuperFamilyRawMatch() {
+    protected SuperFamilyHmmer3RawMatch() {
     }
 
-    public SuperFamilyRawMatch(String sequenceIdentifier, String model,
+    public SuperFamilyHmmer3RawMatch(String sequenceIdentifier, String model,
                                 String signatureLibraryRelease,
                                 int locationStart, int locationEnd,
                                 double evalue, int modelMatchStartPos,
@@ -110,9 +118,9 @@ public class SuperFamilyRawMatch extends RawMatch {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof SuperFamilyRawMatch))
+        if (!(o instanceof SuperFamilyHmmer3RawMatch))
             return false;
-        final SuperFamilyRawMatch m = (SuperFamilyRawMatch) o;
+        final SuperFamilyHmmer3RawMatch m = (SuperFamilyHmmer3RawMatch) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
                 .append(getEvalue(), m.getEvalue())

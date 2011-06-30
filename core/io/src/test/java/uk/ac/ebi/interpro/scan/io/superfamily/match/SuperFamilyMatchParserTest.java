@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,13 +33,13 @@ public class SuperFamilyMatchParserTest extends TestCase {
         // Run test method
         SuperFamilyMatchParser parser = new SuperFamilyMatchParser();
         InputStream inputStream = new FileInputStream(TEST_FILE_NAME);
-        Map<String, RawProtein<SuperFamilyRawMatch>> actualResult = parser.parse(inputStream);
+        Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> actualResult = parser.parse(inputStream);
 
         // Compare actual result with expected result
         Assert.assertEquals(5, actualResult.size());
 
         for (String proteinId : actualResult.keySet()) {
-            RawProtein<SuperFamilyRawMatch> rawProtein = actualResult.get(proteinId);
+            RawProtein<SuperFamilyHmmer3RawMatch> rawProtein = actualResult.get(proteinId);
             int numMatches = rawProtein.getMatches().size();
             try {
                 int proteinIntId = Integer.parseInt(proteinId);
