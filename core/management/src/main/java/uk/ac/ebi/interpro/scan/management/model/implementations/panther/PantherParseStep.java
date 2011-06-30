@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
@@ -68,19 +69,29 @@ public final class PantherParseStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        delayForNfs();
+//        delayForNfs();
         InputStream stream = null;
         try {
             final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileNameTemplate);
             stream = new FileInputStream(outputFilePath);
             final PantherMatchParser parser = this.parser;
             Set<RawProtein<PantherRawMatch>> parsedResults = parser.parse(stream);
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("PANTHER: Retrieved " + parsedResults.size() + " proteins.");
+                int matchCount = 0;
+                for (final RawProtein rawProtein : parsedResults) {
+                    matchCount += rawProtein.getMatches().size();
+                }
+                LOGGER.debug("PANTHER: A total of " + matchCount + " raw matches.");
+            }
+
+            // Persist parsed raw matches
+            LOGGER.info("Persisting parsed raw matches...");
             rawMatchDAO.insertProteinMatches(parsedResults);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse Panther file " + outputFileNameTemplate, e);
-        }
-        finally {
+        } finally {
             if (stream != null) {
                 try {
                     stream.close();

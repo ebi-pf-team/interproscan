@@ -51,7 +51,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
 
     public PantherMatch(Signature signature, Set<PantherLocation> locations, double evalue, String familyName, double score) {
         super(signature, locations);
-        this.evalue = evalue;
+        setEvalue(evalue);
         this.familyName = familyName;
         this.score = score;
     }
@@ -113,6 +113,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
      * Location(s) of match on protein sequence
      *
      * @author Antony Quinn
+     * @author Maxim Scheremetjew, EMBL-EBI, InterPro
      */
     @Entity
     @Table(name = "panther_location")

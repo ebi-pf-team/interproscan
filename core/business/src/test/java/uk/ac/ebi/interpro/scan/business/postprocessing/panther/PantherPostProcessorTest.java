@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TODO: Description
@@ -29,7 +31,7 @@ public class PantherPostProcessorTest {
 
     @Before
     public void init() {
-        processor = new PantherPostProcessor(-11.0d);
+        processor = new PantherPostProcessor(10e-11);
     }
 
     @Test
@@ -40,15 +42,15 @@ public class PantherPostProcessorTest {
         RawProtein<PantherRawMatch> rawProtein = new RawProtein<PantherRawMatch>("1");
         //Build raw matches and add them to the raw protein
         PantherRawMatch rawMatch1 = getDefaultPantherRawMatchObj("1");
-        rawMatch1.setEvalue(-10.8d);
+        rawMatch1.setEvalue(10e-12);
         rawProtein.addMatch(rawMatch1);
         //
         PantherRawMatch rawMatch3 = getDefaultPantherRawMatchObj("2");
-        rawMatch3.setEvalue(-11.0d);
+        rawMatch3.setEvalue(10e-11);
         rawProtein.addMatch(rawMatch3);
         //
         PantherRawMatch rawMatch2 = getDefaultPantherRawMatchObj("3");
-        rawMatch2.setEvalue(-11.1d);
+        rawMatch2.setEvalue(10e-9);
         rawProtein.addMatch(rawMatch2);
         //
         rawMatches.add(rawProtein);
@@ -58,6 +60,9 @@ public class PantherPostProcessorTest {
         assertEquals(1, filteredMatches.size());
         for (RawProtein<PantherRawMatch> item : filteredMatches) {
             assertEquals("Actual match size is different to the expected match size!", 2, item.getMatches().size());
+            assertTrue("Raw match 1 should be part of the result set!", item.getMatches().contains(rawMatch1));
+            assertTrue("Raw match 3 should be part of the result set!", item.getMatches().contains(rawMatch3));
+            assertFalse("Raw match 2 shouldn't be part of the result set!", item.getMatches().contains(rawMatch2));
         }
     }
 
