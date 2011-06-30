@@ -164,9 +164,9 @@ public class GenericDAOImpl<T, PK extends Serializable>
 
     @Transactional(readOnly = true)
     public T readSpecific(String id) {
-        String queryString = String.format("select o from %s o where o.model = :id", unqualifiedModelClassName);
+        String queryString = String.format("select o from %s o where o.modelId = :modelId", unqualifiedModelClassName);
         Query query = this.entityManager.createQuery(queryString);
-        query.setParameter("model", id);
+        query.setParameter("modelId", id);
 
         // Originally this made use of query.getSingleResult
         // however this method throws an Exception if there is no
