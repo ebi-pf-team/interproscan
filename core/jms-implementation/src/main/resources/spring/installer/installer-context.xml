@@ -166,7 +166,7 @@
         <property name="analysisJobId" value="jobSMART"/>
     </bean>
 
-    <bean id="SuperFamily_1.75" class="uk.ac.ebi.interpro.scan.io.superfamily.model.SuperFamilyModelParserTest">
+    <bean id="SuperFamily_1.75" class="uk.ac.ebi.interpro.scan.io.superfamily.model.SuperFamilyModelParser">
         <property name="signatureLibrary" value="SUPERFAMILY"/>
         <property name="modelFile" value="file:${superfamily.hmm.path.3.0}"/>
         <property name="releaseVersionNumber" value="1.75"/>
