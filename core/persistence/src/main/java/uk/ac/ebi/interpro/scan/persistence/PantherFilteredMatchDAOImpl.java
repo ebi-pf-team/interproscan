@@ -1,7 +1,5 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.PantherMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -15,11 +13,12 @@ import java.util.Set;
 
 /**
  * @author Phil Jones, EMBL-EBI
+ * @author Maxim Scheremetjew
  * @version $Id$
  * @since 1.0
  */
 
-public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRawMatch, PantherMatch> {
+public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRawMatch, PantherMatch> implements PantherFilteredMatchDAO{
 
     /**
      * Sets the class of the model that the DOA instance handles.
@@ -43,8 +42,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Override
-    @Transactional
-    protected void persist(Collection<RawProtein<PantherRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<PantherRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<PantherRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {

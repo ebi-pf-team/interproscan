@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import org.hibernate.annotations.Index;
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
@@ -51,17 +52,17 @@ public class PantherRawMatch extends RawMatch {
                            int locationStart, int locationEnd,
                            double evalue, double score, String familyName) {
         super(sequenceIdentifier, model, SignatureLibrary.PANTHER, signatureLibraryRelease, locationStart, locationEnd);
-        this.evalue = evalue;
+        setEvalue(evalue);
         this.score = score;
         this.familyName = familyName;
     }
 
     public double getEvalue() {
-        return evalue;
+        return PersistenceConversion.get(evalue);
     }
 
     public void setEvalue(double evalue) {
-        this.evalue = evalue;
+        this.evalue = PersistenceConversion.set(evalue);
     }
 
     public String getFamilyName() {

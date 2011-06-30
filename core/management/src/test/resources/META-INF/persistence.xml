@@ -29,6 +29,7 @@
         <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.PantherMatch</class>
 
         <!-- Concrete Locations. -->
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
@@ -40,6 +41,7 @@
         <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch$CoilsLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PantherMatch$PantherLocation</class>
 
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
@@ -60,6 +62,7 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
 
         <class>uk.ac.ebi.interpro.scan.management.model.StepExecution</class>
         <class>uk.ac.ebi.interpro.scan.management.model.StepInstance</class>

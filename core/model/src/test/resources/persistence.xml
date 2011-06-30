@@ -35,6 +35,7 @@
         <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.PantherMatch</class>
 
         <class>uk.ac.ebi.interpro.scan.model.OpenReadingFrame</class>
         <class>uk.ac.ebi.interpro.scan.model.NucleotideSequence</class>
@@ -50,6 +51,7 @@
         <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch$CoilsLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PantherMatch$PantherLocation</class>
 
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
@@ -71,6 +73,7 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
 
         <properties>
             <property name="hibernate.show_sql" value="${mvn.hibernate.show_sql}"/>

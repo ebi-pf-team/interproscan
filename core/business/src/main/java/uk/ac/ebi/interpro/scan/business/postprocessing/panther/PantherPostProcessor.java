@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.panther;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -21,8 +22,12 @@ public class PantherPostProcessor implements Serializable {
 
     private double eValueCutoff;
 
-    public PantherPostProcessor(double eValueCutoff) {
-        this.eValueCutoff = eValueCutoff;
+    public PantherPostProcessor(double eValue) {
+        this.eValueCutoff = PersistenceConversion.set(eValue);
+    }
+
+    public double geteValueCutoff() {
+        return PersistenceConversion.get(eValueCutoff);
     }
 
     /**
@@ -54,7 +59,7 @@ public class PantherPostProcessor implements Serializable {
     private RawProtein<PantherRawMatch> processProtein(final RawProtein<PantherRawMatch> rawProtein) {
         RawProtein<PantherRawMatch> result = new RawProtein<PantherRawMatch>(rawProtein.getProteinIdentifier());
         for (PantherRawMatch rawProteinMatch : rawProtein.getMatches()) {
-            if (rawProteinMatch.getEvalue() <= eValueCutoff) {
+            if (rawProteinMatch.getEvalue() <= geteValueCutoff()) {
                 result.addMatch(rawProteinMatch);
             } else {
                 LOGGER.info("Discarding the following protein raw match because it is not hold on the evalue cutoff: " + rawProteinMatch.getModelId());

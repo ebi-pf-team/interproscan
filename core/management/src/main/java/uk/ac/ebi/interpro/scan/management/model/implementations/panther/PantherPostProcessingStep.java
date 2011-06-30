@@ -74,6 +74,5 @@ public class PantherPostProcessingStep extends Step {
         // Post process
         Set<RawProtein<PantherRawMatch>> filteredMatches = postProcessor.process(rawMatches);
         filteredMatchDAO.persist(filteredMatches);
-//            throw new IllegalStateException("IOException thrown when attempting to post process filtered PRINTS matches.", e);
     }
 }
