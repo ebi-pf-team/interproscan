@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Test the SuperFamily binary output file parser.
@@ -31,19 +32,18 @@ public class SuperFamilyMatchParserTest extends TestCase {
                 "Does it pass?");
 
         // Run test method
-        SuperFamilyMatchParser parser = new SuperFamilyMatchParser();
+        SuperFamilyHmmer3MatchParser parser = new SuperFamilyHmmer3MatchParser();
         InputStream inputStream = new FileInputStream(TEST_FILE_NAME);
-        Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> actualResult = parser.parse(inputStream);
+        Set<RawProtein<SuperFamilyHmmer3RawMatch>> actualResult = parser.parse(inputStream);
 
         // Compare actual result with expected result
         Assert.assertEquals(5, actualResult.size());
 
-        for (String proteinId : actualResult.keySet()) {
-            RawProtein<SuperFamilyHmmer3RawMatch> rawProtein = actualResult.get(proteinId);
+        for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein: actualResult) {
             int numMatches = rawProtein.getMatches().size();
             try {
-                int proteinIntId = Integer.parseInt(proteinId);
-                switch (proteinIntId) {
+                int proteinId = Integer.parseInt(rawProtein.getProteinIdentifier());
+                switch (proteinId) {
                     case 1:
                         Assert.assertEquals(4, numMatches);
                         break;
@@ -64,7 +64,7 @@ public class SuperFamilyMatchParserTest extends TestCase {
                 }
             }
             catch(NumberFormatException e) {
-                fail("Protein Id " + proteinId + " cannot be parsed as an integer");
+                fail("Protein Id " + rawProtein.getProteinIdentifier() + " cannot be parsed as an integer");
             }
         }
     }

@@ -2,18 +2,18 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.superfamily;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyMatchParser;
+import uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyHmmer3MatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAOImpl;
+import uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * This step parses the output from the SuperFamily Perl script and then persists the matches.
@@ -23,15 +23,15 @@ import java.util.Map;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ParseAndPersistSSFOutputStep extends Step {
+public class ParseAndPersistSuperFamilyOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParseAndPersistSSFOutputStep.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ParseAndPersistSuperFamilyOutputStep.class.getName());
 
     private String superFamilyBinaryOutputFileName;
 
-    private SuperFamilyMatchParser parser;
+    private SuperFamilyHmmer3MatchParser parser;
 
-    private SuperFamilyHmmer3FilteredMatchDAOImpl rawMatchDAO;
+    private SuperFamilyHmmer3FilteredMatchDAO rawMatchDAO;
 
     @Required
     public void setSuperFamilyBinaryOutputFileName(String superFamilyBinaryOutputFileName) {
@@ -39,12 +39,12 @@ public class ParseAndPersistSSFOutputStep extends Step {
     }
 
     @Required
-    public void setParser(SuperFamilyMatchParser parser) {
+    public void setParser(SuperFamilyHmmer3MatchParser parser) {
         this.parser = parser;
     }
 
     @Required
-    public void setRawMatchDAO(SuperFamilyHmmer3FilteredMatchDAOImpl rawMatchDAO) {
+    public void setRawMatchDAO(SuperFamilyHmmer3FilteredMatchDAO rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
     }
 
@@ -61,20 +61,17 @@ public class ParseAndPersistSSFOutputStep extends Step {
         // Retrieve raw matches from the SuperFamily binary output file
         InputStream inputStream = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, superFamilyBinaryOutputFileName);
-        Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> rawProteins;
+        Set<RawProtein<SuperFamilyHmmer3RawMatch>> rawProteins;
         try {
             inputStream = new FileInputStream(fileName);
             rawProteins = parser.parse(inputStream);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Parsed out " + rawProteins.size() + " proteins with matches from file " + fileName);
                 int count = 0;
-                for (String proteinId : rawProteins.keySet()) {
-                    Collection<SuperFamilyHmmer3RawMatch> matches = rawProteins.get(proteinId).getMatches();
-                    if (matches != null) {
-                        count += matches.size();
-                    }
+                for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein: rawProteins) {
+                    count += rawProtein.getMatches().size();
                 }
-                LOGGER.debug("A total of " + count + " matches from file " + fileName);
+                LOGGER.debug("A total of " + count + " raw matches from file " + fileName);
             }
             // NOTE: No post processing therefore no need to store the raw results here - we will just persist them to
             // the database later on...
@@ -90,21 +87,15 @@ public class ParseAndPersistSSFOutputStep extends Step {
             }
         }
 
-//        if (rawProteins != null && rawProteins.size() > 0) {
-//            // Lookup protein information
-//            Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<SuperFamilyHmmer3RawMatch>>(rawProteins.size());
-//            for (RawProtein<SuperFamilyHmmer3RawMatch> rawMatch : rawProteins) {
-//                proteinIdToRawProteinMap.put(rawMatch.getProteinIdentifier(), rawMatch);
-//            }
-//
-//            // Persist the matches
-//            rawMatchDAO.persist(rawProteins);
-//        }
-//        else {
-//            if (LOGGER.isDebugEnabled()) {
-//                LOGGER.debug("No SuperFamily matches were persisted as none were found in the SuperFamily binary output file: " + fileName);
-//            }
-//        }
+        if (rawProteins != null && rawProteins.size() > 0) {
+            // Persist the matches
+            rawMatchDAO.persist(rawProteins);
+        }
+        else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No SuperFamily matches were persisted as none were found in the SuperFamily binary output file: " + fileName);
+            }
+        }
 
 
     }

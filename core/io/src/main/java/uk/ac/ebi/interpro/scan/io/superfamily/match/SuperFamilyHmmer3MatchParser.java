@@ -38,9 +38,9 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class SuperFamilyMatchParser {
+public class SuperFamilyHmmer3MatchParser {
 
-    private static final Logger LOGGER = Logger.getLogger(SuperFamilyMatchParser.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SuperFamilyHmmer3MatchParser.class.getName());
 
     private static final Pattern MATCH_REGIONS_PATTERN = Pattern.compile("^\\d+\\-\\d+(\\,\\d+\\-\\d+)*$"); // E.g. "39-245,316-411"
 
@@ -52,27 +52,17 @@ public class SuperFamilyMatchParser {
      * @return The set of raw protein objects described within the file
      * @throws java.io.IOException
      */
-    public Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> parse(InputStream is) throws IOException {
-//        File file = new File(pathToFile);
-//        if (file == null) {
-//            throw new NullPointerException("SuperFamily binary output file resource is null");
-//        }
-//        if (!file.exists()) {
-//            throw new IllegalStateException(file.getName() + " does not exist");
-//        }
-//        if (!file.canRead()) {
-//            throw new IllegalStateException(file.getName() + " is not readable");
-//        }
+    public Set<RawProtein<SuperFamilyHmmer3RawMatch>> parse(InputStream is) throws IOException {
 
-        final Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> data = new HashMap<String, RawProtein<SuperFamilyHmmer3RawMatch>>();
+        Map<String, RawProtein<SuperFamilyHmmer3RawMatch>> data = new HashMap<String, RawProtein<SuperFamilyHmmer3RawMatch>>();
 
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 Set<SuperFamilyHmmer3RawMatch> rawMatches = parseLine(line);
-                SuperFamilyHmmer3RawMatch rawMatch = null;
+                SuperFamilyHmmer3RawMatch rawMatch;
                 Iterator<SuperFamilyHmmer3RawMatch> i = rawMatches.iterator();
                 while (i.hasNext()) {
                     rawMatch = i.next();
@@ -93,8 +83,10 @@ public class SuperFamilyMatchParser {
                 reader.close();
             }
         }
-        return data;
+
+        return new HashSet<RawProtein<SuperFamilyHmmer3RawMatch>>(data.values());
     }
+
 
     /**
      * Create raw matches from this line of text from the binary output.
@@ -114,7 +106,7 @@ public class SuperFamilyMatchParser {
             return rawMatches;
         }
 
-        String token = null;
+        String token;
 
         String sequenceId = null;
         String ssfModelId = null;
@@ -150,6 +142,23 @@ public class SuperFamilyMatchParser {
                             sequenceId = token;
                             break;
                         case 1:
+                            /*
+                             * Note that only the model name is included in the output from the SuperFamily perl binary,
+                             * in the example below token would now be "0037432":
+                             *
+                             * 13	0037432	39-245,316-411	2.20e-44	37	NFLNFYYMPLLVVVGSIGNILSVLVFFNTKLKKLSSSYYL...
+                             *
+                             * For the raw match we need to get the signature accession from the hmmlib file, in the
+                             * example below that would be "SSF81321":
+                             *
+                             * HMMER3/b [3.0 | March 2010]
+                             * NAME  0037432
+                             * ACC   81321
+                             * DESC  Family A G protein-coupled receptor-like
+                             * LENG  348
+                             * ...
+                             */
+                            // TODO Lookup signature Id!
                             ssfModelId = token;
                             break;
                         case 2:
