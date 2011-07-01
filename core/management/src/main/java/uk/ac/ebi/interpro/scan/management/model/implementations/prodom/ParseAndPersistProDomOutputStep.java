@@ -62,14 +62,14 @@ public class ParseAndPersistProDomOutputStep extends Step {
         // Retrieve raw matches from the ProDom binary output file
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, proDomBinaryOutputFileName);
-        Set<RawProtein<ProDomRawMatch>> rawMatches;
+        Set<RawProtein<ProDomRawMatch>> rawProteins;
         try {
             is = new FileInputStream(fileName);
-            rawMatches = parser.parse(is);
+            rawProteins = parser.parse(is);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Parsed out " + rawMatches.size() + " proteins with matches from file " + fileName);
+                LOGGER.debug("Parsed out " + rawProteins.size() + " proteins with matches from file " + fileName);
                 int count = 0;
-                for (RawProtein<ProDomRawMatch> rawProtein : rawMatches) {
+                for (RawProtein<ProDomRawMatch> rawProtein : rawProteins) {
                     count += rawProtein.getMatches().size();
                 }
                 LOGGER.debug("A total of " + count + " matches from file " + fileName);
@@ -88,15 +88,9 @@ public class ParseAndPersistProDomOutputStep extends Step {
             }
         }
 
-        if (rawMatches != null && rawMatches.size() > 0) {
-            // Lookup protein information
-            Map<String, RawProtein<ProDomRawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<ProDomRawMatch>>(rawMatches.size());
-            for (RawProtein<ProDomRawMatch> rawMatch : rawMatches) {
-                proteinIdToRawProteinMap.put(rawMatch.getProteinIdentifier(), rawMatch);
-            }
-
+        if (rawProteins != null && rawProteins.size() > 0) {
             // Persist the matches
-            rawMatchDAO.persist(rawMatches);
+            rawMatchDAO.persist(rawProteins);
         }
         else {
             if (LOGGER.isDebugEnabled()) {
