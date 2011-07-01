@@ -73,17 +73,17 @@
     </bean>
 
     <!-- STEP: Parse the SuperFamily binary output and persist the results in the database. No post processing required. -->
-    <!--<bean id="stepSuperFamilyParseAndPersistOutput-1.75"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.superfamily.ParseAndPersistSuperFamilyOutputStep"-->
-    <!--parent="abstractSuperFamilyStep-1.75">-->
-    <!--<property name="dependsUpon" ref="stepSuperFamilyRunBinary-1.75"/>-->
-    <!--<property name="stepDescription" value="Parse the output from the SuperFamily binary and persist as filtered matches"/>-->
-    <!--<property name="serialGroup" value="PARSE_SUPERFAMILY"/>-->
-    <!--<property name="retries" value="3"/>-->
-    <!--<property name="proDomBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--<property name="rawMatchDAO" ref="superfamilyMatchDAO-1.75"/>-->
-    <!--<property name="parser" ref="superfamilyRawOutputParser-1.75"/>-->
-    <!--</bean>-->
+    <bean id="stepSuperFamilyParseAndPersistOutput-1.75"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.superfamily.ParseAndPersistSuperFamilyOutputStep"
+          parent="abstractSuperFamilyStep-1.75">
+        <property name="dependsUpon" ref="stepSuperFamilyRunBinary-1.75"/>
+        <property name="stepDescription" value="Parse the output from the SuperFamily binary and persist as filtered matches"/>
+        <property name="serialGroup" value="PARSE_SUPERFAMILY"/>
+        <property name="retries" value="3"/>
+        <property name="superFamilyBinaryOutputFileName" ref="superFamilyBinaryOutputFileTemplate-1.75"/>
+        <property name="rawMatchDAO" ref="superFamilyHmmer3MatchDAO-1.75"/>
+        <property name="parser" ref="superFamilyHmmer3MatchParser-1.75"/>
+    </bean>
 
     <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
                writing to the directory at the same time) -->
@@ -114,15 +114,14 @@
         <constructor-arg value="[PROTSTART]_[PROTEND].ass3.std.out"/>
     </bean>
 
-    <!--<bean id="superfamilyRawOutputParser-1.75"-->
-    <!--class="uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyMatchParser">-->
-    <!--<constructor-arg value="1.75"/>-->
-    <!--</bean>-->
+    <bean id="superFamilyHmmer3MatchParser-1.75"
+          class="uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyHmmer3MatchParser">
+    </bean>
 
-    <!--<bean id="superfamilyMatchDAO-1.75"-->
-    <!--class="uk.ac.ebi.interpro.scan.persistence.SuperFamilyFilteredMatchDAOImpl">-->
-    <!--<constructor-arg value="1.75"/>-->
-    <!--</bean>-->
+    <bean id="superFamilyHmmer3MatchDAO-1.75"
+          class="uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAOImpl">
+        <constructor-arg value="1.75"/>
+    </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
