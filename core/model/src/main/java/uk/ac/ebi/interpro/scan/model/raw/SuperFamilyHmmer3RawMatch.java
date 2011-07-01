@@ -19,11 +19,11 @@ import javax.persistence.Transient;
 @Entity
 @javax.persistence.Table(name = SuperFamilyHmmer3RawMatch.TABLE_NAME)
 @org.hibernate.annotations.Table(appliesTo = SuperFamilyHmmer3RawMatch.TABLE_NAME, indexes = {
-        @Index(name = "G3D_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "G3D_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "G3D_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "G3D_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "G3D_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+        @Index(name = "SUPERFAMILY_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
+        @Index(name = "SUPERFAMILY_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
+        @Index(name = "SUPERFAMILY_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
+        @Index(name = "SUPERFAMILY_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
+        @Index(name = "SUPERFAMILY_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
 })
 public class SuperFamilyHmmer3RawMatch extends RawMatch {
 
