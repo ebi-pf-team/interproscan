@@ -131,6 +131,9 @@ public final class PantherBinaryStep extends RunBinaryStep {
         // FASTA file
         command.add("-i");
         command.add(fastaFilePath);
+        // Temporary directory
+        command.add("-T");
+        command.add(temporaryFileDirectory);
         return command;
     }
 }
