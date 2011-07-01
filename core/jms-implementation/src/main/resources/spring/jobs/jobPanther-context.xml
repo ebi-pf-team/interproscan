@@ -67,7 +67,7 @@
         <property name="hmmerPath" value="${binary.hmmer2.hmmsearch.path}"/>
         <!--Add additional arguments/parameter-->
         <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
-        <property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n"/>
+        <property name="binarySwitches" value="-D I -E 1e-3 -n"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
