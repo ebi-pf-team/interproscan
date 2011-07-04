@@ -113,6 +113,7 @@
         <property name="postProcessor" ref="pantherPostProcessor"/>
         <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
         <property name="filteredMatchDAO" ref="pantherFilteredMatchDAO"/>
+        <property name="retries" value="3"/>
     </bean>
 
     <!-- ######################## Dependencies ############################  -->
