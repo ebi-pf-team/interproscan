@@ -6,11 +6,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,13 +50,18 @@ public class SuperFamilyModelParserTest extends TestCase {
         // Compare actual result with expected result
         assertEquals(TEST_LIBRARY, actualResult.getLibrary());
         assertEquals(TEST_RELEASE_VERSION, actualResult.getVersion());
-        assertNotNull(actualResult.getSignatures());
-        assertEquals(2, actualResult.getSignatures().size());
 
-        for (Signature signature : actualResult.getSignatures()) {
+        Set<Signature> signatures = actualResult.getSignatures();
+        assertNotNull(signatures);
+        assertEquals(3, signatures.size());
+
+        for (Signature signature : signatures) {
             assertNotNull(signature);
-            assertNotNull(signature.getModels());
-            assertEquals(1, signature.getModels().size());
+
+            Map<String, Model> models = signature.getModels();
+
+            assertNotNull(models);
+            assertTrue(models.size() > 0 && models.size() <= 2);
 
             // Check the signature accession is in the correct format
             String acc = signature.getAccession();
@@ -66,6 +74,7 @@ public class SuperFamilyModelParserTest extends TestCase {
                 LOGGER.debug("Signature accession = " + signature.getAccession());
                 LOGGER.debug("Signature name = " + signature.getName());
                 LOGGER.debug("Signature description = " + signature.getDescription());
+                LOGGER.debug("Number of models = " + models.size());
             }
         }
 
