@@ -150,14 +150,14 @@
                 MatchesHolder holder = new MatchesHolder();
                 holder.addProtein(p);
 
-                return holder;                
+                return holder;
             ]]>
         </lang:inline-script>
     </lang:groovy>
     <bean id="pfamXml" class="java.lang.String">
         <constructor-arg>
             <value>
-                <![CDATA[                
+                <![CDATA[
                     <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
                                                        xmlns:pfam="http://pfam.sanger.ac.uk"
                                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -251,12 +251,12 @@
                 Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
                 p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
                 Signature signature = new Signature("SSF53098", "Ribonuclease H-like");
-                Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-                locations.add(new Hmmer2Match.Hmmer2Location(1, 237, 93.8, 2.4e-32, 1, 262, 470));
-                p.addMatch(new Hmmer2Match(signature, 93.8, 2.4e-32, locations));
+                Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
+                locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(1, 237));
+                p.addMatch(new SuperFamilyHmmer3Match(signature, 2.4e-32, locations));
 
                 // Create release
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.73");
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.75");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
                 MatchesHolder holder = new MatchesHolder();
@@ -278,16 +278,14 @@
                         <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                         <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
                         <matches>
-                            <hmmer2-match score="93.8" evalue="2.4E-32">
+                            <superfamilyhmmer3-match evalue="2.4E-32">
                                 <signature ac="SSF53098" name="Ribonuclease H-like">
-                                    <signature-library-release library="SUPERFAMILY" version="1.73" />
+                                    <signature-library-release library="SUPERFAMILY" version="1.75" />
                                 </signature>
                                 <locations>
-                                    <hmmer2-location start="1" end="237"
-                                                     score="93.8" evalue="2.4E-32"
-                                                     hmm-start="1" hmm-end="262" hmm-length="470"/>
+                                    <superfamilyhmmer3-location start="1" end="237"/>
                                 </locations>
-                            </hmmer2-match>
+                            </superfamilyhmmer3-match>
                         </matches>
                     </protein>
                 </protein-matches>
@@ -310,7 +308,7 @@
                 locations.add(new FingerPrintsMatch.FingerPrintsLocation(22, 38, 2.06e-10, 80.20, 2));
                 locations.add(new FingerPrintsMatch.FingerPrintsLocation(85, 101, 1.83e-13, 81.56, 3));
                 locations.add(new FingerPrintsMatch.FingerPrintsLocation(191, 207, 1.43e-10, 77.83, 4));
-                locations.add(new FingerPrintsMatch.FingerPrintsLocation(271, 289, 9.33e-15, 83.70, 5));                            
+                locations.add(new FingerPrintsMatch.FingerPrintsLocation(271, 289, 9.33e-15, 83.70, 5));
                 locations.add(new FingerPrintsMatch.FingerPrintsLocation(319, 332, 1.04e-09, 81.87, 6));
                 p.addMatch(new FingerPrintsMatch(signature, 2.2e-64, "IIIIII", locations));
 
