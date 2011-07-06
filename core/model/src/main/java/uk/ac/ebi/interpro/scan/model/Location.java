@@ -158,6 +158,7 @@ public abstract class Location implements Serializable {
         public LocationsType marshal(Set<? extends Location> locations) {
             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
             Set<Hmmer3Match.Hmmer3Location> hmmer3Locations = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
+            Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations = new LinkedHashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
             Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations = new LinkedHashSet<FingerPrintsMatch.FingerPrintsLocation>();
             Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations = new LinkedHashSet<BlastProDomMatch.BlastProDomLocation>();
             Set<PatternScanMatch.PatternScanLocation> patternScanLocations = new LinkedHashSet<PatternScanMatch.PatternScanLocation>();
@@ -169,6 +170,8 @@ public abstract class Location implements Serializable {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
                 } else if (l instanceof Hmmer3Match.Hmmer3Location) {
                     hmmer3Locations.add((Hmmer3Match.Hmmer3Location) l);
+                } else if (l instanceof SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) {
+                    superFamilyHmmer3Locations.add((SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) l);
                 } else if (l instanceof FingerPrintsMatch.FingerPrintsLocation) {
                     fingerPrintsLocations.add((FingerPrintsMatch.FingerPrintsLocation) l);
                 } else if (l instanceof BlastProDomMatch.BlastProDomLocation) {
@@ -185,7 +188,7 @@ public abstract class Location implements Serializable {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
-            return new LocationsType(hmmer2Locations, hmmer3Locations, fingerPrintsLocations, blastProDomLocations,
+            return new LocationsType(hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
                     patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations);
         }
 
@@ -197,6 +200,7 @@ public abstract class Location implements Serializable {
             Set<Location> locations = new LinkedHashSet<Location>();
             locations.addAll(locationsType.getHmmer2Locations());
             locations.addAll(locationsType.getHmmer3Locations());
+            locations.addAll(locationsType.getSuperFamilyHmmer3Locations());
             locations.addAll(locationsType.getFingerPrintsLocations());
             locations.addAll(locationsType.getBlastProDomLocations());
             locations.addAll(locationsType.getPatternScanLocations());
@@ -219,6 +223,9 @@ public abstract class Location implements Serializable {
         @XmlElement(name = "hmmer3-location")
         private final Set<Hmmer3Match.Hmmer3Location> hmmer3Locations;
 
+        @XmlElement(name = "superfamilyhmmer3-location")
+        private final Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations;
+
         @XmlElement(name = "fingerprints-location")
         private final Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations;
 
@@ -240,6 +247,7 @@ public abstract class Location implements Serializable {
         private LocationsType() {
             hmmer2Locations = null;
             hmmer3Locations = null;
+            superFamilyHmmer3Locations = null;
             fingerPrintsLocations = null;
             blastProDomLocations = null;
             patternScanLocations = null;
@@ -250,6 +258,7 @@ public abstract class Location implements Serializable {
 
         public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
                              Set<Hmmer3Match.Hmmer3Location> hmmer3Locations,
+                             Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations,
                              Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations,
                              Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations,
                              Set<PatternScanMatch.PatternScanLocation> patternScanLocations,
@@ -258,6 +267,7 @@ public abstract class Location implements Serializable {
                              Set<CoilsMatch.CoilsLocation> coilsLocations) {
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
+            this.superFamilyHmmer3Locations = superFamilyHmmer3Locations;
             this.fingerPrintsLocations = fingerPrintsLocations;
             this.blastProDomLocations = blastProDomLocations;
             this.patternScanLocations = patternScanLocations;
@@ -272,6 +282,10 @@ public abstract class Location implements Serializable {
 
         public Set<Hmmer3Match.Hmmer3Location> getHmmer3Locations() {
             return (hmmer3Locations == null ? Collections.<Hmmer3Match.Hmmer3Location>emptySet() : hmmer3Locations);
+        }
+
+        public Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> getSuperFamilyHmmer3Locations() {
+            return (superFamilyHmmer3Locations == null ? Collections.<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>emptySet() : superFamilyHmmer3Locations);
         }
 
         public Set<FingerPrintsMatch.FingerPrintsLocation> getFingerPrintsLocations() {

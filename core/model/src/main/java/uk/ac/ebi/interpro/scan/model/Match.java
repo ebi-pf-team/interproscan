@@ -160,6 +160,7 @@ public abstract class Match<T extends Location> implements Serializable {
         public MatchesType marshal(Set<Match> matches) {
             Set<Hmmer2Match> hmmer2Matches = new LinkedHashSet<Hmmer2Match>();
             Set<Hmmer3Match> hmmer3Matches = new LinkedHashSet<Hmmer3Match>();
+            Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches = new LinkedHashSet<SuperFamilyHmmer3Match>();
             Set<FingerPrintsMatch> fingerPrintsMatches = new LinkedHashSet<FingerPrintsMatch>();
             Set<BlastProDomMatch> proDomMatches = new LinkedHashSet<BlastProDomMatch>();
             Set<PatternScanMatch> patternScanMatches = new LinkedHashSet<PatternScanMatch>();
@@ -171,6 +172,8 @@ public abstract class Match<T extends Location> implements Serializable {
                     hmmer2Matches.add((Hmmer2Match) m);
                 } else if (m instanceof Hmmer3Match) {
                     hmmer3Matches.add((Hmmer3Match) m);
+                } else if (m instanceof SuperFamilyHmmer3Match) {
+                    superFamilyHmmer3Matches.add((SuperFamilyHmmer3Match) m);
                 } else if (m instanceof FingerPrintsMatch) {
                     fingerPrintsMatches.add((FingerPrintsMatch) m);
                 } else if (m instanceof BlastProDomMatch) {
@@ -187,7 +190,7 @@ public abstract class Match<T extends Location> implements Serializable {
                     throw new IllegalArgumentException("Unrecognised Match class: " + m);
                 }
             }
-            return new MatchesType(hmmer2Matches, hmmer3Matches, fingerPrintsMatches, proDomMatches,
+            return new MatchesType(hmmer2Matches, hmmer3Matches, superFamilyHmmer3Matches, fingerPrintsMatches, proDomMatches,
                     patternScanMatches, profileScanMatches, phobiusMatches, coilsMatches);
         }
 
@@ -199,6 +202,7 @@ public abstract class Match<T extends Location> implements Serializable {
             Set<Match> matches = new HashSet<Match>();
             matches.addAll(matchTypes.getHmmer2Matches());
             matches.addAll(matchTypes.getHmmer3Matches());
+            matches.addAll(matchTypes.getSuperFamilyHmmer3Matches());
             matches.addAll(matchTypes.getFingerPrintsMatches());
             matches.addAll(matchTypes.getProDomMatches());
             matches.addAll(matchTypes.getPatternScanMatches());
@@ -220,6 +224,9 @@ public abstract class Match<T extends Location> implements Serializable {
 
         @XmlElement(name = "hmmer3-match")
         private final Set<Hmmer3Match> hmmer3Matches;
+
+        @XmlElement(name = "superfamilyhmmer3-match")
+        private final Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches;
 
         @XmlElement(name = "fingerprints-match")
         private final Set<FingerPrintsMatch> fingerPrintsMatches;
@@ -243,6 +250,7 @@ public abstract class Match<T extends Location> implements Serializable {
         private MatchesType() {
             hmmer2Matches = null;
             hmmer3Matches = null;
+            superFamilyHmmer3Matches = null;
             fingerPrintsMatches = null;
             proDomMatches = null;
             patternScanMatches = null;
@@ -253,6 +261,7 @@ public abstract class Match<T extends Location> implements Serializable {
 
         public MatchesType(Set<Hmmer2Match> hmmer2Matches,
                            Set<Hmmer3Match> hmmer3Matches,
+                           Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches,
                            Set<FingerPrintsMatch> fingerPrintsMatches,
                            Set<BlastProDomMatch> proDomMatches,
                            Set<PatternScanMatch> patternScanMatches,
@@ -261,6 +270,7 @@ public abstract class Match<T extends Location> implements Serializable {
                            Set<CoilsMatch> coilsMatches) {
             this.hmmer2Matches = hmmer2Matches;
             this.hmmer3Matches = hmmer3Matches;
+            this.superFamilyHmmer3Matches = superFamilyHmmer3Matches;
             this.fingerPrintsMatches = fingerPrintsMatches;
             this.proDomMatches = proDomMatches;
             this.patternScanMatches = patternScanMatches;
@@ -275,6 +285,10 @@ public abstract class Match<T extends Location> implements Serializable {
 
         public Set<Hmmer3Match> getHmmer3Matches() {
             return (hmmer3Matches == null ? Collections.<Hmmer3Match>emptySet() : hmmer3Matches);
+        }
+
+        public Set<SuperFamilyHmmer3Match> getSuperFamilyHmmer3Matches() {
+            return (superFamilyHmmer3Matches == null ? Collections.<SuperFamilyHmmer3Match>emptySet() : superFamilyHmmer3Matches);
         }
 
         public Set<FingerPrintsMatch> getFingerPrintsMatches() {
