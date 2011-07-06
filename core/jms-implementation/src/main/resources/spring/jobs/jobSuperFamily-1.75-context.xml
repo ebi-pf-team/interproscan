@@ -87,19 +87,20 @@
 
     <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
                writing to the directory at the same time) -->
-    <!--<bean id="stepPromDomDeleteTempFiles-1.75"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-    <!--parent="abstractSuperFamilyStep-1.75">-->
-    <!--<property name="dependsUpon" ref="stepSuperFamilyParseAndPersistOutput-1.75"/>-->
-    <!--<property name="stepDescription"-->
-    <!--value="Delete the remaining temporary files following successful parsing and persistence"/>-->
-    <!--<property name="fileNameTemplate">-->
-    <!--<list>-->
-    <!--<ref bean="fastaFileNameTemplate"/>-->
-    <!--<ref bean="rawAnalaysisOutputFileTemplate"/>-->
-    <!--</list>-->
-    <!--</property>-->
-    <!--</bean>-->
+    <bean id="stepSuperFamilyDeleteTempFiles-1.75"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractSuperFamilyStep-1.75">
+        <property name="dependsUpon" ref="stepSuperFamilyParseAndPersistOutput-1.75"/>
+        <property name="stepDescription" value="Delete the remaining temporary files following successful parsing and persistence"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="superFamilyBinaryOutputFileTemplate-1.75"/>
+                <ref bean="superFamilyBinaryStandardOutputFileTemplate-1.75"/>
+            </list>
+        </property>
+    </bean>
 
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SuperFamily !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
