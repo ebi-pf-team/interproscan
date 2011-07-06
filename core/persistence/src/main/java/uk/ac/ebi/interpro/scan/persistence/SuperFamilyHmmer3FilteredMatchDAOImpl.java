@@ -41,7 +41,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
      * persist filtered matches.
      *
      * @param filteredProteins      being the Collection of filtered RawProtein objects to persist
-     * @param modelIdToSignatureMap a Map of signature accessions to Signature objects.
+     * @param modelIdToSignatureMap a Map of model IDs to Signature objects.
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Transactional
@@ -53,25 +53,25 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
             Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = null;
-            String currentSignatureAc = null;
+            String currentModelId = null;
             Double currentEvalue = null;
             Signature currentSignature = null;
             SuperFamilyHmmer3RawMatch lastRawMatch = null;
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) continue;
 
-                if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
-                    if (currentSignatureAc != null && currentEvalue != null) {
+                if (currentModelId == null || !currentModelId.equals(rawMatch.getModelId())) {
+                    if (currentModelId != null && currentEvalue != null) {
                         // Not the first...
                         protein.addMatch(new SuperFamilyHmmer3Match(currentSignature, currentEvalue, locations));
                     }
                     // Reset everything
                     locations = new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
-                    currentSignatureAc = rawMatch.getModelId();
+                    currentModelId = rawMatch.getModelId();
                     currentEvalue = rawMatch.getEvalue();
-                    currentSignature = modelIdToSignatureMap.get(currentSignatureAc);
+                    currentSignature = modelIdToSignatureMap.get(currentModelId);
                     if (currentSignature == null) {
-                        throw new IllegalStateException("Cannot find signature " + currentSignatureAc + " in the database.");
+                        throw new IllegalStateException("Cannot find model " + currentModelId + " in the database.");
                     }
                 }
                 locations.add(
