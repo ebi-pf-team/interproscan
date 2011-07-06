@@ -109,7 +109,7 @@ public class SuperFamilyHmmer3MatchParser {
         String token;
 
         String sequenceId = null;
-        String ssfModelId = null;
+        String modelId = null;
         String matchRegions = null;
         double evalue = 0.0;
         int modelMatchStartPos = 0;
@@ -142,24 +142,7 @@ public class SuperFamilyHmmer3MatchParser {
                             sequenceId = token;
                             break;
                         case 1:
-                            /*
-                             * Note that only the model name is included in the output from the SuperFamily perl binary,
-                             * in the example below token would now be "0037432":
-                             *
-                             * 13	0037432	39-245,316-411	2.20e-44	37	NFLNFYYMPLLVVVGSIGNILSVLVFFNTKLKKLSSSYYL...
-                             *
-                             * For the raw match we need to get the signature accession from the hmmlib file, in the
-                             * example below that would be "SSF81321":
-                             *
-                             * HMMER3/b [3.0 | March 2010]
-                             * NAME  0037432
-                             * ACC   81321
-                             * DESC  Family A G protein-coupled receptor-like
-                             * LENG  348
-                             * ...
-                             */
-                            // TODO Lookup signature Id!
-                            ssfModelId = token;
+                            modelId = token;
                             break;
                         case 2:
                             matchRegions = token;
@@ -218,7 +201,7 @@ public class SuperFamilyHmmer3MatchParser {
                         LOGGER.warn("Ignoring line with unexpected format (of match region): " + line);
                         continue; // Raw matches will therefore be empty or incomplete
                     }
-                    SuperFamilyHmmer3RawMatch match = new SuperFamilyHmmer3RawMatch(sequenceId, ssfModelId,
+                    SuperFamilyHmmer3RawMatch match = new SuperFamilyHmmer3RawMatch(sequenceId, modelId,
                             "1.75", from, to, evalue, modelMatchStartPos,
                             aligmentToModel, familyEvalue, scopDomainId, scopFamilyId);
                     rawMatches.add(match);
