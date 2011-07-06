@@ -37,7 +37,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
      * persist filtered matches.
      *
      * @param filteredProteins      being the Collection of filtered RawProtein objects to persist
-     * @param modelIdToSignatureMap a Map of signature accessions to Signature objects.
+     * @param modelIdToSignatureMap a Map of model IDs to Signature objects.
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Transactional
@@ -49,23 +49,23 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
             Set<BlastProDomMatch.BlastProDomLocation> locations = null;
-            String currentSignatureAc = null;
+            String currentModelId = null;
             Signature currentSignature = null;
             ProDomRawMatch lastRawMatch = null;
             for (ProDomRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) continue;
 
-                if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
-                    if (currentSignatureAc != null) {
+                if (currentModelId == null || !currentModelId.equals(rawMatch.getModelId())) {
+                    if (currentModelId != null) {
                         // Not the first...
                         protein.addMatch(new BlastProDomMatch(currentSignature, locations));
                     }
                     // Reset everything
                     locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
-                    currentSignatureAc = rawMatch.getModelId();
-                    currentSignature = modelIdToSignatureMap.get(currentSignatureAc);
+                    currentModelId = rawMatch.getModelId();
+                    currentSignature = modelIdToSignatureMap.get(currentModelId);
                     if (currentSignature == null) {
-                        throw new IllegalStateException("Cannot find ProDom signature " + currentSignatureAc + " in the database.");
+                        throw new IllegalStateException("Cannot find ProDom model " + currentModelId + " in the database.");
                     }
                 }
                 locations.add(
