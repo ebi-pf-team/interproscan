@@ -42,7 +42,7 @@
                 <constructor-arg ref="superfamilyObject"/>
                 <constructor-arg ref="superfamilyXml"/>
             </bean>
-        </entry>        
+        </entry>
         <!-- Non-HMM databases -->
         <entry key="PRINTS">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
@@ -67,9 +67,9 @@
                 <constructor-arg ref="proSiteProfilesObject"/>
                 <constructor-arg ref="proSiteProfilesXml"/>
             </bean>
-        </entry>        
+        </entry>
     </util:map>
-    
+
     <!-- HMM databases -->
 
     <lang:groovy id="gene3dObject">
@@ -132,7 +132,7 @@
                                            xmlns="http://www.ebi.ac.uk/schema/interpro"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
-                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">                
+                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
                     <signature ac="PF00001" name="7tm_2" type="family" desc="7 transmembrane receptor (rhodopsin family)">
                         <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins [pubmed:15774036]</abstract>
                         <models>
@@ -186,7 +186,7 @@
                                            xmlns="http://www.ebi.ac.uk/schema/interpro"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
-                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">                
+                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
                     <signature ac="PIRSF000743" name="RPO19" type="family" desc="DNA-directed RNA polymerase, RPO19 subunit">
                         <models>
                             <model ac="PIRSF000743" name="RPO19"/>
@@ -223,7 +223,7 @@
                                            xmlns="http://www.ebi.ac.uk/schema/interpro"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
-                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">                
+                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
                     <signature ac="SM00323" type="domain" name="RasGAP_2" desc="GTPase-activator protein for Ras-like GTPases">
                         <abstract>All alpha-helical domain that accelerates the GTPase activity of Ras, thereby "switching" it into an "off" position. Improved domain limits from structure.</abstract>
                         <models>
@@ -240,7 +240,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.73")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.75")
                 Signature signature = release.addSignature(
                         new Signature.Builder("SSF53098")
                                 .name("Ribonuclease H-like")
@@ -257,7 +257,7 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-library-release library="SUPERFAMILY" version="1.73"
+                <signature-library-release library="SUPERFAMILY" version="1.75"
                                            xmlns="http://www.ebi.ac.uk/schema/interpro"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
@@ -274,7 +274,7 @@
             </value>
         </constructor-arg>
     </bean>
-    
+
     <!-- Non-HMM databases -->
 
     <lang:groovy id="proDomObject">
@@ -428,7 +428,7 @@
                                            xmlns="http://www.ebi.ac.uk/schema/interpro"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
-                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">                
+                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
                     <signature ac="PR00579" name="RHODOPSIN" type="family" created="2005-12-25" updated="2010-10-18" md5="5ab17489095dd2836122eec0e91db82d">
                         <abstract>Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).</abstract>
                         <comment>RELAXIN is a 6-element fingerprint that provides a signature for the relaxins.</comment>
@@ -436,7 +436,7 @@
                         <xref db="PRINTS"   id="PR01913" name="NGFBETA" />
                         <xref db="INTERPRO" id="IPR020433" name="Nerve growth factor conserved site" />
                         <deprecated-ac>PR00458</deprecated-ac>
-                        <deprecated-ac>PR00459</deprecated-ac>              
+                        <deprecated-ac>PR00459</deprecated-ac>
                         <models>
                             <model ac="PR00579" md5="6bb17489095dd2836122eec0e91db85f"/>
                         </models>
@@ -450,6 +450,6 @@
                 ]]>
             </value>
         </constructor-arg>
-    </bean>        
-    
+    </bean>
+
 </beans>
