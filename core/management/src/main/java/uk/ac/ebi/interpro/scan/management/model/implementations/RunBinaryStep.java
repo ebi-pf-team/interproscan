@@ -84,7 +84,7 @@ abstract public class RunBinaryStep extends Step {
         delayForNfs();
         final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
         List<String> command = createCommand(stepInstance, temporaryFileDirectory);
-        LOGGER.debug("Running the following command: " + command);
+        LOGGER.info("Running the following command: " + command);
 
         CommandLineConversation clc = new CommandLineConversationImpl();
         try {

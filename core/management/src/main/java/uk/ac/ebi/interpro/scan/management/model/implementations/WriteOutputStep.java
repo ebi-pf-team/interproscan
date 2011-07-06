@@ -120,6 +120,12 @@ public class WriteOutputStep extends Step {
             writer.setMapToInterProEntries(mapToInterProEntries);
             writer.setMapToGo(mapToGO);
             LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
+            if (proteins != null) {
+                LOGGER.info("Loaded " + proteins.size() + " proteins...");
+                if (proteins.size() > 0 && proteins.get(0).getMatches().size() == 0) {
+                    LOGGER.info("Couldn't load protein matches!");
+                }
+            }
             for (Protein protein : proteins) {
                 writer.write(protein);
             }
