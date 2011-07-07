@@ -19,6 +19,7 @@
     <import resource="jobTIGRFAM-10.1-context.xml"/>
     <import resource="jobPIRSF-2.74-context.xml"/>
     <import resource="jobProDom-2006.1-context.xml"/>
+    <import resource="jobSuperFamily-1.75-context.xml"/>
 
     <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
 
@@ -50,6 +51,7 @@
                 <ref bean="jobTIGRFAM-9.0"/>
                 <ref bean="jobTIGRFAM-10.1"/>
                 <ref bean="jobPIRSF-2.74"/>
+                <ref bean="jobSuperFamily-1.75"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
