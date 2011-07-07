@@ -39,7 +39,7 @@
                 <ref bean="jobPfamA"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobGene3d"/>
-                <ref bean="jobPanther"/>
+                <!--<ref bean="jobPanther"/>-->
                 <ref bean="jobPRINTS"/>
                 <ref bean="jobCoils"/>
                 <ref bean="jobHAMAP"/>
