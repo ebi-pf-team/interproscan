@@ -4,10 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import javax.persistence.Query;
+import java.math.MathContext;
 import java.util.*;
 
 /**
@@ -84,7 +86,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         }
 
         final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
-        final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease);
+        final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
     }
 
@@ -110,31 +112,51 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      * @return
      */
     @Transactional(readOnly = true)
-    private Map<String, Signature> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
-        final Query query =
-                entityManager.createQuery(
-                        "select r from SignatureLibraryRelease r " +
-                                "where r.version = :version " +
-                                "and r.library = :signatureLibrary");
-        query.setParameter("signatureLibrary", signatureLibrary);
-        query.setParameter("version", signatureLibraryRelease);
-        @SuppressWarnings("unchecked") List<SignatureLibraryRelease> releaseList = query.getResultList();
-        if (releaseList.size() == 0) {
-            throw new IllegalStateException("No SignatureLibraryRelease found for "
-                    + signatureLibrary.getName() + " " + signatureLibraryRelease);
-        }
-        if (releaseList.size() > 1) {
-            throw new IllegalStateException("More than one SignatureLibraryRelease found for "
-                    + signatureLibrary.getName() + " " + signatureLibraryRelease);
-        }
-        Set<Signature> signatures = releaseList.get(0).getSignatures();
-        Map<String, Signature> map = new HashMap<String, Signature>(signatures.size());
-        for (Signature s : signatures) {
-            for (Model m : s.getModels().values()) {
-                map.put(m.getAccession(), s);
+    private Map<String, Signature> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease,
+                                                                   Collection<RawProtein<T>> rawProteins) {
+        //Model accession to signatures map
+        LOGGER.info("Creating model accession to signature map...");
+        final Map<String, Signature> result = new HashMap<String, Signature>();
+
+        List<String> signatureAccessions = new ArrayList<String>();
+        for (RawProtein<T> rawProtein : rawProteins) {
+            for (RawMatch rawMatch : rawProtein.getMatches()) {
+                signatureAccessions.add(rawMatch.getModelId());
             }
         }
-        return map;
+        LOGGER.info("... for " + signatureAccessions.size() + " signature accessions.");
+        for (int index = 0; index < signatureAccessions.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
+            int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
+            if (endIndex > signatureAccessions.size()) {
+                endIndex = signatureAccessions.size();
+            }
+            //Signature accession slice
+            final List<String> sigAccSlice = signatureAccessions.subList(index, endIndex);
+            LOGGER.info("Querying a batch of " + sigAccSlice.size() + " accessions.");
+//            final Query query =
+//                    entityManager.createQuery(
+//                            "select s from Signature s, SignatureLibraryRelease r " +
+//                                    "where s.accession in (:accession) " +
+//                                    "and r.version = :version " +
+//                                    "and r.library = :signatureLibrary");
+            final Query query =
+                    entityManager.createQuery(
+                            "select s from Signature s " +
+                                    "where s.accession in (:accession) " +
+                                    "and s.signatureLibraryRelease.version = :version " +
+                                    "and s.signatureLibraryRelease.library = :signatureLibrary");
+            query.setParameter("accession", sigAccSlice);
+            query.setParameter("signatureLibrary", signatureLibrary);
+            query.setParameter("version", signatureLibraryRelease);
+            @SuppressWarnings("unchecked") List<Signature> signatures = query.getResultList();
+
+            for (Signature s : signatures) {
+                for (Model m : s.getModels().values()) {
+                    result.put(m.getAccession(), s);
+                }
+            }
+        }
+        return result;
     }
 
 
@@ -147,7 +169,8 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      * @return a Map of protein IDs to Protein objects.
      */
     @Transactional(readOnly = true)
-    private Map<String, Protein> getProteinIdToProteinMap(Collection<RawProtein<T>> rawProteins) {
+    private Map<String, Protein> getProteinIdToProteinMap
+    (Collection<RawProtein<T>> rawProteins) {
         final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(rawProteins.size());
 
         final List<Long> proteinIds = new ArrayList<Long>(rawProteins.size());
