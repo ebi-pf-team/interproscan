@@ -64,6 +64,7 @@ public class PantherPostProcessingStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        LOGGER.info("Starting step with Id " + this.getId());
         // Retrieve raw results for protein range.
         Set<RawProtein<PantherRawMatch>> rawMatches = rawMatchDAO.getProteinsByIdRange(
                 stepInstance.getBottomProtein(),
@@ -73,6 +74,8 @@ public class PantherPostProcessingStep extends Step {
 
         // Post process
         Set<RawProtein<PantherRawMatch>> filteredMatches = postProcessor.process(rawMatches);
+        LOGGER.info("Finally persisting filtered raw matches.");
         filteredMatchDAO.persist(filteredMatches);
+        LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 }

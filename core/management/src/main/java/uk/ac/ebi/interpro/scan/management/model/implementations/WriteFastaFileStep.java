@@ -49,8 +49,10 @@ public class WriteFastaFileStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        LOGGER.info("Starting step with Id " + this.getId());
         String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
         List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        LOGGER.info("Writing " + proteins.size() + " proteins to FASTA file...");
         try {
             fastaFile.writeFastaFile(proteins, fastaFilePathName);
         } catch (IOException e) {
@@ -58,6 +60,7 @@ public class WriteFastaFileStep extends Step {
         } catch (WriteFastaFile.FastaFileWritingException e) {
             throw new IllegalStateException("WriteFastaFile.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
         }
+        LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 }
 
