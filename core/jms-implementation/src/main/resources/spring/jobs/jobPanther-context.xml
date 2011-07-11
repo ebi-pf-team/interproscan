@@ -12,7 +12,7 @@
         <property name="description"
                   value="The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a
                   unique resource that classifies genes by their functions, using published scientific experimental
-                  evidence and evolutionary relationships to predict function even in the absence of direct 
+                  evidence and evolutionary relationships to predict function even in the absence of direct
                   experimental evidence"/>
         <property name="analysis" value="true"/>
     </bean>
@@ -54,7 +54,7 @@
         <property name="dependsUpon" ref="stepPantherWriteFastaFile"/>
         <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
         <!--Add Perl command-->
-        <property name="perlCommand" value="${panther.perl.command}"/>
+        <property name="perlCommand" value="${perl.command}"/>
         <!--Add Perl parameter (in this case the Perl PERL5LIB)-->
         <property name="perlLibrary" value="${panther.perl.library}"/>
         <!--Panther Perl script-->

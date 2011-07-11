@@ -20,6 +20,7 @@ public class RunSuperFamilyAss3Step extends RunBinaryStep {
 
     private static final Logger LOGGER = Logger.getLogger(RunSuperFamilyAss3Step.class.getName());
 
+    private String perlCommand;
     private String fullPathToSuperFamilyAss3PerlScript;
     private String fullPathToSelfHitsFile;
     private String fullPathToClaFile;
@@ -28,6 +29,11 @@ public class RunSuperFamilyAss3Step extends RunBinaryStep {
     private String fastaFileNameTemplate;
     private String hmmer3ResultsFileNameTemplate;
     private String binaryOutputFileNameTemplate;
+
+    @Required
+    public void setPerlCommand(String perlCommand) {
+        this.perlCommand = perlCommand;
+    }
 
     @Required
     public void setFullPathToSuperFamilyAss3PerlScript(String fullPathToSuperFamilyAss3PerlScript) {
@@ -88,7 +94,7 @@ public class RunSuperFamilyAss3Step extends RunBinaryStep {
         final String binaryOutputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.binaryOutputFileNameTemplate);
 
         List<String> command = new ArrayList<String>();
-        command.add("perl"); // Run the perl script using installed version of Perl
+        command.add(this.perlCommand); // Run the perl script using installed version of Perl
         command.add(this.fullPathToSuperFamilyAss3PerlScript);
         command.addAll(this.getBinarySwitchesAsList());
         command.add("-s");
