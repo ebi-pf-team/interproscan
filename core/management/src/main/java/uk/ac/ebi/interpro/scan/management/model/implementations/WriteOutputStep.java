@@ -65,7 +65,7 @@ public class WriteOutputStep extends Step {
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-
+        LOGGER.info("Starting step with Id " + this.getId());
         final Map<String, String> parameters = stepInstance.getParameters();
         final String outputFormat = parameters.get(OUTPUT_FILE_FORMAT);
         final File outputFile = new File(parameters.get(OUTPUT_FILE_PATH_KEY));
@@ -97,6 +97,7 @@ public class WriteOutputStep extends Step {
                 LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
+        LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 
     private void outputToXML(File outputFile, StepInstance stepInstance) throws IOException {
@@ -119,15 +120,10 @@ public class WriteOutputStep extends Step {
             final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             writer.setMapToInterProEntries(mapToInterProEntries);
             writer.setMapToGo(mapToGO);
+            LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
+            if (proteins != null) {
+                LOGGER.info("Loaded " + proteins.size() + " proteins...");
 
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
-                if (proteins != null) {
-                    LOGGER.info("Loaded " + proteins.size() + " proteins...");
-                    if (proteins.size() > 0 && proteins.get(0).getMatches().size() == 0) {
-                        LOGGER.info("Couldn't load protein matches!");
-                    }
-                }
             }
 
             for (Protein protein : proteins) {

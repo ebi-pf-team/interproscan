@@ -69,7 +69,7 @@ public final class PantherParseStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-//        delayForNfs();
+        LOGGER.info("Starting step with Id " + this.getId());
         InputStream stream = null;
         try {
             final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileNameTemplate);
@@ -100,5 +100,6 @@ public final class PantherParseStep extends Step {
                 }
             }
         }
+        LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 }

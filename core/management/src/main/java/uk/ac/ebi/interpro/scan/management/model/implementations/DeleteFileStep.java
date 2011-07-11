@@ -38,6 +38,7 @@ public class DeleteFileStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        LOGGER.info("Starting step with Id " + this.getId());
         if (fileNameTemplate != null && fileNameTemplate.length > 0) {
             for (String fileName : fileNameTemplate) {
                 final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileName);
@@ -51,5 +52,6 @@ public class DeleteFileStep extends Step {
         else {
             throw new IllegalStateException("Delete file step called without specifying any files to delete");
         }
+        LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 }

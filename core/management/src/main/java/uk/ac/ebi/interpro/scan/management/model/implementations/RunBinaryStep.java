@@ -80,6 +80,7 @@ abstract public class RunBinaryStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        LOGGER.info("Starting step with Id " + this.getId());
         LOGGER.debug("About to run binary... some output should follow.");
         delayForNfs();
         final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
@@ -118,6 +119,7 @@ abstract public class RunBinaryStep extends Step {
             // TODO Look for a more specific Exception to throw here...
             throw new IllegalStateException(failureMessage.toString());
         }
+        LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 
     /**
