@@ -4,12 +4,10 @@ import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import javax.persistence.Query;
-import java.math.MathContext;
 import java.util.*;
 
 /**
@@ -131,8 +129,8 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                 endIndex = modelIDs.size();
             }
             //Signature accession slice
-            final List<String> sigAccSlice = modelIDs.subList(index, endIndex);
-            LOGGER.info("Querying a batch of " + sigAccSlice.size() + " model IDs.");
+            final List<String> modelIdsSlice = modelIDs.subList(index, endIndex);
+            LOGGER.info("Querying a batch of " + modelIdsSlice.size() + " model IDs.");
 //            final Query query =
 //                    entityManager.createQuery(
 //                            "select s from Signature s, SignatureLibraryRelease r " +
@@ -153,10 +151,10 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     entityManager.createQuery(
                             "select s from Signature s, Model m " +
                                     "where s.id = m.signature.id " +
-                                    "and s.accession in (:accession) " +
+                                    "and m.accession in (:accession) " +
                                     "and s.signatureLibraryRelease.version = :version " +
                                     "and s.signatureLibraryRelease.library = :signatureLibrary");
-            query.setParameter("accession", sigAccSlice);
+            query.setParameter("accession", modelIdsSlice);
             query.setParameter("signatureLibrary", signatureLibrary);
             query.setParameter("version", signatureLibraryRelease);
             @SuppressWarnings("unchecked") List<Signature> signatures = query.getResultList();
