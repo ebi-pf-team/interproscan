@@ -44,6 +44,7 @@
         <property name="stepDescription" value="Run ProDomBlast3i.pl perl script for selected proteins"/>
         <property name="binarySwitches" value="-p blastp -h 0 -f"/>
         <property name="retries" value="3"/>
+        <property name="perlCommand" value="${perl.command}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <!--<property name="fullPathToTempDirectory" value="${prodom.binary.tmp.path.2006.1}"/>--> <!-- Optional -->
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>

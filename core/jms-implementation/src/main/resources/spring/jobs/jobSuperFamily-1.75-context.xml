@@ -61,6 +61,7 @@
         <property name="stepDescription" value="Run ass3.pl perl script for selected proteins"/>
         <property name="binarySwitches" value="-e 0.0001 -t n  -f 1"/>
         <property name="retries" value="3"/>
+        <property name="perlCommand" value="${perl.command}"/>
         <property name="fullPathToSuperFamilyAss3PerlScript" value="${binary.superfamily.1.75.ass3.pl.path}"/>
         <property name="fullPathToSelfHitsFile" value="${superfamily.self.hits.path.1.75}"/>
         <property name="fullPathToClaFile" value="${superfamily.cla.path.1.75}"/>
