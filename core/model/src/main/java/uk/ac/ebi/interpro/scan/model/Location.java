@@ -165,6 +165,7 @@ public abstract class Location implements Serializable {
             Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations = new LinkedHashSet<ProfileScanMatch.ProfileScanLocation>();
             Set<PhobiusMatch.PhobiusLocation> phobiusLocations = new LinkedHashSet<PhobiusMatch.PhobiusLocation>();
             Set<CoilsMatch.CoilsLocation> coilsLocations = new LinkedHashSet<CoilsMatch.CoilsLocation>();
+            Set<PantherMatch.PantherLocation> pantherLocations = new LinkedHashSet<PantherMatch.PantherLocation>();
             for (Location l : locations) {
                 if (l instanceof Hmmer2Match.Hmmer2Location) {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
@@ -184,12 +185,14 @@ public abstract class Location implements Serializable {
                     phobiusLocations.add((PhobiusMatch.PhobiusLocation) l);
                 } else if (l instanceof CoilsMatch.CoilsLocation) {
                     coilsLocations.add((CoilsMatch.CoilsLocation) l);
+                } else if (l instanceof PantherMatch.PantherLocation) {
+                    pantherLocations.add((PantherMatch.PantherLocation) l);
                 } else {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
             return new LocationsType(hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
-                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations);
+                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations);
         }
 
         /**
@@ -207,6 +210,7 @@ public abstract class Location implements Serializable {
             locations.addAll(locationsType.getProfileScanLocations());
             locations.addAll(locationsType.getPhobiusLocations());
             locations.addAll(locationsType.getCoilsLocations());
+            locations.addAll(locationsType.getPantherLocations());
             return locations;
         }
 
@@ -244,6 +248,9 @@ public abstract class Location implements Serializable {
         @XmlElement(name = "coils-location")
         private final Set<CoilsMatch.CoilsLocation> coilsLocations;
 
+        @XmlElement(name = "panther-location")
+        private final Set<PantherMatch.PantherLocation> pantherLocations;
+
         private LocationsType() {
             hmmer2Locations = null;
             hmmer3Locations = null;
@@ -254,6 +261,7 @@ public abstract class Location implements Serializable {
             profileScanLocations = null;
             phobiusLocations = null;
             coilsLocations = null;
+            pantherLocations = null;
         }
 
         public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
@@ -264,7 +272,8 @@ public abstract class Location implements Serializable {
                              Set<PatternScanMatch.PatternScanLocation> patternScanLocations,
                              Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations,
                              Set<PhobiusMatch.PhobiusLocation> phobiusLocations,
-                             Set<CoilsMatch.CoilsLocation> coilsLocations) {
+                             Set<CoilsMatch.CoilsLocation> coilsLocations,
+                             Set<PantherMatch.PantherLocation> pantherLocations) {
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
             this.superFamilyHmmer3Locations = superFamilyHmmer3Locations;
@@ -274,6 +283,7 @@ public abstract class Location implements Serializable {
             this.profileScanLocations = profileScanLocations;
             this.phobiusLocations = phobiusLocations;
             this.coilsLocations = coilsLocations;
+            this.pantherLocations = pantherLocations;
         }
 
         public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {
@@ -312,6 +322,9 @@ public abstract class Location implements Serializable {
             return (coilsLocations == null ? Collections.<CoilsMatch.CoilsLocation>emptySet() : coilsLocations);
         }
 
+        public Set<PantherMatch.PantherLocation> getPantherLocations() {
+            return (pantherLocations == null ? Collections.<PantherMatch.PantherLocation>emptySet() : pantherLocations);
+        }
     }
 
     @Override
@@ -339,5 +352,4 @@ public abstract class Location implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
 }
