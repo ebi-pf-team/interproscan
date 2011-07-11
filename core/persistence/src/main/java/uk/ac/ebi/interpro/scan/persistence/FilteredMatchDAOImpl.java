@@ -118,31 +118,42 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         LOGGER.info("Creating model accession to signature map...");
         final Map<String, Signature> result = new HashMap<String, Signature>();
 
-        List<String> signatureAccessions = new ArrayList<String>();
+        List<String> modelIDs = new ArrayList<String>();
         for (RawProtein<T> rawProtein : rawProteins) {
             for (RawMatch rawMatch : rawProtein.getMatches()) {
-                signatureAccessions.add(rawMatch.getModelId());
+                modelIDs.add(rawMatch.getModelId());
             }
         }
-        LOGGER.info("... for " + signatureAccessions.size() + " signature accessions.");
-        for (int index = 0; index < signatureAccessions.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
+        LOGGER.info("... for " + modelIDs.size() + " model IDs.");
+        for (int index = 0; index < modelIDs.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
             int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
-            if (endIndex > signatureAccessions.size()) {
-                endIndex = signatureAccessions.size();
+            if (endIndex > modelIDs.size()) {
+                endIndex = modelIDs.size();
             }
             //Signature accession slice
-            final List<String> sigAccSlice = signatureAccessions.subList(index, endIndex);
-            LOGGER.info("Querying a batch of " + sigAccSlice.size() + " accessions.");
+            final List<String> sigAccSlice = modelIDs.subList(index, endIndex);
+            LOGGER.info("Querying a batch of " + sigAccSlice.size() + " model IDs.");
 //            final Query query =
 //                    entityManager.createQuery(
 //                            "select s from Signature s, SignatureLibraryRelease r " +
 //                                    "where s.accession in (:accession) " +
 //                                    "and r.version = :version " +
 //                                    "and r.library = :signatureLibrary");
+//            final Query query =
+//                    entityManager.createQuery(
+//                            "select s from Signature s " +
+//                                    "where s.accession in (:accession) " +
+//                                    "and s.signatureLibraryRelease.version = :version " +
+//                                    "and s.signatureLibraryRelease.library = :signatureLibrary");
+//            query.setParameter("accession", sigAccSlice);
+//            query.setParameter("signatureLibrary", signatureLibrary);
+//            query.setParameter("version", signatureLibraryRelease);
+            //Inner join
             final Query query =
                     entityManager.createQuery(
-                            "select s from Signature s " +
-                                    "where s.accession in (:accession) " +
+                            "select s from Signature s, Model m " +
+                                    "where s.id = m.signature.id " +
+                                    "and s.accession in (:accession) " +
                                     "and s.signatureLibraryRelease.version = :version " +
                                     "and s.signatureLibraryRelease.library = :signatureLibrary");
             query.setParameter("accession", sigAccSlice);
