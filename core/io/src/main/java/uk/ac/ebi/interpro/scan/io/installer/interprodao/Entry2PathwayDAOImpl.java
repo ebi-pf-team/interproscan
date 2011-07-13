@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.installer.interprodao;
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -25,6 +27,9 @@ import java.util.List;
  */
 @Repository
 public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(Entry2PathwayDAOImpl.class.getName());
+
     private JdbcTemplate jdbcTemplate;
 
     @Resource
@@ -37,34 +42,36 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
 
     public Collection<PathwayXref> getPathwayXrefsByEntryAc(String entryAc) {
         List<PathwayXref> result = null;
-        try {
-            result = this.jdbcTemplate
-                    .query(
-                            "SELECT ENTRY_AC, DBCODE, AC, NAME FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC=?",
-                            new Object[]{"IPR018382"},
-                            new RowMapper<PathwayXref>() {
-                                public PathwayXref mapRow(ResultSet rs, int rowNum) throws SQLException {
-                                    String name = rs.getString("name");
-                                    String identifier = rs.getString("ac");
-                                    String dbcode = rs.getString("dbcode");
-                                    PathwayXref entry = new PathwayXref(dbcode, identifier, name);
-                                    return entry;
-                                }
-                            });
+        if (isDatabaseAlive()) {
+            try {
+                result = this.jdbcTemplate
+                        .query(
+                                "SELECT ENTRY_AC, DBCODE, AC, NAME FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC=?",
+                                new Object[]{entryAc},
+                                new RowMapper<PathwayXref>() {
+                                    public PathwayXref mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                        String name = rs.getString("name");
+                                        String identifier = rs.getString("ac");
+                                        String dbcode = rs.getString("dbcode");
+                                        PathwayXref entry = new PathwayXref(dbcode, identifier, name);
+                                        return entry;
+                                    }
+                                });
 
-        } catch (Exception e) {
-//            log.warn("Could not perform database query. It might be that the JDBC connection could not build" +
-//                    " or is wrong configured. For more info take a look at the stack trace!", e);
+            } catch (Exception e) {
+                LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
+                        "or is wrong configured. For more info take a look at the stack trace!", e);
+            }
         }
         return result;
     }
 
-    public boolean isDatabaseAlive() {
+    private boolean isDatabaseAlive() {
         try {
             Connection con = jdbcTemplate.getDataSource().getConnection();
             return true;
         } catch (SQLException e) {
-//            log.error("Database is down! Could not perform any SQL query!", e);
+            LOGGER.warn("Database is down! Could not perform any SQL query!", e);
         }
         return false;
     }
