@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.io.installer.interprodao.entry2pathway;
+package uk.ac.ebi.interpro.scan.io.installer.interprodao;
 
 import uk.ac.ebi.interpro.scan.model.PathwayXref;
 
@@ -6,7 +6,7 @@ import java.util.Collection;
 
 /**
  * Represents the data access object interface for
- * {@link uk.ac.ebi.interpro.scan.io.installer.interprodao.entry2pathway.Entry2PathwayDAOImpl}.
+ * {@link Entry2PathwayDAOImpl}.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$

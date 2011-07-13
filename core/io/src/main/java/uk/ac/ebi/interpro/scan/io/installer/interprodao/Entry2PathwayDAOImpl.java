@@ -1,9 +1,7 @@
-package uk.ac.ebi.interpro.scan.io.installer.interprodao.entry2pathway;
+package uk.ac.ebi.interpro.scan.io.installer.interprodao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import uk.ac.ebi.interpro.scan.model.PathwayXref;
 
@@ -13,12 +11,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Represents the implementation class of {@link uk.ac.ebi.interpro.scan.io.installer.interprodao.entry2pathway.Entry2PathwayDAOImpl}.
+ * Represents the implementation class of {@link Entry2PathwayDAOImpl}.
  * The Repository annotation makes it a candidate for component-scanning.
  * <p/>
  * The entry2pathway table contains 12.852 entries at the moment.
