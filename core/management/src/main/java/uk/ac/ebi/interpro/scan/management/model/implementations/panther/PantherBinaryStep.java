@@ -23,6 +23,7 @@ public final class PantherBinaryStep extends RunBinaryStep {
     private String fastaFileNameTemplate;
     private String perlCommand;
     private String perlLibrary;
+    private String perlScriptTempDir;
 
     public String getFastaFileNameTemplate() {
         return fastaFileNameTemplate;
@@ -87,6 +88,14 @@ public final class PantherBinaryStep extends RunBinaryStep {
         this.perlLibrary = perlLibrary;
     }
 
+    public String getPerlScriptTempDir() {
+        return perlScriptTempDir;
+    }
+
+    public void setPerlScriptTempDir(String perlScriptTempDir) {
+        this.perlScriptTempDir = perlScriptTempDir;
+    }
+
     /**
      * Returns command line for runPanther
      * <p/>
@@ -133,7 +142,11 @@ public final class PantherBinaryStep extends RunBinaryStep {
         command.add(fastaFilePath);
         // Temporary directory
         command.add("-T");
-        command.add(temporaryFileDirectory);
+        if (this.getPerlScriptTempDir() != null) {
+            command.add(this.getPerlScriptTempDir());
+        } else {
+            command.add(temporaryFileDirectory);
+        }
         return command;
     }
 }
