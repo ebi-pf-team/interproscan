@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.installer.interprodao.entry2pathway;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import uk.ac.ebi.interpro.scan.model.PathwayXref;
 
@@ -11,6 +13,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents the implementation class of {@link uk.ac.ebi.interpro.scan.io.installer.interprodao.entry2pathway.Entry2PathwayDAOImpl}.
@@ -35,26 +40,27 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
     }
 
     public Collection<PathwayXref> getPathwayXrefsByEntryAc(String entryAc) {
+        List<PathwayXref> result = null;
         try {
-//            this.jdbcTemplate.queryForObject("SELECT submitterid, first_name, surname, password, email_address FROM " + Submitter.TABLE_NAME + " WHERE ACTIVE='Y' AND email_address=?",
-//                    new Object[]{entryAc.toUpperCase()},
-//                    new RowMapper<Submitter>() {
-//                        public Submitter mapRow(ResultSet rs, int rowNum) throws SQLException {
-//                            Submitter submitter = new Submitter();
-//                            submitter.setSubmitterId(Integer.parseInt(rs.getString("submitterid")));
-//                            submitter.setFirstName(rs.getString("first_name"));
-//                            submitter.setSurname(rs.getString("surname"));
-//                            submitter.setEmailAddress(rs.getString("email_address"));
-//                            submitter.setPassword(rs.getString("password"));
-//                            return submitter;
-//                        }
-//                    });
+            result = this.jdbcTemplate
+                    .query(
+                            "SELECT ENTRY_AC, DBCODE, AC, NAME FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC=?",
+                            new Object[]{"IPR018382"},
+                            new RowMapper<PathwayXref>() {
+                                public PathwayXref mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                    String name = rs.getString("name");
+                                    String identifier = rs.getString("ac");
+                                    String dbcode = rs.getString("dbcode");
+                                    PathwayXref entry = new PathwayXref(dbcode, identifier, name);
+                                    return entry;
+                                }
+                            });
 
         } catch (Exception e) {
 //            log.warn("Could not perform database query. It might be that the JDBC connection could not build" +
 //                    " or is wrong configured. For more info take a look at the stack trace!", e);
         }
-        return null;
+        return result;
     }
 
     public boolean isDatabaseAlive() {

@@ -16,4 +16,7 @@ import java.io.Serializable;
 @XmlType(name = "PathwayXrefType")
 public class PathwayXref extends Xref implements Serializable {
 
+    public PathwayXref(String databaseName, String identifier, String name) {
+        super(databaseName, identifier, name);
+    }
 }
