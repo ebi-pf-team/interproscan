@@ -11,6 +11,7 @@ import java.io.Serializable;
  * E.g. UPA00098 Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Matthew Fraser, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -37,5 +38,45 @@ public class PathwayXref extends Xref implements Serializable {
 
     public void setEntry(Entry entry) {
         this.entry = entry;
+    }
+
+    public enum PathwayDatabase {
+
+        META_CYC('t', "MetaCyc"),
+        UNI_PATHWAY('w', "UniPathway"),
+        KEGG('k', "KEGG"),
+        REACTOME('r', "Reactome");
+
+
+        private Character databaseCode;
+
+        private String databaseName;
+
+        PathwayDatabase(Character databaseCode, String databaseName) {
+            this.databaseCode = databaseCode;
+            this.databaseName = databaseName;
+        }
+
+        public Character getDatabaseCode() {
+            return databaseCode;
+        }
+
+        public String getDatabaseName() {
+            return databaseName;
+        }
+
+        @Override
+        public String toString() {
+            return databaseName;
+        }
+
+        public static PathwayDatabase parseDatabaseCode(Character databaseCode) {
+            for (PathwayDatabase database : PathwayDatabase.values()) {
+                if (databaseCode == database.getDatabaseCode() || databaseCode.toString().equalsIgnoreCase(database.getDatabaseCode().toString())) {
+                    return database;
+                }
+            }
+            throw new IllegalArgumentException("Unrecognised database code: " + databaseCode);
+        }
     }
 }
