@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -16,7 +18,24 @@ import java.io.Serializable;
 @XmlType(name = "PathwayXrefType")
 public class PathwayXref extends Xref implements Serializable {
 
+    @ManyToMany
+    private Entry entry;
+
+    /**
+     * Zero arguments constructor just for Hibernate.
+     */
+    protected PathwayXref() {
+    }
+
     public PathwayXref(String databaseName, String identifier, String name) {
         super(databaseName, identifier, name);
+    }
+
+    public Entry getEntry() {
+        return entry;
+    }
+
+    public void setEntry(Entry entry) {
+        this.entry = entry;
     }
 }
