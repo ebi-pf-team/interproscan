@@ -31,11 +31,12 @@ public enum EntryType implements Serializable {
 
     // TODO: Should this be an enum, or read from the database?
 
-    // select upper(abbrev)||'("'||code||'", "'||abbrev||'", "'||description||'"),' 
+    // select upper(abbrev)||'("'||code||'", "'||abbrev||'", "'||description||'"),'
     // from interpro.cv_entry_type order by code;
 
     /** Active site */
-    ACTIVE_SITE("Active site",
+    ACTIVE_SITE('A',
+            "Active site",
             "Active sites are best known as the catalytic pockets of enzymes " +
             "where a substrate is bound and converted to a product, which is then released. Distant parts of a " +
             "protein's primary structure may be involved in the formation of the catalytic pocket. " +
@@ -45,7 +46,8 @@ public enum EntryType implements Serializable {
             "studies reported."),
 
     /** Binding site */
-    BINDING_SITE("Binding site",
+    BINDING_SITE('B',
+            "Binding site",
             "An InterPro Binding site binds chemical compounds, which themselves are not substrates " +
             "for a reaction and where the binding is reversible. The compound, which is bound, may be a " +
             "required co-factor for a chemical reaction, be involved in electron transport or be involved " +
@@ -53,29 +55,34 @@ public enum EntryType implements Serializable {
             "where the amino acid(s) involved in the binding have been described."),
 
     /** Conserved site */
-    CONSERVED_SITE("Conserved site",
+    CONSERVED_SITE('C',
+            "Conserved site",
             "A Conserved site is a protein motif that is define by a PROSITE pattern. " +
             "These PROSITE patterns are intended to identify proteins containing a characteristic fingerprint " +
             "of a protein domain or where they are members of a protein family. In InterPro these are not " +
             "defined as 'Binding Sites', 'Active Sites' or 'PTMs'."),
 
     /** Domain */
-    DOMAIN("Domain",
+    DOMAIN('D',
+            "Domain",
             "In InterPro a 'Domain' can be an evolutionary conserved sequence defining a known biological " +
             "domain or a region of unknown function. Its length is not defined but it must have adjacent member " +
             "database signatures."),
 
     /** Family */
-    FAMILY("Family",
+    FAMILY('F',
+            "Family",
             "Group of evolutionarily related proteins that may share one or more features in common, " +
             "which in InterPro are defined by a member database signature with no adjacent signatures."),
 
     /** Region */
-    REGION("Region",
+    REGION('G',
+            "Region",
             "Used for methods which are to determined manually, or where the status is undetermined."),
 
     /** Post-translational modification */
-    PTM("PTM",
+    PTM('P',
+            "PTM",
             "Posttranslational modification (PTM) is the chemical modification of a protein after its translation. " +
             "PTMs involve the addition of functional groups, addition of other proteins or peptides, " +
             "changing the chemical nature of amino acids or changing the primary structure of the protein itself.  " +
@@ -83,21 +90,30 @@ public enum EntryType implements Serializable {
             "defined by PROSITE patterns."),
 
     /** Repeat */
-    REPEAT("Repeat",
+    REPEAT('R',
+            "Repeat",
             "Repeats are regions that are not expected to fold into a globular domain on their own. " +
             "For example 6-8 copies of the WD40 repeat are needed to form a single globular domain. " +
             "There also many other short repeat motifs that probably do not form a globular fold."),
 
     /** Unknown */
-    UNKNOWN("Unknown",
+    UNKNOWN('U',
+            "Unknown",
             "Placeholder for undecided cases. There should not be any in a release.");
 
+
+    private final char code;
     private final String name;
     private final String description;
 
-    private EntryType(String name, String description) {
+    private EntryType(char code, String name, String description) {
+        this.code        = code;
         this.name        = name;
         this.description = description;
+    }
+
+    public char getCode() {
+        return code;
     }
 
     public String getName() {
@@ -111,7 +127,16 @@ public enum EntryType implements Serializable {
     @Override public String toString() {
         return name;
     }
-    
+
+    public static EntryType parseCode(char code)  {
+        for (EntryType m : EntryType.values()) {
+            if (code == m.getCode())   {
+                return m;
+            }
+        }
+        throw new IllegalArgumentException("Unrecognised code: " + code);
+    }
+
     public static EntryType parseName(String name)  {
         for (EntryType m : EntryType.values()) {
             if (name.equals(m.getName()))   {
@@ -137,5 +162,5 @@ public enum EntryType implements Serializable {
         }
     }
     */
-    
+
 }

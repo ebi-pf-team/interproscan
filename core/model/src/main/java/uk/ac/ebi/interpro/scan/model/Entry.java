@@ -9,8 +9,6 @@ import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.util.*;
 
@@ -83,7 +81,11 @@ public class Entry implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entry")
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "go-xref") // TODO: This should not be here (see TODO comments on getGoCrossReferences)
-    private Set<GoXref> goCrossReferences = new HashSet<GoXref>();
+    private Set<GoXref> goXRefs = new HashSet<GoXref>();
+
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "entry")
+    @XmlElement(name = "pathway-xref") // TODO: This should not be here
+    private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
 
     @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
@@ -140,6 +142,7 @@ public class Entry implements Serializable {
         private Release release;
         private Set<Signature> signatures = new HashSet<Signature>();
         private Set<GoXref> goCrossReferences = new HashSet<GoXref>();
+        private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
 
         public Builder(String accession) {
             this.accession = accession;
@@ -159,7 +162,12 @@ public class Entry implements Serializable {
             }
             if (!goCrossReferences.isEmpty()) {
                 for (GoXref x : goCrossReferences) {
-                    entry.addGoCrossReference(x);
+                    entry.addGoXRef(x);
+                }
+            }
+            if (!pathwayXRefs.isEmpty()) {
+                for (GoXref x : goCrossReferences) {
+                    entry.addGoXRef(x);
                 }
             }
             return entry;
@@ -331,7 +339,7 @@ public class Entry implements Serializable {
      *
      * @return GO cross-references
      */
-    public Set<GoXref> getGoCrossReferences() {
+    public Set<GoXref> getGoXRefs() {
         // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
         // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
         /*
@@ -348,12 +356,12 @@ public class Entry implements Serializable {
         // TODO: Example: Actual:   Xref[protein=<null>]
         // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
         // TODO: JAXB or do we have to use an XmlAdapter?
-        return Collections.unmodifiableSet(goCrossReferences);
+        return Collections.unmodifiableSet(goXRefs);
     }
 
-    private void setGoCrossReferences(Set<GoXref> xrefs) {
+    private void setGoXRefs(Set<GoXref> xrefs) {
         for (GoXref xref : xrefs) {
-            addGoCrossReference(xref);
+            addGoXRef(xref);
         }
     }
 
@@ -364,17 +372,68 @@ public class Entry implements Serializable {
      * @return GO cross-reference
      * @throws IllegalArgumentException if xref is null
      */
-    public GoXref addGoCrossReference(GoXref xref) throws IllegalArgumentException {
+    public GoXref addGoXRef(GoXref xref) throws IllegalArgumentException {
         if (xref == null) {
             throw new IllegalArgumentException("'xref' must not be null");
         }
-        goCrossReferences.add(xref);
+        goXRefs.add(xref);
         xref.setEntry(this);
         return xref;
     }
 
-    public void removeGoCrossReference(GoXref xref) {
-        goCrossReferences.remove(xref);
+    public void removeGoXRef(GoXref xref) {
+        goXRefs.remove(xref);
+    }
+
+    /**
+     * Returns pathway cross-references.
+     *
+     * @return Pathway cross-references
+     */
+    public Set<PathwayXref> getPathwayXRefs() {
+        // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
+        // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
+        /*
+         java.lang.UnsupportedOperationException
+            at java.util.Collections$UnmodifiableCollection.clear(Collections.java:1037)
+            at com.sun.xml.bind.v2.runtime.reflect.Lister$CollectionLister.startPacking(Lister.java:296)
+                ...
+            at javax.xml.bind.helpers.AbstractUnmarshallerImpl.unmarshal(AbstractUnmarshallerImpl.java:105)
+                ...
+            at uk.ac.ebi.interpro.scan.model.AbstractTest.unmarshal(AbstractTest.java:150)
+         */
+        //@XmlElement(name="xref")
+        // TODO: Example: Expected: Xref[protein=uk.ac.ebi.interpro.scan.model.Protein@1f49969]
+        // TODO: Example: Actual:   Xref[protein=<null>]
+        // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
+        // TODO: JAXB or do we have to use an XmlAdapter?
+        return Collections.unmodifiableSet(pathwayXRefs);
+    }
+
+    private void setPathwayXRefs(Set<PathwayXref> xrefs) {
+        for (PathwayXref xref : xrefs) {
+            addPathwayXRef(xref);
+        }
+    }
+
+    /**
+     * Adds and returns pathway cross-reference
+     *
+     * @param xref Pathway cross-reference to add
+     * @return Pathway cross-reference
+     * @throws IllegalArgumentException if xref is null
+     */
+    public PathwayXref addPathwayXRef(PathwayXref xref) throws IllegalArgumentException {
+        if (xref == null) {
+            throw new IllegalArgumentException("'xref' must not be null");
+        }
+        pathwayXRefs.add(xref);
+        xref.setEntry(this);
+        return xref;
+    }
+
+    public void removePathwayXRef(PathwayXref xref) {
+        pathwayXRefs.remove(xref);
     }
 
 
@@ -440,7 +499,8 @@ public class Entry implements Serializable {
                 .append(getDescription(), e.getDescription())
                 .append(getAbstract(), e.getAbstract())
                 .append(signatures, e.signatures)
-                .append(goCrossReferences, e.goCrossReferences)
+                .append(goXRefs, e.goXRefs)
+                .append(pathwayXRefs, e.pathwayXRefs)
                 .isEquals();
     }
 
@@ -455,7 +515,8 @@ public class Entry implements Serializable {
                 .append(getAbstract())
                 // TODO: Figure out why adding signatures to hashCode() causes Entry.equals() to fail
                 .append(signatures)
-                .append(goCrossReferences)
+                .append(goXRefs)
+                .append(pathwayXRefs)
                 .toHashCode();
     }
 

@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -135,14 +134,14 @@ public class EntryTest extends AbstractXmlTest<Entry> {
         assertEquals(UPDATED, entry.getUpdated());
         assertEquals(release, entry.getRelease());
         assertEquals(2, entry.getSignatures().size());
-        assertEquals(4, entry.getGoCrossReferences().size());
+        assertEquals(4, entry.getGoXRefs().size());
 
         if (LOGGER.isDebugEnabled())    {
             LOGGER.debug(entry);
             LOGGER.debug(super.marshal(entry));
         }
 
-    }       
+    }
 
 //    @Test public void testRemoveModel()   {
 //        Signature signature = new Signature("SIG001");
