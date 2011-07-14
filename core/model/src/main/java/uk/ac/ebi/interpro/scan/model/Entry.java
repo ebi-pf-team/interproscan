@@ -114,7 +114,9 @@ public class Entry implements Serializable {
                  String description,
                  String abstractText,
                  Release release,
-                 Set<Signature> signatures) {
+                 Set<Signature> signatures,
+                 Set<GoXref> goXrefs,
+                 Set<PathwayXref> pathwayXrefs) {
         setAccession(accession);
         setName(name);
         setDescription(description);
@@ -122,6 +124,8 @@ public class Entry implements Serializable {
         setAbstract(abstractText);
         setRelease(release);
         setSignatures(signatures);
+        setGoXRefs(goXrefs);
+        setPathwayXRefs(pathwayXrefs);
     }
 
     /**

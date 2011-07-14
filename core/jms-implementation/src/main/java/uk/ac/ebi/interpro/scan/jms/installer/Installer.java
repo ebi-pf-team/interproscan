@@ -43,9 +43,20 @@ public class Installer implements Runnable {
     public void run() {
         LOGGER.info("Schema creation");
         // By Magic!
+
         LOGGER.info("Loading signatures");
         loadModels();
         LOGGER.info("Loaded signatures");
+
+        LOGGER.info("Loading entries and related info");
+        loadEntries();
+        LOGGER.info("Loaded entries and related info");
+
+    }
+
+    private void loadEntries() {
+        //load all entries
+        //jdbcEntryDAO.getEntries(); // TODO
     }
 
     private void loadModels() {
