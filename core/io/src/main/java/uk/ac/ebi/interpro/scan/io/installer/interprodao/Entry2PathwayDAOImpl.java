@@ -1,9 +1,15 @@
 package uk.ac.ebi.interpro.scan.io.installer.interprodao;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowCountCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import uk.ac.ebi.interpro.scan.model.PathwayXref;
 
@@ -12,14 +18,13 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents the implementation class of {@link Entry2PathwayDAOImpl}.
  * The Repository annotation makes it a candidate for component-scanning.
  * <p/>
- * The entry2pathway table contains 12.852 entries at the moment.
+ * The entry2pathway table version 33.0 contained 12.852 entries at the moment.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
@@ -30,11 +35,11 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
 
     private static final Logger LOGGER = Logger.getLogger(Entry2PathwayDAOImpl.class.getName());
 
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate jdbcTemplate;
 
     @Resource
     public void setDataSource(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     public Entry2PathwayDAOImpl() {
@@ -42,37 +47,94 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
 
     public Collection<PathwayXref> getPathwayXrefsByEntryAc(String entryAc) {
         List<PathwayXref> result = null;
-        if (isDatabaseAlive()) {
-            try {
-                result = this.jdbcTemplate
-                        .query(
-                                "SELECT ENTRY_AC, DBCODE, AC, NAME FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC=?",
-                                new Object[]{entryAc},
-                                new RowMapper<PathwayXref>() {
-                                    public PathwayXref mapRow(ResultSet rs, int rowNum) throws SQLException {
-                                        String name = rs.getString("name");
-                                        String identifier = rs.getString("ac");
-                                        String dbcode = rs.getString("dbcode");
-                                        PathwayXref entry = new PathwayXref(dbcode, identifier, name);
-                                        return entry;
-                                    }
-                                });
+        try {
+            SqlParameterSource namedParameters = new MapSqlParameterSource("entry_ac", entryAc);
+            result = this.jdbcTemplate
+                    .query("SELECT DBCODE, AC, NAME FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC = :entry_ac",
+                            namedParameters,
+                            new RowMapper<PathwayXref>() {
+                                public PathwayXref mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                    String name = rs.getString("name");
+                                    String identifier = rs.getString("ac");
+                                    String dbcode = rs.getString("dbcode");
+                                    PathwayXref entry = new PathwayXref(dbcode, identifier, name);
+                                    return entry;
+                                }
+                            });
 
-            } catch (Exception e) {
-                LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
-                        "or is wrong configured. For more info take a look at the stack trace!", e);
-            }
+        } catch (Exception e) {
+            LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
+                    "or is wrong configured. For more info take a look at the stack trace!", e);
         }
         return result;
     }
 
-    private boolean isDatabaseAlive() {
+    public Map<String, Collection<PathwayXref>> getAllPathwayXrefs() {
+        final Map<String, Collection<PathwayXref>> result = new HashMap<String, Collection<PathwayXref>>();
         try {
-            Connection con = jdbcTemplate.getDataSource().getConnection();
-            return true;
-        } catch (SQLException e) {
-            LOGGER.warn("Database is down! Could not perform any SQL query!", e);
+            this.jdbcTemplate
+                    .query("SELECT * FROM INTERPRO.ENTRY2PATHWAY",
+                            new MapSqlParameterSource(),
+                            new RowCallbackHandler() {
+                                @Override
+                                public void processRow(ResultSet rs) throws SQLException {
+                                    String entryAcc = rs.getString("entry_ac");
+                                    String name = rs.getString("name");
+                                    String identifier = rs.getString("ac");
+                                    String dbcode = rs.getString("dbcode");
+                                    PathwayXref newPathway = new PathwayXref(dbcode, identifier, name);
+                                    List<PathwayXref> pathways = (List<PathwayXref>) result.get(entryAcc);
+                                    if (pathways == null) {
+                                        pathways = new ArrayList<PathwayXref>();
+                                    }
+                                    pathways.add(newPathway);
+                                    result.put(entryAcc, pathways);
+                                }
+                            });
+
+        } catch (Exception e) {
+            LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
+                    "or is wrong configured. For more info take a look at the stack trace!", e);
         }
-        return false;
+        return result;
+    }
+
+    public Map<String, Collection<PathwayXref>> getPathwayXrefs(Collection<String> entryAccessions) {
+        final Map<String, Collection<PathwayXref>> result = new HashMap<String, Collection<PathwayXref>>();
+        try {
+            SqlParameterSource namedParameters = new MapSqlParameterSource("accessions", entryAccessions);
+            this.jdbcTemplate
+                    .query("SELECT * FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC in (:accessions)",
+                            namedParameters,
+                            new RowCallbackHandler() {
+                                @Override
+                                public void processRow(ResultSet rs) throws SQLException {
+                                    String entryAcc = rs.getString("entry_ac");
+                                    String name = rs.getString("name");
+                                    String identifier = rs.getString("ac");
+                                    String dbcode = rs.getString("dbcode");
+                                    PathwayXref newPathway = new PathwayXref(dbcode, identifier, name);
+                                    List<PathwayXref> pathways = (List<PathwayXref>) result.get(entryAcc);
+                                    if (pathways == null) {
+                                        pathways = new ArrayList<PathwayXref>();
+                                    }
+                                    pathways.add(newPathway);
+                                    result.put(entryAcc, pathways);
+                                }
+                            });
+
+        } catch (Exception e) {
+            LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
+                    "or is wrong configured. For more info take a look at the stack trace!", e);
+        }
+        return result;
+    }
+
+    class Entry2PathwayRowCallbackHandler implements RowCallbackHandler {
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
     }
 }
