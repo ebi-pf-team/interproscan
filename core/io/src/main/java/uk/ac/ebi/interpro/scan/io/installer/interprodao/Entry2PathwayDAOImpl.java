@@ -1,11 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.installer.interprodao;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowCountCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,7 +11,6 @@ import uk.ac.ebi.interpro.scan.model.PathwayXref;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -57,8 +52,7 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
                                     String name = rs.getString("name");
                                     String identifier = rs.getString("ac");
                                     String dbcode = rs.getString("dbcode");
-                                    PathwayXref entry = new PathwayXref(dbcode, identifier, name);
-                                    return entry;
+                                    return new PathwayXref(dbcode, identifier, name);
                                 }
                             });
 
@@ -128,13 +122,5 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
                     "or is wrong configured. For more info take a look at the stack trace!", e);
         }
         return result;
-    }
-
-    class Entry2PathwayRowCallbackHandler implements RowCallbackHandler {
-
-        @Override
-        public void processRow(ResultSet rs) throws SQLException {
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
     }
 }
