@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.io.installer.interprodao;
+package uk.ac.ebi.interpro.scan.persistence.installer;
 
 import uk.ac.ebi.interpro.scan.model.PathwayXref;
 
