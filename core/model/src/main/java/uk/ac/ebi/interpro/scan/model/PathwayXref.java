@@ -23,7 +23,7 @@ import java.util.HashSet;
 public class PathwayXref extends Xref implements Serializable {
 
     @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            cascade = CascadeType.ALL,
             mappedBy = "pathwayXRefs",
             targetEntity = Entry.class)
     private Collection<Entry> entries;
@@ -34,7 +34,7 @@ public class PathwayXref extends Xref implements Serializable {
     protected PathwayXref() {
     }
 
-    public PathwayXref(String databaseName, String identifier, String name) {
+    public PathwayXref(String identifier, String name, String databaseName) {
         super(databaseName, identifier, name);
     }
 
