@@ -7,9 +7,7 @@ import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * TODO
@@ -40,7 +38,17 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     private SignatureDAO signatureDAO;
 
+    private Map<String, Set<Signature>> entry2SignaturesMap = null;
+    private Map<String, Set<GoXref>> entry2GoXrefsMap = null;
+    private Map<String, Set<PathwayXref>> entry2PathwayXrefsMap = null;
+
     private Set<Entry> entries = new HashSet<Entry>();
+
+    public EntryRowCallbackHandler() {
+        entry2SignaturesMap = new HashMap<String, Set<Signature>>(); // signatureDao.getSignatures();
+        entry2GoXrefsMap = new HashMap<String, Set<GoXref>>();
+        entry2PathwayXrefsMap = new HashMap<String, Set<PathwayXref>>();
+    }
 
     @Override
     public void processRow(ResultSet resultSet) throws SQLException {
@@ -61,9 +69,22 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         }
 
         // Create Entry object
-        Set<Signature> signatures = new HashSet<Signature>(); // TODO Populate for this entry!
-        Set<GoXref> goXrefs = new HashSet<GoXref>(); // TODO Populate for this entry!
-        Set<PathwayXref> pathwayXrefs = new HashSet<PathwayXref>(); // TODO Populate for this entry!
+        Set<Signature> signatures = entry2SignaturesMap.get(entryAc);
+        if (signatures == null) {
+            // TODO Throw exception?
+            signatures = new HashSet<Signature>();
+        }
+
+        Set<GoXref> goXrefs = entry2GoXrefsMap.get(entryAc);
+        if (goXrefs == null) {
+             goXrefs = new HashSet<GoXref>();
+        }
+
+        Set<PathwayXref> pathwayXrefs = entry2PathwayXrefsMap.get(entryAc);
+        if (pathwayXrefs == null) {
+            pathwayXrefs = new HashSet<PathwayXref>();
+        }
+
         final Entry entry = new Entry(entryAc, name, type, description, null, null, signatures, goXrefs, pathwayXrefs);
 
         entries.add(entry);
