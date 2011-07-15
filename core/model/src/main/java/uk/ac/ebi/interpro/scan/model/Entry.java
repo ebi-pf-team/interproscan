@@ -86,7 +86,7 @@ public class Entry implements Serializable {
 
     @ManyToMany(
             targetEntity = PathwayXref.class,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = CascadeType.ALL)
     @JoinTable(
             name = "ENTRY_PATHWAY",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
@@ -439,13 +439,18 @@ public class Entry implements Serializable {
         if (xref == null) {
             throw new IllegalArgumentException("'xref' must not be null");
         }
+        if (pathwayXRefs == null) {
+            pathwayXRefs = new HashSet<PathwayXref>();
+        }
         pathwayXRefs.add(xref);
         xref.addEntry(this);
         return xref;
     }
 
     public void removePathwayXRef(PathwayXref xref) {
-        pathwayXRefs.remove(xref);
+        if (pathwayXRefs != null) {
+            pathwayXRefs.remove(xref);
+        }
     }
 
 
