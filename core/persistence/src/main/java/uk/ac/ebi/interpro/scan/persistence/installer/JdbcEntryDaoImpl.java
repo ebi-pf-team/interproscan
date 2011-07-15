@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 1.0-SNAPSHOT
  */
 @Repository
-public class EntryDaoImpl implements EntryDao {
+public class JdbcEntryDaoImpl implements JdbcEntryDao {
 
     private JdbcTemplate jdbcTemplate;
     private EntryRowCallbackHandler entryRowCallbackHandler;
