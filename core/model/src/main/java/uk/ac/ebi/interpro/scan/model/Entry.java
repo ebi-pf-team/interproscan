@@ -16,6 +16,7 @@ import java.util.*;
  * InterPro entry, for example IPR000152 [http://www.ebi.ac.uk/interpro/IEntry?ac=IPR000152].
  *
  * @author Antony Quinn
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  */
 @Entity
