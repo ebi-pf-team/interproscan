@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.io.installer.interprodao;
+package uk.ac.ebi.interpro.scan.persistence.installer;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
