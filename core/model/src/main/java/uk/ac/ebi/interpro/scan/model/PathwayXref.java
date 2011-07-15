@@ -1,10 +1,13 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Defines a cross reference to a external pathway entry.</br>
@@ -19,8 +22,11 @@ import java.io.Serializable;
 @XmlType(name = "PathwayXrefType")
 public class PathwayXref extends Xref implements Serializable {
 
-    @ManyToMany
-    private Entry entry;
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            mappedBy = "pathwayXRefs",
+            targetEntity = Entry.class)
+    private Collection<Entry> entries;
 
     /**
      * Zero arguments constructor just for Hibernate.
@@ -32,12 +38,19 @@ public class PathwayXref extends Xref implements Serializable {
         super(databaseName, identifier, name);
     }
 
-    public Entry getEntry() {
-        return entry;
+    public void addEntry(Entry entry) {
+        if (entries == null) {
+            entries = new HashSet<Entry>();
+        }
+        entries.add(entry);
     }
 
-    public void setEntry(Entry entry) {
-        this.entry = entry;
+    public Collection<Entry> getEntries() {
+        return entries;
+    }
+
+    public void setEntries(Collection<Entry> entries) {
+        this.entries = entries;
     }
 
     public enum PathwayDatabase {
