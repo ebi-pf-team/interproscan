@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * InterPro entry, for example IPR000152 [http://www.ebi.ac.uk/interpro/IEntry?ac=IPR000152].
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @Entity
@@ -83,10 +83,17 @@ public class Entry implements Serializable {
     @XmlElement(name = "go-xref") // TODO: This should not be here (see TODO comments on getGoCrossReferences)
     private Set<GoXref> goXRefs = new HashSet<GoXref>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "entry")
-    @XmlElement(name = "pathway-xref") // TODO: This should not be here
-    private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
+    @ManyToMany(
+            targetEntity = PathwayXref.class,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "ENTRY_PATHWAY",
+            joinColumns = @JoinColumn(name = "ENTRY_ID"),
+            inverseJoinColumns = @JoinColumn(name = "PATHWAY_ID"))
+//    @XmlElement(name = "pathway-xref") // TODO: This should not be here
+    private Collection<PathwayXref> pathwayXRefs;
 
+    @Transient
     @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
     @XmlElement(name = "signature") // TODO: This should not be here (see TODO comments on getSignatures)
@@ -116,7 +123,7 @@ public class Entry implements Serializable {
                  Release release,
                  Set<Signature> signatures,
                  Set<GoXref> goXrefs,
-                 Set<PathwayXref> pathwayXrefs) {
+                 Collection<PathwayXref> pathwayXrefs) {
         setAccession(accession);
         setName(name);
         setDescription(description);
@@ -146,7 +153,7 @@ public class Entry implements Serializable {
         private Release release;
         private Set<Signature> signatures = new HashSet<Signature>();
         private Set<GoXref> goCrossReferences = new HashSet<GoXref>();
-        private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
+        private Collection<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
 
         public Builder(String accession) {
             this.accession = accession;
@@ -394,7 +401,7 @@ public class Entry implements Serializable {
      *
      * @return Pathway cross-references
      */
-    public Set<PathwayXref> getPathwayXRefs() {
+    public Collection<PathwayXref> getPathwayXRefs() {
         // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
         // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
         /*
@@ -411,10 +418,11 @@ public class Entry implements Serializable {
         // TODO: Example: Actual:   Xref[protein=<null>]
         // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
         // TODO: JAXB or do we have to use an XmlAdapter?
-        return Collections.unmodifiableSet(pathwayXRefs);
+//        return Collections.unmodifiableSet(pathwayXRefs);
+        return pathwayXRefs;
     }
 
-    private void setPathwayXRefs(Set<PathwayXref> xrefs) {
+    private void setPathwayXRefs(Collection<PathwayXref> xrefs) {
         for (PathwayXref xref : xrefs) {
             addPathwayXRef(xref);
         }
@@ -432,7 +440,7 @@ public class Entry implements Serializable {
             throw new IllegalArgumentException("'xref' must not be null");
         }
         pathwayXRefs.add(xref);
-        xref.setEntry(this);
+        xref.addEntry(this);
         return xref;
     }
 
@@ -471,7 +479,7 @@ public class Entry implements Serializable {
     /**
      * Adds and returns signature
      *
-     * @param  signature Signature to add
+     * @param signature Signature to add
      * @return Signature
      * @throws IllegalArgumentException if signature is null
      */
@@ -488,7 +496,8 @@ public class Entry implements Serializable {
         signatures.remove(signature);
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Entry))
@@ -508,7 +517,8 @@ public class Entry implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(87, 23)
                 .append(accession)
                 .append(name)
@@ -517,14 +527,15 @@ public class Entry implements Serializable {
                 .append(updated)
                 .append(getDescription())
                 .append(getAbstract())
-                // TODO: Figure out why adding signatures to hashCode() causes Entry.equals() to fail
+                        // TODO: Figure out why adding signatures to hashCode() causes Entry.equals() to fail
                 .append(signatures)
                 .append(goXRefs)
                 .append(pathwayXRefs)
                 .toHashCode();
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
