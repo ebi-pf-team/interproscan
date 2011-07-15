@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import uk.ac.ebi.interpro.scan.model.GoXref;
 import uk.ac.ebi.interpro.scan.model.PathwayXref;
 
 import javax.annotation.Resource;
@@ -72,17 +73,7 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
                             new RowCallbackHandler() {
                                 @Override
                                 public void processRow(ResultSet rs) throws SQLException {
-                                    String entryAcc = rs.getString("entry_ac");
-                                    String name = rs.getString("name");
-                                    String identifier = rs.getString("ac");
-                                    String dbcode = rs.getString("dbcode");
-                                    PathwayXref newPathway = new PathwayXref(dbcode, identifier, name);
-                                    List<PathwayXref> pathways = (List<PathwayXref>) result.get(entryAcc);
-                                    if (pathways == null) {
-                                        pathways = new ArrayList<PathwayXref>();
-                                    }
-                                    pathways.add(newPathway);
-                                    result.put(entryAcc, pathways);
+                                    addNewXref(rs, result);
                                 }
                             });
 
@@ -103,17 +94,7 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
                             new RowCallbackHandler() {
                                 @Override
                                 public void processRow(ResultSet rs) throws SQLException {
-                                    String entryAcc = rs.getString("entry_ac");
-                                    String name = rs.getString("name");
-                                    String identifier = rs.getString("ac");
-                                    String dbcode = rs.getString("dbcode");
-                                    PathwayXref newPathway = new PathwayXref(dbcode, identifier, name);
-                                    List<PathwayXref> pathways = (List<PathwayXref>) result.get(entryAcc);
-                                    if (pathways == null) {
-                                        pathways = new ArrayList<PathwayXref>();
-                                    }
-                                    pathways.add(newPathway);
-                                    result.put(entryAcc, pathways);
+                                    addNewXref(rs, result);
                                 }
                             });
 
@@ -122,5 +103,19 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
                     "or is wrong configured. For more info take a look at the stack trace!", e);
         }
         return result;
+    }
+
+    private void addNewXref(ResultSet rs, final Map<String, Collection<PathwayXref>> result) throws SQLException {
+        String entryAcc = rs.getString("entry_ac");
+        String name = rs.getString("name");
+        String identifier = rs.getString("ac");
+        String dbcode = rs.getString("dbcode");
+        PathwayXref newPathway = new PathwayXref(dbcode, identifier, name);
+        List<PathwayXref> pathways = (List<PathwayXref>) result.get(entryAcc);
+        if (pathways == null) {
+            pathways = new ArrayList<PathwayXref>();
+        }
+        pathways.add(newPathway);
+        result.put(entryAcc, pathways);
     }
 }
