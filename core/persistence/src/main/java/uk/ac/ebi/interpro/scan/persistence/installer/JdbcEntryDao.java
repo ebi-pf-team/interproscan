@@ -7,6 +7,6 @@ package uk.ac.ebi.interpro.scan.persistence.installer;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public interface EntryDao {
+public interface JdbcEntryDao {
     public void queryEntries();
 }
