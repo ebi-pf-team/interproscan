@@ -94,7 +94,6 @@ public class Entry implements Serializable {
 //    @XmlElement(name = "pathway-xref") // TODO: This should not be here
     private Collection<PathwayXref> pathwayXRefs;
 
-    @Transient
     @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
     @XmlElement(name = "signature") // TODO: This should not be here (see TODO comments on getSignatures)
