@@ -27,7 +27,10 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Signature;
 
 import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -86,7 +89,7 @@ public class SignatureDAOTest {
         // Get the assigned primary key
         Long pk = signature.getId();
 
-        // Now retrieve it
+        // Now retrieve it using read method
         Signature retrievedSignature = dao.read(pk);
         assertNotNull("No signature has been retrieved.", retrievedSignature);
         assertEquals(SIGNATURE_ACCESSION, retrievedSignature.getAccession());
@@ -94,6 +97,23 @@ public class SignatureDAOTest {
         assertEquals(SIGNATURE_DESCRIPTION, retrievedSignature.getDescription());
         assertEquals(SIGNATURE_TYPE, retrievedSignature.getType());
         assertEquals(SIGNATURE_ABSTRACT, retrievedSignature.getAbstract());
+
+        // Test getSignatureAndMethodsDeep, specific to the SignatureDAO object!
+        retrievedSignature = ((SignatureDAO)dao).getSignatureAndMethodsDeep(pk);
+        assertNotNull("No signature has been retrieved.", retrievedSignature);
+        assertEquals(SIGNATURE_ACCESSION, retrievedSignature.getAccession());
+        assertEquals(SIGNATURE_NAME, retrievedSignature.getName());
+        assertEquals(SIGNATURE_DESCRIPTION, retrievedSignature.getDescription());
+        assertEquals(SIGNATURE_TYPE, retrievedSignature.getType());
+        assertEquals(SIGNATURE_ABSTRACT, retrievedSignature.getAbstract());
+
+        // Test getSignaturesAndMethodsDeep, specific to the SignatureDAO object!
+        Set<String> signatureAcs = new HashSet<String>();
+        signatureAcs.add("PF02316");
+        signatureAcs.add("Dummy");
+        Collection<Signature> retrievedSignatures = ((SignatureDAO)dao).getSignaturesAndMethodsDeep(signatureAcs);
+        assertNotNull("No signatures have been retrieved.", retrievedSignatures);
+        assertEquals("Expected 2 signatures to be returned by query", 2, retrievedSignatures.size());
 
         // Finally delete it.
         dao.delete(retrievedSignature);
