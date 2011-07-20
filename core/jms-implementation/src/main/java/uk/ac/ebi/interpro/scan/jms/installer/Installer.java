@@ -65,7 +65,7 @@ public class Installer implements Runnable {
 
     private void loadEntries() {
         //load all entries
-        //jdbcEntryDAO.getEntries(); // TODO
+        //jdbcEntryDAO.queryEntries(); // TODO
     }
 
     private void loadModels() {
