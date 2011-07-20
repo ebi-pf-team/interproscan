@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.Signature;
 
 import javax.persistence.Query;
+import java.util.*;
 
 /**
  * TODO: Add class description
@@ -29,9 +30,27 @@ public class SignatureDAOImpl extends GenericDAOImpl<Signature, Long> implements
                 "select s from Signature s " +
                 "left outer join fetch s.models " +
                 "left outer join fetch s.crossReferences " +
-                "where s.id = :id"                
+                "where s.id = :id"
         );
         query.setParameter("id", id);
         return (Signature) query.getSingleResult();
+    }
+
+    @Transactional(readOnly = true)
+    public Collection<Signature> getSignaturesAndMethodsDeep(Set<String> accessions) {
+
+        if (accessions == null || accessions.size() < 1) {
+            return null;
+        }
+
+        // TODO - probably need to go deeper than this?
+        Query query = entityManager.createQuery("select s from Signature s " +
+                "left outer join fetch s.models " +
+                "left outer join fetch s.crossReferences " +
+                "where s.accession in (:accessions)");
+        query.setParameter("accessions", accessions);
+
+        List<Signature> results = query.getResultList();
+        return new HashSet<Signature>(results);
     }
 }

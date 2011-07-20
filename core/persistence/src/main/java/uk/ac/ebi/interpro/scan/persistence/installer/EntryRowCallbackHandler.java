@@ -3,6 +3,8 @@ package uk.ac.ebi.interpro.scan.persistence.installer;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.persistence.EntryDAO;
+import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,32 +23,27 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     public static final int BATCH_COMMIT_SIZE = 50;
 
-    //InterPro JDBC DAOs
-    /*
-    private JDBCEntryDao jdbcEntryDAO;
+    private Set<Entry> entries = new HashSet<Entry>();
 
-    private Entry2SignaturesDAO entry2methodDAO;
-
-    private Entry2GoDao entry2goDAO;
-
-    private Entry2PathwayDAO entry2pathwayDAO;
-
-    //Hibernate DAOs for persistence in the in-memory database
-    private JdbcEntryDaoImpl entryDAO;
-      */
-
-//    private Entry2SignaturesDAO entry2signaturesDAO;
-
+    // Populated from the InterPro database
     private Map<String, Collection<String>> entry2SignaturesMap = null;
     private Map<String, Collection<GoXref>> entry2GoXrefsMap = null;
     private Map<String, Collection<PathwayXref>> entry2PathwayXrefsMap = null;
 
-    private Set<Entry> entries = new HashSet<Entry>();
+    // I5 model DAOs
+    private EntryDAO entryDAO;
+    private SignatureDAO signatureDAO;
 
-    public EntryRowCallbackHandler(Entry2SignaturesDAO entry2SignaturesDAO, Entry2GoDAO entry2GoDAO, Entry2PathwayDAO entry2PathwayDAO) {
-        entry2SignaturesMap = entry2SignaturesDAO.getAllSignatures();
-        entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
-        entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
+    public EntryRowCallbackHandler(Entry2SignaturesDAO entry2SignaturesDAO,
+                                   Entry2GoDAO entry2GoDAO,
+                                   Entry2PathwayDAO entry2PathwayDAO,
+                                   EntryDAO entryDAO,
+                                   SignatureDAO signatureDAO) {
+        this.entry2SignaturesMap = entry2SignaturesDAO.getAllSignatures();
+        this.entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
+        this.entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
+        this.entryDAO = entryDAO;
+        this.signatureDAO = signatureDAO;
     }
 
     @Override
@@ -68,18 +65,25 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         }
 
         // Prepare entry signatures
+        Set<Signature> signatures = null;
         Set<String> signatureAcs = (Set<String>)entry2SignaturesMap.get(entryAc);
         if (signatureAcs == null) {
             // TODO Throw exception?
             signatureAcs = new HashSet<String>();
         }
-        // Lookup signatures (already in I5 database) from the signature accessions
-        Set<Signature> signatures = new HashSet<Signature>(); // TODO
+        else {
+            // Lookup signatures (already in I5 database) from the signature accessions
+            signatures = (Set<Signature>)signatureDAO.getSignaturesAndMethodsDeep(signatureAcs);
+            if (signatures == null || signatures.size() < 1) {
+                log.error("Signatures could not be found in the database: " + signatureAcs.toString());
+                throw new IllegalStateException("No signatures for entry " + entryAc + " could be found in the database.");
+            }
+        }
 
         // Prepare entry GO cross references
         Set<GoXref> goXrefs = (Set<GoXref>)entry2GoXrefsMap.get(entryAc);
         if (goXrefs == null) {
-             goXrefs = new HashSet<GoXref>();
+            goXrefs = new HashSet<GoXref>();
         }
 
         // Prepare entry pathway cross references
@@ -96,12 +100,21 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         //persistence step
         if (entries.size() == BATCH_COMMIT_SIZE) {
             // Batch insert into DB
+            //entryDAO.insert(entries);
+            entries.clear(); // Free up some resources now these results have been inserted
 
         }
 
     }
 
+    /**
+     * Insert any entries currently in memory into the database (and clear the list of entries).
+     */
     public void processFinalRows() {
-        // TODO
+        if (entries != null && entries.size() > 0) {
+            // Batch insert the remaining entries into the DB
+            //entryDAO.insert(entries);
+            entries.clear(); // Clear now these results have been inserted (just incase this method is accidentally called again)!
+        }
     }
 }

@@ -45,7 +45,7 @@ public class JdbcEntryDaoImpl implements JdbcEntryDao {
         if(jdbcTemplate!=null)
         {
             jdbcTemplate.query("select * from interpro.entry e where e.entry_ac='IPR000001'", entryRowCallbackHandler);
-            //entryRowCallbackHandler.processFinalRows();
+            entryRowCallbackHandler.processFinalRows();
         }
 
     }

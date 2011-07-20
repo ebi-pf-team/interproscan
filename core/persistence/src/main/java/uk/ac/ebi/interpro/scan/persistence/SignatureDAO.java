@@ -4,6 +4,9 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Signature;
 
+import java.util.Collection;
+import java.util.Set;
+
 /**
  * TODO: Add class description
  *
@@ -21,4 +24,14 @@ public interface SignatureDAO extends GenericDAO<Signature, Long> {
      */
     @Transactional(readOnly = true)
     public Signature getSignatureAndMethodsDeep(Long primaryKey);
+
+    /**
+     * Retrieves all signatures from the input and all of the Methods
+     * associated with those signatures.
+     *
+     * @param accessions Set of signature accessions to lookup.
+     * @return a Signature object populated with Models.
+     */
+    @Transactional(readOnly = true)
+    public Collection<Signature> getSignaturesAndMethodsDeep(Set<String> accessions);
 }
