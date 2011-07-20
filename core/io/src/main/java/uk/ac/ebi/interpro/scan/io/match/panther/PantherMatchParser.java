@@ -23,6 +23,7 @@ public final class PantherMatchParser
 
     private static final Logger LOGGER = Logger.getLogger(PantherMatchParser.class.getName());
 
+
     /**
      * Constructor is only for JUnit testing.
      */
@@ -39,6 +40,13 @@ public final class PantherMatchParser
         if (line == null || line.length() == 0) {
             LOGGER.warn("Couldn't parse the given raw match line, because it is NULL or of length 0.");
             return null;
+        } else {
+            String checkLine = line.toUpperCase();
+            if (checkLine.contains("error") || checkLine.contains("warn") || checkLine.contains("cannot")) {
+                LOGGER.fatal("Panther match parser detected some failure which occurred during running the binary file. " +
+                        "The following lines are logs from the PANTHER Perl script.");
+                LOGGER.fatal(line);
+            }
         }
         final String[] splitLine = line.split("\\t");
         if (splitLine.length == 6) {

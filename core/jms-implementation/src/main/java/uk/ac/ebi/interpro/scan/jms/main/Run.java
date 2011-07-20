@@ -35,14 +35,15 @@ public class Run {
 
     private static final int MEGA = 1024 * 1024;
 
-    /*
-    Additional options:
-    -iprlookup    Switch on look up of corresponding InterPro annotation
-
-       -goterms      Switch on look up of corresponding Gene Ontology
-                     annotation (requires -iprlookup option to be used too)
+    /**
+     * Additional options:
+     * -iprlookup    Switch on look up of corresponding InterPro annotation
+     * <p/>
+     * -goterms      Switch on look up of corresponding Gene Ontology
+     * annotation (requires -iprlookup option to be used too)
+     * <p/>
+     * -pathways    Switch on look up of corresponding Pathway annotation.
      */
-
     private enum I5Option {
         MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
         FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
@@ -52,6 +53,7 @@ public class Run {
         PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false),
         IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation", null, false),
         GOTERMS("goterms", "goterms", false, "Switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false),
+        PATHWAY_LOOKUP("pathways", "pa", false, "Switch on look up of corresponding Pathway annotation", null, false),
         SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false);
 
         private String longOpt;
@@ -250,6 +252,13 @@ public class Run {
                     if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                         master.setSequenceType(parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt()));
                     }
+                    if (parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt())) {
+                        //TODO: Is it really necessary to specify the following 2 lines or is the current activation of the pathway quite enough?
+                        //final boolean mapToPathway = parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt());
+                        //master.setPathway(mapToPathway);
+                        master.setPathway(true);
+                    }
+
                     final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
                     master.setMapToInterProEntries(mapToGo || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
                     master.setMapToGOAnnotations(mapToGo);
