@@ -51,6 +51,7 @@ public class WriteOutputStep extends Step {
     public static final String OUTPUT_FILE_FORMAT = "OUTPUT_FORMAT";
     public static final String MAP_TO_INTERPRO_ENTRIES = "MAP_TO_INTERPRO_ENTRIES";
     public static final String MAP_TO_GO = "MAP_TO_GO";
+    public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
 
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
@@ -120,6 +121,8 @@ public class WriteOutputStep extends Step {
             final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             writer.setMapToInterProEntries(mapToInterProEntries);
             writer.setMapToGo(mapToGO);
+            final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
+            writer.setMapToPathway(mapToPathway);
             LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
             if (proteins != null) {
                 LOGGER.info("Loaded " + proteins.size() + " proteins...");
