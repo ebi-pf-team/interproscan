@@ -25,6 +25,7 @@ public class ProteinMatchTSVWriter {
     DateFormat dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
     private boolean mapToInterProEntries;
     private boolean mapToGO;
+    private boolean mapToPathway;
     private Map<SignatureLibrary, SignatureLibraryIntegratedMethods> interProGoMapping;
 
     public ProteinMatchTSVWriter(File file) throws IOException {
@@ -41,8 +42,9 @@ public class ProteinMatchTSVWriter {
 
         Set<Match> matches = protein.getMatches();
         for (Match match : matches) {
-            final String signatureAc = match.getSignature().getAccession();
-            final SignatureLibrary signatureLibrary = match.getSignature().getSignatureLibraryRelease().getLibrary();
+            final Signature signature = match.getSignature();
+            final String signatureAc = signature.getAccession();
+            final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
             final String analysis = signatureLibrary.getName();
             final String description = match.getSignature().getDescription();
 
@@ -67,6 +69,30 @@ public class ProteinMatchTSVWriter {
                 mappingFields.add(score);
                 mappingFields.add(status);
                 mappingFields.add(date);
+
+                Entry databaseEntry = signature.getEntry();
+                if (databaseEntry != null) {
+                    mappingFields.add(databaseEntry.getAccession());
+                    mappingFields.add(databaseEntry.getDescription());
+                    if (mapToPathway) {
+                        Collection<PathwayXref> pathwayXRefs = databaseEntry.getPathwayXRefs();
+                        if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
+                            StringBuffer sb = new StringBuffer();
+                            for (PathwayXref xref : pathwayXRefs) {
+                                if (sb.length() > 0) {
+                                    sb.append(", ");
+                                }
+                                sb.append(xref.getIdentifier());
+                            }
+                            mappingFields.add("This place is reserved to Pathways (unfinished implementation)" + sb.toString());
+                        }
+                    } else {
+                        mappingFields.add("This place is reserved to Pathways (unfinished implementation)");
+                    }
+                    if (mapToGO) {
+                        //TODO: Integrate if model database is ready
+                    }
+                }
 
 
                 if (mapToInterProEntries) {
@@ -111,6 +137,10 @@ public class ProteinMatchTSVWriter {
 
     public void setInterProGoMapping(Map<SignatureLibrary, SignatureLibraryIntegratedMethods> interProGoMapping) {
         this.interProGoMapping = interProGoMapping;
+    }
+
+    public void setMapToPathway(boolean mapToPathway) {
+        this.mapToPathway = mapToPathway;
     }
 
     private String makeProteinAc(Protein protein) {
