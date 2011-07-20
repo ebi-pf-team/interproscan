@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <bean id="jdbcEntryDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.installer.JdbcEntryDaoImpl">
+        <property name="jdbcTemplate" ref="sourceJdbcTemplate"/>
+        <property name="entryRowCallbackHandler" ref="entryRowCallbackHandler"/>
+    </bean>
+
+    <!-- JDBC Template -->
+
+    <bean id="sourceJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref="sourceDataSource"/>
+    </bean>
+
+    <!-- the DataSource being queried (parameterized for configuration via a PropertyPlaceHolderConfigurer) -->
+    <bean id="sourceDataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.source.driverClassName}"/>
+        <property name="url" value="${jdbc.source.url}"/>
+        <property name="username" value="${jdbc.source.username}"/>
+        <property name="password" value="${jdbc.source.password}"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="validationQuery" value="select 1 from dual"/>
+        <!--<property name="maxIdle" value="2"/>-->
+        <!--<property name="maxActive" value="4"/>-->
+        <!--<property name="removeAbandoned" value="true"/>-->
+        <!--<property name="removeAbandonedTimeout" value="5000"/>-->
+        <!--<property name="testWhileIdle" value="true"/>-->
+        <!--<property name="maxActive" value="5"/>-->
+    </bean>
+
+    <!-- Entry row callback handler -->
+
+    <bean id="entryRowCallbackHandler" class="uk.ac.ebi.interpro.scan.persistence.installer.EntryRowCallbackHandler">
+        <constructor-arg ref="entry2SignaturesDAO"/>
+        <constructor-arg ref="entry2GoDAO"/>
+        <constructor-arg ref="entry2PathwayDAO"/>
+        <constructor-arg ref="entryDAO"/>
+        <constructor-arg ref="signatureDAO"/>
+    </bean>
+
+    <bean id="entry2SignaturesDAO" class="uk.ac.ebi.interpro.scan.persistence.installer.Entry2SignaturesDAOImpl">
+        <property name="dataSource" ref="sourceDataSource"/>
+    </bean>
+
+    <bean id="entry2GoDAO" class="uk.ac.ebi.interpro.scan.persistence.installer.Entry2GoDAOImpl">
+        <property name="dataSource" ref="sourceDataSource"/>
+    </bean>
+
+    <bean id="entry2PathwayDAO" class="uk.ac.ebi.interpro.scan.persistence.installer.Entry2PathwayDAOImpl">
+        <property name="dataSource" ref="sourceDataSource"/>
+    </bean>
+
+    <bean id="entryDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.EntryDAOImpl">
+    </bean>
+
+    <bean id="signatureDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">
+    </bean>
+
+</beans>

@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCrea
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAO;
+import uk.ac.ebi.interpro.scan.persistence.installer.JdbcEntryDao;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +26,9 @@ public class Installer implements Runnable {
 
     private List<ModelFileParser> parsers;
 
+    private JdbcEntryDao jdbcEntryDAO;
+
+
     @Required
     public void setSignatureLibraryReleaseDAO(SignatureLibraryReleaseDAO signatureLibraryReleaseDAO) {
         this.signatureLibraryReleaseDAO = signatureLibraryReleaseDAO;
@@ -37,6 +41,11 @@ public class Installer implements Runnable {
 
     public void setStepCreationSignatureDatabaseLoadListener(StepCreationSignatureDatabaseLoadListener stepCreationSignatureDatabaseLoadListener) {
         this.stepCreationSignatureDatabaseLoadListener = stepCreationSignatureDatabaseLoadListener;
+    }
+
+    @Required
+    public void setJdbcEntryDAO(JdbcEntryDao jdbcEntryDAO) {
+        this.jdbcEntryDAO = jdbcEntryDAO;
     }
 
     @Override

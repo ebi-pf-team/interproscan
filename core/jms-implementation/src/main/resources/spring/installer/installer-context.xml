@@ -9,6 +9,7 @@
     <import resource="classpath:/spring/persistence/datasource-context.xml"/>
     <import resource="installer-entitymanager-context.xml"/>
     <import resource="classpath:/spring/directoryManager/InstallerDirectoryManager-context.xml"/>
+    <import resource="interpro-db-access-context.xml"/>
 
     <bean id="installer" class="uk.ac.ebi.interpro.scan.jms.installer.Installer">
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
@@ -31,6 +32,7 @@
                 <ref bean="SuperFamily_1.75"/>
             </list>
         </property>
+        <property name="jdbcEntryDAO" ref="jdbcEntryDAO" />
     </bean>
 
     <!--
