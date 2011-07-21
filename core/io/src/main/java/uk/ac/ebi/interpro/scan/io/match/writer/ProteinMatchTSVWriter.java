@@ -14,8 +14,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+
 /**
  * Write matches as output for InterProScan user.
+ *
+ * @author ?, EMBL-EBI, InterPro
+ * @author Maxim Scheremetjew
+ * @version $Id$
+ * @since 1.0-SNAPSHOT
  */
 public class ProteinMatchTSVWriter {
 
