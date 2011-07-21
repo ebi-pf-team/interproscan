@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,6 +20,7 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
+@Ignore
 public class TestInstaller {
 
     private static final Logger LOGGER = Logger.getLogger(TestInstaller.class.getName());

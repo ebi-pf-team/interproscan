@@ -76,10 +76,17 @@ public class Entry implements Serializable {
     @Transient
     private String abstractText;
 
-    @ManyToOne // TODO This needs to be ManyToMany so that an Entry can be re-used across releases.
+    @ManyToOne
+    // TODO This needs to be ManyToMany so that an Entry can be re-used across releases.
     private Release release;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entry")
+    @ManyToMany(
+            targetEntity = GoXref.class,
+            cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "ENTRY_GO_XREF",
+            joinColumns = @JoinColumn(name = "ENTRY_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GO_XREF_ID"))
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "go-xref") // TODO: This should not be here (see TODO comments on getGoCrossReferences)
     private Set<GoXref> goXRefs = new HashSet<GoXref>();
@@ -88,11 +95,11 @@ public class Entry implements Serializable {
             targetEntity = PathwayXref.class,
             cascade = CascadeType.ALL)
     @JoinTable(
-            name = "ENTRY_PATHWAY",
+            name = "ENTRY_PATHWAY_XREF",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
-            inverseJoinColumns = @JoinColumn(name = "PATHWAY_ID"))
+            inverseJoinColumns = @JoinColumn(name = "PATHWAY_XREF_ID"))
 //    @XmlElement(name = "pathway-xref") // TODO: This should not be here
-    private Collection<PathwayXref> pathwayXRefs;
+    private Set<PathwayXref> pathwayXRefs;
 
     @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
@@ -123,7 +130,7 @@ public class Entry implements Serializable {
                  Release release,
                  Set<Signature> signatures,
                  Set<GoXref> goXrefs,
-                 Collection<PathwayXref> pathwayXrefs) {
+                 Set<PathwayXref> pathwayXrefs) {
         setAccession(accession);
         setName(name);
         setDescription(description);
@@ -153,7 +160,7 @@ public class Entry implements Serializable {
         private Release release;
         private Set<Signature> signatures = new HashSet<Signature>();
         private Set<GoXref> goCrossReferences = new HashSet<GoXref>();
-        private Collection<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
+        private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
 
         public Builder(String accession) {
             this.accession = accession;
@@ -220,15 +227,39 @@ public class Entry implements Serializable {
         }
 
         public Builder signature(Signature signature) {
-            this.signatures.add(signature);
+            if (signatures != null) {
+                this.signatures.add(signature);
+            }
+            return this;
+        }
+
+        public Builder signatures(Set<Signature> signatures) {
+            if (signatures != null) {
+                this.signatures.addAll(signatures);
+            }
             return this;
         }
 
         public Builder goCrossReference(GoXref xref) {
-            this.goCrossReferences.add(xref);
+            if (goCrossReferences != null) {
+                this.goCrossReferences.add(xref);
+            }
             return this;
         }
 
+        public Builder goCrossReferences(Set<GoXref> xrefs) {
+            if (goCrossReferences != null) {
+                this.goCrossReferences.addAll(xrefs);
+            }
+            return this;
+        }
+
+        public Builder pathwayCrossReferences(Set<PathwayXref> xrefs) {
+            if (pathwayXRefs != null) {
+                pathwayXRefs.addAll(xrefs);
+            }
+            return this;
+        }
     }
 
     public Long getId() {
@@ -387,13 +418,18 @@ public class Entry implements Serializable {
         if (xref == null) {
             throw new IllegalArgumentException("'xref' must not be null");
         }
+        if (goXRefs == null) {
+            goXRefs = new HashSet<GoXref>();
+        }
         goXRefs.add(xref);
-        xref.setEntry(this);
+        xref.addEntry(this);
         return xref;
     }
 
     public void removeGoXRef(GoXref xref) {
-        goXRefs.remove(xref);
+        if (goXRefs != null) {
+            goXRefs.remove(xref);
+        }
     }
 
     /**
@@ -422,7 +458,7 @@ public class Entry implements Serializable {
         return pathwayXRefs;
     }
 
-    private void setPathwayXRefs(Collection<PathwayXref> xrefs) {
+    private void setPathwayXRefs(Set<PathwayXref> xrefs) {
         for (PathwayXref xref : xrefs) {
             addPathwayXRef(xref);
         }
@@ -543,6 +579,4 @@ public class Entry implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
-
 }

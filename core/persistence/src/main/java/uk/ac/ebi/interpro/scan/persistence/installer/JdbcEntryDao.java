@@ -8,5 +8,13 @@ package uk.ac.ebi.interpro.scan.persistence.installer;
  * @since 1.0-SNAPSHOT
  */
 public interface JdbcEntryDao {
-    public void queryEntries();
+    /**
+     * Loads entries and entry mappings from an InterPro database and stores them into I5 database.
+     */
+    void loadEntriesAndMappings();
+
+    /**
+     * Returns the latest InterPro database version.
+     */
+    String getLatestDatabaseReleaseVersion();
 }
