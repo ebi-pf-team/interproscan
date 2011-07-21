@@ -19,11 +19,12 @@
         <class>uk.ac.ebi.interpro.scan.model.Signature</class>
         <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
 
-        <!--<class>uk.ac.ebi.interpro.scan.model.Entry</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.EntryType</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.GoCategory</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.GoXref</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.Release</class>-->
+        <class>uk.ac.ebi.interpro.scan.model.Entry</class>
+        <class>uk.ac.ebi.interpro.scan.model.EntryType</class>
+        <class>uk.ac.ebi.interpro.scan.model.GoCategory</class>
+        <class>uk.ac.ebi.interpro.scan.model.GoXref</class>
+        <class>uk.ac.ebi.interpro.scan.model.Release</class>
+        <class>uk.ac.ebi.interpro.scan.model.PathwayXref</class>
 
         <!-- Concrete Matches -->
         <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>

@@ -20,25 +20,32 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * GO cross-reference.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @Entity
 @XmlType(name = "GoXrefType")
 public class GoXref extends Xref implements Serializable {
 
-    @ManyToOne(optional = false)
-    private Entry entry;
+    @ManyToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "goXRefs",
+            targetEntity = Entry.class)
+    private Set<Entry> entries;
 
     private GoCategory category;
 
@@ -63,12 +70,19 @@ public class GoXref extends Xref implements Serializable {
     }
 
     @XmlTransient
-    public Entry getEntry() {
-        return entry;
+    public Set<Entry> getEntries() {
+        return entries;
     }
 
-    void setEntry(Entry entry) {
-        this.entry = entry;
+    public void setEntries(Set<Entry> entries) {
+        this.entries = entries;
+    }
+
+    public void addEntry(Entry entry) {
+        if (entries == null) {
+            entries = new HashSet<Entry>();
+        }
+        entries.add(entry);
     }
 
     /**
@@ -80,7 +94,8 @@ public class GoXref extends Xref implements Serializable {
      * @param o ProteinXref to compare with.
      * @return true if the two ProteinXrefs have the same natural key.
      */
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof GoXref))
@@ -98,13 +113,15 @@ public class GoXref extends Xref implements Serializable {
      *
      * @return hashcode for this Xref.
      */
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(15, 51)
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
