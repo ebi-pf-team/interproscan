@@ -4,10 +4,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Defines a cross reference to a external pathway entry.</br>
@@ -26,7 +28,7 @@ public class PathwayXref extends Xref implements Serializable {
             cascade = CascadeType.ALL,
             mappedBy = "pathwayXRefs",
             targetEntity = Entry.class)
-    private Collection<Entry> entries;
+    private Set<Entry> entries;
 
     /**
      * Zero arguments constructor just for Hibernate.
@@ -45,11 +47,12 @@ public class PathwayXref extends Xref implements Serializable {
         entries.add(entry);
     }
 
-    public Collection<Entry> getEntries() {
+    @XmlTransient
+    public Set<Entry> getEntries() {
         return entries;
     }
 
-    public void setEntries(Collection<Entry> entries) {
+    public void setEntries(Set<Entry> entries) {
         this.entries = entries;
     }
 

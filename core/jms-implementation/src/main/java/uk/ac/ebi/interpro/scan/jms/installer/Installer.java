@@ -53,9 +53,9 @@ public class Installer implements Runnable {
         LOGGER.info("Schema creation");
         // By Magic!
 
-        LOGGER.info("Loading signatures");
-        loadModels();
-        LOGGER.info("Loaded signatures");
+//        LOGGER.info("Loading signatures");
+//        loadModels();
+//        LOGGER.info("Loaded signatures");
 
         LOGGER.info("Loading entries and related info");
         loadEntries();
@@ -65,7 +65,7 @@ public class Installer implements Runnable {
 
     private void loadEntries() {
         //load all entries
-        //jdbcEntryDAO.queryEntries(); // TODO
+        jdbcEntryDAO.loadEntriesAndMappings(); // TODO
     }
 
     private void loadModels() {

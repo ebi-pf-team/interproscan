@@ -11,11 +11,12 @@
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
 
-        <!--<class>uk.ac.ebi.interpro.scan.model.Entry</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.EntryType</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.GoCategory</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.GoXref</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.Release</class>-->
+        <class>uk.ac.ebi.interpro.scan.model.Entry</class>
+        <class>uk.ac.ebi.interpro.scan.model.EntryType</class>
+        <class>uk.ac.ebi.interpro.scan.model.GoCategory</class>
+        <class>uk.ac.ebi.interpro.scan.model.GoXref</class>
+        <class>uk.ac.ebi.interpro.scan.model.Release</class>
+        <class>uk.ac.ebi.interpro.scan.model.PathwayXref</class>
 
         <class>uk.ac.ebi.interpro.scan.model.Protein</class>
         <class>uk.ac.ebi.interpro.scan.model.Model</class>

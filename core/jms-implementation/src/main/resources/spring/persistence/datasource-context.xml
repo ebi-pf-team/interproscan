@@ -55,6 +55,8 @@
     <bean id="nucleotideSequenceDAO"
           class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAOImpl"/>
 
+    <bean id="entryDAO" class="uk.ac.ebi.interpro.scan.persistence.EntryDAOImpl"/>
+
     <bean id="lockObject" class="java.lang.Object"/>
 
 </beans>

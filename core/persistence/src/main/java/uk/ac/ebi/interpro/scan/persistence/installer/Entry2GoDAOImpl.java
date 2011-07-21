@@ -106,11 +106,11 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         String entryAcc = rs.getString("entry_ac");
         String identifier = rs.getString("go_id");
         GoXref newGoXRef = new GoXref(identifier, null, null);
-        List<GoXref> goXrefList = (List<GoXref>) result.get(entryAcc);
-        if (goXrefList == null) {
-            goXrefList = new ArrayList<GoXref>();
+        Set<GoXref> goXrefs = (Set<GoXref>) result.get(entryAcc);
+        if (goXrefs == null) {
+            goXrefs = new HashSet<GoXref>();
         }
-        goXrefList.add(newGoXRef);
-        result.put(entryAcc, goXrefList);
+        goXrefs.add(newGoXRef);
+        result.put(entryAcc, goXrefs);
     }
 }
