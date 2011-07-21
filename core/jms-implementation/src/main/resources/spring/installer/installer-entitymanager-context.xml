@@ -24,7 +24,7 @@
                 <entry key="hibernate.dialect" value="${hibernate.dialect}"/>
                 <entry key="hibernate.default_schema" value="${hibernate.default_schema}"/>
                 <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
-                <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch.size}"/>
+                <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch_size}"/>
                 <!-- create, update -->
                 <entry key="hibernate.hbm2ddl.auto" value="create"/>
                 <!-- Note - the "oracleNamingStrategy" does the following:
