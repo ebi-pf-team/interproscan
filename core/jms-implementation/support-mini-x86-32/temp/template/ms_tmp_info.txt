@@ -1,0 +1,3 @@
+H2 database files 'ms_tmp_interpro.h2.db' and 'ms_tmp_interpro.zip' contain an updated schema, which includes entry, pathway_xref, go_xref and InterPro releases entities.
+
+To run I5 blackbox version successfully you need to use these new updated once, otherwise you end up with exceptions.
