@@ -1,1 +1,0 @@
-H2 database files 'ms_tmp_interpro.h2.db' and 'ms_tmp_interpro.zip' contain a updated schema, which includes entry, pathway_xref and go_xref entities.
