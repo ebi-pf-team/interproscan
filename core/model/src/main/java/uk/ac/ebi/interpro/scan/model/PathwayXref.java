@@ -1,5 +1,8 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -28,7 +31,7 @@ public class PathwayXref extends Xref implements Serializable {
             cascade = CascadeType.ALL,
             mappedBy = "pathwayXRefs",
             targetEntity = Entry.class)
-    private Set<Entry> entries;
+    private Set<Entry> entries = new HashSet<Entry>();
 
     /**
      * Zero arguments constructor just for Hibernate.
@@ -40,20 +43,53 @@ public class PathwayXref extends Xref implements Serializable {
         super(databaseName, identifier, name);
     }
 
-    public void addEntry(Entry entry) {
-        if (entries == null) {
-            entries = new HashSet<Entry>();
+    protected void addEntry(Entry entry) {
+        if (this.entries == null) {
+            this.entries = new HashSet<Entry>();
         }
         entries.add(entry);
     }
 
+    public void removeEntry(Entry entry) {
+        if (entries != null) {
+            entries.remove(entry);
+        }
+    }
+
     @XmlTransient
     public Set<Entry> getEntries() {
-        return entries;
+        return (entries == null ? new HashSet<Entry>() : entries);
     }
 
     public void setEntries(Set<Entry> entries) {
-        this.entries = entries;
+        for (Entry e : entries) {
+            addEntry(e);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof PathwayXref))
+            return false;
+        final PathwayXref p = (PathwayXref) o;
+        return new EqualsBuilder()
+                .append(getIdentifier(), p.getIdentifier())
+                .append(getName(), p.getName())
+                .append(getDatabaseName(), p.getDatabaseName())
+                .append(getEntries(), p.getEntries())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(73, 39)
+                .append(getIdentifier())
+                .append(getName())
+                .append(getDatabaseName())
+                .append(getEntries())
+                .toHashCode();
     }
 
     public enum PathwayDatabase {

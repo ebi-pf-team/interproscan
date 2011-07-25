@@ -76,9 +76,14 @@ public class Entry implements Serializable {
     @Transient
     private String abstractText;
 
-    @ManyToOne
-    // TODO This needs to be ManyToMany so that an Entry can be re-used across releases.
-    private Release release;
+    @ManyToMany(
+            targetEntity = Release.class)
+    @JoinTable(
+            name = "ENTRY_RELEASE",
+            joinColumns = @JoinColumn(name = "ENTRY_ID"),
+            inverseJoinColumns = @JoinColumn(name = "RELEASE_ID"))
+    // TODO: Validate annotation changes
+    private Set<Release> releases;
 
     @ManyToMany(
             targetEntity = GoXref.class,
@@ -101,7 +106,7 @@ public class Entry implements Serializable {
 //    @XmlElement(name = "pathway-xref") // TODO: This should not be here
     private Set<PathwayXref> pathwayXRefs;
 
-    @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "entry", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
     @XmlElement(name = "signature") // TODO: This should not be here (see TODO comments on getSignatures)
     private Set<Signature> signatures = new HashSet<Signature>();
@@ -127,7 +132,7 @@ public class Entry implements Serializable {
                  EntryType type,
                  String description,
                  String abstractText,
-                 Release release,
+                 Set<Release> releases,
                  Set<Signature> signatures,
                  Set<GoXref> goXrefs,
                  Set<PathwayXref> pathwayXrefs) {
@@ -136,7 +141,7 @@ public class Entry implements Serializable {
         setDescription(description);
         setType(type);
         setAbstract(abstractText);
-        setRelease(release);
+        setReleases(releases);
         setSignatures(signatures);
         setGoXRefs(goXrefs);
         setPathwayXRefs(pathwayXrefs);
@@ -157,7 +162,7 @@ public class Entry implements Serializable {
         private Date created;
         private Date updated;
         private String abstractText;
-        private Release release;
+        private Set<Release> releases = new HashSet<Release>();
         private Set<Signature> signatures = new HashSet<Signature>();
         private Set<GoXref> goCrossReferences = new HashSet<GoXref>();
         private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
@@ -172,21 +177,19 @@ public class Entry implements Serializable {
             entry.setDescription(description);
             entry.setType(type);
             entry.setAbstract(abstractText);
-            entry.setRelease(release);
             entry.setCreated(created);
             entry.setUpdated(updated);
-            if (signatures != null) {
+            if (!releases.isEmpty()) {
+                entry.setReleases(releases);
+            }
+            if (!signatures.isEmpty()) {
                 entry.setSignatures(signatures);
             }
             if (!goCrossReferences.isEmpty()) {
-                for (GoXref x : goCrossReferences) {
-                    entry.addGoXRef(x);
-                }
+                entry.setGoXRefs(goCrossReferences);
             }
             if (!pathwayXRefs.isEmpty()) {
-                for (GoXref x : goCrossReferences) {
-                    entry.addGoXRef(x);
-                }
+                entry.setPathwayXRefs(pathwayXRefs);
             }
             return entry;
         }
@@ -221,43 +224,43 @@ public class Entry implements Serializable {
             return this;
         }
 
-        public Builder Release(Release release) {
-            this.release = release;
+        public Builder release(Release release) {
+            releases.add(release);
+            return this;
+        }
+
+        public Builder releases(Set<Release> releases) {
+            this.releases = releases;
             return this;
         }
 
         public Builder signature(Signature signature) {
-            if (signatures != null) {
-                this.signatures.add(signature);
-            }
+            this.signatures.add(signature);
             return this;
         }
 
         public Builder signatures(Set<Signature> signatures) {
-            if (signatures != null) {
-                this.signatures.addAll(signatures);
-            }
+            this.signatures = signatures;
             return this;
         }
 
         public Builder goCrossReference(GoXref xref) {
-            if (goCrossReferences != null) {
-                this.goCrossReferences.add(xref);
-            }
+            this.goCrossReferences.add(xref);
             return this;
         }
 
         public Builder goCrossReferences(Set<GoXref> xrefs) {
-            if (goCrossReferences != null) {
-                this.goCrossReferences.addAll(xrefs);
-            }
+            this.goCrossReferences = xrefs;
+            return this;
+        }
+
+        public Builder pathwayCrossReference(PathwayXref xref) {
+            this.pathwayXRefs.add(xref);
             return this;
         }
 
         public Builder pathwayCrossReferences(Set<PathwayXref> xrefs) {
-            if (pathwayXRefs != null) {
-                pathwayXRefs.addAll(xrefs);
-            }
+            this.pathwayXRefs = xrefs;
             return this;
         }
     }
@@ -368,12 +371,43 @@ public class Entry implements Serializable {
     }
 
     @XmlTransient
-    public Release getRelease() {
+    public Set<Release> getReleases() {
+        return releases;
+    }
+
+    void setReleases(Set<Release> releases) {
+        for (Release release : releases) {
+            addRelease(release);
+        }
+    }
+
+    /**
+     * Adds and returns InterPro releases.
+     *
+     * @param release A new specified Interpro release which should be add to this entry.
+     * @return The specified InterPro release.
+     * @throws IllegalArgumentException if xref is null
+     */
+    public Release addRelease(Release release) throws IllegalArgumentException {
+        if (release == null) {
+            throw new IllegalArgumentException("Release should not be null");
+        }
+        if (releases == null) {
+            releases = new HashSet<Release>();
+        }
+        releases.add(release);
+        release.addEntry(this);
         return release;
     }
 
-    void setRelease(Release release) {
-        this.release = release;
+    public void removeRelease(Release release) {
+        if (release == null) {
+            throw new IllegalArgumentException("Release should not be null");
+        }
+        release.removeEntry(this);
+        if (releases != null) {
+            releases.remove(release);
+        }
     }
 
     /**
@@ -553,8 +587,7 @@ public class Entry implements Serializable {
                 .append(getDescription(), e.getDescription())
                 .append(getAbstract(), e.getAbstract())
                 .append(signatures, e.signatures)
-                .append(goXRefs, e.goXRefs)
-                .append(pathwayXRefs, e.pathwayXRefs)
+//                .append(goXRefs, e.goXRefs)
                 .isEquals();
     }
 
@@ -570,8 +603,7 @@ public class Entry implements Serializable {
                 .append(getAbstract())
                         // TODO: Figure out why adding signatures to hashCode() causes Entry.equals() to fail
                 .append(signatures)
-                .append(goXRefs)
-                .append(pathwayXRefs)
+//                .append(goXRefs)
                 .toHashCode();
     }
 

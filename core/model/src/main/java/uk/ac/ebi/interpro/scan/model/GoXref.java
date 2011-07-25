@@ -45,7 +45,7 @@ public class GoXref extends Xref implements Serializable {
             cascade = CascadeType.ALL,
             mappedBy = "goXRefs",
             targetEntity = Entry.class)
-    private Set<Entry> entries;
+    private Set<Entry> entries = new HashSet<Entry>();
 
     private GoCategory category;
 
@@ -71,19 +71,32 @@ public class GoXref extends Xref implements Serializable {
 
     @XmlTransient
     public Set<Entry> getEntries() {
-        return entries;
+        return (entries == null ? new HashSet<Entry>() : entries);
     }
 
     public void setEntries(Set<Entry> entries) {
-        this.entries = entries;
+        for (Entry e : entries) {
+            addEntry(e);
+        }
     }
 
-    public void addEntry(Entry entry) {
+    protected void addEntry(Entry entry) {
         if (entries == null) {
             entries = new HashSet<Entry>();
         }
         entries.add(entry);
     }
+
+    public void removeEntry(Entry entry) {
+        if (entry == null) {
+            throw new IllegalArgumentException("Entry must not be null!");
+        }
+        entry.removeGoXRef(this);
+        if (entries != null) {
+            entries.remove(entry);
+        }
+    }
+
 
     /**
      * This equals method must not change - do NOT add the database id
@@ -100,8 +113,13 @@ public class GoXref extends Xref implements Serializable {
             return true;
         if (!(o instanceof GoXref))
             return false;
+        final GoXref goXref = (GoXref) o;
         return new EqualsBuilder()
-                .appendSuper(super.equals(o))
+                .append(getIdentifier(), goXref.getIdentifier())
+                .append(getName(), goXref.getName())
+                .append(getDatabaseName(), goXref.getDatabaseName())
+                .append(getCategory(), goXref.getCategory())
+                .append(getEntries(), goXref.getEntries())
                 .isEquals();
     }
 
@@ -116,7 +134,11 @@ public class GoXref extends Xref implements Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(15, 51)
-                .appendSuper(super.hashCode())
+                .append(getIdentifier())
+                .append(getName())
+                .append(getDatabaseName())
+                .append(getCategory())
+                .append(getEntries())
                 .toHashCode();
     }
 

@@ -57,6 +57,8 @@
 
     <bean id="entryDAO" class="uk.ac.ebi.interpro.scan.persistence.EntryDAOImpl"/>
 
+    <bean id="releaseDAO" class="uk.ac.ebi.interpro.scan.persistence.ReleaseDAOImpl"/>
+
     <bean id="lockObject" class="java.lang.Object"/>
 
 </beans>

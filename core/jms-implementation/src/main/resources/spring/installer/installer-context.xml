@@ -32,7 +32,8 @@
                 <ref bean="SuperFamily_1.75"/>
             </list>
         </property>
-        <property name="jdbcEntryDAO" ref="jdbcEntryDAO" />
+        <property name="jdbcEntryDAO" ref="jdbcEntryDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
     </bean>
 
     <!--

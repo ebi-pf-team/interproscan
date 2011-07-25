@@ -32,6 +32,7 @@
         <!--Hibernate DAOs-->
         <property name="entryDAO" ref="entryDAO"/>
         <property name="signatureDAO" ref="signatureDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
         <!--JDBC DAOs-->
         <property name="entry2SignaturesDAO" ref="entry2SignaturesDAO"/>
         <property name="entry2GoDAO" ref="entry2GoDAO"/>
