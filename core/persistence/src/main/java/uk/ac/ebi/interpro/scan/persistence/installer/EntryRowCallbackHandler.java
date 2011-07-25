@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.EntryDAO;
+import uk.ac.ebi.interpro.scan.persistence.ReleaseDAO;
 import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 
 import java.sql.ResultSet;
@@ -25,11 +26,11 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     private final int BATCH_COMMIT_SIZE = 5;
 
     private int entryCounter = 0;
-
     private Set<Entry> entries = new HashSet<Entry>();
 
-    /* InterPro release version */
-    private String releaseVersion;
+    /* InterPro release Id */
+    private Release interProRelease;
+    private Long interProReleaseId;
 
     // Populated from the InterPro database
     private Map<String, Collection<String>> entry2SignaturesMap;
@@ -39,6 +40,7 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     // I5 model Hibernate DAOs
     private EntryDAO entryDAO;
     private SignatureDAO signatureDAO;
+    private ReleaseDAO releaseDAO;
 
     //Installer JDBC DAOs
     private Entry2SignaturesDAO entry2SignaturesDAO;
@@ -53,6 +55,11 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     @Required
     public void setSignatureDAO(SignatureDAO signatureDAO) {
         this.signatureDAO = signatureDAO;
+    }
+
+    @Required
+    public void setReleaseDAO(ReleaseDAO releaseDAO) {
+        this.releaseDAO = releaseDAO;
     }
 
     @Required
@@ -75,7 +82,6 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     @Override
     public void processRow(ResultSet resultSet) throws SQLException {
-
         // Get query row result
         final String entryAc = resultSet.getString(1);
         final String entryType = resultSet.getString(2);
@@ -91,40 +97,40 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
             type = EntryType.parseCode(entryType.charAt(0));
         }
 
-        // Prepare entry GO cross references
+        // Prepare entry 2 GO cross references
         Set<GoXref> goXrefs = (Set<GoXref>) getEntry2GoXrefsMap().get(entryAc);
         if (goXrefs == null) {
             goXrefs = new HashSet<GoXref>();
         }
 
-        // Prepare entry pathway cross references
+        // Prepare entry 2 pathway cross references
         Set<PathwayXref> pathwayXrefs = (Set<PathwayXref>) getEntry2PathwayXrefsMap().get(entryAc);
         if (pathwayXrefs == null) {
             pathwayXrefs = new HashSet<PathwayXref>();
         }
 
         // Now create the entry and attach the signatures, GO xrefs and pathway xrefs
-        Entry entry = buildEntry(entryAc, name, type, description, new Release(getReleaseVersion()), goXrefs, pathwayXrefs);
+        Entry entry = buildEntry(entryAc, name, type, description, goXrefs, pathwayXrefs);
+        Release release = getInterProRelease();
+        entry.addRelease(release);
 
         // Prepare entry signatures
-//        Set<Signature> signatures = null;
-//        Set<String> signatureAcs = (Set<String>) getEntry2SignaturesMap().get(entryAc);
-//        if (signatureAcs == null) {
-//            // TODO Throw exception?
-//            signatureAcs = new HashSet<String>();
-//        } else {
-//            // Lookup signatures (already in I5 database) from the signature accessions
-//            signatures = (Set<Signature>) signatureDAO.getSignaturesAndMethodsDeep(signatureAcs);
-//            if (signatures == null || signatures.size() < 1) {
-//                log.error("Signatures could not be found in the database: " + signatureAcs.toString());
-//                throw new IllegalStateException("No signatures for entry " + entryAc + " could be found in the database.");
-//            } else {
-//                for (Signature signature : signatures) {
-//                    entry.addSignature(signature);
-//                }
-//            }
-//        }
-
+        Set<String> signatureAcs = (Set<String>) getEntry2SignaturesMap().get(entryAc);
+        if (signatureAcs == null) {
+            throw new IllegalStateException("Could not load any signature accession for entry accession - " + entryAc + " from external database!");
+        }
+        // Lookup signatures (already in I5 database) from the signature accessions
+        // Attach them to the entry
+        // Afterwards update signature in database
+        Set<Signature> signatures = (Set<Signature>) signatureDAO.getSignaturesAndMethodsDeep(signatureAcs);
+        if (signatures == null || signatures.size() < 1) {
+            throw new IllegalStateException("Signatures could not be found in the database: " + signatureAcs.toString() + "No signatures for entry " + entryAc + " could be found in the database.");
+        } else {
+            for (Signature signature : signatures) {
+                entry.addSignature(signature);
+                signatureDAO.update(signature);
+            }
+        }
         entries.add(entry);
 
         //persistence step
@@ -139,13 +145,20 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         }
     }
 
+    private boolean checkIfDAOAreUsable() {
+        if (entryDAO == null || signatureDAO == null || releaseDAO == null
+                || entry2GoDAO == null || entry2PathwayDAO == null || entry2SignaturesDAO == null) {
+            throw new IllegalStateException("One or some DAOs are not initialised successfully!");
+        }
+        return true;
+    }
+
     private Entry buildEntry(String entryAc, String name, EntryType type, String description,
-                             Release release, Set<GoXref> goXrefs, Set<PathwayXref> pathwayXrefs) {
+                             Set<GoXref> goXrefs, Set<PathwayXref> pathwayXrefs) {
         return new Entry.Builder(entryAc)
                 .name(name)
                 .type(type)
                 .description(description)
-                .Release(release)
                 .goCrossReferences(goXrefs)
                 .pathwayCrossReferences(pathwayXrefs)
                 .build();
@@ -162,18 +175,23 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         }
     }
 
-    public String getReleaseVersion() {
-        return releaseVersion;
+    public void setInterProReleaseId(Long interProReleaseId) {
+        this.interProReleaseId = interProReleaseId;
     }
 
-    public void setReleaseVersion(String releaseVersion) {
-        this.releaseVersion = releaseVersion;
+    public Release getInterProRelease() {
+        if (interProRelease == null && interProReleaseId != null) {
+            interProRelease = releaseDAO.readDeep(interProReleaseId, "entries");
+        }
+        return interProRelease;
     }
 
     public Map<String, Collection<String>> getEntry2SignaturesMap() {
         if (entry2SignaturesMap == null) {
-            if (entry2SignaturesDAO != null) {
-                this.entry2SignaturesMap = entry2SignaturesDAO.getAllSignatures();
+            if (checkIfDAOAreUsable()) {
+                entry2SignaturesMap = entry2SignaturesDAO.getAllSignatures();
+            } else {
+                entry2SignaturesMap = new HashMap<String, Collection<String>>();
             }
         }
         return entry2SignaturesMap;
@@ -182,8 +200,11 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     public Map<String, Collection<GoXref>> getEntry2GoXrefsMap() {
         if (entry2GoXrefsMap == null) {
-            if (entry2GoDAO != null) {
-                this.entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
+            if (checkIfDAOAreUsable()) {
+                entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
+                if (entry2GoXrefsMap == null) {
+                    throw new RuntimeException("Could not load any entry 2 go mappings from external database!");
+                }
             }
         }
         return entry2GoXrefsMap;
@@ -191,8 +212,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     public Map<String, Collection<PathwayXref>> getEntry2PathwayXrefsMap() {
         if (entry2PathwayXrefsMap == null) {
-            if (entry2PathwayDAO != null) {
-                this.entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
+            if (checkIfDAOAreUsable()) {
+                entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
+            } else {
+                entry2PathwayXrefsMap = new HashMap<String, Collection<PathwayXref>>();
             }
         }
         return entry2PathwayXrefsMap;

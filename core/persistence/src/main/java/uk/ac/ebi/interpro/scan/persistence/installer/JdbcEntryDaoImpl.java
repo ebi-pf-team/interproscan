@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.persistence.installer;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TODO
@@ -43,10 +42,9 @@ public class JdbcEntryDaoImpl implements JdbcEntryDao {
      * Loads entries and entry mappings from an InterPro database and stores them into H2 database.
      * TODO: Release ID thing needs to be discussed, because there isn't any release id associated to the InterPro entry.
      */
-    public void loadEntriesAndMappings() {
+    public void loadEntriesAndMappings(Long releaseId) {
         if (jdbcTemplate != null) {
-            String releaseVersion = getLatestDatabaseReleaseVersion();
-            entryRowCallbackHandler.setReleaseVersion(releaseVersion);
+            entryRowCallbackHandler.setInterProReleaseId(releaseId);
             jdbcTemplate.query("select * from interpro.entry e where e.checked='Y'", entryRowCallbackHandler);
             entryRowCallbackHandler.processFinalRows();
         }

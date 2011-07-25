@@ -50,8 +50,8 @@ public class Release implements Serializable {
     @Column(length = 255, nullable = false)
     private String version;
 
-    // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
-    @OneToMany(mappedBy = "release", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "releases",
+            targetEntity = Entry.class)
     @XmlElement(name = "entry")
     private Set<Entry> entries = new HashSet<Entry>();
 
@@ -79,7 +79,7 @@ public class Release implements Serializable {
     // TODO: is not used (JAXB accesses the field directly).
     // TODO: This needs fixing! (tried XmlAdapter to no avail -- see below)
     public Set<Entry> getEntries() {
-        return (entries == null ? null : Collections.unmodifiableSet(entries));
+        return (entries == null ? new HashSet<Entry>() : entries);
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
@@ -89,21 +89,17 @@ public class Release implements Serializable {
         }
     }
 
-    public Entry addEntry(Entry entry) throws IllegalArgumentException {
-        if (entry == null) {
-            throw new IllegalArgumentException("'entry' must not be null");
+    protected void addEntry(Entry entry) {
+        if (this.entries == null) {
+            this.entries = new HashSet<Entry>();
         }
-        if (entry.getRelease() != null) {
-            entry.getRelease().removeEntry(entry);
-        }
-        entry.setRelease(this);
         entries.add(entry);
-        return entry;
     }
 
     public void removeEntry(Entry entry) {
-        entries.remove(entry);
-        entry.setRelease(null);
+        if (entries != null) {
+            entries.remove(entry);
+        }
     }
 
     @XmlAttribute(required = true)
@@ -116,7 +112,8 @@ public class Release implements Serializable {
         this.version = version;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Release))
@@ -128,14 +125,16 @@ public class Release implements Serializable {
                 .isEquals();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(73, 39)
                 .append(version)
                 .append(entries)
                 .toHashCode();
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 

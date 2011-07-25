@@ -5,6 +5,8 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Entry;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
+import java.util.Set;
+
 /**
  * DAO Interface for data access to the Xref table
  * (which contains protein IDs).
@@ -14,5 +16,8 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
  * @since 1.0
  */
 public interface EntryDAO extends GenericDAO<Entry, Long> {
+    Set<Entry> mergeEntries(Set<Entry> entries);
 
+    @Transactional
+    Entry mergeEntry(Entry entry);
 }
