@@ -4,8 +4,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ModelFileParser;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.memberDatabaseLoad.StepCreationSignatureDatabaseLoadListener;
+import uk.ac.ebi.interpro.scan.model.Release;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.persistence.ReleaseDAO;
 import uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAO;
 import uk.ac.ebi.interpro.scan.persistence.installer.JdbcEntryDao;
 
@@ -28,6 +30,8 @@ public class Installer implements Runnable {
 
     private JdbcEntryDao jdbcEntryDAO;
 
+    private ReleaseDAO releaseDAO;
+
 
     @Required
     public void setSignatureLibraryReleaseDAO(SignatureLibraryReleaseDAO signatureLibraryReleaseDAO) {
@@ -48,6 +52,11 @@ public class Installer implements Runnable {
         this.jdbcEntryDAO = jdbcEntryDAO;
     }
 
+    @Required
+    public void setReleaseDAO(ReleaseDAO releaseDAO) {
+        this.releaseDAO = releaseDAO;
+    }
+
     @Override
     public void run() {
         LOGGER.info("Schema creation");
@@ -64,8 +73,14 @@ public class Installer implements Runnable {
     }
 
     private void loadEntries() {
+        String releaseVersion = jdbcEntryDAO.getLatestDatabaseReleaseVersion();
+        Release interProRelease = releaseDAO.getReleaseByVersion(releaseVersion);
+        if (interProRelease == null) {
+            interProRelease = releaseDAO.insert(new Release(releaseVersion));
+        }
+        Long releaseId = (interProRelease == null ? new Long(-1) : interProRelease.getId());
         //load all entries
-        jdbcEntryDAO.loadEntriesAndMappings(); // TODO
+        jdbcEntryDAO.loadEntriesAndMappings(releaseId); // TODO
     }
 
     private void loadModels() {

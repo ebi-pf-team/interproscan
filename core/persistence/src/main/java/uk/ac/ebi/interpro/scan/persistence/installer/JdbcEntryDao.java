@@ -11,7 +11,7 @@ public interface JdbcEntryDao {
     /**
      * Loads entries and entry mappings from an InterPro database and stores them into I5 database.
      */
-    void loadEntriesAndMappings();
+    void loadEntriesAndMappings(Long releaseId);
 
     /**
      * Returns the latest InterPro database version.
