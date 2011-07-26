@@ -114,35 +114,46 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         Release release = getInterProRelease();
         entry.addRelease(release);
 
-        // Prepare entry signatures
-        Set<String> signatureAcs = (Set<String>) getEntry2SignaturesMap().get(entryAc);
-        if (signatureAcs == null) {
-            throw new IllegalStateException("Could not load any signature accession for entry accession - " + entryAc + " from external database!");
-        }
-        // Lookup signatures (already in I5 database) from the signature accessions
-        // Attach them to the entry
-        // Afterwards update signature in database
-        Set<Signature> signatures = (Set<Signature>) signatureDAO.getSignaturesAndMethodsDeep(signatureAcs);
-        if (signatures == null || signatures.size() < 1) {
-            throw new IllegalStateException("Signatures could not be found in the database: " + signatureAcs.toString() + "No signatures for entry " + entryAc + " could be found in the database.");
-        } else {
-            for (Signature signature : signatures) {
-                entry.addSignature(signature);
-                signatureDAO.update(signature);
-            }
-        }
         entries.add(entry);
 
         //persistence step
         if (entries.size() == BATCH_COMMIT_SIZE) {
-            log.info("Reached entry batch size.");
-            log.info("Persisting entries...");
+            log.info("Reached entry batch size of " + BATCH_COMMIT_SIZE + ".");
+            log.info("Persisting batch of entries...");
             // Batch insert into DB
-            entryDAO.insert(entries);
+            entries = (HashSet<Entry>) entryDAO.insert(entries);
+            log.info("Batch of entries persisted.");
+            addSignatures(entries);
             entries.clear(); // Free up some resources now these results have been inserted
             entryCounter += BATCH_COMMIT_SIZE;
-            log.info("Processed already " + entryCounter + " entries.");
+            printMemory();
+            log.info("----------------- Processed already " + entryCounter + " entries -----------------------");
+
         }
+    }
+
+    private void addSignatures(Set<Entry> entries) {
+        log.info("Adding signatures to entries...");
+        for (Entry entry : entries) {
+            // Prepare entry signatures
+            Set<String> signatureAcs = (Set<String>) getEntry2SignaturesMap().get(entry.getAccession());
+            if (signatureAcs == null) {
+                throw new IllegalStateException("Could not load any signature accession for entry accession - " + entry.getAccession() + " from external database!");
+            }
+            // Lookup signatures (already in I5 database) from the signature accessions
+            // Attach them to the entry
+            // Afterwards update signature in database
+            Set<Signature> signatures = (Set<Signature>) signatureDAO.getSignatures(signatureAcs);
+            if (signatures == null || signatures.size() < 1) {
+                throw new IllegalStateException("Signatures could not be found in the database: " + signatureAcs.toString() + "No signatures for entry " + entry.getAccession() + " could be found in the database.");
+            } else {
+                for (Signature signature : signatures) {
+                    entry.addSignature(signature);
+                    signatureDAO.update(signature);
+                }
+            }
+        }
+        log.info("Finished adding of signatures.");
     }
 
     private boolean checkIfDAOAreUsable() {
@@ -189,10 +200,14 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public Map<String, Collection<String>> getEntry2SignaturesMap() {
         if (entry2SignaturesMap == null) {
             if (checkIfDAOAreUsable()) {
+                log.info("Loading entry 2 signature mappings...");
                 entry2SignaturesMap = entry2SignaturesDAO.getAllSignatures();
-            } else {
-                entry2SignaturesMap = new HashMap<String, Collection<String>>();
             }
+            if (entry2SignaturesMap == null) {
+                throw new RuntimeException("Could not load any entry 2 method mappings from external database!");
+            }
+            log.info(entry2SignaturesMap.size() + " mappings loaded.");
+            printMemory();
         }
         return entry2SignaturesMap;
     }
@@ -201,10 +216,13 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public Map<String, Collection<GoXref>> getEntry2GoXrefsMap() {
         if (entry2GoXrefsMap == null) {
             if (checkIfDAOAreUsable()) {
+                log.info("Loading entry 2 go xrefs...");
                 entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
                 if (entry2GoXrefsMap == null) {
                     throw new RuntimeException("Could not load any entry 2 go mappings from external database!");
                 }
+                log.info(entry2GoXrefsMap.size() + " mappings loaded.");
+                printMemory();
             }
         }
         return entry2GoXrefsMap;
@@ -213,11 +231,20 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public Map<String, Collection<PathwayXref>> getEntry2PathwayXrefsMap() {
         if (entry2PathwayXrefsMap == null) {
             if (checkIfDAOAreUsable()) {
+                log.info("Loading entry 2 pathway xrefs...");
                 entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
-            } else {
-                entry2PathwayXrefsMap = new HashMap<String, Collection<PathwayXref>>();
+                if (entry2PathwayXrefsMap == null) {
+                    throw new RuntimeException("Could not load any entry 2 pathway mappings from external database!");
+                }
+                log.info(entry2PathwayXrefsMap.size() + " mappings loaded.");
+                printMemory();
             }
         }
         return entry2PathwayXrefsMap;
+    }
+
+    private void printMemory() {
+        long heap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        log.info("Current memory usage: " + heap + " bytes (" + (heap / 131072 * 0.125) + " MB)");
     }
 }

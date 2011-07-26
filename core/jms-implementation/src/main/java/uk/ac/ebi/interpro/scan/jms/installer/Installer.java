@@ -79,6 +79,8 @@ public class Installer implements Runnable {
             interProRelease = releaseDAO.insert(new Release(releaseVersion));
         }
         Long releaseId = (interProRelease == null ? new Long(-1) : interProRelease.getId());
+        long heap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        LOGGER.info("Current memory usage: " + heap + " bytes (" + (heap / 131072 * 0.125) + " MB)");
         //load all entries
         jdbcEntryDAO.loadEntriesAndMappings(releaseId); // TODO
     }
