@@ -6,11 +6,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,6 +73,7 @@ public class PathwayXref extends Xref implements Serializable {
             return false;
         final PathwayXref p = (PathwayXref) o;
         return new EqualsBuilder()
+                .append(getId(), p.getId())
                 .append(getIdentifier(), p.getIdentifier())
                 .append(getName(), p.getName())
                 .append(getDatabaseName(), p.getDatabaseName())
@@ -85,6 +84,7 @@ public class PathwayXref extends Xref implements Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(73, 39)
+                .append(getId())
                 .append(getIdentifier())
                 .append(getName())
                 .append(getDatabaseName())
