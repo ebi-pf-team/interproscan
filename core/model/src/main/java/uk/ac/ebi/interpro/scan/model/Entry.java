@@ -106,7 +106,7 @@ public class Entry implements Serializable {
 //    @XmlElement(name = "pathway-xref") // TODO: This should not be here
     private Set<PathwayXref> pathwayXRefs;
 
-    @OneToMany(mappedBy = "entry", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "entry", fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
     @XmlElement(name = "signature") // TODO: This should not be here (see TODO comments on getSignatures)
     private Set<Signature> signatures = new HashSet<Signature>();
@@ -586,8 +586,10 @@ public class Entry implements Serializable {
                 .append(updated, e.updated)
                 .append(getDescription(), e.getDescription())
                 .append(getAbstract(), e.getAbstract())
-                .append(signatures, e.signatures)
-//                .append(goXRefs, e.goXRefs)
+                .append(signatures, e.getSignatures())
+//                .append(releases, e.getReleases())
+//                .append(pathwayXRefs, e.getPathwayXRefs())
+//                .append(goXRefs, e.getGoXRefs())
                 .isEquals();
     }
 
@@ -602,13 +604,27 @@ public class Entry implements Serializable {
                 .append(getDescription())
                 .append(getAbstract())
                         // TODO: Figure out why adding signatures to hashCode() causes Entry.equals() to fail
-                .append(signatures)
-//                .append(goXRefs)
+                .append(getSignatures())
+//                .append(getReleases())
+//                .append(getPathwayXRefs())
+//                .append(getGoXRefs())
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new ToStringBuilder(this)
+                .append("accession", accession)
+                .append("name", name)
+                .append("type", type)
+                .append("created", created)
+                .append("updated", updated)
+                .append("description", getDescription())
+                .append("abstract", getAbstract())
+                .append("signatures", getSignatures())
+//                .append("releases", getReleases())
+//                .append("pathwayXRefs", getPathwayXRefs())
+//                .append("goXRefs", getGoXRefs())
+                .toString();
     }
 }
