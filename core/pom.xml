@@ -96,6 +96,7 @@
         <module>jms-implementation</module>
         <module>cli</module>
         <module>precalcmatches</module>
+        <module>maxim-test</module>
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->

@@ -121,21 +121,24 @@ public class Release implements Serializable {
         final Release s = (Release) o;
         return new EqualsBuilder()
                 .append(version, s.version)
-                .append(entries, s.entries)
+                .append(getEntries(), s.getEntries())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(73, 39)
+        return new HashCodeBuilder(1, 39)
                 .append(version)
-                .append(entries)
+                .append(getEntries())
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new ToStringBuilder(this)
+                .append("version", version)
+                .append("entries", getEntries())
+                .toString();
     }
 
 //    Could not get following to work    

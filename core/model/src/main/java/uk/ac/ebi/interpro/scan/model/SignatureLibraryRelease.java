@@ -161,7 +161,11 @@ public class SignatureLibraryRelease implements Serializable {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new ToStringBuilder(this)
+                .append("library", library)
+                .append("version", version)
+                .append("signatures", signatures)
+                .toString();
     }
 
 //    Could not get following to work    

@@ -129,7 +129,7 @@ public class Signature implements Serializable {
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
     private String comment;
 
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true,cascade = CascadeType.MERGE)
     private Entry entry;
 
     /**
@@ -654,7 +654,20 @@ public class Signature implements Serializable {
      */
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new ToStringBuilder(this)
+                .append("accession", accession)
+                .append("name", name)
+                .append("type", type)
+                .append("created", created)
+                .append("updated", updated)
+                .append("md5", md5)
+                .append("description", getDescription())
+                .append("abstract", getAbstract())
+                .append("comment", getComment())
+//                .append("models", getModels())
+                .append("XRefs", getCrossReferences())
+                .append("deprecatedAccessions", deprecatedAccessions)
+                .toString();
     }
 
 }
