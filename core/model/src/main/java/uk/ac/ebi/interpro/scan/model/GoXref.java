@@ -41,9 +41,7 @@ import java.util.Set;
 @XmlType(name = "GoXrefType")
 public class GoXref extends Xref implements Serializable {
 
-    @ManyToMany(
-            cascade = CascadeType.ALL,
-            mappedBy = "goXRefs",
+    @ManyToMany(mappedBy = "goXRefs",
             targetEntity = Entry.class)
     private Set<Entry> entries = new HashSet<Entry>();
 

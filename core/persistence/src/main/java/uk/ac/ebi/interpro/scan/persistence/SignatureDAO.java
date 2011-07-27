@@ -37,4 +37,11 @@ public interface SignatureDAO extends GenericDAO<Signature, Long> {
 
     @Transactional(readOnly = true)
     public Collection<Signature> getSignatures(Set<String> accessions);
+
+    /**
+     * Updates the modified instances.
+     *
+     * @param modifiedInstances being an attached or unattached, persisted object that has been modified.
+     */
+    Collection<Signature> update(Collection<Signature> modifiedInstances);
 }

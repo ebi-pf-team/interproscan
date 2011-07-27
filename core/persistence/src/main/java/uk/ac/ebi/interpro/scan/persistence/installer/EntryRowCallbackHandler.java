@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.persistence.installer;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.mapping.*;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.ac.ebi.interpro.scan.model.*;
@@ -11,6 +13,9 @@ import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * TODO
@@ -23,7 +28,7 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     private static Logger log = Logger.getLogger(EntryRowCallbackHandler.class);
 
-    private final int BATCH_COMMIT_SIZE = 5;
+    private final int BATCH_COMMIT_SIZE = 60;
 
     private int entryCounter = 0;
     private Set<Entry> entries = new HashSet<Entry>();
@@ -128,12 +133,14 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
             entryCounter += BATCH_COMMIT_SIZE;
             printMemory();
             log.info("----------------- Processed already " + entryCounter + " entries -----------------------");
-
         }
+        if (entryCounter > 100)
+            System.exit(0);
     }
 
     private void addSignatures(Set<Entry> entries) {
         log.info("Adding signatures to entries...");
+        Collection<Signature> batchOfSignatures = new HashSet<Signature>();
         for (Entry entry : entries) {
             // Prepare entry signatures
             Set<String> signatureAcs = (Set<String>) getEntry2SignaturesMap().get(entry.getAccession());
@@ -149,10 +156,12 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
             } else {
                 for (Signature signature : signatures) {
                     entry.addSignature(signature);
-                    signatureDAO.update(signature);
                 }
+                batchOfSignatures.addAll(signatures);
             }
         }
+        log.info("Updating the batch of added signatures (batch size: " + batchOfSignatures.size() + ")");
+        signatureDAO.update(batchOfSignatures);
         log.info("Finished adding of signatures.");
     }
 
@@ -192,7 +201,8 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     public Release getInterProRelease() {
         if (interProRelease == null && interProReleaseId != null) {
-            interProRelease = releaseDAO.readDeep(interProReleaseId, "entries");
+//            interProRelease = releaseDAO.readDeep(interProReleaseId, "entries");
+            interProRelease = releaseDAO.read(interProReleaseId);
         }
         return interProRelease;
     }

@@ -50,8 +50,11 @@ public class Release implements Serializable {
     @Column(length = 255, nullable = false)
     private String version;
 
+    /**
+     * Set fetch type to eager, which means no lazy loading..
+     */
     @ManyToMany(mappedBy = "releases",
-            targetEntity = Entry.class)
+            targetEntity = Entry.class, fetch = FetchType.EAGER)
     @XmlElement(name = "entry")
     private Set<Entry> entries = new HashSet<Entry>();
 
