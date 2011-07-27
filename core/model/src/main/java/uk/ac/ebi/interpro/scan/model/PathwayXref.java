@@ -25,9 +25,7 @@ import java.util.Set;
 @XmlType(name = "PathwayXrefType")
 public class PathwayXref extends Xref implements Serializable {
 
-    @ManyToMany(
-            cascade = CascadeType.ALL,
-            mappedBy = "pathwayXRefs",
+    @ManyToMany(mappedBy = "pathwayXRefs",
             targetEntity = Entry.class)
     private Set<Entry> entries = new HashSet<Entry>();
 
