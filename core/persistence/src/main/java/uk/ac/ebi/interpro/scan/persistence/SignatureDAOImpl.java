@@ -2,7 +2,9 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -65,5 +67,14 @@ public class SignatureDAOImpl extends GenericDAOImpl<Signature, Long> implements
 
         List<Signature> results = query.getResultList();
         return new HashSet<Signature>(results);
+    }
+
+
+    @Transactional
+    public Collection<Signature> update(Collection<Signature> modifiedInstances) {
+        for (Signature modifiedInstance : modifiedInstances) {
+            entityManager.merge(modifiedInstance);
+        }
+        return modifiedInstances;
     }
 }

@@ -105,8 +105,9 @@ public class Signature implements Serializable {
     @Transient
     private String abstractText;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
+    //TODO: Switch back to eager loading after schema update (loading entries to database)
+    @ManyToOne(fetch = FetchType.LAZY)
+    // TODO: This needs to be ManyToMany so that a Signature can be re-used across releases.
     private SignatureLibraryRelease signatureLibraryRelease;
 
     // TODO: Decide whether to use Map or Set (see ChEBI team)
@@ -116,7 +117,7 @@ public class Signature implements Serializable {
     @MapKey(name = "accession")
     private Map<String, Model> models = new HashMap<String, Model>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "signature")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
@@ -129,7 +130,7 @@ public class Signature implements Serializable {
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
     private String comment;
 
-    @ManyToOne(optional = true,cascade = CascadeType.MERGE)
+    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     private Entry entry;
 
     /**
@@ -619,12 +620,12 @@ public class Signature implements Serializable {
                 .append(created, s.created)
                 .append(updated, s.updated)
                 .append(getSafeMd5(md5), getSafeMd5(s.md5))
-                .append(getDescription(), s.getDescription())
-                .append(getAbstract(), s.getAbstract())
-                .append(getComment(), s.getComment())
-                .append(models, s.models)
-                .append(crossReferences, s.crossReferences)
-                .append(deprecatedAccessions, s.deprecatedAccessions)
+                .append(comment, s.comment)
+//                .append(getCrossReferences(), s.getCrossReferences())
+//                .append(getDescription(), s.getDescription())
+//                .append(getAbstract(), s.getAbstract())
+//                .append(models, s.models)
+//                .append(deprecatedAccessions, s.deprecatedAccessions)
                 .isEquals();
     }
 
@@ -636,14 +637,14 @@ public class Signature implements Serializable {
                 .append(type)
                 .append(created)
                 .append(updated)
-                .append(md5)
-                .append(getDescription())
-                .append(getAbstract())
-                .append(getComment())
-                        // TODO: Figure out why adding models to hashCode() causes Signature.equals() to fail
-                        //.append(models)
-                .append(crossReferences)
-                .append(deprecatedAccessions)
+                .append(getSafeMd5(md5))
+                .append(comment)
+//                .append(getCrossReferences())
+//                .append(getDescription())
+//                .append(getAbstract())
+// TODO: Figure out why adding models to hashCode() causes Signature.equals() to fail
+//                .append(models)
+//                .append(deprecatedAccessions)
                 .toHashCode();
     }
 
@@ -660,13 +661,13 @@ public class Signature implements Serializable {
                 .append("type", type)
                 .append("created", created)
                 .append("updated", updated)
-                .append("md5", md5)
-                .append("description", getDescription())
-                .append("abstract", getAbstract())
-                .append("comment", getComment())
+                .append("md5", getSafeMd5(md5))
+                .append("comment", comment)
+//                .append("XRefs", getCrossReferences())
+//                .append("description", getDescription())
+//                .append("abstract", getAbstract())
 //                .append("models", getModels())
-                .append("XRefs", getCrossReferences())
-                .append("deprecatedAccessions", deprecatedAccessions)
+//                .append("deprecatedAccessions", deprecatedAccessions)
                 .toString();
     }
 

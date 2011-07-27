@@ -76,8 +76,13 @@ public class Entry implements Serializable {
     @Transient
     private String abstractText;
 
+    /**
+     * Set cascading to detached, because we do not want to persist or update releases,
+     * during the persistence of an entry.
+     */
     @ManyToMany(
-            targetEntity = Release.class)
+            targetEntity = Release.class,
+            cascade = CascadeType.DETACH)
     @JoinTable(
             name = "ENTRY_RELEASE",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
