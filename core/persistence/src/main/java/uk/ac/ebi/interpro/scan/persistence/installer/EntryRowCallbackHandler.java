@@ -123,19 +123,28 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
         //persistence step
         if (entries.size() == BATCH_COMMIT_SIZE) {
-            log.info("Reached entry batch size of " + BATCH_COMMIT_SIZE + ".");
-            log.info("Persisting batch of entries...");
-            // Batch insert into DB
-            entries = (HashSet<Entry>) entryDAO.insert(entries);
-            log.info("Batch of entries persisted.");
-            addSignatures(entries);
-            entries.clear(); // Free up some resources now these results have been inserted
-            entryCounter += BATCH_COMMIT_SIZE;
-            printMemory();
+            if (log.isInfoEnabled()) {
+                log.info("Reached entry batch size of " + BATCH_COMMIT_SIZE + ".");
+                log.info("Persisting batch of entries...");
+            }
+            insertEntries();
+        }
+    }
+
+    private void insertEntries() {
+        // Batch insert into DB
+        int numEntries = entries.size();
+        entries = (HashSet<Entry>) entryDAO.insert(entries);
+        if (log.isInfoEnabled()) {
+            log.info(numEntries + " entries persisted.");
+        }
+        addSignatures(entries);
+        entries.clear(); // Free up some resources now these results have been inserted
+        entryCounter += numEntries;
+        printMemory();
+        if (log.isInfoEnabled()) {
             log.info("----------------- Processed already " + entryCounter + " entries -----------------------");
         }
-        if (entryCounter > 100)
-            System.exit(0);
     }
 
     private void addSignatures(Set<Entry> entries) {
@@ -152,7 +161,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
             // Afterwards update signature in database
             Set<Signature> signatures = (Set<Signature>) signatureDAO.getSignatures(signatureAcs);
             if (signatures == null || signatures.size() < 1) {
-                throw new IllegalStateException("Signatures could not be found in the database: " + signatureAcs.toString() + "No signatures for entry " + entry.getAccession() + " could be found in the database.");
+                // Perhaps new signatures have been added to the InterPro database since the I5 signature database was populated?
+                // Therefore the signature accession (from the InterPro db) cannot be found in the I5 db!?
+                log.warn("Signatures could not be found in the database: " + signatureAcs.toString() + "No signatures for entry " + entry.getAccession() + " could be found in the database.");
+                // TODO throw new IllegalStateException("Signatures could not be found in the database: " + signatureAcs.toString() + "No signatures for entry " + entry.getAccession() + " could be found in the database.");
             } else {
                 for (Signature signature : signatures) {
                     entry.addSignature(signature);
@@ -160,7 +172,9 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
                 batchOfSignatures.addAll(signatures);
             }
         }
-        log.info("Updating the batch of added signatures (batch size: " + batchOfSignatures.size() + ")");
+        if (log.isInfoEnabled()) {
+            log.info("Updating the batch of added signatures (batch size: " + batchOfSignatures.size() + ")");
+        }
         signatureDAO.update(batchOfSignatures);
         log.info("Finished adding of signatures.");
     }
@@ -190,8 +204,8 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public void processFinalRows() {
         if (entries != null && entries.size() > 0) {
             // Batch insert the remaining entries into the DB
-//            entryDAO.insert(entries);
-            entries.clear(); // Clear now these results have been inserted (just incase this method is accidentally called again)!
+            log.info("Persisting the final few entries...");
+            insertEntries();
         }
     }
 
@@ -210,13 +224,15 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public Map<String, Collection<String>> getEntry2SignaturesMap() {
         if (entry2SignaturesMap == null) {
             if (checkIfDAOAreUsable()) {
-                log.info("Loading entry 2 signature mappings...");
+                log.info("Loading entry to signature mappings...");
                 entry2SignaturesMap = entry2SignaturesDAO.getAllSignatures();
             }
             if (entry2SignaturesMap == null) {
-                throw new RuntimeException("Could not load any entry 2 method mappings from external database!");
+                throw new RuntimeException("Could not load any entry to signature mappings from external database!");
             }
-            log.info(entry2SignaturesMap.size() + " mappings loaded.");
+            if (log.isInfoEnabled()) {
+                log.info(entry2SignaturesMap.size() + " mappings loaded.");
+            }
             printMemory();
         }
         return entry2SignaturesMap;
@@ -226,12 +242,14 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public Map<String, Collection<GoXref>> getEntry2GoXrefsMap() {
         if (entry2GoXrefsMap == null) {
             if (checkIfDAOAreUsable()) {
-                log.info("Loading entry 2 go xrefs...");
+                log.info("Loading entry to go xrefs...");
                 entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
                 if (entry2GoXrefsMap == null) {
-                    throw new RuntimeException("Could not load any entry 2 go mappings from external database!");
+                    throw new RuntimeException("Could not load any entry to go mappings from external database!");
                 }
-                log.info(entry2GoXrefsMap.size() + " mappings loaded.");
+                if (log.isInfoEnabled()) {
+                    log.info(entry2GoXrefsMap.size() + " mappings loaded.");
+                }
                 printMemory();
             }
         }
@@ -241,12 +259,14 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public Map<String, Collection<PathwayXref>> getEntry2PathwayXrefsMap() {
         if (entry2PathwayXrefsMap == null) {
             if (checkIfDAOAreUsable()) {
-                log.info("Loading entry 2 pathway xrefs...");
+                log.info("Loading entry to pathway xrefs...");
                 entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
                 if (entry2PathwayXrefsMap == null) {
-                    throw new RuntimeException("Could not load any entry 2 pathway mappings from external database!");
+                    throw new RuntimeException("Could not load any entry to pathway mappings from external database!");
                 }
-                log.info(entry2PathwayXrefsMap.size() + " mappings loaded.");
+                if (log.isInfoEnabled()) {
+                    log.info(entry2PathwayXrefsMap.size() + " mappings loaded.");
+                }
                 printMemory();
             }
         }
@@ -254,7 +274,9 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     }
 
     private void printMemory() {
-        long heap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        log.info("Current memory usage: " + heap + " bytes (" + (heap / 131072 * 0.125) + " MB)");
+        if (log.isDebugEnabled()) {
+            long heap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            log.debug("Current memory usage: " + heap + " bytes (" + (heap / 131072 * 0.125) + " MB)");
+        }
     }
 }
