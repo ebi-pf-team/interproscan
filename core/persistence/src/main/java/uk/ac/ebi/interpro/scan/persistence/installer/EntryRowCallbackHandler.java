@@ -1,8 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.installer;
 
 import org.apache.log4j.Logger;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.mapping.*;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.ac.ebi.interpro.scan.model.*;
@@ -12,15 +10,16 @@ import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * TODO
+ * Represents the whole entry loading process for the I5 installer (uk.ac.ebi.interpro.scan.jms.installer.Installer).
  *
  * @author Matthew Fraser, EMBL-EBI, InterPro
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -51,6 +50,7 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     private Entry2SignaturesDAO entry2SignaturesDAO;
     private Entry2GoDAO entry2GoDAO;
     private Entry2PathwayDAO entry2PathwayDAO;
+
 
     @Required
     public void setEntryDAO(EntryDAO entryDAO) {
@@ -163,7 +163,7 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
             if (signatures == null || signatures.size() < 1) {
                 // Perhaps new signatures have been added to the InterPro database since the I5 signature database was populated?
                 // Therefore the signature accession (from the InterPro db) cannot be found in the I5 db!?
-                log.warn("Signatures could not be found in the database: " + signatureAcs.toString() + "No signatures for entry " + entry.getAccession() + " could be found in the database.");
+                log.warn("Signatures could not be found in the database: " + signatureAcs.toString() + " No signatures for entry " + entry.getAccession() + " could be found in the database.");
                 // TODO throw new IllegalStateException("Signatures could not be found in the database: " + signatureAcs.toString() + "No signatures for entry " + entry.getAccession() + " could be found in the database.");
             } else {
                 for (Signature signature : signatures) {

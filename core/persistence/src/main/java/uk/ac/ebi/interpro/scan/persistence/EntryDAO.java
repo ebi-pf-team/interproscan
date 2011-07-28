@@ -1,10 +1,9 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Entry;
-import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -16,8 +15,12 @@ import java.util.Set;
  * @since 1.0
  */
 public interface EntryDAO extends GenericDAO<Entry, Long> {
-    Set<Entry> mergeEntries(Set<Entry> entries);
+    /**
+     * Merges a collection of entries and returns a set of merge entries.
+     */
+    Set<Entry> mergeEntries(Collection<Entry> entries);
 
-    @Transactional
     Entry mergeEntry(Entry entry);
+
+    Entry readEntryByAccession(String entryAc);
 }
