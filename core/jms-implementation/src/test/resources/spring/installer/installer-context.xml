@@ -19,6 +19,7 @@
             </list>
         </property>
         <property name="jdbcEntryDAO" ref="jdbcEntryDAO" />
+        <property name="releaseDAO" ref="releaseDAO" />
     </bean>
 
 
