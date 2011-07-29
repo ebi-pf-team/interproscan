@@ -47,10 +47,10 @@ public interface Master extends Runnable {
     /**
      * Sets pathway option.
      *
-     * @param isMapToPathway Indicates if pathway option is activate or not.
-     *                       If so entry to pathway mappings will be print ou to result as well.
+     * @param mapToPathway Indicates if pathway option is activate or not.
+     *                     If so entry to pathway mappings will be print ou to result as well.
      */
-    void setPathway(boolean isMapToPathway);
+    void setMapToPathway(boolean mapToPathway);
 
     //TODO: Unfinished integration. Setter is unused at the moment
     public void setCleanDatabase(boolean clean);
