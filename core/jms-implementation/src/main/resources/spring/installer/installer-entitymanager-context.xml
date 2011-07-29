@@ -26,7 +26,7 @@
                 <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
                 <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch_size}"/>
                 <!-- create, update -->
-                <entry key="hibernate.hbm2ddl.auto" value="create"/>
+                <entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl_auto}"/>
                 <!-- Note - the "oracleNamingStrategy" does the following:
 
                     * guarantees that table / column / index identifiers are no longer than 30 characters.

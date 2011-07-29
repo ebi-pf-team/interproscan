@@ -17,6 +17,10 @@ import java.util.List;
 
 /**
  * Install InterProScan
+ *
+ * @author David Binns, EMBL-EBI, InterPro
+ * @author Phil Jones, EMBL-EBI, InterPro
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  */
 public class Installer implements Runnable {
 
@@ -31,6 +35,11 @@ public class Installer implements Runnable {
     private JdbcEntryDao jdbcEntryDAO;
 
     private ReleaseDAO releaseDAO;
+
+    /**
+     * For more information please have a look at the enum.
+     */
+    private InstallerMode mode = Installer.InstallerMode.LOAD_ALL;
 
 
     @Required
@@ -57,18 +66,26 @@ public class Installer implements Runnable {
         this.releaseDAO = releaseDAO;
     }
 
+    public void setMode(InstallerMode mode) {
+        this.mode = mode;
+    }
+
     @Override
     public void run() {
         LOGGER.info("Schema creation");
+        LOGGER.info("Running installer in mode " + mode);
         // By Magic!
 
-//        LOGGER.info("Loading signatures");
-//        loadModels();
-//        LOGGER.info("Loaded signatures");
-
-        LOGGER.info("Loading entries and related info");
-        loadEntries();
-        LOGGER.info("Loaded entries and related info");
+        if (mode.equals(Installer.InstallerMode.LOAD_ALL) || mode.equals(Installer.InstallerMode.LOAD_MODELS)) {
+            LOGGER.info("Loading signatures");
+            loadModels();
+            LOGGER.info("Loaded signatures");
+        }
+        if (mode.equals(Installer.InstallerMode.LOAD_ALL) || mode.equals(Installer.InstallerMode.LOAD_ENTRIES)) {
+            LOGGER.info("Loading entries and related info");
+            loadEntries();
+            LOGGER.info("Loaded entries and related info");
+        }
 
     }
 
@@ -79,10 +96,12 @@ public class Installer implements Runnable {
             interProRelease = releaseDAO.insert(new Release(releaseVersion));
         }
         Long releaseId = (interProRelease == null ? new Long(-1) : interProRelease.getId());
-        long heap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        LOGGER.info("Current memory usage: " + heap + " bytes (" + (heap / 131072 * 0.125) + " MB)");
+        if (LOGGER.isInfoEnabled()) {
+            long heap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            LOGGER.info("Current memory usage: " + heap + " bytes (" + (heap / 131072 * 0.125) + " MB)");
+        }
         //load all entries
-        jdbcEntryDAO.loadEntriesAndMappings(releaseId); // TODO
+        jdbcEntryDAO.loadEntriesAndMappings(releaseId);
     }
 
     private void loadModels() {
@@ -137,5 +156,17 @@ public class Installer implements Runnable {
                     .toString()
             );
         }
+    }
+
+    /**
+     * Describes in which mode the installer should be run.
+     * <p/>
+     * LOAD_MODELS - Loads member database models/signatures into I5 database.
+     * LOAD_ENTRIES - Loads all entries of the latest release into I5 database, including cross references like Pathways and GO terms.
+     * LOAD_ALL - Default value. Loads models and entries at the same time into I5 database. PLEASE NOTICE: The LOAD_ENTRIES step also creates relations between
+     * signatures and entries. So to create these relations you have to run the LOAD_MODELS step beforehand.
+     */
+    public enum InstallerMode {
+        LOAD_MODELS, LOAD_ENTRIES, LOAD_ALL;
     }
 }
