@@ -4,13 +4,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.XmlWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchTSVWriter;
-import uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer;
-import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.SignatureLibraryIntegratedMethods;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.MatchesHolder;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import java.io.File;
@@ -28,8 +25,6 @@ import java.util.Map;
 public class WriteOutputStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(WriteOutputStep.class.getName());
-
-    private ObjectSerializerDeserializer<Map<SignatureLibrary, SignatureLibraryIntegratedMethods>> serializerDeserializer;
 
     private ProteinDAO proteinDAO;
 
@@ -57,12 +52,6 @@ public class WriteOutputStep extends Step {
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
     }
-
-    @Required
-    public void setSerializerDeserializer(ObjectSerializerDeserializer<Map<SignatureLibrary, SignatureLibraryIntegratedMethods>> serializerDeserializer) {
-        this.serializerDeserializer = serializerDeserializer;
-    }
-
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
@@ -123,11 +112,9 @@ public class WriteOutputStep extends Step {
             LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
             if (proteins != null) {
                 LOGGER.info("Loaded " + proteins.size() + " proteins...");
-
-            }
-
-            for (Protein protein : proteins) {
-                writer.write(protein);
+                for (Protein protein : proteins) {
+                    writer.write(protein);
+                }
             }
         } finally {
             if (writer != null) {
