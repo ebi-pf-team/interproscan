@@ -85,13 +85,11 @@ public class ProteinMatchTSVWriter {
                                     if (sb.length() > 0) {
                                         sb.append(", ");
                                     }
-                                    sb.append(xref.getIdentifier())
-                                            .append('|')
-                                            .append(xref.getDatabaseName())
-                                            .append('|')
-                                            .append(xref.getName());
+                                    sb.append(PathwayXref.PathwayDatabase.parseDatabaseCode(xref.getDatabaseName().charAt(0)) + ": " + xref.getIdentifier());
                                 }
                                 mappingFields.add(sb.toString());
+                            } else {
+                                mappingFields.add("N/A");
                             }
                         }
                         if (mapToGO) {
