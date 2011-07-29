@@ -88,12 +88,10 @@ public class ProteinMatchTSVWriter {
                                 if (sb.length() > 0) {
                                     sb.append(", ");
                                 }
-                                sb.append(xref.getIdentifier());
+                                sb.append(xref.getIdentifier() + "|" + xref.getDatabaseName() + "|" + xref.getName());
                             }
-                            mappingFields.add("This place is reserved to Pathways (unfinished implementation)" + sb.toString());
+                            mappingFields.add(sb.toString());
                         }
-                    } else {
-                        mappingFields.add("This place is reserved to Pathways (unfinished implementation)");
                     }
                     if (mapToGO) {
                         //TODO: Integrate if model database is ready
