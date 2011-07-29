@@ -249,14 +249,6 @@
         <property name="createStepInstancesForNewProteins" value="false"/>
         <property name="retries" value="0"/>
         <property name="proteinDAO" ref="proteinDAO"/>
-        <property name="serializerDeserializer">
-            <bean id="serializerDeserializer"
-                  class="uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer">
-                <property name="compressedUsingGzip" value="true"/>
-                <property name="fileName" value="${interpro.entry.go.mapping.path}"/>
-                <property name="overWrite" value="false"/>
-            </bean>
-        </property>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
         <property name="xmlWriter" ref="xmlWriter"/>
     </bean>
