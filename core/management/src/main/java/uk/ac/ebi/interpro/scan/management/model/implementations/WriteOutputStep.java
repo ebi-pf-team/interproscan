@@ -113,15 +113,12 @@ public class WriteOutputStep extends Step {
         try {
             writer = new ProteinMatchTSVWriter(file);
             final Map<String, String> parameters = stepInstance.getParameters();
+            final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
             final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
-            final boolean mapToInterProEntries = mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
-            if (mapToInterProEntries || mapToGO) {
-                writer.setInterProGoMapping(serializerDeserializer.deserialize());
-            }
+            final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
             final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             writer.setMapToInterProEntries(mapToInterProEntries);
             writer.setMapToGo(mapToGO);
-            final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
             writer.setMapToPathway(mapToPathway);
             LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
             if (proteins != null) {

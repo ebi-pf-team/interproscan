@@ -79,8 +79,7 @@ public class AmqInterProScanMaster implements Master {
     private boolean cleanDatabase = false;
     private boolean mapToInterPro = false;
     private boolean mapToGO = false;
-
-    private boolean isMapToPathwayActivated = false;
+    private boolean mapToPathway = false;
 
     @Required
     public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO) {
@@ -253,7 +252,7 @@ public class AmqInterProScanMaster implements Master {
         params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat);
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
-        params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(isMapToPathwayActivated));
+        params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
     }
 
     /**
@@ -378,8 +377,8 @@ public class AmqInterProScanMaster implements Master {
         this.mapToGO = mapToGO;
     }
 
-    public void setPathway(boolean isMapToPathwayActivated) {
-        this.isMapToPathwayActivated = isMapToPathwayActivated;
+    public void setMapToPathway(boolean mapToPathway) {
+        this.mapToPathway = mapToPathway;
     }
 
     public void setCleanDatabase(boolean clean) {

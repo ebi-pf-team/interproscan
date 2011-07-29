@@ -1,9 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
-import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
-import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.InterProEntry;
-import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.SignatureLibraryIntegratedMethods;
 import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.BufferedWriter;
@@ -32,7 +29,6 @@ public class ProteinMatchTSVWriter {
     private boolean mapToInterProEntries;
     private boolean mapToGO;
     private boolean mapToPathway;
-    private Map<SignatureLibrary, SignatureLibraryIntegratedMethods> interProGoMapping;
 
     public ProteinMatchTSVWriter(File file) throws IOException {
         tsvWriter = new TSVWriter(new BufferedWriter(new FileWriter(file)));
@@ -76,50 +72,39 @@ public class ProteinMatchTSVWriter {
                 mappingFields.add(status);
                 mappingFields.add(date);
 
-                Entry databaseEntry = signature.getEntry();
-                if (databaseEntry != null) {
-                    mappingFields.add(databaseEntry.getAccession());
-                    mappingFields.add(databaseEntry.getDescription());
-                    if (mapToPathway) {
-                        Collection<PathwayXref> pathwayXRefs = databaseEntry.getPathwayXRefs();
-                        if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
-                            StringBuffer sb = new StringBuffer();
-                            for (PathwayXref xref : pathwayXRefs) {
-                                if (sb.length() > 0) {
-                                    sb.append(", ");
-                                }
-                                sb.append(xref.getIdentifier() + "|" + xref.getDatabaseName() + "|" + xref.getName());
-                            }
-                            mappingFields.add(sb.toString());
-                        }
-                    }
-                    if (mapToGO) {
-                        //TODO: Integrate if model database is ready
-                    }
-                }
-
-
                 if (mapToInterProEntries) {
-                    final SignatureLibraryIntegratedMethods methodMappings = interProGoMapping.get(signatureLibrary);
-                    if (methodMappings != null) {
-                        final InterProEntry entry = methodMappings.getEntryByMethodAccession(signatureAc);
-                        if (entry != null) {
-                            mappingFields.add(entry.getEntryAccession());
-                            mappingFields.add(entry.getDescription());
-                            if (mapToGO && entry.getGoTerms().size() > 0) {
-                                StringBuffer buf = new StringBuffer();
-                                for (GoTerm goTerm : entry.getGoTerms()) {
-                                    if (buf.length() > 0) {
-                                        buf.append(", ");
+                    Entry interProEntry = signature.getEntry();
+                    if (interProEntry != null) {
+                        mappingFields.add(interProEntry.getAccession());
+                        mappingFields.add(interProEntry.getDescription());
+                        if (mapToPathway) {
+                            Collection<PathwayXref> pathwayXRefs = interProEntry.getPathwayXRefs();
+                            if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
+                                StringBuffer sb = new StringBuffer();
+                                for (PathwayXref xref : pathwayXRefs) {
+                                    if (sb.length() > 0) {
+                                        sb.append(", ");
                                     }
-                                    buf.append(goTerm.getRoot().getRootName())
-                                            .append(':')
-                                            .append(goTerm.getTermName())
-                                            .append(" (")
-                                            .append(goTerm.getAccession())
-                                            .append(")");
+                                    sb.append(xref.getIdentifier())
+                                            .append('|')
+                                            .append(xref.getDatabaseName())
+                                            .append('|')
+                                            .append(xref.getName());
                                 }
-                                mappingFields.add(buf.toString());
+                                mappingFields.add(sb.toString());
+                            }
+                        }
+                        if (mapToGO) {
+                            Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
+                            if (goXRefs != null && goXRefs.size() > 0) {
+                                StringBuffer sb = new StringBuffer();
+                                for (GoXref xref : goXRefs) {
+                                    if (sb.length() > 0) {
+                                        sb.append(", ");
+                                    }
+                                    sb.append(xref.getIdentifier()); // Just write the GO identifier to the output
+                                }
+                                mappingFields.add(sb.toString());
                             }
                         }
                     }
@@ -137,10 +122,6 @@ public class ProteinMatchTSVWriter {
 
     public void setMapToGo(boolean mapToGO) {
         this.mapToGO = mapToGO;
-    }
-
-    public void setInterProGoMapping(Map<SignatureLibrary, SignatureLibraryIntegratedMethods> interProGoMapping) {
-        this.interProGoMapping = interProGoMapping;
     }
 
     public void setMapToPathway(boolean mapToPathway) {
