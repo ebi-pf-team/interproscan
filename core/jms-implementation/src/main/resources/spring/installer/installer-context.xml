@@ -34,6 +34,7 @@
         </property>
         <property name="jdbcEntryDAO" ref="jdbcEntryDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
+        <property name="mode" value="${jms.installer.mode}"/>
     </bean>
 
     <!--
