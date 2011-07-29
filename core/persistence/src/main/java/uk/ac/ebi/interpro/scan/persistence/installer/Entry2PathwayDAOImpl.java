@@ -110,7 +110,7 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
         String name = rs.getString("name");
         String identifier = rs.getString("ac");
         String dbcode = rs.getString("dbcode");
-        PathwayXref newPathway = new PathwayXref(dbcode, identifier, name);
+        PathwayXref newPathway = new PathwayXref(identifier, name, dbcode);
         Set<PathwayXref> pathways = (Set<PathwayXref>) result.get(entryAcc);
         if (pathways == null) {
             pathways = new HashSet<PathwayXref>();
