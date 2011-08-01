@@ -125,7 +125,7 @@
 
     <bean id="pantherPostProcessor"
           class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">
-        <constructor-arg value="10e-11"/>
+        <constructor-arg value="1e-11"/>
     </bean>
 
     <bean id="pantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>
