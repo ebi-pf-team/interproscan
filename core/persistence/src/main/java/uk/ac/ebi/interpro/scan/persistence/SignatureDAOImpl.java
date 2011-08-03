@@ -57,7 +57,7 @@ public class SignatureDAOImpl extends GenericDAOImpl<Signature, Long> implements
     }
 
     @Transactional(readOnly = true)
-    public Collection<Signature> getSignatures(Set<String> accessions) {
+    public Set<Signature> getSignatures(Collection<String> accessions) {
         if (accessions == null || accessions.size() < 1) {
             return null;
         }
