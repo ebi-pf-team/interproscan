@@ -159,7 +159,7 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
             // Lookup signatures (already in I5 database) from the signature accessions
             // Attach them to the entry
             // Afterwards update signature in database
-            Set<Signature> signatures = (Set<Signature>) signatureDAO.getSignatures(signatureAcs);
+            Set<Signature> signatures = signatureDAO.getSignatures(signatureAcs);
             if (signatures == null || signatures.size() < 1) {
                 // Perhaps new signatures have been added to the InterPro database since the I5 signature database was populated?
                 // Therefore the signature accession (from the InterPro db) cannot be found in the I5 db!?
