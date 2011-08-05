@@ -6,7 +6,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.model.Entry;
 import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.persistence.EntryDAO;
 import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 
 import javax.annotation.Resource;
@@ -26,7 +28,6 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-@Ignore
 public class HibernateAnnotationTest {
 
     private final Logger log = Logger.getLogger(HibernateAnnotationTest.class.getName());
@@ -34,8 +35,12 @@ public class HibernateAnnotationTest {
     @Resource
     private SignatureDAO signatureDAO;
 
+    @Resource
+    private EntryDAO entryDAO;
+
     @Test
-    public void performanceTest() {
+    @Ignore
+    public void selectPerformanceTest() {
         List<String> signatureAc = new ArrayList<String>();
         signatureAc.add("PF00003");
         signatureAc.add("G3DSA:1.10.10.10");
@@ -46,5 +51,15 @@ public class HibernateAnnotationTest {
         }
         lnSystemTime = (System.currentTimeMillis() - lnSystemTime) / 1000;
         log.info("Tooks " + lnSystemTime + " seconds.");
+    }
+
+    @Test
+    public void updatePerformanceTest() {
+        Entry entry1 = new Entry.Builder("IPR011991").build();
+        entryDAO.insert(entry1);
+        //
+        Signature signature = signatureDAO.getSignatureByAccession("PF00003");
+        entry1.addSignature(signature);
+        signatureDAO.update(signature);
     }
 }

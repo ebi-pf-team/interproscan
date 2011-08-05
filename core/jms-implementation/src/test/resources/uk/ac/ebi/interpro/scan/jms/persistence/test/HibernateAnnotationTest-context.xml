@@ -59,4 +59,5 @@
     </bean>
 
     <bean id="signatureDAO" class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl"/>
+    <bean id="entryDAO" class="uk.ac.ebi.interpro.scan.persistence.EntryDAOImpl"/>
 </beans>
