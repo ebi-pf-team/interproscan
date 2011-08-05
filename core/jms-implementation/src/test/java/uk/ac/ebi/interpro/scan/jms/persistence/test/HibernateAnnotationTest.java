@@ -28,6 +28,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
+@Ignore
 public class HibernateAnnotationTest {
 
     private final Logger log = Logger.getLogger(HibernateAnnotationTest.class.getName());
