@@ -38,6 +38,10 @@ public interface SignatureDAO extends GenericDAO<Signature, Long> {
     @Transactional(readOnly = true)
     public Set<Signature> getSignatures(Collection<String> accessions);
 
+
+    @Transactional(readOnly = true)
+    public Signature getSignatureByAccession(String accession);
+
     /**
      * Updates the modified instances.
      *
