@@ -88,6 +88,8 @@ public class ProteinMatchTSVWriter {
                                     sb.append(xref.getIdentifier()); // Just write the GO identifier to the output
                                 }
                                 mappingFields.add(sb.toString());
+                            } else {
+                                mappingFields.add("N/A");
                             }
                         }
                         if (mapToPathway) {
