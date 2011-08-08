@@ -77,6 +77,19 @@ public class ProteinMatchTSVWriter {
                     if (interProEntry != null) {
                         mappingFields.add(interProEntry.getAccession());
                         mappingFields.add(interProEntry.getDescription());
+                        if (mapToGO) {
+                            Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
+                            if (goXRefs != null && goXRefs.size() > 0) {
+                                StringBuffer sb = new StringBuffer();
+                                for (GoXref xref : goXRefs) {
+                                    if (sb.length() > 0) {
+                                        sb.append(", ");
+                                    }
+                                    sb.append(xref.getIdentifier()); // Just write the GO identifier to the output
+                                }
+                                mappingFields.add(sb.toString());
+                            }
+                        }
                         if (mapToPathway) {
                             Collection<PathwayXref> pathwayXRefs = interProEntry.getPathwayXRefs();
                             if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
@@ -90,19 +103,6 @@ public class ProteinMatchTSVWriter {
                                 mappingFields.add(sb.toString());
                             } else {
                                 mappingFields.add("N/A");
-                            }
-                        }
-                        if (mapToGO) {
-                            Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
-                            if (goXRefs != null && goXRefs.size() > 0) {
-                                StringBuffer sb = new StringBuffer();
-                                for (GoXref xref : goXRefs) {
-                                    if (sb.length() > 0) {
-                                        sb.append(", ");
-                                    }
-                                    sb.append(xref.getIdentifier()); // Just write the GO identifier to the output
-                                }
-                                mappingFields.add(sb.toString());
                             }
                         }
                     }
