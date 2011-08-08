@@ -104,6 +104,7 @@ public class FullRoundTripTest {
      * Test of <signature/> xml round trip.
      */
     @Test
+    @Ignore
     public void newSignatureRoundTrip(){
         ObjectRetriever<Signature, SignatureDAO> retriever = new ObjectRetriever<Signature, SignatureDAO>() {
             public Signature getObjectByPrimaryKey(SignatureDAO dao, Long primaryKey) {
