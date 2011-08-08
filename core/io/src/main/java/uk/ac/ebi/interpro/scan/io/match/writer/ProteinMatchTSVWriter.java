@@ -29,6 +29,7 @@ public class ProteinMatchTSVWriter {
     private boolean mapToInterProEntries;
     private boolean mapToGO;
     private boolean mapToPathway;
+    private final String VALUE_SEPARATOR = "|";
 
     public ProteinMatchTSVWriter(File file) throws IOException {
         tsvWriter = new TSVWriter(new BufferedWriter(new FileWriter(file)));
@@ -65,7 +66,7 @@ public class ProteinMatchTSVWriter {
                 mappingFields.add(Integer.toString(length));
                 mappingFields.add(analysis);
                 mappingFields.add(signatureAc);
-                mappingFields.add(description);
+                mappingFields.add((description == null ? "" : description));
                 mappingFields.add(Integer.toString(location.getStart()));
                 mappingFields.add(Integer.toString(location.getEnd()));
                 mappingFields.add(score);
@@ -83,13 +84,13 @@ public class ProteinMatchTSVWriter {
                                 StringBuffer sb = new StringBuffer();
                                 for (GoXref xref : goXRefs) {
                                     if (sb.length() > 0) {
-                                        sb.append(", ");
+                                        sb.append(VALUE_SEPARATOR);
                                     }
                                     sb.append(xref.getIdentifier()); // Just write the GO identifier to the output
                                 }
                                 mappingFields.add(sb.toString());
                             } else {
-                                mappingFields.add("N/A");
+                                mappingFields.add("");
                             }
                         }
                         if (mapToPathway) {
@@ -98,13 +99,13 @@ public class ProteinMatchTSVWriter {
                                 StringBuffer sb = new StringBuffer();
                                 for (PathwayXref xref : pathwayXRefs) {
                                     if (sb.length() > 0) {
-                                        sb.append(", ");
+                                        sb.append(VALUE_SEPARATOR);
                                     }
                                     sb.append(PathwayXref.PathwayDatabase.parseDatabaseCode(xref.getDatabaseName().charAt(0)) + ": " + xref.getIdentifier());
                                 }
                                 mappingFields.add(sb.toString());
                             } else {
-                                mappingFields.add("N/A");
+                                mappingFields.add("");
                             }
                         }
                     }
@@ -132,7 +133,7 @@ public class ProteinMatchTSVWriter {
         StringBuilder proteinXRef = new StringBuilder();
         Set<ProteinXref> crossReferences = protein.getCrossReferences();
         for (ProteinXref crossReference : crossReferences) {
-            if (proteinXRef.length() > 0) proteinXRef.append("|");
+            if (proteinXRef.length() > 0) proteinXRef.append(VALUE_SEPARATOR);
             proteinXRef.append(crossReference.getIdentifier());
         }
         return proteinXRef.toString();
