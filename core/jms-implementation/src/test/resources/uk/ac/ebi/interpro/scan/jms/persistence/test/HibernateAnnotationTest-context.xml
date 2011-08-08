@@ -47,6 +47,12 @@
                 <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
                 <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch_size}"/>
                 <entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl_auto}"/>
+
+                <entry key="hibernate.generate_statistics" value="${hibernate.generate_statistics}"/>
+                <entry key="hibernate.cache.provider_class" value="${hibernate.cache.provider_class}"/>
+                <entry key="hibernate.cache.use_query_cache" value="${hibernate.cache.use_query_cache}"/>
+                <entry key="hibernate.cache.use_second_level_cache" value="${hibernate.cache.use_second_level_cache}"/>
+
                 <entry key="hibernate.ejb.naming_strategy" value="de.schauderhaft.hibernate.OracleNamingStrategy"/>
             </map>
         </property>

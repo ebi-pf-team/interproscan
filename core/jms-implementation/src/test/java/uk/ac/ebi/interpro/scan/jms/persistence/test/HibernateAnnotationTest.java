@@ -40,7 +40,6 @@ public class HibernateAnnotationTest {
     private EntryDAO entryDAO;
 
     @Test
-    @Ignore
     public void selectPerformanceTest() {
         List<String> signatureAc = new ArrayList<String>();
         signatureAc.add("PF00003");
@@ -56,11 +55,24 @@ public class HibernateAnnotationTest {
 
     @Test
     public void updatePerformanceTest() {
-        Entry entry1 = new Entry.Builder("IPR011991").build();
-        entryDAO.insert(entry1);
-        //
-        Signature signature = signatureDAO.getSignatureByAccession("PF00003");
-        entry1.addSignature(signature);
-        signatureDAO.update(signature);
+        for (int i = 0; i < 100; i++) {
+            Entry entry1 = new Entry.Builder("IPR011991").build();
+            entryDAO.insert(entry1);
+            //
+            Signature signature = signatureDAO.getSignatureByAccession("PF00003");
+            entry1.addSignature(signature);
+            signatureDAO.update(signature);
+            if (i % 10 == 0) {
+                printMemory();
+            }
+        }
+        printMemory();
+    }
+
+    private void printMemory() {
+        if (log.isInfoEnabled()) {
+            long heap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            log.info("Current memory usage: " + heap + " bytes (" + (heap / 131072 * 0.125) + " MB)");
+        }
     }
 }
