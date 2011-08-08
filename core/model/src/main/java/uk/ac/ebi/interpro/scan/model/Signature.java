@@ -64,6 +64,8 @@ public class Signature implements Serializable {
     private String name;
 
     @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    //    TODO: Why don't use the non deprecated ElementCollection annotation
+//        @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "signature_description_chunk")
     @IndexColumn(name = "chunk_index")
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
@@ -113,16 +115,18 @@ public class Signature implements Serializable {
     // TODO: Decide whether to use Map or Set (see ChEBI team)
     // TODO: Use ConcurrentHashMap if need concurrent modification of signatures
     // TODO: Use Hashtable if want to disallow duplicate values
-    @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "signature", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+//    @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapKey(name = "accession")
     private Map<String, Model> models = new HashMap<String, Model>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "signature")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
-    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @CollectionOfElements
+//    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     @JoinTable(name = "signature_deprecated_acs")
     @Column(nullable = true)
     private Set<String> deprecatedAccessions = new HashSet<String>();
@@ -130,7 +134,8 @@ public class Signature implements Serializable {
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
     private String comment;
 
-    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+//    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     private Entry entry;
 
     /**

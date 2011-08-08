@@ -61,7 +61,8 @@ public class Model implements Serializable {
     @Index(name = "model_name_idx")
     private String name;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    //TODO: Hibernate annotation issue: Switched to lazy loading
+    @ElementCollection
     @JoinTable(name = "model_description_chunk")
     @IndexColumn(name = "chunk_index")
     @Column(name = "description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
@@ -85,7 +86,8 @@ public class Model implements Serializable {
      * length of this is indeterminate, so stored in a LOB field.
      */
 //    @Column (nullable = true, length=100000)
-    @ElementCollection(fetch = FetchType.EAGER)
+    //    TODO: Hibernate annotation issue: Switched to lazy loading
+    @ElementCollection
     @JoinTable(name = "model_definition_chunk")
     @IndexColumn(name = "chunk_index")
     @Column(name = "definition_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
