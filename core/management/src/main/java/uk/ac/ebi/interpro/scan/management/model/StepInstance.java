@@ -262,10 +262,9 @@ public class StepInstance implements Serializable {
      */
     public boolean haveFinished(Jobs jobs) {
         final StepExecutionState executionState = getState();
-        if (StepExecutionState.STEP_EXECUTION_SUCCESSFUL == executionState) return true;
-        if (StepExecutionState.STEP_EXECUTION_FAILED == executionState && this.getExecutions().size() >= this.getStep(jobs).getRetries())
-            return true;
-        return false;
+        return StepExecutionState.STEP_EXECUTION_SUCCESSFUL == executionState ||
+                StepExecutionState.STEP_EXECUTION_FAILED == executionState &&
+                        this.getExecutions().size() >= this.getStep(jobs).getRetries();
     }
 
 
