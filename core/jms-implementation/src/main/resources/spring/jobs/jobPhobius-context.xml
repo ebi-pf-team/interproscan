@@ -59,8 +59,14 @@
         <property name="stepDescription" value="Parse the output from Phobius"/>
         <property name="serialGroup" value="PARSE_PHOBIUS"/>
         <property name="phobiusOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="phobiusMatchDAO" ref="phobiusMatchDAO"/>
-        <property name="parser" ref="phobiusParser"/>
+        <property name="phobiusMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAOImpl">
+                <constructor-arg value="1.01"/>
+            </bean>
+        </property>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.phobius.PhobiusMatchParser"/>
+        </property>
         <property name="retries" value="3"/>
     </bean>
 
@@ -73,12 +79,4 @@
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: job_phobius  !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
-
-    <!-- ######################## Dependencies ############################  -->
-    <bean id="phobiusMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAOImpl">
-        <constructor-arg value="1.01"/>
-    </bean>
-
-    <bean id="phobiusParser" class="uk.ac.ebi.interpro.scan.io.match.phobius.PhobiusMatchParser"/>
-    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
