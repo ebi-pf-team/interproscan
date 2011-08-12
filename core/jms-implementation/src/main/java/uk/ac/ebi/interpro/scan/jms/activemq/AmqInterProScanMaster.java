@@ -183,15 +183,17 @@ public class AmqInterProScanMaster implements Master {
                         }
                     }
                 }
+                Thread.sleep(200);  // Every 200 ms, checks for any runnable StepInstances and runs them.
 
-
-                if (closeOnCompletion && completed) break;
-                Thread.sleep(200);  // Every half second, checks for any runnable StepInstances and runs them.
+                // Close down (break out of loop) if the analyses are all complete.
+                if (closeOnCompletion && completed && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
+                    break;
+                }
             }
         } catch (JMSException e) {
-            LOGGER.error("JMSException thrown by Master", e);
+            LOGGER.error("JMSException thrown by AmqInterProScanMaster: ", e);
         } catch (Exception e) {
-            LOGGER.error("Exception thrown by Master", e);
+            LOGGER.error("Exception thrown by AmqInterProScanMaster: ", e);
         }
         if (cleanDatabase) {
             databaseCleaner.closeDatabaseCleaner();
