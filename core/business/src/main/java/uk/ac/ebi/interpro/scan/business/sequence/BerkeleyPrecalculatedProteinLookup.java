@@ -81,7 +81,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 return null;  // Needs to be analysed.
             }
             // Now retrieve the Matches and add to the protein.
+            Long startTime = null;
+            if (LOGGER.isDebugEnabled()) {
+                startTime = System.nanoTime();
+            }
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(upperMD5);
+            if (LOGGER.isDebugEnabled()) {
+                long time = System.nanoTime() - startTime;
+                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + time + "ns");
+            }
             if (berkeleyMatchXML != null) {
                 berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches());
             }
@@ -137,7 +145,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 md5s[i++] = md5Upper;
                 precalculatedProteins.add(md5ToProteinMap.get(md5Upper));
             }
+            Long startTime = null;
+            if (LOGGER.isDebugEnabled()) {
+                startTime = System.nanoTime();
+            }
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(md5s);
+            if (LOGGER.isDebugEnabled()) {
+                long time = System.nanoTime() - startTime;
+                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + time + "ns");
+            }
             if (berkeleyMatchXML != null) {
                 berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches());
             }
