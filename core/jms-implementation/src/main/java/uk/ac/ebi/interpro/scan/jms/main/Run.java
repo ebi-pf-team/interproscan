@@ -54,7 +54,9 @@ public class Run {
         IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation", null, false),
         GOTERMS("goterms", "goterms", false, "Switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false),
         PATHWAY_LOOKUP("pathways", "pa", false, "Switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false),
-        SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false);
+        // TODO - put back SEQUENCE_TYPE, once the nucleic acid analysis is completed.
+//        SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false)
+        ;
 
         private String longOpt;
 
@@ -249,9 +251,10 @@ public class Run {
                     if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                         master.setAnalyses(parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt()));
                     }
-                    if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
-                        master.setSequenceType(parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt()));
-                    }
+                    // TODO - put back SEQUENCE_TYPE once the nucleic acid sequence analysis stuff is finished.
+//                    if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
+//                        master.setSequenceType(parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt()));
+//                    }
 
                     // GO terms and/or pathways will also imply IPR lookup
                     final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
