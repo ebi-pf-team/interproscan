@@ -108,13 +108,34 @@ public class Jobs {
      */
     public Jobs subset(String[] jobIds) {
         final List<Job> subsetJobs = new ArrayList<Job>();
+        final List<String> nonExistentJobs = new ArrayList<String>();
         for (String id : jobIds) {
+            boolean foundRequestedJob = false;
             for (String candidate : jobMap.keySet()) {
                 if (candidate.contains(id)) {
+                    foundRequestedJob = true;
                     subsetJobs.add(jobMap.get(candidate));
                 }
             }
+            if (!foundRequestedJob) {
+                nonExistentJobs.add(id);
+            }
         }
+        if (!nonExistentJobs.isEmpty()) {
+            StringBuilder badJobsSentence = new StringBuilder();
+            boolean first = true;
+            for (String badJob : nonExistentJobs) {
+                if (first) {
+                    first = false;
+                } else {
+                    badJobsSentence.append(", ");
+                }
+                badJobsSentence.append(badJob.substring(3)); //Substring to remove "job" from the front.
+            }
+            System.out.println("\n\nYou have requested the following analyses / applications that are not available in this distribution of InterProScan: " + badJobsSentence + ".  Please run interproscan.sh with no arguments for a list of available analyses.\n\n");
+            System.exit(100);
+        }
+
         return new Jobs(subsetJobs);
     }
 
