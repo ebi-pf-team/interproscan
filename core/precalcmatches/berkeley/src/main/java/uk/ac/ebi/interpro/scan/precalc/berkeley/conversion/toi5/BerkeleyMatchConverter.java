@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
  * @since 1.0-SNAPSHOT
  */
 public abstract class BerkeleyMatchConverter<T extends Match> {
+
     public abstract T convertMatch(BerkeleyMatch berkeleyMatch, Signature signature);
 
     protected static double valueOrZero(Double value) {
