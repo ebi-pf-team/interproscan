@@ -65,12 +65,23 @@ public final class SignatureLibraryLookup {
 
         libraryNameToSignatureLibrary.put("coils", SignatureLibrary.COILS);
         libraryNameToSignatureLibrary.put("coil", SignatureLibrary.COILS);
+
         libraryNameToSignatureLibrary.put("phobius", SignatureLibrary.PHOBIUS);
+
         libraryNameToSignatureLibrary.put("pirsf", SignatureLibrary.PIRSF);
 
-        libraryNameToSignatureLibrary.put("ssf", SignatureLibrary.SUPERFAMILY);
-
         libraryNameToSignatureLibrary.put("panther", SignatureLibrary.PANTHER);
+
+        libraryNameToSignatureLibrary.put("prodom", SignatureLibrary.PRODOM);
+
+        libraryNameToSignatureLibrary.put("ssf", SignatureLibrary.SUPERFAMILY);
+        libraryNameToSignatureLibrary.put("superfamily", SignatureLibrary.SUPERFAMILY);
+        libraryNameToSignatureLibrary.put("super-family", SignatureLibrary.SUPERFAMILY);
+        libraryNameToSignatureLibrary.put("super_family", SignatureLibrary.SUPERFAMILY);
+
+        libraryNameToSignatureLibrary.put("smart", SignatureLibrary.SMART);
+
+        libraryNameToSignatureLibrary.put("hamap", SignatureLibrary.HAMAP);
     }
 
     public static SignatureLibrary lookupSignatureLibrary(String signatureLibraryName) {
