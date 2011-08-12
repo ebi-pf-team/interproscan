@@ -87,7 +87,12 @@
           parent="abstractPantherStep">
         <property name="dependsUpon" ref="stepPantherRunBinary"/>
         <property name="stepDescription" value="Parse the output from Panther"/>
-        <property name="parser" ref="pantherParser"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser">
+                <!--TODO: Figure out how to handle signature library release-->
+                <constructor-arg value="7.0"/>
+            </bean>
+        </property>
         <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
         <property name="serialGroup" value="PARSE_PANTHER"/>
         <property name="retries" value="3"/>
@@ -111,24 +116,18 @@
         <property name="stepDescription" value="Performs post processing and match persistence on Panther data"/>
         <property name="serialGroup" value="PANTHER_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" value="7.0"/>
-        <property name="postProcessor" ref="pantherPostProcessor"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">
+                <constructor-arg value="1e-11"/>
+            </bean>
+        </property>
         <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
-        <property name="filteredMatchDAO" ref="pantherFilteredMatchDAO"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>
+        </property>
         <property name="retries" value="3"/>
     </bean>
 
     <!-- ######################## Dependencies ############################  -->
-    <bean id="pantherParser" class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser">
-        <!--TODO: Figure out how to handle signature library release-->
-        <constructor-arg value="7.0"/>
-    </bean>
-
-    <bean id="pantherPostProcessor"
-          class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">
-        <constructor-arg value="1e-11"/>
-    </bean>
-
     <bean id="pantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>
-
-    <bean id="pantherFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>
 </beans>

@@ -60,7 +60,17 @@
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
         <property name="serialGroup" value="PARSE_PIRSF"/>
-        <property name="parser" ref="pirsfHmmPfamParser-2.74"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+                <property name="signatureLibrary" value="PIRSF"/>
+                <property name="signatureLibraryRelease" value="2.74"/>
+                <property name="hmmer2ParserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.PirsfHmmer2ParserSupport">
+                        <property name="signatureLibraryRelease" value="2.74"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <!-- TEST STEP: Simple test implementation to check and to print out if all HMMR 2 raw matches are stored in the H2 database-->
@@ -83,7 +93,14 @@
         <property name="signatureLibraryRelease" value="2.74"/>
         <!--More specific properties-->
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
-        <property name="postProcessor" ref="overlapPostProcessor-2.74"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
+                <property name="pirsfDatFileParser">
+                    <bean class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
+                </property>
+                <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.74}"/>
+            </bean>
+        </property>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
         <property name="filteredMatchesFileName" ref="filteredMatchesFileName-2.74"/>
@@ -124,7 +141,14 @@
           parent="abstractPIRSFStep-2.74">
         <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
         <property name="dependsUpon" ref="stepPirsfBlast-2.74"/>
-        <property name="postProcessor" ref="blastPostProcessor-2.74"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor">
+                <property name="sfTbFileParser">
+                    <bean class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
+                </property>
+                <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.74}"/>
+            </bean>
+        </property>
         <property name="blastMatchesFileName" ref="blastMatchesFileName-2.74"/>
         <property name="blastResultOutputFileName" ref="blastResultOutputFileName-2.74"/>
         <property name="blastedMatchesFileName" ref="blastedMatchesFileName-2.74"/>
@@ -139,7 +163,9 @@
         <property name="signatureLibraryRelease" value="2.74"/>
         <property name="blastedMatchesFileName" ref="blastedMatchesFileName-2.74"/>
         <property name="filteredMatchesFileName" ref="filteredMatchesFileName-2.74"/>
-        <property name="filteredMatchDAO" ref="pirsfFilteredMatchDAO-2.74"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer2FilteredMatchDAOImpl"/>
+        </property>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
     </bean>
 
@@ -173,34 +199,10 @@
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch"/>
     </bean>
 
-    <bean id="rawMatchDAO_TEST-2.74"
-          class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.RawMatch"/>
-    </bean>
-
-    <bean id="pirsfFilteredMatchDAO-2.74"
-          class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer2FilteredMatchDAOImpl"/>
-
-    <bean id="pirsfHmmPfamParser-2.74" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
-        <property name="signatureLibrary" value="PIRSF"/>
-        <property name="signatureLibraryRelease" value="2.74"/>
-        <property name="hmmer2ParserSupport" ref="pirsfParserSupport-2.74"/>
-    </bean>
-
-    <bean id="pirsfParserSupport-2.74"
-          class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.PirsfHmmer2ParserSupport">
-        <property name="signatureLibraryRelease" value="2.74"/>
-    </bean>
-
-    <bean id="overlapPostProcessor-2.74"
-          class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
-        <property name="pirsfDatFileParser" ref="pirsfDatParser-2.74"/>
-        <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.74}"/>
-    </bean>
-
-    <bean id="pirsfDatParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
-
-    <bean id="sfTbParser-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
+    <!--<bean id="rawMatchDAO_TEST-2.74"-->
+    <!--class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">-->
+    <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.RawMatch"/>-->
+    <!--</bean>-->
 
     <bean id="filteredMatchesFileName-2.74" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].filterMatches.out"/>
@@ -216,12 +218,6 @@
 
     <bean id="blastResultOutputFileName-2.74" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].blastResult.out"/>
-    </bean>
-
-    <bean id="blastPostProcessor-2.74"
-          class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor">
-        <property name="sfTbFileParser" ref="sfTbParser-2.74"/>
-        <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.74}"/>
     </bean>
 
     <bean id="blastedMatchesFileName-2.74" class="java.lang.String">

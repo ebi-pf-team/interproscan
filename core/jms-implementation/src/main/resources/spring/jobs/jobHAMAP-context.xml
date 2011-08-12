@@ -70,7 +70,14 @@
         <property name="retries" value="3"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
-        <property name="parser" ref="hamapRawOutputParser"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapMatchParser">
+                <constructor-arg value="180510"/>
+                <property name="cigarEncoder">
+                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <bean id="stepHamapDeleteRawOutput"
@@ -89,8 +96,19 @@
         <property name="serialGroup" value="HAMAP_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter HAMAP matches and persist filtered results"/>
         <property name="signatureLibraryRelease" value="180510"/>
-        <property name="postProcessor" ref="hamapPostProcessor"/>
-        <property name="filteredMatchDAO" ref="hamapFilteredMatchDAO"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing">
+                <property name="passLevels">
+                    <list>
+                        <value>ONE</value>
+                        <value>ZERO</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.HamapFilteredMatchDAOImpl"/>
+        </property>
         <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
     </bean>
 
@@ -100,24 +118,5 @@
     <bean id="hamapRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch"/>
     </bean>
-
-    <bean id="hamapFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.HamapFilteredMatchDAOImpl"/>
-
-    <bean id="hamapPostProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing">
-        <property name="passLevels">
-            <list>
-                <value>ONE</value>
-                <value>ZERO</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="hamapRawOutputParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapMatchParser">
-        <constructor-arg value="180510"/>
-        <property name="cigarEncoder" ref="cigarEncoder"/>
-    </bean>
-
-    <bean id="cigarEncoder" class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
-
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
