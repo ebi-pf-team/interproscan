@@ -91,9 +91,7 @@ public class MatchHttpClient {
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
                         return (BerkeleyMatchXML) unmarshaller.unmarshal(new StreamSource(bis));
-                    }
-//                    }
-                    finally {
+                    } finally {
                         if (bis != null) {
                             bis.close();
                         }
@@ -107,6 +105,15 @@ public class MatchHttpClient {
         return matchXML;
     }
 
+    /**
+     * This method is used to determine if a sequence has already been analysed.  This is necessary as some sequences
+     * will have no matches and so will not appear in the results of the match query, however should not be
+     * reanalysed as this is inefficient.
+     *
+     * @param md5s any number of MD5 checksums.
+     * @return a List<String> of MD5 checksums for all proteins that have pre-calculated matches available.
+     * @throws IOException in the event of a problem communicating with the server.
+     */
     public List<String> getMD5sOfProteinsAlreadyAnalysed(String... md5s) throws IOException {
         if (url == null || url.isEmpty()) {
             throw new IllegalStateException("The url must be set for the MatchHttpClient.getMD5sOfProteinsAlreadyAnalysed method to function");
