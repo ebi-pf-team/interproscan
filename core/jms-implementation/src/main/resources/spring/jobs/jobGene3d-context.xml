@@ -21,7 +21,6 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <!-- STEP 1 -->
     <bean id="stepGene3dWriteFasta"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractGene3dStep">
@@ -30,7 +29,6 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP 2 -->
     <bean id="stepGene3dRunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractGene3dStep">
@@ -52,7 +50,6 @@
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <!-- STEP 3 -->
     <bean id="stepGene3dParseHmmerOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3ParseStep"
           parent="abstractGene3dStep">

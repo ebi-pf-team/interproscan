@@ -61,7 +61,9 @@
           parent="abstractPrintsStep">
         <property name="dependsUpon" ref="stepPrintsRunFingerPrintScan"/>
         <property name="stepDescription" value="Parse the output from FingerPrintScan"/>
-        <property name="parser" ref="printsParser"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.prints.PrintsMatchParser"/>
+        </property>
         <property name="printsRawMatchDAO" ref="printsRawMatchDAO"/>
         <property name="serialGroup" value="PARSE_PRINTS"/>
         <property name="retries" value="3"/>
@@ -83,29 +85,24 @@
           parent="abstractPrintsStep">
         <property name="dependsUpon" ref="stepPrintsParseFingerPrintScanOutput"/>
         <property name="stepDescription" value="Performs post processing and Match persistence on PRINTS data"/>
-        <property name="postProcessor" ref="printsPostProcessor"/>
+        <property name="postProcessor">
+            <bean id="printsPostProcessor"
+                  class="uk.ac.ebi.interpro.scan.business.postprocessing.prints.PrintsPostProcessing">
+                <property name="hierarchyDBParser">
+                    <bean class="uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser"/>
+                </property>
+                <property name="fingerPRINTSHierarchyDB" value="file:${prints.hierarchy.path.41.1}"/>
+            </bean>
+        </property>
         <property name="serialGroup" value="PRINTS_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" value="41.1"/>
         <property name="rawMatchDAO" ref="printsRawMatchDAO"/>
-        <property name="filteredMatchDAO" ref="printsFilteredMatchDAO"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl"/>
+        </property>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-
-    <bean id="printsParser" class="uk.ac.ebi.interpro.scan.io.match.prints.PrintsMatchParser"/>
-
     <bean id="printsRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAOImpl"/>
-
-    <bean id="printsFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl"/>
-
-    <bean id="printsPostProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.prints.PrintsPostProcessing">
-        <property name="hierarchyDBParser" ref="hierarchyDBParser"/>
-        <property name="fingerPRINTSHierarchyDB" value="file:${prints.hierarchy.path.41.1}"/>
-    </bean>
-
-    <bean id="hierarchyDBParser" class="uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser"/>
-
-
-    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

@@ -71,7 +71,14 @@
         <property name="retries" value="3"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
-        <property name="parser" ref="prositeProfilesRawOutputParser"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeProfileMatchParser">
+                <constructor-arg value="20.66"/>
+                <property name="cigarEncoder">
+                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <bean id="stepPrositeProfilesDeleteRawOutput"
@@ -90,8 +97,20 @@
         <property name="serialGroup" value="PROSITE_PROFILES_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter Prosite Profiles matches and persist filtered results"/>
         <property name="signatureLibraryRelease" value="20.66"/>
-        <property name="postProcessor" ref="prositeProfilesPostProcessor"/>
-        <property name="filteredMatchDAO" ref="prositeProfilesFilteredMatchDAO"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing">
+                <property name="passLevels">
+                    <list>
+                        <value>ONE</value>
+                        <value>ZERO</value>
+                        <value>MINUS_ONE</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchDAOImpl"/>
+        </property>
         <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
     </bean>
 
@@ -101,28 +120,5 @@
     <bean id="prositeProfilesRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch"/>
     </bean>
-
-    <bean id="prositeProfilesFilteredMatchDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchDAOImpl"/>
-
-    <bean id="prositeProfilesPostProcessor"
-          class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing">
-        <property name="passLevels">
-            <list>
-                <value>ONE</value>
-                <value>ZERO</value>
-                <value>MINUS_ONE</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="prositeProfilesRawOutputParser"
-          class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeProfileMatchParser">
-        <constructor-arg value="20.66"/>
-        <property name="cigarEncoder" ref="cigarEncoder"/>
-    </bean>
-
-    <bean id="cigarEncoder" class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
-
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

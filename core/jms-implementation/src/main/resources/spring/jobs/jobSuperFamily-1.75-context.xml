@@ -78,12 +78,19 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.superfamily.ParseAndPersistSuperFamilyOutputStep"
           parent="abstractSuperFamilyStep-1.75">
         <property name="dependsUpon" ref="stepSuperFamilyRunBinary-1.75"/>
-        <property name="stepDescription" value="Parse the output from the SuperFamily binary and persist as filtered matches"/>
+        <property name="stepDescription"
+                  value="Parse the output from the SuperFamily binary and persist as filtered matches"/>
         <property name="serialGroup" value="PARSE_SUPERFAMILY"/>
         <property name="retries" value="3"/>
         <property name="superFamilyBinaryOutputFileName" ref="superFamilyBinaryOutputFileTemplate-1.75"/>
-        <property name="rawMatchDAO" ref="superFamilyHmmer3MatchDAO-1.75"/>
-        <property name="parser" ref="superFamilyHmmer3MatchParser-1.75"/>
+        <property name="rawMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAOImpl">
+                <constructor-arg value="1.75"/>
+            </bean>
+        </property>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyHmmer3MatchParser"/>
+        </property>
     </bean>
 
     <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
@@ -92,7 +99,8 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractSuperFamilyStep-1.75">
         <property name="dependsUpon" ref="stepSuperFamilyParseAndPersistOutput-1.75"/>
-        <property name="stepDescription" value="Delete the remaining temporary files following successful parsing and persistence"/>
+        <property name="stepDescription"
+                  value="Delete the remaining temporary files following successful parsing and persistence"/>
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
@@ -107,7 +115,6 @@
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SuperFamily !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-
     <bean id="superFamilyBinaryOutputFileTemplate-1.75" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].ass3.out"/>
     </bean>
@@ -115,15 +122,5 @@
     <bean id="superFamilyBinaryStandardOutputFileTemplate-1.75" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].ass3.std.out"/>
     </bean>
-
-    <bean id="superFamilyHmmer3MatchParser-1.75"
-          class="uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyHmmer3MatchParser">
-    </bean>
-
-    <bean id="superFamilyHmmer3MatchDAO-1.75"
-          class="uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAOImpl">
-        <constructor-arg value="1.75"/>
-    </bean>
-
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

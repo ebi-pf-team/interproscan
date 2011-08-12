@@ -63,7 +63,21 @@
 
         <!-- TODO - Apparently not being used for anything ... ?  Need to test. -->
         <!--<property name="fullPathToHmmFile" value="${Pfam-A.hmm.path.24.0}"/>-->
-        <property name="parser" ref="pfamAHmmer3SearchParser"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+                        <property name="gaValuesRetriever">
+                            <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
+                                <constructor-arg value="${Pfam-A.hmm.path.24.0}"/>
+                            </bean>
+                        </property>
+                        <property name="signatureLibraryRelease" value="24.0"/>
+                        <property name="signatureLibrary" value="PFAM"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
         <property name="serialGroup" value="PARSE_HMMER_3"/>
         <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
         <property name="retries" value="3"/>
@@ -84,43 +98,27 @@
           parent="abstractPfamAStep">
         <property name="dependsUpon" ref="stepPfamAParseHmmerOutput"/>
         <property name="stepDescription" value="Performs post processing on Pfam data (Hmmer 3 based)"/>
-        <property name="postProcessor" ref="pfamAPostProcessor"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing">
+                <property name="clanFileParser">
+                    <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
+                        <property name="pfamASeedFile" value="${Pfam-A.seed.path.24.0}"/>
+                        <property name="pfamCFile" value="${Pfam-C.path.24.0}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
         <property name="serialGroup" value="PFAM_A_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" value="24.0"/>
         <property name="signatureLibrary" value="PFAM"/>
         <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
-        <property name="filteredMatchDAO" ref="pfamFilteredMatchDAO"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
+        </property>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <bean id="pfamAPostProcessor"
-          class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing">
-        <property name="clanFileParser" ref="pfamAClanFileParser"/>
-    </bean>
-
-    <bean id="pfamAClanFileParser" class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
-        <property name="pfamASeedFile" value="${Pfam-A.seed.path.24.0}"/>
-        <property name="pfamCFile" value="${Pfam-C.path.24.0}"/>
-    </bean>
-
-    <bean id="pfamAHmmer3SearchParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
-        <property name="parserSupport">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
-                <property name="gaValuesRetriever">
-                    <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
-                        <constructor-arg value="${Pfam-A.hmm.path.24.0}"/>
-                    </bean>
-                </property>
-                <property name="signatureLibraryRelease" value="24.0"/>
-                <property name="signatureLibrary" value="PFAM"/>
-            </bean>
-        </property>
-    </bean>
-
     <bean id="pfamRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl"/>
-
-    <bean id="pfamFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
-
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

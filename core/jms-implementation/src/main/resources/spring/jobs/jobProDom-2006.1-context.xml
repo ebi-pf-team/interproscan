@@ -58,12 +58,21 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prodom.ParseAndPersistProDomOutputStep"
           parent="abstractProDomStep-2006.1">
         <property name="dependsUpon" ref="stepProDomRunBinary-2006.1"/>
-        <property name="stepDescription" value="Parse the output from the ProDom binary and persist as filtered matches"/>
+        <property name="stepDescription"
+                  value="Parse the output from the ProDom binary and persist as filtered matches"/>
         <property name="serialGroup" value="PARSE_PRODOM"/>
         <property name="retries" value="3"/>
         <property name="proDomBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="rawMatchDAO" ref="prodomMatchDAO-2006.1"/>
-        <property name="parser" ref="prodomRawOutputParser-2006.1"/>
+        <property name="rawMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAOImpl">
+                <constructor-arg value="2006.1"/>
+            </bean>
+        </property>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.prodom.match.BlastProDomMatchParser">
+                <constructor-arg value="2006.1"/>
+            </bean>
+        </property>
     </bean>
 
     <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
@@ -81,21 +90,5 @@
             </list>
         </property>
     </bean>
-
-
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PrositeProfiles !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
-
-    <!-- ######################## Dependencies ############################  -->
-
-    <bean id="prodomRawOutputParser-2006.1"
-          class="uk.ac.ebi.interpro.scan.io.prodom.match.BlastProDomMatchParser">
-        <constructor-arg value="2006.1"/>
-    </bean>
-
-        <bean id="prodomMatchDAO-2006.1"
-          class="uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAOImpl">
-        <constructor-arg value="2006.1"/>
-    </bean>
-
-    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

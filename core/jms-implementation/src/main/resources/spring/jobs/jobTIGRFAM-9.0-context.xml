@@ -68,7 +68,17 @@
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
         <property name="serialGroup" value="PARSE_TIGRFAM"/>
-        <property name="parser" ref="tigrfamHmmPfamParser-9.0"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+                <property name="signatureLibrary" value="TIGRFAM"/>
+                <property name="signatureLibraryRelease" value="9.0"/>
+                <property name="hmmer2ParserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.TigrfamHmmer2ParserSupport">
+                        <property name="signatureLibraryRelease" value="9.0"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <bean id="stepTIGRFAMDeleteRawOutput-9.0"
@@ -86,7 +96,9 @@
         <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches-9.0"/>
         <property name="signatureLibraryRelease" value="9.0"/>
         <property name="stepDescription" value="Stores raw matches as filtered matches."/>
-        <property name="filteredMatchDAO" ref="tigrfamFilteredMatchDAO-9.0"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer2FilteredMatchDAOImpl"/>
+        </property>
         <property name="serialGroup" value="TIGRFAM_POST_PROCESSING"/>
         <property name="rawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
     </bean>
@@ -94,28 +106,9 @@
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-
     <bean id="tigrfamRawMatchDAO-9.0"
           class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch"/>
-    </bean>
-
-    <bean id="tigrfamFilteredMatchDAO-9.0"
-          class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer2FilteredMatchDAOImpl"/>
-
-    <!--<bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">-->
-    <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>-->
-    <!--</bean>-->
-
-    <bean id="tigrfamHmmPfamParser-9.0" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
-        <property name="signatureLibrary" value="TIGRFAM"/>
-        <property name="signatureLibraryRelease" value="9.0"/>
-        <property name="hmmer2ParserSupport" ref="tigrFamParserSupport-9.0"/>
-    </bean>
-
-    <bean id="tigrFamParserSupport-9.0"
-          class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.TigrfamHmmer2ParserSupport">
-        <property name="signatureLibraryRelease" value="9.0"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

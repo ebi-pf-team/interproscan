@@ -59,8 +59,14 @@
         <property name="dependsUpon" ref="stepCoilsRunBinary"/>
         <property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>
         <property name="coilsOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="parser" ref="coilsParser"/>
-        <property name="matchDAO" ref="coilsMatchDAO"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.coils.CoilsMatchParser"/>
+        </property>
+        <property name="matchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CoilsFilteredMatchDAOImpl">
+                <constructor-arg value="2.2"/>
+            </bean>
+        </property>
     </bean>
 
     <bean id="stepCoilsDeleteRawOutput"
@@ -73,14 +79,4 @@
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
-
-    <!-- ######################## Dependencies ############################  -->
-    <bean id="coilsParser"
-          class="uk.ac.ebi.interpro.scan.io.match.coils.CoilsMatchParser"/>
-
-    <bean id="coilsMatchDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.CoilsFilteredMatchDAOImpl">
-        <constructor-arg value="2.2"/>
-    </bean>
-    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
