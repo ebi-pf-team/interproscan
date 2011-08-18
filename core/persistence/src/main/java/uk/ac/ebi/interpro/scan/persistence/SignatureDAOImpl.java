@@ -31,9 +31,12 @@ public class SignatureDAOImpl extends GenericDAOImpl<Signature, Long> implements
         // TODO - probably need to go deeper than this?
         Query query = entityManager.createQuery(
                 "select s from Signature s " +
-                        "left outer join fetch s.models " +
                         "left outer join fetch s.crossReferences " +
                         "left outer join fetch s.deprecatedAccessions " +
+                        "left outer join fetch s.descriptionChunks " +
+                        "left outer join fetch s.models model " +
+                        "left outer join fetch model.descriptionChunks " +
+                        "left outer join fetch model.definitionChunks " +
                         "where s.id = :id"
         );
         query.setParameter("id", id);
