@@ -30,11 +30,11 @@ import static junit.framework.TestCase.*;
  * Performs a full round-trip test of persistence
  * and XML marshalling / unmarshalling.
  *
- * @author  Phil Jones
- * @author  Antony Quinn
+ * @author Phil Jones
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
- * @see     org.custommonkey.xmlunit.XMLUnit
+ * @see org.custommonkey.xmlunit.XMLUnit
+ * @since 1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -42,28 +42,28 @@ public class FullRoundTripTest {
 
     private static final Logger LOGGER = Logger.getLogger(FullRoundTripTest.class.getName());
 
-    @Resource (name="signatureMarshaller")
+    @Resource(name = "signatureMarshaller")
     private Marshaller signatureMarshaller;
 
-    @Resource (name="signatureUnmarshaller")
+    @Resource(name = "signatureUnmarshaller")
     private Unmarshaller signatureUnmarshaller;
 
-    @Resource (name="proteinMarshaller")
+    @Resource(name = "proteinMarshaller")
     private Marshaller proteinMarshaller;
 
-    @Resource (name="proteinUnmarshaller")
+    @Resource(name = "proteinUnmarshaller")
     private Unmarshaller proteinUnmarshaller;
 
-    @Resource (name="signatureDAO")
+    @Resource(name = "signatureDAO")
     private SignatureDAO signatureDAO;
 
-    @Resource (name="proteinDAO")
+    @Resource(name = "proteinDAO")
     private ProteinDAO proteinDAO;
 
-    @Resource (name="proteinXmls")
+    @Resource(name = "proteinXmls")
     private XmlsForTesting proteinXmls;
 
-    @Resource (name="signatureXmls")
+    @Resource(name = "signatureXmls")
     private XmlsForTesting signatureXmls;
 
     public void setSignatureMarshaller(Marshaller signatureMarshaller) {
@@ -94,7 +94,7 @@ public class FullRoundTripTest {
      * Initializes XMLUnit so white space and comments are ignored.
      */
     @Before
-    public void initializeXmlUnit(){
+    public void initializeXmlUnit() {
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);
     }
@@ -104,8 +104,7 @@ public class FullRoundTripTest {
      * Test of <signature/> xml round trip.
      */
     @Test
-    @Ignore
-    public void newSignatureRoundTrip(){
+    public void newSignatureRoundTrip() {
         ObjectRetriever<Signature, SignatureDAO> retriever = new ObjectRetriever<Signature, SignatureDAO>() {
             public Signature getObjectByPrimaryKey(SignatureDAO dao, Long primaryKey) {
                 return dao.getSignatureAndMethodsDeep(primaryKey);
@@ -115,7 +114,7 @@ public class FullRoundTripTest {
                 return persistable.getId();
             }
         };
-        roundTrip (signatureXmls,
+        roundTrip(signatureXmls,
                 signatureDAO,
                 retriever,
                 signatureMarshaller,
@@ -128,7 +127,7 @@ public class FullRoundTripTest {
      */
     @Test
     @Ignore
-    public void newProteinRoundTrip(){
+    public void newProteinRoundTrip() {
         ObjectRetriever<Protein, ProteinDAO> retriever = new ObjectRetriever<Protein, ProteinDAO>() {
             public Protein getObjectByPrimaryKey(ProteinDAO dao, Long primaryKey) {
                 return dao.getProteinAndMatchesById(primaryKey);
@@ -138,7 +137,7 @@ public class FullRoundTripTest {
                 return persistable.getId();
             }
         };
-        roundTrip (proteinXmls,
+        roundTrip(proteinXmls,
                 proteinDAO,
                 retriever,
                 proteinMarshaller,
@@ -148,39 +147,40 @@ public class FullRoundTripTest {
     /**
      * Interface to simulate closures in the roundTrip method below.  Should be implemented
      * as an anonymous inner class in the method calling roundTrip.
+     *
      * @param <P> being the class of model object.
      * @param <D> being the class extending GenericDAO for data access, corresponding to the model object above.
      */
-    private interface ObjectRetriever<P, D extends GenericDAO>{
+    private interface ObjectRetriever<P, D extends GenericDAO> {
         P getObjectByPrimaryKey(D dao, Long primaryKey);
+
         Long getPrimaryKey(P persistable);
     }
 
     /**
      * Generic method to perform a full round-trip test on any xml type.
      *
-     * @param testXMLs which holds a Collection of xmls to be tested.
-     * @param dao being the specific DataAccessObject (extending GenericDAO) for
-     * object persistence / retrieval.
-     * @param retriever implementing a closure for retrieving object primary keys and retrieving the required object map.
-     * @param marshaller to generate the XML from the object map.
+     * @param testXMLs     which holds a Collection of xmls to be tested.
+     * @param dao          being the specific DataAccessObject (extending GenericDAO) for
+     *                     object persistence / retrieval.
+     * @param retriever    implementing a closure for retrieving object primary keys and retrieving the required object map.
+     * @param marshaller   to generate the XML from the object map.
      * @param unmarshaller to generate an object map from XML.
-     * @param <T> being the class of the object being unmarshalled / persisted.
-     * @param <D> being the class of the DAO, extending GenericDAO.
+     * @param <T>          being the class of the object being unmarshalled / persisted.
+     * @param <D>          being the class of the DAO, extending GenericDAO.
      */
-    private <T, D extends GenericDAO> void roundTrip(XmlsForTesting testXMLs, D dao, ObjectRetriever<T, D> retriever, Marshaller marshaller, Unmarshaller unmarshaller){
-        for (String testXml : testXMLs.getXmls()){
+    private <T, D extends GenericDAO> void roundTrip(XmlsForTesting testXMLs, D dao, ObjectRetriever<T, D> retriever, Marshaller marshaller, Unmarshaller unmarshaller) {
+        for (String testXml : testXMLs.getXmls()) {
             String inputXml = testXml.trim();
-            try{
+            try {
                 T persistableObject = (T) unmarshal(unmarshaller, inputXml);
                 // First of all, test that round trip without persistence works...
                 String unpersistedOutputXml = marshal(marshaller, persistableObject);
                 Diff myDiff = new Diff(inputXml, unpersistedOutputXml);
-                if (! myDiff.similar()) {
+                if (!myDiff.similar()) {
                     LOGGER.error("\nNot similar: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
                     LOGGER.error("\ntoString(): \n\n" + persistableObject.toString());
-                }
-                else if (! myDiff.identical()){
+                } else if (!myDiff.identical()) {
                     LOGGER.error("\nNot identical: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
                     LOGGER.error("\ntoString(): \n\n" + persistableObject.toString());
                 }
@@ -193,7 +193,7 @@ public class FullRoundTripTest {
                 // Retrieve its primary key
                 Long id = retriever.getPrimaryKey(persistableObject);
                 assertNotNull("The stored persistableObject should not have a null primary key·", id);
-                LOGGER.debug("Primary key of persisted object (mid round-trip following insert): "+ id);
+                LOGGER.debug("Primary key of persisted object (mid round-trip following insert): " + id);
                 // And retrieve into a new reference
                 T retrievedPersistable = retriever.getObjectByPrimaryKey(dao, id);
 
@@ -203,10 +203,9 @@ public class FullRoundTripTest {
                 // Finally unmarshall the retrieved persistableObject and compare the XML.
                 String persistedOutputXML = marshal(marshaller, retrievedPersistable);
                 myDiff = new Diff(inputXml, persistedOutputXML);
-                if (! myDiff.similar()) {
+                if (!myDiff.similar()) {
                     LOGGER.error("\nNot similar: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
-                }
-                else if (! myDiff.identical()){
+                } else if (!myDiff.identical()) {
                     LOGGER.error("\nNot identical: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
 
                 }
@@ -215,13 +214,12 @@ public class FullRoundTripTest {
 
 
             } catch (IOException e) {
-                LOGGER.error("IOException thrown during XML round trip test:" , e);
+                LOGGER.error("IOException thrown during XML round trip test:", e);
                 fail("IOException thrown during XML round trip test (full stack trace logged):" + e.getMessage());
             } catch (SAXException e) {
                 LOGGER.error("SAXExeption thrown when attempting comparison of XML files.", e);
-                fail ("SAXExeption thrown when attempting comparison of XML files (full stack trace logged): " + e.getMessage());
-            }
-            finally {
+                fail("SAXExeption thrown when attempting comparison of XML files (full stack trace logged): " + e.getMessage());
+            } finally {
                 dao.deleteAll();
             }
         }
@@ -229,12 +227,13 @@ public class FullRoundTripTest {
 
     /**
      * Marshalls an object to an XML, returned as a String instance.
+     *
      * @param marshaller to perform the object -> XML marshalling
-     * @param o the object to marshall to XML
+     * @param o          the object to marshall to XML
      * @return the XML in a String
      * @throws IOException in the event of an error writing out the XML to the StringWriter.
      */
-    private String marshal(Marshaller marshaller, Object o) throws IOException  {
+    private String marshal(Marshaller marshaller, Object o) throws IOException {
         Writer writer = new StringWriter();
         marshaller.marshal(o, new StreamResult(writer));
         String xml = writer.toString();
@@ -244,12 +243,13 @@ public class FullRoundTripTest {
 
     /**
      * Unmarshalls an XML (passed in as a String) to an object map.
+     *
      * @param unmarshaller to perform the XML -> object unmarshalling
-     * @param xml being the XML to unmarshall to an object
+     * @param xml          being the XML to unmarshall to an object
      * @return the object representing the XML contents.
      * @throws IOException in the event of an error reading from the StringReader.
      */
-    private Object unmarshal(Unmarshaller unmarshaller, String xml) throws IOException  {
+    private Object unmarshal(Unmarshaller unmarshaller, String xml) throws IOException {
         Object o = unmarshaller.unmarshal(new StreamSource(new StringReader(xml)));
         LOGGER.debug(o);
         return o;
