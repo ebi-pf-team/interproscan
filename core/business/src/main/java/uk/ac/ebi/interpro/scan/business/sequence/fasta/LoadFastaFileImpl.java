@@ -76,7 +76,12 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                         if (currentId == null || currentId.isEmpty()) {
                             LOGGER.error("Found an empty ID line in the FASTA file on line " + lineNumber);
                             currentId = null;
+                        } else if (currentId.length() > 255) {
+                            // ID line is too long to fit in the database column, so trim it!
+                            // TODO Really this line should be parsed properly!
+                            currentId = currentId.substring(0, 255);
                         }
+
 
                     } else {
                         // must be a sequence line.
