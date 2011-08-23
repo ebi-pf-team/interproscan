@@ -38,12 +38,13 @@
                     <property name="signatureLibrary" value="PRINTS"/>
                     <property name="releaseVersionNumber" value="41.1"/>
                     <property name="modelFile" value="file:${prints.pval.path.41.1}"/>
-                    <property name="kdatParser" ref="kdat_41.1"/>
+                    <property name="kdatParser">
+                        <bean class="uk.ac.ebi.interpro.scan.io.prints.KdatParser">
+                            <property name="kdatFileResource" value="file:${prints.kdat.path.41.1}"/>
+                        </bean>
+                    </property>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPRINTS"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.prints.KdatParser">
-                    <property name="kdatFileResource" value="file:${prints.kdat.path.41.1}"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
                     <property name="signatureLibrary" value="GENE3D"/>
