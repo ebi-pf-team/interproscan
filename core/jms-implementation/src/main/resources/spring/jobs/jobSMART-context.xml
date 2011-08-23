@@ -109,7 +109,7 @@
                 <property name="thresholdFileResource" value="file:${smart.threshold.path}"/>
             </bean>
         </property>
-        <property name="serialGroup" value="SMART_POST_PROCESSING"/>
+        <property name="serialGroup" value="HMMER2_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" value="6.1"/>
         <property name="rawMatchDAO" ref="smartRawMatchDAO"/>
         <property name="filteredMatchDAO">

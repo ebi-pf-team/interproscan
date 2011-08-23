@@ -90,7 +90,7 @@
           parent="abstractGene3dStep">
         <property name="dependsUpon" ref="stepGene3dParseHmmerOutput"/>
         <property name="stepDescription" value="Filter raw results"/>
-        <property name="serialGroup" value="GENE_3D_FILTERING"/>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <!--TODO: We need to pass in or look up release number-->
         <property name="signatureLibraryRelease" value="3.3.0"/>
         <property name="signatureLibrary" value="GENE3D"/>
