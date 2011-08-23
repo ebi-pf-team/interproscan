@@ -94,7 +94,7 @@
           parent="abstractPrositeProfileStep">
 
         <property name="dependsUpon" ref="stepPrositeProfilesParseRawOutput"/>
-        <property name="serialGroup" value="PROSITE_PROFILES_POST_PROCESSING"/>
+        <property name="serialGroup" value="PROFILE_SCAN_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter Prosite Profiles matches and persist filtered results"/>
         <property name="signatureLibraryRelease" value="20.66"/>
         <property name="postProcessor">

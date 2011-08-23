@@ -93,7 +93,7 @@
           parent="abstractHamapStep">
 
         <property name="dependsUpon" ref="stepHamapParseRawOutput"/>
-        <property name="serialGroup" value="HAMAP_POST_PROCESSING"/>
+        <property name="serialGroup" value="PROFILE_SCAN_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter HAMAP matches and persist filtered results"/>
         <property name="signatureLibraryRelease" value="180510"/>
         <property name="postProcessor">

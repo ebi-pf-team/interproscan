@@ -100,7 +100,7 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer3FilteredMatchDAOImpl"/>
         </property>
-        <property name="serialGroup" value="TIGRFAM_POST_PROCESSING"/>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="rawMatchDAO" ref="tigrfamRawMatchDAO-10.1"/>
         <property name="signatureLibrary" value="TIGRFAM"/>
         <property name="filter">
