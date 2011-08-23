@@ -101,7 +101,7 @@ public class ProteinMatchTSVWriter {
                                     if (sb.length() > 0) {
                                         sb.append(VALUE_SEPARATOR);
                                     }
-                                    sb.append(PathwayXref.PathwayDatabase.parseDatabaseCode(xref.getDatabaseName().charAt(0)) + ": " + xref.getIdentifier());
+                                    sb.append(xref.getDatabaseName() + ": " + xref.getIdentifier());
                                 }
                                 mappingFields.add(sb.toString());
                             } else {
