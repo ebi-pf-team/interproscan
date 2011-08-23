@@ -78,7 +78,7 @@
                 </property>
             </bean>
         </property>
-        <property name="serialGroup" value="PARSE_HMMER_3"/>
+        <property name="serialGroup" value="PARSE_PFAM_A"/>
         <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
         <property name="retries" value="3"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>

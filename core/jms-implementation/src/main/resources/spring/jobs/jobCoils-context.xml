@@ -67,6 +67,7 @@
                 <constructor-arg value="2.2"/>
             </bean>
         </property>
+        <property name="serialGroup" value="PARSE_COILS"/>
     </bean>
 
     <bean id="stepCoilsDeleteRawOutput"
