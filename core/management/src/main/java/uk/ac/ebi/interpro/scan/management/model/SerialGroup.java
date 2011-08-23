@@ -15,8 +15,10 @@ package uk.ac.ebi.interpro.scan.management.model;
 public enum SerialGroup {
     LOAD_PROTEINS,
     LOAD_NUCLEIC_ACID,
-    PARSE_HMMER_3,
+    PARSE_GENE3D,
+    PARSE_PFAM_A,
     PARSE_PHOBIUS,
+    PARSE_COILS,
     PARSE_PRINTS,
     PARSE_HAMAP,
     PARSE_SMART,
