@@ -214,9 +214,10 @@ public class Run {
                     ? Mode.valueOf(modeArgument.toUpperCase())
                     : DEFAULT_MODE;
 
+            System.out.println("Welcome to InterProScan v5.");
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Welcome to InterProScan v5");
+//                LOGGER.info("Welcome to InterProScan v5");
 
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
                 LOGGER.info("Running as: " + mode);
@@ -287,7 +288,7 @@ public class Run {
                 }
 
                 // TODO Currently silently ignores command line parameters that are not appropriate for the mode.
-
+                System.out.println("Running InterProScan v5 in " + mode + " mode...");
                 runnable.run();
             }
 //            ctx.close();
