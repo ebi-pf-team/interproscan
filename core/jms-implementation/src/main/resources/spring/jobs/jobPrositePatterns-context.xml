@@ -95,7 +95,7 @@
           parent="abstractPrositePatternStep">
 
         <property name="dependsUpon" ref="stepPrositePatternParseRawOutput"/>
-        <property name="serialGroup" value="PROSITE_PATTERNS_POST_PROCESSING"/>
+        <property name="serialGroup" value="PROFILE_SCAN_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter Prosite Patterns matches and persist filtered results"/>
         <property name="signatureLibraryRelease" value="20.66"/>
         <property name="postProcessor">

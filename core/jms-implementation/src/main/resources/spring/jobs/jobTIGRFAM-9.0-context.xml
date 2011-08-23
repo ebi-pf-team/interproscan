@@ -99,7 +99,7 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer2FilteredMatchDAOImpl"/>
         </property>
-        <property name="serialGroup" value="TIGRFAM_POST_PROCESSING"/>
+        <property name="serialGroup" value="HMMER2_POST_PROCESSING"/>
         <property name="rawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
     </bean>
 

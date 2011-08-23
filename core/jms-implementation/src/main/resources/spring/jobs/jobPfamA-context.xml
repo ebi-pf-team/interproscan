@@ -108,7 +108,7 @@
                 </property>
             </bean>
         </property>
-        <property name="serialGroup" value="PFAM_A_POST_PROCESSING"/>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" value="24.0"/>
         <property name="signatureLibrary" value="PFAM"/>
         <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>

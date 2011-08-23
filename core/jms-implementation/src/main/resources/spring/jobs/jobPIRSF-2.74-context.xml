@@ -158,6 +158,7 @@
     <bean id="stepPirsfPersist-2.74"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfPersistStep"
           parent="abstractPIRSFStep-2.74">
+        <property name="serialGroup" value="HMMER2_POST_PROCESSING"/>
         <property name="stepDescription" value="Persists filtered matches."/>
         <property name="dependsUpon" ref="stepBlastPostProcessing-2.74"/>
         <property name="signatureLibraryRelease" value="2.74"/>
