@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import uk.ac.ebi.interpro.scan.model.GoXref;
 import uk.ac.ebi.interpro.scan.model.PathwayXref;
 
 import javax.annotation.Resource;
@@ -109,13 +108,20 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
         String entryAcc = rs.getString("entry_ac");
         String name = rs.getString("name");
         String identifier = rs.getString("ac");
-        String dbcode = rs.getString("dbcode");
-        PathwayXref newPathway = new PathwayXref(identifier, name, dbcode);
+        String dbName = decodeDbCode(rs.getString("dbcode"));
+        PathwayXref newPathway = new PathwayXref(identifier, name, dbName);
         Set<PathwayXref> pathways = (Set<PathwayXref>) result.get(entryAcc);
         if (pathways == null) {
             pathways = new HashSet<PathwayXref>();
         }
         pathways.add(newPathway);
         result.put(entryAcc, pathways);
+    }
+
+    private String decodeDbCode(String dbCode) {
+        if (dbCode != null && dbCode.length() > 0) {
+            return PathwayXref.PathwayDatabase.parseDatabaseCode(dbCode.charAt(0)).toString();
+        }
+        return null;
     }
 }
