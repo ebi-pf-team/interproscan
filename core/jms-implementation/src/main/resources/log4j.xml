@@ -24,38 +24,6 @@
         </layout>
     </appender>
 
-    <logger name="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
-        <level value="debug"/>
-    </logger>
-
-    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">-->
-    <!--<level value="debug"/>-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">-->
-    <!--<level value="debug"/>-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">-->
-    <!--<level value="debug"/>-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationProteinLoadListener">-->
-    <!--<level value="debug"/>-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.AbstractStepInstanceCreator">-->
-    <!--<level value="debug"/>-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl">-->
-    <!--<level value="debug"/>-->
-    <!--</logger>-->
-
-
-    <!-- log4j.logger.uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing=DEBUG
-log4j.logger.uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep=DEBUG
-log4j.logger.uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAOImpl=DEBUG -->
     <!-- Root Logger -->
     <root>
         <priority value="warn"/>

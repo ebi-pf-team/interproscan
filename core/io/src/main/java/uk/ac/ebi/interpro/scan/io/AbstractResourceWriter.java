@@ -2,41 +2,47 @@ package uk.ac.ebi.interpro.scan.io;
 
 import org.springframework.core.io.Resource;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 
 /**
  * Default implementation.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 public abstract class AbstractResourceWriter<T> implements ResourceWriter<T> {
 
-    @Override public void write(Resource resource, Collection<T> records) throws IOException {
+    @Override
+    public void write(Resource resource, Collection<T> records) throws IOException {
         write(resource, records, false);
     }
 
-    @Override public void write(Resource resource, Collection<T> records, boolean append)
-            throws IOException  {
+    @Override
+    public void write(Resource resource, Collection<T> records, boolean append)
+            throws IOException {
         if (resource == null) {
             throw new NullPointerException("Resource is null");
         }
         // Bizarre Javadoc for createNewFile:
         // <code>true</code> if the named file does not exist and was successfully created;
         // <code>false</code> if the named file already exists
-        boolean exists = !resource.getFile().createNewFile();
+        if (!resource.getFile().createNewFile()) {
+            throw new IllegalStateException("Unable to create the ssf file, as there is already a file of the same name in the way.");
+        }
+
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(resource.getFile(), append));
             final Collection<T> sortedRecords = sort(records);
-            for (T record : sortedRecords)    {
+            for (T record : sortedRecords) {
                 writer.write(createLine(record));
                 writer.newLine();
             }
-        }
-        finally {
-            if (writer != null){
+        } finally {
+            if (writer != null) {
                 writer.close();
             }
         }
@@ -45,7 +51,7 @@ public abstract class AbstractResourceWriter<T> implements ResourceWriter<T> {
     /**
      * Returns sorted records. This implementation simply returns the records without sorting.
      *
-     * @param  records Collection to sort
+     * @param records Collection to sort
      * @return Sorted records.
      */
     protected Collection<T> sort(Collection<T> records) {
