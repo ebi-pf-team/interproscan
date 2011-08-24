@@ -306,11 +306,6 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
     }
 
     /**
-     * This method should ONLY be used outside the scope of I5 - I5 has its own mechanism
-     * for managing temporary files which ensures that they are in a known, managed location
-     * (and provides a mechanism to clean up after they have been used, however this class does that too
-     * so not necessary in this case.).
-     *
      * @param suffix                        the suffix for the file name.
      * @param defaultFullyQualifiedFilePath which, if not null, provides the fully qualified path for the temporary file.
      * @return the Resource object
@@ -319,6 +314,7 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
         try {
             File file;
             if (defaultFullyQualifiedFilePath != null) {
+                // I5 Mode.
                 file = new File(defaultFullyQualifiedFilePath);
             } else if (temporaryFilePath == null) {
                 file = File.createTempFile("ipr-", suffix);
