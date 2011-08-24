@@ -29,10 +29,7 @@ public abstract class AbstractResourceWriter<T> implements ResourceWriter<T> {
         // Bizarre Javadoc for createNewFile:
         // <code>true</code> if the named file does not exist and was successfully created;
         // <code>false</code> if the named file already exists
-        if (!resource.getFile().createNewFile()) {
-            throw new IllegalStateException("Unable to create the ssf file, as there is already a file of the same name in the way.");
-        }
-
+        resource.getFile().createNewFile();
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(resource.getFile(), append));
