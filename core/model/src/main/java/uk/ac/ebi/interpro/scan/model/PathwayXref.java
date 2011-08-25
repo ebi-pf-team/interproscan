@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.xml.bind.annotation.XmlTransient;
@@ -122,7 +121,7 @@ public class PathwayXref extends Xref implements Serializable {
 
         public static PathwayDatabase parseDatabaseCode(Character databaseCode) {
             for (PathwayDatabase database : PathwayDatabase.values()) {
-                if (databaseCode == database.getDatabaseCode() || databaseCode.toString().equalsIgnoreCase(database.getDatabaseCode().toString())) {
+                if (databaseCode.equals(database.getDatabaseCode()) || databaseCode.toString().equalsIgnoreCase(database.getDatabaseCode().toString())) {
                     return database;
                 }
             }
