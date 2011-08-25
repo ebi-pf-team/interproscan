@@ -97,8 +97,6 @@ public class Entry implements Serializable {
             name = "ENTRY_GO_XREF",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
             inverseJoinColumns = @JoinColumn(name = "GO_XREF_ID"))
-    //@XmlElementWrapper(name = "xrefs")
-    @XmlElement(name = "go-xref") // TODO: This should not be here (see TODO comments on getGoCrossReferences)
     private Set<GoXref> goXRefs = new HashSet<GoXref>();
 
     @ManyToMany(
@@ -108,12 +106,11 @@ public class Entry implements Serializable {
             name = "ENTRY_PATHWAY_XREF",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
             inverseJoinColumns = @JoinColumn(name = "PATHWAY_XREF_ID"))
-//    @XmlElement(name = "pathway-xref") // TODO: This should not be here
     private Set<PathwayXref> pathwayXRefs;
 
     @OneToMany(mappedBy = "entry", fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
-    @XmlElement(name = "signature") // TODO: This should not be here (see TODO comments on getSignatures)
+//    @XmlElement(name = "signature") // TODO: This should not be here (see TODO comments on getSignatures)
     private Set<Signature> signatures = new HashSet<Signature>();
 
     /**
@@ -342,7 +339,8 @@ public class Entry implements Serializable {
      *
      * @return Abstract
      */
-    @XmlElement(name = "abstract")
+//    @XmlElement(name = "abstract")
+    @XmlAttribute(name = "abstract")
     public String getAbstract() {
         if (abstractText == null) {
             abstractText = CHUNKER.concatenate(abstractFirstChunk, abstractChunks);
@@ -420,6 +418,7 @@ public class Entry implements Serializable {
      *
      * @return GO cross-references
      */
+    @XmlElement(name = "go-xref")
     public Set<GoXref> getGoXRefs() {
         // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
         // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
@@ -440,7 +439,7 @@ public class Entry implements Serializable {
         return Collections.unmodifiableSet(goXRefs);
     }
 
-    private void setGoXRefs(Set<GoXref> xrefs) {
+    public void setGoXRefs(Set<GoXref> xrefs) {
         for (GoXref xref : xrefs) {
             addGoXRef(xref);
         }
@@ -476,6 +475,7 @@ public class Entry implements Serializable {
      *
      * @return Pathway cross-references
      */
+    @XmlElement(name = "pathway-xref")
     public Collection<PathwayXref> getPathwayXRefs() {
         // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
         // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
@@ -497,7 +497,7 @@ public class Entry implements Serializable {
         return pathwayXRefs;
     }
 
-    private void setPathwayXRefs(Set<PathwayXref> xrefs) {
+    public void setPathwayXRefs(Set<PathwayXref> xrefs) {
         for (PathwayXref xref : xrefs) {
             addPathwayXRef(xref);
         }

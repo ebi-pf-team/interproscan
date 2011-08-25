@@ -598,12 +598,12 @@ public class Signature implements Serializable {
         crossReferences.remove(xref);
     }
 
-    @XmlTransient
+    @XmlElement
     public Entry getEntry() {
         return entry;
     }
 
-    void setEntry(Entry entry) {
+    public void setEntry(Entry entry) {
         this.entry = entry;
     }
 
