@@ -36,8 +36,15 @@ public class ProteinMatchTSVWriter {
     }
 
 
-    public void write(Protein protein) throws IOException {
-
+    /**
+     * Writes out a Protein object to a TSV file
+     *
+     * @param protein containing matches to be written out
+     * @return the number of rows printed (i.e. the number of Locations on Matches).
+     * @throws IOException in the event of I/O problem writing out the file.
+     */
+    public int write(Protein protein) throws IOException {
+        int locationCount = 0;
         String proteinAc = makeProteinAc(protein);
         int length = protein.getSequence().length();
         String md5 = protein.getMd5();
@@ -52,69 +59,71 @@ public class ProteinMatchTSVWriter {
             final String description = match.getSignature().getDescription();
 
             Set<Location> locations = match.getLocations();
-            for (Location location : locations) {
-                String score = "-";
-                String status = "T";
+            if (locations != null) {
+                locationCount += locations.size();
+                for (Location location : locations) {
+                    String score = "-";
+                    String status = "T";
 
-                if (location instanceof HmmerLocation) {
-                    score = Double.toString(((HmmerLocation) location).getEvalue());
-                }
+                    if (location instanceof HmmerLocation) {
+                        score = Double.toString(((HmmerLocation) location).getEvalue());
+                    }
 
-                final List<String> mappingFields = new ArrayList<String>();
-                mappingFields.add(proteinAc);
-                mappingFields.add(md5);
-                mappingFields.add(Integer.toString(length));
-                mappingFields.add(analysis);
-                mappingFields.add(signatureAc);
-                mappingFields.add((description == null ? "" : description));
-                mappingFields.add(Integer.toString(location.getStart()));
-                mappingFields.add(Integer.toString(location.getEnd()));
-                mappingFields.add(score);
-                mappingFields.add(status);
-                mappingFields.add(date);
+                    final List<String> mappingFields = new ArrayList<String>();
+                    mappingFields.add(proteinAc);
+                    mappingFields.add(md5);
+                    mappingFields.add(Integer.toString(length));
+                    mappingFields.add(analysis);
+                    mappingFields.add(signatureAc);
+                    mappingFields.add((description == null ? "" : description));
+                    mappingFields.add(Integer.toString(location.getStart()));
+                    mappingFields.add(Integer.toString(location.getEnd()));
+                    mappingFields.add(score);
+                    mappingFields.add(status);
+                    mappingFields.add(date);
 
-                if (mapToInterProEntries) {
-                    Entry interProEntry = signature.getEntry();
-                    if (interProEntry != null) {
-                        mappingFields.add(interProEntry.getAccession());
-                        mappingFields.add(interProEntry.getDescription());
-                        if (mapToGO) {
-                            Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
-                            if (goXRefs != null && goXRefs.size() > 0) {
-                                StringBuffer sb = new StringBuffer();
-                                for (GoXref xref : goXRefs) {
-                                    if (sb.length() > 0) {
-                                        sb.append(VALUE_SEPARATOR);
+                    if (mapToInterProEntries) {
+                        Entry interProEntry = signature.getEntry();
+                        if (interProEntry != null) {
+                            mappingFields.add(interProEntry.getAccession());
+                            mappingFields.add(interProEntry.getDescription());
+                            if (mapToGO) {
+                                Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
+                                if (goXRefs != null && goXRefs.size() > 0) {
+                                    StringBuffer sb = new StringBuffer();
+                                    for (GoXref xref : goXRefs) {
+                                        if (sb.length() > 0) {
+                                            sb.append(VALUE_SEPARATOR);
+                                        }
+                                        sb.append(xref.getIdentifier()); // Just write the GO identifier to the output
                                     }
-                                    sb.append(xref.getIdentifier()); // Just write the GO identifier to the output
+                                    mappingFields.add(sb.toString());
+                                } else {
+                                    mappingFields.add("");
                                 }
-                                mappingFields.add(sb.toString());
-                            } else {
-                                mappingFields.add("");
                             }
-                        }
-                        if (mapToPathway) {
-                            Collection<PathwayXref> pathwayXRefs = interProEntry.getPathwayXRefs();
-                            if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
-                                StringBuffer sb = new StringBuffer();
-                                for (PathwayXref xref : pathwayXRefs) {
-                                    if (sb.length() > 0) {
-                                        sb.append(VALUE_SEPARATOR);
+                            if (mapToPathway) {
+                                Collection<PathwayXref> pathwayXRefs = interProEntry.getPathwayXRefs();
+                                if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
+                                    StringBuffer sb = new StringBuffer();
+                                    for (PathwayXref xref : pathwayXRefs) {
+                                        if (sb.length() > 0) {
+                                            sb.append(VALUE_SEPARATOR);
+                                        }
+                                        sb.append(xref.getDatabaseName() + ": " + xref.getIdentifier());
                                     }
-                                    sb.append(xref.getDatabaseName() + ": " + xref.getIdentifier());
+                                    mappingFields.add(sb.toString());
+                                } else {
+                                    mappingFields.add("");
                                 }
-                                mappingFields.add(sb.toString());
-                            } else {
-                                mappingFields.add("");
                             }
                         }
                     }
+                    tsvWriter.write(mappingFields);
                 }
-
-                tsvWriter.write(mappingFields);
             }
         }
-
+        return locationCount;
     }
 
     public void setMapToInterProEntries(boolean mapToInterProEntries) {

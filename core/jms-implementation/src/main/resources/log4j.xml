@@ -24,6 +24,54 @@
         </layout>
     </appender>
 
+    <!--<logger name="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3FilterStep">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.business.binary.AbstractBinaryRunner">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="org.springframework.oxm.jaxb.Jaxb2Marshaller">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationSequenceLoadListener">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep">-->
+    <!--<level value="info"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.persistence.Hmmer3FilteredMatchDAO">-->
+    <!--<level value="info"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
     <!-- Root Logger -->
     <root>
         <priority value="warn"/>

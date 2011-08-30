@@ -136,11 +136,11 @@ public class AmqInterProScanMaster implements Master {
                 }
                 LOGGER.debug("Database loaded.");
             }
-
+            int stepInstancesCreatedByLoadStep;
             if ("n".equalsIgnoreCase(this.sequenceType)) {
-                createNucleicAcidLoadStepInstance();
+                stepInstancesCreatedByLoadStep = createNucleicAcidLoadStepInstance();
             } else {
-                createFastaFileLoadStepInstance();
+                stepInstancesCreatedByLoadStep = createFastaFileLoadStepInstance();
             }
 
 
@@ -186,8 +186,29 @@ public class AmqInterProScanMaster implements Master {
                 Thread.sleep(200);  // Every 200 ms, checks for any runnable StepInstances and runs them.
 
                 // Close down (break out of loop) if the analyses are all complete.
-                if (closeOnCompletion && completed && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
-                    break;
+                if (closeOnCompletion &&
+                        completed &&
+                        stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
+                    // This next if ensures that StepInstances created as a result of loading proteins are
+                    // visible.  This is safe, because in the "closeOnCompletion" mode, an "output results" step
+                    // is created, so as an absolute minimum there should be one more StepInstance than those
+                    // created in the createNucleicAcidLoadStepInstance() or createFastaFileLoadStepInstance() methods.
+                    if (outputFile == null || fastaFilePath == null) {
+                        break;
+                    } else if (stepInstanceDAO.count() > stepInstancesCreatedByLoadStep && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("There are no step instances left to run, so about to break out of loop in Master.\n\nStatistics: ");
+                            LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                            LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                        }
+                        break;
+                    } else {
+                        LOGGER.info("Apparently have no more unfinished StepInstances, however it looks like there should be...");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                            LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                        }
+                    }
                 }
             }
         } catch (JMSException e) {
@@ -206,7 +227,8 @@ public class AmqInterProScanMaster implements Master {
      * for the fasta file loading job.  Note that this also creates all of the necessary StepInstances
      * for analyses for the loaded proteins.
      */
-    private void createFastaFileLoadStepInstance() {
+    private int createFastaFileLoadStepInstance() {
+        int stepInstancesCreated = 0;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Creating FASTA file load step.");
         }
@@ -214,14 +236,16 @@ public class AmqInterProScanMaster implements Master {
             Map<String, String> params = new HashMap<String, String>();
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
             createBlackBoxParams(params);
-            createStepInstancesForJob("jobLoadFromFasta", params);
+            stepInstancesCreated = createStepInstancesForJob("jobLoadFromFasta", params);
             LOGGER.info("Fasta file load step instance has been created.");
         } else if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("No fasta file path to load.");
         }
+        return stepInstancesCreated;
     }
 
-    private void createNucleicAcidLoadStepInstance() {
+    private int createNucleicAcidLoadStepInstance() {
+        int stepInstancesCreated = 0;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("creating nucleic acid load step.");
         }
@@ -230,10 +254,11 @@ public class AmqInterProScanMaster implements Master {
             params.put(RunGetOrfStep.SEQUENCE_FILE_PATH_KEY, fastaFilePath);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
             createBlackBoxParams(params);
-            createStepInstancesForJob("jobLoadNucleicAcidSequence", params);
+            stepInstancesCreated = createStepInstancesForJob("jobLoadNucleicAcidSequence", params);
         } else {
             LOGGER.error("No nucleic acid sequence file path has been provided to load.");
         }
+        return stepInstancesCreated;
     }
 
     private void createBlackBoxParams(final Map<String, String> params) {
@@ -264,10 +289,20 @@ public class AmqInterProScanMaster implements Master {
         createStepInstancesForJob("jobLoadFromUniParc", null);
     }
 
-    private void createStepInstancesForJob(String jobId, Map<String, String> parameters) {
+    /**
+     * This method creates the required step instances for the specified job and
+     * set of parameters, returning the number of StepInstances created.
+     *
+     * @param jobId      to specify the job
+     * @param parameters to the analysis.
+     * @return the number of StepInstances created
+     */
+    private int createStepInstancesForJob(String jobId, Map<String, String> parameters) {
+        int stepInstancesCreatedCount = 0;
         Job job = jobs.getJobById(jobId);
         final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
         for (Step step : job.getSteps()) {
+            stepInstancesCreatedCount++;
             StepInstance stepInstance = new StepInstance(step);
             stepInstance.addParameters(parameters);
             List<StepInstance> mappedStepInstance = stepToStepInstances.get(step);
@@ -278,6 +313,7 @@ public class AmqInterProScanMaster implements Master {
             mappedStepInstance.add(stepInstance);
         }
         addDependenciesAndStore(stepToStepInstances);
+        return stepInstancesCreatedCount;
     }
 
     /**

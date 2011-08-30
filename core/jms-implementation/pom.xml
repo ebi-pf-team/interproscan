@@ -305,9 +305,17 @@
         </profile>
 
         <profile>
-            <id>full_support</id>
+            <id>full_support-32bit</id>
             <properties>
                 <mvn.ebi.interproscan5.support>/nfs/seqdb/production/interpro/production/interproscan-5/support
+                </mvn.ebi.interproscan5.support>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>full_support-64bit</id>
+            <properties>
+                <mvn.ebi.interproscan5.support>/nfs/seqdb/production/interpro/production/interproscan-5/support_64bit
                 </mvn.ebi.interproscan5.support>
             </properties>
         </profile>
