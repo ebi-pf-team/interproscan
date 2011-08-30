@@ -67,11 +67,10 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                     }
                     );
             // Add matches to protein
+            int locationCount = 0;
             int count = 0;
             for (Hmmer3Match m : filteredMatches) {
-                if (m == null) {
-                    throw new IllegalStateException("The filteredMatches collection contains a null value.");
-                }
+                locationCount += (m.getLocations() == null) ? 0 : m.getLocations().size();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Adding filtered match to protein object");
                     count++;
@@ -85,6 +84,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                     LOGGER.debug("Persisting protein following addition of filtered matches.");
                 }
             }
+            LOGGER.info(locationCount + " match locations stored.");
             // Store
             entityManager.persist(protein);
             entityManager.flush();
