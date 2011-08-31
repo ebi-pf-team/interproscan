@@ -77,7 +77,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                 }
             }
         }
-        LOGGER.debug(rawMatchCount + " filtered matches have been passed in to the persistFilteredMatches method");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(rawMatchCount + " filtered matches have been passed in to the persistFilteredMatches method");
+        }
         if (signatureLibraryRelease == null) {
             LOGGER.debug("There are no raw matches to filter.");
             return;
@@ -122,7 +124,11 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                 modelIDs.add(rawMatch.getModelId());
             }
         }
-        LOGGER.info("... for " + modelIDs.size() + " model IDs.");
+
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("... for " + modelIDs.size() + " model IDs.");
+        }
+
         for (int index = 0; index < modelIDs.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
             int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
             if (endIndex > modelIDs.size()) {
@@ -130,7 +136,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             }
             //Signature accession slice
             final List<String> modelIdsSlice = modelIDs.subList(index, endIndex);
-            LOGGER.info("Querying a batch of " + modelIdsSlice.size() + " model IDs.");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Querying a batch of " + modelIdsSlice.size() + " model IDs.");
+            }
 //            final Query query =
 //                    entityManager.createQuery(
 //                            "select s from Signature s, SignatureLibraryRelease r " +
