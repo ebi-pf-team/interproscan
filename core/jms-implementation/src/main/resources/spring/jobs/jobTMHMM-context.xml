@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
+
+    <!-- ##### JOB: TMHMM - Prediction of transmembrane helices in proteins ############################  -->
+    <!-- Used by the UniProt team in their "Annabel" automatic annotation pipeline. -->
+
+    <bean id="jobTMHMM" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="Prediction of transmembrane helices in proteins"/>
+        <property name="analysis" value="true"/>
+    </bean>
+
+    <bean id="abstractTMHMMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobTMHMM"/>
+        <property name="maxProteins" value="50"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1: Write FASTA file -->
+    <bean id="stepTMHMMWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractTMHMMStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create FASTA file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2: Run binary -->
+    <bean id="stepTMHMMRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherBinaryStep"
+          parent="abstractTMHMMStep">
+        <!--
+        support-mini-x86-32/bin/tmhmm/2.0c/decodeanhmm
+        -N 1
+        -PostLabProb
+        -PrintNumbers
+        -background '0.081 0.015 0.054 0.061 0.040 0.068 0.022 0.057 0.056 0.093 0.025 0.045 0.049 0.039 0.057 0.068 0.058 0.067 0.013 0.032'
+        support-mini-x86-32/data/tmhmm/model/2.5.1/TMHMM2.5.1.model
+        support-mini-x86-32/data/tmhmm/test_seqs.fasta
+        -->
+        <property name="dependsUpon" ref="stepTMHMMWriteFastaFile"/>
+        <property name="stepDescription" value="Run TMHMM binary for selected protein sequences"/>
+        <!--Add Perl command-->
+        <property name="perlCommand" value="${perl.command}"/>
+        <!--Add Perl parameter (in this case the Perl PERL5LIB)-->
+        <property name="perlLibrary" value="${panther.perl.library}"/>
+        <!--Panther Perl script-->
+        <property name="scriptPath" value="${binary.panther.path}"/>
+        <!--Add Panther models-->
+        <property name="modelDirectory" value="${panther.models.dir.7.0}"/>
+        <!--Add path to (B)last binary-->
+        <property name="blastPath" value="${binary.blastall.2.2.6.path}"/>
+        <!--Add path to (H)mmsearch binary-->
+        <property name="hmmerPath" value="${binary.hmmer2.hmmsearch.path}"/>
+        <!--Add additional arguments/parameter-->
+        <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
+        <property name="binarySwitches" value="-D I -E 1e-3 -n"/>
+        <property name="perlScriptTempDir" value="${panther.temporary.file.directory}"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+    </bean>
+
+    <bean id="stepTMHMMDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep" parent="abstractTMHMMStep">
+        <property name="dependsUpon" ref="stepTMHMMRunBinary"/>
+        <property name="stepDescription" value="Delete the FASTA file following successful run"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!-- STEP 3: Parse and persist raw results -->
+    <!--<bean id="stepPantherParseOutput"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherParseStep"-->
+          <!--parent="abstractPantherStep">-->
+        <!--<property name="dependsUpon" ref="stepPantherRunBinary"/>-->
+        <!--<property name="stepDescription" value="Parse the output from Panther"/>-->
+        <!--<property name="parser">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser">-->
+                <!--&lt;!&ndash;TODO: Figure out how to handle signature library release&ndash;&gt;-->
+                <!--<constructor-arg value="7.0"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="rawMatchDAO" ref="pantherRawMatchDAO"/>-->
+        <!--<property name="serialGroup" value="PARSE_PANTHER"/>-->
+        <!--<property name="retries" value="3"/>-->
+        <!--<property name="signatureLibraryRelease" value="7.0"/>-->
+        <!--<property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="stepPantherDeleteRawOutput"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
+          <!--parent="abstractPantherStep">-->
+        <!--<property name="dependsUpon" ref="stepPantherParseOutput"/>-->
+        <!--<property name="stepDescription" value="Delete the analysis output file following successful parsing"/>-->
+        <!--<property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; STEP 4: Filter and persist filtered results &ndash;&gt;-->
+    <!--<bean id="stepPantherPostProcessing"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherPostProcessingStep"-->
+          <!--parent="abstractPantherStep">-->
+        <!--<property name="dependsUpon" ref="stepPantherParseOutput"/>-->
+        <!--<property name="stepDescription" value="Performs post processing and match persistence on Panther data"/>-->
+        <!--<property name="serialGroup" value="PANTHER_POST_PROCESSING"/>-->
+        <!--<property name="signatureLibraryRelease" value="7.0"/>-->
+        <!--<property name="postProcessor">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">-->
+                <!--<constructor-arg value="1e-11"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="rawMatchDAO" ref="pantherRawMatchDAO"/>-->
+        <!--<property name="filteredMatchDAO">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>-->
+        <!--</property>-->
+        <!--<property name="retries" value="3"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; ######################## Dependencies ############################  &ndash;&gt;-->
+    <!--<bean id="pantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>-->
+</beans>
