@@ -1,0 +1,1581 @@
+# trainanhmm 1.221     Thu Aug 31 06:54:33 2000
+# Labeled training
+# Iteration 18
+# Seed 37032637
+# Score 0.023788
+# Unlab 2.837209
+# Label 2.860997
+# Noise 0.000000
+
+########## HEADER ##################################################
+header {
+#	alphabet ABCDEFGHIJKLMNOPQRSTUVWXYZ; ## commented out on Marko's advice
+	alphabet ACDEFGHIKLMNPQRSTVWY;       ## included on Marko's advice
+        wildcards BJOUXZ;		     ## included on Marko's advice	
+}
+########## STATE begin #############################################
+begin {	trans
+		ins10: 0.729183: 437.143
+		OUT10: 0.084797: 51.429
+		out10: 0.18602: 111.428;
+	type 0;
+	end 0;
+	letter NULL;
+	}
+########## STATE ins10 #############################################
+ins10 {	trans
+		ins11: 0.99551: 595.745
+		ins29: 0: 0.000
+		icap20: 3.2218e-08: 0.000
+		Wicap20: 0.00449004: 4.255;
+	label i;
+	only	 A:0.0713093:43.035 C:0.0112156:6.849 D:0.043783:24.071 E:0.0440758:25.947 F:0.0385866:25.941
+		 G:0.0720067:41.082 H:0.027417:13.911 I:0.0388431:28.770 K:0.0858286:52.931 L:0.0641874:46.750
+		 M:0.0460229:28.585 N:0.0472924:24.788 P:0.0451215:24.784 Q:0.0402721:22.304 R:0.105933:57.697
+		 S:0.0751089:41.155 T:0.0602194:34.899 V:0.038372:26.905 W:0.0184541:12.172 Y:0.0259509:17.423;
+	}
+########## STATE ins11 #############################################
+ins11 {	trans
+		ins12: 0.966897: 577.033
+		ins28: 0.0331034: 22.967
+		ins29: 1.82477e-08: 0.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins12 #############################################
+ins12 {	trans
+		ins13: 0.993508: 595.500
+		ins27: 0.00649222: 4.500
+		ins28: 1.9863e-09: 0.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins13 #############################################
+ins13 {	trans
+		ins14: 0.953776: 571.066
+		ins26: 0.0462235: 28.934
+		ins27: 5.27336e-08: 0.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins14 #############################################
+ins14 {	trans
+		ins15: 0.892009: 533.865
+		ins25: 5.00662e-06: 0.005
+		ins26: 0.107986: 66.130;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins15 #############################################
+ins15 {	trans
+		ins16: 0.945787: 565.011
+		ins24: 0.00845815: 5.562
+		ins25: 0.0457546: 29.427;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins16 #############################################
+ins16 {	trans
+		ins17: 0.810828: 486.071
+		ins23: 0.179731: 107.939
+		ins24: 0.00944088: 5.990;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins17 #############################################
+ins17 {	trans
+		ins18: 0.999957: 599.960
+		ins22: 2.45896e-05: 0.024
+		ins23: 1.82556e-05: 0.016;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins18 #############################################
+ins18 {	trans
+		ins19: 0.999975: 599.977
+		ins21: 1.3388e-05: 0.013
+		ins22: 1.12927e-05: 0.010;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins19 #############################################
+ins19 {	trans
+		insglob1: 0.69525: 418.148
+		ins20: 0.243119: 144.127
+		ins21: 0.0616311: 37.725;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE insglob1 ##########################################
+insglob1 {	trans
+		insglob1: 0.984652: 593.781
+		ins20: 0.015348: 6.219;
+	label i;
+	only	 A:0.0902457:49.980 C:0.0107392:7.254 D:0.0505639:33.133 E:0.0753903:42.569 F:0.0318067:20.435
+		 G:0.0819541:41.857 H:0.0233297:11.965 I:0.0497371:30.530 K:0.0466096:32.839 L:0.0693312:55.469
+		 M:0.0181513:11.735 N:0.0360494:25.542 P:0.0630648:31.973 Q:0.0488367:28.818 R:0.0507763:33.534
+		 S:0.0738585:40.767 T:0.0732376:34.585 V:0.0691331:41.679 W:0.00930962:7.284 Y:0.0278753:18.050;
+	}
+########## STATE ins20 #############################################
+ins20 {	trans
+		ins21: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins21 #############################################
+ins21 {	trans
+		ins22: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins22 #############################################
+ins22 {	trans
+		ins23: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins23 #############################################
+ins23 {	trans
+		ins24: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins24 #############################################
+ins24 {	trans
+		ins25: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins25 #############################################
+ins25 {	trans
+		ins26: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins26 #############################################
+ins26 {	trans
+		ins27: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins27 #############################################
+ins27 {	trans
+		ins28: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins28 #############################################
+ins28 {	trans
+		ins29: 1: 600.000;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE ins29 #############################################
+ins29 {	trans
+		icap20: 0.782932: 471.910
+		Wicap20: 0.217068: 128.090;
+	label i;
+	tied_letter ins10;
+	}
+########## STATE OUT10 #############################################
+OUT10 {	trans
+		OUT11: 1: 600.000
+		OUT29: 0: 0.000
+		ocap20: 0: 0.000;
+	label O;
+	only	 A:0.061823:41.474 C:0.0118979:7.534 D:0.0481663:29.812 E:0.0644646:37.752 F:0.0298453:21.882
+		 G:0.0673843:37.773 H:0.0235516:12.444 I:0.0559911:33.216 K:0.0367711:26.782 L:0.116377:65.284
+		 M:0.0318817:18.125 N:0.0419913:24.157 P:0.0579865:33.998 Q:0.045214:27.166 R:0.0650229:36.619
+		 S:0.0854359:48.304 T:0.0630125:35.102 V:0.062659:39.959 W:0.00965994:7.170 Y:0.0208641:15.447;
+	}
+########## STATE OUT11 #############################################
+OUT11 {	trans
+		OUT12: 1: 600.000
+		OUT28: 0: 0.000
+		OUT29: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT12 #############################################
+OUT12 {	trans
+		OUT13: 1: 600.000
+		OUT27: 0: 0.000
+		OUT28: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT13 #############################################
+OUT13 {	trans
+		OUT14: 1: 600.000
+		OUT26: 0: 0.000
+		OUT27: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT14 #############################################
+OUT14 {	trans
+		OUT15: 1: 600.000
+		OUT25: 0: 0.000
+		OUT26: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT15 #############################################
+OUT15 {	trans
+		OUT16: 1: 600.000
+		OUT24: 0: 0.000
+		OUT25: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT16 #############################################
+OUT16 {	trans
+		OUT17: 1: 600.000
+		OUT23: 0: 0.000
+		OUT24: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT17 #############################################
+OUT17 {	trans
+		OUT18: 1: 600.000
+		OUT22: 0: 0.000
+		OUT23: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT18 #############################################
+OUT18 {	trans
+		OUT19: 1: 600.000
+		OUT21: 0: 0.000
+		OUT22: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT19 #############################################
+OUT19 {	trans
+		OUT20: 0: 0.000
+		OUT21: 0: 0.000
+		outglobLong: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT20 #############################################
+OUT20 {	trans
+		OUT21: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT21 #############################################
+OUT21 {	trans
+		OUT22: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT22 #############################################
+OUT22 {	trans
+		OUT23: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT23 #############################################
+OUT23 {	trans
+		OUT24: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT24 #############################################
+OUT24 {	trans
+		OUT25: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT25 #############################################
+OUT25 {	trans
+		OUT26: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT26 #############################################
+OUT26 {	trans
+		OUT27: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT27 #############################################
+OUT27 {	trans
+		OUT28: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT28 #############################################
+OUT28 {	trans
+		OUT29: 1: 600.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE OUT29 #############################################
+OUT29 {	trans
+		ocap20: 1: 600.000
+		Wicap20: 0: 0.000;
+	label O;
+	tied_letter OUT10;
+	}
+########## STATE outglobLong #######################################
+outglobLong {	trans
+		OUT20: 0.00209302: 1.440
+		outglobLong: 0.997907: 598.560;
+	label O;
+	tied_letter insglob1;
+	}
+########## STATE out10 #############################################
+out10 {	trans
+		out11: 1: 600.000
+		out29: 1.55151e-07: 0.000
+		ocap20: 0: 0.000
+		Wicap20: 0: 0.000;
+	label o;
+	only	 A:0.0635163:42.879 C:0.00612753:2.707 D:0.0571307:29.844 E:0.052208:28.273 F:0.0414214:31.574
+		 G:0.0999048:56.018 H:0.0251448:18.494 I:0.0365797:26.688 K:0.0554282:24.857 L:0.0906838:59.601
+		 M:0.043444:24.497 N:0.0494267:27.913 P:0.0730113:38.379 Q:0.0461197:24.672 R:0.0305028:17.539
+		 S:0.0641023:38.224 T:0.0594213:36.100 V:0.0494482:34.977 W:0.0215606:14.674 Y:0.0348179:22.088;
+	}
+########## STATE out11 #############################################
+out11 {	trans
+		out12: 0.981761: 587.527
+		out28: 3.27884e-06: 0.003
+		out29: 0.0182361: 12.470;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out12 #############################################
+out12 {	trans
+		out13: 0.999715: 599.764
+		out27: 1.82745e-06: 0.002
+		out28: 0.000283188: 0.234;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out13 #############################################
+out13 {	trans
+		out14: 0.995765: 597.342
+		out26: 0.0042337: 2.657
+		out27: 8.50773e-07: 0.001;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out14 #############################################
+out14 {	trans
+		out15: 0.88447: 530.037
+		out25: 9.22494e-06: 0.008
+		out26: 0.115521: 69.956;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out15 #############################################
+out15 {	trans
+		out16: 0.999985: 599.988
+		out24: 1.1762e-05: 0.009
+		out25: 2.74973e-06: 0.002;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out16 #############################################
+out16 {	trans
+		out17: 0.839072: 503.545
+		out23: 0.00509739: 3.113
+		out24: 0.15583: 93.343;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out17 #############################################
+out17 {	trans
+		out18: 0.952404: 570.337
+		out22: 4.80972e-06: 0.004
+		out23: 0.0475907: 29.659;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out18 #############################################
+out18 {	trans
+		out19: 0.736437: 440.551
+		out21: 0.263561: 159.447
+		out22: 2.23403e-06: 0.002;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out19 #############################################
+out19 {	trans
+		out20: 2.37846e-06: 0.002
+		out21: 2.02074e-06: 0.001
+		outglobShort: 0.999996: 599.997;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out20 #############################################
+out20 {	trans
+		out21: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out21 #############################################
+out21 {	trans
+		out22: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out22 #############################################
+out22 {	trans
+		out23: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out23 #############################################
+out23 {	trans
+		out24: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out24 #############################################
+out24 {	trans
+		out25: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out25 #############################################
+out25 {	trans
+		out26: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out26 #############################################
+out26 {	trans
+		out27: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out27 #############################################
+out27 {	trans
+		out28: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out28 #############################################
+out28 {	trans
+		out29: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out29 #############################################
+out29 {	trans
+		ocap20: 1: 600.000
+		Wicap20: 0: 0.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE outglobShort ######################################
+outglobShort {	trans
+		out20: 0.0494041: 32.787
+		outglobShort: 0.950596: 567.213;
+	label o;
+	tied_letter insglob1;
+	}
+########## STATE Wout10 ############################################
+Wout10 {	trans
+		Wout11: 0.999716: 599.805
+		Wout12: 0: 0.000
+		Wout13: 0.000284457: 0.195
+		Wout14: 0: 0.000
+		Wocap20: 0: 0.000;
+	label o;
+	end 0;
+	only	 A:0.0928629:57.988 D:0.0402522:21.553 E:0.0496878:29.675 F:0.020715:14.834 G:0.106114:66.033
+		 H:0.0189621:10.779 I:0.0418291:25.650 K:0.0355567:21.574 L:0.113552:64.742 M:0.0380429:21.570
+		 N:0.0590164:35.044 P:0.0409575:28.318 Q:0.0422953:24.302 R:0.0113245:8.086 S:0.080285:47.187
+		 T:0.0641874:40.460 V:0.0641863:35.015 W:0.043292:24.274 Y:0.0368807:22.916;
+	}
+########## STATE Wout11 ############################################
+Wout11 {	trans
+		Wout12: 1: 600.000;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE Wout12 ############################################
+Wout12 {	trans
+		Wout13: 1: 600.000;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE Wout13 ############################################
+Wout13 {	trans
+		Wout14: 1: 600.000;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE Wout14 ############################################
+Wout14 {	trans
+		Wocap20: 1: 600.000;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE Wout20 ############################################
+Wout20 {	trans Wout21 Wout22 Wout23 Wout24 ocap20;
+	tied_trans Wout10;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE Wout21 ############################################
+Wout21 {	trans Wout22;
+	tied_trans Wout11;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE Wout22 ############################################
+Wout22 {	trans Wout23;
+	tied_trans Wout12;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE Wout23 ############################################
+Wout23 {	trans Wout24;
+	tied_trans Wout13;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE Wout24 ############################################
+Wout24 {	trans ocap20;
+	tied_trans Wout14;
+	label o;
+	end 0;
+	tied_letter Wout10;
+	}
+########## STATE icap20 ############################################
+icap20 {	trans
+		icap21: 1: 600.000;
+	label M;
+	end 0;
+	only	 A:0.112649:62.200 C:0.0124904:8.846 D:0.00490398:3.999 E:0.00312593:1.887 F:0.113946:62.026
+		 G:0.0611227:41.439 H:0.0104644:6.914 I:0.112798:66.392 K:0.00457036:4.938 L:0.203806:113.007
+		 M:0.0331413:21.753 N:0.0173796:11.709 P:0.023765:16.107 Q:0.00723065:5.287 R:0.00734307:7.514
+		 S:0.0460662:29.753 T:0.0252833:19.297 V:0.113218:63.580 W:0.0422133:26.718 Y:0.0444823:26.635;
+	}
+########## STATE icap21 ############################################
+icap21 {	trans
+		icap22: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE icap22 ############################################
+icap22 {	trans
+		icap23: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE icap23 ############################################
+icap23 {	trans
+		icap24: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE icap24 ############################################
+icap24 {	trans
+		helix_i2o_1: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE helix_i2o_1 #######################################
+helix_i2o_1 {	trans
+		helix_i2o_2: 0.00432398: 3.524
+		helix_i2o_3: 0.000597383: 0.881
+		helix_i2o_4: 0.00181233: 1.762
+		helix_i2o_5: 0.00180627: 1.762
+		helix_i2o_6: 0.00185054: 1.762
+		helix_i2o_7: 0.00561846: 4.405
+		helix_i2o_8: 0.00182152: 1.762
+		helix_i2o_9: 0.000604236: 0.881
+		helix_i2o_10: 0.000556911: 0.881
+		helix_i2o_11: 0.00190683: 1.762
+		helix_i2o_12: 0.00200062: 1.762
+		helix_i2o_13: 0.000687269: 0.881
+		helix_i2o_14: 0.189102: 111.013
+		helix_i2o_15: 0.00071875: 0.881
+		helix_i2o_16: 0.557554: 312.775
+		helix_i2o_17: 0.0471535: 29.075
+		helix_i2o_18: 0.171819: 113.656
+		helix_i2o_19: 0.000563418: 0.881
+		helix_i2o_20: 0.000535119: 0.881
+		helix_i2o_21: 0.00752005: 7.048
+		helix_i2o_22: 0.0014478: 1.762;
+	label M;
+	end 0;
+	only	 A:0.128985:77.590 C:0.0199128:10.871 D:0.00276991:2.624 E:0.00713181:4.653 F:0.0851821:50.654
+		 G:0.0899828:58.477 H:0.00384623:2.792 I:0.134389:75.267 K:0.00234157:1.699 L:0.16711:98.390
+		 M:0.0417319:24.874 N:0.00888696:6.876 P:0.01383:12.874 Q:0.00445332:3.668 R:0.00251775:1.888
+		 S:0.0520377:32.949 T:0.0580858:34.663 V:0.144756:78.394 W:0.0128378:8.396 Y:0.0192107:12.403;
+	}
+########## STATE helix_i2o_2 #######################################
+helix_i2o_2 {	trans
+		helix_i2o_3: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_3 #######################################
+helix_i2o_3 {	trans
+		helix_i2o_4: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_4 #######################################
+helix_i2o_4 {	trans
+		helix_i2o_5: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_5 #######################################
+helix_i2o_5 {	trans
+		helix_i2o_6: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_6 #######################################
+helix_i2o_6 {	trans
+		helix_i2o_7: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_7 #######################################
+helix_i2o_7 {	trans
+		helix_i2o_8: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_8 #######################################
+helix_i2o_8 {	trans
+		helix_i2o_9: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_9 #######################################
+helix_i2o_9 {	trans
+		helix_i2o_10: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_10 ######################################
+helix_i2o_10 {	trans
+		helix_i2o_11: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_11 ######################################
+helix_i2o_11 {	trans
+		helix_i2o_12: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_12 ######################################
+helix_i2o_12 {	trans
+		helix_i2o_13: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_13 ######################################
+helix_i2o_13 {	trans
+		helix_i2o_14: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_14 ######################################
+helix_i2o_14 {	trans
+		helix_i2o_15: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_15 ######################################
+helix_i2o_15 {	trans
+		helix_i2o_16: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_16 ######################################
+helix_i2o_16 {	trans
+		helix_i2o_17: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_17 ######################################
+helix_i2o_17 {	trans
+		helix_i2o_18: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_18 ######################################
+helix_i2o_18 {	trans
+		helix_i2o_19: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_19 ######################################
+helix_i2o_19 {	trans
+		helix_i2o_20: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_20 ######################################
+helix_i2o_20 {	trans
+		helix_i2o_21: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_21 ######################################
+helix_i2o_21 {	trans
+		helix_i2o_22: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_22 ######################################
+helix_i2o_22 {	trans
+		helix_i2o_23: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_23 ######################################
+helix_i2o_23 {	trans
+		helix_i2o_24: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_24 ######################################
+helix_i2o_24 {	trans
+		helix_i2o_25: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_i2o_25 ######################################
+helix_i2o_25 {	trans
+		ocap10: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE ocap10 ############################################
+ocap10 {	trans
+		ocap11: 1: 600.000;
+	label M;
+	end 0;
+	only	 A:0.10179:60.889 C:0.0128498:5.883 D:0.0101955:8.615 E:0.00398222:3.422 F:0.0952498:56.802
+		 G:0.0720737:45.543 H:0.00858184:6.310 I:0.11038:62.234 K:0.00209527:2.524 L:0.160269:90.254
+		 M:0.0280081:19.890 N:0.019131:14.019 P:0.0307948:20.533 Q:0.0126251:10.077 R:0.0098492:8.191
+		 S:0.0572836:35.380 T:0.0393031:25.736 V:0.0986028:57.962 W:0.0428606:24.533 Y:0.0840747:41.203;
+	}
+########## STATE ocap11 ############################################
+ocap11 {	trans
+		ocap12: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE ocap12 ############################################
+ocap12 {	trans
+		ocap13: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE ocap13 ############################################
+ocap13 {	trans
+		ocap14: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE ocap14 ############################################
+ocap14 {	trans
+		OUT10: 0.0840786: 61.301
+		out10: 0.861253: 506.427
+		Wout10: 0.0546679: 32.272;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE ocap20 ############################################
+ocap20 {	trans
+		ocap21: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE ocap21 ############################################
+ocap21 {	trans
+		ocap22: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE ocap22 ############################################
+ocap22 {	trans
+		ocap23: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE ocap23 ############################################
+ocap23 {	trans
+		ocap24: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE ocap24 ############################################
+ocap24 {	trans
+		helix_o2i_1: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ocap10;
+	}
+########## STATE helix_o2i_1 #######################################
+helix_o2i_1 {	trans helix_o2i_2 helix_o2i_3 helix_o2i_4 helix_o2i_5 helix_o2i_6 helix_o2i_7 helix_o2i_8 helix_o2i_9 helix_o2i_10 helix_o2i_11 helix_o2i_12 helix_o2i_13 helix_o2i_14 helix_o2i_15 helix_o2i_16 helix_o2i_17 helix_o2i_18 helix_o2i_19 helix_o2i_20 helix_o2i_21 helix_o2i_22;
+	tied_trans helix_i2o_1;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_2 #######################################
+helix_o2i_2 {	trans helix_o2i_3;
+	tied_trans helix_i2o_2;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_3 #######################################
+helix_o2i_3 {	trans helix_o2i_4;
+	tied_trans helix_i2o_3;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_4 #######################################
+helix_o2i_4 {	trans helix_o2i_5;
+	tied_trans helix_i2o_4;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_5 #######################################
+helix_o2i_5 {	trans helix_o2i_6;
+	tied_trans helix_i2o_5;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_6 #######################################
+helix_o2i_6 {	trans helix_o2i_7;
+	tied_trans helix_i2o_6;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_7 #######################################
+helix_o2i_7 {	trans helix_o2i_8;
+	tied_trans helix_i2o_7;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_8 #######################################
+helix_o2i_8 {	trans helix_o2i_9;
+	tied_trans helix_i2o_8;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_9 #######################################
+helix_o2i_9 {	trans helix_o2i_10;
+	tied_trans helix_i2o_9;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_10 ######################################
+helix_o2i_10 {	trans helix_o2i_11;
+	tied_trans helix_i2o_10;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_11 ######################################
+helix_o2i_11 {	trans helix_o2i_12;
+	tied_trans helix_i2o_11;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_12 ######################################
+helix_o2i_12 {	trans helix_o2i_13;
+	tied_trans helix_i2o_12;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_13 ######################################
+helix_o2i_13 {	trans helix_o2i_14;
+	tied_trans helix_i2o_13;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_14 ######################################
+helix_o2i_14 {	trans helix_o2i_15;
+	tied_trans helix_i2o_14;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_15 ######################################
+helix_o2i_15 {	trans helix_o2i_16;
+	tied_trans helix_i2o_15;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_16 ######################################
+helix_o2i_16 {	trans helix_o2i_17;
+	tied_trans helix_i2o_16;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_17 ######################################
+helix_o2i_17 {	trans helix_o2i_18;
+	tied_trans helix_i2o_17;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_18 ######################################
+helix_o2i_18 {	trans helix_o2i_19;
+	tied_trans helix_i2o_18;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_19 ######################################
+helix_o2i_19 {	trans helix_o2i_20;
+	tied_trans helix_i2o_19;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_20 ######################################
+helix_o2i_20 {	trans helix_o2i_21;
+	tied_trans helix_i2o_20;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_21 ######################################
+helix_o2i_21 {	trans helix_o2i_22;
+	tied_trans helix_i2o_21;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_22 ######################################
+helix_o2i_22 {	trans helix_o2i_23;
+	tied_trans helix_i2o_22;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_23 ######################################
+helix_o2i_23 {	trans helix_o2i_24;
+	tied_trans helix_i2o_23;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_24 ######################################
+helix_o2i_24 {	trans helix_o2i_25;
+	tied_trans helix_i2o_24;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE helix_o2i_25 ######################################
+helix_o2i_25 {	trans icap10;
+	tied_trans helix_i2o_25;
+	label M;
+	end 0;
+	tied_letter helix_i2o_1;
+	}
+########## STATE icap10 ############################################
+icap10 {	trans
+		icap11: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE icap11 ############################################
+icap11 {	trans
+		icap12: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE icap12 ############################################
+icap12 {	trans
+		icap13: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE icap13 ############################################
+icap13 {	trans
+		icap14: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE icap14 ############################################
+icap14 {	trans
+		ins10: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter icap20;
+	}
+########## STATE Wicap20 ###########################################
+Wicap20 {	trans Wicap21;
+	tied_trans icap20;
+	label M;
+	end 0;
+	only	 A:0.103739:60.720 C:0.00149287:1.222 D:0.00657589:4.007 E:2.27161e-05:0.027 F:0.0128545:9.219
+		 G:0.117988:68.539 H:6.31938e-05:0.133 I:0.0799782:49.989 K:0.0392725:24.958 L:0.214646:124.422
+		 M:0.0299849:18.187 N:0.0180403:9.819 P:0.0362134:22.060 Q:0.0105418:6.528 R:0.0187763:12.469
+		 S:0.0650024:39.680 T:0.0872654:51.496 V:0.0545168:34.321 W:0.0493344:29.486 Y:0.0536904:32.717;
+	}
+########## STATE Wicap21 ###########################################
+Wicap21 {	trans Wicap22;
+	tied_trans icap21;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
+########## STATE Wicap22 ###########################################
+Wicap22 {	trans Wicap23;
+	tied_trans icap22;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
+########## STATE Wicap23 ###########################################
+Wicap23 {	trans Wicap24;
+	tied_trans icap23;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
+########## STATE Wicap24 ###########################################
+Wicap24 {	trans Whelix_i2o_1;
+	tied_trans icap24;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
+########## STATE Whelix_i2o_1 ######################################
+Whelix_i2o_1 {	trans Whelix_i2o_2 Whelix_i2o_3 Whelix_i2o_4 Whelix_i2o_5 Whelix_i2o_6 Whelix_i2o_7 Whelix_i2o_8 Whelix_i2o_9 Whelix_i2o_10 Whelix_i2o_11 Whelix_i2o_12 Whelix_i2o_13 Whelix_i2o_14 Whelix_i2o_15 Whelix_i2o_16 Whelix_i2o_17 Whelix_i2o_18 Whelix_i2o_19 Whelix_i2o_20 Whelix_i2o_21 Whelix_i2o_22;
+	tied_trans helix_i2o_1;
+	label M;
+	end 0;
+	only	 A:0.109022:65.485 C:0.012689:7.447 D:0.0139094:8.959 E:0.0080979:4.226 F:0.0824799:45.571
+		 G:0.0968445:62.678 H:0.00241331:2.155 I:0.139587:79.133 L:0.208547:120.133 M:0.0270429:16.665
+		 N:0.0103473:7.027 P:0.0201891:14.243 Q:0.018596:11.444 R:0.00222644:1.890 S:0.0418276:28.927
+		 T:0.0690776:43.340 V:0.108598:62.000 W:0.00971336:6.329 Y:0.0187919:12.349;
+	}
+########## STATE Whelix_i2o_2 ######################################
+Whelix_i2o_2 {	trans Whelix_i2o_3;
+	tied_trans helix_i2o_2;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_3 ######################################
+Whelix_i2o_3 {	trans Whelix_i2o_4;
+	tied_trans helix_i2o_3;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_4 ######################################
+Whelix_i2o_4 {	trans Whelix_i2o_5;
+	tied_trans helix_i2o_4;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_5 ######################################
+Whelix_i2o_5 {	trans Whelix_i2o_6;
+	tied_trans helix_i2o_5;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_6 ######################################
+Whelix_i2o_6 {	trans Whelix_i2o_7;
+	tied_trans helix_i2o_6;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_7 ######################################
+Whelix_i2o_7 {	trans Whelix_i2o_8;
+	tied_trans helix_i2o_7;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_8 ######################################
+Whelix_i2o_8 {	trans Whelix_i2o_9;
+	tied_trans helix_i2o_8;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_9 ######################################
+Whelix_i2o_9 {	trans Whelix_i2o_10;
+	tied_trans helix_i2o_9;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_10 #####################################
+Whelix_i2o_10 {	trans Whelix_i2o_11;
+	tied_trans helix_i2o_10;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_11 #####################################
+Whelix_i2o_11 {	trans Whelix_i2o_12;
+	tied_trans helix_i2o_11;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_12 #####################################
+Whelix_i2o_12 {	trans Whelix_i2o_13;
+	tied_trans helix_i2o_12;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_13 #####################################
+Whelix_i2o_13 {	trans Whelix_i2o_14;
+	tied_trans helix_i2o_13;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_14 #####################################
+Whelix_i2o_14 {	trans Whelix_i2o_15;
+	tied_trans helix_i2o_14;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_15 #####################################
+Whelix_i2o_15 {	trans Whelix_i2o_16;
+	tied_trans helix_i2o_15;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_16 #####################################
+Whelix_i2o_16 {	trans Whelix_i2o_17;
+	tied_trans helix_i2o_16;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_17 #####################################
+Whelix_i2o_17 {	trans Whelix_i2o_18;
+	tied_trans helix_i2o_17;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_18 #####################################
+Whelix_i2o_18 {	trans Whelix_i2o_19;
+	tied_trans helix_i2o_18;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_19 #####################################
+Whelix_i2o_19 {	trans Whelix_i2o_20;
+	tied_trans helix_i2o_19;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_20 #####################################
+Whelix_i2o_20 {	trans Whelix_i2o_21;
+	tied_trans helix_i2o_20;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_21 #####################################
+Whelix_i2o_21 {	trans Whelix_i2o_22;
+	tied_trans helix_i2o_21;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_22 #####################################
+Whelix_i2o_22 {	trans Whelix_i2o_23;
+	tied_trans helix_i2o_22;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_23 #####################################
+Whelix_i2o_23 {	trans Whelix_i2o_24;
+	tied_trans helix_i2o_23;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_24 #####################################
+Whelix_i2o_24 {	trans Whelix_i2o_25;
+	tied_trans helix_i2o_24;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_i2o_25 #####################################
+Whelix_i2o_25 {	trans Wocap10;
+	tied_trans helix_i2o_25;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Wocap10 ###########################################
+Wocap10 {	trans Wocap11;
+	tied_trans ocap10;
+	label M;
+	end 0;
+	only	 A:0.127382:75.311 C:5.23349e-06:0.004 D:5.0072e-06:0.004 E:0.00613721:4.403 F:0.125688:69.359
+		 G:0.127222:79.888 H:0.00564351:4.844 I:0.103887:59.747 K:0.0125608:8.091 L:0.163427:98.609
+		 M:0.0452112:28.220 N:0.00489804:3.279 P:0.0159334:11.520 Q:7.50832e-05:0.074 R:3.20782e-05:0.033
+		 S:0.0805744:47.384 T:0.0256104:17.072 V:0.0878189:53.778 W:0.0678775:38.371 Y:1.12914e-05:0.012;
+	}
+########## STATE Wocap11 ###########################################
+Wocap11 {	trans Wocap12;
+	tied_trans ocap11;
+	label M;
+	end 0;
+	tied_letter Wocap10;
+	}
+########## STATE Wocap12 ###########################################
+Wocap12 {	trans Wocap13;
+	tied_trans ocap12;
+	label M;
+	end 0;
+	tied_letter Wocap10;
+	}
+########## STATE Wocap13 ###########################################
+Wocap13 {	trans Wocap14;
+	tied_trans ocap13;
+	label M;
+	end 0;
+	tied_letter Wocap10;
+	}
+########## STATE Wocap14 ###########################################
+Wocap14 {	trans
+		Wout20: 1: 600.000;
+	label M;
+	end 0;
+	only	 A:0.212777:126.887 F:0.279414:167.971 G:6.21284e-05:0.045 H:0.0407618:23.966 I:6.32019e-08:0.000
+		 L:0.0475824:29.656 M:0.0247137:15.618 N:0.030837:18.199 P:0.141409:81.767 R:0.0391936:24.071
+		 S:0.0836903:51.507 T:4.28726e-11:0.000 V:0.00010632:0.070 W:0.00724101:4.729 Y:0.0922113:55.515;
+	}
+########## STATE Wocap20 ###########################################
+Wocap20 {	trans Wocap21;
+	tied_trans ocap10;
+	label M;
+	end 0;
+	tied_letter Wocap10;
+	}
+########## STATE Wocap21 ###########################################
+Wocap21 {	trans Wocap22;
+	tied_trans ocap11;
+	label M;
+	end 0;
+	tied_letter Wocap10;
+	}
+########## STATE Wocap22 ###########################################
+Wocap22 {	trans Wocap23;
+	tied_trans ocap12;
+	label M;
+	end 0;
+	tied_letter Wocap10;
+	}
+########## STATE Wocap23 ###########################################
+Wocap23 {	trans Wocap24;
+	tied_trans ocap13;
+	label M;
+	end 0;
+	tied_letter Wocap10;
+	}
+########## STATE Wocap24 ###########################################
+Wocap24 {	trans
+		Whelix_o2i_1: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter Wocap10;
+	}
+########## STATE Whelix_o2i_1 ######################################
+Whelix_o2i_1 {	trans Whelix_o2i_2 Whelix_o2i_3 Whelix_o2i_4 Whelix_o2i_5 Whelix_o2i_6 Whelix_o2i_7 Whelix_o2i_8 Whelix_o2i_9 Whelix_o2i_10 Whelix_o2i_11 Whelix_o2i_12 Whelix_o2i_13 Whelix_o2i_14 Whelix_o2i_15 Whelix_o2i_16 Whelix_o2i_17 Whelix_o2i_18 Whelix_o2i_19 Whelix_o2i_20 Whelix_o2i_21 Whelix_o2i_22;
+	tied_trans helix_i2o_1;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_2 ######################################
+Whelix_o2i_2 {	trans Whelix_o2i_3;
+	tied_trans helix_i2o_2;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_3 ######################################
+Whelix_o2i_3 {	trans Whelix_o2i_4;
+	tied_trans helix_i2o_3;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_4 ######################################
+Whelix_o2i_4 {	trans Whelix_o2i_5;
+	tied_trans helix_i2o_4;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_5 ######################################
+Whelix_o2i_5 {	trans Whelix_o2i_6;
+	tied_trans helix_i2o_5;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_6 ######################################
+Whelix_o2i_6 {	trans Whelix_o2i_7;
+	tied_trans helix_i2o_6;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_7 ######################################
+Whelix_o2i_7 {	trans Whelix_o2i_8;
+	tied_trans helix_i2o_7;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_8 ######################################
+Whelix_o2i_8 {	trans Whelix_o2i_9;
+	tied_trans helix_i2o_8;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_9 ######################################
+Whelix_o2i_9 {	trans Whelix_o2i_10;
+	tied_trans helix_i2o_9;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_10 #####################################
+Whelix_o2i_10 {	trans Whelix_o2i_11;
+	tied_trans helix_i2o_10;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_11 #####################################
+Whelix_o2i_11 {	trans Whelix_o2i_12;
+	tied_trans helix_i2o_11;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_12 #####################################
+Whelix_o2i_12 {	trans Whelix_o2i_13;
+	tied_trans helix_i2o_12;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_13 #####################################
+Whelix_o2i_13 {	trans Whelix_o2i_14;
+	tied_trans helix_i2o_13;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_14 #####################################
+Whelix_o2i_14 {	trans Whelix_o2i_15;
+	tied_trans helix_i2o_14;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_15 #####################################
+Whelix_o2i_15 {	trans Whelix_o2i_16;
+	tied_trans helix_i2o_15;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_16 #####################################
+Whelix_o2i_16 {	trans Whelix_o2i_17;
+	tied_trans helix_i2o_16;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_17 #####################################
+Whelix_o2i_17 {	trans Whelix_o2i_18;
+	tied_trans helix_i2o_17;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_18 #####################################
+Whelix_o2i_18 {	trans Whelix_o2i_19;
+	tied_trans helix_i2o_18;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_19 #####################################
+Whelix_o2i_19 {	trans Whelix_o2i_20;
+	tied_trans helix_i2o_19;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_20 #####################################
+Whelix_o2i_20 {	trans Whelix_o2i_21;
+	tied_trans helix_i2o_20;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_21 #####################################
+Whelix_o2i_21 {	trans Whelix_o2i_22;
+	tied_trans helix_i2o_21;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_22 #####################################
+Whelix_o2i_22 {	trans Whelix_o2i_23;
+	tied_trans helix_i2o_22;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_23 #####################################
+Whelix_o2i_23 {	trans Whelix_o2i_24;
+	tied_trans helix_i2o_23;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_24 #####################################
+Whelix_o2i_24 {	trans Whelix_o2i_25;
+	tied_trans helix_i2o_24;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Whelix_o2i_25 #####################################
+Whelix_o2i_25 {	trans Wicap10;
+	tied_trans helix_i2o_25;
+	label M;
+	end 0;
+	tied_letter Whelix_i2o_1;
+	}
+########## STATE Wicap10 ###########################################
+Wicap10 {	trans Wicap11;
+	tied_trans icap20;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
+########## STATE Wicap11 ###########################################
+Wicap11 {	trans Wicap12;
+	tied_trans icap21;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
+########## STATE Wicap12 ###########################################
+Wicap12 {	trans Wicap13;
+	tied_trans icap22;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
+########## STATE Wicap13 ###########################################
+Wicap13 {	trans Wicap14;
+	tied_trans icap23;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
+########## STATE Wicap14 ###########################################
+Wicap14 {	trans ins10;
+	tied_trans icap24;
+	label M;
+	end 0;
+	tied_letter Wicap20;
+	}
