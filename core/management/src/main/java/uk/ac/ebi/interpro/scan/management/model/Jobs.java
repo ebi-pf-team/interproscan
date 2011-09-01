@@ -62,8 +62,32 @@ public class Jobs {
     public void setJobList(List<Job> jobList) {
         this.jobMap = new HashMap<String, Job>(jobList.size());
         for (Job job : jobList) {
-            jobMap.put(job.getId(), job);
+            if (checkMandatoryParams(job)) {
+                jobMap.put(job.getId(), job);
+            }
+            else {
+                LOGGER.warn("Missing mandatory job parameter(s), discarding job: " + job.toString());
+            }
         }
+    }
+
+    /**
+     * If a mandatory parameter is empty then returns false, otherwise true.
+     * @param job Job to check.
+     * @return Are mandatory params supplied?
+     */
+    private boolean checkMandatoryParams(Job job) {
+        Map<String, String> mandatoryParams = job.getMandatoryParameters();
+        if (mandatoryParams != null) {
+            for (String paramKey : mandatoryParams.keySet()) {
+                String paramValue = mandatoryParams.get(paramKey);
+                if (paramValue == null || paramValue.trim().length() == 0) {
+                    LOGGER.warn("Mandatory parameter " + paramKey + " is not specified");
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public String getBaseDirectoryTemporaryFiles() {

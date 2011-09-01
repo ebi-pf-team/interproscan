@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Required;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class describes a Job, which is constructed from N steps.
@@ -32,7 +33,8 @@ public class Job implements Serializable, BeanNameAware {
 
     private String description;
 
-    
+    private Map<String,String> mandatoryParameters;
+
     /**
      * List of steps.  this is transient so they don't all get shoved
      * over the wire when each StepExecution is run.
@@ -80,6 +82,14 @@ public class Job implements Serializable, BeanNameAware {
 
     public void setBeanName(String id) {
         this.id = id;
+    }
+
+    public Map<String,String> getMandatoryParameters() {
+        return mandatoryParameters;
+    }
+
+    public void setMandatoryParameters(Map<String,String> mandatoryParameters) {
+        this.mandatoryParameters = mandatoryParameters;
     }
 
     @Override
