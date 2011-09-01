@@ -1,0 +1,84 @@
+package uk.ac.ebi.interpro.scan.management.model.implementations.tmhmm;
+
+import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Runs PANTHER binary.
+ *
+ * @author Antony Quinn
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @version $Id$
+ */
+public final class TMHMMBinaryStep extends RunBinaryStep {
+
+    private String fastaFileNameTemplate;
+
+    private String pathToTmhmmBinary;
+
+    private String binaryBackgroundSwitch;
+
+    private String pathToTmhmmModel;
+
+    public String getFastaFileNameTemplate() {
+        return fastaFileNameTemplate;
+    }
+
+    @Required
+    public void setFastaFileNameTemplate(String fastaFilePathNameTemplate) {
+        this.fastaFileNameTemplate = fastaFilePathNameTemplate;
+    }
+
+    @Required
+    public void setPathToTmhmmBinary(String pathToTmhmmBinary) {
+        this.pathToTmhmmBinary = pathToTmhmmBinary;
+    }
+
+    public void setBinaryBackgroundSwitch(String binaryBackgroundSwitch) {
+        this.binaryBackgroundSwitch = binaryBackgroundSwitch;
+    }
+
+    @Required
+    public void setPathToTmhmmModel(String pathToTmhmmModel) {
+        this.pathToTmhmmModel = pathToTmhmmModel;
+    }
+
+    /**
+     * Returns command line for run TMHMM
+     * <p/>
+     * Example:
+     * support-mini-x86-32/bin/tmhmm/2.0c/decodeanhmm
+     * -N 1
+     * -PostLabProb
+     * -PrintNumbers
+     * -background '0.081 0.015 0.054 0.061 0.040 0.068 0.022 0.057 0.056 0.093 0.025 0.045 0.049 0.039 0.057 0.068 0.058 0.067 0.013 0.032'
+     * support-mini-x86-32/data/tmhmm/model/2.5.1/TMHMM2.5.1.model
+     * support-mini-x86-32/data/tmhmm/test_seqs.fasta
+     *
+     * @param stepInstance           containing the parameters for executing.
+     * @param temporaryFileDirectory is the relative path in which files are stored.
+     * @return Command line.
+     */
+    @Override
+    protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
+        final String fastaFilePath
+                = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
+        List<String> command = new ArrayList<String>();
+        //Add command
+        command.add(this.pathToTmhmmBinary);
+        // Arguments
+        command.addAll(this.getBinarySwitchesAsList());
+        //Add background argument
+        command.add("-background");
+        command.add(this.binaryBackgroundSwitch);
+        // Add TMHMM model
+        command.add(this.pathToTmhmmModel);
+        // FASTA file
+        command.add(fastaFilePath);
+        return command;
+    }
+}
