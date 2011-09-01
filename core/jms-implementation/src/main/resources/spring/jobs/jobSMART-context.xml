@@ -11,6 +11,15 @@
         <property name="description"
                   value="SMART allows the identification and analysis of domain architectures based on Hidden Markov Models or HMMs"/>
         <property name="analysis" value="true"/>
+        <property name="mandatoryParameters">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="fullPathToHmmFile" value-ref="fullPathToHmmFile"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="fullPathToHmmFile" class="java.lang.String">
+        <constructor-arg value="${smart.hmm.bin.path.6.1}"/>
     </bean>
 
     <bean id="abstractSMARTStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -51,7 +60,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToHmmFile" value="${smart.hmm.bin.path.6.1}"/>
+        <property name="fullPathToHmmFile" ref="fullPathToHmmFile"/>
     </bean>
 
     <bean id="stepSMARTDeleteFastaFile"
