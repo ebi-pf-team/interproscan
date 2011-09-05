@@ -65,6 +65,17 @@ public class CreateMatchDBFromOnion {
                     "       and m.UPI <= ? " +
                     "order by p.md5, analt.name, m.relno_major, m.method_ac, m.seqscore";
 
+    private static final String SIGNAL_P_QUERY =
+            "select p.md5 as protein_md5," +
+            "   analt.name as signature_library_name, " +
+            "   m.meand_pos as stop_coord " +
+            " from onion.cv_analysis_type analt " +
+            "   inner join " +
+            "   onion.signalp_analysis m on analt.analysis_type_id = m.analysis_type_id " +
+            "   inner join onion.uniparc_protein p on m.upi = p.upi " +
+            " where m.meand_pred = '1' " +
+            " order by pm.md5";
+
 
     public static void main(String[] args) {
 
@@ -130,6 +141,22 @@ public class CreateMatchDBFromOnion {
             // Connect to the Onion database.
             Class.forName("oracle.jdbc.OracleDriver");
             onionConn = DriverManager.getConnection(onionDBUrl, onionUsername, onionPassword);
+
+            PreparedStatement targetPs = onionConn.prepareStatement(SIGNAL_P_QUERY);
+            ResultSet targetRS= targetPs.executeQuery();
+
+            while (targetRS.next()){
+                final BerkeleyLocation location = new BerkeleyLocation();
+                location.setStart(1);
+                location.setEnd(targetRS.getInt(3));
+                if (targetRS.wasNull()) continue;
+                final String signatureLibraryName = targetRS.getString(2);
+                if (targetRS.wasNull() || signatureLibraryName == null) continue;
+                if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
+                final BerkeleyMatch match = new BerkeleyMatch();
+
+            }
+
 
             PreparedStatement ps = onionConn.prepareStatement(MATCH_QUERY);
             ps.setString(1, maxUPI);
