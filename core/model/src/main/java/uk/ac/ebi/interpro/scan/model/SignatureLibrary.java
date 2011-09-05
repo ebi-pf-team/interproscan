@@ -44,7 +44,10 @@ public enum SignatureLibrary {
     COILS("Coils", "Description to be added"),
     COMPARA("Compara", "Description to be added"),
     HAMAP("Hamap", "Description to be added"),
-    TIGRFAM("TIGRFAM", "Description to be added");
+    TIGRFAM("TIGRFAM", "Description to be added"),
+    SIGNALP3_EUK("SignalP Eukaryotic","Description to be added"),
+    SIGNALP3_GRAM_POS("SignalP Gram+", "Description to be added"),
+    SIGNALP3_GRAM_NEG("SignalP Gram-", "Description to be added");
 
     private String name;
 
