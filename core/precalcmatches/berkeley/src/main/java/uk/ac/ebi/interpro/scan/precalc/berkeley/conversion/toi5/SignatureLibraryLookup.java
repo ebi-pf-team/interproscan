@@ -82,6 +82,10 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("smart", SignatureLibrary.SMART);
 
         libraryNameToSignatureLibrary.put("hamap", SignatureLibrary.HAMAP);
+        libraryNameToSignatureLibrary.put("signalp_euk", SignatureLibrary.SIGNALP3_EUK);
+        libraryNameToSignatureLibrary.put("signalp_gram+", SignatureLibrary.SIGNALP3_GRAM_POS);
+        libraryNameToSignatureLibrary.put("signalp_gram-", SignatureLibrary.SIGNALP3_GRAM_NEG);
+
     }
 
     public static SignatureLibrary lookupSignatureLibrary(String signatureLibraryName) {
