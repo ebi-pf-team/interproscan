@@ -61,7 +61,7 @@ public class CreateMatchDBFromOnion {
                     "       inner join onion.uniparc_protein p " +
                     "       on m.upi = p.upi " +
                     " where m.status = 'T' " +
-                    "       and analt.name in ('PANTHER', 'SMART', 'PRINTS', 'PROSITE_PF', 'PROSITE_PT', 'PIRSF', 'PRODOM', 'SSF', 'HAMAP', 'PFAM_HMMER3', 'COILS', 'GENE3D_HMMER3', 'TIGRFAM_HMMER3') " +
+                    "       and analt.name in ('PANTHER', 'SMART', 'PRINTS', 'PROSITE_PF', 'PROSITE_PT', 'PIRSF', 'PRODOM', 'SSF', 'HAMAP', 'PFAM_HMMER3', 'COILS', 'GENE3D_HMMER3', 'TIGRFAM_HMMER3', 'SIGNALP_EUK', 'SIGNALP_GRAM+', 'SIGNALP_GRAM-') " +
                     "       and m.UPI <= ? " +
                     "order by p.md5, analt.name, m.relno_major, m.method_ac, m.seqscore";
 
