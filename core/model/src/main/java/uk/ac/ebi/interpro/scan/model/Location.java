@@ -166,6 +166,7 @@ public abstract class Location implements Serializable {
             Set<PhobiusMatch.PhobiusLocation> phobiusLocations = new LinkedHashSet<PhobiusMatch.PhobiusLocation>();
             Set<CoilsMatch.CoilsLocation> coilsLocations = new LinkedHashSet<CoilsMatch.CoilsLocation>();
             Set<PantherMatch.PantherLocation> pantherLocations = new LinkedHashSet<PantherMatch.PantherLocation>();
+            Set<SignalPMatch.SignalPLocation> signalPLocations = new LinkedHashSet<SignalPMatch.SignalPLocation>();
             for (Location l : locations) {
                 if (l instanceof Hmmer2Match.Hmmer2Location) {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
@@ -187,12 +188,14 @@ public abstract class Location implements Serializable {
                     coilsLocations.add((CoilsMatch.CoilsLocation) l);
                 } else if (l instanceof PantherMatch.PantherLocation) {
                     pantherLocations.add((PantherMatch.PantherLocation) l);
+                } else if (l instanceof SignalPMatch.SignalPLocation) {
+                    signalPLocations.add((SignalPMatch.SignalPLocation) l);
                 } else {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
             return new LocationsType(hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
-                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations);
+                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations);
         }
 
         /**
@@ -211,6 +214,7 @@ public abstract class Location implements Serializable {
             locations.addAll(locationsType.getPhobiusLocations());
             locations.addAll(locationsType.getCoilsLocations());
             locations.addAll(locationsType.getPantherLocations());
+            locations.addAll(locationsType.getSignalPLocations());
             return locations;
         }
 
@@ -251,6 +255,9 @@ public abstract class Location implements Serializable {
         @XmlElement(name = "panther-location")
         private final Set<PantherMatch.PantherLocation> pantherLocations;
 
+        @XmlElement(name = "signalp-location")
+        private final Set<SignalPMatch.SignalPLocation> signalPLocations;
+
         private LocationsType() {
             hmmer2Locations = null;
             hmmer3Locations = null;
@@ -262,6 +269,7 @@ public abstract class Location implements Serializable {
             phobiusLocations = null;
             coilsLocations = null;
             pantherLocations = null;
+            signalPLocations = null;
         }
 
         public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
@@ -273,7 +281,8 @@ public abstract class Location implements Serializable {
                              Set<ProfileScanMatch.ProfileScanLocation> profileScanLocations,
                              Set<PhobiusMatch.PhobiusLocation> phobiusLocations,
                              Set<CoilsMatch.CoilsLocation> coilsLocations,
-                             Set<PantherMatch.PantherLocation> pantherLocations) {
+                             Set<PantherMatch.PantherLocation> pantherLocations,
+                             Set<SignalPMatch.SignalPLocation> signalPLocations) {
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
             this.superFamilyHmmer3Locations = superFamilyHmmer3Locations;
@@ -284,6 +293,7 @@ public abstract class Location implements Serializable {
             this.phobiusLocations = phobiusLocations;
             this.coilsLocations = coilsLocations;
             this.pantherLocations = pantherLocations;
+            this.signalPLocations = signalPLocations;
         }
 
         public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {
@@ -324,6 +334,10 @@ public abstract class Location implements Serializable {
 
         public Set<PantherMatch.PantherLocation> getPantherLocations() {
             return (pantherLocations == null ? Collections.<PantherMatch.PantherLocation>emptySet() : pantherLocations);
+        }
+
+        public Set<SignalPMatch.SignalPLocation> getSignalPLocations() {
+            return (signalPLocations == null ? Collections.<SignalPMatch.SignalPLocation>emptySet() : signalPLocations);
         }
     }
 
