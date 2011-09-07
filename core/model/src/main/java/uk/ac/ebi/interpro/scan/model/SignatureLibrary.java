@@ -47,7 +47,8 @@ public enum SignatureLibrary {
     TIGRFAM("TIGRFAM", "Description to be added"),
     SIGNALP_EUK("SignalP_EUK", "SignalP (organism type eukaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for eukaryotes."),
     SIGNALP_GRAM_POSITIVE("SignalP_GRAM_POSITIVE", "SignalP (organism type gram-positive prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-positive prokaryotes."),
-    SIGNALP_GRAM_NEGATIVE("SignalP_GRAM_NEGATIVE", "SignalP (organism type gram-negative prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-negative prokaryotes.");
+    SIGNALP_GRAM_NEGATIVE("SignalP_GRAM_NEGATIVE", "SignalP (organism type gram-negative prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-negative prokaryotes."),
+    TMHMM("TMHMM", "Prediction of transmembrane helices in proteins.");
 
     private String name;
 

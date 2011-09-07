@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Runs PANTHER binary.
+ * Runs TMHMM (Prediction of transmembrane helices in proteins) binary.
  *
  * @author Antony Quinn
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
