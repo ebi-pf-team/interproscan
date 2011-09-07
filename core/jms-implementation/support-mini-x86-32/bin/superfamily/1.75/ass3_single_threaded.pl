@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 use strict;
-use Thread;
-use Thread::Semaphore;
   
 # ass3.pl
 # http://supfam.org
@@ -56,7 +54,6 @@ my @lines;
 my @batch :shared;
 my $last;
 my $flag=-1;
-my $semaphore = Thread::Semaphore->new(0);
 my %pickup;
 #----------------------------------------------------
 
@@ -351,10 +348,8 @@ else {
 }
 #----------------------------------------------------
 
-#MULTI-THREAD----------------------------------------
-#----------------------------------------------------
 
-#PARSE-LOOP-------------------------------------------
+#PARSE------------------------------------------
 {
  print STDERR "Progress ($threadsize sequences per dot):";
  open DATA, ("$scanfile");
@@ -502,31 +497,7 @@ print STDERR "\nFinished assigning ($ii sequences processed)\n";
 close OUT;
 #----------------------------------------------------
 
-#SUB-ROUTINE-----------------------------------------------
-sub Threading{
-  my @ls=();
-  my $l;
-  my $it=$_[0];
-  my @lins=('togetstarted');
-  my @output;
-  while (scalar(@lins) > 0){
-    {
-      $semaphore->down();
-      lock(@batch);
-      @lins=@batch;@batch=();
-      cond_signal(@batch);
-    }	 
-    foreach $l (@lins){
-      if ($l =~ /\t/){
-	push @ls, $l;
-      }
-      else{
-	push @output,	&ProcessSequence(\@ls,$l);@ls=();
-      }
-    }
-    {lock($outputfile);open OUT, (">>$outputfile");print OUT join "\n",@output;if (scalar(@output ) > 0){print OUT "\n";}close OUT;@output=();}
-  }
-}
+
 #----------------------------------------------------
 
 #SUB-ROUTINE-----------------------------------------------
