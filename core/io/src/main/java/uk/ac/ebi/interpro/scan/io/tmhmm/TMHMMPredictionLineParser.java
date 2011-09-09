@@ -1,0 +1,55 @@
+package uk.ac.ebi.interpro.scan.io.tmhmm;
+
+/**
+ * Represents a line parser for the following line example:
+ * <p/>
+ * M      0.20497   0.77531   0.01971   0.00000
+ *
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @version $Id$
+ * @since 1.0-SNAPSHOT
+ */
+public class TMHMMPredictionLineParser {
+
+    protected static PredictionMaxScoreWrapper parsePredictionLine(String line) {
+        PredictionMaxScoreWrapper result = null;
+        String[] splitLine = line.split("\\s+");
+        int len = splitLine.length;
+        if (len == 5) {
+            //Get value for column i
+            float scoreInside = Float.parseFloat(splitLine[1].trim());
+            //Get value for column O
+            float scoreO = Float.parseFloat(splitLine[2].trim());
+            //Get value for column o
+            float scoreOutside = Float.parseFloat(splitLine[3].trim());
+            //Get value for column M
+            float scoreMembrane = Float.parseFloat(splitLine[4].trim());
+            //Get max score value and prediction
+            result = getPredictionValue(scoreInside, scoreO, scoreOutside, scoreMembrane);
+        }
+        return result;
+    }
+
+    /**
+     * Determines largest float value of all specified parameter values.
+     *
+     * @return Prediction value.
+     */
+    private static PredictionMaxScoreWrapper getPredictionValue(float scoreInside, float scoreO, float scoreOutside, float scoreMembrane) {
+        TMHMMPrediction result = TMHMMPrediction.INSIDE_CELL;
+        float maxScore = scoreInside;
+        if (scoreO > maxScore) {
+            result = TMHMMPrediction.OTHER;
+            maxScore = scoreO;
+        }
+        if (scoreOutside > maxScore) {
+            result = TMHMMPrediction.OUTSIDE_CELL;
+            maxScore = scoreOutside;
+        }
+        if (scoreMembrane > maxScore) {
+            result = TMHMMPrediction.MEMBRANE;
+            maxScore = scoreMembrane;
+        }
+        return new PredictionMaxScoreWrapper(result, maxScore);
+    }
+}
