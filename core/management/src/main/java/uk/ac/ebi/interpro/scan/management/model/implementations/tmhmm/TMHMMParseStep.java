@@ -2,22 +2,15 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.tmhmm;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser;
-import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMPredicationTableParser;
-import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMPredicationTableParserOld;
+import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMPredictionTableParser;
+import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMProtein;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.TMHMMMatch;
-import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.TMHMMRawMatch;
-import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,8 +24,9 @@ public final class TMHMMParseStep extends Step {
     private static final Logger LOGGER = Logger.getLogger(TMHMMParseStep.class.getName());
     private String outputFileNameTemplate;
     //    private RawMatchDAO<PantherRawMatch> rawMatchDAO;
-    private TMHMMPredicationTableParser parser;
+    private TMHMMPredictionTableParser parser;
     private String signatureLibraryRelease;
+    private TMHMMFilteredMatchDAO filteredMatchDAO;
 
     @Required
     public void setOutputFileNameTemplate(String PantherOutputFileNameTemplate) {
@@ -49,8 +43,13 @@ public final class TMHMMParseStep extends Step {
     }
 
     @Required
-    public void setParser(TMHMMPredicationTableParser parser) {
+    public void setParser(TMHMMPredictionTableParser parser) {
         this.parser = parser;
+    }
+
+    @Required
+    public void setFilteredMatchDAO(TMHMMFilteredMatchDAO filteredMatchDAO) {
+        this.filteredMatchDAO = filteredMatchDAO;
     }
 
     /**
@@ -72,20 +71,20 @@ public final class TMHMMParseStep extends Step {
             final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileNameTemplate);
             stream = new FileInputStream(outputFilePath);
 
-            parser.parse(stream);
+            Set<TMHMMProtein> proteins = parser.parse(stream);
 
-//            if (LOGGER.isDebugEnabled()) {
-//                LOGGER.debug("TMHMM: Retrieved " + parsedResults.size() + " proteins.");
-//                int locationCount = 0;
-//                for (final String sequenceIdentifier : parsedResults.keySet()) {
-//                    locationCount += parsedResults.get(sequenceIdentifier).getMatches().size();
-//                }
-//                LOGGER.debug("TMHHM: A total of " + locationCount + " locations found.");
-//            }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("TMHMM: Retrieved " + proteins.size() + " proteins.");
+                int locationCount = 0;
+                for (final TMHMMProtein tmhmmProtein : proteins) {
+                    locationCount += tmhmmProtein.getMatches().size();
+                }
+                LOGGER.debug("TMHHM: A total of " + locationCount + " locations found.");
+            }
 
-            // Persist parsed raw matches
-//            LOGGER.info("Persisting parsed raw matches...");
-//            rawMatchDAO.insertProteinMatches(parsedResults);
+            // Persist parsed matches
+            LOGGER.info("Persisting parsed matches...");
+            filteredMatchDAO.persist(proteins);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse Panther file " + outputFileNameTemplate, e);
         } finally {
