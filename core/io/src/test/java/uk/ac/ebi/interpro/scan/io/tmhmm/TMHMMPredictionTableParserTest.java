@@ -2,15 +2,6 @@ package uk.ac.ebi.interpro.scan.io.tmhmm;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser;
-import uk.ac.ebi.interpro.scan.model.Model;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-
-import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,11 +17,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class TMHMMPredictionTableParserTest {
 
-    private TMHMMPredicationTableParser parser;
+    private TMHMMPredictionTableParser parser;
 
     @Before
     public void setUp() {
-        parser = new TMHMMPredicationTableParser();
+        parser = new TMHMMPredictionTableParser();
     }
 
     @Test

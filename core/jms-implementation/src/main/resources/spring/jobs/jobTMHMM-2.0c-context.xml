@@ -75,11 +75,16 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.tmhmm.TMHMMParseStep"
           parent="abstractTMHMMStep">
         <property name="dependsUpon" ref="stepTMHMMRunBinary"/>
-        <property name="stepDescription" value="Parse the output from Panther"/>
+        <property name="stepDescription" value="Parse the output from TMHMM binary"/>
         <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMPredicationTableParser"/>
+            <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMPredictionTableParser"/>
         </property>
-        <!--<property name="rawMatchDAO" ref="pantherRawMatchDAO"/>-->
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAOImpl">
+                <constructor-arg value="2.5.1"/>
+            </bean>
+        </property>
+        <!--<property name="rawMatchDAO" ref="tmhmmRawMatchDAO"/>-->
         <property name="serialGroup" value="PARSE_TMHMM"/>
         <property name="retries" value="3"/>
         <property name="signatureLibraryRelease" value="2.5.1"/>
@@ -115,5 +120,5 @@
     <!--</bean>-->
 
     <!--&lt;!&ndash; ######################## Dependencies ############################  &ndash;&gt;-->
-    <!--<bean id="pantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>-->
+    <!--<bean id="tmhmmRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>-->
 </beans>
