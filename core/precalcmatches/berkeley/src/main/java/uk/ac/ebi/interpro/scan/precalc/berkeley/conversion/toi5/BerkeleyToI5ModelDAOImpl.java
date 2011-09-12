@@ -43,7 +43,7 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
      *
      * @param nonPersistedProtein being a newly instantiated Protein object
      * @param berkeleyMatches     being a Set of BerkeleyMatch objects, retrieved / unmarshalled from
-     *                            the Berekeley Match web service.
+     *                            the Berkeley Match web service.
      */
     @Transactional(readOnly = true)
     public void populateProteinMatches(Protein nonPersistedProtein, List<BerkeleyMatch> berkeleyMatches) {
@@ -70,7 +70,7 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             sigQuery.setParameter("library", sigLib);
 
             @SuppressWarnings("unchecked") List<Signature> signatures = sigQuery.getResultList();
-            if (signatures.size() == 0) {   // This Signatures is not in I5, so cannot store this one.
+            if (signatures.size() == 0) {   // This Signature is not in I5, so cannot store this one.
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Retrieved " + berkeleyMatch + ".  Unable to persist this BerkeleyMatch as the combination of" +
                             "Signature accession / SignatureLibrary / SignatureLibraryRelease is not in the I5 database.");

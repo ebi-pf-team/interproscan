@@ -157,10 +157,12 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
 
         BerkeleyLocation that = (BerkeleyLocation) o;
 
-        if (cigarAlignment != null ? !cigarAlignment.equals(that.cigarAlignment) : that.cigarAlignment != null)
-            return false;
-        if (eValue != null ? !eValue.equals(that.eValue) : that.eValue != null) return false;
+        if (start != null ? !start.equals(that.start) : that.start != null) return false;
         if (end != null ? !end.equals(that.end) : that.end != null) return false;
+        if (cigarAlignment != null ? !cigarAlignment.equals(that.cigarAlignment) : that.cigarAlignment != null) {
+            return false;
+        }
+        if (eValue != null ? !eValue.equals(that.eValue) : that.eValue != null) return false;
         if (envelopeEnd != null ? !envelopeEnd.equals(that.envelopeEnd) : that.envelopeEnd != null) return false;
         if (envelopeStart != null ? !envelopeStart.equals(that.envelopeStart) : that.envelopeStart != null)
             return false;
@@ -171,7 +173,7 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
         if (motifNumber != null ? !motifNumber.equals(that.motifNumber) : that.motifNumber != null) return false;
         if (pValue != null ? !pValue.equals(that.pValue) : that.pValue != null) return false;
         if (score != null ? !score.equals(that.score) : that.score != null) return false;
-        if (start != null ? !start.equals(that.start) : that.start != null) return false;
+
 
         return true;
     }
