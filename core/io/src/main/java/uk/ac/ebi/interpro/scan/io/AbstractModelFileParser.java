@@ -27,7 +27,6 @@ public abstract class AbstractModelFileParser implements ModelFileParser {
      *
      * @param modelFile the io.Resource that is the model file being loaded.
      */
-    @Required
     public void setModelFile(Resource modelFile) {
         this.modelFile = modelFile;
     }
@@ -52,7 +51,6 @@ public abstract class AbstractModelFileParser implements ModelFileParser {
         this.library = library;
     }
 
-    @Required
     public void setAnalysisJobId(String analysisJobId) {
         this.analysisJobId = analysisJobId;
     }
