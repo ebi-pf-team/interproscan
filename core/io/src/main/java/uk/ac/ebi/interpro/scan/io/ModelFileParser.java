@@ -23,7 +23,6 @@ public interface ModelFileParser extends Serializable {
      *
      * @param modelFile the io.Resource that is the model file being loaded.
      */
-    @Required
     public void setModelFile(Resource modelFile);
 
     /**
