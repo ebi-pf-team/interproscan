@@ -38,6 +38,7 @@
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.PantherMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignalPMatch</class>
 
         <!-- Concrete Locations. -->
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
@@ -51,6 +52,7 @@
         <class>uk.ac.ebi.interpro.scan.model.CoilsMatch$CoilsLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.PantherMatch$PantherLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match$SuperFamilyHmmer3Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignalPMatch$SignalPLocation</class>
 
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>

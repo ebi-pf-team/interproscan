@@ -1,9 +1,12 @@
-<beans
-        xmlns="http://www.springframework.org/schema/beans"
-        xmlns:amq="http://activemq.apache.org/schema/core"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-2.5.xsd">
 
 
     <!-- Remote (e.g. TCP) JMS ConnectionFactory -->
@@ -11,6 +14,8 @@
             id="remoteJmsFactory"
             useCompression="true"
             optimizeAcknowledge="true"
+
+
             brokerURL="tcp://${jms.broker.host.name}:${jms.broker.port.number}"/>
 
 
@@ -18,10 +23,15 @@
     <bean id="remoteJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory">
             <!-- lets wrap in a pool to avoid creating a connection per send -->
-            <bean class="org.springframework.jms.connection.SingleConnectionFactory">
-                <property name="targetConnectionFactory">
-                    <ref local="remoteJmsFactory" />
-                </property>
+            <!--<bean class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">-->
+            <!--<property name="connectionFactory">-->
+            <!--<ref local="remoteJmsFactory" />-->
+            <!--</property>-->
+            <!--</bean>-->
+
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <constructor-arg ref="remoteJmsFactory"/>
+                <property name="sessionCacheSize" value="100"/>
             </bean>
         </property>
         <property name="explicitQosEnabled" value="true"/>
