@@ -84,51 +84,74 @@
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <!-- STEP 4 -->
-    <bean id="stepGene3dFilter"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3FilterStep"
+    <bean id="stepCreateSsfFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.WriteGene3dSsfFileStep"
           parent="abstractGene3dStep">
         <property name="dependsUpon" ref="stepGene3dParseHmmerOutput"/>
-        <property name="stepDescription" value="Filter raw results"/>
-        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
-        <!--TODO: We need to pass in or look up release number-->
-        <property name="signatureLibraryRelease" value="3.3.0"/>
-        <property name="signatureLibrary" value="GENE3D"/>
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
+        <property name="stepDescription" value="Write out SSF file for DomainFinder3 to consume"/>
+        <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
+        <property name="signatureLibraryRelease" value="3.3.0"/>
+        <property name="ssfFileWriter">
+            <bean class="uk.ac.ebi.interpro.scan.io.gene3d.SsfFileWriter"/>
+        </property>
+    </bean>
+
+    <bean id="stepRunDomainFinder3Step"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.RunDomainFinder3BinaryStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon" ref="stepCreateSsfFile"/>
+        <property name="stepDescription" value="Run DomainFinder3"/>
+        <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
+        <property name="fullPathToBinary" value="${domainfinder3.path}"/>
+        <property name="binarySwitches" value="-l 5900 -e 0.001"/>
+        <property name="ssfOutputFileTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
+        <property name="outputFileNameTemplate" value="[PROTSTART]_[PROTEND].ssf.err"/>
+    </bean>
+
+    <bean id="stepGene3dPostProcessingStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.Gene3DPostProcessingStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
+        <property name="stepDescription" value="Performs Gene3D Post Processing"/>
+        <property name="ssfOutputFileTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO"/>
         </property>
-        <property name="filter">
-            <bean class="uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter">
-                <property name="binaryRunner">
-                    <bean class="uk.ac.ebi.interpro.scan.business.binary.SimpleBinaryRunner">
-                        <property name="binary" value="${domainfinder3.path}"/>
-                        <property name="arguments" value="-l 5900 -e 0.001"/>
-                        <property name="deleteTemporaryFiles" value="true"/>
-                        <property name="commandLineConversation">
-                            <bean class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl"/>
-                        </property>
-                    </bean>
-                </property>
-            </bean>
+        <property name="signatureLibraryRelease" value="3.3.0"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.gene3d.Gene3DPostProcessing"/>
         </property>
-        <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
-        <property name="ssfOutputFileTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
-        <property name="binaryOutputFileTemplate" value="[PROTSTART]_[PROTEND].bin.out"/>
+        <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
     </bean>
 
-    <bean id="stepGene3dDeleteBinaryPipedOutput"
+    <bean id="stepGene3dDeleteSsfInputFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dFilter"/>
+        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
         <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
-        <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].bin.out"/>
+        <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
+    </bean>
+
+    <bean id="stepGene3dDeleteSsfErrFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
+        <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
+        <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].ssf.err"/>
+    </bean>
+
+    <bean id="stepGene3dDeleteSsfOutputFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon" ref="stepGene3dPostProcessingStep"/>
+        <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
+        <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
     </bean>
 
     <!-- ######################## Dependencies ############################  -->
 
-    <!--TODO: Remove Gene3dHmmer3RawMatchDAOImpl? -->
-    <!--<bean id="gene3dRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.Gene3dHmmer3RawMatchDAOImpl"/>    -->
     <bean id="gene3dRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch"/>
     </bean>
