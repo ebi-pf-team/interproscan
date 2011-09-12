@@ -83,7 +83,12 @@ abstract public class RunBinaryStep extends Step {
         LOGGER.info("Starting step with Id " + this.getId());
         LOGGER.debug("About to run binary... some output should follow.");
         delayForNfs();
-        final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
+        String outputFileName;
+        if (this.getOutputFileNameTemplate() == null) {
+            outputFileName = "/dev/null";
+        } else {
+            outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
+        }
         List<String> command = createCommand(stepInstance, temporaryFileDirectory);
         LOGGER.info("Running the following command: " + command);
 

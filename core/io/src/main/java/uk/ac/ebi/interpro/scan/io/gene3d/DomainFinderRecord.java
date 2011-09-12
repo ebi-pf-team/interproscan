@@ -266,7 +266,12 @@ public final class DomainFinderRecord {
         columns[SEQUENCE_END_POS] = String.valueOf(record.sequenceEnd);
         columns[MODEL_START_POS] = String.valueOf(record.modelStart);
         columns[MODEL_END_POS] = String.valueOf(record.modelEnd);
-        columns[DOMAIN_I_EVALUE_POS] = String.valueOf(record.domainIeValue);
+        String eValString = String.valueOf(record.domainIeValue);
+        // Because evalues are stored as log10 values, 0 ends up as -Infinity...
+        if ("-Infinity".equalsIgnoreCase(eValString)) {
+            eValString = "0.0";
+        }
+        columns[DOMAIN_I_EVALUE_POS] = eValString;
         columns[SCORE_POS] = String.valueOf(record.score);
         columns[REVERSE_SCORE_POS] = String.valueOf(record.reverseScore);
         columns[MATCHED_SEQUENCE_COUNT_POS] = String.valueOf(record.matchedSequenceCount);
@@ -280,6 +285,7 @@ public final class DomainFinderRecord {
         }
         return builder.toString();
     }
+
 
     // TODO: Sort out Manjula code below -- IntelliJ complains that it's "too complex to analyze"
     /*
