@@ -139,7 +139,7 @@ public class Installer implements Runnable {
                 signatureLibraryReleaseDAO.insert(release);
 
                 // Finally, if configured, create StepInstances for any proteins currently in the database.
-                if (stepCreationSignatureDatabaseLoadListener != null) {
+                if (stepCreationSignatureDatabaseLoadListener != null && parser.getAnalysisJobId() != null) {
                     stepCreationSignatureDatabaseLoadListener.signatureDatabaseLoaded(release, parser.getAnalysisJobId());
                 }
                 loadedAtLeastOneLibrary = true;
