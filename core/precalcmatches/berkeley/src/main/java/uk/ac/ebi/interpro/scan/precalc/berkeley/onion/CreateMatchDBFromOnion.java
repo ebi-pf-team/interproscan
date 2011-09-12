@@ -67,14 +67,15 @@ public class CreateMatchDBFromOnion {
 
     private static final String SIGNAL_P_QUERY =
             "select p.md5 as protein_md5," +
-            "   analt.name as signature_library_name, " +
-            "   m.meand_pos as stop_coord " +
-            " from onion.cv_analysis_type analt " +
-            "   inner join " +
-            "   onion.signalp_analysis m on analt.analysis_type_id = m.analysis_type_id " +
-            "   inner join onion.uniparc_protein p on m.upi = p.upi " +
-            " where m.meand_pred = '1' " +
-            " order by pm.md5";
+                    "   analt.name as signature_library_name, " +
+                    "   m.meand_pos as stop_coord " +
+                    " from onion.cv_analysis_type analt " +
+                    "   inner join " +
+                    "   onion.signalp_analysis m on analt.analysis_type_id = m.analysis_type_id " +
+                    "   inner join onion.uniparc_protein p on m.upi = p.upi " +
+                    " where m.meand_pred = '1' " +
+                    "       and m.upi <= ? " +
+                    " order by p.md5";
 
 
     public static void main(String[] args) {
@@ -143,18 +144,30 @@ public class CreateMatchDBFromOnion {
             onionConn = DriverManager.getConnection(onionDBUrl, onionUsername, onionPassword);
 
             PreparedStatement targetPs = onionConn.prepareStatement(SIGNAL_P_QUERY);
-            ResultSet targetRS= targetPs.executeQuery();
-
-            while (targetRS.next()){
+            targetPs.setString(1, maxUPI);
+            ResultSet targetRS = targetPs.executeQuery();
+            int sigPcount = 0;
+            while (targetRS.next()) {
                 final BerkeleyLocation location = new BerkeleyLocation();
                 location.setStart(1);
                 location.setEnd(targetRS.getInt(3));
-                if (targetRS.wasNull()) continue;
+                if (targetRS.wasNull()) {
+                    continue;
+                }
                 final String signatureLibraryName = targetRS.getString(2);
-                if (targetRS.wasNull() || signatureLibraryName == null) continue;
-                if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
+                if (targetRS.wasNull() || signatureLibraryName == null || SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) {
+                    continue;
+                }
                 final BerkeleyMatch match = new BerkeleyMatch();
-
+                match.addLocation(location);
+                match.setSignatureLibraryName(signatureLibraryName);
+                match.setSignatureLibraryRelease("3.0");
+                match.setProteinMD5(targetRS.getString(1));
+                match.setSignatureAccession("SignalPeptide");
+                if (++sigPcount % 100000 == 0) {
+                    System.out.println("Stored " + sigPcount + " signal P matches.");
+                }
+                primIDX.put(match);
             }
 
 
