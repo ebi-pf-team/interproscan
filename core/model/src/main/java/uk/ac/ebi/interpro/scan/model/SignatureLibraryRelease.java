@@ -58,6 +58,8 @@ public class SignatureLibraryRelease implements Serializable {
     private String version;
 
     // TODO This needs to be ManyToMany so that a Signature can be re-used across releases.
+    // TODO - This was an IMPACT requirement, but may well cause more problems than it solves.
+    // TODO - so don't worry too much about getting this in place.
     @OneToMany(mappedBy = "signatureLibraryRelease", cascade = CascadeType.ALL)
     @XmlElement(name = "signature")
     protected Set<Signature> signatures = new HashSet<Signature>();
