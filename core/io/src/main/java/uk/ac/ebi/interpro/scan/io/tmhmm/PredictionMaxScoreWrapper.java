@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
+import uk.ac.ebi.interpro.scan.model.TMHMMSignature;
+
 /**
  * Simple wrapper class. Wraps TMHMM predictions and the associated max score.
  *
@@ -8,18 +10,18 @@ package uk.ac.ebi.interpro.scan.io.tmhmm;
  * @since 1.0-SNAPSHOT
  */
 public class PredictionMaxScoreWrapper {
-    private TMHMMPrediction prediction;
+    private TMHMMSignature prediction;
     private float maxScore;
 
     private PredictionMaxScoreWrapper() {
     }
 
-    public PredictionMaxScoreWrapper(TMHMMPrediction prediction, float maxScore) {
+    public PredictionMaxScoreWrapper(TMHMMSignature prediction, float maxScore) {
         this.prediction = prediction;
         this.maxScore = maxScore;
     }
 
-    public TMHMMPrediction getPrediction() {
+    public TMHMMSignature getPrediction() {
         return prediction;
     }
 
