@@ -140,9 +140,11 @@ public final class TMHMMPredictionTableParser {
             //Add new protein to result map
             result.add(protein);
             //
-            for (TMHMMMatch match : matches) {
-                for (TMHMMMatch.TMHMMLocation location : match.getLocations()) {
-                    System.out.println(id + "    " + location.getPrediction() + " " + location.getStart() + " " + location.getEnd() + " " + location.getScore());
+            if (LOGGER.isDebugEnabled()) {
+                for (TMHMMMatch match : matches) {
+                    for (TMHMMMatch.TMHMMLocation location : match.getLocations()) {
+                        LOGGER.debug(id + "    " + location.getPrediction() + " " + location.getStart() + " " + location.getEnd() + " " + location.getScore());
+                    }
                 }
             }
         }
