@@ -71,9 +71,9 @@ public class TMHMMProtein implements Serializable {
 
     // Convenience method for adding a Set of matches in one go.
 
-    public void addAllMatches(Set<TMHMMMatch> rawMatches) {
-        if (rawMatches != null) {
-            for (TMHMMMatch match : rawMatches) {
+    public void addAllMatches(Set<TMHMMMatch> matches) {
+        if (matches != null) {
+            for (TMHMMMatch match : matches) {
                 addMatch(match);
             }
         }

@@ -2,7 +2,9 @@ package uk.ac.ebi.interpro.scan.io.tmhmm;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.model.TMHMMMatch;
+import uk.ac.ebi.interpro.scan.model.TMHMMSignature;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +41,12 @@ public final class TMHMMPredictionTableParser {
 
     private static final Logger LOGGER = Logger.getLogger(TMHMMPredictionTableParser.class.getName());
 
+    private final SignatureLibraryRelease signatureLibraryRelease;
+
+    public TMHMMPredictionTableParser(SignatureLibraryRelease signatureLibraryRelease) {
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
     /**
      * Reads in the analysis result file and parses out all information.
      * </br>
@@ -56,13 +64,13 @@ public final class TMHMMPredictionTableParser {
      */
     public Set<TMHMMProtein> parse(InputStream is) throws IOException {
         //Map between protein IDs (sequenceId)  and TMHMM match locations
-        final Map<String, Set<TMHMMMatch.TMHMMLocation>> seqIdLocationMap = new HashMap<String, Set<TMHMMMatch.TMHMMLocation>>();
+        final Map<String, Set<TMHMMMatch>> seqIdMatchMap = new HashMap<String, Set<TMHMMMatch>>();
 
         String prevSequenceId, sequenceId = null;
         int startPos = 0;
         int currentAAPos = -1;
-        TMHMMPrediction prevPrediction = null;
-        TMHMMPrediction prediction = null;
+        TMHMMSignature prevPrediction = null;
+        TMHMMSignature prediction = null;
         List<Float> scores = new ArrayList<Float>();
         BufferedReader reader = null;
 
@@ -73,7 +81,7 @@ public final class TMHMMPredictionTableParser {
                 if (checkLineForNewEntry(line)) {  // e.g. # UPI0000003CFF OR # 1
                     if (prevPrediction != null) {
                         // Store the last prediction for prevSequenceId
-                        saveTmhmmLocation(seqIdLocationMap, sequenceId,
+                        saveTmhmmMatch(seqIdMatchMap, sequenceId,
                                 startPos, currentAAPos, prevPrediction, scores);
                     }
                     prevSequenceId = sequenceId;
@@ -96,7 +104,7 @@ public final class TMHMMPredictionTableParser {
                     if (prediction != prevPrediction) {
                         if (prevPrediction != null) {
                             // Store the previous prediction for sequenceId
-                            saveTmhmmLocation(seqIdLocationMap, sequenceId,
+                            saveTmhmmMatch(seqIdMatchMap, sequenceId,
                                     startPos, currentAAPos - 1, prevPrediction, scores);
                         }
                         prevPrediction = prediction;
@@ -109,7 +117,7 @@ public final class TMHMMPredictionTableParser {
             // Now store the last prediction for the last sequenceId in the result file
             if (prevPrediction != null) {
                 // Store the previous prediction for sequenceId
-                saveTmhmmLocation(seqIdLocationMap, sequenceId, startPos, currentAAPos, prevPrediction, scores);
+                saveTmhmmMatch(seqIdMatchMap, sequenceId, startPos, currentAAPos, prevPrediction, scores);
             }
         } catch (IOException io) {
             LOGGER.warn("Could not parse input stream!", io);
@@ -118,50 +126,53 @@ public final class TMHMMPredictionTableParser {
                 reader.close();
             }
         }
-        return createProteinsWithMatches(seqIdLocationMap);
+        return createProteinsWithMatches(seqIdMatchMap);
     }
 
-    private Set<TMHMMProtein> createProteinsWithMatches(Map<String, Set<TMHMMMatch.TMHMMLocation>> seqIdLocationMap) {
+    private Set<TMHMMProtein> createProteinsWithMatches(Map<String, Set<TMHMMMatch>> seqIdMatchMap) {
         Set<TMHMMProtein> result = new HashSet<TMHMMProtein>();
-        for (String id : seqIdLocationMap.keySet()) {
+        for (String id : seqIdMatchMap.keySet()) {
             //Create a new protein
             TMHMMProtein protein = new TMHMMProtein(id);
-            //Create a new match and add locations
-            Set<TMHMMMatch.TMHMMLocation> locations = seqIdLocationMap.get(id);
-            TMHMMMatch match = createNewTmhmmMatch(locations);
-            //Add match to protein
-            protein.addMatch(match);
+            //Add matches to protein
+            Set<TMHMMMatch> matches = seqIdMatchMap.get(id);
+            protein.addAllMatches(matches);
             //Add new protein to result map
             result.add(protein);
             //
-            for (TMHMMMatch.TMHMMLocation location : locations) {
-                System.out.println(id + "    " + location.getPrediction() + " " + location.getStart() + " " + location.getEnd() + " " + location.getScore());
+            for (TMHMMMatch match : matches) {
+                for (TMHMMMatch.TMHMMLocation location : match.getLocations()) {
+                    System.out.println(id + "    " + location.getPrediction() + " " + location.getStart() + " " + location.getEnd() + " " + location.getScore());
+                }
             }
         }
         return result;
     }
 
-    private void saveTmhmmLocation(Map<String, Set<TMHMMMatch.TMHMMLocation>> proteins, String sequenceIdentifier, int start,
-                                   int end, TMHMMPrediction prediction, List<Float> scores) {
+    private void saveTmhmmMatch(Map<String, Set<TMHMMMatch>> proteins, String sequenceIdentifier, int start,
+                                int end, TMHMMSignature prediction, List<Float> scores) {
         TMHMMMatch.TMHMMLocation location = buildTmhmmLocation(start, end, prediction, getCurrentScore(scores));
-        Set<TMHMMMatch.TMHMMLocation> locations = proteins.get(sequenceIdentifier);
-        if (locations == null) {
-            locations = new LinkedHashSet<TMHMMMatch.TMHMMLocation>();
+        Set<TMHMMMatch> matches = proteins.get(sequenceIdentifier);
+        if (matches == null) {
+            matches = new LinkedHashSet<TMHMMMatch>();
         }
-        locations.add(location);
-        proteins.put(sequenceIdentifier, locations);
+        matches.add(createNewTmhmmMatch(prediction, Collections.singleton(location)));
+        proteins.put(sequenceIdentifier, matches);
         scores.clear();
     }
 
-    private TMHMMMatch.TMHMMLocation buildTmhmmLocation(int start, int end, TMHMMPrediction prediction, float currentScore) {
+    private TMHMMMatch.TMHMMLocation buildTmhmmLocation(int start, int end, TMHMMSignature prediction, float currentScore) {
         return new TMHMMMatch.TMHMMLocation.Builder(start, end)
                 .prediction(prediction.toString())
                 .score(currentScore)
                 .build();
     }
 
-    private TMHMMMatch createNewTmhmmMatch(Set<TMHMMMatch.TMHMMLocation> locations) {
-        Signature signature = new Signature.Builder("tmhmm").description("region").build();
+    private TMHMMMatch createNewTmhmmMatch(TMHMMSignature prediction, Set<TMHMMMatch.TMHMMLocation> locations) {
+        Signature signature = new Signature.Builder(prediction.getAccession()).
+                description(prediction.getShortDesc()).
+                signatureLibraryRelease(signatureLibraryRelease).
+                build();
         return new TMHMMMatch(signature, locations);
     }
 

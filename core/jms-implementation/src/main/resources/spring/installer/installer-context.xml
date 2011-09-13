@@ -15,6 +15,12 @@
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
         <property name="parsers">
             <list>
+                <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
+                    <property name="signatureLibrary" value="TMHMM"/>
+                    <property name="releaseVersionNumber" value="2.5.1"/>
+                    <property name="analysisJobId" value="jobTMHMM"/>
+                    <property name="modelFile" value="file:/dev/null"/>
+                </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.coils.CoilsDummyParser">
                     <property name="signatureLibrary" value="COILS"/>
                     <property name="releaseVersionNumber" value="2.2"/>

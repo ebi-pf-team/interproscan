@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMPredictionTableParser;
 import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMProtein;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAO;
 
 import java.io.FileInputStream;
@@ -25,21 +26,11 @@ public final class TMHMMParseStep extends Step {
     private String outputFileNameTemplate;
     //    private RawMatchDAO<PantherRawMatch> rawMatchDAO;
     private TMHMMPredictionTableParser parser;
-    private String signatureLibraryRelease;
     private TMHMMFilteredMatchDAO filteredMatchDAO;
 
     @Required
     public void setOutputFileNameTemplate(String PantherOutputFileNameTemplate) {
         this.outputFileNameTemplate = PantherOutputFileNameTemplate;
-    }
-
-    @Required
-    public void setSignatureLibraryRelease(String signatureLibraryRelease) {
-        this.signatureLibraryRelease = signatureLibraryRelease;
-    }
-
-    public String getSignatureLibraryRelease() {
-        return signatureLibraryRelease;
     }
 
     @Required

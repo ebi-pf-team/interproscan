@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
+import uk.ac.ebi.interpro.scan.model.TMHMMSignature;
+
 /**
  * Represents a line parser for the following line example:
  * <p/>
@@ -36,18 +38,18 @@ public class TMHMMPredictionLineParser {
      * @return Prediction value.
      */
     private static PredictionMaxScoreWrapper getPredictionValue(float scoreInside, float scoreO, float scoreOutside, float scoreMembrane) {
-        TMHMMPrediction result = TMHMMPrediction.INSIDE_CELL;
+        TMHMMSignature result = TMHMMSignature.INSIDE_CELL;
         float maxScore = scoreInside;
         if (scoreO > maxScore) {
-            result = TMHMMPrediction.OTHER;
+            result = TMHMMSignature.OTHER;
             maxScore = scoreO;
         }
         if (scoreOutside > maxScore) {
-            result = TMHMMPrediction.OUTSIDE_CELL;
+            result = TMHMMSignature.OUTSIDE_CELL;
             maxScore = scoreOutside;
         }
         if (scoreMembrane > maxScore) {
-            result = TMHMMPrediction.MEMBRANE;
+            result = TMHMMSignature.MEMBRANE;
             maxScore = scoreMembrane;
         }
         return new PredictionMaxScoreWrapper(result, maxScore);

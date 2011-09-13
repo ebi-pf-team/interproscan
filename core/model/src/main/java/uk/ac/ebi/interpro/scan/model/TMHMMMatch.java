@@ -36,6 +36,7 @@ import java.util.Set;
  * @since 1.0
  */
 @Entity
+@Table(name = "tmhmm_match")
 @XmlType(name = "TMHMMMatchType")
 public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
 
