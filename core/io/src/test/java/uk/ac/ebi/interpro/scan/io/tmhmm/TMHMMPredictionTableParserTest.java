@@ -2,6 +2,9 @@ package uk.ac.ebi.interpro.scan.io.tmhmm;
 
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -21,7 +24,7 @@ public class TMHMMPredictionTableParserTest {
 
     @Before
     public void setUp() {
-        parser = new TMHMMPredictionTableParser();
+        parser = new TMHMMPredictionTableParser(new SignatureLibraryRelease(SignatureLibrary.TMHMM, "2.5.1"));
     }
 
     @Test
