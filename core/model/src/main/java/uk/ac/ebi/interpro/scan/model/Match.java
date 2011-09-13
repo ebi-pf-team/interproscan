@@ -169,6 +169,7 @@ public abstract class Match<T extends Location> implements Serializable {
             Set<CoilsMatch> coilsMatches = new LinkedHashSet<CoilsMatch>();
             Set<PantherMatch> pantherMatches = new LinkedHashSet<PantherMatch>();
             Set<SignalPMatch> signalPMatches = new LinkedHashSet<SignalPMatch>();
+            Set<TMHMMMatch> tmhmmPMatches = new LinkedHashSet<TMHMMMatch>();
             for (Match m : matches) {
                 if (m instanceof Hmmer2Match) {
                     hmmer2Matches.add((Hmmer2Match) m);
@@ -192,19 +193,23 @@ public abstract class Match<T extends Location> implements Serializable {
                     pantherMatches.add((PantherMatch) m);
                 } else if (m instanceof SignalPMatch) {
                     signalPMatches.add((SignalPMatch) m);
+                } else if (m instanceof TMHMMMatch) {
+                    tmhmmPMatches.add((TMHMMMatch) m);
                 } else {
                     throw new IllegalArgumentException("Unrecognised Match class: " + m);
                 }
             }
             return new MatchesType(hmmer2Matches, hmmer3Matches, superFamilyHmmer3Matches, fingerPrintsMatches, proDomMatches,
-                    patternScanMatches, profileScanMatches, phobiusMatches, coilsMatches, pantherMatches, signalPMatches);
+                    patternScanMatches, profileScanMatches, phobiusMatches, coilsMatches, pantherMatches, signalPMatches, tmhmmPMatches);
         }
 
         /**
          * Map XML type to Java
          */
         @Override
-        public Set<Match> unmarshal(MatchesType matchTypes) {
+        public Set<Match> unmarshal
+        (MatchesType
+                 matchTypes) {
             Set<Match> matches = new HashSet<Match>();
             matches.addAll(matchTypes.getHmmer2Matches());
             matches.addAll(matchTypes.getHmmer3Matches());
@@ -260,6 +265,9 @@ public abstract class Match<T extends Location> implements Serializable {
         @XmlElement(name = "signalp-match")
         private final Set<SignalPMatch> signalPMatches;
 
+        @XmlElement(name = "tmhmm-match")
+        private final Set<TMHMMMatch> tmhmmMatches;
+
 
         private MatchesType() {
             hmmer2Matches = null;
@@ -273,6 +281,7 @@ public abstract class Match<T extends Location> implements Serializable {
             coilsMatches = null;
             pantherMatches = null;
             signalPMatches = null;
+            tmhmmMatches = null;
         }
 
         public MatchesType(Set<Hmmer2Match> hmmer2Matches,
@@ -285,7 +294,8 @@ public abstract class Match<T extends Location> implements Serializable {
                            Set<PhobiusMatch> phobiusMatches,
                            Set<CoilsMatch> coilsMatches,
                            Set<PantherMatch> pantherMatches,
-                           Set<SignalPMatch> signalPMatches) {
+                           Set<SignalPMatch> signalPMatches,
+                           Set<TMHMMMatch> tmhmmMatches) {
             this.hmmer2Matches = hmmer2Matches;
             this.hmmer3Matches = hmmer3Matches;
             this.superFamilyHmmer3Matches = superFamilyHmmer3Matches;
@@ -297,6 +307,7 @@ public abstract class Match<T extends Location> implements Serializable {
             this.coilsMatches = coilsMatches;
             this.pantherMatches = pantherMatches;
             this.signalPMatches = signalPMatches;
+            this.tmhmmMatches = tmhmmMatches;
         }
 
         public Set<Hmmer2Match> getHmmer2Matches() {
@@ -341,6 +352,10 @@ public abstract class Match<T extends Location> implements Serializable {
 
         public Set<SignalPMatch> getSignalPMatches() {
             return (signalPMatches == null ? Collections.<SignalPMatch>emptySet() : signalPMatches);
+        }
+
+        public Set<TMHMMMatch> getTmhmmMatches() {
+            return (tmhmmMatches == null ? Collections.<TMHMMMatch>emptySet() : tmhmmMatches);
         }
     }
 }

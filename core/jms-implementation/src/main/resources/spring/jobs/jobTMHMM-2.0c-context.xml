@@ -83,33 +83,13 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <!--<bean id="stepPantherDeleteRawOutput"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"-->
-    <!--parent="abstractPantherStep">-->
-    <!--<property name="dependsUpon" ref="stepPantherParseOutput"/>-->
-    <!--<property name="stepDescription" value="Delete the analysis output file following successful parsing"/>-->
-    <!--<property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!--</bean>-->
-
-    <!--&lt;!&ndash; STEP 4: Filter and persist filtered results &ndash;&gt;-->
-    <!--<bean id="stepPantherPostProcessing"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherPostProcessingStep"-->
-    <!--parent="abstractPantherStep">-->
-    <!--<property name="dependsUpon" ref="stepPantherParseOutput"/>-->
-    <!--<property name="stepDescription" value="Performs post processing and match persistence on Panther data"/>-->
-    <!--<property name="serialGroup" value="PANTHER_POST_PROCESSING"/>-->
-    <!--<property name="signatureLibraryRelease" value="7.0"/>-->
-    <!--<property name="postProcessor">-->
-    <!--<bean class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">-->
-    <!--<constructor-arg value="1e-11"/>-->
-    <!--</bean>-->
-    <!--</property>-->
-    <!--<property name="rawMatchDAO" ref="pantherRawMatchDAO"/>-->
-    <!--<property name="filteredMatchDAO">-->
-    <!--<bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>-->
-    <!--</property>-->
-    <!--<property name="retries" value="3"/>-->
-    <!--</bean>-->
+    <bean id="stepTMHMMDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractTMHMMStep">
+        <property name="dependsUpon" ref="stepTMHMMParseOutput"/>
+        <property name="stepDescription" value="Delete the analysis output file following successful parsing"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
 
     <!--&lt;!&ndash; ######################## Dependencies ############################  &ndash;&gt;-->
     <bean id="signatureLibraryRelease" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
