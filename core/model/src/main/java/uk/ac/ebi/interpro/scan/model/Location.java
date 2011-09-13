@@ -167,6 +167,7 @@ public abstract class Location implements Serializable {
             Set<CoilsMatch.CoilsLocation> coilsLocations = new LinkedHashSet<CoilsMatch.CoilsLocation>();
             Set<PantherMatch.PantherLocation> pantherLocations = new LinkedHashSet<PantherMatch.PantherLocation>();
             Set<SignalPMatch.SignalPLocation> signalPLocations = new LinkedHashSet<SignalPMatch.SignalPLocation>();
+            Set<TMHMMMatch.TMHMMLocation> tmhmmLocations = new LinkedHashSet<TMHMMMatch.TMHMMLocation>();
             for (Location l : locations) {
                 if (l instanceof Hmmer2Match.Hmmer2Location) {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
@@ -190,12 +191,14 @@ public abstract class Location implements Serializable {
                     pantherLocations.add((PantherMatch.PantherLocation) l);
                 } else if (l instanceof SignalPMatch.SignalPLocation) {
                     signalPLocations.add((SignalPMatch.SignalPLocation) l);
+                } else if (l instanceof TMHMMMatch.TMHMMLocation) {
+                    tmhmmLocations.add((TMHMMMatch.TMHMMLocation) l);
                 } else {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
             return new LocationsType(hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
-                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations);
+                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations, tmhmmLocations);
         }
 
         /**
@@ -215,6 +218,7 @@ public abstract class Location implements Serializable {
             locations.addAll(locationsType.getCoilsLocations());
             locations.addAll(locationsType.getPantherLocations());
             locations.addAll(locationsType.getSignalPLocations());
+            locations.addAll(locationsType.getTMHMMLocations());
             return locations;
         }
 
@@ -258,6 +262,9 @@ public abstract class Location implements Serializable {
         @XmlElement(name = "signalp-location")
         private final Set<SignalPMatch.SignalPLocation> signalPLocations;
 
+        @XmlElement(name = "tmhmm-location")
+        private final Set<TMHMMMatch.TMHMMLocation> tmhmmLocations;
+
         private LocationsType() {
             hmmer2Locations = null;
             hmmer3Locations = null;
@@ -270,6 +277,7 @@ public abstract class Location implements Serializable {
             coilsLocations = null;
             pantherLocations = null;
             signalPLocations = null;
+            tmhmmLocations = null;
         }
 
         public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
@@ -282,7 +290,8 @@ public abstract class Location implements Serializable {
                              Set<PhobiusMatch.PhobiusLocation> phobiusLocations,
                              Set<CoilsMatch.CoilsLocation> coilsLocations,
                              Set<PantherMatch.PantherLocation> pantherLocations,
-                             Set<SignalPMatch.SignalPLocation> signalPLocations) {
+                             Set<SignalPMatch.SignalPLocation> signalPLocations,
+                             Set<TMHMMMatch.TMHMMLocation> tmhmmLocations) {
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
             this.superFamilyHmmer3Locations = superFamilyHmmer3Locations;
@@ -294,6 +303,7 @@ public abstract class Location implements Serializable {
             this.coilsLocations = coilsLocations;
             this.pantherLocations = pantherLocations;
             this.signalPLocations = signalPLocations;
+            this.tmhmmLocations = tmhmmLocations;
         }
 
         public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {
@@ -338,6 +348,10 @@ public abstract class Location implements Serializable {
 
         public Set<SignalPMatch.SignalPLocation> getSignalPLocations() {
             return (signalPLocations == null ? Collections.<SignalPMatch.SignalPLocation>emptySet() : signalPLocations);
+        }
+
+        public Set<TMHMMMatch.TMHMMLocation> getTMHMMLocations() {
+            return (tmhmmLocations == null ? Collections.<TMHMMMatch.TMHMMLocation>emptySet() : tmhmmLocations);
         }
     }
 
