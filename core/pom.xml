@@ -97,6 +97,7 @@
         <module>jms-implementation</module>
         <module>cli</module>
         <module>precalcmatches</module>
+        <module>web</module>
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
