@@ -18,10 +18,10 @@ public enum SignalPOrganismType {
     GRAM_POSITIVE("GRAM_POSITIVE", "gram+", "Gram-positive bacteria", "SIGNALP_GRAM+"),
     GRAM_NEGATIVE("GRAM_NEGATIVE", "gram-", "Gram-negative bacteria", "SIGNALP_GRAM-");
 
-    private String typeLongName;
+    private String typeLongName; // InterProScan type name
     private String typeShortName; // Type as it appears on the binary command line and in the binary output text file
     private String description; // Human readable description
-    private String onionName;
+    private String onionName;  // Onion type name
 
     private static final Map<String, SignalPOrganismType> ONION_TO_TYPE = new HashMap<String, SignalPOrganismType>();
 
