@@ -54,11 +54,11 @@ public class TMHMMMatchMarshalTest extends TestCase {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(result);
             assertNotNull("XML result shouldn't be null!", result);
-            assertTrue(result.contains("<matches>"));
-            assertTrue(result.contains("<tmhmm-match>"));
-            assertTrue(result.contains("<signature ac=\"TMhelix\"/>"));
-            assertTrue(result.contains("<locations>"));
-            assertTrue(result.contains("<tmhmm-location score=\"1.0\" prediction=\"TMHelix\" end=\"2\" start=\"1\"/>"));
+            assertTrue("Missed <matches> tag!", result.contains("<matches>"));
+            assertTrue("Missed <tmhmm-match> tag!", result.contains("<tmhmm-match>"));
+            assertTrue("Missed <signature> tag or tag values are wrong!", result.contains("<signature ac=\"TMhelix\"/>"));
+            assertTrue("Missed <locations> tag!", result.contains("<locations>"));
+            assertTrue("Missed <tmhmm-location> tag or tag values are wrong!", result.contains("<tmhmm-location score=\"1.0\" end=\"2\" start=\"1\"/>"));
         } catch (IOException e) {
             LOGGER.warn("Couldn't marshal protein object!", e);
         }
