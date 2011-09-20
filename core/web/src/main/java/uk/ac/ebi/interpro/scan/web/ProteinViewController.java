@@ -21,20 +21,37 @@ import java.util.Set;
 public class ProteinViewController {
 
     /**
-     * Returns view name and data to display a simple protein page
+     * Returns protein features for inclusion in DBML
      *
      * @param  ac   Protein accession, for example "P38398"
-     * @return View name and model to display a simple protein page
+     * @return Protein features for inclusion in DBML
      */
-    @RequestMapping(value = "/protein/{ac}", method = RequestMethod.GET)
-    public ModelAndView protein(@PathVariable String ac) {
-        
-//        Protein p = new Protein(id, "GYGDEYGDEEDEOIHOHDEUHWQJINIKNCD", "d85ce40adbc0af811e7feae7fd3cd827");
-//        p.addMatch(new Protein.Match("IPR000008", "C2 calcium-dependent membrane targeting", 841, 932));
-//        p.addMatch(new Protein.Match("IPR000909", "Phospholipase C, phosphatidylinositol-specific , X domain", 402, 546));
-//        //return new ModelAndView("protein", "protein", p);
-//        return new ModelAndView("protein-body", "protein", p);
-        
+    @RequestMapping(value = "/protein-features/{ac}", method = RequestMethod.GET)
+    public ModelAndView proteinFeatures(@PathVariable String ac) {
+        return new ModelAndView("protein-features", "protein", retrieve(ac));
+    }    
+
+    /**
+     * Returns main body of protein page for inclusion in DBML
+     *
+     * @param  ac   Protein accession, for example "P38398"
+     * @return Main body of protein page for inclusion in DBML
+     */
+    @RequestMapping(value = "/protein-body/{ac}", method = RequestMethod.GET)
+    public ModelAndView proteinBody(@PathVariable String ac) {
+        return new ModelAndView("protein-body", "protein", retrieve(ac));
+    }
+
+    /**
+     * Returns protein for given accession number
+     *
+     * @param  ac   Protein accession, for example "P38398"
+     * @return Protein for given accession
+     */
+    private Protein retrieve(String ac) {
+
+        // TODO: Get real data from Berkeley DB
+
         // Create protein
         Protein p = new Protein.Builder("GYGDEYGDEEDEOIHOHDEUHWQJINIKNCD")
                 .crossReference(new ProteinXref("UniProt", "A0A314", "RR12_COFAR"))
@@ -47,7 +64,7 @@ public class ProteinViewController {
         locations.add(new Hmmer3Match.Hmmer3Location(105, 189, -8.9, 0.28, 63, 82, 114, 73, 94));
         p.addMatch(new Hmmer3Match(signature, -8.9, 0.28, locations));
 
-        return new ModelAndView("protein-body", "protein", p);
+        return p;
 
     }
 
