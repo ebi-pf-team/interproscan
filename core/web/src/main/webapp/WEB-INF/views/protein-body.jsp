@@ -1,6 +1,8 @@
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%--Returns main body of protein page for inclusion in DBML--%>
+
 <div class="tab">
     <div class="Protein_tab">Protein</div>
 </div>
@@ -42,6 +44,8 @@
     </div>
 </c:forEach>
 
+    <%--TODO: Include protein-features.jsp rather than repeat here--%>
+
     <h2>Matches</h2>
     <table>
         <tr>
@@ -51,8 +55,7 @@
         </tr>
         <c:forEach var="match" items="${protein.matches}">
             <%--TODO: Sort on location.start, either in model code by implementing Comparable [1], or by returning a holder--%>
-            <%--from the Controller with the separate objects we need for each section? --%>
-            <%--Hmm, my model code isn't looking too clever... --%>
+            <%--TODO: from the Controller with the separate objects we need for each section? --%>
             <%--[1] http://forums.devshed.com/java-help-9/sorting-with-jstl-340581.html--%>
             <c:forEach var="location" items="${match.locations}">
                 <tr>
