@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.Protein;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -65,6 +66,174 @@ public class ProteinViewController {
         p.addMatch(new Hmmer3Match(signature, -8.9, 0.28, locations));
 
         return p;
+
+    }
+
+    public static class SimpleProtein {
+
+        private String ac;
+        private String name;
+        private List<SimpleEntry> entries;
+
+        public SimpleProtein(String ac, String name) {
+            this.ac = ac;
+            this.name = name;
+        }
+
+        public String getAc() {
+            return ac;
+        }
+
+        public void setAc(String ac) {
+            this.ac = ac;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<SimpleEntry> getEntries() {
+            return entries;
+        }
+
+        public void setEntries(List<SimpleEntry> entries) {
+            this.entries = entries;
+        }
+
+    }
+
+    public static class SimpleEntry {
+
+        private String ac;
+        private String name;
+        private String type;
+        private List<SimpleLocation> locations; // super matches
+        private List<SimpleSignature> signatures;
+
+        public SimpleEntry(String ac, String name, String type) {
+            this.ac = ac;
+            this.name = name;
+            this.type = type;
+        }
+
+        public String getAc() {
+            return ac;
+        }
+
+        public void setAc(String ac) {
+            this.ac = ac;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public List<SimpleLocation> getLocations() {
+            return locations;
+        }
+
+        public void setLocations(List<SimpleLocation> locations) {
+            this.locations = locations;
+        }
+
+        public List<SimpleSignature> getSignatures() {
+            return signatures;
+        }
+
+        public void setSignatures(List<SimpleSignature> signatures) {
+            this.signatures = signatures;
+        }
+        
+    }
+
+    public static class SimpleSignature {
+
+        private String ac;
+        private String name;
+        private String type;
+        private List<SimpleLocation> locations;
+
+        public SimpleSignature(String ac, String name, String type) {
+            this.ac = ac;
+            this.name = name;
+            this.type = type;
+        }
+
+        public String getAc() {
+            return ac;
+        }
+
+        public void setAc(String ac) {
+            this.ac = ac;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public List<SimpleLocation> getLocations() {
+            return locations;
+        }
+
+        public void setLocations(List<SimpleLocation> locations) {
+            this.locations = locations;
+        }
+
+    }
+
+    public static class SimpleLocation {
+
+        private int start;
+        private int end;
+
+        public SimpleLocation(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public void setStart(int start) {
+            this.start = start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+        public void setEnd(int end) {
+            this.end = end;
+        }
 
     }
 
