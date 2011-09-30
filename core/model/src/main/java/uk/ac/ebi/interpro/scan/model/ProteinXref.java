@@ -20,8 +20,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -40,6 +42,9 @@ public class ProteinXref extends Xref implements Serializable {
     @ManyToOne(optional = false)
     private Protein protein;
 
+    @Column(nullable = true)
+    private String description;
+
     /**
      * Zero arguments constructor just for Hibernate.
      */
@@ -53,6 +58,20 @@ public class ProteinXref extends Xref implements Serializable {
     public ProteinXref(String databaseName, String identifier, String name) {
         super(databaseName, identifier, name);
     }
+
+    public ProteinXref(String databaseName, String identifier, String name, String description) {
+        super(databaseName, identifier, name);
+        this.description = description;
+    }
+
+    @XmlAttribute(name = "desc", required = false)
+    public String getDescription() {
+        return description;
+    }
+
+    void setDescription(String description) {
+        this.description = description;
+    }    
 
     @XmlTransient
     public Protein getProtein() {
@@ -95,6 +114,7 @@ public class ProteinXref extends Xref implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder(15, 51)
                 .appendSuper(super.hashCode())
+                .append(description)
                 .toHashCode();
     }
 
