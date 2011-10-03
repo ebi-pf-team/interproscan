@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.web;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,8 @@ import java.util.*;
  */
 @Controller
 public class ProteinViewController {
+
+    private static final Logger LOGGER = Logger.getLogger(ProteinViewController.class.getName());
 
     /**
      * Returns protein page.
@@ -119,14 +122,13 @@ public class ProteinViewController {
         private final String id;      // BRCA1_HUMAN
         private final String name;    // eg. Breast cancer type 1 susceptibility
         private final int length;
-        private final List<SimpleEntry> entries;
+        private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
 
         public SimpleProtein(String ac, String id, String name, int length) {
             this.ac         = ac;
             this.id         = id;
             this.name       = name;
             this.length     = length;
-            this.entries    = new ArrayList<SimpleEntry>();
         }
 
         public String getAc() {
@@ -182,7 +184,7 @@ public class ProteinViewController {
                 SimpleEntry se = new SimpleEntry(e.getAccession(), e.getDescription(), e.getType().getName());                
                 if (sp.getEntries().contains(se))    {
                     // Entry already exists, so get it
-                    se = sp.getEntries().get(sp.getEntries().indexOf(se));                    
+                    se = sp.getEntries().get(sp.getEntries().indexOf(se));
                 }
                 else {
                     // Create new entry
@@ -235,15 +237,13 @@ public class ProteinViewController {
         private final String ac;
         private final String name;
         private final String type;
-        private final List<SimpleLocation> locations; // super matches
-        private final Map<String, SimpleSignature> signatures;
+        private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
+        private Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
 
         public SimpleEntry(String ac, String name, String type) {
             this.ac         = ac;
             this.name       = name;
             this.type       = type;
-            this.locations  = new ArrayList<SimpleLocation>();
-            this.signatures = new HashMap<String, SimpleSignature>();
         }
 
         public String getAc() {
@@ -260,6 +260,10 @@ public class ProteinViewController {
 
         public List<SimpleLocation> getLocations() {
             return locations;
+        }
+
+        public void setLocations(List<SimpleLocation> locations) {
+            this.locations = locations;
         }
 
         public Collection<SimpleSignature> getSignatures() {
@@ -315,7 +319,12 @@ public class ProteinViewController {
 
         public List<SimpleLocation> getLocations() {        
             return locations;
-        }    
+        }
+
+        public void addLocation(SimpleLocation location) {
+            this.locations.add(location);
+        }
+        
 
     }
 
