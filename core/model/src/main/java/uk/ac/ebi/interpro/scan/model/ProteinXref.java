@@ -23,6 +23,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -43,6 +44,7 @@ public class ProteinXref extends Xref implements Serializable {
     private Protein protein;
 
     @Column(nullable = true)
+    @Transient // TODO Remove transient annotation!!
     private String description;
 
     /**
