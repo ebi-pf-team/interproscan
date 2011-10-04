@@ -24,10 +24,12 @@ public enum SignalPOrganismType {
     private String onionName;  // Onion type name
 
     private static final Map<String, SignalPOrganismType> ONION_TO_TYPE = new HashMap<String, SignalPOrganismType>();
+    private static final Map<String, SignalPOrganismType> SHORTNAME_TO_TYPE = new HashMap<String, SignalPOrganismType>();
 
     static {
         for (SignalPOrganismType type : SignalPOrganismType.values()) {
             ONION_TO_TYPE.put(type.getOnionName(), type);
+            SHORTNAME_TO_TYPE.put(type.getTypeShortName(), type);
         }
     }
 
@@ -48,13 +50,9 @@ public enum SignalPOrganismType {
      * @param typeShortName Short name for the type (as it appears in the SignalP binary output).
      * @return The SignalP organism type enum.
      */
-    public static SignalPOrganismType getSignalPOrganismType(String typeShortName) {
-        if (typeShortName != null) {
-            for (SignalPOrganismType type : SignalPOrganismType.values()) {
-                if (type.getTypeShortName().equals(typeShortName)) {
-                    return type;
-                }
-            }
+    public static SignalPOrganismType getSignalPOrganismTypeByShortName(String typeShortName) {
+        if (SHORTNAME_TO_TYPE.containsKey(typeShortName)) {
+            return SHORTNAME_TO_TYPE.get(typeShortName);
         }
         return null;
     }
