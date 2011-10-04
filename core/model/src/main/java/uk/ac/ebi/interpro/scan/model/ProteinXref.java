@@ -44,7 +44,6 @@ public class ProteinXref extends Xref implements Serializable {
     private Protein protein;
 
     @Column(nullable = true)
-    @Transient // TODO Remove transient annotation!!
     private String description;
 
     /**
@@ -73,7 +72,7 @@ public class ProteinXref extends Xref implements Serializable {
 
     void setDescription(String description) {
         this.description = description;
-    }    
+    }
 
     @XmlTransient
     public Protein getProtein() {
