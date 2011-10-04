@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.web.biomart;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.web.ProteinViewController;
@@ -17,6 +18,7 @@ import static junit.framework.Assert.fail;
  * Tests for {@link AnalyseBioMartQueryResult}
  *
  * @author  Matthew Fraser
+ * @author  Antony Quinn
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -26,9 +28,12 @@ public class AnalyseBioMartQueryResultTest {
     @Resource
     private AnalyseBioMartQueryResult parser;
 
+    @Resource
+    org.springframework.core.io.Resource resource;
+
     @Test
     public void testParse() throws IOException {
-        ProteinViewController.SimpleProtein protein = parser.parseBioMartQueryOutput();
+        ProteinViewController.SimpleProtein protein = parser.parseBioMartQueryOutput(resource);
         assertNotNull(protein);
         assertEquals("P38398", protein.getAc());
         assertEquals("BRCA1_HUMAN", protein.getName());
@@ -36,16 +41,8 @@ public class AnalyseBioMartQueryResultTest {
         assertEquals(5, protein.getEntries().size());
     }
 
-    @Test
-    public void testResourceNull() throws IOException {
-        ProteinViewController.SimpleProtein protein = null;
-        parser.setResource(null);
-        try {
-            protein = parser.parseBioMartQueryOutput();
-            fail("Test should have thrown an exception but did not!");
-        }
-        catch (NullPointerException e) {
-            assertEquals(null, protein);
-        }
+    @Test(expected = NullPointerException.class)
+    public void testResourceNull() {
+        parser.parseBioMartQueryOutput(null);
     }
 }

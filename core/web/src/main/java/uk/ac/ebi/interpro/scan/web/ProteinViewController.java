@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.web.biomart.AnalyseBioMartQueryResult;
+import uk.ac.ebi.interpro.scan.web.biomart.BioMartQueryResourceReader;
+import uk.ac.ebi.interpro.scan.web.biomart.CreateSimpleProteinFromBioMartQuery;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -57,9 +61,16 @@ public class ProteinViewController {
 
     private SimpleProtein retrieve(String id) {
         // TODO: Check if id is MD5 using regex (using Protein class code?)
-        SimpleProtein p = SimpleProtein.valueOf(retrieveProtein(id));
-        p.sort();
-        return p;
+        //SimpleProtein p = SimpleProtein.valueOf(sampleProtein(id));
+        try {
+            SimpleProtein p = queryByAccession(id);
+            p.sort();
+            return p;
+        }
+        catch (IOException e) {
+            // TODO: Do not allow exception to go beyond here, otherwise user will see in browser
+            throw new IllegalStateException("Could not retrieve " + id, e);
+        }
     }
 
     /**
@@ -68,9 +79,21 @@ public class ProteinViewController {
      * @param  ac   Protein accession, for example "P38398"
      * @return Protein for given accession
      */
-    private Protein retrieveProtein(String ac) {
+    private SimpleProtein queryByAccession(String ac) throws IOException {
+        // TODO: Configure analyser via Spring context
+        AnalyseBioMartQueryResult analyser = new AnalyseBioMartQueryResult(new BioMartQueryResourceReader());
+        CreateSimpleProteinFromBioMartQuery biomart = new CreateSimpleProteinFromBioMartQuery(analyser);
+        return biomart.queryByAccession(ac);
 
-        // TODO: Get real data from Berkeley DB
+    }
+
+    /**
+     * Returns protein for given accession number
+     *
+     * @param  ac   Protein accession, for example "P38398"
+     * @return Protein for given accession
+     */
+    private Protein sampleProtein(String ac) {
 
         // Create protein
         Protein p = new Protein.Builder("MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG\n" +
@@ -116,6 +139,7 @@ public class ProteinViewController {
 
     }
 
+    // TODO: Make top-level class in web.model package
     public final static class SimpleProtein {
 
         private final String ac;      // eg. P38398

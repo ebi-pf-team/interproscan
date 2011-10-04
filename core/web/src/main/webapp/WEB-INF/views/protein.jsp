@@ -6,22 +6,40 @@
     <%--<link href="http://www.ebi.ac.uk/inc/css/userstyles.css"    rel="stylesheet" type="text/css" />--%>
     <%--<link href="http://wwwdev.ebi.ac.uk/interpro/toolkits/interpro/interpro.css" rel="stylesheet" type="text/css" />--%>
     <style type="text/css">
-        /*TODO: See "4. position:relative + position:absolute" [http://www.barelyfitz.com/screencast/html-training/css/positioning/]*/
-        .match-line {
-            border:         0.1em solid black;  /* Line height and colour */
-            /*TODO: Try ex instead of px? [http://www.w3.org/TR/CSS21/syndata.html#length-units]*/
-            width:          700px;              /* Relative units (%, em) not accurate enough - shame */
-            z-index:        -1;                 /* Show underneath match */
-        }
-        .match {
-            float:      left;
-            height:     1em;
-            top:        -0.5em;     /* Shows in middle of line (0.5 * match.height) */
+        div.match {
+            /* Line for entire length of protein sequence */
+            border:     0.1em solid black;  /* Line height and colour */
             position:   relative;
-        }        
-        .match-gap {
-            float:      left;
-            margin-top: 1%;
+            width:      95%;
+        }
+        span.match {
+            /* Individual match */
+            height:     1em;
+            position:   absolute;
+            top:        -0.5em;             /* Shows in middle of line (0.5 * match.height) */
+            z-index:    1;                  /* Show above match line */
+        }
+        table.match {
+            border-width:   1px;
+            border-style:   solid;
+            border-color:   gray;
+            border-collapse: collapse;
+        }
+        table.match th {
+            background-color: silver;
+            border-width:   1px;
+            padding:        2px;
+            border-style:   solid;
+            border-color:   gray;
+        }
+        table.match td {
+            border-width:   1px;
+            padding:        2px;
+            border-style:   solid;
+            border-color:   gray;
+        }
+        table.match tr.entry {
+            background-color: #dcdcdc;
         }
     </style>
 </head>
