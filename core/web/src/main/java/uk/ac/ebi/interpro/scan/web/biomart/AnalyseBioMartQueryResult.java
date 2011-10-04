@@ -21,19 +21,11 @@ public class AnalyseBioMartQueryResult {
 
     private static final Logger LOGGER = Logger.getLogger(AnalyseBioMartQueryResult.class.getName());
 
-    private ResourceReader<BioMartQueryRecord> reader;
-    private Resource resource;
+    private final ResourceReader<BioMartQueryRecord> reader;
 
-    @Required
-    public void setReader(ResourceReader<BioMartQueryRecord> reader) {
+    public AnalyseBioMartQueryResult(ResourceReader<BioMartQueryRecord> reader) {
         this.reader = reader;
     }
-
-    @Required
-    public void setResource(Resource resource) {
-        this.resource = resource;
-    }
-
 
     /**
      * Convert a collection of {@link uk.ac.ebi.interpro.scan.web.biomart.BioMartQueryRecord} objects
@@ -42,7 +34,7 @@ public class AnalyseBioMartQueryResult {
      *
      * @return The simple protein
      */
-    public ProteinViewController.SimpleProtein parseBioMartQueryOutput() {
+    public ProteinViewController.SimpleProtein parseBioMartQueryOutput(Resource resource) {
         ProteinViewController.SimpleProtein protein = null;
         String queryOutputText = "";
         String line = "";
@@ -80,7 +72,8 @@ public class AnalyseBioMartQueryResult {
                 // First line of the query results, so we'll need to initialise the SimpleProtein
                 proteinAc = record.getProteinAc();
                 proteinName = record.getProteinName();
-                protein = new ProteinViewController.SimpleProtein(proteinAc, "id", proteinName, 0); // TODO ID AND SEQ LEN!
+                int DUMMY_SEQUENCE_LENGTH = 1863;
+                protein = new ProteinViewController.SimpleProtein(proteinAc, "id", proteinName, DUMMY_SEQUENCE_LENGTH); // TODO ID AND SEQ LEN!
             }
 
             String methodAc = record.getMethodAc();
