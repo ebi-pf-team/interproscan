@@ -76,6 +76,10 @@ public class Installer implements Runnable {
         LOGGER.info("Running installer in mode " + mode);
         // By Magic!
 
+        if (mode.equals(InstallerMode.LOAD_NONE)) {
+            LOGGER.info("No signatures or entries will be loaded (empty database).");
+            return;
+        }
         if (mode.equals(Installer.InstallerMode.LOAD_ALL) || mode.equals(Installer.InstallerMode.LOAD_MODELS)) {
             LOGGER.info("Loading signatures");
             loadModels();
@@ -165,8 +169,9 @@ public class Installer implements Runnable {
      * LOAD_ENTRIES - Loads all entries of the latest release into I5 database, including cross references like Pathways and GO terms.
      * LOAD_ALL - Default value. Loads models and entries at the same time into I5 database. PLEASE NOTICE: The LOAD_ENTRIES step also creates relations between
      * signatures and entries. So to create these relations you have to run the LOAD_MODELS step beforehand.
+     * LOAD_NONE - Do not load any databse models/signatures into I5 database. This mode therefore just creates an empty database.
      */
     public enum InstallerMode {
-        LOAD_MODELS, LOAD_ENTRIES, LOAD_ALL;
+        LOAD_MODELS, LOAD_ENTRIES, LOAD_ALL, LOAD_NONE;
     }
 }
