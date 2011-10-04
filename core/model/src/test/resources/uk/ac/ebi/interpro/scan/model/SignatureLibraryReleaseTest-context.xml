@@ -68,6 +68,12 @@
                 <constructor-arg ref="proSiteProfilesXml"/>
             </bean>
         </entry>
+        <entry key="SignalP">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="signalPObject"/>
+                <constructor-arg ref="signalPXml"/>
+            </bean>
+        </entry>
     </util:map>
 
     <!-- HMM databases -->
@@ -444,6 +450,50 @@
                     <signature ac="PR00238" name="OPSIN" type="family" desc="Opsin signature">
                         <models>
                             <model ac="PR00238"/>
+                        </models>
+                    </signature>
+                </signature-library-release>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <lang:groovy id="signalPObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.0")
+                Signature signature1 = release.addSignature(
+                        new Signature.Builder("SignalP-TM")
+                                .name("SignalP-TM")
+                                .build())
+                signature1.addModel(new Model("SignalP-TM"))
+                Signature signature2 = release.addSignature(
+                        new Signature.Builder("SignalP-noTM")
+                                .name("SignalP-noTM")
+                                .build())
+                signature2.addModel(new Model("SignalP-noTM"))
+                return release
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="signalPXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <signature-library-release library="SIGNALP_EUK" version="4.0"
+                                           xmlns="http://www.ebi.ac.uk/schema/interpro"
+                                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                           xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
+                                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
+                    <signature ac="SignalP-TM" name="SignalP-TM">
+                        <models>
+                            <model ac="SignalP-TM"/>
+                        </models>
+                    </signature>
+                    <signature ac="SignalP-noTM" name="SignalP-noTM">
+                        <models>
+                            <model ac="SignalP-noTM"/>
                         </models>
                     </signature>
                 </signature-library-release>

@@ -66,6 +66,12 @@
                 <constructor-arg ref="proSiteProfilesXml"/>
             </bean>
         </entry>
+        <entry key="SignalP">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="signalPObject"/>
+                <constructor-arg ref="signalPXml"/>
+            </bean>
+        </entry>
     </util:map>
 
     <!-- HMM databases -->
@@ -564,6 +570,62 @@
             UPI0001AF8DCD	ps_scan|v1.57	PS50042	171	275	24.202	.	.	Name "CNMP_BINDING_3" ; Level 1 ; RawScore 1207 ; FeatureFrom 1 ; FeatureTo –18 ; Sequence "VFSKVPVANIEAMFQRMERINTVAGQVIIQQGAAGDYYYLIESGTVLVTRADGVnaHPLLVAELQSGDAFGEEALVSDNKRNATVAMKTDGQLLRLNKHDFVALL–––––––––––––––––" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 5
             UPI0001AF8DCD	ps_scan|v1.57	PS50206	292	370	15.158	.	.	Name "RHODANESE_3" ; Level 0 ; RawScore 60203 ; FeatureFrom 1 ; FeatureTo –1 ; Sequence "IaDGAIWVDAR––––––––––––––––––LPSEYQYDHIDGAINLPLNEIR–––––––––––––QKLLeLDYRKSHVVYCQT–GRRSSAAAFILAQNGF–DVVVLK––––––––GGARAN" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 0
         -->
+    </bean>
+
+    <lang:groovy id="signalPObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MVSTMLSGLVLWLTFGWTPALAYSPRTPDRVSETDIQRLLHGVMEQLGIARPRVEYPAHQAMNLVGPQSIEGGAHEGLQHLGPFGNIPNIVAELTGDNTPKDFSEDQGYPDPPNPCPIGKTDDGCLENTPDTAEFSREFQLHQHLFDPEHDYPGLGKWNKKLLYEKMKGGQRRKRRSVNPYLQGQRLDNVVAKKSVPHFSDEDKDPE");
+                p.addCrossReference(new ProteinXref("UniProt", "P01165", "7B2_PIG"));
+                Signature signature = new Signature("SignalP-noTM", "SignalP-noTM");
+                SignalPOrganismType organismType = SignalPOrganismType.EUK;
+                Set<SignalPMatch.SignalPLocation> locations = new HashSet<SignalPMatch.SignalPLocation>();
+                locations.add(new SignalPMatch.SignalPLocation(1, 22, 0.903));
+                p.addMatch(new SignalPMatch(signature, organismType, locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.0");
+                signature.setSignatureLibraryRelease(release);
+                // Create holder
+                MatchesHolder holder = new MatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="signalPXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <protein-matches xmlns="http://www.ebi.ac.uk/schema/interpro"
+                                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:schemaLocation="http://www.ebi.ac.uk/schema/interpro
+                                               http://www.ebi.ac.uk/schema/interpro/interpro-5.0.xsd">
+                    <protein>
+                        <sequence md5="52e5277916375709c7865985a7e88f80">MVSTMLSGLVLWLTFGWTPALAYSPRTPDRVSETDIQRLLHGVMEQLGIARPRVEYPAHQAMNLVGPQSIEGGAHEGLQHLGPFGNIPNIVAELTGDNTPKDFSEDQGYPDPPNPCPIGKTDDGCLENTPDTAEFSREFQLHQHLFDPEHDYPGLGKWNKKLLYEKMKGGQRRKRRSVNPYLQGQRLDNVVAKKSVPHFSDEDKDPE</sequence>
+                        <xref id="P01165|7B2_PIG"/>
+                        <matches>
+                            <signalp-match>
+                                <signature name="SignalP-noTM" ac="SignalP-noTM">
+                                    <models>
+                                        <model name="SignalP-noTM" ac="SignalP-noTM"/>
+                                    </models>
+                                    <signature-library-release version="4.0" library="SIGNALP_EUK"/>
+                                </signature>
+                                <locations>
+                                    <signalp-location score="0.903" end="22" start="1"/>
+                                </locations>
+                            </signalp-match>
+                        </matches>
+                    </protein>
+                </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
     </bean>
 
 </beans>
