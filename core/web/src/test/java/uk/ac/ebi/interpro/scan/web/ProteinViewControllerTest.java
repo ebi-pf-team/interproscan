@@ -18,7 +18,7 @@ public class ProteinViewControllerTest {
     @Test
     public void testProtein()    {
         ProteinViewController c = new ProteinViewController();
-        c.proteinFeatures("PLCH2");
+        c.proteinFeatures("P38398");
     }
 
 }

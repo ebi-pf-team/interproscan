@@ -5,31 +5,18 @@
 
 <h3>Domains and sites</h3>
 
-<%--<div class="match-line">--%>
-    <%--<span class="match" style="width: 11.580883px; background-color:#e6c4a8;" title="144 - 180"></span>--%>
-    <%--<span class="match-gap" style="width: 47.2886px; display: block;"></span>--%>
-    <%--<span class="match" style="width: 10.6158085px; background-color:#ff0000;" title="147 - 180"></span>--%>
-    <%--<span class="match-gap" style="width: 26.056984px; display: block;"></span>--%>
-    <%--<span class="match" style="width: 11.902574px; background-color:#ff0000;" title="261 - 298"></span>--%>
-<%--</div>--%>
-
 <c:forEach var="entry" items="${protein.entries}">
     <div>
         <p><a href="IEntry?ac=${entry.ac}">${entry.name}</a> (${entry.ac})</p>
-        <div class="match-line">
+        <div class="match">
             <c:forEach var="location" items="${entry.locations}">
-                <%--TODO: Put WIDTH in separate JSP so can include here and in protein.jsp to set in CSS--%>
-                <%--final int WIDTH = 700; // pixels--%>
-
-                <%--float graphicWidth     = ((matchEnd - matchStart) / proteinLength) * WIDTH;--%>
-
-                <%--TODO: Add checks to see if start is 1 or end is protein.length--%>
-                <%--float graphicLineWidth = 0;--%>
-                <%--if (matchStart > 1) {--%>
-                    <%--graphicLineWidth = (matchStart / proteinLength) * WIDTH;--%>
-                <%--}--%>
-                <span class="match"     style="width: ${((location.end - location.start + 1) / protein.length) * 700}px; background-color:#e6c4a8;" title="${location.start} - ${location.end}"></span>
-                <span class="match-gap" style="width: ${(location.start / protein.length) * 700}px;   display: block;"></span>
+                <%--TODO: Get background-color for match--%>
+                <span class="match"
+                      style="left:  ${(location.start / protein.length) * 100}%;
+                             width: ${((location.end - location.start + 1) / protein.length) * 100}%;
+                             background-color:#ff9999;"
+                      title="${location.start} - ${location.end}">
+                </span>
             </c:forEach>
         </div>
         <%--Not sure why we need this break, but next entry gets messed up without it --%>
@@ -41,7 +28,7 @@
 <div><br/></div>
 
 <%--TODO: Could use HTML5 Canvas to highlight matches in graphic and table when hover over--%>
-<table>
+<table class="match">
     <tr>
         <th>Entry</th>        
         <th>Signature</th>
@@ -50,7 +37,7 @@
     </tr>
     <c:forEach var="entry" items="${protein.entries}">
         <c:forEach var="location" items="${entry.locations}">
-            <tr>
+            <tr class="entry">
                 <td><a href="IEntry?ac=${entry.ac}">${entry.name}</a> (${entry.ac})</td>
                 <td></td>
                 <td align="right">${location.start}</td>
