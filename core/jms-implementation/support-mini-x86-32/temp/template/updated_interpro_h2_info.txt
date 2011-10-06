@@ -1,6 +1,0 @@
-H2 database files 'updated_interpro.h2.db' and 'updated_interpro.zip' contain an updated schema, which includes entry, pathway_xref, go_xref and InterPro releases entities.
-
-To run I5 blackbox version successfully you need to use these new updated once, otherwise you end up with exceptions.
-
-For more details on how to run the refactored implementation of the Installer please visit:
-http://code.google.com/p/interproscan/wiki/DatabaseSchemaUpdate?ts=1311950392&updated=DatabaseSchemaUpdate
