@@ -4,7 +4,7 @@
 <%--Returns main body of protein page for inclusion in DBML--%>
 
 <div class="tab">
-    <div class="Protein_tab">Protein Ho Ho Ho</div>
+    <div class="Protein_tab">Protein</div>
 </div>
 
 <div class="main-box">
