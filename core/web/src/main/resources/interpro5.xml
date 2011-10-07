@@ -1,0 +1,5 @@
+<Context
+        docBase="${deployment.folder}/interpro5-${timestamp}.war"
+        path="/interpro5"
+        distributable="false">
+</Context>

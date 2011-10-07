@@ -3,35 +3,35 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-	<!-- Appenders -->
-	<appender name="console" class="org.apache.log4j.ConsoleAppender">
-		<param name="Target" value="System.out" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
-		</layout>
-	</appender>
+    <!-- Appenders -->
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-5p: %c - %m%n"/>
+        </layout>
+    </appender>
 
-	<!-- 3rdparty Loggers -->
-	<logger name="org.springframework.core">
-		<level value="info" />
-	</logger>
+    <!-- 3rdparty Loggers -->
+    <logger name="org.springframework.core">
+        <level value="${third.party.log.level}"/>
+    </logger>
 
-	<logger name="org.springframework.beans">
-		<level value="info" />
-	</logger>
-	
-	<logger name="org.springframework.context">
-		<level value="info" />
-	</logger>
+    <logger name="org.springframework.beans">
+        <level value="${third.party.log.level}"/>
+    </logger>
 
-	<logger name="org.springframework.web">
-		<level value="info" />
-	</logger>
+    <logger name="org.springframework.context">
+        <level value="${third.party.log.level}"/>
+    </logger>
 
-	<!-- Root Logger -->
-	<root>
-		<priority value="warn" />
-		<appender-ref ref="console" />
-	</root>
-	
+    <logger name="org.springframework.web">
+        <level value="${third.party.log.level}"/>
+    </logger>
+
+    <!-- Root Logger -->
+    <root>
+        <priority value="${default.log.level}"/>
+        <appender-ref ref="console"/>
+    </root>
+
 </log4j:configuration>
