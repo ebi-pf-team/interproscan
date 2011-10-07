@@ -199,6 +199,7 @@
                             <mode>both</mode>
                             <contextFile>${project.build.directory}/interpro5.xml</contextFile>
                             <warFile>${project.build.directory}/interpro5.war</warFile>
+                            <path>/interpro5</path>
                         </configuration>
                     </plugin>
                 </plugins>
