@@ -160,8 +160,6 @@
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.1-alpha-1</version>
                         <configuration>
-                            <!-- Currently need to comment out the warName element below
-                      for the jetty:run-war target to work. -->
                             <warName>interpro5-${timestamp}</warName>
                             <!-- NOTE that the webResources filtering as exemplified
                           below does NOT work recursively - only the contents of the explicit directory
