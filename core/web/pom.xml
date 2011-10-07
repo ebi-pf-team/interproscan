@@ -118,15 +118,33 @@
             <id>tc-test</id>
             <!--
 
-             Profile for deployment to tomcat instance tc-interpro @ tc-test-3.ebi.ac.uk:9750
-             copy the following two files to /ebi/www/jtest/deploy/tc-interpro/
+1. Profile to deploy to tc-test-3.ebi.ac.uk:9750
 
-             target/interpro5-yyyyMMdd-HHmm.war
-             target/interpro5.xml
+(Once-only)
 
-             Deploy using the tomcat manager application:
+Add the following XML to your ~/.m2/settings.xml file, to provide the server credentials:
 
-             http://tc-test-3.ebi.ac.uk:9750/manager/html
+                        <settings>
+                            <servers>
+                                <server>
+                                    <id>tc-test-3</id>
+                                    <username>tomcat</username>
+                                    <password>THE REAL PASSWORD</password>
+                                </server>
+                            </servers>
+                        </settings>
+
+2) Commit your (tested) changes to subversion, wherever you may be building them.
+
+2) OPTIONALLY, If you have changed any code that the web module is dependent upon (e.g. in model):
+
+cd /nfs/seqdb/production/interpro/web/i5; svn up; mvn clean install
+
+
+3) Build and deploy the web application:
+
+cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat:redeploy
+
 
                  -->
             <properties>
@@ -139,56 +157,15 @@
                 <finalName>interpro5</finalName>
                 <plugins>
                     <plugin>
-                        <groupId>com.keyboardsamurais.maven</groupId>
-                        <artifactId>maven-timestamp-plugin</artifactId>
-                        <version>1.0</version>
-                        <configuration>
-                            <propertyName>timestamp</propertyName>
-                            <!-- timestampPattern using SimpleDateFormat format. -->
-                            <timestampPattern>yyyyMMdd-HHmm</timestampPattern>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>create</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.1-alpha-1</version>
                         <configuration>
                             <warName>interpro5</warName>
-                            <!-- NOTE that the webResources filtering as exemplified
-                          below does NOT work recursively - only the contents of the explicit directory
-                          listed are filtered-->
-                            <!--<webResources>-->
-                            <!--<resource>-->
-                            <!--<directory>${basedir}/src/main/webapp/WEB-INF/spring/</directory>-->
-                            <!--<filtering>true</filtering>-->
-                            <!--</resource>-->
-                            <!--</webResources>-->
                         </configuration>
                     </plugin>
 
                     <!-- Plugin to automatically deploy the war file to Tomcat. -->
-
-                    <!--
-                        It is necessary to include the server credentials in your ~/,m2/settings.xml file:
-                        e.g.
-                        <settings>
-                            <servers>
-                                <server>
-                                    <id>tc-test-3</id>
-                                    <username>tomcat</username>
-                                    <password>THE_REAL_PASSWORD</password>
-                                </server>
-                            </servers>
-                        </settings>
-                    -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>tomcat-maven-plugin</artifactId>
