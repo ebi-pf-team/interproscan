@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.web.biomart;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
-import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
 import uk.ac.ebi.interpro.scan.web.ProteinViewController;
 
@@ -17,42 +16,52 @@ import java.util.*;
  * @author  Matthew Fraser
  * @version $Id$
  */
-public class AnalyseBioMartQueryResult {
+public class AnalyseMatchDataResult {
 
-    private static final Logger LOGGER = Logger.getLogger(AnalyseBioMartQueryResult.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AnalyseMatchDataResult.class.getName());
 
-    private final ResourceReader<BioMartQueryRecord> reader;
+    private final ResourceReader<MatchDataRecord> reader;
 
-    public AnalyseBioMartQueryResult(ResourceReader<BioMartQueryRecord> reader) {
+    public AnalyseMatchDataResult(ResourceReader<MatchDataRecord> reader) {
         this.reader = reader;
     }
 
     /**
-     * Convert a collection of {@link uk.ac.ebi.interpro.scan.web.biomart.BioMartQueryRecord} objects
+     * Convert a collection of {@link MatchDataRecord} objects
      * into a {@link uk.ac.ebi.interpro.scan.web.ProteinViewController.SimpleProtein} object using necessary
      * business logic.
      *
+     * @param resource Resource to parse
      * @return The simple protein
      */
-    public ProteinViewController.SimpleProtein parseBioMartQueryOutput(Resource resource) {
+    public ProteinViewController.SimpleProtein parseMatchDataOutput(Resource resource) {
         ProteinViewController.SimpleProtein protein = null;
         String queryOutputText = "";
         String line = "";
 
-        // Example output:
-        // P38398	BRCA1_HUMAN	E40F752DEDF675E2F7C99142EBB2607A	G3DSA:3.30.40.10	Znf_RING/FYVE/PHD	GENE3D	10	85	2.7e-19	IPR013083	Znf_RING/FYVE/PHD	Zinc finger, RING/FYVE/PHD-type	Domain
-        // P38398	BRCA1_HUMAN	E40F752DEDF675E2F7C99142EBB2607A	G3DSA:3.40.50.10190	G3DSA:3.40.50.10190	GENE3D	1648	1754	5.1e-40
-        // P38398	BRCA1_HUMAN	E40F752DEDF675E2F7C99142EBB2607A	G3DSA:3.40.50.10190	G3DSA:3.40.50.10190	GENE3D	1756	1858	0
-        // P38398	BRCA1_HUMAN	E40F752DEDF675E2F7C99142EBB2607A	PB005611	Pfam-B_5611	PfamB	115	238	5.9e-25
-        // P38398	BRCA1_HUMAN	E40F752DEDF675E2F7C99142EBB2607A	PB005611	Pfam-B_5611	PfamB	231	285	5.6e-06
-        // P38398	BRCA1_HUMAN	E40F752DEDF675E2F7C99142EBB2607A	PB005611	Pfam-B_5611	PfamB	281	633	7.60064e-42
-        // P38398	BRCA1_HUMAN	E40F752DEDF675E2F7C99142EBB2607A	PB005611	Pfam-B_5611	PfamB	640	925	1.6e-09
-        // P38398	BRCA1_HUMAN	E40F752DEDF675E2F7C99142EBB2607A	PB005611	Pfam-B_5611	PfamB	995	1196	0
-        // ...
+        /*
+         * Example output:
+         *
+         * PROTEIN_ACCESSION	PROTEIN_ID	PROTEIN_LENGTH	MD5	CRC64	METHOD_AC	METHOD_NAME	METHOD_DATABASE_NAME	POS_FROM	POS_TO	MATCH_SCORE	ENTRY_AC	ENTRY_SHORT_NAME	ENTRY_NAME	ENTRY_TYPE	TAXONOMY_ID	TAXONOMY_SCIENCE_NAME	TAXONOMY_FULL_NAME
+         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	PS50172	BRCT	PROSITE profiles	1756	1855		IPR001357	BRCT	BRCT	Domain	9606	Homo sapiens	Homo sapiens (Human)
+         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	PS00518	ZF_RING_1	PROSITE patterns	39	48		IPR017907	Znf_RING_CS	Zinc finger, RING-type, conserved site	Conserved_site	9606	Homo sapiens	Homo sapiens (Human)
+         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	PB005611	Pfam-B_5611	PfamB	115	238	5.9000000000000110005130767365509328264E-25					9606	Homo sapiens	Homo sapiens (Human)
+         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	PF00533	BRCT	Pfam	1757	1842	1.3000000000000006908481590183164001544E-08	IPR001357	BRCT	BRCT	Domain	9606	Homo sapiens	Homo sapiens (Human)
+         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	PR00493	BRSTCANCERI	PRINTS	1430	1446	2.100002678340298509737490372806090548E-92	IPR002378	Brst_cancerI	Breast cancer type I susceptibility protein	Family	9606	Homo sapiens	Homo sapiens (Human)
+         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	PR00493	BRSTCANCERI	PRINTS	1771	1794	2.100002678340298509737490372806090548E-92	IPR002378	Brst_cancerI	Breast cancer type I susceptibility protein	Family	9606	Homo sapiens	Homo sapiens (Human)
+         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	G3DSA:3.40.50.10190	G3DSA:3.40.50.10190	GENE3D	1648	1754	5.1000000000000426766658650783671814604E-40					9606	Homo sapiens	Homo sapiens (Human)
+         * ...
+         */
 
-        String proteinAc = null;
-        String proteinName = null;
-        Collection<BioMartQueryRecord> records = null;
+        String proteinAc;
+        String proteinId;
+        int proteinLength;
+        String md5;
+        String crc64;
+        int taxId;
+        String taxScienceName;
+        String taxFullName;
+        Collection<MatchDataRecord> records;
 
         try {
             records = reader.read(resource);
@@ -65,15 +74,21 @@ public class AnalyseBioMartQueryResult {
         // Assumption: Query results are for one specific protein accession!
         // Therefore all BioMart output relates to the same protein.
 
-        for (BioMartQueryRecord record : records) {
+        for (MatchDataRecord record : records) {
             // Loop through BioMart query output one line at a time
 
             if (protein == null) {
                 // First line of the query results, so we'll need to initialise the SimpleProtein
                 proteinAc = record.getProteinAc();
-                proteinName = record.getProteinName();
-                int DUMMY_SEQUENCE_LENGTH = 1863;
-                protein = new ProteinViewController.SimpleProtein(proteinAc, "id", proteinName, DUMMY_SEQUENCE_LENGTH); // TODO ID AND SEQ LEN!
+                proteinId = record.getProteinId();
+                proteinLength = record.getProteinLength();
+                md5 = record.getMd5();
+                crc64 = record.getCrc64();
+                taxId = record.getTaxId();
+                taxScienceName = record.getTaxScienceName();
+                taxFullName = record.getTaxFullName();
+                protein = new ProteinViewController.SimpleProtein(proteinAc, proteinId, "Name not available",
+                        proteinLength, md5, crc64, taxId, taxScienceName, taxFullName);
             }
 
             String methodAc = record.getMethodAc();
@@ -81,16 +96,19 @@ public class AnalyseBioMartQueryResult {
             String methodType = record.getMethodType();
             Integer posFrom = record.getPosFrom();
             Integer posTo = record.getPosTo();
+            Double score = record.getScore();
             String entryAc = record.getEntryAc();
+            String entryShortName = record.getEntryShortName();
             String entryName = record.getEntryName();
             String entryType = record.getEntryType();
 
             // Need to eventually associate this match location with the exiting SimpleProtein object
+            // TODO Set score against location? Could be double or NULL, e.g. PROSITE PROFILES
             ProteinViewController.SimpleLocation location = new ProteinViewController.SimpleLocation(posFrom, posTo);
 
             // Has this entry already been added to the protein?
             List<ProteinViewController.SimpleEntry> entries = protein.getEntries();
-            ProteinViewController.SimpleEntry newEntry = new ProteinViewController.SimpleEntry(entryAc, entryName, entryType);
+            ProteinViewController.SimpleEntry newEntry = new ProteinViewController.SimpleEntry(entryAc, entryShortName, entryName, entryType);
             if (entries.contains(newEntry)) {
                 // Entry already exists
                 ProteinViewController.SimpleEntry entry = entries.get(entries.indexOf(newEntry));
@@ -112,7 +130,7 @@ public class AnalyseBioMartQueryResult {
             }
             else {
                 // New entry for this protein, add it to the map
-                ProteinViewController.SimpleEntry entry = new ProteinViewController.SimpleEntry(entryAc, entryName, entryType);
+                ProteinViewController.SimpleEntry entry = new ProteinViewController.SimpleEntry(entryAc, entryShortName, entryName, entryType);
                 ProteinViewController.SimpleSignature signature = new ProteinViewController.SimpleSignature(methodAc, methodName, methodType);
                 signature.addLocation(location);
                 entry.getSignaturesMap().put(methodAc, signature);

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.web.biomart.AnalyseBioMartQueryResult;
-import uk.ac.ebi.interpro.scan.web.biomart.BioMartQueryResourceReader;
-import uk.ac.ebi.interpro.scan.web.biomart.CreateSimpleProteinFromBioMartQuery;
+import uk.ac.ebi.interpro.scan.web.biomart.AnalyseMatchDataResult;
+import uk.ac.ebi.interpro.scan.web.biomart.CreateSimpleProteinFromMatchData;
+import uk.ac.ebi.interpro.scan.web.biomart.MatchDataResourceReader;
 
 import java.io.IOException;
 import java.util.*;
@@ -81,8 +81,8 @@ public class ProteinViewController {
      */
     private SimpleProtein queryByAccession(String ac) throws IOException {
         // TODO: Configure analyser via Spring context
-        AnalyseBioMartQueryResult analyser = new AnalyseBioMartQueryResult(new BioMartQueryResourceReader());
-        CreateSimpleProteinFromBioMartQuery biomart = new CreateSimpleProteinFromBioMartQuery(analyser);
+        AnalyseMatchDataResult analyser = new AnalyseMatchDataResult(new MatchDataResourceReader());
+        CreateSimpleProteinFromMatchData biomart = new CreateSimpleProteinFromMatchData(analyser);
         return biomart.queryByAccession(ac);
 
     }
@@ -146,13 +146,24 @@ public class ProteinViewController {
         private final String id;      // BRCA1_HUMAN
         private final String name;    // eg. Breast cancer type 1 susceptibility
         private final int length;
+        private final String md5;
+        private final String crc64;
+        private final int taxId;
+        private final String taxScienceName;
+        private final String taxFullName;
         private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
 
-        public SimpleProtein(String ac, String id, String name, int length) {
-            this.ac         = ac;
-            this.id         = id;
-            this.name       = name;
-            this.length     = length;
+        public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
+                             int taxId, String taxScienceName, String taxFullName) {
+            this.ac = ac;
+            this.id = id;
+            this.name = name;
+            this.length = length;
+            this.md5 = md5;
+            this.crc64 = crc64;
+            this.taxId = taxId;
+            this.taxScienceName = taxScienceName;
+            this.taxFullName = taxFullName;
         }
 
         public String getAc() {
@@ -169,6 +180,26 @@ public class ProteinViewController {
 
         public int getLength() {
             return length;
+        }
+
+        public String getMd5() {
+            return md5;
+        }
+
+        public String getCrc64() {
+            return crc64;
+        }
+
+        public int getTaxId() {
+            return taxId;
+        }
+
+        public String getTaxScienceName() {
+            return taxScienceName;
+        }
+
+        public String getTaxFullName() {
+            return taxFullName;
         }
 
         public List<SimpleEntry> getEntries() {
@@ -192,7 +223,8 @@ public class ProteinViewController {
                 proteinName   = x.getName();
                 proteinDesc   = x.getDescription();
             }
-            SimpleProtein sp = new SimpleProtein(proteinAc, proteinName, proteinDesc, p.getSequenceLength());
+            SimpleProtein sp = new SimpleProtein(proteinAc, proteinName, proteinDesc, p.getSequenceLength(),
+                    p.getMd5(), null, 0, null,null);// TODO Populate values properly instead of null or 0!
             // Get entries and corresponding signatures
             for (Match m : p.getMatches()) {
                 // Signature
@@ -205,7 +237,7 @@ public class ProteinViewController {
                 }
                 // Entry
                 Entry e = s.getEntry();
-                SimpleEntry se = new SimpleEntry(e.getAccession(), e.getDescription(), e.getType().getName());                
+                SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName());                
                 if (sp.getEntries().contains(se))    {
                     // Entry already exists, so get it
                     se = sp.getEntries().get(sp.getEntries().indexOf(se));
@@ -259,19 +291,25 @@ public class ProteinViewController {
     public final static class SimpleEntry implements Comparable<SimpleEntry>  {
 
         private final String ac;
+        private final String shortName;
         private final String name;
         private final String type;
         private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
         private Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
 
-        public SimpleEntry(String ac, String name, String type) {
+        public SimpleEntry(String ac, String shortName, String name, String type) {
             this.ac         = ac;
+            this.shortName  = shortName;
             this.name       = name;
             this.type       = type;
         }
 
         public String getAc() {
             return ac;
+        }
+
+        public String getShortName() {
+            return shortName;
         }
 
         public String getName() {
