@@ -4,10 +4,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="reader" class="uk.ac.ebi.interpro.scan.web.biomart.BioMartQueryResourceReader"/>
-
-    <bean id="file" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/BioMartQueryResult.dat"/>
+    <bean id="analyser" class="uk.ac.ebi.interpro.scan.web.biomart.AnalyseMatchDataResult">
+        <constructor-arg>
+            <bean class="uk.ac.ebi.interpro.scan.web.biomart.MatchDataResourceReader"/>
+        </constructor-arg>
     </bean>
 
  </beans>

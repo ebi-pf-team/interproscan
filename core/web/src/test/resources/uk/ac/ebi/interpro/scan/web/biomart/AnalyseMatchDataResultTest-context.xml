@@ -4,14 +4,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="parser" class="uk.ac.ebi.interpro.scan.web.biomart.AnalyseBioMartQueryResult">
+    <bean id="parser" class="uk.ac.ebi.interpro.scan.web.biomart.AnalyseMatchDataResult">
         <constructor-arg>
-            <bean class="uk.ac.ebi.interpro.scan.web.biomart.BioMartQueryResourceReader"/>
+            <bean class="uk.ac.ebi.interpro.scan.web.biomart.MatchDataResourceReader"/>
         </constructor-arg>
     </bean>
 
     <bean id="resource" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/BioMartQueryResult.dat"/>
+        <constructor-arg value="data/P38398_matches.tsv"/>
     </bean>
 
  </beans>
