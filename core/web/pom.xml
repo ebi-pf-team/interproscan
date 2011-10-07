@@ -108,7 +108,7 @@
                         <groupId>org.mortbay.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
                         <configuration>
-                            <webApp>${basedir}/target/interpro5.war</webApp>
+                            <webApp>${project.build.directory}/interpro5.war</webApp>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -132,10 +132,11 @@
             <properties>
                 <default.log.level>warn</default.log.level>
                 <third.party.log.level>warn</third.party.log.level>
-                <deployment.folder>/ebi/www/jtest/deploy/tc-interpro</deployment.folder>
+                <deployment.folder>${project.build.directory}</deployment.folder>
             </properties>
 
             <build>
+                <finalName>interpro5</finalName>
                 <plugins>
                     <plugin>
                         <groupId>com.keyboardsamurais.maven</groupId>
@@ -170,6 +171,34 @@
                             <!--<filtering>true</filtering>-->
                             <!--</resource>-->
                             <!--</webResources>-->
+                        </configuration>
+                    </plugin>
+
+                    <!-- Plugin to automatically deploy the war file to Tomcat. -->
+
+                    <!--
+                        It is necessary to include the server credentials in your ~/,m2/settings.xml file:
+                        e.g.
+                        <settings>
+                            <servers>
+                                <server>
+                                    <id>tc-test-3</id>
+                                    <username>tomcat</username>
+                                    <password>THE_REAL_PASSWORD</password>
+                                </server>
+                            </servers>
+                        </settings>
+                    -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>tomcat-maven-plugin</artifactId>
+                        <configuration>
+                            <url>http://tc-test-3.ebi.ac.uk:9750/manager</url>
+                            <server>tc-test-3</server>
+                            <!-- See note above for server credentials -->
+                            <mode>both</mode>
+                            <contextFile>${project.build.directory}/interpro5.xml</contextFile>
+                            <warFile>${project.build.directory}/interpro5-${timestamp}.war</warFile>
                         </configuration>
                     </plugin>
                 </plugins>
