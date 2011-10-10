@@ -10,7 +10,7 @@ import java.util.*;
 
 
 /**
- * Analyse BioMart query results and construct a more understandable
+ * Analyse query results and construct a more understandable
  * {@link uk.ac.ebi.interpro.scan.web.ProteinViewController.SimpleProtein} object.
  *
  * @author  Matthew Fraser
@@ -66,16 +66,16 @@ public class AnalyseMatchDataResult {
         try {
             records = reader.read(resource);
         } catch (IOException e) {
-            LOGGER.error("Could not read from BioMart query resource: " + resource.getDescription());
+            LOGGER.error("Could not read from query resource: " + resource.getDescription());
             e.printStackTrace();
             return null;
         }
 
         // Assumption: Query results are for one specific protein accession!
-        // Therefore all BioMart output relates to the same protein.
+        // Therefore all output relates to the same protein.
 
         for (MatchDataRecord record : records) {
-            // Loop through BioMart query output one line at a time
+            // Loop through query output one line at a time
 
             if (protein == null) {
                 // First line of the query results, so we'll need to initialise the SimpleProtein
@@ -102,7 +102,7 @@ public class AnalyseMatchDataResult {
             String entryName = record.getEntryName();
             String entryType = record.getEntryType();
 
-            // Need to eventually associate this match location with the exiting SimpleProtein object
+            // Need to eventually associate this match location with the existing SimpleProtein object
             // TODO Set score against location? Could be double or NULL, e.g. PROSITE PROFILES
             ProteinViewController.SimpleLocation location = new ProteinViewController.SimpleLocation(posFrom, posTo);
 
@@ -141,7 +141,7 @@ public class AnalyseMatchDataResult {
 
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("BioMart query returned:\n" + queryOutputText);
+            LOGGER.debug("Query returned:\n" + queryOutputText);
         }
 
         // Start to calculate the supermatches for each entry
