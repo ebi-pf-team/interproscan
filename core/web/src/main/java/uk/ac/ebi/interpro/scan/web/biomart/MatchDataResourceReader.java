@@ -9,8 +9,8 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
- * Reads the TSV output from the BioMart query, each output row becomes a Java object.
- * See {@see BioMartQueryRecord}
+ * Reads the TSV output from the web service query, each output row becomes a Java object.
+ * See {@see uk.ac.ebi.interpro.scan.web.biomart.MatchDataRecord}
  *
  * @author  Matthew Fraser
  * @version $Id$
