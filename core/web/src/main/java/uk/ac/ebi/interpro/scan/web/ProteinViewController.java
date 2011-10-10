@@ -432,7 +432,7 @@ public class ProteinViewController {
 
     }
 
-    public final static class SimpleStructuralMatch {
+    public final static class SimpleStructuralMatch implements Comparable<SimpleStructuralMatch> {
 
         private final String databaseName;
         private final String domainId;
@@ -464,6 +464,30 @@ public class ProteinViewController {
 
         public void addLocation(SimpleLocation location) {
             this.locations.add(location);
+        }
+
+        @Override public int compareTo(SimpleStructuralMatch that) {
+            if (this == that) {
+                return 0;
+            }
+            return Collections.min(this.locations).compareTo(Collections.min(that.locations));
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (!(o instanceof SimpleStructuralMatch))
+                return false;
+            if (!this.databaseName.equals(((SimpleStructuralMatch)o).databaseName)) {
+                return false;
+            }
+            if (!this.domainId.equals(((SimpleStructuralMatch)o).domainId)) {
+                return false;
+            }
+            if (!this.classId.equals(((SimpleStructuralMatch)o).classId)) {
+                return false;
+            }
+            return true;
         }
 
 
