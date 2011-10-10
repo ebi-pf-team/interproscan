@@ -64,6 +64,13 @@ public class ProteinViewController {
         //SimpleProtein p = SimpleProtein.valueOf(sampleProtein(id));
         try {
             SimpleProtein p = queryByAccession(id);
+            // TODO: Testing structural features - remove when done
+//            SimpleStructuralMatch m1 = new SimpleStructuralMatch("PDB", "1t29A", "");
+//            m1.addLocation(new SimpleLocation(1, 110));
+//            SimpleStructuralMatch m2 = new SimpleStructuralMatch("CATH", "", "3.30.40.10");
+//            m2.addLocation(new SimpleLocation(1, 103));
+//            p.getStructuralMatches().add(m1);
+//            p.getStructuralMatches().add(m2);
             p.sort();
             return p;
         }
@@ -205,6 +212,10 @@ public class ProteinViewController {
 
         public List<SimpleEntry> getEntries() {
             return entries;
+        }
+
+        public List<SimpleStructuralMatch> getStructuralMatches() {
+            return structuralMatches;
         }
 
         /**

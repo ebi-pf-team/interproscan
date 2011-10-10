@@ -1,7 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!doctype html>
 <html>
-<title>${protein.name} (${protein.ac}) - InterPro</title>
 <head>
+    <%--TODO: see http://html5boilerplate.com/--%>
+    <meta charset="utf-8">
+    <title>${protein.name} (${protein.ac}) - InterPro</title>
+    <meta name="description" content="Protein matches">
+    <meta name="author"      content="InterPro Team, European Bioinformatics Institute">
     <%--<link href="http://www.ebi.ac.uk/inc/css/contents.css"      rel="stylesheet" type="text/css" />--%>
     <%--<link href="http://www.ebi.ac.uk/inc/css/userstyles.css"    rel="stylesheet" type="text/css" />--%>
     <%--<link href="http://wwwdev.ebi.ac.uk/interpro/toolkits/interpro/interpro.css" rel="stylesheet" type="text/css" />--%>
@@ -24,6 +29,7 @@
             border-style:   solid;
             border-color:   gray;
             border-collapse: collapse;
+            display: none;
         }
         table.match th {
             background-color: silver;
@@ -44,18 +50,25 @@
     </style>
 </head>
 <body>
+    <header>
+        <nav>
+            <ol id="toc">
+                <li><a href="#domains-sites">Domains and sites</a></li>
+                <li><a href="#unintegrated-signatures">Unintegrated signatures</a></li>
+                <li><a href="#structural-features">Structural features</a></li>
+                <li><a href="#structural-predictions">Structural predictions</a></li>
+            </ol>
+        </nav>
+    </header>
+    <div id="main" role="main" class="main-content">
+        <div class="contents" id="contents">
+            <%--TODO: Include protein-features.jsp - just for testing at moment--%>
+            <%--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!--%>
+            <c:import url="protein-body.jsp"/>
+        </div>
+    </div>
+    <footer>
 
-<div class="main-content">
-
-<div class="contents" id="contents">
-
-<%--TODO: Include protein-features.jsp - just for testing at moment--%>
-<%--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!--%>
-<c:import url="protein-body.jsp"/>
-
-</div>
-
-</div>
-
+    </footer>
 </body>
 </html>
