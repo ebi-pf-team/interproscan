@@ -359,6 +359,15 @@ public class ProteinViewController {
             if (this == that) {
                 return 0;
             }
+
+            // No supermatch locations (un-integrated signatures)
+            if (this.locations == null || this.locations.size() < 1) {
+                return 1;
+            }
+            else if (that.locations == null || that.locations.size() < 1) {
+                return -1;
+            }
+            
             return Collections.min(this.locations).compareTo(Collections.min(that.locations));
         }
 
