@@ -32,10 +32,9 @@ public class AnalyseStructuralMatchDataResult {
      * necessary business logic.
      *
      * @param resource Resource to parse
-     * @param expectedProteinAc The protein accession expected to be returned by the query
      * @return The list of simple structural matches
      */
-    public List<ProteinViewController.SimpleStructuralMatch> parseStructuralMatchDataOutput(Resource resource, String expectedProteinAc) {
+    public List<ProteinViewController.SimpleStructuralMatch> parseStructuralMatchDataOutput(Resource resource) {
         List<ProteinViewController.SimpleStructuralMatch> structuralMatches = new ArrayList<ProteinViewController.SimpleStructuralMatch>();
         String queryOutputText = "";
         String line = "";
@@ -79,11 +78,6 @@ public class AnalyseStructuralMatchDataResult {
                 //proteinLength = record.getProteinLength();
                 //md5 = record.getMd5();
                 //crc64 = record.getCrc64();
-                if (!proteinAc.equals(expectedProteinAc)) {
-                    // The protein accession returned by the query did not match what was expected, sanity check failed!
-                    throw new IllegalStateException("Query returned results for protein " + proteinAc +
-                            ", but results for " + expectedProteinAc + " were expected.");
-                }
             }
 
             String databaseName = record.getDatabaseName();

@@ -7,6 +7,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.io.*;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.InputStreamResource;
@@ -28,35 +29,53 @@ public class CreateSimpleProteinFromMatchData {
     private static final String STRUCTURAL_MATCH_DATA_URL = "http://wwwdev.ebi.ac.uk/interpro/structure/";
     private static final String EXTENSION = ".tsv";
 
-    private final AnalyseMatchDataResult analyser;
+    private final AnalyseMatchDataResult matchAnalyser;
+    private final AnalyseStructuralMatchDataResult structuralMatchAnalyser;
 
-    public CreateSimpleProteinFromMatchData(AnalyseMatchDataResult analyser) {
-        this.analyser = analyser;
+    public CreateSimpleProteinFromMatchData(AnalyseMatchDataResult matchAnalyser,
+                                            AnalyseStructuralMatchDataResult structuralMatchAnalyser) {
+        this.matchAnalyser = matchAnalyser;
+        this.structuralMatchAnalyser = structuralMatchAnalyser;
     }
 
     public ProteinViewController.SimpleProtein queryByAccession(String ac) throws IOException {
-        return retrieveMatches(createMatchesUrl(ac, true));
+        return retrieveMatches(createMatchesUrl(ac, true), createStructuralMatchesUrl(ac, true));
     }
 
     public ProteinViewController.SimpleProtein queryByMd5(String md5) throws IOException {
-        return retrieveMatches(createMatchesUrl(md5, false));
+        return retrieveMatches(createMatchesUrl(md5, false), createStructuralMatchesUrl(md5, true));
     }
 
-    private ProteinViewController.SimpleProtein retrieveMatches(String url) throws IOException {
+    private ProteinViewController.SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) throws IOException {
+        ProteinViewController.SimpleProtein protein = null;
         HttpClient client = new HttpClient();
         GetMethod method = new GetMethod();
-        method.setURI(new URI(url, false));
+        method.setURI(new URI(matchesUrl, false));
+
         try {
+            // First query for match data
             int statusCode = client.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
-                LOGGER.error("Error getting " + url);
+                LOGGER.error("Error getting " + matchesUrl);
                 throw new HttpException(method.getStatusLine().toString());
             }
-            return this.analyser.parseMatchDataOutput(new InputStreamResource(method.getResponseBodyAsStream()));
+            protein =  this.matchAnalyser.parseMatchDataOutput(new InputStreamResource(method.getResponseBodyAsStream()));
+
+            // Now query for structural match data
+            method.setURI(new URI(structuralMatchesUrl, false));
+            statusCode = client.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK) {
+                LOGGER.error("Error getting " + structuralMatchesUrl);
+                throw new HttpException(method.getStatusLine().toString());
+            }
+
+            protein.setStructuralMatches(this.structuralMatchAnalyser.parseStructuralMatchDataOutput(new InputStreamResource(method.getResponseBodyAsStream())));
         }
         finally {
             method.releaseConnection();
         }
+
+        return protein;
     }
 
     /**
@@ -88,7 +107,7 @@ public class CreateSimpleProteinFromMatchData {
          * @param isProteinAc
          * @return
          */
-        private String createStructuralMatchUrl(String proteinAc, boolean isProteinAc) {
+        private String createStructuralMatchesUrl(String proteinAc, boolean isProteinAc) {
             // TODO: Use MD5 as filter if not proteinAc
             StringBuilder url = new StringBuilder()
                     .append(STRUCTURAL_MATCH_DATA_URL)
