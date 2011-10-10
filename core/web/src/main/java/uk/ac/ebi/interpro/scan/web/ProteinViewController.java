@@ -46,7 +46,7 @@ public class ProteinViewController {
     @RequestMapping(value = "/protein-features/{id}", method = RequestMethod.GET)
     public ModelAndView proteinFeatures(@PathVariable String id) {
         return new ModelAndView("protein-features", "protein", retrieve(id));
-    }    
+    }
 
     /**
      * Returns main body of protein page for inclusion in DBML
@@ -97,8 +97,8 @@ public class ProteinViewController {
 
         // Create protein
         Protein p = new Protein.Builder("MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG\n" +
-                                        "FEITAYIPGIGHNLQEHSVVLVRGGRVKDLPGVRYHIVRGTLDAVGVKDRQQGRSKYGVK\n" +
-                                        "KPK")
+                "FEITAYIPGIGHNLQEHSVVLVRGGRVKDLPGVRYHIVRGTLDAVGVKDRQQGRSKYGVK\n" +
+                "KPK")
                 .crossReference(new ProteinXref("UniProt", "A0A314", "RR12_COFAR", "30S ribosomal protein S12, chloroplastic"))
                 .build();
 
@@ -107,32 +107,32 @@ public class ProteinViewController {
         l1.add(new Hmmer3Match.Hmmer3Location(1, 123, -8.9, 0.28, 63, 82, 114, 73, 94));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("G3DSA:2.40.50.140")
-                    .name("Nucleic acid-binding proteins")
-                    .entry(new Entry.Builder("IPR012340")
-                        .description("Nucleic acid-binding, OB-fold")
-                        .type(EntryType.DOMAIN)
-                        .build())
-                    .build(),
-               -8.9, 0.28, l1));
+                        .name("Nucleic acid-binding proteins")
+                        .entry(new Entry.Builder("IPR012340")
+                                .description("Nucleic acid-binding, OB-fold")
+                                .type(EntryType.DOMAIN)
+                                .build())
+                        .build(),
+                -8.9, 0.28, l1));
 
 
         Entry entry = new Entry.Builder("IPR016027")
-                        .description("Nucleic acid-binding, OB-fold-like")
-                        .type(EntryType.DOMAIN)
-                        .build();
+                .description("Nucleic acid-binding, OB-fold-like")
+                .type(EntryType.DOMAIN)
+                .build();
         Set<Hmmer3Match.Hmmer3Location> l2 = new HashSet<Hmmer3Match.Hmmer3Location>();
         l2.add(new Hmmer3Match.Hmmer3Location(2, 123, -8.9, 0.28, 63, 82, 114, 73, 94));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("SSF50249")
-                    .name("Nucleic_acid_OB")
-                    .entry(entry)
-                    .build(),
+                        .name("Nucleic_acid_OB")
+                        .entry(entry)
+                        .build(),
                 -8.9, 0.28, l2));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("SSF50250")
-                    .name("Made up name")
-                    .entry(entry)
-                    .build(),
+                        .name("Made up name")
+                        .entry(entry)
+                        .build(),
                 -8.9, 0.28, l2));
 
         return p;
@@ -152,6 +152,7 @@ public class ProteinViewController {
         private final String taxScienceName;
         private final String taxFullName;
         private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
+        private final List<SimpleStructuralMatch> structuralMatches = new ArrayList<SimpleStructuralMatch>();
 
         public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
                              int taxId, String taxScienceName, String taxFullName) {
@@ -237,7 +238,7 @@ public class ProteinViewController {
                 }
                 // Entry
                 Entry e = s.getEntry();
-                SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName());                
+                SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName());
                 if (sp.getEntries().contains(se))    {
                     // Entry already exists, so get it
                     se = sp.getEntries().get(sp.getEntries().indexOf(se));
@@ -379,14 +380,14 @@ public class ProteinViewController {
             return type;
         }
 
-        public List<SimpleLocation> getLocations() {        
+        public List<SimpleLocation> getLocations() {
             return locations;
         }
 
         public void addLocation(SimpleLocation location) {
             this.locations.add(location);
         }
-        
+
 
     }
 
@@ -430,5 +431,43 @@ public class ProteinViewController {
         }
 
     }
+
+    public final static class SimpleStructuralMatch {
+
+        private final String databaseName;
+        private final String domainId;
+        private final String classId;
+        private final List<SimpleLocation> locations;
+
+        public SimpleStructuralMatch(String databaseName, String domainId, String classId) {
+            this.databaseName = databaseName;
+            this.domainId = domainId;
+            this.classId = classId;
+            this.locations  = new ArrayList<SimpleLocation>();
+        }
+
+        public String getDatabaseName() {
+            return databaseName;
+        }
+
+        public String getDomainId() {
+            return domainId;
+        }
+
+        public String getClassId() {
+            return classId;
+        }
+
+        public List<SimpleLocation> getLocations() {
+            return locations;
+        }
+
+        public void addLocation(SimpleLocation location) {
+            this.locations.add(location);
+        }
+
+
+    }
+
 
 }
