@@ -12,7 +12,6 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
 
 /**
  * Tests for {@link AnalyseStructuralMatchDataResult}
@@ -33,15 +32,13 @@ public class AnalyseStructuralMatchDataResultTest {
 
     @Test
     public void testParse() throws IOException {
-        String proteinAc = "P38398";
-        List<ProteinViewController.SimpleStructuralMatch> structuralMatches = parser.parseStructuralMatchDataOutput(resource, proteinAc);
+        List<ProteinViewController.SimpleStructuralMatch> structuralMatches = parser.parseStructuralMatchDataOutput(resource);
         assertNotNull(structuralMatches);
         assertEquals(9, structuralMatches.size());
     }
 
     @Test(expected = NullPointerException.class)
     public void testResourceNull() {
-        String proteinAc = "P38398";
-        parser.parseStructuralMatchDataOutput(null, proteinAc);
+        parser.parseStructuralMatchDataOutput(null);
     }
 }
