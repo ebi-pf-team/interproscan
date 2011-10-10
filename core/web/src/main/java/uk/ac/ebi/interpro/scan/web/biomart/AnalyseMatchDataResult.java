@@ -145,9 +145,12 @@ public class AnalyseMatchDataResult {
         }
 
         // Start to calculate the supermatches for each entry
-        // TODO What about for un-integrated signatures? All have entryAc "Unintegrated"...
         List<ProteinViewController.SimpleEntry> entries = protein.getEntries();
         for (ProteinViewController.SimpleEntry entry : entries) {
+            if (entry.getAc() == null || entry.getAc().equals("")) {
+                // Un-integrated signatures do not have supermatches
+                continue;
+            }
             List<ProteinViewController.SimpleLocation> superLocations = new ArrayList<ProteinViewController.SimpleLocation>();
             List<ProteinViewController.SimpleLocation> locations = new ArrayList<ProteinViewController.SimpleLocation>();
             Map<String, ProteinViewController.SimpleSignature> signatures = entry.getSignaturesMap();
