@@ -43,7 +43,7 @@ public class CreateSimpleProteinFromMatchData {
     }
 
     public ProteinViewController.SimpleProtein queryByMd5(String md5) throws IOException {
-        return retrieveMatches(createMatchesUrl(md5, false), createStructuralMatchesUrl(md5, true));
+        return retrieveMatches(createMatchesUrl(md5, false), createStructuralMatchesUrl(md5, false));
     }
 
     private ProteinViewController.SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) throws IOException {
