@@ -9,8 +9,10 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.web.biomart.AnalyseMatchDataResult;
+import uk.ac.ebi.interpro.scan.web.biomart.AnalyseStructuralMatchDataResult;
 import uk.ac.ebi.interpro.scan.web.biomart.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.biomart.MatchDataResourceReader;
+import uk.ac.ebi.interpro.scan.web.biomart.StructuralMatchDataResourceReader;
 
 import java.io.IOException;
 import java.util.*;
@@ -87,10 +89,11 @@ public class ProteinViewController {
      * @return Protein for given accession
      */
     private SimpleProtein queryByAccession(String ac) throws IOException {
-        // TODO: Configure analyser via Spring context
-        AnalyseMatchDataResult analyser = new AnalyseMatchDataResult(new MatchDataResourceReader());
-        CreateSimpleProteinFromMatchData biomart = new CreateSimpleProteinFromMatchData(analyser);
-        return biomart.queryByAccession(ac);
+        // TODO: Configure matchAnalyser via Spring context
+        AnalyseMatchDataResult matchAnalyser = new AnalyseMatchDataResult(new MatchDataResourceReader());
+        AnalyseStructuralMatchDataResult structuralMatchAnalyser = new AnalyseStructuralMatchDataResult(new StructuralMatchDataResourceReader());
+        CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchData(matchAnalyser, structuralMatchAnalyser);
+        return data.queryByAccession(ac);
 
     }
 
@@ -159,7 +162,7 @@ public class ProteinViewController {
         private final String taxScienceName;
         private final String taxFullName;
         private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
-        private final List<SimpleStructuralMatch> structuralMatches = new ArrayList<SimpleStructuralMatch>();
+        private List<SimpleStructuralMatch> structuralMatches = new ArrayList<SimpleStructuralMatch>();
 
         public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
                              int taxId, String taxScienceName, String taxFullName) {
@@ -216,6 +219,10 @@ public class ProteinViewController {
 
         public List<SimpleStructuralMatch> getStructuralMatches() {
             return structuralMatches;
+        }
+
+        public void setStructuralMatches(List<SimpleStructuralMatch> structuralMatches) {
+            this.structuralMatches = structuralMatches;
         }
 
         /**

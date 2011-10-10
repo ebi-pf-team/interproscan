@@ -26,17 +26,22 @@ import static junit.framework.Assert.assertNotNull;
 public class CreateSimpleProteinFromMatchDataTest {
 
     @Resource
-    AnalyseMatchDataResult analyser;
+    AnalyseMatchDataResult matchAnalyser;
+
+    @Resource
+    AnalyseStructuralMatchDataResult structuralMatchAnalyser;
 
     @Test
     public void queryByAccessionTest() throws IOException {
         // TODO: This is really an integration test (relies on web service), so should not be part of usual unit tests - use main() method instead?
-        CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchData(analyser);
+        CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchData(matchAnalyser, structuralMatchAnalyser);
         SimpleProtein protein = data.queryByAccession("P38398");
         assertNotNull(protein);
         assertEquals("P38398", protein.getAc());
         assertEquals("BRCA1_HUMAN", protein.getId());
         assertNotNull(protein.getEntries());
         assertEquals(9, protein.getEntries().size());
+        assertNotNull(protein.getStructuralMatches());
+        assertEquals(9, protein.getStructuralMatches().size());
     }
 }
