@@ -361,10 +361,10 @@ public class ProteinViewController {
             }
 
             // No supermatch locations (un-integrated signatures)
-            if (this.locations == null || this.locations.size() < 1) {
+            if (this.ac == null || this.ac.equals("")) {
                 return 1;
             }
-            else if (that.locations == null || that.locations.size() < 1) {
+            else if (that.ac == null || that.ac.equals("")) {
                 return -1;
             }
             
