@@ -4,6 +4,8 @@
 
 <%--Returns protein features for inclusion in DBML--%>
 
+<%--TODO: Easier if SimpleProtein returns separate collections for each section, even if based on two underlying collections?--%>
+
 <a name="domains-sites"></a>
 <h3>Domains and sites</h3>
 <c:forEach var="entry" items="${protein.entries}">
@@ -52,31 +54,68 @@
 
 <a name="structural-features"></a>
 <h3>Structural features</h3>
-<%--TODO: Show CATH, SCOP and PDB features only --%>
-
-<c:forEach var="structuralMatch" items="${protein.structuralMatches}">
-    <div>
-        <%--TODO: Build URL based on database name: http://www.ebi.ac.uk/pdbe-srv/view/entry/1jm7/summary, http://www.cathdb.info/cathnode/3.30.40.10, http://scop.mrc-lmb.cam.ac.uk/scop/search.cgi?key=g.44.1.1--%>
-        <%--<p><a href="IEntry?ac=${entry.ac}">${entry.name}</a> (${entry.ac})</p>--%>
-        <p><a href="${structuralMatch.domainId}">${structuralMatch.classId}</a> (${structuralMatch.databaseName})</p>
-        <div class="match">
-            <c:forEach var="location" items="${structuralMatch.locations}">
-                <%--TODO: Get background-color for match--%>
-                <h:match proteinLength="${protein.length}"
-                         start="${location.start}"
-                         end="${location.end}"
-                         colour="#ff9999"/>
-            </c:forEach>
+<c:forEach var="match" items="${protein.structuralMatches}">
+    <c:if test="${match.databaseName == 'CATH' or match.databaseName == 'SCOP' or match.databaseName == 'PDB'}">
+        <div>
+            <p>
+                <c:choose>
+                    <c:when test="${match.databaseName == 'CATH'}">
+                        <a href="http://www.cathdb.info/cathnode/${match.classId}">${match.classId}</a>
+                    </c:when>
+                    <c:when test="${match.databaseName == 'SCOP'}">
+                        <a href="http://scop.mrc-lmb.cam.ac.uk/scop/search.cgi?key=${match.classId}">${match.classId}</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="http://www.ebi.ac.uk/pdbe-srv/view/entry/${match.domainId}/summary">${match.domainId}</a>
+                    </c:otherwise>
+                </c:choose>
+                (${match.databaseName})
+            </p>                
+            <div class="match">
+                <c:forEach var="location" items="${match.locations}">
+                    <%--TODO: Get background-color for match--%>
+                    <h:match proteinLength="${protein.length}"
+                             start="${location.start}"
+                             end="${location.end}"
+                             colour="#ff9999"/>
+                </c:forEach>
+            </div>
+            <%--Not sure why we need this break, but next entry gets messed up without it --%>
+            <br/>
         </div>
-        <%--Not sure why we need this break, but next entry gets messed up without it --%>
-        <br/>
-    </div>
+    </c:if>
 </c:forEach>
 
 <a name="structural-predictions"></a>
 <h3>Structural predictions</h3>
-TODO
-<%--TODO: Show ModBase predictions --%>
+<c:forEach var="match" items="${protein.structuralMatches}">
+    <c:if test="${match.databaseName == 'MODBASE' or match.databaseName == 'SWISS-MODEL'}">
+        <div>
+            <p>
+                <c:choose>
+                    <c:when test="${match.databaseName == 'MODBASE'}">
+                        <a href="http://modbase.compbio.ucsf.edu/modbase-cgi-new/model_search.cgi?searchvalue=${protein.ac}&searchproperties=database_id&displaymode=moddetail&searchmode=default">${match.classId}</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="http://swissmodel.expasy.org/repository/?pid=smr03&query_1_input=${protein.ac}">${match.domainId}</a>
+                    </c:otherwise>
+                </c:choose>
+                (${match.databaseName})
+            </p>
+            <div class="match">
+                <c:forEach var="location" items="${match.locations}">
+                    <%--TODO: Get background-color for match--%>
+                    <h:match proteinLength="${protein.length}"
+                             start="${location.start}"
+                             end="${location.end}"
+                             colour="#ff9999"/>
+                </c:forEach>
+            </div>
+            <%--Not sure why we need this break, but next entry gets messed up without it --%>
+            <br/>
+        </div>
+    </c:if>
+</c:forEach>
 
 <%--Not sure why we need this break, but table gets right-aligned without it...--%>
 <div><br/></div>
