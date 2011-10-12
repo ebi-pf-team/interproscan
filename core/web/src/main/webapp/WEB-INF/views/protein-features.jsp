@@ -1,3 +1,4 @@
+<%@ taglib prefix="h"  tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -12,12 +13,10 @@
         <div class="match">
             <c:forEach var="location" items="${entry.locations}">
                 <%--TODO: Get background-color for match--%>
-                <span class="match"
-                      style="left:  ${(location.start / protein.length) * 100}%;
-                             width: ${((location.end - location.start + 1) / protein.length) * 100}%;
-                             background-color:#ff9999;"
-                      title="${location.start} - ${location.end}">
-                </span>
+                <h:match proteinLength="${protein.length}"
+                         start="${location.start}"
+                         end="${location.end}"
+                         colour="#ff9999"/>
             </c:forEach>
         </div>
         <%--Not sure why we need this break, but next entry gets messed up without it --%>
@@ -72,16 +71,13 @@ TODO
         <%--TODO: Build URL based on database name: http://www.ebi.ac.uk/pdbe-srv/view/entry/1jm7/summary, http://www.cathdb.info/cathnode/3.30.40.10, http://scop.mrc-lmb.cam.ac.uk/scop/search.cgi?key=g.44.1.1--%>
         <%--<p><a href="IEntry?ac=${entry.ac}">${entry.name}</a> (${entry.ac})</p>--%>
         <p><a href="${structuralMatch.domainId}">${structuralMatch.classId}</a> (${structuralMatch.databaseName})</p>
-        <%--TODO: Put match stuff in function or separate JSP to avoid repetition--%>
         <div class="match">
             <c:forEach var="location" items="${structuralMatch.locations}">
                 <%--TODO: Get background-color for match--%>
-                <span class="match"
-                      style="left:  ${(location.start / protein.length) * 100}%;
-                             width: ${((location.end - location.start + 1) / protein.length) * 100}%;
-                             background-color:#ff9999;"
-                      title="${location.start} - ${location.end}">
-                </span>
+                <h:match proteinLength="${protein.length}"
+                         start="${location.start}"
+                         end="${location.end}"
+                         colour="#ff9999"/>
             </c:forEach>
         </div>
         <%--Not sure why we need this break, but next entry gets messed up without it --%>
