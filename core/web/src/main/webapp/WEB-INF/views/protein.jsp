@@ -52,19 +52,52 @@
             border-bottom: 1px dotted black;
             cursor:        help;
         }
+        div.entry {
+            background-color: #f9f9f9;     
+        }
+        /* Line for entire length of protein sequence */
         div.match {
-            /* Line for entire length of protein sequence */
             border:     0.1em solid black;  /* Line height and colour */
             position:   relative;
             width:      95%;
         }
+        /* Individual match */
         span.match {
-            /* Individual match */
-            height:     1em;
+            border: 0.1em solid black;
+            /* Round edges: */
+            border-radius:          4px;
+            -moz-border-radius:     4px;
+            -khtml-border-radius:   4px;
+            -webkit-border-radius:  4px;
+            height:     0.5em;
             position:   absolute;
-            top:        -0.5em;             /* Shows in middle of line (0.5 * match.height) */
+            top:        -0.3em;             /* Shows in middle of line (0.5 * match.height plus a bit of judgment by eye) */
             z-index:    1;                  /* Show above match line */
         }
+        /* Colours */
+        span.c-entry {
+            background-color: #ff9999;
+        }
+        span.c-signature {
+            background-color: #aa9999;
+        }
+        span.c-signature-pfam, span.c-signature-pfamb {
+            background-color: #ff721d;
+        }        
+        span.c-structure {
+            background-color: #cc9999;
+        }
+        span.c-entry:hover, span.c-structure:hover, span.c-signature:hover {
+            /* Enlarge slightly: */
+            height:     0.7em;
+            top:        -0.4em;
+            /* Show overlaps */
+            z-index:    5;
+            /* Make it glow: */
+            box-shadow:         0 0 0.5em rgba(0, 0, 255, 1);
+            -webkit-box-shadow: 0 0 0.5em rgba(0, 0, 255, 1);
+            -moz-box-shadow:    0 0 0.5em rgba(0, 0, 255, 1);
+        }        
         table.match {
             border-width:   1px;
             border-style:   solid;
