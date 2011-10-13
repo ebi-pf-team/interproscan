@@ -1,9 +1,10 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
-import uk.ac.ebi.interpro.scan.web.ProteinViewController;
+import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
+import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch;
 
 import java.io.IOException;
 import java.util.*;
@@ -11,7 +12,7 @@ import java.util.*;
 
 /**
 * Analyse query results and construct a more understandable list of
-* {@link uk.ac.ebi.interpro.scan.web.ProteinViewController.SimpleStructuralMatch} objects.
+* {@link uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch} objects.
 *
 * @author  Matthew Fraser
 * @version $Id$
@@ -28,14 +29,14 @@ public class AnalyseStructuralMatchDataResult {
 
     /**
      * Convert a collection of {@link StructuralMatchDataRecord} objects
-     * into a list of {@link uk.ac.ebi.interpro.scan.web.ProteinViewController.SimpleStructuralMatch} objects using
+     * into a list of {@link uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch} objects using
      * necessary business logic.
      *
      * @param resource Resource to parse
      * @return The list of simple structural matches
      */
-    public List<ProteinViewController.SimpleStructuralMatch> parseStructuralMatchDataOutput(Resource resource) {
-        List<ProteinViewController.SimpleStructuralMatch> structuralMatches = new ArrayList<ProteinViewController.SimpleStructuralMatch>();
+    public List<SimpleStructuralMatch> parseStructuralMatchDataOutput(Resource resource) {
+        List<SimpleStructuralMatch> structuralMatches = new ArrayList<SimpleStructuralMatch>();
         String queryOutputText = "";
         String line = "";
 
@@ -86,13 +87,13 @@ public class AnalyseStructuralMatchDataResult {
             Integer posFrom = record.getPosFrom();
             Integer posTo = record.getPosTo();
 
-            ProteinViewController.SimpleStructuralMatch newStructuralMatch = new ProteinViewController.SimpleStructuralMatch(databaseName, domainId, classId);
-            ProteinViewController.SimpleLocation newLocation = new ProteinViewController.SimpleLocation(posFrom, posTo);
+            SimpleStructuralMatch newStructuralMatch = new SimpleStructuralMatch(databaseName, domainId, classId);
+            SimpleLocation newLocation = new SimpleLocation(posFrom, posTo);
 
             // Has this structural match already been added to the list?
             if (structuralMatches.contains(newStructuralMatch)) {
                 // Structural match already exists, just add the location
-                ProteinViewController.SimpleStructuralMatch structuralMatch = structuralMatches.get(structuralMatches.indexOf(newStructuralMatch));
+                SimpleStructuralMatch structuralMatch = structuralMatches.get(structuralMatches.indexOf(newStructuralMatch));
                 structuralMatch.addLocation(newLocation);
             }
             else {

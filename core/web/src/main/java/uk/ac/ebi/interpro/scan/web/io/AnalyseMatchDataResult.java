@@ -1,9 +1,12 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
-import uk.ac.ebi.interpro.scan.web.ProteinViewController;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
+import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
+import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
+import uk.ac.ebi.interpro.scan.web.model.SimpleSignature;
 
 import java.io.IOException;
 import java.util.*;
@@ -11,7 +14,7 @@ import java.util.*;
 
 /**
  * Analyse query results and construct a more understandable
- * {@link uk.ac.ebi.interpro.scan.web.ProteinViewController.SimpleProtein} object.
+ * {@link SimpleProtein} object.
  *
  * @author  Matthew Fraser
  * @version $Id$
@@ -28,14 +31,14 @@ public class AnalyseMatchDataResult {
 
     /**
      * Convert a collection of {@link MatchDataRecord} objects
-     * into a {@link uk.ac.ebi.interpro.scan.web.ProteinViewController.SimpleProtein} object using necessary
+     * into a {@link SimpleProtein} object using necessary
      * business logic.
      *
      * @param resource Resource to parse
      * @return The simple protein
      */
-    public ProteinViewController.SimpleProtein parseMatchDataOutput(Resource resource) {
-        ProteinViewController.SimpleProtein protein = null;
+    public SimpleProtein parseMatchDataOutput(Resource resource) {
+        SimpleProtein protein = null;
         String queryOutputText = "";
         String line = "";
 
@@ -87,13 +90,13 @@ public class AnalyseMatchDataResult {
                 taxId = record.getTaxId();
                 taxScienceName = record.getTaxScienceName();
                 taxFullName = record.getTaxFullName();
-                protein = new ProteinViewController.SimpleProtein(proteinAc, proteinId, "Name not available",
+                protein = new SimpleProtein(proteinAc, proteinId, "Name not available",
                         proteinLength, md5, crc64, taxId, taxScienceName, taxFullName);
             }
 
             String methodAc = record.getMethodAc();
             String methodName = record.getMethodName();
-            String methodType = record.getMethodType();
+            String methodDatabase = record.getMethodDatabase();
             Integer posFrom = record.getPosFrom();
             Integer posTo = record.getPosTo();
             Double score = record.getScore();
@@ -104,25 +107,26 @@ public class AnalyseMatchDataResult {
 
             // Need to eventually associate this match location with the existing SimpleProtein object
             // TODO Set score against location? Could be double or NULL, e.g. PROSITE PROFILES
-            ProteinViewController.SimpleLocation location = new ProteinViewController.SimpleLocation(posFrom, posTo);
+            SimpleLocation location = new SimpleLocation(posFrom, posTo);
 
             // Has this entry already been added to the protein?
-            List<ProteinViewController.SimpleEntry> entries = protein.getEntries();
-            ProteinViewController.SimpleEntry newEntry = new ProteinViewController.SimpleEntry(entryAc, entryShortName, entryName, entryType);
+            List<SimpleEntry> entries = protein.getEntries();
+            SimpleEntry newEntry = new SimpleEntry(entryAc, entryShortName, entryName, entryType);
             if (entries.contains(newEntry)) {
                 // Entry already exists
-                ProteinViewController.SimpleEntry entry = entries.get(entries.indexOf(newEntry));
+                SimpleEntry entry = entries.get(entries.indexOf(newEntry));
 
                 // Has this signature already been added to the entry?
-                Map<String, ProteinViewController.SimpleSignature> signatures = entry.getSignaturesMap();
+                Map<String, SimpleSignature> signatures = entry.getSignaturesMap();
                 if (signatures.containsKey(methodAc)) {
                     // Signature already exists
-                    ProteinViewController.SimpleSignature signature = signatures.get(methodAc);
+                    SimpleSignature signature = signatures.get(methodAc);
                     signature.addLocation(location);
                 }
                 else {
                     // New signature for this entry, add it to the map
-                    ProteinViewController.SimpleSignature signature = new ProteinViewController.SimpleSignature(methodAc, methodName, methodType);
+                    SimpleSignature signature =
+                            new SimpleSignature(methodAc, methodName, methodDatabase);
                     signature.addLocation(location);
                     signatures.put(methodAc, signature);
                 }
@@ -130,8 +134,9 @@ public class AnalyseMatchDataResult {
             }
             else {
                 // New entry for this protein, add it to the map
-                ProteinViewController.SimpleEntry entry = new ProteinViewController.SimpleEntry(entryAc, entryShortName, entryName, entryType);
-                ProteinViewController.SimpleSignature signature = new ProteinViewController.SimpleSignature(methodAc, methodName, methodType);
+                SimpleEntry entry = new SimpleEntry(entryAc, entryShortName, entryName, entryType);
+                SimpleSignature signature =
+                        new SimpleSignature(methodAc, methodName, methodDatabase);
                 signature.addLocation(location);
                 entry.getSignaturesMap().put(methodAc, signature);
                 entries.add(entry);
@@ -145,22 +150,22 @@ public class AnalyseMatchDataResult {
         }
 
         // Start to calculate the supermatches for each entry
-        List<ProteinViewController.SimpleEntry> entries = protein.getEntries();
-        for (ProteinViewController.SimpleEntry entry : entries) {
+        List<SimpleEntry> entries = protein.getEntries();
+        for (SimpleEntry entry : entries) {
             if (entry.getAc() == null || entry.getAc().equals("")) {
                 // Un-integrated signatures do not have supermatches
                 continue;
             }
-            List<ProteinViewController.SimpleLocation> superLocations = new ArrayList<ProteinViewController.SimpleLocation>();
-            List<ProteinViewController.SimpleLocation> locations = new ArrayList<ProteinViewController.SimpleLocation>();
-            Map<String, ProteinViewController.SimpleSignature> signatures = entry.getSignaturesMap();
-            for (ProteinViewController.SimpleSignature signature: signatures.values()) {
+            List<SimpleLocation> superLocations = new ArrayList<SimpleLocation>();
+            List<SimpleLocation> locations = new ArrayList<SimpleLocation>();
+            Map<String, SimpleSignature> signatures = entry.getSignaturesMap();
+            for (SimpleSignature signature: signatures.values()) {
                 locations.addAll(signature.getLocations());
             }
             Collections.sort(locations); // Ordered list of all locations for this entry
             Integer superPosStart = null;
             Integer superPosEnd = null;
-            for (ProteinViewController.SimpleLocation location : locations) {
+            for (SimpleLocation location : locations) {
                 // Loop through locations, ordered by start position then end position (ascending)
                 if (superPosStart == null) {
                     // Looking at the first location
@@ -179,12 +184,12 @@ public class AnalyseMatchDataResult {
                 else {
                     // Doesn't overlap with the current supermatch under construction, so can add that supermatch and
                     // begin constructing the next one.
-                    superLocations.add(new ProteinViewController.SimpleLocation(superPosStart, superPosEnd));
+                    superLocations.add(new SimpleLocation(superPosStart, superPosEnd));
                     superPosStart = posStart;
                     superPosEnd = posEnd;
                 }
             }
-            superLocations.add(new ProteinViewController.SimpleLocation(superPosStart, superPosEnd)); // Don't forget the final supermatch
+            superLocations.add(new SimpleLocation(superPosStart, superPosEnd)); // Don't forget the final supermatch
             Collections.sort(superLocations);
             entry.setLocations(superLocations); // Add the supermatches to this entry
         }

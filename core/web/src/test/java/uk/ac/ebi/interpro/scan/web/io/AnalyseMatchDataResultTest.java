@@ -1,10 +1,10 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.web.ProteinViewController;
+import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class AnalyseMatchDataResultTest {
 
     @Test
     public void testParse() throws IOException {
-        ProteinViewController.SimpleProtein protein = parser.parseMatchDataOutput(resource);
+        SimpleProtein protein = parser.parseMatchDataOutput(resource);
         assertNotNull(protein);
         assertEquals("P38398", protein.getAc());
         assertEquals("BRCA1_HUMAN", protein.getId());

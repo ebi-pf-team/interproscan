@@ -4,11 +4,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
+import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -31,25 +31,25 @@ public class ProteinViewControllerTest {
 
     @Test
     public void testSimpleEntrySort() {
-        List<ProteinViewController.SimpleEntry> entries = new ArrayList<ProteinViewController.SimpleEntry>();
+        List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
 
-        ProteinViewController.SimpleEntry entry1 = new ProteinViewController.SimpleEntry("IPR000001", "Kringle", "Name not available", "Domain");
-        List<ProteinViewController.SimpleLocation> locations1 = new ArrayList<ProteinViewController.SimpleLocation>();
-        ProteinViewController.SimpleLocation location1 = new ProteinViewController.SimpleLocation(55, 66);
+        SimpleEntry entry1 = new SimpleEntry("IPR000001", "Kringle", "Name not available", "Domain");
+        List<SimpleLocation> locations1 = new ArrayList<SimpleLocation>();
+        SimpleLocation location1 = new SimpleLocation(55, 66);
         locations1.add(location1);
         entry1.setLocations(locations1);
         entries.add(entry1);
 
-        ProteinViewController.SimpleEntry entry2 = new ProteinViewController.SimpleEntry(null, "Unintegrated", "Name not available", null);
-        List<ProteinViewController.SimpleLocation> locations2 = new ArrayList<ProteinViewController.SimpleLocation>();
-        ProteinViewController.SimpleLocation location2 = new ProteinViewController.SimpleLocation(33, 44);
+        SimpleEntry entry2 = new SimpleEntry(null, "Unintegrated", "Name not available", null);
+        List<SimpleLocation> locations2 = new ArrayList<SimpleLocation>();
+        SimpleLocation location2 = new SimpleLocation(33, 44);
         locations2.add(location2);
         entry2.setLocations(locations2);
         entries.add(entry2);
 
-        ProteinViewController.SimpleEntry entry3 = new ProteinViewController.SimpleEntry("IPR000007", "Tubby_C", "Name not available", "Domain");
-        List<ProteinViewController.SimpleLocation> locations3 = new ArrayList<ProteinViewController.SimpleLocation>();
-        ProteinViewController.SimpleLocation location3 = new ProteinViewController.SimpleLocation(11, 22);
+        SimpleEntry entry3 = new SimpleEntry("IPR000007", "Tubby_C", "Name not available", "Domain");
+        List<SimpleLocation> locations3 = new ArrayList<SimpleLocation>();
+        SimpleLocation location3 = new SimpleLocation(11, 22);
         locations3.add(location3);
         entry3.setLocations(locations3);
         entries.add(entry3);
@@ -61,5 +61,58 @@ public class ProteinViewControllerTest {
         assertEquals("IPR000001", entries.get(1).getAc());
         assertEquals(null, entries.get(2).getAc());
     }
+
+    /**
+     * Returns protein for given accession number
+     *
+     * @param  ac   Protein accession, for example "P38398"
+     * @return Protein for given accession
+     */
+    private Protein sampleProtein(String ac) {
+
+        // Create protein
+        Protein p = new Protein.Builder("MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG\n" +
+                "FEITAYIPGIGHNLQEHSVVLVRGGRVKDLPGVRYHIVRGTLDAVGVKDRQQGRSKYGVK\n" +
+                "KPK")
+                .crossReference(new ProteinXref("UniProt", "A0A314", "RR12_COFAR", "30S ribosomal protein S12, chloroplastic"))
+                .build();
+
+        // Add matches
+        Set<Hmmer3Match.Hmmer3Location> l1 = new HashSet<Hmmer3Match.Hmmer3Location>();
+        l1.add(new Hmmer3Match.Hmmer3Location(1, 123, -8.9, 0.28, 63, 82, 114, 73, 94));
+        p.addMatch(new Hmmer3Match(
+                new Signature.Builder("G3DSA:2.40.50.140")
+                        .name("Nucleic acid-binding proteins")
+                        .entry(new Entry.Builder("IPR012340")
+                                .description("Nucleic acid-binding, OB-fold")
+                                .type(EntryType.DOMAIN)
+                                .build())
+                        .build(),
+                -8.9, 0.28, l1));
+
+
+        Entry entry = new Entry.Builder("IPR016027")
+                .description("Nucleic acid-binding, OB-fold-like")
+                .type(EntryType.DOMAIN)
+                .build();
+        Set<Hmmer3Match.Hmmer3Location> l2 = new HashSet<Hmmer3Match.Hmmer3Location>();
+        l2.add(new Hmmer3Match.Hmmer3Location(2, 123, -8.9, 0.28, 63, 82, 114, 73, 94));
+        p.addMatch(new Hmmer3Match(
+                new Signature.Builder("SSF50249")
+                        .name("Nucleic_acid_OB")
+                        .entry(entry)
+                        .build(),
+                -8.9, 0.28, l2));
+        p.addMatch(new Hmmer3Match(
+                new Signature.Builder("SSF50250")
+                        .name("Made up name")
+                        .entry(entry)
+                        .build(),
+                -8.9, 0.28, l2));
+
+        return p;
+
+    }
+    
 
 }
