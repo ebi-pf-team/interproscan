@@ -1,10 +1,10 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.web.ProteinViewController;
+import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class AnalyseStructuralMatchDataResultTest {
 
     @Test
     public void testParse() throws IOException {
-        List<ProteinViewController.SimpleStructuralMatch> structuralMatches = parser.parseStructuralMatchDataOutput(resource);
+        List<SimpleStructuralMatch> structuralMatches = parser.parseStructuralMatchDataOutput(resource);
         assertNotNull(structuralMatches);
         assertEquals(9, structuralMatches.size());
     }

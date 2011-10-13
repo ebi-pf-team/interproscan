@@ -4,13 +4,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="parser" class="uk.ac.ebi.interpro.scan.web.biomart.AnalyseStructuralMatchDataResult">
-        <constructor-arg>
-            <bean class="uk.ac.ebi.interpro.scan.web.biomart.StructuralMatchDataResourceReader"/>
-        </constructor-arg>
-    </bean>
+    <bean id="reader" class="uk.ac.ebi.interpro.scan.web.io.StructuralMatchDataResourceReader"/>
 
-    <bean id="resource" class="org.springframework.core.io.ClassPathResource">
+    <bean id="file" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="data/P38398_structural_matches.tsv"/>
     </bean>
 

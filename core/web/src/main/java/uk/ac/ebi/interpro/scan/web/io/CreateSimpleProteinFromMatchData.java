@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -7,11 +7,10 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.io.*;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.InputStreamResource;
-import uk.ac.ebi.interpro.scan.web.ProteinViewController;
+import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 /**
 * TODO: Add class description
@@ -38,16 +37,16 @@ public class CreateSimpleProteinFromMatchData {
         this.structuralMatchAnalyser = structuralMatchAnalyser;
     }
 
-    public ProteinViewController.SimpleProtein queryByAccession(String ac) throws IOException {
+    public SimpleProtein queryByAccession(String ac) throws IOException {
         return retrieveMatches(createMatchesUrl(ac, true), createStructuralMatchesUrl(ac, true));
     }
 
-    public ProteinViewController.SimpleProtein queryByMd5(String md5) throws IOException {
+    public SimpleProtein queryByMd5(String md5) throws IOException {
         return retrieveMatches(createMatchesUrl(md5, false), createStructuralMatchesUrl(md5, false));
     }
 
-    private ProteinViewController.SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) throws IOException {
-        ProteinViewController.SimpleProtein protein = null;
+    private SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) throws IOException {
+        SimpleProtein protein = null;
         HttpClient client = new HttpClient();
         GetMethod method = new GetMethod();
         method.setURI(new URI(matchesUrl, false));
