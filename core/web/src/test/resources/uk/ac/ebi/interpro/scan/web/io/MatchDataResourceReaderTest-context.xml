@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="reader" class="uk.ac.ebi.interpro.scan.web.biomart.MatchDataResourceReader"/>
+    <bean id="reader" class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
 
     <bean id="file" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="data/P38398_matches.tsv"/>

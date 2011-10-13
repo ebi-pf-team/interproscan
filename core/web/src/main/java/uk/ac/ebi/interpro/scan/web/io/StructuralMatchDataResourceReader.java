@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.AbstractResourceReader;

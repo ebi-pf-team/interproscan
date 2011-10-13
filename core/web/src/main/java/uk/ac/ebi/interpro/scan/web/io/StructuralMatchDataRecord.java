@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;

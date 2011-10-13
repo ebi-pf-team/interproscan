@@ -48,6 +48,10 @@
         });
     </script>
     <style type="text/css">
+        abbr {
+            border-bottom: 1px dotted black;
+            cursor:        help;
+        }
         div.match {
             /* Line for entire length of protein sequence */
             border:     0.1em solid black;  /* Line height and colour */

@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.AbstractResourceReader;
@@ -41,7 +41,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
         String crc64;
         String methodAc;
         String methodName;
-        String methodType;
+        String methodDatabase;
         int posFrom;
         int posTo;
         Double score;
@@ -63,7 +63,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
         crc64 = scanner.next();
         methodAc = scanner.next();
         methodName = scanner.next();
-        methodType = scanner.next();
+        methodDatabase = scanner.next();
         posFrom = scanner.nextInt();
         posTo = scanner.nextInt();
 
@@ -100,7 +100,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
         taxFullName = scanner.next();
 
         return new MatchDataRecord(proteinAc, proteinId, proteinLength, md5, crc64,
-                methodAc, methodName, methodType,
+                methodAc, methodName, methodDatabase,
                 posFrom, posTo, score,
                 entryAc, entryShortName, entryName, entryType,
                 taxId, taxScienceName, taxFullName);

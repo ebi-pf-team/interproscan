@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.web.biomart;
+package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -43,7 +43,7 @@ public final class MatchDataRecord {
     private final String crc64;
     private final String methodAc;
     private final String methodName;
-    private final String methodType;
+    private final String methodDatabase;
     private final int posFrom;
     private final int posTo;
     private final Double score; // Could be NULL
@@ -56,7 +56,7 @@ public final class MatchDataRecord {
     private final String taxFullName;
 
     public MatchDataRecord(String proteinAc, String proteinId, int proteinLength, String md5, String crc64,
-                              String methodAc, String methodName, String methodType,
+                              String methodAc, String methodName, String methodDatabase,
                               int posFrom, int posTo, Double score,
                               String entryAc, String entryShortName, String entryName, String entryType,
                               int taxId, String taxScienceName, String taxFullName){
@@ -67,7 +67,7 @@ public final class MatchDataRecord {
         this.crc64 = crc64;
         this.methodAc = methodAc;
         this.methodName = methodName;
-        this.methodType = methodType;
+        this.methodDatabase = methodDatabase;
         this.posFrom = posFrom;
         this.posTo = posTo;
         this.score = score;
@@ -108,8 +108,8 @@ public final class MatchDataRecord {
         return methodName;
     }
 
-    public String getMethodType() {
-        return methodType;
+    public String getMethodDatabase() {
+        return methodDatabase;
     }
 
     public int getPosFrom() {
@@ -168,7 +168,7 @@ public final class MatchDataRecord {
                 .append(crc64, r.crc64)
                 .append(methodAc, r.methodAc)
                 .append(methodName, r.methodName)
-                .append(methodType, r.methodType)
+                .append(methodDatabase, r.methodDatabase)
                 .append(posFrom, r.posFrom)
                 .append(posTo, r.posTo)
                 .append(score, r.score)
@@ -192,7 +192,7 @@ public final class MatchDataRecord {
                 .append(crc64)
                 .append(methodAc)
                 .append(methodName)
-                .append(methodType)
+                .append(methodDatabase)
                 .append(posFrom)
                 .append(posTo)
                 .append(score)

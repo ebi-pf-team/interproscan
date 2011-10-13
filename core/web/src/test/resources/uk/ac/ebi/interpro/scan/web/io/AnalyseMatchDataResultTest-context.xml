@@ -4,9 +4,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="parser" class="uk.ac.ebi.interpro.scan.web.biomart.AnalyseMatchDataResult">
+    <bean id="parser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult">
         <constructor-arg>
-            <bean class="uk.ac.ebi.interpro.scan.web.biomart.MatchDataResourceReader"/>
+            <bean class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
         </constructor-arg>
     </bean>
 
