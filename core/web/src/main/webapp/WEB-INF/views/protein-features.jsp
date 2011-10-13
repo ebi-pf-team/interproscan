@@ -8,6 +8,7 @@
 
 <a name="domains-sites"></a>
 <h3>Domains and sites</h3>
+<div id="section-domains-sites">
 <c:forEach var="entry" items="${protein.entries}">
     <c:if test="${not empty entry.type}">
     <div>
@@ -21,11 +22,30 @@
                          colour="#ff9999"/>
             </c:forEach>
         </div>
+        <div id="${entry.ac}-signatures" class="entry-signatures">
+        <c:forEach var="signature" items="${entry.signatures}">
+            <div>
+                <p><a href="ISignature?ac=${signature.ac}">${signature.name}</a> (${signature.ac})</p>
+                <div class="match">
+                    <c:forEach var="location" items="${signature.locations}">
+                        <%--TODO: Get background-color for match--%>
+                        <h:match proteinLength="${protein.length}"
+                                 start="${location.start}"
+                                 end="${location.end}"
+                                 colour="#aa9999"/>
+                    </c:forEach>
+                </div>
+                <%--Not sure why we need this break, but next entry gets messed up without it --%>
+                <br/>
+            </div>
+        </c:forEach>
+        </div>
         <%--Not sure why we need this break, but next entry gets messed up without it --%>
         <br/>
     </div>
     </c:if>
 </c:forEach>
+</div>
 
 <a name="unintegrated-signatures"></a>
 <h3>Unintegrated signatures</h3>
