@@ -22,9 +22,15 @@ import java.io.IOException;
  * @version $Id$
  */
 @Controller
+@RequestMapping(value = "/proteins", method = RequestMethod.GET)
 public class ProteinViewController {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinViewController.class.getName());
+
+    @RequestMapping
+    public String index() {
+        return "proteins";
+    }
 
     /**
      * Returns protein page.
@@ -32,20 +38,9 @@ public class ProteinViewController {
      * @param  id   Protein accession or MD5 checksum, for example "P38398"
      * @return Protein page
      */
-    @RequestMapping(value = "/protein/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}")
     public ModelAndView protein(@PathVariable String id) {
         return new ModelAndView("protein", "protein", retrieve(id));
-    }
-
-    /**
-     * Returns protein features for inclusion in DBML
-     *
-     * @param  id   Protein accession or MD5 checksum, for example "P38398"
-     * @return Protein features for inclusion in DBML
-     */
-    @RequestMapping(value = "/protein-features/{id}", method = RequestMethod.GET)
-    public ModelAndView proteinFeatures(@PathVariable String id) {
-        return new ModelAndView("protein-features", "protein", retrieve(id));
     }
 
     /**
@@ -54,9 +49,20 @@ public class ProteinViewController {
      * @param  id   Protein accession or MD5 checksum, for example "P38398"
      * @return Main body of protein page for inclusion in DBML
      */
-    @RequestMapping(value = "/protein-body/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/body")
     public ModelAndView proteinBody(@PathVariable String id) {
         return new ModelAndView("protein-body", "protein", retrieve(id));
+    }    
+
+    /**
+     * Returns protein features for inclusion in DBML
+     *
+     * @param  id   Protein accession or MD5 checksum, for example "P38398"
+     * @return Protein features for inclusion in DBML
+     */
+    @RequestMapping(value = "/{id}/features")
+    public ModelAndView proteinFeatures(@PathVariable String id) {
+        return new ModelAndView("protein-features", "protein", retrieve(id));
     }
 
     private SimpleProtein retrieve(String id) {
