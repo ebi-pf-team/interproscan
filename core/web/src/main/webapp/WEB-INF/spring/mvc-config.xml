@@ -7,7 +7,10 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
 	<!-- Configures the @Controller programming model -->
-	<mvc:annotation-driven />
+	<mvc:annotation-driven />        
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
 
 	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/views directory -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

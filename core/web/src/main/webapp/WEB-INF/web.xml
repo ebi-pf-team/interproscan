@@ -2,6 +2,9 @@
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    
+    <!--Set Pet Clinic for example of large application: -->
+    <!--https://src.springframework.org/svn/spring-samples/petclinic/trunk/src/main/webapp/WEB-INF/-->
 
 	<!-- Handles all requests into the application -->
 	<servlet>
@@ -18,7 +21,12 @@
 
 	<servlet-mapping>
 		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
-		<url-pattern>/app/*</url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+
+	<!-- Disables Servlet Container welcome file handling. Needed for compatibility with Servlet 3.0 and Tomcat 7.0 -->
+	<welcome-file-list>
+		<welcome-file></welcome-file>
+	</welcome-file-list>    
 
 </web-app>
