@@ -37,7 +37,13 @@
                     <h:location protein="${protein}" location="${location}" colourClass="c-entry"/>
                 </c:forEach>
             </div>
-            <div id="${entry.ac}-signatures" class="entry-signatures">
+            <%--TODO: Does this need CDATA?--%>
+            <%--Add show/hide button--%>
+            <c:set var="containerId" value="${entry.ac}-signatures"/>
+            <script type="text/javascript">
+                //createSingleEntryShowHideButton('${containerId}');
+            </script>
+            <div id="${containerId}" class="entry-signatures">
                 <c:forEach var="signature" items="${entry.signatures}">
                     <h:signature protein="${protein}"
                                  signature="${signature}"
