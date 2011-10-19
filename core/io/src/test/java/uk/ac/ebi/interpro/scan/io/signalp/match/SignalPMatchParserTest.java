@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.signalp.match;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -20,8 +19,6 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public class SignalPMatchParserTest extends TestCase {
-
-    private static final Logger LOGGER = Logger.getLogger(SignalPMatchParserTest.class.getName());
 
     @Test
     public void testParse() throws IOException {
