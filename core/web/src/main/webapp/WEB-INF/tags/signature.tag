@@ -4,6 +4,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ attribute name="protein"   required="true" type="uk.ac.ebi.interpro.scan.web.model.SimpleProtein" %>
 <%@ attribute name="signature" required="true" type="uk.ac.ebi.interpro.scan.web.model.SimpleSignature" %>
+<%@ attribute name="entryTypeIcon"  required="false" %>
+<%@ attribute name="entryTypeTitle" required="false" %>
 
 <div>
     <p>
@@ -28,7 +30,12 @@
                 </c:otherwise>
             </c:choose>
         </c:set>
-        <a href="ISignature?ac=${signature.ac}">${signature.name}</a> (<abbr title="${desc}">${db}</abbr>: ${signature.ac})
+        <c:if test="${not empty entryTypeIcon}">
+            <%--TODO: Make icon stuff a tag--%>
+            <img src="/interpro/images/ico_type_${entryTypeIcon}_small.png"
+                 alt="${entryTypeTitle}" title="${entryTypeTitle}"/>
+        </c:if>
+        <a href="ISignature?ac=${signature.ac}" title="${entryTypeTitle}">${signature.name}</a> (<abbr title="${desc}">${db}</abbr>: ${signature.ac})
     </p>
     <div class="match">
         <c:forEach var="location" items="${signature.locations}">
