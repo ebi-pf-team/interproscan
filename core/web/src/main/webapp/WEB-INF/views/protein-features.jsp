@@ -11,22 +11,43 @@
 <div id="section-domains-sites">
 <c:forEach var="entry" items="${protein.entries}">
     <c:if test="${not empty entry.type}">
-    <div class="entry">
-        <p><a href="IEntry?ac=${entry.ac}">${entry.name}</a> (${entry.ac})</p>
-        <div class="match">
-            <c:forEach var="location" items="${entry.locations}">
-                <%--TODO: Get class for background colour--%>
-                <h:location protein="${protein}" location="${location}" colourClass="c-entry"/>
-            </c:forEach>
+        <c:set var="icon">
+            <c:choose>
+                <c:when test="${entry.type == 'Family' or entry.type == 'Domain' or
+                                entry.type == 'Region' or entry.type == 'Repeat'}">
+                    ${fn:toLowerCase(entry.type)}
+                </c:when>
+                <c:otherwise>
+                    site
+                </c:otherwise>
+            </c:choose>
+        </c:set>
+        <c:set var="title" value="${fn:replace(entry.type, '_', ' ')}"/>
+        <div class="entry">
+            <p>
+                <%-- Use InterPro 5.2 image paths for now (see mvc-config.xml) --%>
+                <%-- Better to pass in param from DBML instead so can use normal resource: --%>
+                <%--<c:url value="/resources/images/ico_type_uni_small.png"/>--%>
+                <img src="/interpro/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/>
+                <a href="IEntry?ac=${entry.ac}" title="${title}">${entry.name}</a> (${entry.ac})
+            </p>
+            <div class="match">
+                <c:forEach var="location" items="${entry.locations}">
+                    <%--TODO: Get class for background colour--%>
+                    <h:location protein="${protein}" location="${location}" colourClass="c-entry"/>
+                </c:forEach>
+            </div>
+            <div id="${entry.ac}-signatures" class="entry-signatures">
+                <c:forEach var="signature" items="${entry.signatures}">
+                    <h:signature protein="${protein}"
+                                 signature="${signature}"
+                                 entryTypeIcon="${icon}"
+                                 entryTypeTitle="${title}"/>
+                </c:forEach>
+            </div>
+            <%--Not sure why we need this break, but next entry gets messed up without it --%>
+            <br/>
         </div>
-        <div id="${entry.ac}-signatures" class="entry-signatures">
-            <c:forEach var="signature" items="${entry.signatures}">
-                <h:signature protein="${protein}" signature="${signature}"/>
-            </c:forEach>
-        </div>
-        <%--Not sure why we need this break, but next entry gets messed up without it --%>
-        <br/>
-    </div>
     </c:if>
 </c:forEach>
 </div>
@@ -37,7 +58,10 @@
     <c:if test="${empty entry.type}">
     <div>
         <c:forEach var="signature" items="${entry.signatures}">
-            <h:signature protein="${protein}" signature="${signature}"/>            
+            <h:signature protein="${protein}"
+                         signature="${signature}"                         
+                         entryTypeIcon="uni"
+                         entryTypeTitle="Unintegrated"/>
         </c:forEach>
     </div>
     </c:if>
