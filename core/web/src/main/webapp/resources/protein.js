@@ -5,41 +5,63 @@
  * @version $Id$
  */
 
+// Chevrons
+var SHOW_ICON = "\u00BB"; // »
+var HIDE_ICON = "\u00AB"; // «
+
 $(document).ready(function() {
+    createAllEntriesShowHideButton();
+});
 
-    // Set up the button to show and hide all signatures
-    var toggleAllId = "all-signatures-toggle";
-    var toggleAllClass = ".entry-signatures";
-    var showAllText = "Show all signatures \u00BB"; // »
-    var hideAllText = "Hide all signatures \u00AB"; // «
+// Add button to show and hide all signatures
+function createAllEntriesShowHideButton(){
 
-    // Add button to show and hide signatures
-    $("<button id='" + toggleAllId + "'></button>").prependTo("#section-domains-sites");
-    var toggleAllButton = $("#" + toggleAllId);
-    toggleAllButton.text(showAllText);
+    var showText = "Show all signatures " + SHOW_ICON;
+    var hideText = "Hide all signatures " + HIDE_ICON;
+    var buttonId = "all-signatures-toggle";
+    var allSignaturesClass = ".entry-signatures";
 
-    // Hide signatures after 0 milliseconds -- leaves visible if JavaScript off or not available
-    $(toggleAllClass).slideToggle(0);
+    // Add button to page
+    $(getButtonHtml(buttonId)).prependTo("#section-domains-sites");
+    createShowHideButton(buttonId, allSignaturesClass, showText, showText, hideText);
 
-    // Show or hide all signature matches
-    toggleAllButton.click(function () {
+    // Hide all signatures after 0 milliseconds -- leaves visible if JavaScript off or not available
+    $(allSignaturesClass).slideToggle(0);    
+}
+
+// Add button to show and hide signatures for an individual entry
+function createSingleEntryShowHideButton(targetId){
+    var showText = "Show signatures " + SHOW_ICON;
+    var hideText = "Hide signatures " + HIDE_ICON;
+    var buttonId = targetId + "-toggle";
+    // Add button to page
+    document.write(getButtonHtml(buttonId));
+    createShowHideButton(buttonId, "#" + targetId, showText, showText, hideText);
+}
+
+function getButtonHtml(buttonId) {
+    return "<button id='" + buttonId + "'></button>";
+}
+
+function createShowHideButton(buttonId, target, initialText, showText, hideText) {
+
+    // console.log("createShowHideButton: " + buttonId);
+
+    // Set initial text
+    var button = $("#" + buttonId);
+    button.text(initialText);
+    
+    // Add show/hide behaviour
+    button.click(function () {
         //console.log("clicked");
         var delay = 400; // milliseconds
-        $(toggleAllClass).slideToggle(delay);
-        // Togglw
+        $(target).slideToggle(delay);
+        // Toggle
         setTimeout(function() {
-            var s = (toggleAllButton.text() == showAllText ? hideAllText : showAllText);
-            toggleAllButton.text(s);
+            var s = (button.text() == showText ? hideText : showText);
+            button.text(s);
         }, delay / 2);
     });
-    
-    // TODO: Toggle individual sections based on entry ac
-    //            $("#toggle-entry-signatures").click(function () {
-    //                $(".entry-signatures").slideToggle("slow", function () {
-    //                    alert("1");
-    //                    var button = $("#toggle-entry-signatures");
-    //                    $(this).is(":visible") ? button.html("Hide signatures «") : button.html("Show signatures »");
-    //                });
-    //            });
 
-});
+    return button;
+}
