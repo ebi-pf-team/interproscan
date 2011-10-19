@@ -10,8 +10,8 @@ $(document).ready(function() {
     // Set up the button to show and hide all signatures
     var toggleAllId = "all-signatures-toggle";
     var toggleAllClass = ".entry-signatures";
-    var showAllText = "Show all signatures »";
-    var hideAllText = "Hide all signatures «";
+    var showAllText = "Show all signatures \u00BB"; // »
+    var hideAllText = "Hide all signatures \u00AB"; // «
 
     // Add button to show and hide signatures
     $("<button id='" + toggleAllId + "'></button>").prependTo("#section-domains-sites");
