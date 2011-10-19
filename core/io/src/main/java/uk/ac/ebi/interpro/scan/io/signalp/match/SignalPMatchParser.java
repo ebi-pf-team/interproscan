@@ -33,13 +33,13 @@ public class SignalPMatchParser implements Serializable {
 
     public static final String FILE_START_LINE1 = "# SignalP-4.0 "; // Start of the first line of the file
     public static final String FILE_START_LINE2 = " predictions"; // End of the first line of the file
-    public static final String RECORD_START_LINE = "# Measure  Position  Value"; // First line of a result
+    public static final String RECORD_START_LINE = "# Measure  Position  Value  Cutoff  signal peptide?"; // First line of a result
 
-    // Example match: "#       D     1-40    0.533"
-    private static final Pattern D_LINE = Pattern.compile("^#\\s+D\\s+\\d+-\\d+\\s+\\d+\\.\\d+$");
+    // Example match: "D     1-40    0.533    0.450  YES"
+    private static final Pattern D_LINE = Pattern.compile("^D\\s+\\d+-\\d+\\s+\\d+\\.\\d+\\s+\\d+\\.\\d+");
 
-    // Example match: "# 2	SP= 'Yes' Cleavage site between pos. 17 and 18: ASA-VP D= 0.499 D-cutoff= 0.450 Networks= SignalP-TM"
-    private static final Pattern SP_LINE = Pattern.compile("^#\\s+\\d+\\s+SP=");
+    // Example match: "Name=2   SP='Yes' Cleavage site between pos. 17 and 18: ASA-VP D=0.499 D-cutoff=0.450 Networks=SignalP-TM"
+    private static final Pattern SP_LINE = Pattern.compile("^Name=.*\\s+SP=.*Networks=.*$");
 
     public SignalPMatchParser(String typeShortName) {
         this.type = SignalPOrganismType.getSignalPOrganismTypeByShortName(typeShortName);
@@ -55,8 +55,8 @@ public class SignalPMatchParser implements Serializable {
             int lineCount = 0;
             String line;
 
-            String sequenceIdentifier = null;
-            String model = null;
+            String sequenceIdentifier;
+            String model;
             Integer locationStart = null;
             Integer locationEnd = null;
             Double dScore = null;
@@ -86,7 +86,7 @@ public class SignalPMatchParser implements Serializable {
                 }
                 else if (line.equals(RECORD_START_LINE)) {
                     // Start of a new result record, reset the values
-                    // E.g. "# Measure  Position  Value"
+                    // E.g. "# Measure  Position  Value  Cutoff  signal peptide?"
                     sequenceIdentifier = null;
                     model = null;
                     locationStart = null;
@@ -99,27 +99,41 @@ public class SignalPMatchParser implements Serializable {
                 Matcher matcher1 = D_LINE.matcher(line);
                 if (matcher1.find()) {
                     // Regex has ensured this matches the dScore line format
-                    // E.g. "#       D     1-40    0.533"
+                    // E.g. "D     1-40    0.533    0.450  YES"
                     String[] lineArray = line.split("\\s+");
-                    String[] startStop = lineArray[2].split("-");
+                    String[] startStop = lineArray[1].split("-");
 
                     locationStart = Integer.parseInt(startStop[0]);
                     locationEnd = Integer.parseInt(startStop[1]);
-                    dScore = Double.parseDouble(lineArray[3]);
+                    dScore = Double.parseDouble(lineArray[2]);
+                    dCutoff = Double.parseDouble(lineArray[3]);
                     continue;
                 }
 
                 Matcher matcher2 = SP_LINE.matcher(line);
                 if (matcher2.find()) {
                     // Regex has ensured this matches the SP line format
-                    // E.g. "# 2	SP= 'Yes' Cleavage site between pos. 17 and 18: ASA-VP D= 0.499 D-cutoff= 0.450 Networks= SignalP-TM"
+                    // E.g. "Name=2	SP='Yes' Cleavage site between pos. 17 and 18: ASA-VP D=0.499 D-cutoff=0.450 Networks=SignalP-TM"
                     String[] lineArray = line.split("\\s+");
-                    if (lineArray[3].equalsIgnoreCase("'Yes'")) {
+                    if (lineArray[1].equalsIgnoreCase("SP='Yes'")) {
                         // Signal Peptide found, check previous line was OK
-                        if (locationStart != null && locationEnd != null && dScore != null) {
-                            sequenceIdentifier = lineArray[1]; // E.g. "2"
-                            dCutoff= Double.parseDouble(lineArray[lineArray.length - 3]); // E.g. "0.450"
-                            model = lineArray[lineArray.length - 1]; // E.g. "SignalP-TM"
+                        if (locationStart != null && locationEnd != null && dScore != null && dCutoff != null) {
+                            sequenceIdentifier = lineArray[0]; // E.g. "Name=2"
+                            if (sequenceIdentifier.startsWith("Name=")) {
+                                sequenceIdentifier = sequenceIdentifier.substring(5); // E.g. "2"
+                            }
+                            else {
+                                LOGGER.warn("This line in the binary output file is in an unexpected format - ignoring: " + line);
+                                continue;
+                            }
+                            model = lineArray[lineArray.length - 1]; // E.g. "Networks=SignalP-TM"
+                            if (model.startsWith("Networks=")) {
+                                model = model.substring(9); // E.g. "SignalP-TM"
+                            }
+                            else {
+                                LOGGER.warn("This line in the binary output file is in an unexpected format - ignoring: " + line);
+                                continue;
+                            }
 
                             SignatureLibrary signatureLibrary = SignalPOrganismType.getSignatureLibraryFromType(type);
                             if (signatureLibrary == null) {
