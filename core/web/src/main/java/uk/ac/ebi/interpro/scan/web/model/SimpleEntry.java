@@ -62,6 +62,7 @@ public final class SimpleEntry implements Comparable<SimpleEntry>  {
     }
 
     @Override public int compareTo(SimpleEntry that) {
+
         if (this == that) {
             return 0;
         }
@@ -72,6 +73,22 @@ public final class SimpleEntry implements Comparable<SimpleEntry>  {
         }
         else if (that.ac == null || that.ac.equals("")) {
             return -1;
+        }
+
+        // Entry type
+        final EntryType thisType = EntryType.parseName(this.getType());
+        final EntryType thatType = EntryType.parseName(that.getType());
+        if ( thisType != null && thatType != null) {
+            final int compare = thisType.compareTo(thatType);
+            if (compare != 0) {
+                return compare;
+            }
+        }
+        else if (thisType != null){
+            return -1;
+        }
+        else if (thatType != null){
+            return 1;
         }
 
         return Collections.min(this.locations).compareTo(Collections.min(that.locations));

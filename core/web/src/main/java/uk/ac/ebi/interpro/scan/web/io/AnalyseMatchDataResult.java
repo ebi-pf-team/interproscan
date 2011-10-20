@@ -3,10 +3,7 @@ package uk.ac.ebi.interpro.scan.web.io;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
-import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
-import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
-import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
-import uk.ac.ebi.interpro.scan.web.model.SimpleSignature;
+import uk.ac.ebi.interpro.scan.web.model.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -104,6 +101,11 @@ public class AnalyseMatchDataResult {
             String entryShortName = record.getEntryShortName();
             String entryName = record.getEntryName();
             String entryType = record.getEntryType();
+
+            // Check if unreleased entry
+            if (!entryAc.equals("") && entryType.equals("")) {
+                entryType = EntryType.UNKNOWN.toString();
+            }
 
             // Need to eventually associate this match location with the existing SimpleProtein object
             // TODO Set score against location? Could be double or NULL, e.g. PROSITE PROFILES

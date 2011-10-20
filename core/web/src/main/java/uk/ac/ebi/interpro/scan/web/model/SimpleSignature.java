@@ -10,7 +10,7 @@ import java.util.List;
 * @author Antony Quinn
 * @version $Id$
 */
-public final class SimpleSignature {
+public final class SimpleSignature implements Comparable<SimpleSignature>  {
 
     private final String ac;
     private final String name;
@@ -36,6 +36,10 @@ public final class SimpleSignature {
         return database;
     }
 
+    public String getDatabaseDescription() {
+        return MatchDataSource.parseName(database).getDescription();
+    }
+
     public List<SimpleLocation> getLocations() {
         return locations;
     }
@@ -44,8 +48,11 @@ public final class SimpleSignature {
         this.locations.add(location);
     }
 
-    public void sort() {
-        Collections.sort(locations);
+    @Override public int compareTo(SimpleSignature that) {
+        if (this == that || this.equals(that)) {
+            return 0;
+        }
+        return Collections.min(this.locations).compareTo(Collections.min(that.locations));
     }
 
 }

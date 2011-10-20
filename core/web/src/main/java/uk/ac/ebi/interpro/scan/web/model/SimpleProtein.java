@@ -92,6 +92,7 @@ public final class SimpleProtein {
                 entries.add(entry);
             }
         }
+        Collections.sort(entries);
         return entries;
     }
 
@@ -102,40 +103,31 @@ public final class SimpleProtein {
                 signatures.addAll(entry.getSignatures());
             }
         }
+        Collections.sort(signatures);
         return signatures;
     }
 
     public List<SimpleStructuralMatch> getStructuralFeatures() {
         final List<SimpleStructuralMatch> features = new ArrayList<SimpleStructuralMatch>();
         for (SimpleStructuralMatch m : this.structuralMatches) {
-            if (MatchDataSources.isStructuralFeature(m.getDatabaseName())) {
+            if (MatchDataSource.isStructuralFeature(m.getDatabaseName())) {
                 features.add(m);
             }
         }
+        Collections.sort(features);
         return features;
     }    
     
     public List<SimpleStructuralMatch> getStructuralPredictions() {
-        final List<SimpleStructuralMatch> features = new ArrayList<SimpleStructuralMatch>();
+        final List<SimpleStructuralMatch> predictions = new ArrayList<SimpleStructuralMatch>();
         for (SimpleStructuralMatch m : this.structuralMatches) {
-            if (MatchDataSources.isStructuralPrediction(m.getDatabaseName())) {
-                features.add(m);
+            if (MatchDataSource.isStructuralPrediction(m.getDatabaseName())) {
+                predictions.add(m);
             }
         }
-        return features;
-    }
-
-    public void sort() {
-        // Sort by entry start, and then by signature start
-        Collections.sort(entries);
-        for (SimpleEntry e : entries) {
-            // TODO: Sort signatures
-            //Collections.sort(e.signatures);
-            for (SimpleSignature s : e.getSignatures()) {
-                s.sort();
-            }
-        }
-    }    
+        Collections.sort(predictions);
+        return predictions;
+    } 
 
     /**
      * Returns a {@link SimpleProtein} from a {@link uk.ac.ebi.interpro.scan.model.Protein}

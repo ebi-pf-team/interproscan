@@ -1,13 +1,24 @@
-<%@ page import="uk.ac.ebi.interpro.scan.web.model.MatchDataSources" %>
+<%@ page import="uk.ac.ebi.interpro.scan.web.model.EntryType" %>
+<%@ page import="uk.ac.ebi.interpro.scan.web.model.MatchDataSource" %>
 <%@ taglib prefix="h"  tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<% pageContext.setAttribute("MODBASE", uk.ac.ebi.interpro.scan.web.model.MatchDataSources.MODBASE.toString()); %>
-<%--TODO: Use other Enum values--%>
+
+<%
+    // Entry type names
+    pageContext.setAttribute("FAMILY", uk.ac.ebi.interpro.scan.web.model.EntryType.FAMILY.toString());
+    pageContext.setAttribute("DOMAIN", uk.ac.ebi.interpro.scan.web.model.EntryType.DOMAIN.toString());
+    pageContext.setAttribute("REPEAT", uk.ac.ebi.interpro.scan.web.model.EntryType.REPEAT.toString());
+    pageContext.setAttribute("REGION", uk.ac.ebi.interpro.scan.web.model.EntryType.REGION.toString());
+    pageContext.setAttribute("UNKNOWN", uk.ac.ebi.interpro.scan.web.model.EntryType.UNKNOWN.toString());
+
+    // Data source names
+    pageContext.setAttribute("CATH", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.CATH.toString());
+    pageContext.setAttribute("SCOP", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.SCOP.toString());
+    pageContext.setAttribute("MODBASE", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.MODBASE.toString());
+%>
 
 <%--Returns protein features for inclusion in DBML--%>
-
-<%--TODO: Easier if SimpleProtein returns separate collections for each section, even if based on two underlying collections?--%>
 
 <c:if test="${not empty protein.entries}">
     <a name="domains-sites"></a>
@@ -16,10 +27,15 @@
     <c:forEach var="entry" items="${protein.entries}">
         <c:set var="icon">
             <c:choose>
-                <c:when test="${entry.type == 'Family' or entry.type == 'Domain' or
-                                entry.type == 'Region' or entry.type == 'Repeat'}">
+                <%--TODO: Use enum--%>
+                <c:when test="${entry.type == FAMILY or entry.type == DOMAIN or
+                                entry.type == REGION or entry.type == REPEAT}">
                     ${fn:toLowerCase(entry.type)}
                 </c:when>
+                <%--Use unintegrated signature icon if unknown (probably needs own icon)--%>
+                <c:when test="${entry.type == UNKNOWN}">
+                    uni
+                </c:when>                
                 <c:otherwise>
                     site
                 </c:otherwise>
@@ -84,11 +100,10 @@
         <div>
             <p>
                 <c:choose>
-                    <%--TODO: Get dbnames from enum? (so can share with SimpleProtein.getStructuralFeatures)--%>
-                    <c:when test="${match.databaseName == 'CATH'}">
+                    <c:when test="${match.databaseName == CATH}">
                         <a href="http://www.cathdb.info/cathnode/${match.classId}">${match.classId}</a>
                     </c:when>
-                    <c:when test="${match.databaseName == 'SCOP'}">
+                    <c:when test="${match.databaseName == SCOP}">
                         <a href="http://scop.mrc-lmb.cam.ac.uk/scop/search.cgi?key=${match.classId}">${match.classId}</a>
                     </c:when>
                     <c:otherwise>
