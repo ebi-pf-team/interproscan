@@ -78,9 +78,7 @@ public class ProteinViewController {
     private SimpleProtein retrieve(String id) {
         // TODO: Check if id is MD5 using regex (using Protein class code?)
         try {
-            SimpleProtein p = queryByAccession(id);
-            p.sort();
-            return p;
+            return queryByAccession(id);
         }
         catch (IOException e) {
             // TODO: Do not allow exception to go beyond here, otherwise user will see in browser
