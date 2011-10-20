@@ -110,7 +110,7 @@ public class AnalyseMatchDataResult {
             SimpleLocation location = new SimpleLocation(posFrom, posTo);
 
             // Has this entry already been added to the protein?
-            List<SimpleEntry> entries = protein.getEntries();
+            List<SimpleEntry> entries = protein.getAllEntries();
             SimpleEntry newEntry = new SimpleEntry(entryAc, entryShortName, entryName, entryType);
             if (entries.contains(newEntry)) {
                 // Entry already exists
@@ -150,9 +150,9 @@ public class AnalyseMatchDataResult {
         }
 
         // Start to calculate the supermatches for each entry
-        List<SimpleEntry> entries = protein.getEntries();
+        List<SimpleEntry> entries = protein.getAllEntries();
         for (SimpleEntry entry : entries) {
-            if (entry.getAc() == null || entry.getAc().equals("")) {
+            if (!entry.isIntegrated()) {
                 // Un-integrated signatures do not have supermatches
                 continue;
             }

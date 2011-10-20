@@ -39,8 +39,8 @@ public class CreateSimpleProteinFromMatchDataTest {
         assertNotNull(protein);
         assertEquals("P38398", protein.getAc());
         assertEquals("BRCA1_HUMAN", protein.getId());
-        assertNotNull(protein.getEntries());
-        assertEquals(9, protein.getEntries().size());
+        assertNotNull(protein.getAllEntries());
+        assertEquals(9, protein.getAllEntries().size());
         assertNotNull(protein.getStructuralMatches());
         assertEquals(9, protein.getStructuralMatches().size());
     }

@@ -26,13 +26,9 @@ import java.util.Map;
 public class ProteinViewController {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinViewController.class.getName());
-    
-    private EntryHierarchy entryHierarchy;
 
     @Resource
-    public void setEntryHierarchy(EntryHierarchy entryHierarchy) {
-        this.entryHierarchy = entryHierarchy;
-    }
+    private EntryHierarchy entryHierarchy;
 
     @RequestMapping
     public String index() {
@@ -47,14 +43,7 @@ public class ProteinViewController {
      */
     @RequestMapping(value = "/{id}")
     public ModelAndView protein(@PathVariable String id) {
-        //return new ModelAndView("protein", "protein", retrieve(id));
-        Map<String, Object> models = new HashMap<String, Object>();
-        models.put("protein", retrieve(id));
-        //Map<String, Integer> entryColours = new HashMap<String, Integer>();
-        //entryColours.put("IPR011364", 1);
-        //models.put("entryColours", entryColours);
-        models.put("entryColours", entryHierarchy.getEntryColourMap());
-        return new ModelAndView("protein", models);
+        return new ModelAndView("protein", buildModelMap(retrieve(id)));
     }
 
     /**
@@ -65,7 +54,7 @@ public class ProteinViewController {
      */
     @RequestMapping(value = "/{id}/body")
     public ModelAndView proteinBody(@PathVariable String id) {
-        return new ModelAndView("protein-body", "protein", retrieve(id));
+        return new ModelAndView("protein-body", buildModelMap(retrieve(id)));
     }    
 
     /**
@@ -76,7 +65,14 @@ public class ProteinViewController {
      */
     @RequestMapping(value = "/{id}/features")
     public ModelAndView proteinFeatures(@PathVariable String id) {
-        return new ModelAndView("protein-features", "protein", retrieve(id));
+        return new ModelAndView("protein-features", buildModelMap(retrieve(id)));
+    }
+
+    private Map<String, Object> buildModelMap(SimpleProtein p) {
+        Map<String, Object> m = new HashMap<String, Object>();
+        m.put("protein", p);
+        m.put("entryColours", entryHierarchy.getEntryColourMap());
+        return m;
     }
 
     private SimpleProtein retrieve(String id) {

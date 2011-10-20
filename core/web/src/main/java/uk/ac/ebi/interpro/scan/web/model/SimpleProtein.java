@@ -69,7 +69,7 @@ public final class SimpleProtein {
         return taxFullName;
     }
 
-    public List<SimpleEntry> getEntries() {
+    public List<SimpleEntry> getAllEntries() {
         return entries;
     }
 
@@ -77,11 +77,37 @@ public final class SimpleProtein {
         return structuralMatches;
     }
 
-    /* Convenience filter methods for JSPs: */
+    /* Convenience filter methods for JSPs: */  
+
+    // A tautology really -- all entries have integrated signatures! -- so actually better to make this separation
+    // when the SimpleProtein is created: entries collection only has "true" entries, unintegrated signatures can
+    // be in signatures collection. Same for structural features and predictions. Protein class would then be:
+    // protein.entries, protein.signatures, protein.structuralFeatures, protein.structuralMatches
+    // ... with no need for these filters.
+    
+    public List<SimpleEntry> getEntries() {
+        final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
+        for (SimpleEntry entry : this.entries) {
+            if (entry.isIntegrated()) {
+                entries.add(entry);
+            }
+        }
+        return entries;
+    }
+
+    public List<SimpleSignature> getUnintegratedSignatures() {
+        final List<SimpleSignature> signatures = new ArrayList<SimpleSignature>();
+        for (SimpleEntry entry : this.entries) {
+            if (!entry.isIntegrated()) {
+                signatures.addAll(entry.getSignatures());
+            }
+        }
+        return signatures;
+    }
 
     public List<SimpleStructuralMatch> getStructuralFeatures() {
         final List<SimpleStructuralMatch> features = new ArrayList<SimpleStructuralMatch>();
-        for(SimpleStructuralMatch m : structuralMatches) {
+        for (SimpleStructuralMatch m : this.structuralMatches) {
             if (MatchDataSources.isStructuralFeature(m.getDatabaseName())) {
                 features.add(m);
             }
@@ -91,7 +117,7 @@ public final class SimpleProtein {
     
     public List<SimpleStructuralMatch> getStructuralPredictions() {
         final List<SimpleStructuralMatch> features = new ArrayList<SimpleStructuralMatch>();
-        for(SimpleStructuralMatch m : structuralMatches) {
+        for (SimpleStructuralMatch m : this.structuralMatches) {
             if (MatchDataSources.isStructuralPrediction(m.getDatabaseName())) {
                 features.add(m);
             }
@@ -143,12 +169,12 @@ public final class SimpleProtein {
             // Entry
             Entry e = s.getEntry();
             SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName());
-            if (sp.getEntries().contains(se)) {
+            if (sp.getAllEntries().contains(se)) {
                 // Entry already exists, so get it
-                se = sp.getEntries().get(sp.getEntries().indexOf(se));
+                se = sp.getAllEntries().get(sp.getAllEntries().indexOf(se));
             } else {
                 // Create new entry
-                sp.getEntries().add(se);
+                sp.getAllEntries().add(se);
             }
 //                if (sp.getEntriesMap().containsKey(entryAc)) {
 //                    // Entry already exists

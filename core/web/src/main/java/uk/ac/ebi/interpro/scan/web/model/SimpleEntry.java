@@ -56,6 +56,11 @@ public final class SimpleEntry implements Comparable<SimpleEntry>  {
         return signatures;
     }
 
+    // Tautology: all entries are composed of integrated signatures. Better to *not* put integrated signatures here!!
+    public boolean isIntegrated() {
+        return (ac != null && !ac.equals(""));
+    }
+
     @Override public int compareTo(SimpleEntry that) {
         if (this == that) {
             return 0;

@@ -3,16 +3,17 @@
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <% pageContext.setAttribute("MODBASE", uk.ac.ebi.interpro.scan.web.model.MatchDataSources.MODBASE.toString()); %>
+<%--TODO: Use other Enum values--%>
 
 <%--Returns protein features for inclusion in DBML--%>
 
 <%--TODO: Easier if SimpleProtein returns separate collections for each section, even if based on two underlying collections?--%>
 
-<a name="domains-sites"></a>
-<h3>Domains and sites</h3>
-<div id="section-domains-sites">
-<c:forEach var="entry" items="${protein.entries}">
-    <c:if test="${not empty entry.type}">
+<c:if test="${not empty protein.entries}">
+    <a name="domains-sites"></a>
+    <h3>Domains and sites</h3>
+    <div id="section-domains-sites">
+    <c:forEach var="entry" items="${protein.entries}">
         <c:set var="icon">
             <c:choose>
                 <c:when test="${entry.type == 'Family' or entry.type == 'Domain' or
@@ -59,27 +60,21 @@
             <%--Not sure why we need this break, but next entry gets messed up without it --%>
             <br/>
         </div>
-    </c:if>
-</c:forEach>
-</div>
+    </c:forEach>
+    </div>
+</c:if>   
 
-<a name="unintegrated-signatures"></a>
-<h3>Unintegrated signatures</h3>
-<c:forEach var="entry" items="${protein.entries}">
-    <c:if test="${empty entry.type}">
-    <div>
-        <c:forEach var="signature" items="${entry.signatures}">
+<c:if test="${not empty protein.unintegratedSignatures}">
+    <a name="unintegrated-signatures"></a>
+    <h3>Unintegrated signatures</h3>
+    <c:forEach var="signature" items="${protein.unintegratedSignatures}">
+        <div>
             <h:signature protein="${protein}"
-                         signature="${signature}"                         
+                         signature="${signature}"
                          entryTypeIcon="uni"
                          entryTypeTitle="Unintegrated"/>
-        </c:forEach>
-    </div>
-    </c:if>
-</c:forEach>
-
-<c:if test="${not empty protein.structuralFeatures}">
-
+        </div>
+    </c:forEach>
 </c:if>
 
 <c:if test="${not empty protein.structuralFeatures}">
