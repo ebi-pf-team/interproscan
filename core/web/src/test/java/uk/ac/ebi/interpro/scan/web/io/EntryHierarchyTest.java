@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import javax.annotation.Resource;
 
@@ -27,13 +26,17 @@ public class EntryHierarchyTest {
     @Resource
     private EntryHierarchy entryHierarchy;
 
-    @Test
-    public void testEntryColours() {
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetEntryColoursMap() {
         Map<String, Integer> entryColoursMap = entryHierarchy.getEntryColourMap();
         assertNotNull(entryColoursMap);
         assertEquals(2, entryColoursMap.size());
         assertFalse(entryColoursMap.containsKey("invalid"));
+        entryColoursMap.put("IPR000001", 1);
+    }
 
+    @Test
+    public void testGetEntryColour() {
         assertEquals(45, entryHierarchy.getEntryColour("IPR011987"));
         assertEquals(44, entryHierarchy.getEntryColour("IPR011986"));
         assertEquals(-1, entryHierarchy.getEntryColour("invalid"));
