@@ -11,7 +11,6 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Tests for {@link ProteinViewController}

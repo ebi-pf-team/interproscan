@@ -1,6 +1,8 @@
+<%@ page import="uk.ac.ebi.interpro.scan.web.model.MatchDataSources" %>
 <%@ taglib prefix="h"  tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<% pageContext.setAttribute("MODBASE", uk.ac.ebi.interpro.scan.web.model.MatchDataSources.MODBASE.toString()); %>
 
 <%--Returns protein features for inclusion in DBML--%>
 
@@ -31,18 +33,21 @@
                 <img src="/interpro/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/>
                 <a href="IEntry?ac=${entry.ac}" title="${title}">${entry.name}</a> (${entry.ac})
             </p>
+            <%--<p>--%>
+                <%--${entryColours[entry.ac]}--%>
+            <%--</p>--%>
             <div class="match">
                 <c:forEach var="location" items="${entry.locations}">
                     <%--TODO: Get class for background colour--%>
                     <h:location protein="${protein}" location="${location}" colourClass="c-entry"/>
                 </c:forEach>
             </div>
-            <%--TODO: Does this need CDATA?--%>
             <%--Add show/hide button--%>
             <c:set var="containerId" value="${entry.ac}-signatures"/>
-            <script type="text/javascript">
-                //createSingleEntryShowHideButton('${containerId}');
-            </script>
+            <%--TODO: Figure out how to do show/hide for individual entries without interference with show/hide for all --%>
+            <%--<script type="text/javascript"> --%>
+                <%--createSingleEntryShowHideButton('${containerId}');--%>
+            <%--</script>--%>
             <div id="${containerId}" class="entry-signatures">
                 <c:forEach var="signature" items="${entry.signatures}">
                     <h:signature protein="${protein}"
@@ -73,13 +78,18 @@
     </c:if>
 </c:forEach>
 
-<a name="structural-features"></a>
-<h3>Structural features</h3>
-<c:forEach var="match" items="${protein.structuralMatches}">
-    <c:if test="${match.databaseName == 'CATH' or match.databaseName == 'SCOP' or match.databaseName == 'PDB'}">
+<c:if test="${not empty protein.structuralFeatures}">
+
+</c:if>
+
+<c:if test="${not empty protein.structuralFeatures}">
+    <a name="structural-features"></a>
+    <h3>Structural features</h3>
+    <c:forEach var="match" items="${protein.structuralFeatures}">
         <div>
             <p>
                 <c:choose>
+                    <%--TODO: Get dbnames from enum? (so can share with SimpleProtein.getStructuralFeatures)--%>
                     <c:when test="${match.databaseName == 'CATH'}">
                         <a href="http://www.cathdb.info/cathnode/${match.classId}">${match.classId}</a>
                     </c:when>
@@ -91,7 +101,7 @@
                     </c:otherwise>
                 </c:choose>
                 (${match.databaseName})
-            </p>                
+            </p>
             <div class="match">
                 <c:forEach var="location" items="${match.locations}">
                     <%--TODO: Get background-color for match--%>
@@ -103,17 +113,17 @@
             <%--Not sure why we need this break, but next entry gets messed up without it --%>
             <br/>
         </div>
-    </c:if>
-</c:forEach>
+    </c:forEach>
+</c:if>
 
-<a name="structural-predictions"></a>
-<h3>Structural predictions</h3>
-<c:forEach var="match" items="${protein.structuralMatches}">
-    <c:if test="${match.databaseName == 'MODBASE' or match.databaseName == 'SWISS-MODEL'}">
+<c:if test="${not empty protein.structuralPredictions}">
+    <a name="structural-predictions"></a>
+    <h3>Structural predictions</h3>
+    <c:forEach var="match" items="${protein.structuralPredictions}">
         <div>
             <p>
                 <c:choose>
-                    <c:when test="${match.databaseName == 'MODBASE'}">
+                    <c:when test="${match.databaseName == MODBASE}">
                         <a href="http://modbase.compbio.ucsf.edu/modbase-cgi-new/model_search.cgi?searchvalue=${protein.ac}&searchproperties=database_id&displaymode=moddetail&searchmode=default">${match.classId}</a>
                     </c:when>
                     <c:otherwise>
@@ -133,8 +143,8 @@
             <%--Not sure why we need this break, but next entry gets messed up without it --%>
             <br/>
         </div>
-    </c:if>
-</c:forEach>
+    </c:forEach>
+</c:if>    
 
 <%--Not sure why we need this break, but table gets right-aligned without it...--%>
 <div><br/></div>

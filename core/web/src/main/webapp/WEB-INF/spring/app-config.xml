@@ -15,10 +15,10 @@
 
     <!-- Entry hierarchy properties files -->
     <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init" scope="singleton">
-      <property name="propertiesFile">
-        <util:properties location="classpath: entry_colours.properties"/>
-      </property>
+        <!--TODO: Pick up properties from file system when deploy on production server so can update properties without redeploying app?-->
+        <property name="propertiesFile">
+            <util:properties location="classpath:/entry_colours.properties"/>
+        </property>
     </bean>
-
 
 </beans>

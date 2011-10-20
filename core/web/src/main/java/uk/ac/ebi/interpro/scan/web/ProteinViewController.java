@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult;
-import uk.ac.ebi.interpro.scan.web.io.AnalyseStructuralMatchDataResult;
-import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
-import uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader;
-import uk.ac.ebi.interpro.scan.web.io.StructuralMatchDataResourceReader;
+import uk.ac.ebi.interpro.scan.web.io.*;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
+import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Controller for InterPro protein view.
@@ -26,6 +26,13 @@ import java.io.IOException;
 public class ProteinViewController {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinViewController.class.getName());
+    
+    private EntryHierarchy entryHierarchy;
+
+    @Resource
+    public void setEntryHierarchy(EntryHierarchy entryHierarchy) {
+        this.entryHierarchy = entryHierarchy;
+    }
 
     @RequestMapping
     public String index() {
@@ -40,7 +47,14 @@ public class ProteinViewController {
      */
     @RequestMapping(value = "/{id}")
     public ModelAndView protein(@PathVariable String id) {
-        return new ModelAndView("protein", "protein", retrieve(id));
+        //return new ModelAndView("protein", "protein", retrieve(id));
+        Map<String, Object> models = new HashMap<String, Object>();
+        models.put("protein", retrieve(id));
+        //Map<String, Integer> entryColours = new HashMap<String, Integer>();
+        //entryColours.put("IPR011364", 1);
+        //models.put("entryColours", entryColours);
+        models.put("entryColours", entryHierarchy.getEntryColourMap());
+        return new ModelAndView("protein", models);
     }
 
     /**
