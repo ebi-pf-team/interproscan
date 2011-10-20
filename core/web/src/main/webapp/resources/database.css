@@ -1,0 +1,14 @@
+/**
+ * Style signature matches by member database name.
+ *
+ * @author  Antony Quinn
+ * @version $Id$
+ */
+
+/* TODO: Pick decent colours */
+/* TODO: Add other member databases */
+
+span.pfam, span.pfamb, span.panther, span.prints, span.pirsf,
+span.smart, span.prosite-profiles, span.prosite-patterns, span.hamap, span.gene3d, span.superfamily {
+    background-color: black;
+}
