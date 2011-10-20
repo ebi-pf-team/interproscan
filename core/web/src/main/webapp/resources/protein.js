@@ -16,6 +16,8 @@ $(document).ready(function() {
 // Add button to show and hide all signatures
 function createAllEntriesShowHideButton(){
 
+    // TODO: This messes up the state of individual toggling, so may need to loop through each element and toggle?
+
     var showText = "Show all signatures " + SHOW_ICON;
     var hideText = "Hide all signatures " + HIDE_ICON;
     var buttonId = "all-signatures-toggle";
