@@ -27,7 +27,6 @@ public class ProteinViewController {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinViewController.class.getName());
 
-    @Resource
     private EntryHierarchy entryHierarchy;
 
     @RequestMapping
@@ -101,4 +100,9 @@ public class ProteinViewController {
 
     }
 
+    @Resource
+    void setEntryHierarchy(EntryHierarchy entryHierarchy) {
+        this.entryHierarchy = entryHierarchy;
+    }
+    
 }
