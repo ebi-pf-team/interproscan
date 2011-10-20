@@ -7,10 +7,12 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.io.*;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.core.io.InputStreamResource;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
+import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch;
 
 /**
 * TODO: Add class description
@@ -68,7 +70,13 @@ public class CreateSimpleProteinFromMatchData {
                 throw new HttpException(method.getStatusLine().toString());
             }
 
-            protein.setStructuralMatches(this.structuralMatchAnalyser.parseStructuralMatchDataOutput(new InputStreamResource(method.getResponseBodyAsStream())));
+            // Add structural matches
+            List<SimpleStructuralMatch> structuralMatches =
+                    structuralMatchAnalyser.parseStructuralMatchDataOutput(new InputStreamResource(method.getResponseBodyAsStream()));
+            for (SimpleStructuralMatch m : structuralMatches) {
+                protein.getStructuralMatches().add(m);
+            }
+            
         }
         finally {
             method.releaseConnection();

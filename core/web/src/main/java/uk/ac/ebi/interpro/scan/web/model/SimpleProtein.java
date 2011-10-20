@@ -18,7 +18,7 @@ public final class SimpleProtein {
     private final String taxScienceName;
     private final String taxFullName;
     private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
-    private List<SimpleStructuralMatch> structuralMatches = new ArrayList<SimpleStructuralMatch>();
+    private final List<SimpleStructuralMatch> structuralMatches = new ArrayList<SimpleStructuralMatch>();
 
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
                          int taxId, String taxScienceName, String taxFullName) {
@@ -77,8 +77,26 @@ public final class SimpleProtein {
         return structuralMatches;
     }
 
-    public void setStructuralMatches(List<SimpleStructuralMatch> structuralMatches) {
-        this.structuralMatches = structuralMatches;
+    /* Convenience filter methods for JSPs: */
+
+    public List<SimpleStructuralMatch> getStructuralFeatures() {
+        final List<SimpleStructuralMatch> features = new ArrayList<SimpleStructuralMatch>();
+        for(SimpleStructuralMatch m : structuralMatches) {
+            if (MatchDataSources.isStructuralFeature(m.getDatabaseName())) {
+                features.add(m);
+            }
+        }
+        return features;
+    }    
+    
+    public List<SimpleStructuralMatch> getStructuralPredictions() {
+        final List<SimpleStructuralMatch> features = new ArrayList<SimpleStructuralMatch>();
+        for(SimpleStructuralMatch m : structuralMatches) {
+            if (MatchDataSources.isStructuralPrediction(m.getDatabaseName())) {
+                features.add(m);
+            }
+        }
+        return features;
     }
 
     public void sort() {

@@ -16,18 +16,15 @@
         <h1>Proteins</h1>
         <ul>
             <li>
-                <a href="<c:url value="/proteins/P12345"/>" title="Aspartate aminotransferase, mitochondrial">AATM_RABIT</a>
-            </li>
-            <li>
+                Structural features and predictions:
                 <a href="<c:url value="/proteins/P38398"/>" title="Breast cancer type 1 susceptibility protein">BRCA1_HUMAN</a>
             </li>
             <li>
-                <a href="<c:url value="/proteins/P99999"/>" title="Cytochrome c">CYC_HUMAN</a>
-            </li>
-            <li>
+                MODBASE and SWISS-MODEL:
                 <a href="<c:url value="/proteins/A0AIY7"/>" title="Glycerol kinase">GLPK_LISW6</a>
             </li>
             <li>
+                No unintegrated signatures:
                 <a href="<c:url value="/proteins/A0A314"/>" title="30S ribosomal protein S12, chloroplastic">RR12_COFAR</a>
             </li>
             <li>
