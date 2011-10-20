@@ -5,9 +5,11 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -22,9 +24,13 @@ import static junit.framework.Assert.assertEquals;
 @ContextConfiguration
 public class ProteinViewControllerTest {
 
+    @Resource
+    private EntryHierarchy entryHierarchy;
+
     @Test
     public void testProtein()    {
         ProteinViewController c = new ProteinViewController();
+        c.setEntryHierarchy(entryHierarchy);
         c.proteinFeatures("P38398");
     }
 

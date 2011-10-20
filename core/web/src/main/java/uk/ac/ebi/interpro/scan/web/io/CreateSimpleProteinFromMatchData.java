@@ -48,6 +48,9 @@ public class CreateSimpleProteinFromMatchData {
     }
 
     private SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) throws IOException {
+
+        // TODO: Use Spring UrlResource here instead? Can then easily test with local copies of TSV
+
         SimpleProtein protein = null;
         HttpClient client = new HttpClient();
         GetMethod method = new GetMethod();
