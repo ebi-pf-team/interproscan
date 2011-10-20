@@ -22,8 +22,12 @@
 
 <c:if test="${not empty protein.entries}">
     <a name="domains-sites"></a>
-    <h3>Domains and sites</h3>
+    <h3>Families, domains, repeats and sites</h3>
     <div id="section-domains-sites">
+    <div class="entry-signatures">
+        <input id="database" name="colour" type="checkbox" value="database" />
+        <label for="database">Colour signature matches by database name</label>
+    </div>
     <c:forEach var="entry" items="${protein.entries}">
         <c:set var="icon">
             <c:choose>
@@ -50,13 +54,19 @@
                 <img src="/interpro/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/>
                 <a href="IEntry?ac=${entry.ac}" title="${title}">${entry.name}</a> (${entry.ac})
             </p>
-            <%--<p>--%>
-                <%--${entryColours[entry.ac]}--%>
-            <%--</p>--%>
+            <c:set var="colourClass">
+                <c:choose>
+                    <c:when test="${entry.type == DOMAIN}">
+                        c${entryColours[entry.ac]} ${entry.type}
+                    </c:when>
+                    <c:otherwise>
+                        ${entry.type}
+                    </c:otherwise>
+                </c:choose>
+            </c:set>
             <div class="match">
                 <c:forEach var="location" items="${entry.locations}">
-                    <%--TODO: Get class for background colour--%>
-                    <h:location protein="${protein}" location="${location}" colourClass="c-entry"/>
+                    <h:location protein="${protein}" location="${location}" colourClass="${colourClass}"/>
                 </c:forEach>
             </div>
             <%--Add show/hide button--%>
@@ -70,7 +80,8 @@
                     <h:signature protein="${protein}"
                                  signature="${signature}"
                                  entryTypeIcon="${icon}"
-                                 entryTypeTitle="${title}"/>
+                                 entryTypeTitle="${title}"
+                                 colourClass="${colourClass}"/>
                 </c:forEach>
             </div>
             <%--Not sure why we need this break, but next entry gets messed up without it --%>
@@ -88,7 +99,8 @@
             <h:signature protein="${protein}"
                          signature="${signature}"
                          entryTypeIcon="uni"
-                         entryTypeTitle="Unintegrated"/>
+                         entryTypeTitle="Unintegrated"
+                         colourClass="uni"/>
         </div>
     </c:forEach>
 </c:if>
@@ -117,7 +129,7 @@
                     <%--TODO: Get background-color for match--%>
                     <h:location protein="${protein}"
                                 location="${location}"
-                                colourClass="c-structure"/>
+                                colourClass="${match.databaseName}"/>
                 </c:forEach>
             </div>
             <%--Not sure why we need this break, but next entry gets messed up without it --%>
@@ -147,7 +159,7 @@
                     <%--TODO: Get background-color for match--%>
                     <h:location protein="${protein}"
                                 location="${location}"
-                                colourClass="c-structure"/>
+                                colourClass="${match.databaseName}"/>
                 </c:forEach>
             </div>
             <%--Not sure why we need this break, but next entry gets messed up without it --%>

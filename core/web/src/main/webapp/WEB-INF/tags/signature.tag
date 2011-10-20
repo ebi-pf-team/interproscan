@@ -6,6 +6,7 @@
 <%@ attribute name="signature" required="true" type="uk.ac.ebi.interpro.scan.web.model.SimpleSignature" %>
 <%@ attribute name="entryTypeIcon"  required="false" %>
 <%@ attribute name="entryTypeTitle" required="false" %>
+<%@ attribute name="colourClass"    required="false" %>
 
 <div>
     <p>
@@ -29,12 +30,14 @@
     </p>
     <div class="match">
         <c:forEach var="location" items="${signature.locations}">
-            <%--TODO: Get background-color for match--%>
-            <c:set var="dbClass" value="${fn:replace(fn:toLowerCase(db), ' ', '-')}"/>
-            <%--fn:toLowerCase(--%>
+            <c:set var="dbClass">
+                <c:if test="${colourClass != 'uni'}">
+                    ${fn:replace(fn:toLowerCase(signature.database), ' ', '-')}
+                </c:if>
+            </c:set>
             <h:location protein="${protein}"
                         location="${location}"
-                        colourClass="c-signature-${dbClass} c-signature"/>
+                        colourClass="${dbClass} ${colourClass}"/>
         </c:forEach>
     </div>
     <%--Not sure why we need this break, but next entry gets messed up without it --%>

@@ -10,8 +10,32 @@ var SHOW_ICON = "\u00BB"; // »
 var HIDE_ICON = "\u00AB"; // «
 
 $(document).ready(function() {
+    
     createAllEntriesShowHideButton();
+
+    // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
+//    if($.cookie("css")) {
+//        var id = $.cookie("colour-by-database");
+//        ...
+//    }
+
+    // CSS switching
+    var checkbox = $("input[type=checkbox]");
+    configureStylesheets(checkbox.checked); // initialise
+    checkbox.click(function() {
+        configureStylesheets(this.checked);
+        // Save in cookie
+        //$.cookie("colour-by-database", this.checked, {expires: 365, path: '/'});
+    });
+    
 });
+
+// Disables or enables stylesheets for database colouring
+function configureStylesheets(enable) {
+    $("link.database").each(function(i) {
+        this.disabled = (!enable);
+    });
+}
 
 // Add button to show and hide all signatures
 function createAllEntriesShowHideButton(){
@@ -28,7 +52,7 @@ function createAllEntriesShowHideButton(){
     createShowHideButton(buttonId, allSignaturesClass, showText, showText, hideText);
 
     // Hide all signatures after 0 milliseconds -- leaves visible if JavaScript off or not available
-    $(allSignaturesClass).slideToggle(0);    
+    $(allSignaturesClass).slideToggle(0);
 }
 
 // Add button to show and hide signatures for an individual entry

@@ -34,31 +34,46 @@ span.match {
     z-index: 1; /* Show above match line */
 }
 
-/* Colours */
-span.c-entry {
-    background-color: #ff9999;
-}
-
-span.c-signature {
-    background-color: #aa9999;
-}
-
-span.c-signature-pfam, span.c-signature-pfamb {
-    background-color: #ff721d;
-}
-
-span.c-structure {
-    background-color: #cc9999;
-}
-
-span.c-entry:hover, span.c-structure:hover, span.c-signature:hover {
-/* Enlarge slightly: */
+span.match:hover {
+    /* Enlarge slightly: */
     height: 0.7em;
     top: -0.4em; /* Show overlaps */
     z-index: 5; /* Make it glow: */
     box-shadow: 0 0 0.5em rgba(0, 0, 255, 1);
     -webkit-box-shadow: 0 0 0.5em rgba(0, 0, 255, 1);
     -moz-box-shadow: 0 0 0.5em rgba(0, 0, 255, 1);
+}
+
+/* Colours from DBML ColourScheme.java */
+/* Note: domain colour is set in either domain.css or database.css depending on user preference */
+span.Family {
+    background-color: #ec1d25
+}
+span.Repeat, span.Region {
+    background-color: #ff830a
+}
+span.Active_site, span.Binding_site, span.Conserved_site, span.PTM {
+    background-color: #c974de
+}
+span.uni {
+    background-color: #9b9b9b
+}
+
+/* Colours from DBML MatchLine.java */
+span.CATH {
+    background-color: #0072bc
+}
+span.SCOP {
+    background-color: #1cbbb4
+}
+span.PDB {
+    background-color: #ff830a
+}
+span.MODBASE {
+    background-color: #c974de
+}
+span.SWISS-MODEL {
+    background-color: #ec1d25
 }
 
 table.match {
