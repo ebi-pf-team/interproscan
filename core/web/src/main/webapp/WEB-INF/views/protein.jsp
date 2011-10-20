@@ -10,7 +10,9 @@
     <%--<link href="http://www.ebi.ac.uk/inc/css/contents.css"      rel="stylesheet" type="text/css" />--%>
     <%--<link href="http://www.ebi.ac.uk/inc/css/userstyles.css"    rel="stylesheet" type="text/css" />--%>
     <%--<link href="http://wwwdev.ebi.ac.uk/interpro/toolkits/interpro/interpro.css" rel="stylesheet" type="text/css" />--%>
-	<link  href="<c:url value="/resources/protein.css" />" rel="stylesheet"  type="text/css" />
+	<link href="<c:url value="/resources/protein.css" />" rel="stylesheet"  type="text/css" />
+    <link href="<c:url value="/resources/domain.css" />"  rel="stylesheet"  type="text/css" />
+    <link class="database" href="<c:url value="/resources/database.css" />" rel="stylesheet"  type="text/css" />
     <script src="<c:url value="/resources/jquery/jquery-1.4.3.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/protein.js"/>" type="text/javascript"></script>
 </head>
