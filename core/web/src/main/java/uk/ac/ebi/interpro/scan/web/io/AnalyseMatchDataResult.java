@@ -65,9 +65,10 @@ public class AnalyseMatchDataResult {
 
         try {
             records = reader.read(resource);
-        } catch (IOException e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Could not read from query resource: " + resource.getDescription());
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
 
