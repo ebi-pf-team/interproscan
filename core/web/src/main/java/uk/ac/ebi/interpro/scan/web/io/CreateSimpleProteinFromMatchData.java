@@ -1,16 +1,14 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.methods.GetMethod;
-
 import java.io.*;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
+
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch;
 
@@ -21,7 +19,8 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch;
 * @author  Antony Quinn
 * @version $Id$
 */
-public class CreateSimpleProteinFromMatchData {
+@Component
+public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
 
     private static final Logger LOGGER = Logger.getLogger(CreateSimpleProteinFromMatchData.class);
 
@@ -32,6 +31,14 @@ public class CreateSimpleProteinFromMatchData {
 
     private final AnalyseMatchDataResult matchAnalyser;
     private final AnalyseStructuralMatchDataResult structuralMatchAnalyser;
+
+	private ResourceLoader resourceLoader;
+
+    // TODO: Configure in Spring context
+    private CreateSimpleProteinFromMatchData() {
+        matchAnalyser = null;
+        structuralMatchAnalyser = null;
+    }
 
     public CreateSimpleProteinFromMatchData(AnalyseMatchDataResult matchAnalyser,
                                             AnalyseStructuralMatchDataResult structuralMatchAnalyser) {
@@ -47,84 +54,63 @@ public class CreateSimpleProteinFromMatchData {
         return retrieveMatches(createMatchesUrl(md5, false), createStructuralMatchesUrl(md5, false));
     }
 
-    private SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) throws IOException {
+	@Override public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
 
-        // TODO: Use Spring UrlResource here instead? Can then easily test with local copies of TSV
+    private SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) {
 
-        SimpleProtein protein = null;
-        HttpClient client = new HttpClient();
-        GetMethod method = new GetMethod();
-        method.setURI(new URI(matchesUrl, false));
-
-        try {
-            // First query for match data
-            int statusCode = client.executeMethod(method);
-            if (statusCode != HttpStatus.SC_OK) {
-                LOGGER.error("Error getting " + matchesUrl);
-                throw new HttpException(method.getStatusLine().toString());
-            }
-            protein =  this.matchAnalyser.parseMatchDataOutput(new InputStreamResource(method.getResponseBodyAsStream()));
-
-            // Now query for structural match data
-            method.setURI(new URI(structuralMatchesUrl, false));
-            statusCode = client.executeMethod(method);
-            if (statusCode != HttpStatus.SC_OK) {
-                LOGGER.error("Error getting " + structuralMatchesUrl);
-                throw new HttpException(method.getStatusLine().toString());
-            }
-
-            // Add structural matches
-            List<SimpleStructuralMatch> structuralMatches =
-                    structuralMatchAnalyser.parseStructuralMatchDataOutput(new InputStreamResource(method.getResponseBodyAsStream()));
-            for (SimpleStructuralMatch m : structuralMatches) {
-                protein.getStructuralMatches().add(m);
-            }
-            
+        // TODO: Shouldn't need this -- why isn't Spring giving us the resourceLoader??
+        if (resourceLoader == null) {
+            resourceLoader = new DefaultResourceLoader();
         }
-        finally {
-            method.releaseConnection();
+        // Get match data
+        SimpleProtein protein =  this.matchAnalyser.parseMatchDataOutput(resourceLoader.getResource(matchesUrl));
+
+        // Add structural matches
+        List<SimpleStructuralMatch> structuralMatches =
+                structuralMatchAnalyser.parseStructuralMatchDataOutput(resourceLoader.getResource(structuralMatchesUrl));
+        for (SimpleStructuralMatch m : structuralMatches) {
+            protein.getStructuralMatches().add(m);
         }
 
         return protein;
+        
     }
 
-    /**
-     * Create URL required to call REST web service to get protein match information.
-     *
-     * Example:
-     * http://wwwdev.ebi.ac.uk/interpro/match/P38398.tsv
-     *
-     * @param proteinAc
-     * @param isProteinAc
-     * @return
-     */
     private String createMatchesUrl(String proteinAc, boolean isProteinAc) {
-        // TODO: Use MD5 as filter if not proteinAc
-        StringBuilder url = new StringBuilder()
-                .append(MATCH_DATA_URL)
-                .append(proteinAc) // PROTEIN ACCESSION
-                .append(EXTENSION);
-        return url.toString();
+        return buildUrl(proteinAc, isProteinAc, true);
     }
 
-    /**
-         * Create URL required to call REST web service to get protein structural match information.
-         *
-         * Example:
-         * http://wwwdev.ebi.ac.uk/interpro/structure/P38398.tsv
-         *
-         * @param proteinAc
-         * @param isProteinAc
-         * @return
-         */
-        private String createStructuralMatchesUrl(String proteinAc, boolean isProteinAc) {
-            // TODO: Use MD5 as filter if not proteinAc
-            StringBuilder url = new StringBuilder()
-                    .append(STRUCTURAL_MATCH_DATA_URL)
-                    .append(proteinAc) // PROTEIN ACCESSION
-                    .append(EXTENSION);
-            return url.toString();
-        }
+    private String createStructuralMatchesUrl(String proteinAc, boolean isProteinAc) {
+        return buildUrl(proteinAc, isProteinAc, false);
+    }
 
+    private String buildUrl(String proteinAc, boolean isProteinAc, boolean isMatchUrl) {
+        String prefix = STRUCTURAL_MATCH_DATA_URL;
+        if (isMatchUrl) {
+            prefix = MATCH_DATA_URL;    
+        }
+        String extension = EXTENSION;
+        if (useLocalData()) {
+            String currentDir = System.getProperty("user.dir");
+            currentDir = currentDir.replace(File.separatorChar, '/');
+            prefix = "file:/" + currentDir + "/src/test/resources/data/";
+            if (isMatchUrl) {
+                extension = "-match";
+            }
+            else {
+                extension = "-structure";
+            }
+            extension += EXTENSION;
+        }
+        // TODO: Use MD5 as filter if not proteinAc
+        return prefix + proteinAc + extension;
+    }
+
+    // Only use for testing -- means we don't need a connection to data source
+    private static boolean useLocalData()  {
+        return System.getProperty("ebi.local.data", "false").equals("true");
+    }
 
 }
