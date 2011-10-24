@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.web.model.EntryHierarchyData;
 
 import javax.annotation.Resource;
 
@@ -41,5 +42,12 @@ public class EntryHierarchyTest {
         assertEquals(44, entryHierarchy.getEntryColour("IPR011986"));
         assertEquals(-1, entryHierarchy.getEntryColour("invalid"));
         assertEquals(-1, entryHierarchy.getEntryColour("doesnotexist"));
+    }
+
+    @Test
+    public void testGetEntryHierarchyDataMap() {
+        Map<String, EntryHierarchyData> data = entryHierarchy.getEntryHierarchyDataMap();
+        assertNotNull(data);
+        assertEquals(6300, data.size());
     }
 }
