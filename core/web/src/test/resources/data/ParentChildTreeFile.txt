@@ -1,0 +1,235 @@
+IPR000014::PAS::
+--IPR013655::PAS fold-3::
+--IPR013656::PAS fold-4::
+--IPR013767::PAS fold::
+IPR000020::Anaphylatoxin/fibulin::
+--IPR018081::Anaphylatoxin::
+----IPR001840::Complement C3a/C4a/C5a anaphylatoxin::
+IPR000276::GPCR, rhodopsin-like, 7TM::
+--IPR000025::Melatonin receptor::
+----IPR002278::Melatonin receptor type 1A::
+----IPR002279::Melatonin receptor type 1C::
+----IPR002280::Melatonin-related receptor type 1X::
+--IPR000174::CXC chemokine receptor/Interleukin-8 receptor::
+----IPR000057::CXC chemokine receptor, type 2/Interleukin 8 receptor beta::
+----IPR001355::CXC chemokine receptor, type 1/Interleukin 8 receptor alpha::
+--IPR000204::Orexin receptor::
+----IPR004059::Orexin receptor, type 1::
+----IPR004060::Orexin receptor, type 2::
+--IPR000248::Angiotensin II receptor::
+----IPR000147::AT2 angiotensin II receptor::
+----IPR000190::AT1 angiotensin II receptor::
+--IPR000355::Chemokine receptor::
+----IPR001277::CXC chemokine receptor, type 4::
+----IPR001718::CC chemokine receptor, type 7::
+----IPR002235::CXC chemokine receptor, type 6::
+----IPR002236::CC chemokine receptor, type 1::
+----IPR002237::CC chemokine receptor, type 2::
+----IPR002238::CC chemokine receptor, type 3::
+----IPR002239::CC chemokine receptor, type 4::
+----IPR002240::CC chemokine receptor, type 5::
+----IPR004067::CC chemokine receptor, type 6::
+----IPR004068::CC chemokine receptor, type 8::
+----IPR004069::CC chemokine receptor, type 9::
+----IPR004070::CXC chemokine receptor, type 3::
+----IPR005383::CC chemokine receptor, type 11::
+--IPR000405::Galanin receptor::
+----IPR003906::Galanin 1 receptor::
+----IPR003907::Galanin 2 receptor::
+----IPR003908::Galanin 3 receptor::
+--IPR000496::Bradykinin receptor::
+----IPR001186::B1 bradykinin receptor::
+----IPR001504::B2 bradykinin receptor::
+--IPR000499::Endothelin receptor::
+----IPR001112::Endothelin B receptor::
+----IPR002175::Endothelin A receptor::
+--IPR000503::Histamine H2 receptor::
+--IPR000586::Somatostatin receptor::
+----IPR001116::Somatostatin receptor, type 1::
+----IPR001184::Somatostatin receptor, type 5::
+----IPR001512::Somatostatin receptor, type 4::
+----IPR001856::Somatostatin receptor, type 3::
+----IPR002074::Somatostatin receptor, type 2::
+--IPR000611::Neuropeptide Y receptor::
+----IPR000351::Neuropeptide Y1 receptor::
+----IPR000393::Neuropeptide Y5 receptor::
+----IPR000986::Neuropeptide Y6 receptor::
+----IPR001358::Neuropeptide Y2 receptor::
+----IPR001933::Neuropeptide Y4 receptor::
+--IPR000670::Urotensin II receptor::
+--IPR000723::GPR orphan receptor::
+----IPR000599::GPR12 orphan receptor::
+----IPR000984::GPR3 orphan receptor::
+----IPR001151::GPR6 orphan receptor::
+--IPR000725::Olfactory receptor::
+--IPR000820::Mas transmembrane protein::
+--IPR000826::Formyl/methionyl peptide receptor::
+--IPR000921::Histamine H1 receptor::
+--IPR000929::Dopamine receptor::
+----IPR001620::Dopamine D3 receptor::
+----IPR001922::Dopamine D2 receptor::
+----IPR002185::Dopamine D4 receptor::
+--IPR000995::Muscarinic acetylcholine receptor::
+----IPR000502::Muscarinic acetylcholine receptor M5::
+----IPR001065::Muscarinic acetylcholine receptor M2::
+----IPR001183::Muscarinic acetylcholine receptor M3::
+----IPR001432::Muscarinic acetylcholine receptor M4::
+----IPR002228::Muscarinic acetylcholine receptor M1::
+--IPR001053::CXC chemokine receptor, type 5::
+--IPR001069::5-Hydroxytryptamine 7 receptor::
+--IPR001350::G10D orphan receptor::
+--IPR001402::Prolactin-releasing peptide receptor::
+--IPR001416::RDC1 orphan receptor::
+--IPR001418::Opioid receptor::
+----IPR000105::Mu opioid receptor::
+----IPR000321::Delta opioid receptor::
+----IPR000452::Kappa opioid receptor::
+----IPR001420::X opioid receptor::
+--IPR001520::5-Hydroxytryptamine 4 receptor::
+--IPR001556::Bombesin receptor::
+----IPR001560::Bombesin receptor, type 3::
+----IPR001642::Neuromedin B receptor::
+----IPR001966::Gastrin-releasing peptide receptor::
+--IPR001634::Adenosine receptor::
+----IPR000466::Adenosine A3 receptor::
+----IPR001068::Adenosine A1 receptor::
+----IPR001435::Adenosine A2B receptor::
+----IPR001513::Adenosine A2A receptor::
+--IPR001658::Gonadotrophin releasing hormone receptor::
+--IPR001671::Melanocortin/ACTH receptor::
+----IPR000761::Melanocyte-stimulating hormone receptor::
+----IPR001168::Adrenocorticotrophin (ACTH) receptor::
+----IPR001908::Melanocortin receptor::
+------IPR000155::Melanocortin 4 receptor::
+------IPR000621::Melanocortin 5 receptor::
+------IPR002122::Melanocortin 3 receptor::
+--IPR001681::Neurokinin receptor::
+----IPR000046::Neurokinin NK1 receptor::
+----IPR000913::Neurokinin NK2 receptor::
+----IPR001013::Neurokinin NK3 receptor::
+--IPR001760::Opsin::
+----IPR000378::Opsin, red/green sensitive::
+----IPR000732::Rhodopsin::
+----IPR000856::Opsin RH3/RH4::
+----IPR001391::Opsin, lateral eye type::
+----IPR001521::Opsin, blue sensitive::
+----IPR001735::Opsin RH1/RH2::
+----IPR002206::Opsin, pineal type::
+--IPR001793::Retinal pigment epithelium GPCR::
+--IPR001817::Vasopressin receptor::
+----IPR000161::Vasopressin V2 receptor::
+----IPR000628::Vasopressin V1B receptor::
+----IPR001224::Vasopressin V1A receptor::
+----IPR002062::Oxytocin receptor::
+--IPR002002::Octopamine receptor::
+--IPR002131::Glycoprotein hormone receptor::
+----IPR002272::Follicle-stimulating hormone receptor::
+----IPR002273::Lutropin-choriogonadotropic hormone receptor::
+--IPR002188::P2Y5 purinoceptor::
+--IPR002230::Cannabinoid receptor::
+----IPR000810::Cannabinoid receptor, type 1::
+----IPR001551::Cannabinoid receptor, type 2::
+--IPR002231::5-Hydroxytryptamine receptor::
+----IPR000377::5-Hydroxytryptamine 2C receptor::
+----IPR000431::5-Hydroxytryptamine 5B receptor::
+----IPR000450::5-Hydroxytryptamine 1F receptor::
+----IPR000455::5-Hydroxytryptamine 2A receptor::
+----IPR000482::5-Hydroxytryptamine 2B receptor::
+----IPR000505::5-Hydroxytryptamine 1D receptor::
+----IPR000610::5-Hydroxytryptamine 1A receptor::
+----IPR001397::5-Hydroxytryptamine 5A receptor::
+----IPR002147::5-Hydroxytryptamine 1B receptor::
+--IPR002232::5-Hydroxytryptamine 6 receptor::
+--IPR002233::Adrenergic receptor::
+----IPR000332::Adrenergic receptor, beta 2::
+----IPR000363::Adrenergic receptor, alpha-1A::
+----IPR000507::Adrenergic receptor, beta 1::
+----IPR000681::Adrenergic receptor, beta 3::
+----IPR001004::Adrenergic receptor, alpha 1C subtype::
+----IPR001115::Adrenergic receptor, alpha-1B::
+--IPR002234::Anaphylatoxin chemotactic receptor::
+----IPR001274::C5A-anaphylatoxin receptor::
+----IPR001644::C3A-anaphylatoxin receptor::
+--IPR002258::DEZ orphan receptor::
+--IPR002275::GPR1 orphan receptor::
+--IPR002276::GPR4 orphan receptor::
+--IPR002282::Platelet-activating factor receptor::
+--IPR002286::P2 purinoceptor::
+----IPR000018::P2Y4 purinoceptor::
+----IPR000142::P2Y purinoceptor::
+----IPR000356::P2U purinoceptor::
+----IPR000371::P2Y3 purinoceptor::
+----IPR001973::P2Y6 purinoceptor::
+----IPR005394::P2Y12 purinoceptor::
+----IPR005466::UDP-glucose receptor::
+----IPR008109::P2Y13 purinoceptor::
+--IPR002962::Peropsin::
+--IPR003904::APJ receptor::
+--IPR003905::Growth hormone secretagogue receptor, type 1::
+--IPR003909::GPR37 orphan receptor::
+--IPR003912::Protease-activated receptor::
+----IPR000935::Thrombin receptor::
+----IPR002281::Protease-activated receptor 2::
+----IPR003943::Protease-activated receptor 3::
+----IPR003944::Protease-activated receptor 4::
+--IPR003980::Histamine H3 receptor::
+--IPR003981::Leukotriene B4 receptor::
+----IPR003982::Leukotriene B4 type 2 receptor::
+----IPR003983::Leukotriene B4 type 1 receptor::
+--IPR003984::Neurotensin receptor::
+----IPR003985::Neurotensin type 1 receptor::
+----IPR003986::Neurotensin type 2 receptor::
+--IPR004061::Sphingosine 1-phosphate receptor::
+----IPR000987::EDG-1 sphingosine 1-phosphate receptor::
+----IPR004062::EDG-3 sphingosine 1-phosphate receptor::
+----IPR004063::EDG-5 sphingosine 1-phosphate receptor::
+----IPR004064::EDG-6 sphingosine 1-phosphate receptor::
+----IPR005386::EDG-8 sphingosine 1-phosphate receptor::
+--IPR004065::Lysophosphatidic acid receptor::
+----IPR002277::Lysophosphatidic acid receptor EDG-2::
+----IPR004066::Lysophosphatidic acid receptor EDG-4::
+----IPR005385::Lysophosphatidic acid receptor EDG-7::
+--IPR004071::Cysteinyl leukotriene receptor::
+----IPR013310::Cysteinyl leukotriene receptor 1::
+----IPR013311::Cysteinyl leukotriene receptor 2::
+--IPR005387::CX3C chemokine fractalkine receptor::
+--IPR005388::G2A lysophosphatidylcholine receptor::
+--IPR005389::OGR1 sphingosylphosphorylcholine receptor::
+--IPR005390::Neuromedin U receptor::
+----IPR005391::Neuromedin U receptor, type 1::
+----IPR005392::Neuromedin U receptor, type 2::
+--IPR005393::C  chemokine lymphotactin receptor::
+--IPR005395::Neuropeptide FF receptor::
+----IPR005396::Neuropeptide FF receptor, type 1::
+----IPR005397::Neuropeptide FF receptor, type 2::
+--IPR005464::Psychosine receptor::
+--IPR008102::Histamine H4 receptor::
+--IPR008103::KiSS-1 peptide receptor::
+--IPR008112::Relaxin receptor::
+--IPR008361::Melanin-concentrating hormone receptor::
+----IPR004047::Melanin-concentrating hormone 1 receptor::
+----IPR008362::Melanin-concentrating hormone 2 receptor::
+--IPR008365::Prostanoid receptor::
+----IPR000376::Prostaglandin D receptor::
+----IPR001105::Thromboxane receptor::
+----IPR001244::Prostaglandin DP receptor::
+------IPR000265::Prostanoid EP3 receptor::
+--------IPR000154::Prostanoid EP3 receptor, type 3::
+--------IPR001481::Prostanoid EP3 receptor, type 2::
+------IPR000708::Prostanoid EP1 receptor::
+------IPR001758::Prostanoid EP4 receptor::
+--IPR009126::Cholecystokinin receptor::
+----IPR000314::Gastrin receptor::
+----IPR000596::Cholecystokinin receptor, type A::
+--IPR009132::Trace amine receptor::
+----IPR009133::Trace amine receptor 1::
+--IPR009144::Thyrotropin-releasing hormone receptor::
+----IPR002120::Thyrotrophin-releasing hormone receptor::
+----IPR005465::Thyrotropin-releasing hormone receptor 2::
+--IPR009150::Neuropeptide W receptor::
+--IPR013312::GPR40-related receptor::
+----IPR013313::GPR40 receptor, fatty acid::
+--IPR015692::G-protein-coupled receptor 30::
+--IPR022347::GPCR 153/162::
+----IPR022335::GPCR 153::
+----IPR022348::GPCR 162::
