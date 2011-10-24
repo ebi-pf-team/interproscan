@@ -6,9 +6,17 @@
 
     <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init"
           scope="singleton">
-        <property name="propertiesFile">
+        <property name="entryColourPropertiesFile">
             <util:properties location="classpath:/data/entry_colours.properties"/>
         </property>
+        <property name="entryHierarchyDataResource" ref="entryHierarchyResource" />
+        <property name="entryHierarchyDataResourceReader" ref="entryHierarchyReader" />
+    </bean>
+
+    <bean id="entryHierarchyReader" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
+
+    <bean id="entryHierarchyResource" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/ParentChildTreeFile.txt"/>
     </bean>
 
 </beans>

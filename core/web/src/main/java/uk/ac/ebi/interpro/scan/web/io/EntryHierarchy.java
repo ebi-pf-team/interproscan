@@ -1,7 +1,10 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.Resource;
+import uk.ac.ebi.interpro.scan.web.model.EntryHierarchyData;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,15 +21,19 @@ public class EntryHierarchy {
 
     private static final Logger LOGGER = Logger.getLogger(EntryHierarchy.class.getName());
 
-    private Properties propertiesFile;
+    private Properties entryColourPropertiesFile;
     private Map<String, Integer> entryColourMap;
+    private Resource entryHierarchyDataResource;
+    private EntryHierarchyDataResourceReader entryHierarchyDataResourceReader;
+    private Map<String, EntryHierarchyData> entryHierarchyDataMap = null;
 
     /**
      * Initialise the singleton.
      */
     public void init() {
+        // Build entry colour map
         entryColourMap = new HashMap<String, Integer>();
-        for (Map.Entry<Object, Object> entryColour :  this.propertiesFile.entrySet()) {
+        for (Map.Entry<Object, Object> entryColour :  this.entryColourPropertiesFile.entrySet()) {
             String entryAc = (String) entryColour.getKey();
             int colour = Integer.parseInt((String) entryColour.getValue());
             if (entryAc.startsWith("IPR")) {
@@ -36,10 +43,26 @@ public class EntryHierarchy {
                 LOGGER.warn("Entry colours properties file contained an invalid entryAc - ignoring: " + entryAc);
             }
         }
+
+        // Build entry hierarchy data map
+        try {
+            entryHierarchyDataMap = entryHierarchyDataResourceReader.read(entryHierarchyDataResource);
+        }
+        catch (IOException e) {
+            LOGGER.warn("Problem reading entry hierarchy data resource: " + e.getMessage());
+        }
     }
 
-    public void setPropertiesFile(Properties propertiesFile) {
-        this.propertiesFile = propertiesFile;
+    public void setEntryColourPropertiesFile(Properties entryColourPropertiesFile) {
+        this.entryColourPropertiesFile = entryColourPropertiesFile;
+    }
+
+    public void setEntryHierarchyDataResource(Resource entryHierarchyDataResource) {
+        this.entryHierarchyDataResource = entryHierarchyDataResource;
+    }
+
+    public void setEntryHierarchyDataResourceReader(EntryHierarchyDataResourceReader entryHierarchyDataResourceReader) {
+        this.entryHierarchyDataResourceReader = entryHierarchyDataResourceReader;
     }
 
     /**
@@ -60,5 +83,25 @@ public class EntryHierarchy {
             return this.entryColourMap.get(ac);
         }
         return -1;
+    }
+
+    /**
+     * Return the entry accession to hierarchy data map (unmodifiable).
+     * @return The unmodifiable entry accession to hierarchy data map
+     */
+    public Map<String, EntryHierarchyData> getEntryHierarchyDataMap() {
+        return Collections.unmodifiableMap(this.entryHierarchyDataMap);
+    }
+
+    /**
+     * Get the associated hierarchy data for a supplied InterPro entry.
+     * @param ac Entry accession
+     * @return The hierarchy data for the specified entry accession (or NULL if not found)
+     */
+    public EntryHierarchyData getEntryHierarchyData(String ac) {
+        if (this.entryHierarchyDataMap.containsKey(ac)) {
+            return this.entryHierarchyDataMap.get(ac);
+        }
+        return null;
     }
 }
