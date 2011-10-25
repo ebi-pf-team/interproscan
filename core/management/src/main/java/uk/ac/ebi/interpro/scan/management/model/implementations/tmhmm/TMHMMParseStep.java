@@ -2,11 +2,10 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.tmhmm;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMPredictionTableParser;
 import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMProtein;
+import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMRawResultParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAO;
 
 import java.io.FileInputStream;
@@ -25,7 +24,7 @@ public final class TMHMMParseStep extends Step {
     private static final Logger LOGGER = Logger.getLogger(TMHMMParseStep.class.getName());
     private String outputFileNameTemplate;
     //    private RawMatchDAO<PantherRawMatch> rawMatchDAO;
-    private TMHMMPredictionTableParser parser;
+    private TMHMMRawResultParser parser;
     private TMHMMFilteredMatchDAO filteredMatchDAO;
 
     @Required
@@ -34,7 +33,7 @@ public final class TMHMMParseStep extends Step {
     }
 
     @Required
-    public void setParser(TMHMMPredictionTableParser parser) {
+    public void setParser(TMHMMRawResultParser parser) {
         this.parser = parser;
     }
 
