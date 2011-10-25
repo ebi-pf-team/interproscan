@@ -36,7 +36,10 @@ import java.util.regex.Pattern;
  *
  * @author Maxim Scheremetjew
  * @version $Id$
+ * @deprecated This parser still works fine, but was replaced by {@link TMHMMRawResultParser} within TMHMMParseStep. The reason for that is, that the format
+ *             of the raw result output changed completely after changing the set of program parameters.
  */
+@Deprecated
 public final class TMHMMPredictionTableParser {
 
     private static final Logger LOGGER = Logger.getLogger(TMHMMPredictionTableParser.class.getName());
