@@ -36,7 +36,7 @@ public class TMHMMFilteredMatchDAOImpl extends GenericDAOImpl<TMHMMMatch, Long> 
         for (TMHMMProtein protein : proteins) {
             final Protein persistentProtein = proteinIdToProteinMap.get(protein.getProteinIdentifier());
             if (persistentProtein == null) {
-                throw new IllegalArgumentException("Attempting to store a Phobius match for a protein with id " + protein.getProteinIdentifier() + ", however this does not exist in the database.");
+                throw new IllegalArgumentException("Attempting to store a TMHMM match for a protein with id " + protein.getProteinIdentifier() + ", however this does not exist in the database.");
             }
             for (TMHMMMatch match : protein.getMatches()) {
                 final Signature signature = sigAccToDbSignatureMap.get(match.getSignature().getAccession());
@@ -61,7 +61,7 @@ public class TMHMMFilteredMatchDAOImpl extends GenericDAOImpl<TMHMMMatch, Long> 
         // Check first to see if the SignatureLibraryRelease exists.  If not, create it.
         final SignatureLibraryRelease release = loadTMHMMRelease();
 
-        // Now try to retrieve the Signatures for Phobius.  If they do not exist, create them.
+        // Now try to retrieve the Signatures for TMHMM.  If they do not exist, create them.
         final Query query = entityManager.createQuery("select s from Signature s where s.signatureLibraryRelease = :release");
         query.setParameter("release", release);
         @SuppressWarnings("unchecked") List<Signature> retrievedSignatures = query.getResultList();
