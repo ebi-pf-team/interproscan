@@ -10,7 +10,10 @@ import uk.ac.ebi.interpro.scan.model.TMHMMSignature;
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
+ * @deprecated This parser still works fine, but was replaced by {@link TMHMMRawResultParser} within TMHMMParseStep. The reason for that is, that the format
+ *             of the raw result output changed completely after changing the set of program parameters.
  */
+@Deprecated
 public class TMHMMPredictionLineParser {
 
     protected static PredictionMaxScoreWrapper parsePredictionLine(String line) {

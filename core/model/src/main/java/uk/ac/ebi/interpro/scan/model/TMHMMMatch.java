@@ -139,7 +139,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
             this.prediction = prediction;
         }
 
-        @XmlAttribute(required = true)
+        @XmlTransient
         public float getScore() {
             return score;
         }
