@@ -1,0 +1,996 @@
+# trainanhmm 1.221     Thu Aug 31 07:29:33 2000
+# Labeled training
+# Iteration 19
+# Seed 10079
+# Score 0.026108
+# Unlab 2.840134
+# Label 2.866241
+# Noise 0.000000
+
+########## HEADER ##################################################
+header {
+	alphabet ACDEFGHIKLMNPQRSTVWY;
+	wildcards XZB;
+}
+########## STATE begin #############################################
+begin {	trans
+		in10: 0.726439: 437.143
+		outglob10: 0.0859642: 51.429
+		out10: 0.187596: 111.428;
+	type 0;
+	end 0;
+	letter NULL;
+	}
+########## STATE in10 ##############################################
+in10 {	trans
+		in11: 1: 600.000
+		in29: 0: 0.000
+		ohelixi1: 0: 0.000;
+	label i;
+	only	 A:0.0625022:41.279 C:0.011973:7.081 D:0.0465777:24.487 E:0.043127:25.588 F:0.0318371:24.931
+		 G:0.0699562:41.030 H:0.0304645:14.514 I:0.0361148:28.323 K:0.0919219:53.937 L:0.0594748:46.771
+		 M:0.0457392:28.535 N:0.0505707:25.052 P:0.0471925:25.596 Q:0.0440963:22.455 R:0.112995:58.761
+		 S:0.0757411:41.597 T:0.0598967:34.657 V:0.0351482:26.101 W:0.0196178:12.478 Y:0.025053:16.829;
+	}
+########## STATE in11 ##############################################
+in11 {	trans
+		in12: 0.956117: 570.071
+		in28: 0.0438827: 29.929
+		in29: 9.71352e-09: 0.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in12 ##############################################
+in12 {	trans
+		in13: 0.990515: 593.970
+		in27: 0.00948479: 6.030
+		in28: 2.4756e-09: 0.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in13 ##############################################
+in13 {	trans
+		in14: 0.995096: 596.914
+		in26: 0.00490371: 3.086
+		in27: 2.57412e-07: 0.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in14 ##############################################
+in14 {	trans
+		in15: 0.864063: 518.528
+		in25: 8.9739e-06: 0.009
+		in26: 0.135928: 81.463;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in15 ##############################################
+in15 {	trans
+		in16: 0.908494: 543.090
+		in24: 0.00860093: 5.531
+		in25: 0.0829047: 51.379;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in16 ##############################################
+in16 {	trans
+		in17: 0.82148: 494.342
+		in23: 0.175249: 103.578
+		in24: 0.00327163: 2.080;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in17 ##############################################
+in17 {	trans
+		in18: 0.999959: 599.963
+		in22: 2.81729e-05: 0.026
+		in23: 1.27779e-05: 0.011;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in18 ##############################################
+in18 {	trans
+		in19: 0.996063: 597.404
+		in21: 0.00392622: 2.586
+		in22: 1.12793e-05: 0.010;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in19 ##############################################
+in19 {	trans
+		in20: 0.139746: 83.244
+		in21: 0.145316: 87.897
+		inglob1: 0.714938: 428.859;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in20 ##############################################
+in20 {	trans
+		in21: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in21 ##############################################
+in21 {	trans
+		in22: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in22 ##############################################
+in22 {	trans
+		in23: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in23 ##############################################
+in23 {	trans
+		in24: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in24 ##############################################
+in24 {	trans
+		in25: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in25 ##############################################
+in25 {	trans
+		in26: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in26 ##############################################
+in26 {	trans
+		in27: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in27 ##############################################
+in27 {	trans
+		in28: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in28 ##############################################
+in28 {	trans
+		in29: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE in29 ##############################################
+in29 {	trans
+		ohelixi1: 1: 600.000;
+	label i;
+	tied_letter in10;
+	}
+########## STATE inglob1 ###########################################
+inglob1 {	trans
+		in20: 0.00574688: 6.329
+		inglob1: 0.994253: 593.671;
+	label i;
+	only	 A:0.0900218:49.958 C:0.012179:7.305 D:0.0516498:33.237 E:0.077044:42.700 F:0.0353261:20.531
+		 G:0.077062:41.688 H:0.0222542:11.926 I:0.0505364:30.574 K:0.0432539:32.655 L:0.0763501:55.444
+		 M:0.0188953:11.714 N:0.0348768:25.489 P:0.0615277:31.973 Q:0.0490588:28.851 R:0.0502433:33.481
+		 S:0.0722427:40.791 T:0.0682991:34.622 V:0.0688267:41.667 W:0.0121526:7.289 Y:0.0281997:18.105;
+	}
+########## STATE outglob10 #########################################
+outglob10 {	trans
+		outglob11: 1: 600.000
+		outglob29: 0: 0.000
+		ihelixo1: 0: 0.000;
+	label O;
+	only	 A:0.0636688:42.228 C:0.0122754:7.534 D:0.0537934:30.190 E:0.0650323:37.752 F:0.0266501:21.127
+		 G:0.065804:38.150 H:0.0247341:12.444 I:0.054519:33.216 K:0.0411857:27.537 L:0.11247:64.905
+		 M:0.0307553:17.748 N:0.0412938:24.157 P:0.0604684:34.376 Q:0.0434411:26.789 R:0.0643075:36.242
+		 S:0.0867196:48.304 T:0.0629746:35.102 V:0.0606489:39.959 W:0.010358:7.169 Y:0.0189001:15.071;
+	}
+########## STATE outglob11 #########################################
+outglob11 {	trans
+		outglob12: 1: 600.000
+		outglob28: 0: 0.000
+		outglob29: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob12 #########################################
+outglob12 {	trans
+		outglob13: 1: 600.000
+		outglob27: 0: 0.000
+		outglob28: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob13 #########################################
+outglob13 {	trans
+		outglob14: 1: 600.000
+		outglob26: 0: 0.000
+		outglob27: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob14 #########################################
+outglob14 {	trans
+		outglob15: 1: 600.000
+		outglob25: 0: 0.000
+		outglob26: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob15 #########################################
+outglob15 {	trans
+		outglob16: 1: 600.000
+		outglob24: 0: 0.000
+		outglob25: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob16 #########################################
+outglob16 {	trans
+		outglob17: 1: 600.000
+		outglob23: 0: 0.000
+		outglob24: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob17 #########################################
+outglob17 {	trans
+		outglob18: 1: 600.000
+		outglob22: 0: 0.000
+		outglob23: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob18 #########################################
+outglob18 {	trans
+		outglob19: 1: 600.000
+		outglob21: 0: 0.000
+		outglob22: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob19 #########################################
+outglob19 {	trans
+		outglobLong: 1: 600.000
+		outglob20: 0: 0.000
+		outglob21: 0: 0.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglobLong #######################################
+outglobLong {	trans
+		outglobLong: 0.996932: 598.559
+		outglob20: 0.00306842: 1.441;
+	label O;
+	tied_letter inglob1;
+	}
+########## STATE outglob20 #########################################
+outglob20 {	trans
+		outglob21: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob21 #########################################
+outglob21 {	trans
+		outglob22: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob22 #########################################
+outglob22 {	trans
+		outglob23: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob23 #########################################
+outglob23 {	trans
+		outglob24: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob24 #########################################
+outglob24 {	trans
+		outglob25: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob25 #########################################
+outglob25 {	trans
+		outglob26: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob26 #########################################
+outglob26 {	trans
+		outglob27: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob27 #########################################
+outglob27 {	trans
+		outglob28: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob28 #########################################
+outglob28 {	trans
+		outglob29: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE outglob29 #########################################
+outglob29 {	trans
+		ihelixo1: 1: 600.000;
+	label O;
+	tied_letter outglob10;
+	}
+########## STATE out10 #############################################
+out10 {	trans
+		out11: 1: 600.000
+		out29: 0: 0.000
+		ihelixo1: 0: 0.000;
+	label o;
+	only	 A:0.0694284:45.854 C:0.00529111:2.262 D:0.0583837:28.912 E:0.0551306:28.320 F:0.0360541:29.862
+		 G:0.0947705:55.618 H:0.0259669:17.962 I:0.033777:26.656 K:0.0603885:25.302 L:0.0833085:57.989
+		 M:0.0366854:22.732 N:0.05723:30.114 P:0.0777635:39.701 Q:0.0493737:24.988 R:0.027103:15.835
+		 S:0.0666774:39.286 T:0.0532191:34.698 V:0.0503144:35.688 W:0.0260175:16.368 Y:0.0331167:21.854;
+	}
+########## STATE out11 #############################################
+out11 {	trans
+		out12: 0.991045: 592.638
+		out28: 4.16059e-07: 0.000
+		out29: 0.00895479: 7.362;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out12 #############################################
+out12 {	trans
+		out13: 0.783264: 468.338
+		out27: 1.10922e-07: 0.000
+		out28: 0.216736: 131.662;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out13 #############################################
+out13 {	trans
+		out14: 0.999999: 599.999
+		out26: 7.85572e-07: 0.001
+		out27: 3.1425e-07: 0.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out14 #############################################
+out14 {	trans
+		out15: 0.78323: 474.588
+		out25: 2.50276e-06: 0.002
+		out26: 0.216767: 125.410;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out15 #############################################
+out15 {	trans
+		out16: 0.999983: 599.987
+		out24: 1.41974e-05: 0.011
+		out25: 3.09923e-06: 0.002;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out16 #############################################
+out16 {	trans
+		out17: 0.783169: 472.867
+		out23: 0.211392: 123.953
+		out24: 0.00543811: 3.180;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out17 #############################################
+out17 {	trans
+		out18: 0.959204: 575.798
+		out22: 5.88738e-06: 0.004
+		out23: 0.0407897: 24.197;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out18 #############################################
+out18 {	trans
+		out19: 0.816719: 491.893
+		out21: 0.18328: 108.106
+		out22: 1.01057e-06: 0.001;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out19 #############################################
+out19 {	trans
+		outglobShort: 0.90421: 541.977
+		out20: 4.21315e-06: 0.003
+		out21: 0.0957858: 58.020;
+	label o;
+	tied_letter out10;
+	}
+########## STATE outglobShort ######################################
+outglobShort {	trans
+		outglobShort: 0.954016: 569.604
+		out20: 0.045984: 30.396;
+	label o;
+	tied_letter inglob1;
+	}
+########## STATE out20 #############################################
+out20 {	trans
+		out21: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out21 #############################################
+out21 {	trans
+		out22: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out22 #############################################
+out22 {	trans
+		out23: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out23 #############################################
+out23 {	trans
+		out24: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out24 #############################################
+out24 {	trans
+		out25: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out25 #############################################
+out25 {	trans
+		out26: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out26 #############################################
+out26 {	trans
+		out27: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out27 #############################################
+out27 {	trans
+		out28: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out28 #############################################
+out28 {	trans
+		out29: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE out29 #############################################
+out29 {	trans
+		ihelixo1: 1: 600.000;
+	label o;
+	tied_letter out10;
+	}
+########## STATE ohelixi1 ##########################################
+ohelixi1 {	trans
+		ohelixi2: 1: 600.000;
+	label M;
+	end 0;
+	only	 A:0.114443:63.816 C:0.0106036:7.090 D:0.0034286:3.454 E:0.00255246:1.819 F:0.0962407:53.823
+		 G:0.0657207:44.185 H:0.0067991:5.457 I:0.113977:66.002 K:0.00732845:7.635 L:0.206678:113.086
+		 M:0.0323484:20.911 N:0.0163112:11.271 P:0.021096:15.819 Q:0.00839845:5.999 R:0.00824344:8.180
+		 S:0.046536:30.184 T:0.0356799:25.096 V:0.108469:59.818 W:0.0423111:26.542 Y:0.0528362:29.814;
+	}
+########## STATE ohelixi2 ##########################################
+ohelixi2 {	trans
+		ohelixi3: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
+########## STATE ohelixi3 ##########################################
+ohelixi3 {	trans
+		ohelixi4: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
+########## STATE ohelixi4 ##########################################
+ohelixi4 {	trans
+		ohelixi5: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
+########## STATE ohelixi5 ##########################################
+ohelixi5 {	trans
+		ohelixi6: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
+########## STATE ohelixi6 ##########################################
+ohelixi6 {	trans
+		ohelixi7: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelixi7 ##########################################
+ohelixi7 {	trans
+		ohelixm: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelixm ###########################################
+ohelixm {	trans
+		ohelix2: 0.00353342: 2.643
+		ohelix3: 0.000705826: 0.881
+		ohelix4: 0.0007305: 0.881
+		ohelix5: 0.00223117: 1.762
+		ohelix6: 0.00367403: 3.524
+		ohelix7: 0.00269998: 2.643
+		ohelix8: 0.000529431: 0.881
+		ohelix9: 0.000533321: 0.881
+		ohelix10: 0.000608711: 0.881
+		ohelix11: 0.000622036: 0.881
+		ohelix12: 0.000658946: 0.881
+		ohelix13: 0.000694851: 0.881
+		ohelix14: 0.263768: 152.423
+		ohelix15: 0.000731612: 0.881
+		ohelix16: 0.430626: 242.291
+		ohelix17: 0.101971: 61.674
+		ohelix18: 0.177261: 115.418
+		ohelix19: 0.00281214: 2.643
+		ohelix20: 0.00155099: 1.762
+		ohelix21: 0.000437803: 0.881
+		ohelixo1: 0.00361957: 4.405;
+	label M;
+	end 0;
+	only	 A:0.130087:76.880 C:0.0175855:10.561 D:0.00204049:3.357 E:0.00758961:4.831 F:0.0890425:50.276
+		 G:0.0899529:59.688 H:0.00207005:2.540 I:0.134418:74.836 K:0.00123452:1.392 L:0.180361:100.873
+		 M:0.0415602:23.827 N:0.00852764:7.287 P:0.0113352:13.183 Q:0.00458544:4.585 R:0.0016742:1.801
+		 S:0.0473245:31.933 T:0.0601922:35.863 V:0.14418:77.372 W:0.0109822:7.616 Y:0.0152575:11.300;
+	}
+########## STATE ohelix2 ###########################################
+ohelix2 {	trans
+		ohelix3: 0: 0.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix3 ###########################################
+ohelix3 {	trans
+		ohelix4: 0: 0.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix4 ###########################################
+ohelix4 {	trans
+		ohelix5: 0: 0.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix5 ###########################################
+ohelix5 {	trans
+		ohelix6: 0: 0.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix6 ###########################################
+ohelix6 {	trans
+		ohelix7: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix7 ###########################################
+ohelix7 {	trans
+		ohelix8: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix8 ###########################################
+ohelix8 {	trans
+		ohelix9: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix9 ###########################################
+ohelix9 {	trans
+		ohelix10: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix10 ##########################################
+ohelix10 {	trans
+		ohelix11: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix11 ##########################################
+ohelix11 {	trans
+		ohelix12: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix12 ##########################################
+ohelix12 {	trans
+		ohelix13: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix13 ##########################################
+ohelix13 {	trans
+		ohelix14: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix14 ##########################################
+ohelix14 {	trans
+		ohelix15: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix15 ##########################################
+ohelix15 {	trans
+		ohelix16: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix16 ##########################################
+ohelix16 {	trans
+		ohelix17: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix17 ##########################################
+ohelix17 {	trans
+		ohelix18: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix18 ##########################################
+ohelix18 {	trans
+		ohelix19: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix19 ##########################################
+ohelix19 {	trans
+		ohelix20: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix20 ##########################################
+ohelix20 {	trans
+		ohelix21: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelix21 ##########################################
+ohelix21 {	trans
+		ohelixo1: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelixo1 ##########################################
+ohelixo1 {	trans
+		ohelixo2: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelixo2 ##########################################
+ohelixo2 {	trans
+		ohelixo3: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ohelixo3 ##########################################
+ohelixo3 {	trans
+		ohelixo4: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ohelixo4 ##########################################
+ohelixo4 {	trans
+		ohelixo5: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ohelixo5 ##########################################
+ohelixo5 {	trans
+		ohelixo6: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ohelixo6 ##########################################
+ohelixo6 {	trans
+		ohelixo7: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ohelixo7 ##########################################
+ohelixo7 {	trans
+		outglob10: 0.0613158: 47.788
+		out10: 0.938684: 552.212;
+	label M;
+	end 0;
+	only	 A:0.102243:61.271 C:0.00862802:4.909 D:0.0082285:6.544 E:0.0026447:2.546 F:0.112145:62.366
+		 G:0.084165:50.728 H:0.00796212:6.366 I:0.105559:60.913 K:0.00151596:2.182 L:0.165595:94.727
+		 M:0.0362802:23.456 N:0.0139466:10.362 P:0.0228418:16.909 Q:0.0089193:7.635 R:0.00944314:8.180
+		 S:0.0612718:37.999 T:0.039499:25.096 V:0.0879611:53.820 W:0.0459407:25.815 Y:0.0752113:38.175;
+	}
+########## STATE ihelixo1 ##########################################
+ihelixo1 {	trans
+		ihelixo2: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ihelixo2 ##########################################
+ihelixo2 {	trans
+		ihelixo3: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ihelixo3 ##########################################
+ihelixo3 {	trans
+		ihelixo4: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ihelixo4 ##########################################
+ihelixo4 {	trans
+		ihelixo5: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ihelixo5 ##########################################
+ihelixo5 {	trans
+		ihelixo6: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixo7;
+	}
+########## STATE ihelixo6 ##########################################
+ihelixo6 {	trans
+		ihelixo7: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelixo7 ##########################################
+ihelixo7 {	trans
+		ihelixm: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelixm ###########################################
+ihelixm {	trans ihelix2 ihelix3 ihelix4 ihelix5 ihelix6 ihelix7 ihelix8 ihelix9 ihelix10 ihelix11 ihelix12 ihelix13 ihelix14 ihelix15 ihelix16 ihelix17 ihelix18 ihelix19 ihelix20 ihelix21 ihelixi1;
+	tied_trans ohelixm;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix2 ###########################################
+ihelix2 {	trans
+		ihelix3: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix3 ###########################################
+ihelix3 {	trans
+		ihelix4: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix4 ###########################################
+ihelix4 {	trans
+		ihelix5: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix5 ###########################################
+ihelix5 {	trans
+		ihelix6: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix6 ###########################################
+ihelix6 {	trans
+		ihelix7: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix7 ###########################################
+ihelix7 {	trans
+		ihelix8: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix8 ###########################################
+ihelix8 {	trans
+		ihelix9: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix9 ###########################################
+ihelix9 {	trans
+		ihelix10: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix10 ##########################################
+ihelix10 {	trans
+		ihelix11: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix11 ##########################################
+ihelix11 {	trans
+		ihelix12: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix12 ##########################################
+ihelix12 {	trans
+		ihelix13: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix13 ##########################################
+ihelix13 {	trans
+		ihelix14: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix14 ##########################################
+ihelix14 {	trans
+		ihelix15: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix15 ##########################################
+ihelix15 {	trans
+		ihelix16: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix16 ##########################################
+ihelix16 {	trans
+		ihelix17: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix17 ##########################################
+ihelix17 {	trans
+		ihelix18: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix18 ##########################################
+ihelix18 {	trans
+		ihelix19: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix19 ##########################################
+ihelix19 {	trans
+		ihelix20: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix20 ##########################################
+ihelix20 {	trans
+		ihelix21: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelix21 ##########################################
+ihelix21 {	trans
+		ihelixi1: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelixi1 ##########################################
+ihelixi1 {	trans
+		ihelixi2: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelixi2 ##########################################
+ihelixi2 {	trans
+		ihelixi3: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixm;
+	}
+########## STATE ihelixi3 ##########################################
+ihelixi3 {	trans
+		ihelixi4: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
+########## STATE ihelixi4 ##########################################
+ihelixi4 {	trans
+		ihelixi5: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
+########## STATE ihelixi5 ##########################################
+ihelixi5 {	trans
+		ihelixi6: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
+########## STATE ihelixi6 ##########################################
+ihelixi6 {	trans
+		ihelixi7: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
+########## STATE ihelixi7 ##########################################
+ihelixi7 {	trans
+		in10: 1: 600.000;
+	label M;
+	end 0;
+	tied_letter ohelixi1;
+	}
