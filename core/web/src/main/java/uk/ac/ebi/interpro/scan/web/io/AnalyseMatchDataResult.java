@@ -22,8 +22,11 @@ public class AnalyseMatchDataResult {
 
     private final ResourceReader<MatchDataRecord> reader;
 
-    public AnalyseMatchDataResult(ResourceReader<MatchDataRecord> reader) {
+    private final EntryHierarchy entryHierarchy;
+
+    public AnalyseMatchDataResult(ResourceReader<MatchDataRecord> reader, EntryHierarchy entryHierarchy) {
         this.reader = reader;
+        this.entryHierarchy = entryHierarchy;
     }
 
     /**
@@ -114,7 +117,7 @@ public class AnalyseMatchDataResult {
 
             // Has this entry already been added to the protein?
             List<SimpleEntry> entries = protein.getAllEntries();
-            SimpleEntry newEntry = new SimpleEntry(entryAc, entryShortName, entryName, entryType);
+            SimpleEntry newEntry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
             if (entries.contains(newEntry)) {
                 // Entry already exists
                 SimpleEntry entry = entries.get(entries.indexOf(newEntry));
@@ -137,7 +140,7 @@ public class AnalyseMatchDataResult {
             }
             else {
                 // New entry for this protein, add it to the map
-                SimpleEntry entry = new SimpleEntry(entryAc, entryShortName, entryName, entryType);
+                SimpleEntry entry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
                 SimpleSignature signature =
                         new SimpleSignature(methodAc, methodName, methodDatabase);
                 signature.addLocation(location);

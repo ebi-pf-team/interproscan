@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,14 +78,14 @@ public final class SimpleProtein {
         return structuralMatches;
     }
 
-    /* Convenience filter methods for JSPs: */  
+    /* Convenience filter methods for JSPs: */
 
     // A tautology really -- all entries have integrated signatures! -- so actually better to make this separation
     // when the SimpleProtein is created: entries collection only has "true" entries, unintegrated signatures can
     // be in signatures collection. Same for structural features and predictions. Protein class would then be:
     // protein.entries, protein.signatures, protein.structuralFeatures, protein.structuralMatches
     // ... with no need for these filters.
-    
+
     public List<SimpleEntry> getEntries() {
         final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
         for (SimpleEntry entry : this.entries) {
@@ -116,8 +117,8 @@ public final class SimpleProtein {
         }
         Collections.sort(features);
         return features;
-    }    
-    
+    }
+
     public List<SimpleStructuralMatch> getStructuralPredictions() {
         final List<SimpleStructuralMatch> predictions = new ArrayList<SimpleStructuralMatch>();
         for (SimpleStructuralMatch m : this.structuralMatches) {
@@ -127,7 +128,7 @@ public final class SimpleProtein {
         }
         Collections.sort(predictions);
         return predictions;
-    } 
+    }
 
     /**
      * Returns a {@link SimpleProtein} from a {@link uk.ac.ebi.interpro.scan.model.Protein}
@@ -135,64 +136,64 @@ public final class SimpleProtein {
      * @param p Protein
      * @return A {@link SimpleProtein} from a {@link uk.ac.ebi.interpro.scan.model.Protein}
      */
-    public static SimpleProtein valueOf(Protein p) {
-        // Get protein info
-        String proteinAc = "Unknown";
-        String proteinName = "Unknown";
-        String proteinDesc = "Unknown";
-        if (!p.getCrossReferences().isEmpty()) {
-            ProteinXref x = p.getCrossReferences().iterator().next();
-            proteinAc = x.getIdentifier();
-            proteinName = x.getName();
-            proteinDesc = x.getDescription();
-        }
-        SimpleProtein sp = new SimpleProtein(proteinAc, proteinName, proteinDesc, p.getSequenceLength(),
-                p.getMd5(), null, 0, null, null);// TODO Populate values properly instead of null or 0!
-        // Get entries and corresponding signatures
-        for (Match m : p.getMatches()) {
-            // Signature
-            Signature s = m.getSignature();
-            String signatureAc = s.getAccession();
-            SimpleSignature ss = new SimpleSignature(signatureAc, s.getName(), s.getSignatureLibraryRelease().getLibrary().getName());
-            for (Object o : m.getLocations()) {
-                Location l = (Location) o;
-                ss.getLocations().add(new SimpleLocation(l.getStart(), l.getEnd()));
-            }
-            // Entry
-            Entry e = s.getEntry();
-            SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName());
-            if (sp.getAllEntries().contains(se)) {
-                // Entry already exists, so get it
-                se = sp.getAllEntries().get(sp.getAllEntries().indexOf(se));
-            } else {
-                // Create new entry
-                sp.getAllEntries().add(se);
-            }
-//                if (sp.getEntriesMap().containsKey(entryAc)) {
-//                    // Entry already exists
-//                    se = sp.getEntriesMap().get(entryAc);
-//                }
-//                else {
-//                    // Create new entry
-//                    Entry e = s.getEntry();
-//                    se = new SimpleEntry(entryAc, e.getDescription(), e.getType().getName());
-//                    // Add to protein
-//                    sp.getEntriesMap().put(entryAc, se);
-//                }
-            // Add signature to entry
-            se.getSignaturesMap().put(signatureAc, ss);
-        }
-        for (SimpleEntry se : sp.entries) {
-            // TODO: Calculate super-match start and end locations from signature matches
-            if (se.getAc().equals("IPR012340")) {
-                se.getLocations().add(new SimpleLocation(1, 123));
-            } else {
-                se.getLocations().add(new SimpleLocation(10, 30));
-                se.getLocations().add(new SimpleLocation(35, 60));
-                se.getLocations().add(new SimpleLocation(80, 110));
-            }
-        }
-        return sp;
-    }
+//    public static SimpleProtein valueOf(Protein p) {
+//        // Get protein info
+//        String proteinAc = "Unknown";
+//        String proteinName = "Unknown";
+//        String proteinDesc = "Unknown";
+//        if (!p.getCrossReferences().isEmpty()) {
+//            ProteinXref x = p.getCrossReferences().iterator().next();
+//            proteinAc = x.getIdentifier();
+//            proteinName = x.getName();
+//            proteinDesc = x.getDescription();
+//        }
+//        SimpleProtein sp = new SimpleProtein(proteinAc, proteinName, proteinDesc, p.getSequenceLength(),
+//                p.getMd5(), null, 0, null, null);// TODO Populate values properly instead of null or 0!
+//        // Get entries and corresponding signatures
+//        for (Match m : p.getMatches()) {
+//            // Signature
+//            Signature s = m.getSignature();
+//            String signatureAc = s.getAccession();
+//            SimpleSignature ss = new SimpleSignature(signatureAc, s.getName(), s.getSignatureLibraryRelease().getLibrary().getName());
+//            for (Object o : m.getLocations()) {
+//                Location l = (Location) o;
+//                ss.getLocations().add(new SimpleLocation(l.getStart(), l.getEnd()));
+//            }
+//            // Entry
+//            Entry e = s.getEntry();
+//            SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName());
+//            if (sp.getAllEntries().contains(se)) {
+//                // Entry already exists, so get it
+//                se = sp.getAllEntries().get(sp.getAllEntries().indexOf(se));
+//            } else {
+//                // Create new entry
+//                sp.getAllEntries().add(se);
+//            }
+////                if (sp.getEntriesMap().containsKey(entryAc)) {
+////                    // Entry already exists
+////                    se = sp.getEntriesMap().get(entryAc);
+////                }
+////                else {
+////                    // Create new entry
+////                    Entry e = s.getEntry();
+////                    se = new SimpleEntry(entryAc, e.getDescription(), e.getType().getName());
+////                    // Add to protein
+////                    sp.getEntriesMap().put(entryAc, se);
+////                }
+//            // Add signature to entry
+//            se.getSignaturesMap().put(signatureAc, ss);
+//        }
+//        for (SimpleEntry se : sp.entries) {
+//            // TODO: Calculate super-match start and end locations from signature matches
+//            if (se.getAc().equals("IPR012340")) {
+//                se.getLocations().add(new SimpleLocation(1, 123));
+//            } else {
+//                se.getLocations().add(new SimpleLocation(10, 30));
+//                se.getLocations().add(new SimpleLocation(35, 60));
+//                se.getLocations().add(new SimpleLocation(80, 110));
+//            }
+//        }
+//        return sp;
+//    }
 
 }

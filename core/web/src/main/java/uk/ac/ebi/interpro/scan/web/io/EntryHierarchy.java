@@ -1,14 +1,12 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.web.model.EntryHierarchyData;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * A singleton that contains information about the InterPro domain entry hierarchy.
@@ -53,14 +51,17 @@ public class EntryHierarchy {
         }
     }
 
+    @Required
     public void setEntryColourPropertiesFile(Properties entryColourPropertiesFile) {
         this.entryColourPropertiesFile = entryColourPropertiesFile;
     }
 
+    @Required
     public void setEntryHierarchyDataResource(Resource entryHierarchyDataResource) {
         this.entryHierarchyDataResource = entryHierarchyDataResource;
     }
 
+    @Required
     public void setEntryHierarchyDataResourceReader(EntryHierarchyDataResourceReader entryHierarchyDataResourceReader) {
         this.entryHierarchyDataResourceReader = entryHierarchyDataResourceReader;
     }
@@ -103,5 +104,39 @@ public class EntryHierarchy {
             return this.entryHierarchyDataMap.get(ac);
         }
         return null;
+    }
+
+    /**
+     * Are the two entries part of the same hierarchy?
+     * @param ac1 First entry accession
+     * @param ac2 Second entry accession
+     * @return True if part of the same hierarchy, otherwise false
+     */
+    public boolean areInSameHierarchy(String ac1, String ac2) {
+        if (this.entryHierarchyDataMap.containsKey(ac1)) {
+            EntryHierarchyData data = this.entryHierarchyDataMap.get(ac1);
+            Set<String> entriesInSameHierarchy = data.getEntriesInSameHierarchy();
+            if (entriesInSameHierarchy != null && entriesInSameHierarchy.contains(ac2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Compare the hierarchy level of two entries
+     * @param ac1 First entry accession
+     * @param ac2 Second entry accession
+     * @return 0 if the same, -1 or 1
+     */
+    public int compareHierarchyLevels(String ac1, String ac2) {
+        if (this.entryHierarchyDataMap.containsKey(ac1) && this.entryHierarchyDataMap.containsKey(ac2)) {
+            EntryHierarchyData data1 = this.entryHierarchyDataMap.get(ac1);
+            EntryHierarchyData data2 = this.entryHierarchyDataMap.get(ac2);
+            Integer level1 = data1.getHierarchyLevel();
+            Integer level2 = data2.getHierarchyLevel();
+            return level1.compareTo(level2);
+        }
+        return 0;
     }
 }
