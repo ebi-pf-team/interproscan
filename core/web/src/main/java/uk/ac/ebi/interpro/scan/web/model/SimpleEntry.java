@@ -1,14 +1,17 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
+
 import java.util.*;
 
 /**
-* TODO: Add description
-*
-* @author Antony Quinn
-* @version $Id$
-*/
-public final class SimpleEntry implements Comparable<SimpleEntry>  {
+ * Contains basic information about an InterPro entry.
+ *
+ * @author Antony Quinn
+ * @author Matthew Fraser
+ * @version $Id$
+ */
+public final class SimpleEntry implements Comparable<SimpleEntry> {
 
     private final String ac;
     private final String shortName;
@@ -16,12 +19,14 @@ public final class SimpleEntry implements Comparable<SimpleEntry>  {
     private final String type;
     private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
     private Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
+    private final EntryHierarchy entryHierarchy;
 
-    public SimpleEntry(String ac, String shortName, String name, String type) {
+    public SimpleEntry(String ac, String shortName, String name, String type, EntryHierarchy entryHierarchy) {
         this.ac         = ac;
         this.shortName  = shortName;
         this.name       = name;
         this.type       = type;
+        this.entryHierarchy = entryHierarchy;
     }
 
     public String getAc() {
@@ -50,6 +55,10 @@ public final class SimpleEntry implements Comparable<SimpleEntry>  {
 
     public Collection<SimpleSignature> getSignatures() {
         return signatures.values();
+    }
+
+    public void setSignatures(Map<String, SimpleSignature> signatures) {
+        this.signatures = signatures;
     }
 
     public Map<String, SimpleSignature> getSignaturesMap() {
@@ -90,6 +99,18 @@ public final class SimpleEntry implements Comparable<SimpleEntry>  {
         else if (thatType != null){
             return 1;
         }
+
+        // Order by entry accession whilst considering if the entries are in the same hierarchy
+        if (!this.ac.equals(that.ac)) {
+            if (this.entryHierarchy.areInSameHierarchy(this.ac, that.ac)) {
+                // Sort based upon level in hierarchy
+                final int hierarchyComparison = this.entryHierarchy.compareHierarchyLevels(this.ac, that.ac);
+                if (hierarchyComparison != 0) {
+                    return hierarchyComparison;
+                }
+            }
+        }
+
 
         return Collections.min(this.locations).compareTo(Collections.min(that.locations));
     }
