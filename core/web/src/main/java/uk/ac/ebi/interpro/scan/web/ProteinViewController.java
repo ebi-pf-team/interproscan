@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class ProteinViewController {
     @RequestMapping(value = "/{id}/body")
     public ModelAndView proteinBody(@PathVariable String id) {
         return new ModelAndView("protein-body", buildModelMap(retrieve(id)));
-    }    
+    }
 
     /**
      * Returns protein features for inclusion in DBML
@@ -93,16 +94,16 @@ public class ProteinViewController {
      */
     private SimpleProtein queryByAccession(String ac) throws IOException {
         // TODO: Configure matchAnalyser via Spring context
-        AnalyseMatchDataResult matchAnalyser = new AnalyseMatchDataResult(new MatchDataResourceReader());
+        AnalyseMatchDataResult matchAnalyser = new AnalyseMatchDataResult(new MatchDataResourceReader(), this.entryHierarchy);
         AnalyseStructuralMatchDataResult structuralMatchAnalyser = new AnalyseStructuralMatchDataResult(new StructuralMatchDataResourceReader());
         CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchData(matchAnalyser, structuralMatchAnalyser);
-        return data.queryByAccession(ac);
-
+        SimpleProtein protein = data.queryByAccession(ac);
+        return protein;
     }
 
     @Resource
     void setEntryHierarchy(EntryHierarchy entryHierarchy) {
         this.entryHierarchy = entryHierarchy;
     }
-    
+
 }
