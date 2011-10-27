@@ -7,7 +7,7 @@
     <bean id="reader" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
 
     <bean id="resource" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/ParentChildTreeFile.txt"/>
+        <constructor-arg value="data/entry_hierarchy.csv"/>
     </bean>
 
  </beans>
