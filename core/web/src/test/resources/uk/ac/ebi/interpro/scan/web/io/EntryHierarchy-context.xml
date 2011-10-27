@@ -19,7 +19,7 @@
     <bean id="entryHierarchyReader" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
 
     <bean id="entryHierarchyResource" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/ParentChildTreeFile.txt"/>
+        <constructor-arg value="data/entry_hierarchy.csv"/>
     </bean>
 
  </beans>
