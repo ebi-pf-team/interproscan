@@ -6,18 +6,6 @@
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init" scope="singleton">
-      <property name="entryColourPropertiesFile">
-        <util:properties location="data/entry_colours.properties"/>
-      </property>
-        <property name="entryHierarchyDataResource" ref="entryHierarchyResource" />
-        <property name="entryHierarchyDataResourceReader" ref="entryHierarchyReader" />
-    </bean>
-
-    <bean id="entryHierarchyReader" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
-
-    <bean id="entryHierarchyResource" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="ParentChildTreeFile.txt"/>
-    </bean>
+    <import resource="EntryHierarchy-context.xml" />
 
  </beans>

@@ -6,7 +6,8 @@ import java.util.Set;
  * Contains useful information about InterPro entry domain hierarchies.
  *
  * For a given entry accession, will be able to tell:
- * - At what level within the hierarchy is this entry? Level 0 is a root entry.
+ * - At what level within the hierarchy is this entry? Level 1 is a root entry.
+ * - What is this entries parent? Root entries have no parent.
  * - Which other entries are within the same hierarchy as this one?
  *
  * @author Matthew Fraser, EMBL-EBI, InterPro
@@ -16,11 +17,13 @@ import java.util.Set;
 public class EntryHierarchyData {
     private final String entryAc;
     private final int hierarchyLevel;
+    private final String parentEntryAc;
     private Set<String> entriesInSameHierarchy = null;
 
-    public EntryHierarchyData(String entryAc, int hierarchyLevel) {
+    public EntryHierarchyData(String entryAc, int hierarchyLevel, String parentEntryAc) {
         this.entryAc = entryAc;
         this.hierarchyLevel = hierarchyLevel;
+        this.parentEntryAc = parentEntryAc;
     }
 
     public String getEntryAc() {
@@ -29,6 +32,10 @@ public class EntryHierarchyData {
 
     public int getHierarchyLevel() {
         return hierarchyLevel;
+    }
+
+    public String getParentEntryAc() {
+        return parentEntryAc;
     }
 
     public Set<String> getEntriesInSameHierarchy() {

@@ -40,13 +40,13 @@ public class EntryHierarchyDataResourceReaderTest {
 
         EntryHierarchyData ipr000014 = result.get("IPR000014");
         EntryHierarchyData ipr013655 = result.get("IPR013655");
-        assertEquals(0, ipr000014.getHierarchyLevel());
-        assertEquals(1, ipr013655.getHierarchyLevel());
+        assertEquals(1, ipr000014.getHierarchyLevel());
+        assertEquals(2, ipr013655.getHierarchyLevel());
         assertEquals(4, ipr000014.getEntriesInSameHierarchy().size());
         assertEquals(ipr000014.getEntriesInSameHierarchy(), ipr013655.getEntriesInSameHierarchy());
 
         EntryHierarchyData ipr001840 = result.get("IPR001840");
-        assertEquals(2, ipr001840.getHierarchyLevel());
+        assertEquals(3, ipr001840.getHierarchyLevel());
 
         EntryHierarchyData ipr000276 = result.get("IPR000276");
         assertEquals(228, ipr000276.getEntriesInSameHierarchy().size());
