@@ -100,8 +100,8 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         }
 
         Process process = pb.start();
-        StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputFileHandle);
-        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), errorFileHandle);
+        final StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputFileHandle);
+        final StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), errorFileHandle);
         errorGobbler.start();
         outputGobbler.start();
         if (commandInputStream != null) {
