@@ -13,6 +13,12 @@ package uk.ac.ebi.interpro.scan.management.model;
  * @since 1.0
  */
 public enum SerialGroup {
+    WRITE_FASTA_COILS,
+    WRITE_FASTA_PHOBIUS,
+    WRITE_FASTA_SIGNALP_EUK,
+    WRITE_FASTA_SIGNALP_GRAM_POS,
+    WRITE_FASTA_SIGNALP_GRAM_NEG,
+    WRITE_FASTA_FILE_TMHMM,
     LOAD_PROTEINS,
     LOAD_NUCLEIC_ACID,
     PARSE_GENE3D,

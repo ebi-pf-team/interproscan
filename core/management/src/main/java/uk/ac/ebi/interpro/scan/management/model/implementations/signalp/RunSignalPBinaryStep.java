@@ -55,6 +55,8 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
         command.add(this.perlCommand); // Run the perl script using installed version of Perl
         command.add(this.fullPathToSignalPBinary);
         command.addAll(this.getBinarySwitchesAsList());
+        command.add("-T");
+        command.add(temporaryFileDirectory);
         command.add(fastaFilePathName);
 
         if (LOGGER.isDebugEnabled()) {

@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
+import uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfMatchTempParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -30,7 +30,7 @@ public class WriteFastaFileForBlastStep extends Step {
     private String blastMatchesFileName;
 
     @Transient
-    private final WriteFastaFile fastaFile = new WriteFastaFile();
+    private final FastaFileWriter fastaFileWriter = new FastaFileWriter();
 
     private String fastaFilePathTemplate;
 
@@ -83,11 +83,11 @@ public class WriteFastaFileForBlastStep extends Step {
         String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
         List<Protein> proteins = proteinDAO.getProteinsByIds(proteinIds);
         try {
-            fastaFile.writeFastaFile(proteins, fastaFilePathName);
+            fastaFileWriter.writeFastaFile(proteins, fastaFilePathName);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
-        } catch (WriteFastaFile.FastaFileWritingException e) {
-            throw new IllegalStateException("WriteFastaFile.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
+        } catch (FastaFileWriter.FastaFileWritingException e) {
+            throw new IllegalStateException("FastaFileWriter.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
         }
     }
 }
