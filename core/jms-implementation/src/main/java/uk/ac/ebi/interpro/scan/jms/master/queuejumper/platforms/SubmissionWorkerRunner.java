@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
+import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 
 import java.io.IOException;
 
@@ -18,6 +20,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private boolean highMemory;
 
+    private static long submissionTimeMillis = 0;
+
+    private WorkerStartupStrategy workerStartupStrategy;
+
     @Required
     public void setSubmissionCommand(String submissionCommand) {
         this.submissionCommand = submissionCommand;
@@ -26,6 +32,11 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Required
     public void setHighMemory(boolean highMemory) {
         this.highMemory = highMemory;
+    }
+
+    @Required
+    public void setWorkerStartupStrategy(WorkerStartupStrategy workerStartupStrategy) {
+        this.workerStartupStrategy = workerStartupStrategy;
     }
 
     /**
@@ -38,25 +49,32 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         startupNewWorker(priority);
     }
 
+
+
     @Override
     public void startupNewWorker(int priority) {
-        try {
+        if (workerStartupStrategy.startUpWorker(priority)){
             StringBuilder command = new StringBuilder(submissionCommand);
-//            command = command.replaceAll("%config%", System.getProperty("config"));
-
             command.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
-
             if (priority > 0) {
                 command.append(" --priority=")
                         .append(priority);
             }
-
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Submitted Command: " + command);
+                LOGGER.debug("Command ABOUT to be submitted: " + command);
             }
-            Runtime.getRuntime().exec(command.toString());
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot run the worker", e);
+            try {
+//                Runtime.getRuntime().exec(command.toString());
+                final CommandLineConversation clc = new CommandLineConversationImpl();
+                int exitStatus = clc.runCommand(false, command.toString().split(" "));
+                if (exitStatus != 0){
+                    LOGGER.warn("Non-zero exit status from attempting to run a worker: \nCommand:" + command + "\nExit status: " + exitStatus + "\nError output: " + clc.getErrorMessage());
+                }
+            } catch (IOException e) {
+                LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:" + command + "\nESee stack trace: ", e);
+            } catch (InterruptedException e) {
+                LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:" + command + "\nESee stack trace: ", e);
+            }
         }
     }
 
