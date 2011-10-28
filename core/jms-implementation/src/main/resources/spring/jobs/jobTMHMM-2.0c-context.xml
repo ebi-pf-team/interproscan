@@ -30,7 +30,23 @@
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create FASTA file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <!--<property name="serialGroup"        value="WRITE_FASTA_FILE"/>-->
+
+        <!-- TMHMM cannot cope with non-standard amino acids.  Both pyrrolysine and selenocysteine are
+         present in uniparc.  This custom FastaFileWriter will check for any non-standard amino acids
+         in the sequence and substitute where possible.  If any other characters appear that
+         cannot be handled, the sequence will not be written out to the fasta file.-->
+        <property name="fastaFileWriter">
+            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter">
+                <property name="validAlphabet" value="ARNDCEQGHILKMFPSTWYV"/>
+                <property name="residueSubstitutions">
+                    <map>
+                        <entry key="O" value="K"/>
+                        <entry key="U" value="C"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="serialGroup" value="WRITE_FASTA_FILE_TMHMM"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 

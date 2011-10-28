@@ -28,6 +28,7 @@
         <property name="stepDescription" value="Create fasta file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="serialGroup" value="WRITE_FASTA_COILS"/>
     </bean>
 
     <!-- STEP 2 -->

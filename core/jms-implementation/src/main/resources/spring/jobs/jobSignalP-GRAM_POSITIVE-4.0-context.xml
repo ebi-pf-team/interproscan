@@ -39,6 +39,7 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="serialGroup" value="WRITE_FASTA_SIGNALP_GRAM_POS"/>
     </bean>
 
     <!--
