@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
@@ -27,10 +28,14 @@ public class ProteinViewControllerTest {
     @Resource
     private EntryHierarchy entryHierarchy;
 
+    @Resource
+    private CreateSimpleProteinFromMatchData matchData;
+
     @Test
     public void testProtein()    {
         ProteinViewController c = new ProteinViewController();
         c.setEntryHierarchy(entryHierarchy);
+        c.setMatchData(matchData);
         c.proteinFeatures("P38398");
     }
 

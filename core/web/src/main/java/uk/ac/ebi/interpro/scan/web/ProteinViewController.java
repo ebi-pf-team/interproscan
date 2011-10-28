@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ebi.interpro.scan.web.io.*;
-import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +26,9 @@ public class ProteinViewController {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinViewController.class.getName());
 
+    // Spring managed beans
     private EntryHierarchy entryHierarchy;
+    private CreateSimpleProteinFromMatchData matchData;
 
     @RequestMapping
     public String index() {
@@ -93,17 +93,19 @@ public class ProteinViewController {
      * @return Protein for given accession
      */
     private SimpleProtein queryByAccession(String ac) throws IOException {
-        // TODO: Configure matchAnalyser via Spring context
-        AnalyseMatchDataResult matchAnalyser = new AnalyseMatchDataResult(new MatchDataResourceReader(), this.entryHierarchy);
-        AnalyseStructuralMatchDataResult structuralMatchAnalyser = new AnalyseStructuralMatchDataResult(new StructuralMatchDataResourceReader());
-        CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchData(matchAnalyser, structuralMatchAnalyser);
-        SimpleProtein protein = data.queryByAccession(ac);
+        SimpleProtein protein = matchData.queryByAccession(ac);
         return protein;
     }
 
+    // Setter methods required by Spring framework
+
     @Resource
-    void setEntryHierarchy(EntryHierarchy entryHierarchy) {
+    public void setEntryHierarchy(EntryHierarchy entryHierarchy) {
         this.entryHierarchy = entryHierarchy;
     }
 
+    @Resource
+    public void setMatchData(CreateSimpleProteinFromMatchData matchData) {
+        this.matchData = matchData;
+    }
 }

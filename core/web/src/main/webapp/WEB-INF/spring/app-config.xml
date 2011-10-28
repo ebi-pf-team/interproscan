@@ -22,12 +22,36 @@
         <property name="entryHierarchyDataResource" ref="entryHierarchyResource" />
         <property name="entryHierarchyDataResourceReader" ref="entryHierarchyReader" />
     </bean>
-
     <bean id="entryHierarchyReader" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
-
     <bean id="entryHierarchyResource" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="entry_hierarchy.csv"/>
     </bean>
 
+    <!-- AnalyseMatchDataResult -->
+    <bean id="matchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult">
+        <constructor-arg>
+            <bean class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="entryHierarchy" />
+        </constructor-arg>
+    </bean>
+
+    <!-- AnalyseStructuralMatchDataResult -->
+    <bean id="structuralMatchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseStructuralMatchDataResult">
+        <constructor-arg>
+            <bean class="uk.ac.ebi.interpro.scan.web.io.StructuralMatchDataResourceReader"/>
+        </constructor-arg>
+    </bean>
+
+    <!-- CreateSimpleProteinFromMatchData -->
+    <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData">
+        <constructor-arg>
+            <ref bean="matchAnalyser" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="structuralMatchAnalyser" />
+        </constructor-arg>
+    </bean>
 
 </beans>

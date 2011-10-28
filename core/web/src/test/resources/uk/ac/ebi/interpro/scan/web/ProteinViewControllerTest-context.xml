@@ -6,4 +6,28 @@
 
     <import resource="io/EntryHierarchy-context.xml" />
 
+    <bean id="matchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult">
+        <constructor-arg>
+            <bean class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="entryHierarchy" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="structuralMatchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseStructuralMatchDataResult">
+        <constructor-arg>
+            <bean class="uk.ac.ebi.interpro.scan.web.io.StructuralMatchDataResourceReader"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="data" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData">
+        <constructor-arg>
+            <ref bean="matchAnalyser" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="structuralMatchAnalyser" />
+        </constructor-arg>
+    </bean>
+    
 </beans>
