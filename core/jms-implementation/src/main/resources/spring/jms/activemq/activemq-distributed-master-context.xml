@@ -12,14 +12,28 @@
 
     <!--  lets create an embedded ActiveMQ Broker -->
     <amq:broker id="i5_broker"
-                useJmx="true"
+                useJmx="false"
                 persistent="true"
                 useShutdownHook="true"
+                dedicatedTaskRunner="false"
                 dataDirectory="${broker.directory}"
             >
         <!-- shutdownhook is the default shutdown mode for ActiveMQ, see:
         http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broker/BrokerService.html#setUseShutdownHook(boolean)
         -->
+        <amq:systemUsage>
+            <amq:systemUsage>
+                <amq:memoryUsage>
+                    <amq:memoryUsage limit="2048 mb"/>
+                </amq:memoryUsage>
+                <!--<amq:storeUsage>-->
+                    <!--<amq:storeUsage limit="1 gb"/>-->
+                <!--</amq:storeUsage>-->
+                <!--<amq:tempUsage>-->
+                    <!--<amq:tempUsage limit="100 mb"/>-->
+                <!--</amq:tempUsage>-->
+            </amq:systemUsage>
+        </amq:systemUsage>
 
         <amq:transportConnectors>
             <!-- Connector for remote workers-->
@@ -52,12 +66,22 @@
           class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
         <property name="submissionCommand" value="${worker.command}"/>
         <property name="highMemory" value="false"/>
+        <property name="workerStartupStrategy">
+            <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LSFMaximumSubmittedJobsWorkerStartupStrategy">
+                <property name="maximumSubmittedJobs" value="${lsf.maximum.submitted.jobs}"/>
+                <property name="linuxAccountName" value="${unix.username}"/>
+                <property name="checkInterval" value="300000"/>  <!-- Every five minutes.-->
+            </bean>
+        </property>
     </bean>
 
     <bean id="workerRunnerHighMemory"
           class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
         <property name="submissionCommand" value="${worker.high.memory.command}"/>
         <property name="highMemory" value="true"/>
+        <property name="workerStartupStrategy">
+            <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
+        </property>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">

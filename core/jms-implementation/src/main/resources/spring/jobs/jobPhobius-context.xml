@@ -29,6 +29,21 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="serialGroup" value="WRITE_FASTA_PHOBIUS"/>
+        <!-- Phobius cannot cope with all non-standard amino acids.  Pyrrolysine is
+         present in uniparc.  This custom FastaFileWriter will check for any non-standard amino acids
+         in the sequence (other than selenocysteine, which is OK) and substitute Pyrrolysine -> Lysine.
+         If any other characters appear that cannot be handled, the sequence will not be written out to the fasta file.-->
+        <property name="fastaFileWriter">
+            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter">
+                <property name="validAlphabet" value="ARNDCEQGHILKMFPSTWYVU"/>
+                <property name="residueSubstitutions">
+                    <map>
+                        <entry key="O" value="K"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <!-- STEP 2 -->

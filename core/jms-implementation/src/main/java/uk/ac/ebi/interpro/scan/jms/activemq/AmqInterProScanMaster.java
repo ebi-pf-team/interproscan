@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep;
@@ -167,8 +168,15 @@ public class AmqInterProScanMaster implements Master {
                         if (highMemory) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " will be re-run in a high-memory worker.");
                         }
+                        final Step step = stepInstance.getStep(jobs);
 
-                        final int priority = stepInstance.getStep(jobs).getSerialGroup() == null ? 4 : 8;
+                        // Serial groups should be high priority, however exclude WriteFastaFileStep from this
+                        // as they are very abundant.
+                        final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep
+                                ? 4
+                                : 8;
+
+                        // Reduce the priority slightly for FASTA file writing - need to get post-processing running.
 
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, highMemory, priority);
@@ -182,8 +190,9 @@ public class AmqInterProScanMaster implements Master {
                             workerRunner.startupNewWorker(priority);
                         }
                     }
+//                    Thread.sleep(3);  // Give the system a chance to breath...
                 }
-                Thread.sleep(200);  // Every 200 ms, checks for any runnable StepInstances and runs them.
+//                Thread.sleep(10);  // Every 10 ms, checks for any runnable StepInstances and runs them.
 
                 // Close down (break out of loop) if the analyses are all complete.
                 if (closeOnCompletion &&
@@ -229,10 +238,10 @@ public class AmqInterProScanMaster implements Master {
      */
     private int createFastaFileLoadStepInstance() {
         int stepInstancesCreated = 0;
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Creating FASTA file load step.");
-        }
         if (fastaFilePath != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Creating FASTA file load step.");
+            }
             Map<String, String> params = new HashMap<String, String>();
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
             createBlackBoxParams(params);
@@ -246,10 +255,10 @@ public class AmqInterProScanMaster implements Master {
 
     private int createNucleicAcidLoadStepInstance() {
         int stepInstancesCreated = 0;
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("creating nucleic acid load step.");
-        }
         if (fastaFilePath != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("creating nucleic acid load step.");
+            }
             Map<String, String> params = new HashMap<String, String>();
             params.put(RunGetOrfStep.SEQUENCE_FILE_PATH_KEY, fastaFilePath);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
