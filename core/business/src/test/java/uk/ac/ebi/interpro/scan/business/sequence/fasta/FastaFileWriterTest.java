@@ -22,14 +22,14 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class WriteFastaFileTest {
+public class FastaFileWriterTest {
 
-    private WriteFastaFile writer;
+    private FastaFileWriter writer;
 
     private ProteinDAO proteinDAO;
 
     @Resource(name = "writer")
-    public void setWriter(WriteFastaFile writer) {
+    public void setWriter(FastaFileWriter writer) {
         this.writer = writer;
     }
 
@@ -40,7 +40,7 @@ public class WriteFastaFileTest {
 
     @Test
     @Ignore("Need to fix as sequences are now validated as amino acid.")
-    public void testWriter() throws IOException, WriteFastaFile.FastaFileWritingException {
+    public void testWriter() throws IOException, FastaFileWriter.FastaFileWritingException {
         List<Protein> proteinList = new ArrayList<Protein>();
         String[] proteins = {"ABCDEFGHIKLMNPQRSTUVWXYZ",
                 "ASFYSTAFCYDASFYCTDFSYTCFYSDTCFYDSCFYSDCFSDTYCVHEVSDHSDVCYDVS" +
