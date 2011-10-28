@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.business.sequence.fasta.WriteFastaFile;
+import uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -25,7 +25,7 @@ public class WriteFastaFileStep extends Step {
     private static final Logger LOGGER = Logger.getLogger(WriteFastaFileStep.class.getName());
 
     @Transient
-    private final WriteFastaFile fastaFile = new WriteFastaFile();
+    private FastaFileWriter fastaFileWriter = new FastaFileWriter();
 
     private String fastaFilePathTemplate;
 
@@ -42,6 +42,16 @@ public class WriteFastaFileStep extends Step {
     }
 
     /**
+     * If you need a custom fasta file writer, you can inject it here (e.g. for Phobius and TMHMM which
+     * have picky requirements for amino acid alphabet).  Normally you can safely ignore this parameter
+     * and the Step will use a default FastaFileWriter.
+     * @param fastaFileWriter a custom fasta file writer
+     */
+    public void setFastaFileWriter(FastaFileWriter fastaFileWriter) {
+        this.fastaFileWriter = fastaFileWriter;
+    }
+
+    /**
      * This method is called to execute the action that the StepInstance must perform.
      *
      * @param stepInstance           containing the parameters for executing.
@@ -54,11 +64,11 @@ public class WriteFastaFileStep extends Step {
         List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
         LOGGER.info("Writing " + proteins.size() + " proteins to FASTA file...");
         try {
-            fastaFile.writeFastaFile(proteins, fastaFilePathName);
+            fastaFileWriter.writeFastaFile(proteins, fastaFilePathName);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
-        } catch (WriteFastaFile.FastaFileWritingException e) {
-            throw new IllegalStateException("WriteFastaFile.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
+        } catch (FastaFileWriter.FastaFileWritingException e) {
+            throw new IllegalStateException("FastaFileWriter.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
         }
         LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
