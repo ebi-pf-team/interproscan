@@ -2,13 +2,69 @@
  * Style signature matches by member database name.
  *
  * @author  Antony Quinn
+ * @author  Matthew Fraser
  * @version $Id$
  */
 
 /* TODO: Pick decent colours */
-/* TODO: Add other member databases */
 
-span.pfam, span.pfamb, span.panther, span.prints, span.pirsf,
-span.smart, span.prosite-profiles, span.prosite-patterns, span.hamap, span.gene3d, span.superfamily {
+span.pfam {
+    background-color: black;
+}
+
+/* TODO No integrated signatures, so not required? */
+span.pfamb {
+    background-color: black;
+}
+
+span.panther {
+    background-color: black;
+}
+
+span.prints {
+    background-color: black;
+}
+
+span.pirsf {
+    background-color: black;
+}
+
+span.smart {
+    background-color: black;
+}
+
+span.prosite-profiles {
+    background-color: black;
+}
+
+span.prosite-patterns {
+    background-color: black;
+}
+
+span.hamap {
+    background-color: black;
+}
+
+span.gene3d {
+    background-color: black;
+}
+
+span.superfamily {
+    background-color: black;
+}
+
+span.tigrfam {
+    background-color: black;
+}
+
+span.prodom {
+    background-color: black;
+}
+
+span.signalp {
+    background-color: black;
+}
+
+span.tmhmm {
     background-color: black;
 }
