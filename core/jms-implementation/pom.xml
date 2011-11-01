@@ -235,33 +235,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>ideauidesigner-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>javac2</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <fork>true</fork>
-
-                    <debug>true</debug>
-                    <failOnError>true</failOnError>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.intellij</groupId>
-                        <artifactId>javac2</artifactId>
-
-                        <version>7.0.3</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
         </plugins>
     </build>
 
