@@ -5,97 +5,95 @@
  * @version $Id$
  */
 
-/* Generated from DBML InterProEntryHierarchyLoader.DOMAIN_COLOUR_SET */
-
 span.c1 {
-    background-color: #00c6ff;
+    background-color: #a5a5a5;
 }
 span.c2 {
-    background-color: #ff0000;
+    background-color: #00baf0;
 }
 span.c3 {
-    background-color: #a6ff46;
+    background-color: #ff0000;
 }
 span.c4 {
-    background-color: #ffd200;
+    background-color: #33cc33;
 }
 span.c5 {
-    background-color: #ffa99e;
+    background-color: #ffde00;
 }
 span.c6 {
-    background-color: #c571ff;
+    background-color: #ffa99e;
 }
 span.c7 {
-    background-color: #c69c6d;
+    background-color: #c571ff;
 }
 span.c8 {
     background-color: #ff9000;
 }
 span.c9 {
-    background-color: #000000;
+    background-color: #c69c6d;
 }
 span.c10 {
-    background-color: #0000ff;
+    background-color: #deeded;
 }
 span.c11 {
-    background-color: #ff00ff;
+    background-color: #1e82d4;
 }
 span.c12 {
-    background-color: #12b548;
+    background-color: #a1e42d;
 }
 span.c13 {
     background-color: #ffff00;
 }
 span.c14 {
-    background-color: #ff009c;
+    background-color: #cf161d;
 }
 span.c15 {
-    background-color: #717171;
+    background-color: #000000;
 }
 span.c16 {
-    background-color: #92acd1;
+    background-color: #1cbbb4;
 }
 span.c17 {
-    background-color: #ff6000;
+    background-color: #e354e3;
 }
 span.c18 {
-    background-color: #d4d4d4;
+    background-color: #cbcbcb;
 }
 span.c19 {
-    background-color: #1cbbb4
+    background-color: #92acd1
 }
 span.c20 {
-    background-color: #0ff7fa;
+    background-color: #a66c32;
 }
 span.c21 {
-    background-color: #9306ff;
+    background-color: #0000ff;
 }
 span.c22 {
-    background-color: #26d685;
+    background-color: #0ff7fa;
 }
 span.c23 {
-    background-color: #d4d721;
+    background-color: #ecd66d;
 }
 span.c24 {
     background-color: #ffa8fd;
 }
 span.c25 {
-    background-color: #d0c4ff;
+    background-color: #9306ff;
 }
 span.c26 {
-    background-color: #7db7ff;
+    background-color: #998675;
 }
 span.c27 {
-    background-color: #c1694d;
+    background-color: #c3b8f0;
 }
 span.c28 {
-    background-color: #b3dbce;
+    background-color: #7db7ff;
 }
 span.c29 {
-    background-color: #0072bc
+    background-color: #00984a
 }
 span.c30 {
-    background-color: #9dd8f3;
+    background-color: #bedbfe;
 }
 span.c31 {
     background-color: #ffdfdf;
@@ -104,7 +102,7 @@ span.c32 {
     background-color: #cde6a8;
 }
 span.c33 {
-    background-color: #fffca8;
+    background-color: #fffdcc;
 }
 span.c34 {
     background-color: #e6e4a8;
@@ -122,13 +120,13 @@ span.c38 {
     background-color: #dfffdc;
 }
 span.c39 {
-    background-color: #d5e8ff;
+    background-color: #c3b3a1;
 }
 span.c40 {
-    background-color: #0a4ca5;
+    background-color: #e7e1ff;
 }
 span.c41 {
-    background-color: #ae3a3a;
+    background-color: #950e0e;
 }
 span.c42 {
     background-color: #005e20;
@@ -137,50 +135,50 @@ span.c43 {
     background-color: #a2a420;
 }
 span.c44 {
-    background-color: #d7ff5e;
+    background-color: #e8ffa2;
 }
 span.c45 {
-    background-color: #c5209c;
+    background-color: #ff00ff;
 }
 span.c46 {
     background-color: #604036;
 }
 span.c47 {
-    background-color: #ecd66d;
+    background-color: #717171;
 }
 span.c48 {
-    background-color: #71ffb0;
+    background-color: #6af0a6;
 }
 span.c49 {
-    background-color: #a5a5a5;
+    background-color: #5d8ca2;
 }
 span.c50 {
-    background-color: #6595ed;
+    background-color: #6e2e9d;
 }
 span.c51 {
     background-color: #e56251;
 }
 span.c52 {
-    background-color: #82db22;
+    background-color: #a6ff46;
 }
 span.c53 {
-    background-color: #fff22a;
+    background-color: #bf6b66;
 }
 span.c54 {
     background-color: #6d4afe;
 }
 span.c55 {
-    background-color: #c400fd;
+    background-color: #a186be;
 }
 span.c56 {
-    background-color: #976838;
+    background-color: #c5209c;
 }
 span.c57 {
     background-color: #d28428;
 }
 span.c58 {
-    background-color: #7d927c;
+    background-color: #86a185;
 }
 span.c59 {
-    background-color: #ededed;
+    background-color: #ff6000;
 }

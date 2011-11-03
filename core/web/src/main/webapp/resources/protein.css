@@ -59,36 +59,41 @@ span.match:hover {
     -moz-box-shadow:    0 0 0.5em rgba(0, 0, 255, 1);
 }
 
-/* Colours from DBML ColourScheme.java */
+/* Entry types colours */
 /* Note: domain colour is set in either domain.css or database.css depending on user preference */
 span.Family {
-    background-color: #ec1d25
+    background-color: #ff0000;
 }
+/*
+span.Domain {
+    background-color: #33cc33;
+}
+*/
 span.Repeat, span.Region {
-    background-color: #ff830a
+    background-color: #ff9000;
 }
 span.Active_site, span.Binding_site, span.Conserved_site, span.PTM {
-    background-color: #c974de
+    background-color: #b852d4;
 }
 span.uni {
-    background-color: #9b9b9b
+    background-color: #a5a5a5;
 }
 
-/* Colours from DBML MatchLine.java */
+/* Structures colours */
+span.PDB {
+    background-color: #82a4bf;
+}
 span.CATH {
-    background-color: #0072bc
+    background-color: #b852d4;
 }
 span.SCOP {
-    background-color: #1cbbb4
-}
-span.PDB {
-    background-color: #ff830a
-}
-span.MODBASE {
-    background-color: #c974de
+    background-color: #cbcbcb;
 }
 span.SWISS-MODEL {
-    background-color: #ec1d25
+    background-color: #cf161d;
+}
+span.MODBASE {
+    background-color: #ffac0b;
 }
 
 /* Match table - currently not shown */
