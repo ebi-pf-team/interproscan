@@ -95,7 +95,7 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
         if (useLocalData()) {
             String currentDir = System.getProperty("user.dir");
             currentDir = currentDir.replace(File.separatorChar, '/');
-            prefix = "file:/" + currentDir + "/src/test/resources/data/";
+            prefix = "file://" + currentDir + "/src/test/resources/data/";
             if (isMatchUrl) {
                 extension = "-match";
             }

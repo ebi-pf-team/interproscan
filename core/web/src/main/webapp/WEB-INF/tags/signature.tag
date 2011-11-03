@@ -40,6 +40,4 @@
                         colourClass="${dbClass} ${colourClass}"/>
         </c:forEach>
     </div>
-    <%--Not sure why we need this break, but next entry gets messed up without it --%>
-    <br/>
 </div>
