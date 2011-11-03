@@ -6,65 +6,58 @@
  * @version $Id$
  */
 
-/* TODO: Pick decent colours */
-
-span.pfam {
-    background-color: black;
-}
-
-/* TODO No integrated signatures, so not required? */
-span.pfamb {
-    background-color: black;
+span.pfam, span.pfamb {
+    background-color: #1e82d4;
 }
 
 span.panther {
-    background-color: black;
+    background-color: #a66c32;
 }
 
 span.prints {
-    background-color: black;
+    background-color: #33cc33;
 }
 
 span.pirsf {
-    background-color: black;
+    background-color: #ff0000;
 }
 
 span.smart {
-    background-color: black;
+    background-color: #ffa99e;
 }
 
 span.prosite-profiles {
-    background-color: black;
+    background-color: #08ecec;
 }
 
 span.prosite-patterns {
-    background-color: black;
+    background-color: #0dc3c4;
 }
 
 span.hamap {
-    background-color: black;
+    background-color: #ffde00;
 }
 
 span.gene3d {
-    background-color: black;
+    background-color: #c3b8f0;
 }
 
 span.superfamily {
-    background-color: black;
+    background-color: #e354e3;
 }
 
-span.tigrfam {
-    background-color: black;
+span.tigrfams {
+    background-color: #ff9000;
 }
 
 span.prodom {
-    background-color: black;
+    background-color: #a1e42d;
 }
 
 span.signalp {
-    background-color: black;
+    background-color: #a5a5a5;
 }
 
 span.tmhmm {
-    background-color: black;
+    background-color: #000000;
 }
