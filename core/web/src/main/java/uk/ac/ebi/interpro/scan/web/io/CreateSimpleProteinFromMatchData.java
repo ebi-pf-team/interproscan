@@ -13,12 +13,12 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch;
 
 /**
-* TODO: Add class description
-*
-* @author  Matthew Fraser
-* @author  Antony Quinn
-* @version $Id$
-*/
+ * Query for match data and construct a simple protein object from the query results.
+ *
+ * @author  Matthew Fraser
+ * @author  Antony Quinn
+ * @version $Id$
+ */
 @Component
 public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
 
@@ -32,7 +32,7 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
     private final AnalyseMatchDataResult matchAnalyser;
     private final AnalyseStructuralMatchDataResult structuralMatchAnalyser;
 
-	private ResourceLoader resourceLoader;
+    private ResourceLoader resourceLoader;
 
     // TODO: Configure in Spring context
     private CreateSimpleProteinFromMatchData() {
@@ -54,9 +54,9 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
         return retrieveMatches(createMatchesUrl(md5, false), createStructuralMatchesUrl(md5, false));
     }
 
-	@Override public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
-	}
+    @Override public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 
     private SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) {
 
@@ -68,14 +68,19 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
         SimpleProtein protein =  this.matchAnalyser.parseMatchDataOutput(resourceLoader.getResource(matchesUrl));
 
         // Add structural matches
+        if (protein == null) {
+            throw new IllegalStateException("Protein match data was not found or could not be parsed");
+        }
         List<SimpleStructuralMatch> structuralMatches =
                 structuralMatchAnalyser.parseStructuralMatchDataOutput(resourceLoader.getResource(structuralMatchesUrl));
-        for (SimpleStructuralMatch m : structuralMatches) {
-            protein.getStructuralMatches().add(m);
+        if (structuralMatches != null) {
+            for (SimpleStructuralMatch m : structuralMatches) {
+                protein.getStructuralMatches().add(m);
+            }
         }
 
         return protein;
-        
+
     }
 
     private String createMatchesUrl(String proteinAc, boolean isProteinAc) {
@@ -89,7 +94,7 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
     private String buildUrl(String proteinAc, boolean isProteinAc, boolean isMatchUrl) {
         String prefix = STRUCTURAL_MATCH_DATA_URL;
         if (isMatchUrl) {
-            prefix = MATCH_DATA_URL;    
+            prefix = MATCH_DATA_URL;
         }
         String extension = EXTENSION;
         if (useLocalData()) {

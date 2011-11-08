@@ -33,10 +33,10 @@ public class AnalyseStructuralMatchDataResult {
      * necessary business logic.
      *
      * @param resource Resource to parse
-     * @return The list of simple structural matches
+     * @return The list of simple structural matches, or NULL if nothing found
      */
     public List<SimpleStructuralMatch> parseStructuralMatchDataOutput(Resource resource) {
-        List<SimpleStructuralMatch> structuralMatches = new ArrayList<SimpleStructuralMatch>();
+        List<SimpleStructuralMatch> structuralMatches = null;
         String queryOutputText = "";
         String line = "";
 
@@ -69,6 +69,12 @@ public class AnalyseStructuralMatchDataResult {
         // Assumption: Query results are for one specific protein accession!
         // Therefore all output relates to the same protein.
 
+        if (records == null || records.size() < 1) {
+            LOGGER.info("No matches found in resource: " + resource.getDescription());
+            return null;
+        }
+
+        structuralMatches = new ArrayList<SimpleStructuralMatch>();
         for (StructuralMatchDataRecord record : records) {
             // Loop through query output one line at a time
 
