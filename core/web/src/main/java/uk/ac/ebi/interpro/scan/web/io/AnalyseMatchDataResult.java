@@ -5,7 +5,6 @@ import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
 import uk.ac.ebi.interpro.scan.web.model.*;
 
-import java.io.IOException;
 import java.util.*;
 
 
@@ -35,7 +34,7 @@ public class AnalyseMatchDataResult {
      * business logic.
      *
      * @param resource Resource to parse
-     * @return The simple protein
+     * @return The simple protein, or NULL if nothing found
      */
     public SimpleProtein parseMatchDataOutput(Resource resource) {
         SimpleProtein protein = null;
@@ -78,6 +77,11 @@ public class AnalyseMatchDataResult {
         // Assumption: Query results are for one specific protein accession!
         // Therefore all output relates to the same protein.
 
+        if (records == null || records.size() < 1) {
+            LOGGER.info("No matches found in resource: " + resource.getDescription());
+            return null;
+        }
+
         for (MatchDataRecord record : records) {
             // Loop through query output one line at a time
 
@@ -100,7 +104,7 @@ public class AnalyseMatchDataResult {
             String methodDatabase = record.getMethodDatabase();
             Integer posFrom = record.getPosFrom();
             Integer posTo = record.getPosTo();
-            Double score = record.getScore();
+            //Double score = record.getScore();
             String entryAc = record.getEntryAc();
             String entryShortName = record.getEntryShortName();
             String entryName = record.getEntryName();
@@ -112,7 +116,6 @@ public class AnalyseMatchDataResult {
             }
 
             // Need to eventually associate this match location with the existing SimpleProtein object
-            // TODO Set score against location? Could be double or NULL, e.g. PROSITE PROFILES
             SimpleLocation location = new SimpleLocation(posFrom, posTo);
 
             // Has this entry already been added to the protein?
@@ -156,6 +159,9 @@ public class AnalyseMatchDataResult {
         }
 
         // Start to calculate the supermatches for each entry
+        if (protein == null) {
+            throw new IllegalStateException("Protein is still NULL, therefore cannot calculate supermatches");
+        }
         List<SimpleEntry> entries = protein.getAllEntries();
         for (SimpleEntry entry : entries) {
             if (!entry.isIntegrated()) {
@@ -168,35 +174,42 @@ public class AnalyseMatchDataResult {
             for (SimpleSignature signature: signatures.values()) {
                 locations.addAll(signature.getLocations());
             }
-            Collections.sort(locations); // Ordered list of all locations for this entry
-            Integer superPosStart = null;
-            Integer superPosEnd = null;
-            for (SimpleLocation location : locations) {
-                // Loop through locations, ordered by start position then end position (ascending)
-                if (superPosStart == null) {
-                    // Looking at the first location
-                    superPosStart = location.getStart();
-                    superPosEnd = location.getEnd();
-                    continue;
-                }
-                int posStart = location.getStart();
-                int posEnd = location.getEnd();
-                if (posStart < superPosEnd) {
-                    // This match overlaps with the current supermatch under construction, so incorporate this match
-                    if (posEnd > superPosEnd) {
+            if (locations.size() > 0) {
+                Collections.sort(locations); // Ordered list of all locations for this entry
+                Integer superPosStart = null;
+                Integer superPosEnd = null;
+                for (SimpleLocation location : locations) {
+                    // Loop through locations, ordered by start position then end position (ascending)
+                    if (superPosStart == null) {
+                        // Looking at the first location
+                        superPosStart = location.getStart();
+                        superPosEnd = location.getEnd();
+                        continue;
+                    }
+                    int posStart = location.getStart();
+                    int posEnd = location.getEnd();
+                    if (posStart < superPosEnd) {
+                        // This match overlaps with the current supermatch under construction, so incorporate this match
+                        if (posEnd > superPosEnd) {
+                            superPosEnd = posEnd;
+                        }
+                    }
+                    else {
+                        // Doesn't overlap with the current supermatch under construction, so can add that supermatch and
+                        // begin constructing the next one.
+                        superLocations.add(new SimpleLocation(superPosStart, superPosEnd));
+                        superPosStart = posStart;
                         superPosEnd = posEnd;
                     }
                 }
-                else {
-                    // Doesn't overlap with the current supermatch under construction, so can add that supermatch and
-                    // begin constructing the next one.
-                    superLocations.add(new SimpleLocation(superPosStart, superPosEnd));
-                    superPosStart = posStart;
-                    superPosEnd = posEnd;
+                try {
+                    superLocations.add(new SimpleLocation(superPosStart, superPosEnd)); // Don't forget the final supermatch
                 }
+                catch (NullPointerException e) {
+                    throw new IllegalStateException("Supermatch location start/end position was invalid, start: " + superPosStart + ", end: " + superPosEnd);
+                }
+                Collections.sort(superLocations);
             }
-            superLocations.add(new SimpleLocation(superPosStart, superPosEnd)); // Don't forget the final supermatch
-            Collections.sort(superLocations);
             entry.setLocations(superLocations); // Add the supermatches to this entry
         }
 
