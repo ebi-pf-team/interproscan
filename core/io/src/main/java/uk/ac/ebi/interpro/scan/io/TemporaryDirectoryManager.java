@@ -15,10 +15,17 @@ public interface TemporaryDirectoryManager {
     /**
      * This method replaces (if found) the sub-string [UNIQUE] in any input String
      * with the value determined by the implementation of this interface.
+     *
      * @param inputURI being the URI that may contain [UNIQUE] to filter.
      * @return the input String (if it does not contain [UNIQUE]) or a filtered String
-     * with [UNIQUE] replaced by ... er... whatever the implementation chooses.
+     *         with [UNIQUE] replaced by ... er... whatever the implementation chooses.
      */
-    String replacePath (String inputURI);
+    String replacePath(String inputURI);
 
+    /**
+     * Returns the directory name that will replace [UNIQUE].
+     *
+     * @return the directory name that will replace [UNIQUE].
+     */
+    String getReplacement();
 }

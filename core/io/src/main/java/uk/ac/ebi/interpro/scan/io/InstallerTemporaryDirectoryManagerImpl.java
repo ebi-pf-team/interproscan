@@ -13,7 +13,7 @@ public class InstallerTemporaryDirectoryManagerImpl implements TemporaryDirector
 
     private static final Logger LOGGER = Logger.getLogger(InstallerTemporaryDirectoryManagerImpl.class.getName());
 
-    private static final String TEMPLATE_DIRECTORY_NAME ="template";
+    private static final String TEMPLATE_DIRECTORY_NAME = "template";
 
     /**
      * This method replaces (if found) the sub-string [UNIQUE] in any input String
@@ -24,12 +24,19 @@ public class InstallerTemporaryDirectoryManagerImpl implements TemporaryDirector
      */
     @Override
     public String replacePath(String inputURI) {
-        if (inputURI.contains(TemporaryDirectoryManager.DIRECTORY_TEMPLATE)){
+        if (inputURI.contains(TemporaryDirectoryManager.DIRECTORY_TEMPLATE)) {
             return inputURI.replace(TemporaryDirectoryManager.DIRECTORY_TEMPLATE, TEMPLATE_DIRECTORY_NAME);
         }
         return inputURI;
     }
 
-
-
+    /**
+     * Returns the directory name that will replace [UNIQUE].
+     *
+     * @return the directory name that will replace [UNIQUE].
+     */
+    @Override
+    public String getReplacement() {
+        return TEMPLATE_DIRECTORY_NAME;
+    }
 }

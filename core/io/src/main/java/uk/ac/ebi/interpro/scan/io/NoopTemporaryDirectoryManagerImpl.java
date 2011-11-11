@@ -7,7 +7,7 @@ package uk.ac.ebi.interpro.scan.io;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class NoopTemporaryDirectoryManagerImpl implements TemporaryDirectoryManager{
+public class NoopTemporaryDirectoryManagerImpl implements TemporaryDirectoryManager {
     /**
      * This method does not modify it's parameter
      *
@@ -17,5 +17,15 @@ public class NoopTemporaryDirectoryManagerImpl implements TemporaryDirectoryMana
     @Override
     public String replacePath(String inputURI) {
         return inputURI;
+    }
+
+    /**
+     * Returns the directory name that will replace [UNIQUE].
+     *
+     * @return the directory name that will replace [UNIQUE].
+     */
+    @Override
+    public String getReplacement() {
+        return null;
     }
 }
