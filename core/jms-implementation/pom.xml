@@ -41,8 +41,7 @@
 
         <!-- 5.3.1 is the version we have been using stably for development.
         The latest version is 5.5.0 -->
-        <!--<apache.activemq.version>5.5.0</apache.activemq.version>-->
-        <apache.activemq.version>5.3.1</apache.activemq.version>
+        <apache.activemq.version>5.5.0</apache.activemq.version>
     </properties>
 
     <dependencies>

@@ -63,4 +63,14 @@ public interface Master extends Runnable {
      * @param sequenceType the kind of input sequence
      */
     void setSequenceType(String sequenceType);
+
+    /**
+     * If the Run class has created a TCP URI message transport
+     * with a random port number, this method injects the URI
+     * into the Master, so that the Master can create Workers
+     * listening to the broker on this URI.
+     *
+     * @param tcpConnectionString created by the Run class.
+     */
+    void setTcpUri(String tcpConnectionString);
 }

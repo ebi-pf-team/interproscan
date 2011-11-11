@@ -61,6 +61,7 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToHmmFile" ref="fullPathToHmmFile"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <bean id="stepSMARTDeleteFastaFile"

@@ -50,6 +50,7 @@
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
         <property name="modelFile" value="${hamap.profile.models.path.180510}"/>
         <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <bean id="stepHamapDeleteFastaFile"
