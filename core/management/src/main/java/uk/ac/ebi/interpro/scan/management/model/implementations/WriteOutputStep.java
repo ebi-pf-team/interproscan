@@ -59,6 +59,11 @@ public class WriteOutputStep extends Step {
         final Map<String, String> parameters = stepInstance.getParameters();
         final String outputFormat = parameters.get(OUTPUT_FILE_FORMAT);
         final File outputFile = new File(parameters.get(OUTPUT_FILE_PATH_KEY));
+        if (outputFile.exists()) {
+            if (!outputFile.delete()) {
+                throw new IllegalStateException("The output file already exists and cannot be overwritten.");
+            }
+        }
         try {
             if ("tsv".equalsIgnoreCase(outputFormat)) {
                 LOGGER.info("Writing out TSV file");

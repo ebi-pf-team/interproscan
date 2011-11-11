@@ -29,10 +29,11 @@ public class FastaFileWriter implements Serializable {
      * If an analysis is picky about the amino acid codes that it can handle,
      * this Pattern can be initialised to check the sequence.  This can be left
      * null for non-picky analyses (i.e. most of them).
+     *
      * @param alphabet the alphabet to which the sequence must be restricted.
-     * The base 20 amino acids are: ARNDCEQGHILKMFPSTWYV
+     *                 The base 20 amino acids are: ARNDCEQGHILKMFPSTWYV
      */
-    public void setValidAlphabet(final String alphabet){
+    public void setValidAlphabet(final String alphabet) {
         alphabetPattern = Pattern.compile("^[" + alphabet + "]+$");
     }
 
@@ -41,13 +42,14 @@ public class FastaFileWriter implements Serializable {
      * to allow a sequence to be "rescued" so that it can be analysed. E.g. Phobius will not
      * accept Pyrrolisine residues, in which case this can be configured to convert O to K.
      * (Pyrrolisine to Lysine).
+     *
      * @param residueSubstitutions a Map of start -> end residues
      */
     public void setResidueSubstitutions(Map<String, String> residueSubstitutions) {
         this.residueSubstitutions = residueSubstitutions;
     }
 
-    private boolean deviatesFromAlphabet(final String sequence){
+    private boolean deviatesFromAlphabet(final String sequence) {
         return alphabetPattern != null && !alphabetPattern.matcher(sequence).matches();
     }
 
@@ -64,23 +66,30 @@ public class FastaFileWriter implements Serializable {
     public void writeFastaFile(List<Protein> proteins, String filePath) throws IOException, FastaFileWritingException {
         BufferedWriter writer = null;
         try {
-            File file = new File(filePath);
+            final File file = new File(filePath);
+            if (file.exists()) {
+                // File already exists - delete it.  Must be from a previous run that did not finish successfully,
+                // so need to clean up and continue.
+                if (!file.delete()) {
+                    throw new IllegalStateException("Unable to delete the old fasta file at path " + file.getAbsolutePath());
+                }
+            }
             if (!file.createNewFile()) {
-                return; // File already exists, so don't try to write it again.
+                throw new IllegalStateException("Unable to create new fasta file at " + file.getAbsolutePath());
             }
             writer = new BufferedWriter(new FileWriter(file));
             for (Protein protein : proteins) {
                 String seq = protein.getSequence();
                 // Analyses such as Phobius & TMHMM break if they are given non-standard amino acids
                 // such as Pyrrolysine (O).
-                if (deviatesFromAlphabet(seq)){
+                if (deviatesFromAlphabet(seq)) {
                     // Attempt to replace disallowed residues
-                    if (residueSubstitutions != null){
-                        for (String from : residueSubstitutions.keySet()){
+                    if (residueSubstitutions != null) {
+                        for (String from : residueSubstitutions.keySet()) {
                             seq = seq.replaceAll(from, residueSubstitutions.get(from));
                         }
                     }
-                    if (deviatesFromAlphabet(seq)){
+                    if (deviatesFromAlphabet(seq)) {
                         // OK, so even following the substitution, the sequence still contains non-standard codes.
                         // Do not attempt to analyse this sequence.
                         continue;
@@ -103,8 +112,7 @@ public class FastaFileWriter implements Serializable {
                     writer.write('\n');
                 }
             }
-        }
-        finally {
+        } finally {
             if (writer != null) {
                 writer.close();
             }
