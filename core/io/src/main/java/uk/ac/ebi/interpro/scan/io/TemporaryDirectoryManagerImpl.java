@@ -25,7 +25,7 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
 
     private volatile String temporaryDirectoryName;
 
-    private List<File> createdDirectories=new ArrayList<File>();
+    private List<File> createdDirectories = new ArrayList<File>();
 
     private final Object lock = new Object();
 
@@ -34,7 +34,7 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
     /**
      * This method replaces (if found) the sub-string [TEMP] in any input String
      * with the value determined by the implementation of this interface.
-     *
+     * <p/>
      * TODO: There is a possibility of a race condition where two separate processes (JVMs) are attempting
      * to create the same directory name simultaneously.  This needs to be addressed.
      *
@@ -45,33 +45,32 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
     @Override
     public String replacePath(String inputURI) {
         LOGGER.debug("About to filter: " + inputURI);
-        if (inputURI.contains(TemporaryDirectoryManager.DIRECTORY_TEMPLATE)){
+        if (inputURI.contains(TemporaryDirectoryManager.DIRECTORY_TEMPLATE)) {
 
             synchronized (lock) {
 
                 initialiseDirectory();
 
-                String[] components=inputURI.split("[:;]");
+                String[] components = inputURI.split("[:;]");
                 for (String component : components) {
                     if (component.contains(DIRECTORY_TEMPLATE)) {
                         LOGGER.debug("Component of URL: " + component);
                         LOGGER.debug("temporaryDirectoryName: " + temporaryDirectoryName);
-                        String prefix=component.substring(0,component.indexOf(DIRECTORY_TEMPLATE));
+                        String prefix = component.substring(0, component.indexOf(DIRECTORY_TEMPLATE));
                         LOGGER.debug("prefix: " + prefix);
-                        File temporaryDirectory=new File(prefix,temporaryDirectoryName);
+                        File temporaryDirectory = new File(prefix, temporaryDirectoryName);
 
                         if (!createdDirectories.contains(temporaryDirectory)) {
                             if (!temporaryDirectory.exists()) {
                                 if (!temporaryDirectory.mkdirs()) {
                                     throw new IllegalStateException(
-                                        "Directory "+temporaryDirectory+" could not be created while configuring "+inputURI);
-                                }
-                                else {
+                                            "Directory " + temporaryDirectory + " could not be created while configuring " + inputURI);
+                                } else {
                                     createdDirectories.add(temporaryDirectory);
                                 }
                             } else {
                                 throw new IllegalStateException(
-                                        "Directory "+temporaryDirectory+" already exists while configuring "+inputURI);
+                                        "Directory " + temporaryDirectory + " already exists while configuring " + inputURI);
                             }
                         }
                     }
@@ -86,6 +85,19 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
     }
 
     /**
+     * Returns the directory name that will replace [UNIQUE].
+     *
+     * @return the directory name that will replace [UNIQUE].
+     */
+    @Override
+    public String getReplacement() {
+        synchronized (lock) {
+            initialiseDirectory();
+        }
+        return temporaryDirectoryName;
+    }
+
+    /**
      * This method checks if the temporaryDirectory path has been determined.  If not,
      * it creates a new unique directory path and creates this directory.
      */
@@ -93,7 +105,7 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
         if (temporaryDirectoryName != null) return;
 
         String hostName;
-        try{
+        try {
             hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             hostName = "localhost";
