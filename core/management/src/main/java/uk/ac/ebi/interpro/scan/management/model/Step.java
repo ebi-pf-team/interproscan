@@ -44,6 +44,8 @@ public abstract class Step implements BeanNameAware {
 
     protected SerialGroup serialGroup;
 
+    protected boolean requiresDatabaseAccess = true;
+
 
     /**
      * Number of retries
@@ -129,6 +131,14 @@ public abstract class Step implements BeanNameAware {
         this.createStepInstancesForNewProteins = createStepInstancesForNewProteins;
     }
 
+    public boolean isRequiresDatabaseAccess() {
+        return requiresDatabaseAccess;
+    }
+
+    public void setRequiresDatabaseAccess(boolean requiresDatabaseAccess) {
+        this.requiresDatabaseAccess = requiresDatabaseAccess;
+    }
+
     public Integer getMaxProteins() {
         return maxProteins;
     }
@@ -194,26 +204,26 @@ public abstract class Step implements BeanNameAware {
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
-     * <p>
+     * <p/>
      * If an error occurs that cannot be immediately recovered from, the implementation
      * of this method <b>MUST</b> throw a suitable Exception, as the call
      * to execute is performed within a transaction with the reply to the JMSBroker.
-     * <p>
+     * <p/>
      * Implementations of this method MAY call <code>this.delayForNfs()</code> before starting, if, for example,
      * they are operating on file system resources.
-     *
+     * <p/>
      * <h2>Notes:</h2>
-     *
+     * <p/>
      * <p>The StepInstance parameter that is passed in provides the following useful methods that you may need to use
      * in your implementation:
-     *
+     * <p/>
      * <p><code>stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate)</code>
      * <p>should be used to ensure that temporary files are written to the appropriate location, with file names
      * filtered for the range of proteins / models being analysed.  Note that the parameter to this method
      * temporaryFileDirectory is also passed in to executions of this method.
-     *
+     * <p/>
      * <p>To determine the range of proteins or models being analysed, call any of:
-     *
+     * <p/>
      * <ul>
      * <li><code>stepInstance.getBottomProtein()</code></li>
      * <li><code>stepInstance.getTopProtein()</code></li>
@@ -222,10 +232,10 @@ public abstract class Step implements BeanNameAware {
      * </ul>
      *
      * @param stepInstance           containing the parameters for executing. Provides utility methods as described
-     * above.
+     *                               above.
      * @param temporaryFileDirectory which can be passed into the
-     * stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate) method
-     * to build temporary file paths.
+     *                               stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate) method
+     *                               to build temporary file paths.
      */
     public abstract void execute(StepInstance stepInstance, String temporaryFileDirectory);
 
