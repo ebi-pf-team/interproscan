@@ -19,19 +19,16 @@
                     <property name="signatureLibrary" value="TMHMM"/>
                     <property name="releaseVersionNumber" value="2.5.1"/>
                     <property name="analysisJobId" value="jobTMHMM"/>
-                    <property name="modelFile" value="file:/dev/null"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.coils.CoilsDummyParser">
                     <property name="signatureLibrary" value="COILS"/>
                     <property name="releaseVersionNumber" value="2.2"/>
                     <property name="analysisJobId" value="jobCoils"/>
-                    <property name="modelFile" value="file:/dev/null"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.phobius.PhobiusDummyParser">
                     <property name="signatureLibrary" value="PHOBIUS"/>
                     <property name="releaseVersionNumber" value="1.01"/>
                     <property name="analysisJobId" value="jobPhobius"/>
-                    <property name="modelFile" value="file:/dev/null"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PFAM"/>

@@ -50,16 +50,31 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     }
 
 
-
     @Override
-    public void startupNewWorker(int priority) {
-        if (workerStartupStrategy.startUpWorker(priority)){
+    public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
+        if (workerStartupStrategy.startUpWorker(priority)) {
             StringBuilder command = new StringBuilder(submissionCommand);
-            command.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
+            if (tcpUri == null) {
+                command.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
+            } else {
+                command.append(highMemory ? " --mode=cl_highmem_worker" : " --mode=cl_worker");
+
+            }
             if (priority > 0) {
                 command.append(" --priority=")
                         .append(priority);
             }
+
+            if (tcpUri != null) {
+                command.append(" --masteruri=")
+                        .append(tcpUri);
+            }
+
+            if (temporaryDirectory != null) {
+                command.append(" --tempdirname=")
+                        .append(temporaryDirectory);
+            }
+
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Command ABOUT to be submitted: " + command);
             }
@@ -67,7 +82,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 //                Runtime.getRuntime().exec(command.toString());
                 final CommandLineConversation clc = new CommandLineConversationImpl();
                 int exitStatus = clc.runCommand(false, command.toString().split(" "));
-                if (exitStatus != 0){
+                if (exitStatus != 0) {
                     LOGGER.warn("Non-zero exit status from attempting to run a worker: \nCommand:" + command + "\nExit status: " + exitStatus + "\nError output: " + clc.getErrorMessage());
                 }
             } catch (IOException e) {
@@ -76,6 +91,18 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                 LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:" + command + "\nESee stack trace: ", e);
             }
         }
+    }
+
+    /**
+     * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
+     * Assumes that the jar being executed has a main class define in the MANIFEST.
+     * Sets the worker to only accept jobs above the priority passed in as argument.
+     *
+     * @param priority being the minimum message priority that this worker will accept.
+     */
+    @Override
+    public void startupNewWorker(int priority) {
+        startupNewWorker(priority, null, null);
     }
 
 

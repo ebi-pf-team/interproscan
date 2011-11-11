@@ -24,13 +24,13 @@
         <amq:systemUsage>
             <amq:systemUsage>
                 <amq:memoryUsage>
-                    <amq:memoryUsage limit="2048 mb"/>
+                    <amq:memoryUsage limit="1024 mb"/>
                 </amq:memoryUsage>
                 <!--<amq:storeUsage>-->
-                    <!--<amq:storeUsage limit="1 gb"/>-->
+                <!--<amq:storeUsage limit="1 gb"/>-->
                 <!--</amq:storeUsage>-->
                 <!--<amq:tempUsage>-->
-                    <!--<amq:tempUsage limit="100 mb"/>-->
+                <!--<amq:tempUsage limit="100 mb"/>-->
                 <!--</amq:tempUsage>-->
             </amq:systemUsage>
         </amq:systemUsage>
@@ -51,6 +51,8 @@
         <property name="workerRunner" ref="workerRunner"/>
         <property name="workerRunnerHighMemory" ref="workerRunnerHighMemory"/>
         <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
+        <property name="onlyFarmOutNonDatabaseProcesses" value="false"/>
+        <property name="hasInVmWorker" value="false"/>
     </bean>
 
     <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.EmailErrorAndContinueErrorStrategy"/>
@@ -58,19 +60,20 @@
     <bean id="masterMessageSender" class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
-        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
-
+        <property name="jmsTemplateWrapper">
+            <bean class="uk.ac.ebi.interpro.scan.jms.activemq.JmsTemplateWrapper">
+                <property name="template" ref="inVmJmsTemplate"/>
+            </bean>
+        </property>
     </bean>
+
 
     <bean id="workerRunner"
           class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
         <property name="submissionCommand" value="${worker.command}"/>
         <property name="highMemory" value="false"/>
         <property name="workerStartupStrategy">
-            <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LSFMaximumSubmittedJobsWorkerStartupStrategy">
-                <property name="maximumSubmittedJobs" value="${lsf.maximum.submitted.jobs}"/>
-                <property name="linuxAccountName" value="${unix.username}"/>
-                <property name="checkInterval" value="300000"/>  <!-- Every five minutes.-->
+            <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy">
             </bean>
         </property>
     </bean>

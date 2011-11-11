@@ -21,29 +21,19 @@
 
     <bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
-        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
+        <property name="jmsTemplateWrapper" ref="jmsTemplateWrapper"/>
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
     </bean>
 
     <bean id="embeddedStepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
         <property name="jobs" ref="jobs"/>
-        <property name="jmsTemplate" ref="InVmJmsTemplate"/>
+        <property name="jmsTemplateWrapper" ref="jmsTemplateWrapper"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="directoryManager" ref="tempDirectoryManager"/>
     </bean>
 
-
-    <!--<bean id="amqInterProScanMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
-    <!--<property name="connectionFactory" ref="inVmJmsFactory"/>-->
-    <!--<property name="destination" ref="workerManagerTopic"/>-->
-    <!--<property name="messageListener" ref="amqInterProScanMonitor" />-->
-    <!--</bean>-->
-
-    <!--<bean id="amqInterProScanMonitor" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMonitorListener">-->
-    <!--<property name="jobs" ref="jobs"/>-->
-    <!--<property name="workerManagerResponseQueue" ref="workerManagerResponseQueue"/>-->
-    <!--<property name="worker" ref="amqEmbeddedWorker"/>-->
-    <!--<property name="jmsTemplate" ref="InVmJmsTemplate"/>-->
-    <!--</bean>-->
+    <bean id="jmsTemplateWrapper" class="uk.ac.ebi.interpro.scan.jms.activemq.JmsTemplateWrapper">
+        <property name="template" ref="inVmJmsTemplate"/>
+    </bean>
 
 </beans>

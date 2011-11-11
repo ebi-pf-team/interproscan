@@ -47,6 +47,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path.2.74}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <!-- STEP: Reads the raw HMMR result output and persists it in the H2 memory database-->

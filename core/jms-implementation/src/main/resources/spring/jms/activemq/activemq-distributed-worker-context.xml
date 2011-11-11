@@ -15,21 +15,42 @@
         <property name="messageListener" ref="worker"/>
         <property name="sessionTransacted" value="false"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
-        <property name="receiveTimeout" value="10000"/>
+        <property name="receiveTimeout" value="-1"/>
+    </bean>
+
+    <bean id="highMemDistributedWorkerJmsContainer"
+          class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="remoteJmsFactory"/>
+        <property name="destination" ref="jobRequestQueue"/>
+        <property name="messageListener" ref="worker"/>
+        <property name="sessionTransacted" value="false"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="-1"/>
     </bean>
 
     <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
-        <property name="jmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="jmsTemplateWrapper" ref="remoteJmsTemplateWrapper"/>
         <property name="controller" ref="distributedWorkerController"/>
+        <property name="stepExecutor" ref="stepExecutor"/>
+    </bean>
+
+    <bean id="highMemWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="jmsTemplateWrapper" ref="remoteJmsTemplateWrapper"/>
+        <property name="controller" ref="highMemDistributedWorkerController"/>
         <property name="stepExecutor" ref="stepExecutor"/>
     </bean>
 
     <bean id="stepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
         <property name="jobs" ref="jobs"/>
-        <property name="jmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="jmsTemplateWrapper" ref="remoteJmsTemplateWrapper"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="directoryManager" ref="tempDirectoryManager"/>
+    </bean>
+
+    <bean id="remoteJmsTemplateWrapper" class="uk.ac.ebi.interpro.scan.jms.activemq.JmsTemplateWrapper">
+        <property name="template" ref="remoteJmsTemplate"/>
     </bean>
 
 
@@ -38,6 +59,7 @@
         <property name="maximumIdleTimeSeconds" value="${jvm.maximum.idle.time.seconds}"/>
         <property name="maximumLifeSeconds" value="${jvm.maximum.life.seconds}"/>
         <property name="highMemory" value="false"/>
+        <property name="remoteWorker" value="true"/>
     </bean>
 
     <bean id="highMemDistributedWorkerController"
@@ -46,6 +68,7 @@
         <property name="maximumIdleTimeSeconds" value="${jvm.maximum.idle.time.seconds}"/>
         <property name="maximumLifeSeconds" value="${jvm.maximum.life.seconds}"/>
         <property name="highMemory" value="true"/>
+        <property name="remoteWorker" value="true"/>
     </bean>
 
 
@@ -62,7 +85,7 @@ several jobs at a time -->
     <!--<property name="jobs" ref="jobs"/>-->
     <!--<property name="workerManagerResponseQueue" ref="workerManagerResponseQueue"/>-->
     <!--<property name="worker" ref="amqworker"/>-->
-    <!--<property name="jmsTemplate" ref="remoteJmsTemplate"/>-->
+    <!--<property name="jmsTemplateWrapper" ref="remoteJmsTemplate"/>-->
     <!--</bean>-->
 
 </beans>

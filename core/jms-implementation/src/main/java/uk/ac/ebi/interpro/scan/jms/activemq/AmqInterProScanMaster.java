@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
+import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
@@ -35,6 +36,8 @@ import java.util.Map;
  */
 public class AmqInterProScanMaster implements Master {
 
+    private String tcpUri;
+
     private static final Logger LOGGER = Logger.getLogger(AmqInterProScanMaster.class.getName());
 
     private Jobs jobs;
@@ -58,8 +61,14 @@ public class AmqInterProScanMaster implements Master {
     private WorkerRunner workerRunnerHighMemory;
 
     private UnrecoverableErrorStrategy unrecoverableErrorStrategy;
+
     private String sequenceType;
 
+    private boolean onlyFarmOutNonDatabaseProcesses;
+
+    private TemporaryDirectoryManager temporaryDirectoryManager;
+
+    private boolean hasInVmWorker;
 
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
@@ -67,6 +76,23 @@ public class AmqInterProScanMaster implements Master {
 
     public void setWorkerRunnerHighMemory(WorkerRunner workerRunnerHighMemory) {
         this.workerRunnerHighMemory = workerRunnerHighMemory;
+    }
+
+    public boolean isOnlyFarmOutNonDatabaseProcesses() {
+        return onlyFarmOutNonDatabaseProcesses;
+    }
+
+    @Required
+    public void setHasInVmWorker(boolean hasInVmWorker) {
+        this.hasInVmWorker = hasInVmWorker;
+    }
+
+    public void setOnlyFarmOutNonDatabaseProcesses(boolean onlyFarmOutNonDatabaseProcesses) {
+        this.onlyFarmOutNonDatabaseProcesses = onlyFarmOutNonDatabaseProcesses;
+    }
+
+    public void setTemporaryDirectoryManager(TemporaryDirectoryManager temporaryDirectoryManager) {
+        this.temporaryDirectoryManager = temporaryDirectoryManager;
     }
 
     /**
@@ -125,6 +151,7 @@ public class AmqInterProScanMaster implements Master {
      * Run the Master Application.
      */
     public void run() {
+        LOGGER.debug("Started Master run() method.");
         try {
             if (cleanDatabase) {
                 Thread databaseLoaderThread = new Thread(databaseCleaner);
@@ -151,6 +178,9 @@ public class AmqInterProScanMaster implements Master {
                 boolean completed = true;
 
                 for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
+                    }
                     if (stepInstance.hasFailedPermanently(jobs)) {
                         unrecoverableErrorStrategy.failed(stepInstance, jobs);
                     }
@@ -163,12 +193,13 @@ public class AmqInterProScanMaster implements Master {
                         if (resubmission) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " is being re-run following a failure.");
                         }
+                        final Step step = stepInstance.getStep(jobs);
+                        final boolean canRunRemotely = !onlyFarmOutNonDatabaseProcesses || !step.isRequiresDatabaseAccess();
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
-                        final boolean highMemory = resubmission && workerRunnerHighMemory != null;
+                        final boolean highMemory = resubmission && workerRunnerHighMemory != null && canRunRemotely;
                         if (highMemory) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " will be re-run in a high-memory worker.");
                         }
-                        final Step step = stepInstance.getStep(jobs);
 
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                         // as they are very abundant.
@@ -176,18 +207,17 @@ public class AmqInterProScanMaster implements Master {
                                 ? 4
                                 : 8;
 
-                        // Reduce the priority slightly for FASTA file writing - need to get post-processing running.
-
                         // Performed in a transaction.
-                        messageSender.sendMessage(stepInstance, highMemory, priority);
+                        messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
 
+                        final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
                         // Start up workers appropriately.
                         if (highMemory) {
                             // This execution has failed before so use the high-memory worker runner
                             LOGGER.warn("Starting a high memory worker.");
-                            workerRunnerHighMemory.startupNewWorker(priority);
-                        } else if (workerRunner != null) { // Not mandatory (e.g. in single-jvm implementation)
-                            workerRunner.startupNewWorker(priority);
+                            workerRunnerHighMemory.startupNewWorker(priority, tcpUri, temporaryDirectoryName);
+                        } else if (canRunRemotely && workerRunner != null) { // Not mandatory (e.g. in single-jvm implementation)
+                            workerRunner.startupNewWorker(priority, tcpUri, temporaryDirectoryName);
                         }
                     }
 //                    Thread.sleep(3);  // Give the system a chance to breath...
@@ -219,6 +249,11 @@ public class AmqInterProScanMaster implements Master {
                         }
                     }
                 }
+                if (hasInVmWorker) {
+                    Thread.sleep(200);
+                } else {
+                    Thread.sleep(10);
+                }
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by AmqInterProScanMaster: ", e);
@@ -247,8 +282,6 @@ public class AmqInterProScanMaster implements Master {
             createBlackBoxParams(params);
             stepInstancesCreated = createStepInstancesForJob("jobLoadFromFasta", params);
             LOGGER.info("Fasta file load step instance has been created.");
-        } else if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("No fasta file path to load.");
         }
         return stepInstancesCreated;
     }
@@ -380,6 +413,19 @@ public class AmqInterProScanMaster implements Master {
     @Override
     public void setSequenceType(String sequenceType) {
         this.sequenceType = sequenceType;
+    }
+
+    /**
+     * If the Run class has created a TCP URI message transport
+     * with a random port number, this method injects the URI
+     * into the Master, so that the Master can create Workers
+     * listening to the broker on this URI.
+     *
+     * @param tcpUri created by the Run class.
+     */
+    @Override
+    public void setTcpUri(String tcpUri) {
+        this.tcpUri = tcpUri;
     }
 
     /**

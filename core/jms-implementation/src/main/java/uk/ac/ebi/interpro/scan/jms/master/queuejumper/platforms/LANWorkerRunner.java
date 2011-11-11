@@ -103,6 +103,18 @@ public class LANWorkerRunner implements WorkerRunner {
      * @param priority being the minimum message priority that this worker will accept.
      */
     @Override
+    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory) {
+        startupNewWorker(priority);
+    }
+
+    /**
+     * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
+     * Assumes that the jar being executed has a main class define in the MANIFEST.
+     * Sets the worker to only accept jobs above the priority passed in as argument.
+     *
+     * @param priority being the minimum message priority that this worker will accept.
+     */
+    @Override
     public void startupNewWorker(int priority) {
         startupNewWorker();
     }
