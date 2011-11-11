@@ -99,8 +99,10 @@ public class GaValuesRetriever implements Serializable {
             FileLock lock = fos.getChannel().lock();
             accessionToGAProps.store(fos, "Mapping of model accessions to GA values.");
             lock.release();
-        }
-        finally {
+        } catch (Exception ioe) {
+            // Something went wrong while attempting to write out the file - delete it as it may be partial.
+            mapFile.delete();
+        } finally {
             if (fos != null) {
                 fos.close();
             }
@@ -130,8 +132,7 @@ public class GaValuesRetriever implements Serializable {
             accessionToGAProps = new Properties();
             accessionToGAProps.load(fis);
             lock.release();
-        }
-        finally {
+        } finally {
             if (fis != null) {
                 fis.close();
             }
@@ -189,8 +190,7 @@ public class GaValuesRetriever implements Serializable {
                     }
                 }
             }
-        }
-        finally {
+        } finally {
             if (reader != null) {
                 reader.close();
             }

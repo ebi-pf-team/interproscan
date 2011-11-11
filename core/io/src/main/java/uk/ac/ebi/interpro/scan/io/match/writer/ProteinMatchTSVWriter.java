@@ -32,6 +32,11 @@ public class ProteinMatchTSVWriter {
     private final String VALUE_SEPARATOR = "|";
 
     public ProteinMatchTSVWriter(File file) throws IOException {
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new IllegalStateException("The file being written to already exists and cannot be deleted: " + file.getAbsolutePath());
+            }
+        }
         tsvWriter = new TSVWriter(new BufferedWriter(new FileWriter(file)));
     }
 

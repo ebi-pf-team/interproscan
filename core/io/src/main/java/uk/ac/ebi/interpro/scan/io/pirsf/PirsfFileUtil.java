@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Simple utility class to create temporary files.
@@ -25,12 +24,12 @@ public class PirsfFileUtil {
      * Write out raw protein details into a temporary file so the data can be made available for later steps in the job.
      * With PIRSF, only the best match (smallest e-value) is of interest for each protein.
      *
-     * @param filePath The file to write to
+     * @param filePath              The file to write to
      * @param proteinIdBestMatchMap Protein and best match information.
      * @throws IOException Error if a problem is encountered whilst writing to the file system
      */
-        public static void writeProteinBestMatchesToFile(String filePath,
-                                            Map<String, PIRSFHmmer2RawMatch> proteinIdBestMatchMap) throws IOException {
+    public static void writeProteinBestMatchesToFile(String filePath,
+                                                     Map<String, PIRSFHmmer2RawMatch> proteinIdBestMatchMap) throws IOException {
         BufferedWriter writer = null;
         try {
             File file = createTmpFile(filePath);
@@ -85,11 +84,14 @@ public class PirsfFileUtil {
      * @throws IOException If the file could not be created.
      */
     public static File createTmpFile(String pathToFile) throws IOException {
-        File result = new File(pathToFile);
-        if (!result.createNewFile()) {
-            LOGGER.warn("Couldn't create new File! Maybe the file " + result.getAbsolutePath() + " already exists!");
+        File file = new File(pathToFile);
+        if (file.exists()) {
+            file.delete();
         }
-        return result;
+        if (!file.createNewFile()) {
+            LOGGER.warn("Couldn't create new File! Maybe the file " + file.getAbsolutePath() + " already exists!");
+        }
+        return file;
     }
 
 }
