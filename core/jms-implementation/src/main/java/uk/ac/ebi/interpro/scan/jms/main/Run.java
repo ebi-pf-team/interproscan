@@ -139,7 +139,7 @@ public class Run {
     private enum Mode {
         MASTER("master", "spring/jms/activemq/activemq-distributed-master-context.xml"),
         WORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
-        HIGHMEM_WORKER("highMemDistributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
+        HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-highmem-context.xml"),
         STANDALONE("standalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
