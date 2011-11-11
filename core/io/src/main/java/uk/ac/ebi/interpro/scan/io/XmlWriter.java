@@ -29,6 +29,11 @@ public class XmlWriter {
     }
 
     public void writeMatches(final File file, final MatchesHolder matchesHolder) throws IOException {
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new IllegalStateException("The file " + file.getAbsolutePath() + " already exists and cannot be deleted.");
+            }
+        }
         BufferedOutputStream bos = null;
         LOGGER.debug("About to start writing out match XML.");
         try {

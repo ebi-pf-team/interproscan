@@ -25,7 +25,7 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
 
     private volatile String temporaryDirectoryName;
 
-    private List<File> createdDirectories = new ArrayList<File>();
+    private List<String> createdDirectories = new ArrayList<String>();
 
     private final Object lock = new Object();
 
@@ -60,17 +60,17 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
                         LOGGER.debug("prefix: " + prefix);
                         File temporaryDirectory = new File(prefix, temporaryDirectoryName);
 
-                        if (!createdDirectories.contains(temporaryDirectory)) {
+                        if (!createdDirectories.contains(temporaryDirectory.getPath())) {
                             if (!temporaryDirectory.exists()) {
                                 if (!temporaryDirectory.mkdirs()) {
                                     throw new IllegalStateException(
                                             "Directory " + temporaryDirectory + " could not be created while configuring " + inputURI);
                                 } else {
-                                    createdDirectories.add(temporaryDirectory);
+                                    createdDirectories.add(temporaryDirectory.getPath());
                                 }
                             } else {
-                                throw new IllegalStateException(
-                                        "Directory " + temporaryDirectory + " already exists while configuring " + inputURI);
+                                // The directory already exists (probably from a previous run of I5).
+                                createdDirectories.add(temporaryDirectory.getPath());
                             }
                         }
                     }
