@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
@@ -20,7 +19,7 @@ public class AmqInterProScanWorker implements MessageListener {
 
     private static final Logger LOGGER = Logger.getLogger(AmqInterProScanWorker.class.getName());
 
-    private JmsTemplate jmsTemplate;
+    private JmsTemplateWrapper jmsTemplateWrapper;
 
     private Destination jobResponseQueue;
 
@@ -39,8 +38,9 @@ public class AmqInterProScanWorker implements MessageListener {
     AmqInterProScanWorker() {
     }
 
-    public void setJmsTemplate(JmsTemplate jmsTemplate) {
-        this.jmsTemplate = jmsTemplate;
+    @Required
+    public void setJmsTemplateWrapper(JmsTemplateWrapper jmsTemplateWrapper) {
+        this.jmsTemplateWrapper = jmsTemplateWrapper;
     }
 
     public void setController(DistributedWorkerController controller) {
@@ -103,7 +103,7 @@ public class AmqInterProScanWorker implements MessageListener {
                 // that failed during the execution.
                 stepExecution.fail(e);
 
-                jmsTemplate.send(jobResponseQueue, new MessageCreator() {
+                jmsTemplateWrapper.getTemplate().send(jobResponseQueue, new MessageCreator() {
                     public Message createMessage(Session session) throws JMSException {
                         return session.createObjectMessage(stepExecution);
                     }

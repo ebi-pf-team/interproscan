@@ -47,6 +47,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <!-- STEP: Run the SuperFamily perl script -->
@@ -58,7 +59,7 @@
         perl ass3.pl -e 0.0001 -s data/superfamily/1.75/self_hits.tab -r data/superfamily/1.75/dir.cla.scop.txt_1.75 -m data/superfamily/1.75/model.tab -p data/superfamily/1.75/pdbj95d  -t n  -f 1 INPUT_SEQUENCE_FILE HMMER3_OUTPUT_FILE PP_OUTPUT_FILE
         -->
         <property name="dependsUpon" ref="stepSuperFamilyRunHmmer3-1.75"/>
-        <property name="stepDescription" value="Run ass3.pl perl script for selected proteins"/>
+        <property name="stepDescription" value="Run ass3_single_threaded.pl perl script for selected proteins"/>
         <property name="binarySwitches" value="-e 0.0001 -t n  -f 1"/>
         <property name="retries" value="3"/>
         <property name="perlCommand" value="${perl.command}"/>

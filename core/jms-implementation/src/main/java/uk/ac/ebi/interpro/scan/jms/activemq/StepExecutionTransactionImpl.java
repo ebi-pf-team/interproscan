@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
@@ -37,7 +36,7 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
 
     private Jobs jobs;
 
-    private JmsTemplate jmsTemplate;
+    private JmsTemplateWrapper jmsTemplateWrapper;
 
     private Destination jobResponseQueue;
 
@@ -49,8 +48,8 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
     }
 
     @Required
-    public void setJmsTemplate(JmsTemplate jmsTemplate) {
-        this.jmsTemplate = jmsTemplate;
+    public void setJmsTemplateWrapper(JmsTemplateWrapper jmsTemplateWrapper) {
+        this.jmsTemplateWrapper = jmsTemplateWrapper;
     }
 
     @Required
@@ -86,7 +85,7 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Successful run of Step.executeInTransaction() method for StepExecution ID: " + stepExecution.getId());
 
-        jmsTemplate.send(jobResponseQueue, new MessageCreator() {
+        jmsTemplateWrapper.getTemplate().send(jobResponseQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 return session.createObjectMessage(stepExecution);
             }

@@ -40,6 +40,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <bean id="stepGene3dDeleteFastaFile"
@@ -107,6 +108,7 @@
         <property name="binarySwitches" value="-l 5900 -e 0.001"/>
         <property name="ssfOutputFileTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
         <property name="outputFileNameTemplate" value="[PROTSTART]_[PROTEND].ssf.err"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <bean id="stepGene3dPostProcessingStep"

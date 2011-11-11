@@ -52,6 +52,7 @@
         <property name="modelFile" value="${prosite.models.path.20.66}"/>
         <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
         <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path.20.66}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <bean id="stepPrositePatternDeleteFastaFile"

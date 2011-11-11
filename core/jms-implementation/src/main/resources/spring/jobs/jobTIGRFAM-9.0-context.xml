@@ -50,6 +50,7 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToHmmFile" value="${tigrfam.hmm.bin.path.9.0}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <bean id="stepTIGRFAMDeleteFastaFile-9.0"

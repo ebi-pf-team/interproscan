@@ -22,5 +22,5 @@ public interface MasterMessageSender {
      * @throws javax.jms.JMSException in the event of a failure sending the message to the JMS Broker.
      */
     @Transactional
-    void sendMessage(StepInstance stepInstance, final boolean highMemory, final int priority) throws JMSException;
+    void sendMessage(StepInstance stepInstance, final boolean highMemory, final int priority, final boolean canRunRemotely) throws JMSException;
 }

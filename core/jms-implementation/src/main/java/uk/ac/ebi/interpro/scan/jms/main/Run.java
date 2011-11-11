@@ -1,13 +1,26 @@
 package uk.ac.ebi.interpro.scan.jms.main;
 
+import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.broker.TransportConnector;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager;
+import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
+
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * The main entry point for the the master and workers in a
@@ -65,9 +78,10 @@ public class Run {
         IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation", null, false),
         GOTERMS("goterms", "goterms", false, "Switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false),
         PATHWAY_LOOKUP("pathways", "pa", false, "Switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false),
+        MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false),
         // TODO - put back SEQUENCE_TYPE, once the nucleic acid analysis is completed.
 //        SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false)
-        ;
+        TEMP_DIRECTORY("tempdirname", "td", false, "Used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false);
 
         private String longOpt;
 
@@ -127,7 +141,9 @@ public class Run {
         WORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
         HIGHMEM_WORKER("highMemDistributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
         STANDALONE("standalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
-        CLEANRUN("cleanrun", "spring/jms/activemq/activemq-cleanrun-master-context.xml"),
+        CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
+        CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
+        CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
         MONITOR("monitor", "spring/monitor/monitor-context.xml"),
         INSTALLER("installer", "spring/installer/installer-context.xml");
         //
@@ -200,7 +216,6 @@ public class Run {
 
 
     public static void main(String[] args) {
-
         // create the command line parser
         CommandLineParser parser = new PosixParser();
         String modeArgument = null;
@@ -229,9 +244,14 @@ public class Run {
 //                LOGGER.info("Custom config: " + config);
 //            }
 
-            AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
+            final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
 
-//            ctx.registerShutdownHook();    // Removed as explicitly calling close at the end of a successful run.
+            // The command-line distributed mode selects a random port number for communications.
+            // This block selects the random port number and sets it on the broker.
+            String tcpConnectionString = null;
+            if (mode == Mode.CL_MASTER) {
+                tcpConnectionString = configureTCPTransport(ctx);
+            }
 
             if (args.length == 0) {
                 printHelp();
@@ -263,6 +283,9 @@ public class Run {
                     if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                         master.setAnalyses(parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt()));
                     }
+                    if (tcpConnectionString != null) {
+                        master.setTcpUri(tcpConnectionString);
+                    }
                     // TODO - put back SEQUENCE_TYPE once the nucleic acid sequence analysis stuff is finished.
 //                    if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
 //                        master.setSequenceType(parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt()));
@@ -277,14 +300,37 @@ public class Run {
                 }
 
                 if (runnable instanceof DistributedWorkerController) {
+//                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt()) || parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
+                    final DistributedWorkerController workerController = (DistributedWorkerController) runnable;
                     if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt())) {
-                        final DistributedWorkerController workerController = (DistributedWorkerController) runnable;
                         final int priority = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.PRIORITY.getLongOpt()));
                         if (priority < 0 || priority > 9) {
                             throw new IllegalStateException("The JMS priority value must be an integer between 0 and 9.  The value passed in is " + priority);
                         }
                         workerController.setMinimumJmsPriority(priority);
                     }
+                    if (parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
+                        final String masterUri = parsedCommandLine.getOptionValue(I5Option.MASTER_URI.getLongOpt());
+                        workerController.setMasterUri(masterUri);
+                    }
+                    if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
+                        final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt());
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("Have a temporary directory name passed in: " + temporaryDirectoryName);
+                        // Attempt to modify the TemporaryDirectoryManager by retrieving it by name from the context.
+                        final TemporaryDirectoryManager tdm = (TemporaryDirectoryManager) ctx.getBean("tempDirectoryManager");
+                        // Check it is the right kind of directory manager, if it is, set the directory.
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("Retrieved the TemporaryDirectoryManager - is it an ExternallySetLocationTemporaryDirectoryManager?");
+                        if (tdm != null && tdm instanceof ExternallySetLocationTemporaryDirectoryManager) {
+                            if (LOGGER.isDebugEnabled())
+                                LOGGER.debug("YES!  Calling setPassedInDirectoryName on the DirectoryManager.");
+                            ((ExternallySetLocationTemporaryDirectoryManager) tdm).setPassedInDirectoryName(temporaryDirectoryName);
+                        } else if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("NO!  So can't set the temporary directory manager.  Details of Directory Manager:" + tdm.toString());
+                        }
+                    }
+//                    }
                 }
 
                 // TODO Currently silently ignores command line parameters that are not appropriate for the mode.
@@ -304,8 +350,113 @@ public class Run {
         }
     }
 
+    private static final String PORT_EXCLUSION_LIST_BEAN_ID = "portExclusionList";
+
+    /**
+     * this method selects a random port number to run the TCP broker transport on.
+     * <p/>
+     * It tests the port is available and then attempts to use it (There is a very small chance
+     * that another process will start using this port between checking and using, in which case this method
+     * will barfe out and InterProScan will exit non-zero.  This is very unlikely however,
+     * as the two InterProScan instances would need to be running on the same host and have
+     * randomly picked the same port number at the same moment!)
+     * <p/>
+     * But never say never...
+     *
+     * @param ctx the Spring application context.
+     * @return the URI as a String for this transport, e.g. tcp://myservername:1901
+     */
+    private static String configureTCPTransport(final AbstractApplicationContext ctx) {
+        List<Integer> portExclusionList = null;
+
+        if (ctx.containsBean(PORT_EXCLUSION_LIST_BEAN_ID)) {
+            final String exclusionString = (String) ctx.getBean(PORT_EXCLUSION_LIST_BEAN_ID);
+            if (exclusionString != null && !exclusionString.isEmpty()) {
+                final String[] exclusionStringArray = exclusionString.split(",");
+                portExclusionList = new ArrayList<Integer>(exclusionStringArray.length);
+                for (String portString : exclusionStringArray) {
+                    final String trimmedPortString = portString.trim();
+                    if (!trimmedPortString.isEmpty()) {
+                        try {
+                            portExclusionList.add(new Integer(trimmedPortString));
+                        } catch (NumberFormatException nfe) {
+                            throw new IllegalStateException("Please check that the property 'tcp.port.exclusion.list' is a comma separated list of integer values (port numbers) or is empty. (White space is fine.)", nfe);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Configure the Broker with a random TCP port number.
+        final BrokerService broker = (BrokerService) ctx.getBean("jmsBroker");
+        try {
+            // Get hostname
+            final String hostname = InetAddress.getLocalHost().getHostName();
+
+            // Select a random port above 1024, excluding LSF ports and check availability.
+            boolean portAssigned = false;
+            int port = 0;
+            final Random rand = new Random();
+            while (!portAssigned) {
+                port = rand.nextInt(64510) + 1025; // > 1024 and < 65535
+                if (portExclusionList != null && portExclusionList.contains(port)) {
+                    continue;
+                }
+                // Test the port is available on this machine.
+                portAssigned = available(port);
+            }
+
+            final String uriString = new StringBuilder("tcp://").append(hostname).append(':').append(port).toString();
+
+            final TransportConnector tc = new TransportConnector();
+            tc.setUri(new URI(uriString));
+            broker.addConnector(tc);
+            broker.start();
+            System.out.println("uriString = " + uriString);
+            return uriString;
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to configure the TCPTransport on the Broker", e);
+        }
+    }
+
     private static void printHelp() {
         HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, HEADER, COMMAND_LINE_OPTIONS, FOOTER);
     }
 
+    /**
+     * Checks to see if a specific port is available.
+     * Checks for use both TCP and UDP use of ports.
+     *
+     * @param port number to check for availability
+     * @return true if the port number is available.
+     */
+    public static boolean available(int port) {
+        ServerSocket ss = null;
+        DatagramSocket ds = null;
+        try {
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            ds = new DatagramSocket(port);
+            ds.setReuseAddress(true);
+            // The port is currently not used for anything and is available for TCP / UDP
+            return true;
+        } catch (IOException e) {
+            // Don't need to do anything here - if an Exception is thrown attempting to connect to
+            // a port then this method returns false, indicating that the
+            // specified port is not available. (Which is the desired behaviour).
+            return false;
+        } finally {
+            if (ds != null) {
+                ds.close();
+            }
+
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    /* should not be thrown */
+                }
+            }
+        }
+    }
 }
