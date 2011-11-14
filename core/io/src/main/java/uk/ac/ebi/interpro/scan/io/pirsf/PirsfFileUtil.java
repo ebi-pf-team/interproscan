@@ -77,7 +77,7 @@ public class PirsfFileUtil {
     }
 
     /**
-     * Create a new temporary file. If the file already exists a warning is logged but this is not considered a failure.
+     * Create a new temporary file. If the file already exists it is replaced.
      *
      * @param pathToFile Path and filename
      * @return The file
