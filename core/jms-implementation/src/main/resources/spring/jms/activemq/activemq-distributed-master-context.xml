@@ -16,6 +16,7 @@
                 persistent="true"
                 useShutdownHook="true"
                 dedicatedTaskRunner="false"
+                deleteAllMessagesOnStartup="true"
                 dataDirectory="${broker.directory}"
             >
         <!-- shutdownhook is the default shutdown mode for ActiveMQ, see:
