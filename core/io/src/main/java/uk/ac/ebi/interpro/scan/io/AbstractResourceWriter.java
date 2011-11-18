@@ -26,6 +26,13 @@ public abstract class AbstractResourceWriter<T> implements ResourceWriter<T> {
         if (resource == null) {
             throw new NullPointerException("Resource is null");
         }
+
+        if (resource.exists()) {
+            if (!resource.getFile().delete()) {
+                throw new IllegalStateException("File " + resource.getFilename() + " already exists, but cannot be deleted.");
+            }
+        }
+
         // Bizarre Javadoc for createNewFile:
         // <code>true</code> if the named file does not exist and was successfully created;
         // <code>false</code> if the named file already exists
