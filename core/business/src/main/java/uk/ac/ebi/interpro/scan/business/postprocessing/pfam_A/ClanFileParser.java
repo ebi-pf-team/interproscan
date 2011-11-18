@@ -1,24 +1,22 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
 
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClan;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClanData;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamModel;
 
 import java.io.*;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.Map;
 import java.util.regex.Matcher;
-
-import org.springframework.core.io.Resource;
-import org.springframework.beans.factory.annotation.Required;
+import java.util.regex.Pattern;
 
 /**
  * Parser for Pfam Clan file.  Builds a PfamClanData object model of the contents of
  * the file, which captures clan and nesting information for models.
- *
+ * <p/>
  * On testing, an entire typical Pfam clan file uses 4.3MB of heap space to store, so
  * sticking this in memory is fine.
  *
@@ -91,10 +89,10 @@ public class ClanFileParser implements Serializable {
 
      */
 
-    private static final String RECORD_END                  = "//";
-    private static final String ACCESSION_LINE              = "#=GF AC";
-    private static final String CLAN_MEMBER_MODEL_AC_LINE   = "#=GF MB";
-    private static final String NESTING_LINE                = "#=GF NE";     // Points to nested (child) model entry.
+    private static final String RECORD_END = "//";
+    private static final String ACCESSION_LINE = "#=GF AC";
+    private static final String CLAN_MEMBER_MODEL_AC_LINE = "#=GF MB";
+    private static final String NESTING_LINE = "#=GF NE";     // Points to nested (child) model entry.
 
     private static final Pattern ACCESSION_EXTRACTOR_PATTERN = Pattern.compile("^\\#=GF\\s+[A-Z]{2}\\s+([A-Z0-9]+).*$");
 
@@ -118,14 +116,15 @@ public class ClanFileParser implements Serializable {
      * Lazy-loads and returns the PfamClanData object that contains
      * all the details of Pfam clans and nesting relationships
      * between models.
+     *
      * @return the PfamClanData object that contains
-     * all the details of Pfam clans and nesting relationships
-     * between models.
+     *         all the details of Pfam clans and nesting relationships
+     *         between models.
      * @throws IOException in the event of a problem reading the
-     * clan data file.
+     *                     clan data file.
      */
     public PfamClanData getClanData() throws IOException {
-        if (clanData == null){
+        if (clanData == null) {
             buildClanAndModelModel();
         }
         return clanData;
@@ -136,6 +135,7 @@ public class ClanFileParser implements Serializable {
      * data from each record and stores it into a RecordHolder object.
      * This object is then used to build the proper data model, held
      * in PfamClanData.  The RecordHolder object is then discarded.
+     *
      * @throws IOException in the event of a problem reading the file.
      */
     private void buildClanAndModelModel() throws IOException {
@@ -151,28 +151,25 @@ public class ClanFileParser implements Serializable {
         // will be added to the domain model after parsing the file.
         Map<String, List<String>> modelAccessionNestsModelAccession = new HashMap<String, List<String>>();
 
-        try{
+        try {
             reader = new BufferedReader(new FileReader(new File(pfamASeedFile)));
             RecordHolder record = new RecordHolder();
-            while (reader.ready()){
+            while (reader.ready()) {
                 String line = reader.readLine();
-                if (line.startsWith(RECORD_END)){
-                    buildModel (record, modelAccessionNestsModelAccession);
+                if (line.startsWith(RECORD_END)) {
+                    buildModel(record, modelAccessionNestsModelAccession);
                     record = new RecordHolder();
-                }
-                else if (line.startsWith(ACCESSION_LINE)){
+                } else if (line.startsWith(ACCESSION_LINE)) {
                     Matcher acLineMatcher = ACCESSION_EXTRACTOR_PATTERN.matcher(line);
-                    if (acLineMatcher.find()){
+                    if (acLineMatcher.find()) {
                         record.setModelAc(acLineMatcher.group(1));
                     }
-                }
-                else if (line.startsWith(NESTING_LINE)){
+                } else if (line.startsWith(NESTING_LINE)) {
                     Matcher nestingAccessionMatcher = ACCESSION_EXTRACTOR_PATTERN.matcher(line);
-                    if (nestingAccessionMatcher.find()){
+                    if (nestingAccessionMatcher.find()) {
                         record.addNestedDomainAc(nestingAccessionMatcher.group(1));
-                    }
-                    else {
-                        throw new IllegalStateException ("Line: " + line +" appears to be a nesting line, but does not match the regex to retrieve the accession number.");
+                    } else {
+                        throw new IllegalStateException("Line: " + line + " appears to be a nesting line, but does not match the regex to retrieve the accession number.");
                     }
                 }
             }
@@ -180,76 +177,74 @@ public class ClanFileParser implements Serializable {
             buildModel(record, modelAccessionNestsModelAccession);
 
             // Last of all, add Nesting information to the model.
-            addNestingInformation (modelAccessionNestsModelAccession);
-        }
-        finally{
-            if (reader != null){
+            addNestingInformation(modelAccessionNestsModelAccession);
+        } finally {
+            if (reader != null) {
                 reader.close();
             }
         }
     }
 
-    private void parsePfamC() throws IOException{
+    private void parsePfamC() throws IOException {
         BufferedReader reader = null;
 
-        try{
+        try {
             reader = new BufferedReader(new FileReader(new File(pfamCFile)));
             PfamClan clan = null;
-            while (reader.ready()){
+            while (reader.ready()) {
                 String line = reader.readLine();
-                if (line.startsWith(RECORD_END)){
+                if (line.startsWith(RECORD_END)) {
                     clan = null;
-                }
-                else if (line.startsWith(ACCESSION_LINE)){
+                } else if (line.startsWith(ACCESSION_LINE)) {
                     Matcher acLineMatcher = ACCESSION_EXTRACTOR_PATTERN.matcher(line);
-                    if (acLineMatcher.find()){
+                    if (acLineMatcher.find()) {
                         clan = new PfamClan(acLineMatcher.group(1));
                     }
-                }
-                else if (line.startsWith(CLAN_MEMBER_MODEL_AC_LINE)){
-                    if (clan == null){
-                        throw new IllegalStateException ("Found an entry in file " + pfamCFile + " where there appears to be no clan accession.");
+                } else if (line.startsWith(CLAN_MEMBER_MODEL_AC_LINE)) {
+                    if (clan == null) {
+                        throw new IllegalStateException("Found an entry in file " + pfamCFile + " where there appears to be no clan accession.");
                     }
                     Matcher clanAccessionMatcher = ACCESSION_EXTRACTOR_PATTERN.matcher(line);
-                    if (clanAccessionMatcher.find()){
+                    if (clanAccessionMatcher.find()) {
                         String modelAccession = clanAccessionMatcher.group(1);
                         PfamModel model = clanData.getModelByModelAccession(modelAccession);
-                        if (model == null){
-                            throw new IllegalArgumentException ("Cannot find the model with accession " + modelAccession + " in the model accession to model map.");
+                        if (model == null) {
+                            throw new IllegalArgumentException("Cannot find the model with accession " + modelAccession + " in the model accession to model map.");
                         }
                         model.setClan(clan);
-                    }
-                    else {
-                        throw new IllegalArgumentException ("Looks like a nesting line, but can't parse out the accession.  Line = " + line);
+                    } else {
+                        throw new IllegalArgumentException("Looks like a nesting line, but can't parse out the accession.  Line = " + line);
                     }
                 }
             }
-        }
-        finally{
-            if (reader != null){
+        } finally {
+            if (reader != null) {
                 reader.close();
             }
         }
     }
+
     /**
      * Goes through the Map of nesting to nested model IDs and adds
      * these relationships to the Models stored in the PfamClanData object.
-     * @param modelAccessionNestsModelAccession mapping nesting model IDs to nested model IDs.
+     *
+     * @param modelAccessionNestsModelAccession
+     *         mapping nesting model IDs to nested model IDs.
      */
-    private void addNestingInformation (Map<String, List<String>> modelAccessionNestsModelAccession){
-        for (String nestingModelAc : modelAccessionNestsModelAccession.keySet()){
-            for (String nestedModelAc : modelAccessionNestsModelAccession.get(nestingModelAc)){
+    private void addNestingInformation(Map<String, List<String>> modelAccessionNestsModelAccession) {
+        for (String nestingModelAc : modelAccessionNestsModelAccession.keySet()) {
+            for (String nestedModelAc : modelAccessionNestsModelAccession.get(nestingModelAc)) {
                 PfamModel nestingModel = clanData.getModelByModelAccession(nestingModelAc);
                 PfamModel nestedModel = clanData.getModelByModelAccession(nestedModelAc);
-                if (nestingModel == null){
-                    throw new IllegalStateException ("Attempting to update PfamModel with AC "+ nestingModelAc + " with nesting information, but cannot find it!");
+                if (nestingModel == null) {
+                    throw new IllegalStateException("Attempting to update PfamModel with AC " + nestingModelAc + " with nesting information, but cannot find it!");
                 }
-                if (nestedModel == null){
-                    throw new IllegalStateException ("Attempting to update PfamModel with AC "+ nestedModelAc + " with nesting information, but cannot find it!");
+                if (nestedModel == null) {
+                    throw new IllegalStateException("Attempting to update PfamModel with AC " + nestedModelAc + " with nesting information, but cannot find it!");
                 }
                 // Sanity checks for potential circular relationships.  This is safe as it is called recursively.
-                if (nestingModel.isNestedIn(nestedModel)){
-                    throw new IllegalStateException ("Circularity detected in Clan file nesting relationship between model ACs " + nestedModelAc + " and " + nestingModelAc + '.');
+                if (nestingModel.isNestedIn(nestedModel)) {
+                    throw new IllegalStateException("Circularity detected in Clan file nesting relationship between model ACs " + nestedModelAc + " and " + nestingModelAc + '.');
                 }
 
                 // Add the nesting relationship.
@@ -261,16 +256,18 @@ public class ClanFileParser implements Serializable {
     /**
      * For a single record parsed from the flat file, builds the required objects and stores
      * them in the PfamClanData object.
+     *
      * @param record containing the relevant information from a single record in the flat file.
-     * @param modelAccessionNestsModelAccession mapping nesting model IDs to nested model IDs.
+     * @param modelAccessionNestsModelAccession
+     *               mapping nesting model IDs to nested model IDs.
      */
     private void buildModel(RecordHolder record, Map<String, List<String>> modelAccessionNestsModelAccession) {
-        if (record.getModelAc() != null){
+        if (record.getModelAc() != null) {
             clanData.addModel(record.getModelAc());
-            if (record.getNestedDomains().size() > 0){
-                for (String nestedDomain : record.getNestedDomains()){
-                    List<String> nestedDomains = modelAccessionNestsModelAccession.get (record.getModelAc());
-                    if (nestedDomains == null){
+            if (record.getNestedDomains().size() > 0) {
+                for (String nestedDomain : record.getNestedDomains()) {
+                    List<String> nestedDomains = modelAccessionNestsModelAccession.get(record.getModelAc());
+                    if (nestedDomains == null) {
                         nestedDomains = new ArrayList<String>();
                     }
                     nestedDomains.add(nestedDomain);
@@ -285,7 +282,7 @@ public class ClanFileParser implements Serializable {
      * Used for convenience only - the data is then transferred into the more rich data structure
      * provided by the PfamClanData, PfamModel and PfamClan classes.
      */
-    private class RecordHolder{
+    private class RecordHolder {
         private String modelAc;
         private final List<String> nestedDomains = new ArrayList<String>();
 
