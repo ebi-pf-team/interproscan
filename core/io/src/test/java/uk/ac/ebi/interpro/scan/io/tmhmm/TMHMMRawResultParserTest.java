@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -15,11 +14,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 /**
  * Test class for {@link TMHMMRawResultParser}.
