@@ -93,6 +93,12 @@
             <properties>
                 <default.log.level>debug</default.log.level>
                 <third.party.log.level>info</third.party.log.level>
+                <!-- In the Jetty profile just use a relative path to the copies of the entry colours properties file
+                and entry hierarchy CSV file in version control. NOTE: This data may not have been generated recently,
+                or from the protein database you are currently using (IPPRO, IWEBPRO1 etc) therefore will introduce
+                inconsistencies! But that's OK, Jetty profile is used for development, not production! -->
+                <entry.colours.file.loc>${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
+                <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
             </properties>
             <build>
                 <plugins>
@@ -101,6 +107,13 @@
                         <artifactId>maven-war-plugin</artifactId>
                         <configuration>
                             <warName>interpro5</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>WEB-INF/spring</targetPath>
+                                </resource>
+                            </webResources>
                         </configuration>
                     </plugin>
                     <!-- http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
@@ -147,12 +160,17 @@ cd /nfs/seqdb/production/interpro/web/i5; svn up; mvn clean install
 
 cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat:redeploy
 
-
                  -->
             <properties>
                 <default.log.level>warn</default.log.level>
                 <third.party.log.level>warn</third.party.log.level>
                 <deployment.folder>/nfs/production/seqdb2/production/interpro/web/i5/web/target</deployment.folder>
+                <!-- In this production profile use a full path to the copies of the entry colours properties file
+                and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
+                NOTE: These should have been generated at the time of the last release, therefore will be consistent
+                with the current public database -->
+                <entry.colours.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_colours.properties</entry.colours.file.loc>
+                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv</entry.hierarchy.file.loc>
             </properties>
 
             <build>
@@ -164,6 +182,13 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                         <version>2.1-alpha-1</version>
                         <configuration>
                             <warName>interpro5</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>WEB-INF/spring</targetPath>
+                                </resource>
+                            </webResources>
                         </configuration>
                     </plugin>
 
@@ -186,6 +211,89 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>localhost-tomcat</id>
+            <!--
+
+1. Profile to deploy to Tomcat running on the current local desktop machine!
+
+(Once-only)
+
+Add the following XML to your ~/.m2/settings.xml file, to provide the server credentials:
+
+                        <settings>
+                            <servers>
+                                <server>
+                                    <id>localhost</id>
+                                    <username>tomcat</username>
+                                    <password>THE REAL PASSWORD</password>
+                                </server>
+                            </servers>
+                        </settings>
+
+2) Commit your (tested) changes to subversion, wherever you may be building them.
+
+2) OPTIONALLY, If you have changed any code that the web module is dependent upon (e.g. in model):
+
+cd /home/matthew/Projects/i5/interproscan/core; svn up; mvn clean install
+
+
+3) Build and deploy the web application:
+
+cd /home/matthew/Projects/i5/interproscan/core/web; svn up; mvn -Plocalhost-tomcat clean tomcat:redeploy
+
+                 -->
+            <properties>
+                <default.log.level>warn</default.log.level>
+                <third.party.log.level>warn</third.party.log.level>
+                <deployment.folder>${basedir}/target</deployment.folder>
+                <!-- In the localhost profile just use a relative path to the copies of the entry colours properties file
+                and entry hierarchy CSV file in version control. NOTE: This data may not have been generated recently,
+                or from the protein database you are currently using (IPPRO, IWEBPRO1 etc) therefore will introduce
+                inconsistencies! But that's OK, this profile is used for development/testing, not production! -->
+                <entry.colours.file.loc>${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
+                <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
+            </properties>
+
+            <build>
+                <finalName>interpro5</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.1-alpha-1</version>
+                        <configuration>
+                            <warName>interpro5</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>WEB-INF/spring</targetPath>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+
+                    <!-- Plugin to automatically deploy the war file to Tomcat running on localhost. -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>tomcat-maven-plugin</artifactId>
+                        <configuration>
+                            <url>http://localhost:8080/manager</url>
+                            <server>localhost</server>
+                            <!-- See note above for server credentials -->
+                            <mode>both</mode>
+                            <contextFile>${project.build.directory}/interpro5.xml
+                            </contextFile>
+                            <warFile>${project.build.directory}/interpro5.war
+                            </warFile>
+                            <path>/interpro5</path>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
 </project>
