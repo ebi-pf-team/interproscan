@@ -29,7 +29,7 @@ public class EntryHierarchyDataResourceReader {
             throw new NullPointerException("Resource is null");
         }
         if (!resource.exists()) {
-            throw new IllegalStateException(resource.getFilename() + " does not exist");
+            throw new IllegalStateException(resource.getURL() + " does not exist");
         }
         if (!resource.isReadable()) {
             throw new IllegalStateException(resource.getFilename() + " is not readable");
