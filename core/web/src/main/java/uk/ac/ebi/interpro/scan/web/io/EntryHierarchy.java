@@ -20,7 +20,7 @@ public class EntryHierarchy {
     private static final Logger LOGGER = Logger.getLogger(EntryHierarchy.class.getName());
 
     private Properties entryColourPropertiesFile;
-    private Map<String, Integer> entryColourMap;
+    private Map<String, Integer> entryColourMap = null;
     private Resource entryHierarchyDataResource;
     private EntryHierarchyDataResourceReader entryHierarchyDataResourceReader;
     private Map<String, EntryHierarchyData> entryHierarchyDataMap = null;
@@ -50,6 +50,26 @@ public class EntryHierarchy {
             LOGGER.warn("Problem reading entry hierarchy data resource: " + e.getMessage());
         }
     }
+
+    /**
+     * Re-initialise the singleton whilst the application is running.
+     * @return True if application singleton data re-initialisation succeeded, otherwise false.
+     */
+    public boolean reinit() {
+        Map<String, Integer> backupEntryColourMap = entryColourMap;
+        Map<String, EntryHierarchyData> backupEntryHierarchyDataMap = entryHierarchyDataMap;
+
+        init();
+
+        if (entryColourMap == null || entryColourMap.size() < 1 || entryHierarchyDataMap == null || entryHierarchyDataMap.size() < 1) {
+            // Something went wrong - rollback to previous data
+            entryColourMap = backupEntryColourMap;
+            entryHierarchyDataMap = backupEntryHierarchyDataMap;
+            return  false;
+        }
+        return true;
+    }
+
 
     @Required
     public void setEntryColourPropertiesFile(Properties entryColourPropertiesFile) {
