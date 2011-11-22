@@ -22,6 +22,8 @@
     <h2>InterPro Entry to Colour ID mappings</h2>
 
     <table>
+        <th>Entry Ac</th>
+        <th>Colour Id</th>
         <c:forEach var="entry" items="${entryColours}">
             <tr>
                 <td>${entry.key}</td>
@@ -33,6 +35,10 @@
     <h2>InterPro Entry Hierarchy Details</h2>
 
     <table>
+        <th>Entry Ac</th>
+        <th>Level</th>
+        <th>Parent Entry Ac</th>
+        <th>Entries In Same Hierarchy</th>
         <c:forEach var="entry" items="${entryHierarchy}">
             <tr>
                 <td>${entry.key}</td>
