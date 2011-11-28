@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
+import uk.ac.ebi.interpro.scan.model.OpenReadingFrame;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
@@ -51,6 +53,8 @@ public class ProteinLoader implements SequenceLoader {
 
     private boolean isGetOrfOutput;
 
+    private GetOrfDescriptionLineParser descriptionLineParser;
+
     public void setProteinLookup(PrecalculatedProteinLookup proteinLookup) {
         this.proteinLookup = proteinLookup;
     }
@@ -75,6 +79,10 @@ public class ProteinLoader implements SequenceLoader {
     public void setProteinPrecalcLookupBatchSize(int proteinPrecalcLookupBatchSize) {
         this.proteinPrecalcLookupBatchSize = proteinPrecalcLookupBatchSize;
         proteinsAwaitingPrecalcLookup = new HashSet<Protein>(proteinPrecalcLookupBatchSize);
+    }
+
+    public void setDescriptionLineParser(GetOrfDescriptionLineParser descriptionLineParser) {
+        this.descriptionLineParser = descriptionLineParser;
     }
 
     public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
@@ -109,6 +117,10 @@ public class ProteinLoader implements SequenceLoader {
                     // parse out the start and end coordinates relative to the nucleic acid,
                     // retrieve the correct nucleic acid and create an OpenReadingFrame object
                     // to relate the Protein to the NucleicAcid.
+//                    if (isGetOrfOutput) {
+//                        OpenReadingFrame orf = descriptionLineParser.parseGetOrfDescriptionLine(crossReference);
+//                        openReadingFrameDAO.insert(orf);
+//                    }
                 }
             }
             proteinsAwaitingPrecalcLookup.add(protein);
