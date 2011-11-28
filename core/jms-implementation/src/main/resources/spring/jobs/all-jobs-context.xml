@@ -23,7 +23,7 @@
     <import resource="jobPIRSF-2.74-context.xml"/>
     <import resource="jobProDom-2006.1-context.xml"/>
     <import resource="jobSuperFamily-1.75-context.xml"/>
-    <!--<import resource="jobTMHMM-2.0c-context.xml"/>-->
+    <import resource="jobTMHMM-2.0c-context.xml"/>
 
     <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
 
@@ -59,7 +59,7 @@
                 <ref bean="jobTIGRFAM-10.1"/>
                 <ref bean="jobPIRSF-2.74"/>
                 <ref bean="jobSuperFamily-1.75"/>
-                <!--<ref bean="jobTMHMM"/>-->
+                <ref bean="jobTMHMM"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
@@ -202,6 +202,7 @@
                         <property name="getOrfOutput" value="true"/>
                         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
                         <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
+                        <property name="descriptionLineParser" ref="getOrfDescriptionLineParser"/>
                     </bean>
                 </property>
             </bean>
@@ -269,6 +270,8 @@
 
     <!-- ######################## Dependencies ############################  -->
 
+    <bean id="getOrfDescriptionLineParser"
+          class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
 
     <bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
         <property name="sequenceLoader" ref="proteinLoader"/>
