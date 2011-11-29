@@ -67,6 +67,10 @@ public class EntryHierarchy {
     public boolean reinit() {
         // Re-build entry colour map
         Map<String, Integer> newEntryColourMap = buildEntryColourMap();
+        if (newEntryColourMap == null || newEntryColourMap.size() < 1) {
+            // Something went wrong - leave previous data un-touched
+            return false;
+        }
 
         // Re-build entry hierarchy data map
         Map<String, EntryHierarchyData> newEntryHierarchyDataMap;
@@ -77,12 +81,12 @@ public class EntryHierarchy {
             LOGGER.warn("Problem reading entry hierarchy data resource: " + e.getMessage());
             return false;
         }
-
-        if (newEntryColourMap == null || newEntryColourMap.size() < 1 || newEntryHierarchyDataMap == null || newEntryHierarchyDataMap.size() < 1) {
+        if (newEntryHierarchyDataMap == null || newEntryHierarchyDataMap.size() < 1) {
             // Something went wrong - leave previous data un-touched
-            return  false;
+            return false;
         }
-        // Else all looks OK with the new data, proceed with re-initialisation
+
+        // All looks OK with the new data, proceed with re-initialisation
         entryColourMap = newEntryColourMap;
         entryHierarchyDataMap = newEntryHierarchyDataMap;
         return true;
