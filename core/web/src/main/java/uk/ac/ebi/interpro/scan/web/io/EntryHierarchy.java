@@ -30,17 +30,7 @@ public class EntryHierarchy {
      */
     public void init() {
         // Build entry colour map
-        entryColourMap = new HashMap<String, Integer>();
-        for (Map.Entry<Object, Object> entryColour :  this.entryColourPropertiesFile.entrySet()) {
-            String entryAc = (String) entryColour.getKey();
-            int colour = Integer.parseInt((String) entryColour.getValue());
-            if (entryAc.startsWith("IPR")) {
-                this.entryColourMap.put(entryAc, colour);
-            }
-            else {
-                LOGGER.warn("Entry colours properties file contained an invalid entryAc - ignoring: " + entryAc);
-            }
-        }
+        entryColourMap = buildEntryColourMap();
 
         // Build entry hierarchy data map
         try {
@@ -52,21 +42,49 @@ public class EntryHierarchy {
     }
 
     /**
+     * Build a map of InterPro entry accessions to colour ID numbers from the configured properties file.
+     * @return The map
+     */
+    private Map<String, Integer> buildEntryColourMap() {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        for (Map.Entry<Object, Object> entryColour :  this.entryColourPropertiesFile.entrySet()) {
+            String entryAc = (String) entryColour.getKey();
+            int colour = Integer.parseInt((String) entryColour.getValue());
+            if (entryAc.startsWith("IPR")) {
+                map.put(entryAc, colour);
+            }
+            else {
+                LOGGER.warn("Entry colours properties file contained an invalid entryAc - ignoring: " + entryAc);
+            }
+        }
+        return map;
+    }
+
+    /**
      * Re-initialise the singleton whilst the application is running.
      * @return True if application singleton data re-initialisation succeeded, otherwise false.
      */
     public boolean reinit() {
-        Map<String, Integer> backupEntryColourMap = entryColourMap;
-        Map<String, EntryHierarchyData> backupEntryHierarchyDataMap = entryHierarchyDataMap;
+        // Re-build entry colour map
+        Map<String, Integer> newEntryColourMap = buildEntryColourMap();
 
-        init();
+        // Re-build entry hierarchy data map
+        Map<String, EntryHierarchyData> newEntryHierarchyDataMap;
+        try {
+            newEntryHierarchyDataMap = entryHierarchyDataResourceReader.read(entryHierarchyDataResource);
+        }
+        catch (IOException e) {
+            LOGGER.warn("Problem reading entry hierarchy data resource: " + e.getMessage());
+            return false;
+        }
 
-        if (entryColourMap == null || entryColourMap.size() < 1 || entryHierarchyDataMap == null || entryHierarchyDataMap.size() < 1) {
-            // Something went wrong - rollback to previous data
-            entryColourMap = backupEntryColourMap;
-            entryHierarchyDataMap = backupEntryHierarchyDataMap;
+        if (newEntryColourMap == null || newEntryColourMap.size() < 1 || newEntryHierarchyDataMap == null || newEntryHierarchyDataMap.size() < 1) {
+            // Something went wrong - leave previous data un-touched
             return  false;
         }
+        // Else all looks OK with the new data, proceed with re-initialisation
+        entryColourMap = newEntryColourMap;
+        entryHierarchyDataMap = newEntryHierarchyDataMap;
         return true;
     }
 
