@@ -50,7 +50,7 @@ public class GetOrfDescriptionLineParser {
         String startPosChunk = chunks[1];
         String endPosChunk = chunks[3];
         NucleotideSequenceStrand strand = NucleotideSequenceStrand.SENSE;
-        if (chunks[4].equalsIgnoreCase("REVERSE")) {
+        if (descLine.contains("REVERSE")) {
             strand = NucleotideSequenceStrand.ANTISENSE;
             startPosChunk = endPosChunk;
             endPosChunk = chunks[1];
@@ -63,7 +63,6 @@ public class GetOrfDescriptionLineParser {
 
     private String filterDescriptionLine(String descLine) {
         descLine = descLine.replace("[", "");
-        descLine = descLine.replace("(", "");
         return descLine.replace("]", "");
     }
 }

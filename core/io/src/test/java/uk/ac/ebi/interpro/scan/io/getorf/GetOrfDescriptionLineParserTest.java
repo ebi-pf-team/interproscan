@@ -42,6 +42,7 @@ public class GetOrfDescriptionLineParserTest {
         orfs = new HashSet<OpenReadingFrame>();
         orfs.add(new OpenReadingFrame(735, 1112, NucleotideSequenceStrand.SENSE));
         orfs.add(new OpenReadingFrame(49, 465, NucleotideSequenceStrand.ANTISENSE));
+        orfs.add(new OpenReadingFrame(1, 231, NucleotideSequenceStrand.SENSE));
     }
 
     @Test
