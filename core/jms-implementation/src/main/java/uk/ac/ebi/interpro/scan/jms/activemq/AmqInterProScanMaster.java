@@ -356,6 +356,7 @@ public class AmqInterProScanMaster implements Master {
         }
         addDependenciesAndStore(stepToStepInstances);
         return stepInstancesCreatedCount;
+
     }
 
     /**
@@ -374,7 +375,10 @@ public class AmqInterProScanMaster implements Master {
                         List<StepInstance> candidateStepInstances = stepToStepInstances.get(stepRequired);
                         if (candidateStepInstances != null) {
                             for (StepInstance candidate : candidateStepInstances) {
-                                if (stepInstance.proteinBoundsOverlap(candidate)) {
+                                // If the two StepInstance are dealing with overlapping proteins,
+                                // OR if they are not dealing with proteins ranges, then they
+                                // are dependent as defined in the Job XML file.
+                                if (stepInstance.proteinBoundsOverlap(candidate) || (candidate.getBottomProtein() == null && candidate.getTopProtein() == null)) {
                                     stepInstance.addDependentStepInstance(candidate);
                                 }
                             }
@@ -389,8 +393,8 @@ public class AmqInterProScanMaster implements Master {
                     LOGGER.debug("About to attempt to persist stepInstance: " + stepInstance.getId() + " with " + stepInstance.stepInstanceDependsUpon().size() + " dependent steps.");
                 }
             }
-            stepInstanceDAO.insert(stepToStepInstances.get(step));
         }
+        stepInstanceDAO.insert(stepToStepInstances);
     }
 
     /**
