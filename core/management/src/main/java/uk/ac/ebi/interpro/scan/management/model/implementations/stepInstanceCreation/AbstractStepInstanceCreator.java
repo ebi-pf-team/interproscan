@@ -132,7 +132,7 @@ public abstract class AbstractStepInstanceCreator {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + stepToStepInstances.get(step).size() + " StepInstances for Step " + step.getId());
             }
-            stepInstanceDAO.insert(stepToStepInstances.get(step));
         }
+        stepInstanceDAO.insert(stepToStepInstances);
     }
 }

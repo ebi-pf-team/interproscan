@@ -362,5 +362,36 @@ public class StepInstance implements Serializable {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        StepInstance that = (StepInstance) o;
+
+        if (bottomModel != null ? !bottomModel.equals(that.bottomModel) : that.bottomModel != null) return false;
+        if (bottomProtein != null ? !bottomProtein.equals(that.bottomProtein) : that.bottomProtein != null)
+            return false;
+        if (dependsUpon != null ? !dependsUpon.equals(that.dependsUpon) : that.dependsUpon != null) return false;
+        if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) return false;
+        if (!stepId.equals(that.stepId)) return false;
+        if (!timeCreated.equals(that.timeCreated)) return false;
+        if (topModel != null ? !topModel.equals(that.topModel) : that.topModel != null) return false;
+        if (topProtein != null ? !topProtein.equals(that.topProtein) : that.topProtein != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = stepId.hashCode();
+        result = 31 * result + (bottomProtein != null ? bottomProtein.hashCode() : 0);
+        result = 31 * result + (topProtein != null ? topProtein.hashCode() : 0);
+        result = 31 * result + (bottomModel != null ? bottomModel.hashCode() : 0);
+        result = 31 * result + (topModel != null ? topModel.hashCode() : 0);
+        result = 31 * result + (dependsUpon != null ? dependsUpon.hashCode() : 0);
+        result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+        result = 31 * result + timeCreated.hashCode();
+        return result;
+    }
 }
