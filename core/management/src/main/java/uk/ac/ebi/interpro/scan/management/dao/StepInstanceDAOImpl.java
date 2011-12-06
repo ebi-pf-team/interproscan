@@ -6,10 +6,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.management.model.*;
 
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * DAO for StepInstance objects.  Used to retrieve
@@ -158,6 +155,24 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
 
         query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
         return ((Long) query.getSingleResult()) > 0L;
+    }
+
+    /**
+     * Method to store a set of StepInstances that are (potentially) interdependent,
+     * all in one transaction.
+     *
+     * @param stepToStepInstances a Map of Steps to their dependencies.
+     */
+    @Transactional
+    public void insert(Map<Step, List<StepInstance>> stepToStepInstances) {
+        if (stepToStepInstances == null) {
+            return;
+        }
+        final Set<StepInstance> stepInstances = new HashSet<StepInstance>();
+        for (Step step : stepToStepInstances.keySet()) {
+            stepInstances.addAll(stepToStepInstances.get(step));
+        }
+        this.insert(stepInstances);
     }
 
     private List<String> buildMapStepIdsInGroup(SerialGroup serialGroup, Jobs jobs) {
