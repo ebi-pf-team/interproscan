@@ -3,41 +3,27 @@ package uk.ac.ebi.interpro.scan.io.match.writer;
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
 /**
  * Write matches as output for InterProScan user.
  *
- * @author ?, EMBL-EBI, InterPro
- * @author Maxim Scheremetjew
+ * @author David Binns, EMBL-EBI, InterPro
+ * @author Phil Jones, EMBL-EBI, InterPro
+ * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ProteinMatchTSVWriter {
-
+public class ProteinMatchTSVWriter extends ProteinMatchesResultWriter {
 
     private TSVWriter tsvWriter;
 
-    DateFormat dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private boolean mapToInterProEntries;
-    private boolean mapToGO;
-    private boolean mapToPathway;
-    private final String VALUE_SEPARATOR = "|";
-
     public ProteinMatchTSVWriter(File file) throws IOException {
-        if (file.exists()) {
-            if (!file.delete()) {
-                throw new IllegalStateException("The file being written to already exists and cannot be deleted: " + file.getAbsolutePath());
-            }
-        }
-        tsvWriter = new TSVWriter(new BufferedWriter(new FileWriter(file)));
+        super(file);
+        this.tsvWriter = new TSVWriter(super.fileWriter);
     }
 
 
@@ -50,7 +36,7 @@ public class ProteinMatchTSVWriter {
      */
     public int write(Protein protein) throws IOException {
         int locationCount = 0;
-        String proteinAc = makeProteinAc(protein);
+        String proteinAc = getProteinAccession(protein);
         int length = protein.getSequence().length();
         String md5 = protein.getMd5();
         String date = dmyFormat.format(new Date());
@@ -100,7 +86,7 @@ public class ProteinMatchTSVWriter {
                                         if (sb.length() > 0) {
                                             sb.append(VALUE_SEPARATOR);
                                         }
-                                        sb.append(xref.getIdentifier()); // Just write the GO identifier to the output
+                                        sb.append(xref.getIdentifier()); // Just writeComment the GO identifier to the output
                                     }
                                     mappingFields.add(sb.toString());
                                 } else {
@@ -124,36 +110,10 @@ public class ProteinMatchTSVWriter {
                             }
                         }
                     }
-                    tsvWriter.write(mappingFields);
+                    this.tsvWriter.write(mappingFields);
                 }
             }
         }
         return locationCount;
-    }
-
-    public void setMapToInterProEntries(boolean mapToInterProEntries) {
-        this.mapToInterProEntries = mapToInterProEntries;
-    }
-
-    public void setMapToGo(boolean mapToGO) {
-        this.mapToGO = mapToGO;
-    }
-
-    public void setMapToPathway(boolean mapToPathway) {
-        this.mapToPathway = mapToPathway;
-    }
-
-    private String makeProteinAc(Protein protein) {
-        StringBuilder proteinXRef = new StringBuilder();
-        Set<ProteinXref> crossReferences = protein.getCrossReferences();
-        for (ProteinXref crossReference : crossReferences) {
-            if (proteinXRef.length() > 0) proteinXRef.append(VALUE_SEPARATOR);
-            proteinXRef.append(crossReference.getIdentifier());
-        }
-        return proteinXRef.toString();
-    }
-
-    public void close() throws IOException {
-        tsvWriter.close();
     }
 }

@@ -8,7 +8,7 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
  *         Date: 21/06/11
  *         Time: 15:07
  */
-public interface StepCreatingStep {
+public interface StepInstanceCreatingStep {
 
     public static final String ANALYSIS_JOB_NAMES_KEY = "ANALYSIS_JOB_NAMES";
     public static final String COMPLETION_JOB_NAME_KEY = "COMPLETION_JOB_NAME";

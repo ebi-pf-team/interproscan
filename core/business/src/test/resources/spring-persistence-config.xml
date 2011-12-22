@@ -47,4 +47,7 @@
 
     <bean id="pfamFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
 
+    <bean id="openReadingFrameDAO" class="uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAOImpl"/>
+
+
 </beans>

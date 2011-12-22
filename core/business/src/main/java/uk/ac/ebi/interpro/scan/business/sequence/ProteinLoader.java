@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
+import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.OpenReadingFrame;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
@@ -55,6 +56,9 @@ public class ProteinLoader implements SequenceLoader {
 
     private GetOrfDescriptionLineParser descriptionLineParser;
 
+    //This is simply a collection of all create open reading frames (they are created while calling the store method)
+    private Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
+
     public void setProteinLookup(PrecalculatedProteinLookup proteinLookup) {
         this.proteinLookup = proteinLookup;
     }
@@ -104,7 +108,6 @@ public class ProteinLoader implements SequenceLoader {
      * @param sequence        being the protein sequence to store
      * @param crossReferences being a set of Cross references.
      */
-    @Override
     public void store(String sequence, String... crossReferences) {
         if (sequence != null && sequence.length() > 0) {
             Protein protein = new Protein(sequence);
@@ -117,10 +120,24 @@ public class ProteinLoader implements SequenceLoader {
                     // parse out the start and end coordinates relative to the nucleic acid,
                     // retrieve the correct nucleic acid and create an OpenReadingFrame object
                     // to relate the Protein to the NucleicAcid.
-//                    if (isGetOrfOutput) {
-//                        OpenReadingFrame orf = descriptionLineParser.parseGetOrfDescriptionLine(crossReference);
-//                        openReadingFrameDAO.insert(orf);
-//                    }
+                    if (isGetOrfOutput) {
+                        String[] chunks = descriptionLineParser.parseGetOrfDescriptionLine(crossReference);
+                        OpenReadingFrame orf = descriptionLineParser.createORFFromParsingResult(chunks);
+                        if (orf != null) {
+                            String identifier = descriptionLineParser.getIdentifier(chunks[0]);
+                            NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(identifier);
+                            if (nucleotide != null) {
+                                //attach protein sequence
+                                orf.setProtein(protein);
+                                //attach nucleotide sequence
+                                orf.setNucleotideSequence(nucleotide);
+                                //collecting ORF
+                                orfs.add(orf);
+                            }
+                        } else {
+                            LOGGER.warn("Couldn't create any ORF object by the specified chunks: " + chunks + "!");
+                        }
+                    }
                 }
             }
             proteinsAwaitingPrecalcLookup.add(protein);
@@ -197,7 +214,6 @@ public class ProteinLoader implements SequenceLoader {
      *
      * @param sequenceLoadListener which handles the creation of StepInstances for the new proteins added.
      */
-    @Override
     public void persist(SequenceLoadListener sequenceLoadListener) {
         // Check any remaining proteins awaiting lookup
         lookupProteins();
@@ -233,6 +249,11 @@ public class ProteinLoader implements SequenceLoader {
         }
 
         sequenceLoadListener.sequencesLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
+        if (isGetOrfOutput && orfs.size() > 0) {
+            //persisting open reading frames
+            openReadingFrameDAO.insert(orfs);
+            openReadingFrameDAO.flush();
+        }
 
         // Prepare the ProteinLoader for another set of proteins.
         resetBounds();
