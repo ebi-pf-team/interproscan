@@ -24,6 +24,16 @@ public class RunGetOrfStep extends RunBinaryStep {
      */
     private String fastaFilePath;
 
+    /**
+     * Minimum nucleotide size of ORF to report (Any integer value). Default value is 30.
+     */
+    private String minSize;
+
+    /**
+     * Maximum nucleotide size of ORF to report (Any integer value). Default value is 1000000.
+     */
+    private String maxSize;
+
     public static final String SEQUENCE_FILE_PATH_KEY = "nucleic.seq.file.path";
 
     /**
@@ -47,6 +57,15 @@ public class RunGetOrfStep extends RunBinaryStep {
         this.fastaFilePath = fastaFilePath;
     }
 
+    @Required
+    public void setMinSize(String minSize) {
+        this.minSize = minSize;
+    }
+
+    public void setMaxSize(String maxSize) {
+        this.maxSize = maxSize;
+    }
+
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String nucleicAcidSeqFilePath = stepInstance.getParameters().get(SEQUENCE_FILE_PATH_KEY);
@@ -57,7 +76,14 @@ public class RunGetOrfStep extends RunBinaryStep {
         command.add(nucleicAcidSeqFilePath);
         command.add("-outseq");
         command.add(fastaFile);
-
+        if (this.minSize != null) {
+            command.add("-minsize");
+            command.add(this.minSize);
+        }
+        if (this.maxSize != null) {
+            command.add("-maxsize");
+            command.add(this.maxSize);
+        }
         // Need to build binary switches.
         // Need to have default minimum length (100?)
         command.addAll(getBinarySwitchesAsList());

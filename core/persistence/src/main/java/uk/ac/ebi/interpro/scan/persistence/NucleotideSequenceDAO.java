@@ -4,8 +4,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 
+import javax.persistence.Query;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,6 +16,14 @@ import java.util.Set;
  *         Time: 16:42
  */
 public interface NucleotideSequenceDAO extends GenericDAO<NucleotideSequence, Long> {
+
+    /**
+     * Retrieves nucleotide sequence by cross reference (more precisely by cross reference identifier).
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public NucleotideSequence retrieveByXrefIdentifier(String identifier);
 
     /**
      * Inserts new Sequences.

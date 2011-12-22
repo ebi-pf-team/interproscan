@@ -13,7 +13,7 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
-import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepCreatingStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep;
 
@@ -62,7 +62,13 @@ public class AmqInterProScanMaster implements Master {
 
     private UnrecoverableErrorStrategy unrecoverableErrorStrategy;
 
-    private String sequenceType;
+    /**
+     * Specifies the type of the I5 input sequences.
+     * <p/>
+     * p: Protein (DEFAULT)
+     * n: nucleic acid (DNA or RNA)
+     */
+    private String sequenceType = "p";
 
     private boolean onlyFarmOutNonDatabaseProcesses;
 
@@ -228,20 +234,27 @@ public class AmqInterProScanMaster implements Master {
                 if (closeOnCompletion &&
                         completed &&
                         stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
-                    // This next if ensures that StepInstances created as a result of loading proteins are
+                    // This next 'if' ensures that StepInstances created as a result of loading proteins are
                     // visible.  This is safe, because in the "closeOnCompletion" mode, an "output results" step
                     // is created, so as an absolute minimum there should be one more StepInstance than those
                     // created in the createNucleicAcidLoadStepInstance() or createFastaFileLoadStepInstance() methods.
-                    if (outputFile == null || fastaFilePath == null) {
+
+
+                    // TODO - should this be && ?
+                    if (outputFile == null || fastaFilePath == null) { // i.e. If running in production mode...
                         break;
-                    } else if (stepInstanceDAO.count() > stepInstancesCreatedByLoadStep && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
+                    }
+
+                    // First clause - checks that the load fasta file thread has finished.
+                    // Second clause - if the fasta file thread has finished, checks that all the analysis steps and the output step have finished.
+                    else if (stepInstanceDAO.count() > stepInstancesCreatedByLoadStep && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("There are no step instances left to run, so about to break out of loop in Master.\n\nStatistics: ");
                             LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                             LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
                         }
                         break;
-                    } else {
+                    } else {    // This else clause is for LOGGING ONLY - no  logic here.
                         LOGGER.info("Apparently have no more unfinished StepInstances, however it looks like there should be...");
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
@@ -309,9 +322,9 @@ public class AmqInterProScanMaster implements Master {
             for (String analysisName : analyses) {
                 jobNameList.add("job" + analysisName);
             }
-            params.put(StepCreatingStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
+            params.put(StepInstanceCreatingStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
         }
-        params.put(StepCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
+        params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
         String outputFilePath = outputFile;
         if (outputFilePath == null) {
@@ -322,6 +335,7 @@ public class AmqInterProScanMaster implements Master {
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
+        params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
     }
 
     /**

@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.XmlWriter;
-import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchTSVWriter;
+import uk.ac.ebi.interpro.scan.io.match.writer.*;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.MatchesHolder;
@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +48,7 @@ public class WriteOutputStep extends Step {
     public static final String MAP_TO_INTERPRO_ENTRIES = "MAP_TO_INTERPRO_ENTRIES";
     public static final String MAP_TO_GO = "MAP_TO_GO";
     public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
+    public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
 
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
@@ -71,9 +73,13 @@ public class WriteOutputStep extends Step {
             } else if ("xml".equalsIgnoreCase(outputFormat)) {
                 LOGGER.info("Writing out XML file");
                 outputToXML(outputFile, stepInstance);
+            } else if ("gff".equalsIgnoreCase(outputFormat)) {
+                LOGGER.info("Writing out GFF file (version 3)");
+                final String sequenceType = parameters.get(SEQUENCE_TYPE);
+                outputToGFF(outputFile, stepInstance, sequenceType);
             }
         } catch (IOException ioe) {
-            throw new IllegalStateException("IOException thrown when attempting to write output from InterProScan", ioe);
+            throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan", ioe);
         }
 
 
@@ -103,34 +109,64 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToTSV(File file, StepInstance stepInstance) throws IOException {
-        ProteinMatchTSVWriter writer = null;
+        ProteinMatchTSVWriter writer = new ProteinMatchTSVWriter(file);
         try {
-            writer = new ProteinMatchTSVWriter(file);
-            final Map<String, String> parameters = stepInstance.getParameters();
-            final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
-            final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
-            final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
-            final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            writer.setMapToInterProEntries(mapToInterProEntries);
-            writer.setMapToGo(mapToGO);
-            writer.setMapToPathway(mapToPathway);
-            LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
-            int locationCount = 0;
-            if (proteins != null) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Loaded " + proteins.size() + " proteins...");
-                }
-                for (Protein protein : proteins) {
-                    locationCount += writer.write(protein);
-                }
-            }
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Written out " + locationCount + " locations (should equal rows in TSV).");
-            }
+            writeProteinMatches(writer, stepInstance);
         } finally {
             if (writer != null) {
                 writer.close();
             }
+        }
+    }
+
+    private void outputToGFF(File file, StepInstance stepInstance, String sequenceType) throws IOException {
+        ProteinMatchesGFFResultWriter writer;
+        if (sequenceType.equalsIgnoreCase("n")) {
+            writer = new GFFResultWriterForNucSeqs(file);
+        }//Default tsvWriter for proteins
+        else {
+            writer = new GFFResultWriterForProtSeqs(file);
+        }
+        try {
+            //This step writes features (protein matches) into the GFF file
+            writeProteinMatches(writer, stepInstance);
+            //This step writes FASTA sequence at the end of the GFF file
+            writeFASTASequences(writer);
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    private void writeFASTASequences(ProteinMatchesGFFResultWriter writer) throws IOException {
+        Map<String, String> identifierToSeqMap = writer.getIdentifierToSeqMap();
+        for (String key : identifierToSeqMap.keySet()) {
+            writer.writeFASTASequence(key, identifierToSeqMap.get(key));
+        }
+    }
+
+    private void writeProteinMatches(ProteinMatchesResultWriter writer, StepInstance stepInstance) throws IOException {
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
+        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
+        final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
+        final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        writer.setMapToInterProEntries(mapToInterProEntries);
+        writer.setMapToGo(mapToGO);
+        writer.setMapToPathway(mapToPathway);
+        LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
+        int locationCount = 0;
+        if (proteins != null) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Loaded " + proteins.size() + " proteins...");
+            }
+            for (Protein protein : proteins) {
+                locationCount += writer.write(protein);
+            }
+        }
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Written out " + locationCount + " locations (should equal rows in TSV).");
         }
     }
 }
