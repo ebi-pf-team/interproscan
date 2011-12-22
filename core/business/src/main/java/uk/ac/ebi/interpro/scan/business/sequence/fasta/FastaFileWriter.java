@@ -10,7 +10,9 @@ import java.util.regex.Pattern;
 /**
  * This class writes a fasta file, using the database
  * primary keys as sequence identifiers, THEREFORE this
- * writer only works with PERSISTED Proteins
+ * tsvWriter only works with PERSISTED Proteins
+ * <p/>
+ * TODO: Shouldn't there be only 1 fasta file writer ({@link uk.ac.ebi.interpro.scan.io.sequence.FastaSequenceWriter})?
  *
  * @author Phil Jones
  *         Date: 15-Nov-2009

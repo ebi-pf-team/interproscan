@@ -11,6 +11,7 @@ import java.util.Collection;
 
 /**
  * Write FASTA file.
+ * TODO: Shouldn't there be only 1 fasta file writer ({@link uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter})?
  *
  * @author Antony Quinn
  * @version $Id$

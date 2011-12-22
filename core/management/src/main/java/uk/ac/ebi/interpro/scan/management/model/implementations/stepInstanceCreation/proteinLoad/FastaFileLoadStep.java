@@ -9,7 +9,7 @@ import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepCreatingStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 
 import java.io.*;
 
@@ -22,7 +22,7 @@ import java.io.*;
  * @version $Id$
  * @since 1.0
  */
-public class FastaFileLoadStep extends Step implements StepCreatingStep {
+public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep {
 
     public static final String FASTA_FILE_PATH_KEY = "FASTA_FILE_PATH";
 

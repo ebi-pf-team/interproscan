@@ -71,7 +71,7 @@ public class Run {
     private enum I5Option {
         MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
         FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
-        OUTPUT_FORMAT("format", "F", false, "Output format. Supported formats are TSV(default) and XML.", "OUTPUT-FORMAT", false),
+        OUTPUT_FORMAT("format", "F", false, "Output format. Supported formats are TSV(default), XML and GFF3 (default for nucleotide sequence scan).", "OUTPUT-FORMAT", false),
         OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH", false),
         ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true),
         PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false),
@@ -80,7 +80,7 @@ public class Run {
         PATHWAY_LOOKUP("pathways", "pa", false, "Switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false),
         MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false),
         // TODO - put back SEQUENCE_TYPE, once the nucleic acid analysis is completed.
-//        SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false)
+        SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false),
         TEMP_DIRECTORY("tempdirname", "td", false, "Used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false);
 
         private String longOpt;
@@ -287,9 +287,9 @@ public class Run {
                         master.setTcpUri(tcpConnectionString);
                     }
                     // TODO - put back SEQUENCE_TYPE once the nucleic acid sequence analysis stuff is finished.
-//                    if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
-//                        master.setSequenceType(parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt()));
-//                    }
+                    if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
+                        master.setSequenceType(parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt()));
+                    }
 
                     // GO terms and/or pathways will also imply IPR lookup
                     final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());

@@ -2,11 +2,13 @@ package uk.ac.ebi.interpro.scan.io;
 
 import org.springframework.util.StringUtils;
 
+import javax.swing.text.StringContent;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-public class TSVWriter {
+public class TSVWriter implements Closeable {
 
     protected Writer writer;
 
@@ -14,18 +16,19 @@ public class TSVWriter {
         this.writer = writer;
     }
 
+    public void writeComment(String comment) throws IOException {
+        writer.write(comment + "\n");
+    }
+
     public void write(String... columns) throws IOException {
-        writer.write(StringUtils.arrayToDelimitedString(columns, "\t"));
-        writer.write("\n");
+        writer.write(StringUtils.arrayToDelimitedString(columns, "\t") + "\n");
     }
 
     public void write(List<String> columns) throws IOException {
-        writer.write(StringUtils.collectionToDelimitedString(columns, "\t"));
-        writer.write("\n");
+        writer.write(StringUtils.collectionToDelimitedString(columns, "\t") + "\n");
     }
 
     public void close() throws IOException {
         writer.close();
     }
-
 }

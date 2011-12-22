@@ -52,7 +52,7 @@ public class OpenReadingFrame implements Serializable {
     @Column(nullable = false)
     private NucleotideSequenceStrand strand;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Protein protein;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
@@ -65,9 +65,15 @@ public class OpenReadingFrame implements Serializable {
     }
 
     public OpenReadingFrame(int start, int end, NucleotideSequenceStrand strand) {
+        this(start, end, strand, null, null);
+    }
+
+    public OpenReadingFrame(int start, int end, NucleotideSequenceStrand strand, Protein protein, NucleotideSequence nucleotideSequence) {
         this.start = start;
         this.end = end;
         this.strand = strand;
+        this.protein = protein;
+        this.nucleotideSequence = nucleotideSequence;
     }
 
     @XmlAttribute(required = true)
@@ -102,7 +108,7 @@ public class OpenReadingFrame implements Serializable {
         return nucleotideSequence;
     }
 
-    void setNucleotideSequence(NucleotideSequence nucleotideSequence) {
+    public void setNucleotideSequence(NucleotideSequence nucleotideSequence) {
         this.nucleotideSequence = nucleotideSequence;
     }
 

@@ -144,8 +144,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
         <property name="job" ref="jobLoadNucleicAcidSequence"/>
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
-        <property name="stepDescription"
-                  value="Load nucleic acids from a fasta file"/>
+        <property name="stepDescription" value="Load nucleic acids from a fasta file"/>
         <property name="createStepInstancesForNewProteins" value="false"/>
         <property name="retries" value="2"/>
         <property name="serialGroup" value="LOAD_NUCLEIC_ACID"/>
@@ -161,28 +160,31 @@
         </property>
         <!-- Don't need the following two properties, that have been copied from load Protein fasta file above.-->
         <property name="jobs" ref="jobs"/>
-        <!--<property name="stepInstanceDAO" ref="stepInstanceDAO"/>-->
     </bean>
 
     <!-- STEP 2 -->
     <bean id="stepRunGetOrf"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep">
-        <property name="createStepInstancesForNewProteins" value="false"/>
+        <!--Abstract parameter-->
         <property name="job" ref="jobLoadNucleicAcidSequence"/>
-        <property name="fullPathToBinary" value="${binary.getorf.path}"/>
+        <property name="stepDescription" value="Run GetOrf to predict open reading frames from nucleic acid sequence"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="1"/>
         <!-- Need to consider this parameter "outputFileNameTemplate"- this is normally the output from the binary
         but in this case
          the output is defined as a parameter (fastaFileNameTemplate).  This may contain error messages,
          so needs to be handled in some way.-->
         <property name="outputFileNameTemplate" value="getorf.err.txt"/>
+        <!--More specific parameter-->
+        <property name="fullPathToBinary" value="${binary.getorf.path}"/>
         <property name="fastaFilePath" value="orfs.fasta"/>
-        <property name="stepDescription" value="Run GetOrf to predict open reading frames from nucleic acid sequence"/>
-        <property name="retries" value="1"/>
+        <property name="minSize" value="${getorf.minsize}"/>
     </bean>
 
     <!-- STEP 3 (depends on both Step 1 and 2) -->
     <bean id="stepLoadOrfFromFasta"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <!--Abstract parameter-->
         <property name="job" ref="jobLoadNucleicAcidSequence"/>
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"
@@ -190,6 +192,13 @@
         <property name="createStepInstancesForNewProteins" value="false"/>
         <property name="retries" value="2"/>
         <property name="serialGroup" value="LOAD_PROTEINS"/>
+        <property name="dependsUpon">
+            <list>
+                <ref bean="stepLoadNucleicAcidFromFasta"/>
+                <ref bean="stepRunGetOrf"/>
+            </list>
+        </property>
+        <!--More specific parameter-->
         <property name="fastaFileLoader">
             <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
                 <property name="sequenceLoader">
@@ -207,41 +216,29 @@
                 </property>
             </bean>
         </property>
-        <property name="overridingFastaFileName" value="orfs.fasta"/>
+        <property name="overridingFastaFileName" ref="getOrfResultFile"/>
         <property name="jobs" ref="jobs"/>
-        <property name="dependsUpon">
-            <list>
-                <ref bean="stepLoadNucleicAcidFromFasta"/>
-                <ref bean="stepRunGetOrf"/>
-            </list>
-        </property>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
     </bean>
 
-    <!-- STEP 4 - cleanup -->
+    <!-- STEP 4 - cleanup (depends on step 3) -->
     <bean id="stepDeleteGetOrfOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep">
+        <!--Abstract parameter-->
         <property name="job" ref="jobLoadNucleicAcidSequence"/>
-        <property name="dependsUpon" ref="stepLoadOrfFromFasta"/>
         <property name="stepDescription"
                   value="Delete the GetOrf output fasta file following successful loading of the proteins."/>
-        <property name="fileNameTemplate" value="orfs.fasta"/>
         <property name="createStepInstancesForNewProteins" value="false"/>
         <property name="retries" value="1"/>
-    </bean>
-
-    <!-- STEP 5 - cleanup -->
-    <bean id="stepDeleteGetOrfErrorLog"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep">
-        <property name="job" ref="jobLoadNucleicAcidSequence"/>
         <property name="dependsUpon" ref="stepLoadOrfFromFasta"/>
-        <property name="stepDescription"
-                  value="Delete the GetOrf output error file following successful loading of the proteins."/>
-        <property name="fileNameTemplate" value="getorf.err.txt"/>
-        <property name="createStepInstancesForNewProteins" value="false"/>
-        <property name="retries" value="1"/>
+        <!--More specific parameter-->
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="getOrfResultFile"/>
+                <ref bean="getOrfErrorFile"/>
+            </list>
+        </property>
     </bean>
-
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadNucleicAcidSequence !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## JOB: writeOut ############################  -->
@@ -269,6 +266,14 @@
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
+
+    <bean id="getOrfResultFile" class="java.lang.String">
+        <constructor-arg value="orfs.fasta"/>
+    </bean>
+
+    <bean id="getOrfErrorFile" class="java.lang.String">
+        <constructor-arg value="getorf.err.txt"/>
+    </bean>
 
     <bean id="getOrfDescriptionLineParser"
           class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
@@ -302,5 +307,6 @@
         <property name="completionJob" ref="jobWriteOutput"/>
         <property name="jobs" ref="jobs"/>
     </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
 </beans>

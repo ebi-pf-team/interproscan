@@ -54,7 +54,8 @@ public class GetOrfDescriptionLineParserTest {
     public void testParseGetOrfDescLine() throws IOException {
         final Set<String> descriptions = read(getOrfTestFile);
         for (String description : descriptions) {
-            OpenReadingFrame orf = parser.parseGetOrfDescriptionLine(description);
+            String[] chunks = parser.parseGetOrfDescriptionLine(description);
+            OpenReadingFrame orf = parser.createORFFromParsingResult(chunks);
             assertNotNull("ORF result shouldn't be NULL!", orf);
             assertTrue("ORF (" + orf.getStrand() + ") " + orf.getStart() + ":" + orf.getEnd() + " should be an item of the result set!", orfs.contains(orf));
         }
