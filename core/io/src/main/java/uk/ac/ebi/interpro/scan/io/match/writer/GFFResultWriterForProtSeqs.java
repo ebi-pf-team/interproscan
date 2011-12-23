@@ -9,7 +9,8 @@ import java.util.*;
 
 
 /**
- * Write matches as output in GFF (Generic Feature Format) version 3.
+ * Write matches as output in GFF (Generic Feature Format) version 3. This writer is specific
+ * for protein sequence scans.
  * <p/>
  * GFF3 description (http://www.sequenceontology.org/gff3.shtml):
  * The format consists of 9 columns, separated by tabs (NOT spaces).
@@ -26,7 +27,7 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
 
 
     /**
-     * Writes out a Protein object to a GFF version 3 file
+     * Writes out all protein matches for the specified protein (GFF formatted).
      *
      * @param protein containing matches to be written out
      * @return the number of rows printed (i.e. the number of Locations on Matches).
@@ -84,75 +85,20 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
                     gffAttributes.add("status=" + status);
                     gffAttributes.add("date=" + date);
                     if (mapToInterProEntries) {
-                        addAditionalAttr(signature, gffAttributes);
+                        addAdditionalAttr(signature, gffAttributes);
                     }
                     //
                     gffFeature.add(StringUtils.collectionToDelimitedString(gffAttributes, ";"));
                     super.gffWriter.write(gffFeature);
-                    //Add match sequence to map
-                    StringBuffer matchId = new StringBuffer("match" + match.getId());
+                    //Add match sequence to the map
+                    StringBuilder matchId = new StringBuilder("match" + match.getId());
                     if (locations.size() > 1) {
-                        matchId.append("_" + locStart + "_" + locEnd);
+                        matchId.append("_").append(locStart).append("_").append(locEnd);
                     }
                     addFASTASeqToMap(matchId.toString(), protein.getSequence().substring(locStart, locEnd));
                 }
             }
         }
         return 0;
-    }
-
-    private void addAditionalAttr(Signature signature, final List<String> gffAttributes) {
-        Entry interProEntry = signature.getEntry();
-        if (interProEntry != null) {
-            gffAttributes.add("interPro_entry=" + interProEntry.getAccession());
-            gffAttributes.add("interPro_entry_desc=" + interProEntry.getDescription());
-            if (mapToGO) {
-                Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
-                if (goXRefs != null && goXRefs.size() > 0) {
-                    StringBuffer sb = new StringBuffer();
-                    for (GoXref xref : goXRefs) {
-                        if (sb.length() > 0) {
-                            sb.append(VALUE_SEPARATOR);
-                        }
-                        sb.append(xref.getIdentifier()); // Just writeComment the GO identifier to the output
-                    }
-                    gffAttributes.add("go_entries=" + sb.toString());
-                }
-            }
-            if (mapToPathway) {
-                Collection<PathwayXref> pathwayXRefs = interProEntry.getPathwayXRefs();
-                if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
-                    StringBuffer sb = new StringBuffer();
-                    for (PathwayXref xref : pathwayXRefs) {
-                        if (sb.length() > 0) {
-                            sb.append(VALUE_SEPARATOR);
-                        }
-                        sb.append(xref.getDatabaseName() + ": " + xref.getIdentifier());
-                    }
-                    gffAttributes.add("pathways=" + sb.toString());
-                }
-            }
-        }
-    }
-
-    /**
-     * Writes information about the target protein sequence (or reference sequence).
-     *
-     * @param accession
-     * @param sequenceLength
-     * @throws IOException
-     */
-    private void writeReferenceLine(String accession, int sequenceLength) throws IOException {
-        final List<String> referenceLine = new ArrayList<String>();
-        referenceLine.add(accession);
-        referenceLine.add(".");
-        referenceLine.add("polypeptide");
-        referenceLine.add("1");
-        referenceLine.add("" + sequenceLength);
-        referenceLine.add(".");
-        referenceLine.add("+");
-        referenceLine.add("0");
-        referenceLine.add("ID=" + accession);
-        super.gffWriter.write(referenceLine);
     }
 }

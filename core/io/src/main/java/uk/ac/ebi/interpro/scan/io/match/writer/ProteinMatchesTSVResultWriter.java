@@ -17,11 +17,11 @@ import java.util.*;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ProteinMatchTSVWriter extends ProteinMatchesResultWriter {
+public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
 
     private TSVWriter tsvWriter;
 
-    public ProteinMatchTSVWriter(File file) throws IOException {
+    public ProteinMatchesTSVResultWriter(File file) throws IOException {
         super(file);
         this.tsvWriter = new TSVWriter(super.fileWriter);
     }

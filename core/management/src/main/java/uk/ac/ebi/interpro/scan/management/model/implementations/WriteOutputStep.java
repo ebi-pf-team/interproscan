@@ -12,7 +12,6 @@ import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +108,7 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToTSV(File file, StepInstance stepInstance) throws IOException {
-        ProteinMatchTSVWriter writer = new ProteinMatchTSVWriter(file);
+        ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(file);
         try {
             writeProteinMatches(writer, stepInstance);
         } finally {
