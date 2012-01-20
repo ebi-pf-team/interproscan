@@ -116,7 +116,7 @@ public class ChunkerSingleton implements Chunker {
         if (chunks == null || chunks.size() < 2) {
             return null;
         }
-        return chunks.subList(1, chunks.size());
+        return new ArrayList<String>(chunks.subList(1, chunks.size()));
     }
 
 }
