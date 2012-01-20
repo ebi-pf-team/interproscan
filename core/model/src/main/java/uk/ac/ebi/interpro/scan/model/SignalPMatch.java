@@ -115,7 +115,7 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + orgType.hashCode();
+        result = 31 * result + (orgType != null ? orgType.hashCode() : 0);
         return result;
     }
 }
