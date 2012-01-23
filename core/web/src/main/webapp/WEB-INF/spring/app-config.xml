@@ -45,6 +45,8 @@
     <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData">
         <constructor-arg ref="matchAnalyser"/>
         <constructor-arg ref="structuralMatchAnalyser"/>
+        <constructor-arg value="${match.data.webservice.url}" />
+        <constructor-arg value="${structural.match.data.webservice.url}" />
     </bean>
 
 </beans>
