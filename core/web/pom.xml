@@ -108,6 +108,7 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <!-- Use Maven goal "jetty:run-war" for filtering to take place -->
             <properties>
                 <default.log.level>debug</default.log.level>
                 <third.party.log.level>info</third.party.log.level>
@@ -117,6 +118,8 @@
                 inconsistencies! But that's OK, Jetty profile is used for development, not production! -->
                 <entry.colours.file.loc>${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
                 <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <match.data.webservice.url>http://tc-test-3.ebi.ac.uk:9750/interpro-rest/match/</match.data.webservice.url>
+                <structural.match.data.webservice.url>http://tc-test-3.ebi.ac.uk:9750/interpro-rest/structure/</structural.match.data.webservice.url>
             </properties>
             <build>
                 <plugins>
