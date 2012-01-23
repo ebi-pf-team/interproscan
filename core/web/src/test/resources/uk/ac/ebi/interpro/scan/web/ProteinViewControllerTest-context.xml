@@ -10,9 +10,7 @@
         <constructor-arg>
             <bean class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
         </constructor-arg>
-        <constructor-arg>
-            <ref bean="entryHierarchy" />
-        </constructor-arg>
+        <constructor-arg ref="entryHierarchy" />
     </bean>
 
     <bean id="structuralMatchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseStructuralMatchDataResult">
@@ -21,13 +19,22 @@
         </constructor-arg>
     </bean>
 
-    <bean id="data" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData">
-        <constructor-arg>
-            <ref bean="matchAnalyser" />
-        </constructor-arg>
-        <constructor-arg>
-            <ref bean="structuralMatchAnalyser" />
-        </constructor-arg>
+    <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData">
+        <constructor-arg ref="matchAnalyser" />
+        <constructor-arg ref="structuralMatchAnalyser" />
+        <constructor-arg ref="matchDataWebserviceUrl" />
+        <constructor-arg ref="structMatchDataWebserviceUrl" />
     </bean>
-    
+
+    <!-- URL to use for InterPro webservices that provide the match and structural match data -->
+    <bean id="websrvicesProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:uk/ac/ebi/interpro/scan/web/webservices.properties" />
+    </bean>
+    <bean id="matchDataWebserviceUrl" class="java.lang.String">
+        <constructor-arg value="${match.data.webservice.url}"/>
+    </bean>
+    <bean id="structMatchDataWebserviceUrl" class="java.lang.String">
+        <constructor-arg value="${structural.match.data.webservice.url}"/>
+    </bean>
+
 </beans>

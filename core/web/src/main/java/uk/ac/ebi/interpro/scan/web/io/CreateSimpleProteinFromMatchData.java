@@ -24,26 +24,31 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
 
     private static final Logger LOGGER = Logger.getLogger(CreateSimpleProteinFromMatchData.class);
 
-    // TODO: Make this configurable
-    private static final String MATCH_DATA_URL = "http://wwwdev.ebi.ac.uk/interpro/match/";
-    private static final String STRUCTURAL_MATCH_DATA_URL = "http://wwwdev.ebi.ac.uk/interpro/structure/";
-    private static final String EXTENSION = ".tsv";
-
     private final AnalyseMatchDataResult matchAnalyser;
     private final AnalyseStructuralMatchDataResult structuralMatchAnalyser;
+    private String matchDataWebserviceUrl;
+    private String structMatchDataWebserviceUrl;
 
     private ResourceLoader resourceLoader;
+
+    private static final String EXTENSION = ".tsv";
 
     // TODO: Configure in Spring context
     private CreateSimpleProteinFromMatchData() {
         matchAnalyser = null;
         structuralMatchAnalyser = null;
+        matchDataWebserviceUrl = null;
+        structMatchDataWebserviceUrl = null;
     }
 
     public CreateSimpleProteinFromMatchData(AnalyseMatchDataResult matchAnalyser,
-                                            AnalyseStructuralMatchDataResult structuralMatchAnalyser) {
+                                            AnalyseStructuralMatchDataResult structuralMatchAnalyser,
+                                            String matchDataWebserviceUrl,
+                                            String structMatchDataWebserviceUrl) {
         this.matchAnalyser = matchAnalyser;
         this.structuralMatchAnalyser = structuralMatchAnalyser;
+        this.matchDataWebserviceUrl = matchDataWebserviceUrl;
+        this.structMatchDataWebserviceUrl = structMatchDataWebserviceUrl;
     }
 
     public SimpleProtein queryByAccession(String ac) throws IOException {
@@ -52,10 +57,6 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
 
     public SimpleProtein queryByMd5(String md5) throws IOException {
         return retrieveMatches(createMatchesUrl(md5, false), createStructuralMatchesUrl(md5, false));
-    }
-
-    @Override public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
     }
 
     private SimpleProtein retrieveMatches(String matchesUrl, String structuralMatchesUrl) {
@@ -92,9 +93,9 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
     }
 
     private String buildUrl(String proteinAc, boolean isProteinAc, boolean isMatchUrl) {
-        String prefix = STRUCTURAL_MATCH_DATA_URL;
+        String prefix = structMatchDataWebserviceUrl;
         if (isMatchUrl) {
-            prefix = MATCH_DATA_URL;
+            prefix = matchDataWebserviceUrl;
         }
         String extension = EXTENSION;
         if (useLocalData()) {
@@ -118,4 +119,26 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
         return System.getProperty("ebi.local.data", "false").equals("true");
     }
 
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+
+    /**
+     * Set the URL of the web service that provides match data (excludes structural match data).
+     *
+     * @param matchDataWebserviceUrl The URL
+     */
+    public void setMatchDataWebserviceUrl(String matchDataWebserviceUrl) {
+        this.matchDataWebserviceUrl = matchDataWebserviceUrl;
+    }
+
+    /**
+     * Set the URL of the web service that provides the structural match data (only).
+     *
+     * @param structMatchDataWebserviceUrl The URL
+     */
+    public void setStructMatchDataWebserviceUrl(String structMatchDataWebserviceUrl) {
+        this.structMatchDataWebserviceUrl = structMatchDataWebserviceUrl;
+    }
 }
