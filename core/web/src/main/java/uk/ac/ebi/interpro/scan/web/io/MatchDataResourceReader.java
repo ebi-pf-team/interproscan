@@ -20,6 +20,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
     private static final Logger LOGGER = Logger.getLogger(MatchDataResourceReader.class.getName());
 
     private static final String HEADER_LINE = "PROTEIN_ACCESSION\tPROTEIN_ID\tPROTEIN_LENGTH\tMD5\tCRC64\tMETHOD_AC\tMETHOD_NAME\tMETHOD_DATABASE_NAME\tPOS_FROM\tPOS_TO\tMATCH_SCORE\tENTRY_AC\tENTRY_SHORT_NAME\tENTRY_NAME\tENTRY_TYPE\tTAXONOMY_ID\tTAXONOMY_SCIENCE_NAME\tTAXONOMY_FULL_NAME";
+    private static final String NO_RESULTS = "No results found";
 
     @Override
     protected MatchDataRecord createRecord(String line) {
@@ -34,6 +35,14 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
             // Looks like the column headers from the web service have changed to an un-expected format
             throw new IllegalStateException("Column heading line in un-expected format: " + line);
         }
+        else if (line.startsWith(NO_RESULTS)) {
+             // No result to parse
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Do not parse line: " + line);
+            }
+            return null;
+        }
+
         String proteinAc;
         String proteinId;
         int proteinLength;
