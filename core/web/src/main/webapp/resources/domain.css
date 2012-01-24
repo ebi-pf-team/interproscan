@@ -1,12 +1,11 @@
 /**
- * Domain organisation colours.
+ * Colours for entries of type domain and repeat.
  *
  * @author  Antony Quinn
  * @version $Id$
  */
-
 span.c1 {
-    background-color: #a5a5a5;
+    background-color: #b852d4;
 }
 span.c2 {
     background-color: #00baf0;
@@ -48,7 +47,7 @@ span.c14 {
     background-color: #cf161d;
 }
 span.c15 {
-    background-color: #000000;
+    background-color: #ff6000;
 }
 span.c16 {
     background-color: #1cbbb4;
@@ -178,7 +177,4 @@ span.c57 {
 }
 span.c58 {
     background-color: #86a185;
-}
-span.c59 {
-    background-color: #ff6000;
 }

@@ -60,20 +60,20 @@ span.match:hover {
 }
 
 /* Entry types colours */
-/* Note: domain colour is set in either domain.css or database.css depending on user preference */
 span.Family {
-    background-color: #ff0000;
+    background-color: #ffffff;
 }
+/* Note: domain and repeat colours are set in either domain.css or database.css depending on user preference */
 /*
 span.Domain {
     background-color: #33cc33;
 }
-*/
 span.Repeat, span.Region {
     background-color: #ff9000;
 }
+*/
 span.Active_site, span.Binding_site, span.Conserved_site, span.PTM {
-    background-color: #b852d4;
+    background-color: #000000;
 }
 span.uni {
     background-color: #a5a5a5;
