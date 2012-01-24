@@ -19,14 +19,16 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
     private final String type;
     private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
     private Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
-    private final EntryHierarchy entryHierarchy;
+    private static EntryHierarchy entryHierarchy;
 
     public SimpleEntry(String ac, String shortName, String name, String type, EntryHierarchy entryHierarchy) {
         this.ac         = ac;
         this.shortName  = shortName;
         this.name       = name;
         this.type       = type;
-        this.entryHierarchy = entryHierarchy;
+        if (SimpleEntry.entryHierarchy == null){
+            SimpleEntry.entryHierarchy = entryHierarchy;
+        }
     }
 
     public String getAc() {
@@ -43,6 +45,10 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
 
     public String getType() {
         return type;
+    }
+
+    public static EntryHierarchy getEntryHierarchy() {
+        return entryHierarchy;
     }
 
     public List<SimpleLocation> getLocations() {
@@ -102,9 +108,9 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
 
         // Order by entry accession whilst considering if the entries are in the same hierarchy
         if (!this.ac.equals(that.ac)) {
-            if (this.entryHierarchy.areInSameHierarchy(this.ac, that.ac)) {
+            if (SimpleEntry.entryHierarchy.areInSameHierarchy(this.ac, that.ac)) {
                 // Sort based upon level in hierarchy
-                final int hierarchyComparison = this.entryHierarchy.compareHierarchyLevels(this.ac, that.ac);
+                final int hierarchyComparison = SimpleEntry.entryHierarchy.compareHierarchyLevels(this.ac, that.ac);
                 if (hierarchyComparison != 0) {
                     return hierarchyComparison;
                 }
