@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.web.model.EntryHierarchyData;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 
 import java.io.IOException;
 import java.util.*;
@@ -35,25 +36,24 @@ public class EntryHierarchy {
         // Build entry hierarchy data map
         try {
             entryHierarchyDataMap = entryHierarchyDataResourceReader.read(entryHierarchyDataResource);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.warn("Problem reading entry hierarchy data resource: " + e.getMessage());
         }
     }
 
     /**
      * Build a map of InterPro entry accessions to colour ID numbers from the configured properties file.
+     *
      * @return The map
      */
     private Map<String, Integer> buildEntryColourMap() {
         Map<String, Integer> map = new HashMap<String, Integer>();
-        for (Map.Entry<Object, Object> entryColour :  this.entryColourPropertiesFile.entrySet()) {
+        for (Map.Entry<Object, Object> entryColour : this.entryColourPropertiesFile.entrySet()) {
             String entryAc = (String) entryColour.getKey();
             int colour = Integer.parseInt((String) entryColour.getValue());
             if (entryAc.startsWith("IPR")) {
                 map.put(entryAc, colour);
-            }
-            else {
+            } else {
                 LOGGER.warn("Entry colours properties file contained an invalid entryAc - ignoring: " + entryAc);
             }
         }
@@ -62,6 +62,7 @@ public class EntryHierarchy {
 
     /**
      * Re-initialise the singleton whilst the application is running.
+     *
      * @return True if application singleton data re-initialisation succeeded, otherwise false.
      */
     public boolean reinit() {
@@ -76,8 +77,7 @@ public class EntryHierarchy {
         Map<String, EntryHierarchyData> newEntryHierarchyDataMap;
         try {
             newEntryHierarchyDataMap = entryHierarchyDataResourceReader.read(entryHierarchyDataResource);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.warn("Problem reading entry hierarchy data resource: " + e.getMessage());
             return false;
         }
@@ -110,6 +110,7 @@ public class EntryHierarchy {
 
     /**
      * Return the entry accession to colour map (unmodifiable).
+     *
      * @return The unmodifiable entry accession to colour map
      */
     public Map<String, Integer> getEntryColourMap() {
@@ -118,6 +119,7 @@ public class EntryHierarchy {
 
     /**
      * Get the colour for an InterPro entry.
+     *
      * @param ac Entry accession
      * @return The colour for the specified entry accession (or -1 if not found)
      */
@@ -130,6 +132,7 @@ public class EntryHierarchy {
 
     /**
      * Return the entry accession to hierarchy data map (unmodifiable).
+     *
      * @return The unmodifiable entry accession to hierarchy data map
      */
     public Map<String, EntryHierarchyData> getEntryHierarchyDataMap() {
@@ -138,6 +141,7 @@ public class EntryHierarchy {
 
     /**
      * Get the associated hierarchy data for a supplied InterPro entry.
+     *
      * @param ac Entry accession
      * @return The hierarchy data for the specified entry accession (or NULL if not found)
      */
@@ -150,6 +154,7 @@ public class EntryHierarchy {
 
     /**
      * Are the two entries part of the same hierarchy?
+     *
      * @param ac1 First entry accession
      * @param ac2 Second entry accession
      * @return True if part of the same hierarchy, otherwise false
@@ -165,8 +170,16 @@ public class EntryHierarchy {
         return false;
     }
 
+    public boolean areInSameHierarchy(SimpleEntry se1, SimpleEntry se2) {
+        if (se1 == null || se2 == null) {
+            return false;
+        }
+        return areInSameHierarchy(se1.getAc(), se2.getAc());
+    }
+
     /**
      * Compare the hierarchy level of two entries
+     *
      * @param ac1 First entry accession
      * @param ac2 Second entry accession
      * @return 0 if the same, -1 or 1
