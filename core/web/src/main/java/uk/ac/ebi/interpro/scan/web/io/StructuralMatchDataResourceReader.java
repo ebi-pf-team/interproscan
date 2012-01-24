@@ -18,19 +18,27 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
     private static final Logger LOGGER = Logger.getLogger(StructuralMatchDataResourceReader.class.getName());
 
     private static final String HEADER_LINE = "PROTEIN_ACCESSION\tPROTEIN_ID\tPROTEIN_LENGTH\tMD5\tCRC64\tdatabase_name\tdomain_id\tclass_id\tpos_from\tpos_to";
+    private static final String NO_RESULTS = "No results found";
 
     @Override
     protected StructuralMatchDataRecord createRecord(String line) {
         if (line == null || line.isEmpty())   {
             return null;
         }
-        if (line.startsWith(HEADER_LINE)) {
+        else if (line.startsWith(HEADER_LINE)) {
             // Ignore first line of the output (column headers)
             return null;
         }
         else if (line.startsWith("PROTEIN_ACCESSION\t")) {
             // Looks like the column headers from the web service have changed to an un-expected format
             throw new IllegalStateException("Column heading line in un-expected format: " + line);
+        }
+        else if (line.startsWith(NO_RESULTS)) {
+             // No result to parse
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Do not parse line: " + line);
+            }
+            return null;
         }
 
         String proteinAc;
