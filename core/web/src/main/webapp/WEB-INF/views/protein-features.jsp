@@ -52,6 +52,9 @@
                     <c:when test="${entry.type == DOMAIN}">
                         c${entryColours[entry.ac]} ${entry.type}
                     </c:when>
+                    <c:when test="${entry.type == REPEAT}">
+                        c${entryColours[entry.ac]} ${entry.type}
+                    </c:when>
                     <c:otherwise>
                         ${entry.type}
                     </c:otherwise>
@@ -91,7 +94,7 @@
         </c:forEach>
         </ol>
     </div>
-</c:if>   
+</c:if>
 
 <c:if test="${not empty protein.unintegratedSignatures}">
     <a name="unintegrated-signatures"></a>
@@ -170,7 +173,7 @@
         </li>
     </c:forEach>
     </ol>
-</c:if>    
+</c:if>
 
 <%--Not sure why we need this break, but table gets right-aligned without it...--%>
 <div><br/></div>
