@@ -1,13 +1,11 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import uk.ac.ebi.interpro.scan.web.ProteinViewController;
-
 /**
-* TODO: Add description
-*
-* @author Antony Quinn
-* @version $Id$
-*/
+ * TODO: Add description
+ *
+ * @author Antony Quinn
+ * @version $Id$
+ */
 public final class SimpleLocation implements Comparable<SimpleLocation> {
 
     private final int start;
@@ -26,7 +24,8 @@ public final class SimpleLocation implements Comparable<SimpleLocation> {
         return end;
     }
 
-    @Override public int compareTo(SimpleLocation that) {
+    @Override
+    public int compareTo(SimpleLocation that) {
         // Equal
         if (this == that || this.equals(that)) {
             return 0;

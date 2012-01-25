@@ -56,7 +56,7 @@ public class CondensedLine implements Comparable<CondensedLine> {
     public boolean addSuperMatchesWithoutOverlap(final SuperMatchBucket superMatchBucket) {
         for (SimpleSuperMatch candidate : superMatchBucket.getSupermatches()) {
             for (SimpleSuperMatch existingMatch : superMatchList) {
-                if (matchesOverlap(candidate, existingMatch)) {
+                if (candidate.matchesOverlap(existingMatch)) {
                     return false;
                 }
             }
@@ -65,18 +65,6 @@ public class CondensedLine implements Comparable<CondensedLine> {
         return true;
     }
 
-    /**
-     * Determines if two domains overlap.
-     *
-     * @param one domain match one.
-     * @param two domain match two.
-     * @return true if the two domain matches overlap.
-     */
-    private boolean matchesOverlap(SimpleSuperMatch one, SimpleSuperMatch two) {
-        return !
-                ((one.getLocation().getStart() > two.getLocation().getEnd()) ||
-                        (two.getLocation().getStart() > one.getLocation().getEnd()));
-    }
 
     @Override
     public boolean equals(Object o) {
