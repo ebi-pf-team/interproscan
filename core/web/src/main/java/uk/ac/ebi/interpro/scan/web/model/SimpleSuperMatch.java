@@ -23,6 +23,12 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
      */
     private final Set<SimpleEntry> entries = new HashSet<SimpleEntry>();
 
+    public SimpleSuperMatch(String type, SimpleLocation location, SimpleEntry firstEntry) {
+        this.type = type;
+        this.location = location;
+        entries.add(firstEntry);
+    }
+
     public String getType() {
         return type;
     }
@@ -97,11 +103,51 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
         return true;
     }
 
+    /**
+     * Determines if domains overlap overlap.
+     *
+     * @param that SimpleSuperMatch to compare with.
+     * @return true if the two domain matches overlap.
+     */
+    public boolean matchesOverlap(SimpleSuperMatch that) {
+        return !
+                ((this.getLocation().getStart() > that.getLocation().getEnd()) ||
+                        (that.getLocation().getStart() > this.getLocation().getEnd()));
+    }
+
     @Override
     public int hashCode() {
         int result = type.hashCode();
         result = 31 * result + location.hashCode();
         result = 31 * result + entries.hashCode();
         return result;
+    }
+
+    /**
+     * Merges candidate with this SuperMatch.
+     *
+     * @param candidate to Merge with this SuperMatch.
+     */
+    public void merge(SimpleSuperMatch candidate) {
+        // Sanity check
+        if (!this.getType().equals(candidate.getType())) {
+            throw new IllegalStateException("Found supermatches int the same hierarchy, but not of the same type?");
+        }
+
+        // Reset location to widest bounds of overlapping matches
+        int start = (candidate.getLocation().getStart() < this.getLocation().getStart())
+                ? candidate.getLocation().getStart()
+                : this.getLocation().getStart();
+
+        int end = (candidate.getLocation().getEnd() > this.getLocation().getEnd())
+                ? candidate.getLocation().getEnd()
+                : this.getLocation().getEnd();
+
+        this.setLocation(new SimpleLocation(start, end));
+
+        // Add entries from the candidate
+        this.entries.addAll(candidate.getEntries());
+
+
     }
 }
