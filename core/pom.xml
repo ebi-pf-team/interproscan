@@ -25,7 +25,7 @@
         <repository>
             <id>i5.repo</id>
             <name>i5 maven repository</name>
-            <url>svn:http://interproscan.googlecode.com/svn/repository/</url>
+            <url>svn:https://interproscan.googlecode.com/svn/repository/</url>
         </repository>
     </distributionManagement>
 
@@ -217,17 +217,42 @@
                 </configuration>
             </plugin>
 		<plugin>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-deploy-plugin</artifactId>
-		    <dependencies>
-			<dependency>
-			    <groupId>com.google.code.maven-svn-wagon</groupId>
-			    <artifactId>maven-svn-wagon</artifactId>
-			    <version>1.4</version>
-			</dependency>
-		    </dependencies>
-		</plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+	<version>2.7</version>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.code.maven-svn-wagon</groupId>
+                <artifactId>maven-svn-wagon</artifactId>
+		<version>1.4</version>
+            </dependency>
+        </dependencies>
+    </plugin>
         </plugins>
+<extensions>
+	<extension>
+                <groupId>com.google.code.maven-svn-wagon</groupId>
+                <artifactId>maven-svn-wagon</artifactId>
+                <version>1.4</version>
+            </extension>
+</extensions>
+	<!--extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-scm</artifactId>
+        <version>2.2</version>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-manager-plexus</artifactId>
+        <version>1.5</version>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-provider-svnexe</artifactId>
+        <version>1.5</version>
+      </extension>
+    </extensions-->
     </build>
 
 </project>
