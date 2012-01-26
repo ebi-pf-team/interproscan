@@ -41,7 +41,6 @@ div.scale {
 span.scale {
     border-left:            0.1em solid black;
     height:                 100%;
-    /*width:                  1em;*/
     position:               absolute;
     z-index:                0;      /* Show above match line */
 }
@@ -81,14 +80,7 @@ span.Family {
     background-color: #ffffff;
 }
 /* Note: domain and repeat colours are set in either domain.css or database.css depending on user preference */
-/*
-span.Domain {
-    background-color: #33cc33;
-}
-span.Repeat, span.Region {
-    background-color: #ff9000;
-}
-*/
+
 span.Active_site, span.Binding_site, span.Conserved_site, span.PTM {
     background-color: #000000;
 }
@@ -114,29 +106,29 @@ span.MODBASE {
 }
 
 /* Match table - currently not shown */
-table.match {
-    border-width:       1px;
-    border-style:       solid;
-    border-color:       gray;
-    border-collapse:    collapse;
-    display:            none;
-}
+/*table.match {*/
+    /*border-width:       1px;*/
+    /*border-style:       solid;*/
+    /*border-color:       gray;*/
+    /*border-collapse:    collapse;*/
+    /*display:            none;*/
+/*}*/
 
-table.match th {
-    background-color:   silver;
-    border-width:       1px;
-    padding:            2px;
-    border-style:       solid;
-    border-color:       gray;
-}
+/*table.match th {*/
+    /*background-color:   silver;*/
+    /*border-width:       1px;*/
+    /*padding:            2px;*/
+    /*border-style:       solid;*/
+    /*border-color:       gray;*/
+/*}*/
 
-table.match td {
-    border-width:       1px;
-    padding:            2px;
-    border-style:       solid;
-    border-color:       gray;
-}
+/*table.match td {*/
+    /*border-width:       1px;*/
+    /*padding:            2px;*/
+    /*border-style:       solid;*/
+    /*border-color:       gray;*/
+/*}*/
 
-table.match tr.entry {
-    background-color:   #dcdcdc;
-}
+/*table.match tr.entry {*/
+    /*background-color:   #dcdcdc;*/
+/*}*/
