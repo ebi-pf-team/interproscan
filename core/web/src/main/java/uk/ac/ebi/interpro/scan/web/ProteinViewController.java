@@ -25,6 +25,7 @@ import java.util.Map;
 public class ProteinViewController {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinViewController.class.getName());
+    private static final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10; // Max number of scale markers to include on the match diagram (one will always be 0 and another protein length)!
 
     // Spring managed beans
     private EntryHierarchy entryHierarchy;
@@ -70,8 +71,11 @@ public class ProteinViewController {
 
     private Map<String, Object> buildModelMap(SimpleProtein p) {
         Map<String, Object> m = new HashMap<String, Object>();
-        m.put("protein", p);
-        m.put("entryColours", entryHierarchy.getEntryColourMap());
+        if (p != null) {
+            m.put("protein", p);
+            m.put("entryColours", entryHierarchy.getEntryColourMap());
+            m.put("scale", generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
+        } // Else no match data was found for the protein therefore nothing to display
         return m;
     }
 
@@ -95,6 +99,71 @@ public class ProteinViewController {
     private SimpleProtein queryByAccession(String ac) throws IOException {
         SimpleProtein protein = matchData.queryByAccession(ac);
         return protein;
+    }
+
+    /**
+     * Generate a string of comma-separated numbers that will be used to mark the scale of the match diagram.
+     * @param maxNumScaleMarkers Maximum number of scale markers (should be 2 or more)!
+     * @return Comma-separated list of marker positions
+     */
+    private String generateScaleMarkers(int proteinLength, int maxNumScaleMarkers) {
+        if (maxNumScaleMarkers < 2) {
+            // Doesn't make sense! Zero and protein length should always be included whatever happens!
+            LOGGER.warn("Protein match diagram given un-expected number of scale markers! Was " + maxNumScaleMarkers +
+                    " but should be 2 or more!");
+            maxNumScaleMarkers = 2;
+        }
+        int scale = calcScale(proteinLength, maxNumScaleMarkers);
+        StringBuilder sb = new StringBuilder("0"); // The first scale marker (position zero)
+        int index = 0;
+        int numRemaining = proteinLength;
+        while (index <= proteinLength) {
+            index += scale;
+            numRemaining-= scale;
+            sb.append(",");
+            if ((numRemaining > 0) && (numRemaining < scale)) {
+                // This will be the penultimate marker, unless...
+                if (numRemaining < (scale / 2)) {
+                    // Not many amino acids remaining, may as well just use the protein length
+                    // (E.g. Don't want something like "0,200,400,401" since the 400 and 401 would be too close
+                    // together to display both bits of text)!
+                    sb.append(proteinLength);
+                    break;
+                }
+
+            }
+            if (index >= proteinLength) {
+                // The last scale marker (at protein length position)!
+                sb.append(proteinLength);
+            }
+            else {
+                // Append and continue
+                sb.append(index);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Calculate scale marker intervals.
+     *
+     * @param maxNumScaleMarkers Maximum number of scale markers
+     * @return Default gap between each scale markers
+     */
+    private int calcScale(int proteinLength, int maxNumScaleMarkers) {
+        int scale = 1;
+        while (true) {
+            if (proteinLength / (scale) <= maxNumScaleMarkers) {
+                return scale;
+            }
+            else if (proteinLength / (scale*2) <= maxNumScaleMarkers) {
+                return scale*2;
+            }
+            else if (proteinLength / (scale*5) <= maxNumScaleMarkers) {
+                return scale*5;
+            }
+            scale *= 10;
+        }
     }
 
     // Setter methods required by Spring framework
