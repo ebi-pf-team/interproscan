@@ -29,6 +29,23 @@ li.entry:hover, li.signature:hover, li.structural-feature:hover, li.structural-p
     background-color: #C9C9C9;
 }
 
+/* Line for entire length of protein sequence (for scale) */
+div.scale {
+    /*border:     0.1em solid black; *//* Line height and colour */
+    position:   relative;
+    width:      95%;
+    height: 1em;
+    background-color: #eeeeee;
+}
+/* Individual scale marker point */
+span.scale {
+    border-left:            0.1em solid black;
+    height:                 100%;
+    /*width:                  1em;*/
+    position:               absolute;
+    z-index:                0;      /* Show above match line */
+}
+
 /* Line for entire length of protein sequence */
 div.match {
     border:     0.1em solid black; /* Line height and colour */
