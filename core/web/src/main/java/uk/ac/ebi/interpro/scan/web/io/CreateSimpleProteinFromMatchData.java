@@ -70,7 +70,8 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
 
         // Add structural matches
         if (protein == null) {
-            throw new IllegalStateException("Protein match data was not found or could not be parsed");
+            LOGGER.warn("Protein match data was not found or could not be parsed");
+            return null;
         }
         List<SimpleStructuralMatch> structuralMatches =
                 structuralMatchAnalyser.parseStructuralMatchDataOutput(resourceLoader.getResource(structuralMatchesUrl));
