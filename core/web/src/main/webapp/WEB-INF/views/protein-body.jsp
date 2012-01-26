@@ -30,7 +30,7 @@
             </tr>
             <tr>
                 <td><strong>Species</strong></td>
-                <td>TODO: get species</td>
+                <td>${protein.taxFullName}</td>
             </tr>
             <tr>
                 <td><strong>Length</strong></td>
@@ -42,4 +42,4 @@
 
     <c:import url="protein-features.jsp"/>
 
-</div>    
+</div>
