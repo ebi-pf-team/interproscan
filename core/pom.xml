@@ -17,6 +17,18 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
+    <scm>
+        <developerConnection>scm:svn:http://interproscan.googlecode.com/svn/trunk/</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>local.i5.repo</id>
+            <name>i5 local repository</name>
+            <url>file:~/i5_local_repository/repository</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
 
         <repository>
@@ -60,11 +72,6 @@
         </license>
     </licenses>
 
-    <scm>
-        <connection>http://interproscan.googlecode.com/svn/</connection>
-        <url>http://interproscan.googlecode.com/svn/</url>
-    </scm>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -98,6 +105,7 @@
         <module>cli</module>
         <module>precalcmatches</module>
         <module>web</module>
+        <!--<module>master-tools</module>-->
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
@@ -198,6 +206,15 @@
                     <finalName>filename-of-generated-jar-file</finalName>
                     <attach>false</attach>
                     </configuration-->
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>
+                        http://interproscan.googlecode.com/svn/tags/
+                    </tagBase>
+                </configuration>
             </plugin>
         </plugins>
     </build>
