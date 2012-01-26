@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>i5-svn-revision-1559</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>jms-implementation</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>i5-svn-revision-1559</version>
 
     <packaging>jar</packaging>
 
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-management</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>i5-svn-revision-1559</version>
         </dependency>
 
         <dependency>
