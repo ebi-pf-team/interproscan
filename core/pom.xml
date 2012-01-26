@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>i5-svn-revision-1559</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
@@ -23,9 +23,9 @@
 
     <distributionManagement>
         <repository>
-            <id>local.i5.repo</id>
-            <name>i5 local repository</name>
-            <url>file:~/i5_local_repository/repository</url>
+            <id>i5.repo</id>
+            <name>i5 maven repository</name>
+            <url>svn:http://interproscan.googlecode.com/svn/repository/</url>
         </repository>
     </distributionManagement>
 
@@ -216,6 +216,17 @@
                     </tagBase>
                 </configuration>
             </plugin>
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-deploy-plugin</artifactId>
+		    <dependencies>
+			<dependency>
+			    <groupId>com.google.code.maven-svn-wagon</groupId>
+			    <artifactId>maven-svn-wagon</artifactId>
+			    <version>1.4</version>
+			</dependency>
+		    </dependencies>
+		</plugin>
         </plugins>
     </build>
 
