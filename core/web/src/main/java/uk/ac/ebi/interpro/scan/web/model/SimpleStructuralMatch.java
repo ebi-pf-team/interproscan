@@ -1,13 +1,11 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import uk.ac.ebi.interpro.scan.web.ProteinViewController;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
-* TODO: Add description
+* Holds data relating to a structural match.
 *
 * @author Antony Quinn
 * @version $Id$
@@ -17,13 +15,12 @@ public final class SimpleStructuralMatch implements Comparable<SimpleStructuralM
     private final String databaseName;
     private final String domainId;
     private final String classId;
-    private final List<SimpleLocation> locations;
+    private List<SimpleLocation> locations = new ArrayList<SimpleLocation>();
 
     public SimpleStructuralMatch(String databaseName, String domainId, String classId) {
         this.databaseName = databaseName;
         this.domainId = domainId;
         this.classId = classId;
-        this.locations  = new ArrayList<SimpleLocation>();
     }
 
     public String getDatabaseName() {
