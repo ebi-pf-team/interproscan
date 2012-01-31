@@ -17,10 +17,17 @@ public class CondensedLine implements Comparable<CondensedLine> {
      */
     private int lineNumber;
 
+    /**
+     * To ensure only features of the same type can be added.
+     */
+    private final String type;
+
     private Set<SimpleSuperMatch> superMatchList = new TreeSet<SimpleSuperMatch>();
 
-    public CondensedLine(int lineNumber) {
+    public CondensedLine(int lineNumber, SuperMatchBucket bucket) {
         this.lineNumber = lineNumber;
+        this.type = bucket.getType();
+        superMatchList.addAll(bucket.getSupermatches());
     }
 
     public int getLineNumber() {
@@ -54,6 +61,9 @@ public class CondensedLine implements Comparable<CondensedLine> {
      * @return
      */
     public boolean addSuperMatchesWithoutOverlap(final SuperMatchBucket superMatchBucket) {
+        if (!this.type.equals(superMatchBucket.getType())) {
+            return false;
+        }
         for (SimpleSuperMatch candidate : superMatchBucket.getSupermatches()) {
             for (SimpleSuperMatch existingMatch : superMatchList) {
                 if (candidate.matchesOverlap(existingMatch)) {

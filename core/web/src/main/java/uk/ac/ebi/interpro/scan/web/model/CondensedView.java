@@ -16,6 +16,8 @@ public class CondensedView {
 
     private final SimpleProtein protein;
 
+    // The CondensedLines in this Set are ordered by their lineNumber,
+    // 0 indexed.
     private Set<CondensedLine> lines = new TreeSet<CondensedLine>();
 
     public CondensedView(final SimpleProtein protein) {
@@ -77,8 +79,27 @@ public class CondensedView {
         return superMatchBucketList;
     }
 
+    /**
+     * Considering each bucket in turn, attempt to add the buckets to a line, minimising the
+     * number of lines and attempting to add the
+     *
+     * @param buckets
+     */
     private void buildLines(List<SuperMatchBucket> buckets) {
-        //To change body of created methods use File | Settings | File Templates.
+        for (SuperMatchBucket bucket : buckets) {
+            boolean bucketFoundAHome = false;
+            // Check if this bucket can be added to any existing lines
+            for (CondensedLine line : lines) {  // This will give the lines in the correct order, as they are in a TreeSet.
+                bucketFoundAHome = line.addSuperMatchesWithoutOverlap(bucket);
+                if (bucketFoundAHome) {
+                    break; // out of the Condensed line loop - stop trying to add this bucket to any more lines.
+                }
+            }
+            // if the bucket has still not found a line to live on, need to create a new line for it.
+            if (!bucketFoundAHome) {
+                lines.add(new CondensedLine(lines.size(), bucket));
+            }
+        }
     }
 
     public Set<CondensedLine> getLines() {
