@@ -2,12 +2,13 @@ package uk.ac.ebi.interpro.scan.web;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import uk.ac.ebi.interpro.scan.web.io.*;
+import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
+import uk.ac.ebi.interpro.scan.web.model.CondensedView;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
@@ -18,7 +19,7 @@ import java.util.Map;
 /**
  * Controller for InterPro protein structure view.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @Controller
@@ -40,7 +41,7 @@ public class ProteinStructureViewController {
     /**
      * Returns protein structure page.
      *
-     * @param  id   Protein accession or MD5 checksum, for example "P38398"
+     * @param id Protein accession or MD5 checksum, for example "P38398"
      * @return Protein structure page
      */
     @RequestMapping(value = "/{id}")
@@ -51,7 +52,7 @@ public class ProteinStructureViewController {
     /**
      * Returns main body of protein structure page for inclusion in DBML
      *
-     * @param  id   Protein accession or MD5 checksum, for example "P38398"
+     * @param id Protein accession or MD5 checksum, for example "P38398"
      * @return Main body of protein structure page for inclusion in DBML
      */
     @RequestMapping(value = "/{id}/body")
@@ -62,7 +63,7 @@ public class ProteinStructureViewController {
     /**
      * Returns protein structural features for inclusion in DBML
      *
-     * @param  id   Protein accession or MD5 checksum, for example "P38398"
+     * @param id Protein accession or MD5 checksum, for example "P38398"
      * @return Protein structural features for inclusion in DBML
      */
     @RequestMapping(value = "/{id}/features")
@@ -74,6 +75,7 @@ public class ProteinStructureViewController {
         Map<String, Object> m = new HashMap<String, Object>();
         if (p != null) {
             m.put("protein", p);
+            m.put("condensedView", new CondensedView(p));
             m.put("entryColours", entryHierarchy.getEntryColourMap());
             m.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
         } // Else no match data was found for the protein therefore nothing to display
@@ -84,8 +86,7 @@ public class ProteinStructureViewController {
         // TODO: Check if id is MD5 using regex (using Protein class code?)
         try {
             return queryByAccession(id);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // TODO: Do not allow exception to go beyond here, otherwise user will see in browser
             throw new IllegalStateException("Could not retrieve " + id, e);
         }
@@ -94,7 +95,7 @@ public class ProteinStructureViewController {
     /**
      * Returns protein for given accession number
      *
-     * @param  ac   Protein accession, for example "P38398"
+     * @param ac Protein accession, for example "P38398"
      * @return Protein for given accession
      */
     private SimpleProtein queryByAccession(String ac) throws IOException {
