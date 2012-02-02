@@ -1,8 +1,5 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +16,7 @@ public final class SimpleProtein {
     private final String taxScienceName;
     private final String taxFullName;
     private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
-    private final List<SimpleStructuralMatch> structuralMatches = new ArrayList<SimpleStructuralMatch>();
+    private final List<SimpleStructuralDatabase> structuralDatabases = new ArrayList<SimpleStructuralDatabase>();
 
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
                          int taxId, String taxScienceName, String taxFullName) {
@@ -74,8 +71,8 @@ public final class SimpleProtein {
         return entries;
     }
 
-    public List<SimpleStructuralMatch> getStructuralMatches() {
-        return structuralMatches;
+    public List<SimpleStructuralDatabase> getStructuralDatabases() {
+        return structuralDatabases;
     }
 
     /* Convenience filter methods for JSPs: */
@@ -83,7 +80,7 @@ public final class SimpleProtein {
     // A tautology really -- all entries have integrated signatures! -- so actually better to make this separation
     // when the SimpleProtein is created: entries collection only has "true" entries, unintegrated signatures can
     // be in signatures collection. Same for structural features and predictions. Protein class would then be:
-    // protein.entries, protein.signatures, protein.structuralFeatures, protein.structuralMatches
+    // protein.entries, protein.signatures, protein.structuralFeatures, protein.structuralDatabases
     // ... with no need for these filters.
 
     public List<SimpleEntry> getEntries() {
@@ -108,22 +105,22 @@ public final class SimpleProtein {
         return signatures;
     }
 
-    public List<SimpleStructuralMatch> getStructuralFeatures() {
-        final List<SimpleStructuralMatch> features = new ArrayList<SimpleStructuralMatch>();
-        for (SimpleStructuralMatch m : this.structuralMatches) {
-            if (MatchDataSource.isStructuralFeature(m.getDatabaseName())) {
-                features.add(m);
+    public List<SimpleStructuralDatabase> getStructuralFeatures() {
+        final List<SimpleStructuralDatabase> features = new ArrayList<SimpleStructuralDatabase>();
+        for (SimpleStructuralDatabase db : this.structuralDatabases) {
+            if (MatchDataSource.isStructuralFeature(db.getDatabaseName())) {
+                features.add(db);
             }
         }
         Collections.sort(features);
         return features;
     }
 
-    public List<SimpleStructuralMatch> getStructuralPredictions() {
-        final List<SimpleStructuralMatch> predictions = new ArrayList<SimpleStructuralMatch>();
-        for (SimpleStructuralMatch m : this.structuralMatches) {
-            if (MatchDataSource.isStructuralPrediction(m.getDatabaseName())) {
-                predictions.add(m);
+    public List<SimpleStructuralDatabase> getStructuralPredictions() {
+        final List<SimpleStructuralDatabase> predictions = new ArrayList<SimpleStructuralDatabase>();
+        for (SimpleStructuralDatabase db : this.structuralDatabases) {
+            if (MatchDataSource.isStructuralPrediction(db.getDatabaseName())) {
+                predictions.add(db);
             }
         }
         Collections.sort(predictions);
