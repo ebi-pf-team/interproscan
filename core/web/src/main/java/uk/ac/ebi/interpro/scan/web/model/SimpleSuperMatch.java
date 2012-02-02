@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,8 +24,11 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
      */
     private final Set<SimpleEntry> entries = new HashSet<SimpleEntry>();
 
-    public SimpleSuperMatch(String type, SimpleLocation location, SimpleEntry firstEntry) {
-        this.type = type;
+    public SimpleSuperMatch(SimpleEntry firstEntry, SimpleLocation location) {
+        if (location == null || firstEntry == null) {
+            throw new IllegalArgumentException("The type, location and firstEntry are all mandatory when constructing a SimpleSuperMatch object.");
+        }
+        this.type = firstEntry.getType();
         this.location = location;
         entries.add(firstEntry);
     }
@@ -64,6 +68,9 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
      * <p/>
      * To be on the safe side and to test the assumption, the first version will iterate
      * over the cross-product to make sure the answer is consistent.
+     * <p/>
+     * TODO - To improve performance, just compare with the first Supermatch in the collection,
+     * TODO - no need to iterate over all of them.  Do this once satisfied that the method works correctly.
      *
      * @param superMatch
      * @return
@@ -103,6 +110,13 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
         return true;
     }
 
+    public SimpleEntry getFirstEntry() {
+        if (entries == null || entries.size() == 0) {
+            return null;
+        }
+        return entries.iterator().next();
+    }
+
     /**
      * Determines if domains overlap overlap.
      *
@@ -124,16 +138,22 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
     }
 
     /**
-     * Merges candidate with this SuperMatch.
+     * Merges candidate with this SuperMatch if they overlap.
      *
      * @param candidate to Merge with this SuperMatch.
+     * @return true if the mergeIfOverlap criteria are met and the candidate is merged. false if
+     *         the criteria are not met.
      */
-    public void merge(SimpleSuperMatch candidate) {
-        // Sanity check
-        if (!this.getType().equals(candidate.getType())) {
-            throw new IllegalStateException("Found supermatches int the same hierarchy, but not of the same type?");
+    public SimpleSuperMatch mergeIfOverlap(SimpleSuperMatch candidate) {
+        if (!this.type.equals(candidate.getType())) {
+            return null;
         }
-
+        if (!this.inSameHierarchy(candidate)) {
+            return null;
+        }
+        if (!this.matchesOverlap(candidate)) {
+            return null;
+        }
         // Reset location to widest bounds of overlapping matches
         int start = (candidate.getLocation().getStart() < this.getLocation().getStart())
                 ? candidate.getLocation().getStart()
@@ -147,7 +167,6 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
 
         // Add entries from the candidate
         this.entries.addAll(candidate.getEntries());
-
-
+        return this;
     }
 }
