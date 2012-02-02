@@ -160,21 +160,20 @@ public class EntryHierarchy {
      * @return True if part of the same hierarchy, otherwise false
      */
     public boolean areInSameHierarchy(String ac1, String ac2) {
+        // Are they the same entry?  If so, they are in the same hierarchy by definition...
+        if (ac1.equals(ac2)) {
+            return true;
+        }
         if (this.entryHierarchyDataMap.containsKey(ac1)) {
-            EntryHierarchyData data = this.entryHierarchyDataMap.get(ac1);
-            Set<String> entriesInSameHierarchy = data.getEntriesInSameHierarchy();
-            if (entriesInSameHierarchy != null && entriesInSameHierarchy.contains(ac2)) {
-                return true;
-            }
+            final EntryHierarchyData data = this.entryHierarchyDataMap.get(ac1);
+            final Set<String> entriesInSameHierarchy = data.getEntriesInSameHierarchy();
+            return entriesInSameHierarchy != null && entriesInSameHierarchy.contains(ac2);
         }
         return false;
     }
 
     public boolean areInSameHierarchy(SimpleEntry se1, SimpleEntry se2) {
-        if (se1 == null || se2 == null) {
-            return false;
-        }
-        return areInSameHierarchy(se1.getAc(), se2.getAc());
+        return se1 != null && se2 != null && areInSameHierarchy(se1.getAc(), se2.getAc());
     }
 
     /**

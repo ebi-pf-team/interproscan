@@ -1,9 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author Phil Jones
@@ -16,9 +13,11 @@ public class CondensedView {
 
     private final SimpleProtein protein;
 
+    private static final List<String> INCLUDED_TYPES = Arrays.asList("domain", "repeat");
+
     // The CondensedLines in this Set are ordered by their lineNumber,
     // 0 indexed.
-    private Set<CondensedLine> lines = new TreeSet<CondensedLine>();
+    private Set<CondensedLine> lines;
 
     public CondensedView(final SimpleProtein protein) {
         this.protein = protein;
@@ -37,6 +36,8 @@ public class CondensedView {
      * Very dumb method - just makes "SimpleSuperMatch" objects out of SimpleEntry
      * objects - however at this point they are not Supermatches - that is the job
      * of the next method (buildBuckets).
+     * <p/>
+     * Note - only includes features of the types allowed in the INCLUDED_TYPES list.
      *
      * @return a List of SimpleSuperMatch objects, one for each Entry / location.
      */
@@ -44,14 +45,13 @@ public class CondensedView {
         final List<SimpleSuperMatch> superMatchList = new ArrayList<SimpleSuperMatch>();
         // Initially the SimpleSuperMatches are just matches - the merging occurs in the next method call.
         for (final SimpleEntry entry : protein.getAllEntries()) {
-            for (final SimpleLocation location : entry.getLocations()) {
-                superMatchList.add(new SimpleSuperMatch(
-                        entry.getType(),
-                        location,
-                        entry
-                ));
+            if (INCLUDED_TYPES.contains(entry.getType().toLowerCase())) {
+                for (final SimpleLocation location : entry.getLocations()) {
+                    superMatchList.add(new SimpleSuperMatch(entry, location));
+                }
             }
         }
+
         return superMatchList;
     }
 
@@ -86,20 +86,25 @@ public class CondensedView {
      * @param buckets
      */
     private void buildLines(List<SuperMatchBucket> buckets) {
+        //While building, don't try to sort.  This should speed things up
+        // as well as prevent sort order errors due to mutable objects.
+        final Set<CondensedLine> unsortedLines = new HashSet<CondensedLine>();
         for (SuperMatchBucket bucket : buckets) {
             boolean bucketFoundAHome = false;
             // Check if this bucket can be added to any existing lines
-            for (CondensedLine line : lines) {  // This will give the lines in the correct order, as they are in a TreeSet.
-                bucketFoundAHome = line.addSuperMatchesWithoutOverlap(bucket);
+            for (CondensedLine line : unsortedLines) {  // This will give the lines in the correct order, as they are in a TreeSet.
+                bucketFoundAHome = line.addSuperMatchesSameTypeWithoutOverlap(bucket);
                 if (bucketFoundAHome) {
                     break; // out of the Condensed line loop - stop trying to add this bucket to any more lines.
                 }
             }
             // if the bucket has still not found a line to live on, need to create a new line for it.
             if (!bucketFoundAHome) {
-                lines.add(new CondensedLine(lines.size(), bucket));
+                unsortedLines.add(new CondensedLine(bucket));
             }
         }
+        // Sort them when finished building, by placing into a TreeSet.
+        lines = new TreeSet<CondensedLine>(unsortedLines);
     }
 
     public Set<CondensedLine> getLines() {
