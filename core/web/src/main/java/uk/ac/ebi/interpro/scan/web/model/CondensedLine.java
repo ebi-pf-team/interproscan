@@ -13,33 +13,37 @@ import java.util.TreeSet;
 public class CondensedLine implements Comparable<CondensedLine> {
 
     /**
-     * zero indexed line number.
-     */
-    private int lineNumber;
-
-    /**
      * To ensure only features of the same type can be added.
      */
     private final String type;
 
     private Set<SimpleSuperMatch> superMatchList = new TreeSet<SimpleSuperMatch>();
 
-    public CondensedLine(int lineNumber, SuperMatchBucket bucket) {
-        this.lineNumber = lineNumber;
+    public CondensedLine(SuperMatchBucket bucket) {
         this.type = bucket.getType();
         superMatchList.addAll(bucket.getSupermatches());
-    }
-
-    public int getLineNumber() {
-        return lineNumber;
     }
 
     public Set<SimpleSuperMatch> getSuperMatchList() {
         return superMatchList;
     }
 
+    public String getType() {
+        return type;
+    }
+
     /**
      * Comparator to get the lines in the right order.
+     * <p/>
+     * Sort order:
+     * <p/>
+     * By type (domain, repeat)
+     * <p/>
+     * By first position first
+     * <p/>
+     * By most matches first
+     * <p/>
+     * By hashcode
      *
      * @param other to compare with
      * @return negative number if this comes first, 0 if they are the same line number
@@ -49,7 +53,35 @@ public class CondensedLine implements Comparable<CondensedLine> {
         if (this == other || this.equals(other)) {
             return 0;
         }
-        return this.lineNumber - other.lineNumber;
+        // Being a bit cheeky here - the
+        // (potential) required order "Family", "Domain", "Repeat", "Site" just so happens to be alphabetical ;-)
+        int comp = this.type.toLowerCase().compareTo(other.type.toLowerCase());
+
+        if (comp == 0) {
+            final Integer thisStart = this.getStart();
+            final Integer otherStart = other.getStart();
+            if (thisStart != null && otherStart != null) {
+                comp = thisStart - otherStart;
+            }
+        }
+        if (comp == 0) {
+            comp = this.getSuperMatchList().size() - other.getSuperMatchList().size();
+        }
+        if (comp == 0) {
+            comp = this.hashCode() - other.hashCode();
+        }
+        return comp;
+    }
+
+    private Integer getStart() {
+        final SimpleSuperMatch firstMatch = superMatchList.iterator().next();
+        if (firstMatch != null) {
+            final SimpleLocation location = firstMatch.getLocation();
+            if (location != null) {
+                return location.getStart();
+            }
+        }
+        return null;
     }
 
     /**
@@ -60,7 +92,7 @@ public class CondensedLine implements Comparable<CondensedLine> {
      * @param superMatchBucket
      * @return
      */
-    public boolean addSuperMatchesWithoutOverlap(final SuperMatchBucket superMatchBucket) {
+    public boolean addSuperMatchesSameTypeWithoutOverlap(final SuperMatchBucket superMatchBucket) {
         if (!this.type.equals(superMatchBucket.getType())) {
             return false;
         }
@@ -83,7 +115,6 @@ public class CondensedLine implements Comparable<CondensedLine> {
 
         CondensedLine that = (CondensedLine) o;
 
-        if (lineNumber != that.lineNumber) return false;
         if (!superMatchList.equals(that.superMatchList)) return false;
 
         return true;
@@ -91,8 +122,6 @@ public class CondensedLine implements Comparable<CondensedLine> {
 
     @Override
     public int hashCode() {
-        int result = lineNumber;
-        result = 31 * result + superMatchList.hashCode();
-        return result;
+        return superMatchList.hashCode();
     }
 }
