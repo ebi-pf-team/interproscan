@@ -25,8 +25,8 @@
 </head>
 <body>
 <c:choose>
-    <c:when test="${protein == null}">
-        Sorry, no data found for this protein.
+    <c:when test="${empty protein.structuralDatabases}">
+        Sorry, no structural data found for this protein.
     </c:when>
     <c:otherwise>
         <header>
