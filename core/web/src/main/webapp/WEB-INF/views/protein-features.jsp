@@ -1,7 +1,5 @@
-<%@ page import="uk.ac.ebi.interpro.scan.web.model.EntryType" %>
-<%@ page import="uk.ac.ebi.interpro.scan.web.model.MatchDataSource" %>
-<%@ taglib prefix="h"  tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="h" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%
@@ -23,14 +21,16 @@
 <c:if test="${not empty protein.entries}">
 
     <p>
-        <b>TODO: Supermatch summary view goes here!</b>
+        <c:import url="condensed-view.jsp"/>
     </p>
 
     <a name="domains-sites"></a>
+
     <h3>Families, domains, repeats and sites</h3>
+
     <div id="section-domains-sites">
         <div class="entry-signatures">
-            <input id="database" name="colour" type="checkbox" value="database" />
+            <input id="database" name="colour" type="checkbox" value="database"/>
             <label for="database">Colour signature matches by database name</label>
         </div>
 
@@ -44,6 +44,7 @@
             </c:forTokens>
         </div>
         <br/>
+
         <div class="scale">
             <!-- Position marker lines -->
             <c:forTokens items="${scale}" delims="," var="scaleMarker">
@@ -116,7 +117,8 @@
 
 <c:if test="${not empty protein.unintegratedSignatures}">
     <a name="unintegrated-signatures"></a>
-    <img src="/interpro/images/ico_type_uni_small.png" alt="Unintegrated signatures" title="Unintegrated signatures"/> no IPR
+    <img src="/interpro/images/ico_type_uni_small.png" alt="Unintegrated signatures"
+         title="Unintegrated signatures"/> no IPR
     Unintegrated signatures
     <ol class="signatures">
         <c:forEach var="signature" items="${protein.unintegratedSignatures}">
@@ -135,30 +137,30 @@
 
 <%--TODO: Could use HTML5 Canvas to highlight matches in graphic and table when hover over--%>
 <%--<table class="match">--%>
-    <%--<tr>--%>
-        <%--<th>Entry</th>--%>
-        <%--<th>Signature</th>--%>
-        <%--<th>Start</th>--%>
-        <%--<th>End</th>--%>
-    <%--</tr>--%>
-    <%--<c:forEach var="entry" items="${protein.entries}">--%>
-        <%--<c:forEach var="location" items="${entry.locations}">--%>
-            <%--<tr class="entry">--%>
-                <%--<td><a href="IEntry?ac=${entry.ac}">${entry.name}</a> (${entry.ac})</td>--%>
-                <%--<td></td>--%>
-                <%--<td align="right">${location.start}</td>--%>
-                <%--<td align="right">${location.end}</td>--%>
-            <%--</tr>--%>
-            <%--<c:forEach var="signature" items="${entry.signatures}">--%>
-                <%--<c:forEach var="location" items="${signature.locations}">--%>
-                    <%--<tr>--%>
-                        <%--<td></td>--%>
-                        <%--<td><a href="ISignature?ac=${signature.ac}">${signature.name}</a> (${signature.ac})</td>--%>
-                        <%--<td align="right">${location.start}</td>--%>
-                        <%--<td align="right">${location.end}</td>--%>
-                    <%--</tr>--%>
-                <%--</c:forEach>--%>
-            <%--</c:forEach>--%>
-        <%--</c:forEach>--%>
-    <%--</c:forEach>--%>
+<%--<tr>--%>
+<%--<th>Entry</th>--%>
+<%--<th>Signature</th>--%>
+<%--<th>Start</th>--%>
+<%--<th>End</th>--%>
+<%--</tr>--%>
+<%--<c:forEach var="entry" items="${protein.entries}">--%>
+<%--<c:forEach var="location" items="${entry.locations}">--%>
+<%--<tr class="entry">--%>
+<%--<td><a href="IEntry?ac=${entry.ac}">${entry.name}</a> (${entry.ac})</td>--%>
+<%--<td></td>--%>
+<%--<td align="right">${location.start}</td>--%>
+<%--<td align="right">${location.end}</td>--%>
+<%--</tr>--%>
+<%--<c:forEach var="signature" items="${entry.signatures}">--%>
+<%--<c:forEach var="location" items="${signature.locations}">--%>
+<%--<tr>--%>
+<%--<td></td>--%>
+<%--<td><a href="ISignature?ac=${signature.ac}">${signature.name}</a> (${signature.ac})</td>--%>
+<%--<td align="right">${location.start}</td>--%>
+<%--<td align="right">${location.end}</td>--%>
+<%--</tr>--%>
+<%--</c:forEach>--%>
+<%--</c:forEach>--%>
+<%--</c:forEach>--%>
+<%--</c:forEach>--%>
 <%--</table>--%>
