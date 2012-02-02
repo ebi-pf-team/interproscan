@@ -5,11 +5,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
+import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase;
 
 import javax.annotation.Resource;
 
 import java.io.IOException;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -48,9 +51,16 @@ public class CreateSimpleProteinFromMatchDataTest {
         assertNotNull(protein);
         assertEquals("P38398", protein.getAc());
         assertEquals("BRCA1_HUMAN", protein.getId());
-        assertNotNull(protein.getAllEntries());
-        assertEquals(9, protein.getAllEntries().size());
-        assertNotNull(protein.getStructuralDatabases());
-        assertEquals(9, protein.getStructuralDatabases().size());
+
+        List<SimpleEntry> entries = protein.getAllEntries();
+        assertNotNull(entries);
+        assertEquals(9, entries.size());
+
+        List<SimpleStructuralDatabase> structuralDatabases = protein.getStructuralDatabases();
+        assertNotNull(structuralDatabases);
+        assertEquals(4, structuralDatabases.size());
+        for (SimpleStructuralDatabase database : structuralDatabases) {
+            assertNotNull(database);
+        }
     }
 }
