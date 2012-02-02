@@ -6,18 +6,18 @@
  */
 
 abbr {
-    border-bottom:  1px dotted black;
-    cursor:         help;
+    border-bottom: 1px dotted black;
+    cursor: help;
 }
 
 ol.entries, ol.signatures, ol.structural-features, ol.structural-predictions {
-    margin:  0;
+    margin: 0;
     padding: 0;
 }
 
 li.entry, li.signature, li.structural-feature, li.structural-prediction {
-    list-style:     none;
-    padding-bottom: 6px;   /* Ensures background colour includes lower half of match blobs */
+    list-style: none;
+    padding-bottom: 6px; /* Ensures background colour includes lower half of match blobs */
 }
 
 li.entry {
@@ -32,58 +32,77 @@ li.entry:hover, li.signature:hover, li.structural-feature:hover, li.structural-p
 /* Line for entire length of protein sequence (for scale) */
 div.scale {
     /*border:     0.1em solid black; *//* Line height and colour */
-    position:   relative;
-    width:      95%;
+    position: relative;
+    width: 95%;
     height: 1em;
     background-color: #eeeeee;
 }
+
 /* Individual scale marker point */
 span.scale {
-    border-left:            0.1em solid black;
-    height:                 100%;
-    position:               absolute;
-    z-index:                0;      /* Show above match line */
+    border-left: 0.1em solid black;
+    height: 100%;
+    position: absolute;
+    z-index: 0; /* Show above match line */
 }
 
 /* Line for entire length of protein sequence */
 div.match {
-    border:     0.1em solid black; /* Line height and colour */
-    position:   relative;
-    width:      95%;
+    border: 0.1em solid black; /* Line height and colour */
+    position: relative;
+    width: 95%;
+}
+
+/* div for a supermatch, with 0.8em spacing between divs (padding-bottom) */
+div.supermatchline {
+    /*border:     0.1em solid black; *//* Line height and colour */
+    border-style: none;
+    position: relative;
+    width: 95%;
+    padding-bottom: 0.7em;
+    display: inline-block;
+}
+
+span.supermatchType {
+    font-size: 0.7em;
+    vertical-align: top;
+    padding-left: 20px;
 }
 
 /* Individual match */
 span.match {
-    border:                 0.1em solid black; /* Round edges: */
-    border-radius:          4px;
-    -moz-border-radius:     4px;
-    -khtml-border-radius:   4px;
-    -webkit-border-radius:  4px;
-    height:                 0.5em;
-    position:               absolute;
-    top:                    -0.3em; /* Shows in middle of line (0.5 * match.height plus a bit of judgment by eye) */
-    z-index:                1;      /* Show above match line */
+    border: 0.1em solid black; /* Round edges: */
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    height: 0.5em;
+    position: absolute;
+    top: -0.3em; /* Shows in middle of line (0.5 * match.height plus a bit of judgment by eye) */
+    z-index: 1; /* Show above match line */
 }
 
 span.match:hover {
     /* Enlarge slightly: */
-    height:             0.7em;
-    top:                -0.4em; /* Show overlaps */
-    z-index:            5;      /* Make it glow: */
-    box-shadow:         0 0 0.5em rgba(0, 0, 255, 1);
+    height: 0.7em;
+    top: -0.4em; /* Show overlaps */
+    z-index: 5; /* Make it glow: */
+    box-shadow: 0 0 0.5em rgba(0, 0, 255, 1);
     -webkit-box-shadow: 0 0 0.5em rgba(0, 0, 255, 1);
-    -moz-box-shadow:    0 0 0.5em rgba(0, 0, 255, 1);
+    -moz-box-shadow: 0 0 0.5em rgba(0, 0, 255, 1);
 }
 
 /* Entry types colours */
 span.Family {
     background-color: #ffffff;
 }
+
 /* Note: domain and repeat colours are set in either domain.css or database.css depending on user preference */
 
 span.Active_site, span.Binding_site, span.Conserved_site, span.PTM {
     background-color: #000000;
 }
+
 span.uni {
     background-color: #a5a5a5;
 }
@@ -92,43 +111,47 @@ span.uni {
 span.PDB {
     background-color: #82a4bf;
 }
+
 span.CATH {
     background-color: #b852d4;
 }
+
 span.SCOP {
     background-color: #cbcbcb;
 }
+
 span.SWISS-MODEL {
     background-color: #cf161d;
 }
+
 span.MODBASE {
     background-color: #ffac0b;
 }
 
 /* Match table - currently not shown */
 /*table.match {*/
-    /*border-width:       1px;*/
-    /*border-style:       solid;*/
-    /*border-color:       gray;*/
-    /*border-collapse:    collapse;*/
-    /*display:            none;*/
+/*border-width:       1px;*/
+/*border-style:       solid;*/
+/*border-color:       gray;*/
+/*border-collapse:    collapse;*/
+/*display:            none;*/
 /*}*/
 
 /*table.match th {*/
-    /*background-color:   silver;*/
-    /*border-width:       1px;*/
-    /*padding:            2px;*/
-    /*border-style:       solid;*/
-    /*border-color:       gray;*/
+/*background-color:   silver;*/
+/*border-width:       1px;*/
+/*padding:            2px;*/
+/*border-style:       solid;*/
+/*border-color:       gray;*/
 /*}*/
 
 /*table.match td {*/
-    /*border-width:       1px;*/
-    /*padding:            2px;*/
-    /*border-style:       solid;*/
-    /*border-color:       gray;*/
+/*border-width:       1px;*/
+/*padding:            2px;*/
+/*border-style:       solid;*/
+/*border-color:       gray;*/
 /*}*/
 
 /*table.match tr.entry {*/
-    /*background-color:   #dcdcdc;*/
+/*background-color:   #dcdcdc;*/
 /*}*/
