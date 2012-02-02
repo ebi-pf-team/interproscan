@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 /**
- * TODO: Add description
+ * Location of a match.
  *
  * @author Antony Quinn
  * @version $Id$
@@ -46,4 +46,23 @@ public final class SimpleLocation implements Comparable<SimpleLocation> {
         return this.getStart() - that.getEnd();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SimpleLocation that = (SimpleLocation) o;
+
+        if (end != that.end) return false;
+        if (start != that.start) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = start;
+        result = 31 * result + end;
+        return result;
+    }
 }

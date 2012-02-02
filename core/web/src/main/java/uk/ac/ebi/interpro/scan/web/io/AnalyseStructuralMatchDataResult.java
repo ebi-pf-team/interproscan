@@ -4,19 +4,19 @@ import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
 import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
-import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch;
+import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase;
 
 import java.io.IOException;
 import java.util.*;
 
 
 /**
-* Analyse query results and construct a more understandable list of
-* {@link uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch} objects.
-*
-* @author  Matthew Fraser
-* @version $Id$
-*/
+ * Analyse query results and construct a more understandable list of
+ * {@link uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase} objects.
+ *
+ * @author  Matthew Fraser
+ * @version $Id$
+ */
 public class AnalyseStructuralMatchDataResult {
 
     private static final Logger LOGGER = Logger.getLogger(AnalyseStructuralMatchDataResult.class.getName());
@@ -29,14 +29,13 @@ public class AnalyseStructuralMatchDataResult {
 
     /**
      * Convert a collection of {@link StructuralMatchDataRecord} objects
-     * into a list of {@link uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch} objects using
+     * into a list of {@link uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase} objects using
      * necessary business logic.
      *
      * @param resource Resource to parse
      * @return The list of simple structural matches, or NULL if nothing found
      */
-    public List<SimpleStructuralMatch> parseStructuralMatchDataOutput(Resource resource) {
-        List<SimpleStructuralMatch> structuralMatches = null;
+    public Collection<SimpleStructuralDatabase> parseStructuralMatchDataOutput(Resource resource) {
         String queryOutputText = "";
         String line = "";
 
@@ -44,10 +43,21 @@ public class AnalyseStructuralMatchDataResult {
          * Example output:
          *
          * PROTEIN_ACCESSION	PROTEIN_ID	PROTEIN_LENGTH	MD5	CRC64	database_name	domain_id	class_id	pos_from	pos_to
-         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	PDB	1jm7A	1jm7	1	110
-         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	CATH	1jm7A00	3.30.40.10	1	103
-         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	CATH	1oqaA00	3.40.50.10190	1755	1863
-         * P38398	BRCA1_HUMAN	1863	E40F752DEDF675E2F7C99142EBB2607A	89C6D83FF56312AF	CATH	1t15A01	3.40.50.10190	1649	1755
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	CATH	1w91A01	2.60.40.1500	4	14
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	CATH	1w91A01	2.60.40.1500	362	446
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	CATH	1w91A01	2.60.40.1500	449	483
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	CATH	1w91A02	3.20.20.80	15	248
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	CATH	1w91A02	3.20.20.80	251	361
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	PDB	1w91B	1w91	1	248
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	PDB	1w91B	1w91	251	446
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	PDB	1w91B	1w91	449	504
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	PDB	1w91C	1w91	1	248
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	PDB	1w91C	1w91	251	446
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	PDB	1w91C	1w91	449	504
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	MODBASE	MB_Q9ZFM2	MB_Q9ZFM2	1	502
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	SCOP	d1w91a1	b.71.1.2	4	13
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	SCOP	d1w91a1	b.71.1.2	363	446
+         * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	SCOP	d1w91a1	b.71.1.2	449	503
          * ...
          */
 
@@ -74,7 +84,7 @@ public class AnalyseStructuralMatchDataResult {
             return null;
         }
 
-        structuralMatches = new ArrayList<SimpleStructuralMatch>();
+        Map<String, SimpleStructuralDatabase> structuralMatchDatabases = new HashMap<String, SimpleStructuralDatabase>();
         for (StructuralMatchDataRecord record : records) {
             // Loop through query output one line at a time
 
@@ -92,20 +102,18 @@ public class AnalyseStructuralMatchDataResult {
             String classId = record.getClassId();
             Integer posFrom = record.getPosFrom();
             Integer posTo = record.getPosTo();
+            SimpleLocation location = new SimpleLocation(posFrom, posTo);
 
-            SimpleStructuralMatch newStructuralMatch = new SimpleStructuralMatch(databaseName, domainId, classId);
-            SimpleLocation newLocation = new SimpleLocation(posFrom, posTo);
-
-            // Has this structural match already been added to the list?
-            if (structuralMatches.contains(newStructuralMatch)) {
-                // Structural match already exists, just add the location
-                SimpleStructuralMatch structuralMatch = structuralMatches.get(structuralMatches.indexOf(newStructuralMatch));
-                structuralMatch.addLocation(newLocation);
+            if (structuralMatchDatabases.containsKey(databaseName)) {
+                // Structural match database already exists, just add to the collection of structural matches for the database
+                SimpleStructuralDatabase structuralDatabase = structuralMatchDatabases.get(databaseName);
+                structuralDatabase.addStructuralMatch(classId, domainId, location);
             }
             else {
-                // New structural match that needs creating and adding to the list
-                newStructuralMatch.addLocation(newLocation);
-                structuralMatches.add(newStructuralMatch);
+                // New structural match database that needs initialising and adding to the map
+                SimpleStructuralDatabase structuralDatabase = new SimpleStructuralDatabase(databaseName);
+                structuralDatabase.addStructuralMatch(classId, domainId, location);
+                structuralMatchDatabases.put(databaseName, structuralDatabase);
             }
 
             queryOutputText += line + "\n";
@@ -114,8 +122,7 @@ public class AnalyseStructuralMatchDataResult {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Query returned:\n" + queryOutputText);
         }
-
-        return structuralMatches;
+        return Collections.unmodifiableCollection(structuralMatchDatabases.values());
     }
 
 }

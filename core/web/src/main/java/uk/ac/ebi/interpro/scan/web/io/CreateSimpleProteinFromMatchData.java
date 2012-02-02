@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
 import java.io.*;
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ResourceLoaderAware;
@@ -10,7 +10,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
-import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralMatch;
+import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase;
 
 /**
  * Query for match data and construct a simple protein object from the query results.
@@ -73,11 +73,11 @@ public class CreateSimpleProteinFromMatchData implements ResourceLoaderAware {
             LOGGER.warn("Protein match data was not found or could not be parsed");
             return null;
         }
-        List<SimpleStructuralMatch> structuralMatches =
+        Collection<SimpleStructuralDatabase> structuralDatabases =
                 structuralMatchAnalyser.parseStructuralMatchDataOutput(resourceLoader.getResource(structuralMatchesUrl));
-        if (structuralMatches != null) {
-            for (SimpleStructuralMatch m : structuralMatches) {
-                protein.getStructuralMatches().add(m);
+        if (structuralDatabases != null) {
+            for (SimpleStructuralDatabase db : structuralDatabases) {
+                protein.getStructuralDatabases().add(db);
             }
         }
 
