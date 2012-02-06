@@ -25,6 +25,8 @@
 
 <%--Returns protein structure features for inclusion in DBML--%>
 
+<c:set var="id" value="0" scope="page"/>
+
 <c:if test="${not empty protein.structuralFeatures}">
     <a name="structural-features"></a>
     <h3>Structural features</h3>
@@ -51,46 +53,13 @@
                 <div class="match">
                     <c:forEach var="structuralMatch" items="${database.structuralMatches}">
                         <%-- location = ${structuralMatch.key} --%>
-                        <%-- locationData = ${structuralMatch.value.locationDataMap} --%>
-                        <c:set var="title" value=""/>
-                        <c:choose>
-                            <c:when test="${databaseName == CATH}">
-                                <c:forEach var="dataEntry" items="${structuralMatch.value.locationDataMap}" varStatus="vs">
-                                    <%-- classId = ${dataEntry.key} --%>
-                                    <c:if test="${!vs.first}">
-                                        <c:set var="title" value="${title}, "/>
-                                    </c:if>
-                                    <c:set var="title" value="${title}${dataEntry.key}"/>
-                                </c:forEach>
-                                <%--<a href="http://www.cathdb.info/cathnode/${classId}">${classId}</a>--%>
-                            </c:when>
-                            <c:when test="${databaseName == SCOP}">
-                                <c:forEach var="dataEntry" items="${structuralMatch.value.locationDataMap}" varStatus="vs">
-                                    <%-- classId = ${dataEntry.key} --%>
-                                    <c:if test="${!vs.first}">
-                                        <c:set var="title" value="${title}, "/>
-                                    </c:if>
-                                    <c:set var="title" value="${title}${dataEntry.key}"/>
-                                </c:forEach>
-                                <%--<a href="http://scop.mrc-lmb.cam.ac.uk/scop/search.cgi?key=${classId}">${classId}</a>--%>
-                            </c:when>
-                            <c:otherwise>
-                                <c:forEach var="dataEntry" items="${structuralMatch.value.locationDataMap}">
-                                    <%-- domainIds = ${dataEntry.value} --%>
-                                    <c:forEach var="domainId" items="${dataEntry.value}" varStatus="vs">
-                                        <c:if test="${!vs.first}">
-                                            <c:set var="title" value="${title}, "/>
-                                        </c:if>
-                                        <c:set var="title" value="${title}${domainId}"/>
-                                    </c:forEach>
-                                </c:forEach>
-                                <%--<a href="http://www.ebi.ac.uk/pdbe-srv/view/entry/${domainId}/summary">${domainId}</a>--%>
-                            </c:otherwise>
-                        </c:choose>
-                        <h:location protein="${protein}"
-                                    prefix="${title}"
-                                    location="${structuralMatch.key}"
-                                    colourClass="${databaseName}"/>
+                        <%-- structuralMatchData = ${structuralMatch.value} --%>
+                        <c:set var="id" value="${id + 1}" />
+                        <h:structuralLocation id="${id}"
+                                              protein="${protein}"
+                                              location="${structuralMatch.key}"
+                                              structuralMatchData="${structuralMatch.value}"
+                                              databaseName="${databaseName}"/>
                     </c:forEach>
 
                 </div>
@@ -120,40 +89,17 @@
                     -- locationDataMap (Map<String, List<String>>)
                 -->
                 <c:set var="databaseName">${database.databaseName}</c:set>
-                ${databaseName}
+                    ${databaseName}
                 <div class="match">
                     <c:forEach var="structuralMatch" items="${database.structuralMatches}">
                         <%-- location = ${structuralMatch.key} --%>
-                        <%-- locationData = ${structuralMatch.value.locationDataMap} --%>
-                        <c:set var="title" value=""/>
-                        <c:choose>
-                            <c:when test="${databaseName == MODBASE}">
-                                <c:forEach var="dataEntry" items="${structuralMatch.value.locationDataMap}" varStatus="vs">
-                                    <%-- classId = ${dataEntry.key} --%>
-                                    <c:if test="${!vs.first}">
-                                        <c:set var="title" value="${title}, "/>
-                                    </c:if>
-                                    <c:set var="title" value="${title}${dataEntry.key}"/>
-                                </c:forEach>
-                                <%--<a href="http://modbase.compbio.ucsf.edu/modbase-cgi-new/model_search.cgi?searchvalue=${protein.ac}&searchproperties=database_id&displaymode=moddetail&searchmode=default">${classId}</a>--%>
-                            </c:when>
-                            <c:otherwise>
-                                <c:forEach var="dataEntry" items="${structuralMatch.value.locationDataMap}">
-                                    <%-- domainIds = ${dataEntry.value} --%>
-                                    <c:forEach var="domainId" items="${dataEntry.value}" varStatus="vs">
-                                        <c:if test="${!vs.first}">
-                                            <c:set var="title" value="${title}, "/>
-                                        </c:if>
-                                        <c:set var="title" value="${title}${domainId}"/>
-                                    </c:forEach>
-                                </c:forEach>
-                                <%--<a href="http://swissmodel.expasy.org/repository/?pid=smr03&query_1_input=${protein.ac}">${domainId}</a>--%>
-                            </c:otherwise>
-                        </c:choose>
-                        <h:location protein="${protein}"
-                                    prefix="${title}"
-                                    location="${structuralMatch.key}"
-                                    colourClass="${databaseName}"/>
+                        <%-- structuralMatchData = ${structuralMatch.value} --%>
+                        <c:set var="id" value="${id + 1}" />
+                        <h:structuralLocation id="${id}"
+                                              protein="${protein}"
+                                              location="${structuralMatch.key}"
+                                              structuralMatchData="${structuralMatch.value}"
+                                              databaseName="${databaseName}"/>
                     </c:forEach>
 
                 </div>
@@ -161,3 +107,37 @@
         </c:forEach>
     </ol>
 </c:if>
+
+<!-- JavaScript placed near the end </body> tag as this ensures the DOM is loaded before manipulation
+of it occurs. This is not a requirement, simply a useful tip! -->
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        for(var i = 1; i <= ${id}; i++)
+        {
+            $('#location-'.concat(i)).qtip({
+                content: {
+                    text: $('#structuralPopup-'.concat(i)),
+                    title: {
+                        text: 'Location data',
+                        button: true // Close button
+                    }
+                },
+                position: {
+                    my: 'top center',
+                    at: 'bottom center',
+                    viewport: $(window), // Keep the tooltip on-screen at all times
+                    effect: true // Disable positioning animation
+                },
+                show: {
+                    event: 'click',
+                    solo: true // Only show one tooltip at a time
+                },
+                hide: 'unfocus',
+                style: {
+                    classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-shadow'
+                }
+            });
+        }
+    });
+</script>
