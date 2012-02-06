@@ -1,11 +1,9 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Holds data about structural matches for a member database.
@@ -17,27 +15,27 @@ import java.util.Map;
  */
 public class SimpleStructuralMatchData {
 
-    private Map<String, List<String>> locationDataMap = new HashMap<String, List<String>>();
+    private Map<String, SortedSet<String>> locationDataMap = new HashMap<String, SortedSet<String>>();
 
     public SimpleStructuralMatchData(String classId, String domainId) {
-        List<String> domainIds = new ArrayList<String>();
+        SortedSet<String> domainIds = new TreeSet<String>();
         domainIds.add(domainId);
         this.locationDataMap.put(classId, domainIds);
     }
 
     public void addStructuralMatchData(String classId, String domainId) {
         if (locationDataMap.containsKey(classId)) {
-            List<String> domainIds = locationDataMap.get(classId);
+            SortedSet<String> domainIds = locationDataMap.get(classId);
             domainIds.add(domainId);
         }
         else {
-            List<String> domainIds = new ArrayList<String>();
+            SortedSet<String> domainIds = new TreeSet<String>();
             domainIds.add(domainId);
             locationDataMap.put(classId, domainIds);
         }
     }
 
-    public Map<String, List<String>> getLocationDataMap() {
+    public Map<String, SortedSet<String>> getLocationDataMap() {
         return locationDataMap;
     }
 }
