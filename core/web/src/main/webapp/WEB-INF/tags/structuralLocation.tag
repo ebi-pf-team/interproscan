@@ -73,15 +73,13 @@
     </c:otherwise>
 </c:choose>
 
-<span id="location-${id}"
-      class="match ${databaseName}"
-      style="left:  ${(location.start / protein.length) * 100}%;
-              width: ${((location.end - location.start + 1) / protein.length) * 100}%;"
-      title="${title} (${location.start} - ${location.end})">
-</span>
+<h:location id="match-location-${id}"
+            protein="${protein}"
+            titlePrefix="${title}: "
+            location="${location}"
+            colourClass="${databaseName}"/>
 
-
-<div id="structuralPopup-${id}" style="display: none;">
+<div id="match-popup-${id}" style="display: none;">
     ${links}<br />
     Start: ${location.start}<br />
     End: ${location.end}

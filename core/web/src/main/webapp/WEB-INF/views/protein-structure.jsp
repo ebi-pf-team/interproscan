@@ -21,9 +21,9 @@
     <link href="<c:url value="/resources/css/domain.css" />"  rel="stylesheet"  type="text/css" />
     <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet"  type="text/css" />
     <link href="<c:url value="/resources/javascript/qtip2/jquery.qtip.css" />"  rel="stylesheet"  type="text/css" />
-    <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/jquery/jquery-1.7.1.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/qtip2/jquery.qtip.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
 </head>
 <body>
 
@@ -51,5 +51,16 @@
     </c:otherwise>
 </c:choose>
 
+<!-- JavaScript placed near the end </body> tag as this ensures the DOM is loaded before manipulation
+of it occurs. This is not a requirement, simply a useful tip! -->
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('span[id*="location-"]').each(
+                function(i) {
+                    preparePopup(this.id);
+                }
+        );
+    });
+</script>
 </body>
 </html>

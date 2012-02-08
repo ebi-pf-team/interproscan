@@ -20,7 +20,9 @@
     <link href="<c:url value="/resources/css/protein.css" />" rel="stylesheet"  type="text/css" />
     <link href="<c:url value="/resources/css/domain.css" />"  rel="stylesheet"  type="text/css" />
     <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet"  type="text/css" />
+    <link href="<c:url value="/resources/javascript/qtip2/jquery.qtip.css" />"  rel="stylesheet"  type="text/css" />
     <script src="<c:url value="/resources/javascript/jquery/jquery-1.7.1.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/qtip2/jquery.qtip.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
 </head>
 <body>
@@ -47,5 +49,33 @@
         </footer>
     </c:otherwise>
 </c:choose>
+
+<!-- JavaScript placed near the end </body> tag as this ensures the DOM is loaded before manipulation
+of it occurs. This is not a requirement, simply a useful tip! -->
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
+//    if($.cookie("css")) {
+//        var id = $.cookie("colour-by-database");
+//        ...
+//    }
+
+        // CSS switching
+        var checkbox = $("input[type=checkbox]");
+        configureStylesheets(checkbox.checked); // initialise
+        checkbox.click(function() {
+            configureStylesheets(this.checked);
+            // Save in cookie
+            //$.cookie("colour-by-database", this.checked, {expires: 365, path: '/'});
+        });
+
+        $('span[id*="location-"]').each(
+                function(i) {
+                    preparePopup(this.id);
+                }
+        );
+    });
+</script>
 </body>
 </html>

@@ -25,7 +25,7 @@
 
 <%--Returns protein structure features for inclusion in DBML--%>
 
-<c:set var="id" value="0" scope="page"/>
+<c:set var="locationId" value="0" scope="request"/>
 
 <c:if test="${not empty protein.structuralFeatures}">
     <a name="structural-features"></a>
@@ -54,8 +54,8 @@
                     <c:forEach var="structuralMatch" items="${database.structuralMatches}">
                         <%-- location = ${structuralMatch.key} --%>
                         <%-- structuralMatchData = ${structuralMatch.value} --%>
-                        <c:set var="id" value="${id + 1}" />
-                        <h:structuralLocation id="${id}"
+                        <c:set var="locationId" value="${locationId + 1}" />
+                        <h:structuralLocation id="${locationId}"
                                               protein="${protein}"
                                               location="${structuralMatch.key}"
                                               structuralMatchData="${structuralMatch.value}"
@@ -94,8 +94,8 @@
                     <c:forEach var="structuralMatch" items="${database.structuralMatches}">
                         <%-- location = ${structuralMatch.key} --%>
                         <%-- structuralMatchData = ${structuralMatch.value} --%>
-                        <c:set var="id" value="${id + 1}" />
-                        <h:structuralLocation id="${id}"
+                        <c:set var="locationId" value="${locationId + 1}" />
+                        <h:structuralLocation id="${locationId}"
                                               protein="${protein}"
                                               location="${structuralMatch.key}"
                                               structuralMatchData="${structuralMatch.value}"
@@ -107,37 +107,3 @@
         </c:forEach>
     </ol>
 </c:if>
-
-<!-- JavaScript placed near the end </body> tag as this ensures the DOM is loaded before manipulation
-of it occurs. This is not a requirement, simply a useful tip! -->
-<script type="text/javascript">
-    $(document).ready(function()
-    {
-        for(var i = 1; i <= ${id}; i++)
-        {
-            $('#location-'.concat(i)).qtip({
-                content: {
-                    text: $('#structuralPopup-'.concat(i)),
-                    title: {
-                        text: 'Location data',
-                        button: true // Close button
-                    }
-                },
-                position: {
-                    my: 'top center',
-                    at: 'bottom center',
-                    viewport: $(window), // Keep the tooltip on-screen at all times
-                    effect: true // Disable positioning animation
-                },
-                show: {
-                    event: 'click',
-                    solo: true // Only show one tooltip at a time
-                },
-                hide: 'unfocus',
-                style: {
-                    classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-shadow'
-                }
-            });
-        }
-    });
-</script>
