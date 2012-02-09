@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
+import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -37,6 +38,12 @@ public class ProteinViewControllerTest {
         c.setEntryHierarchy(entryHierarchy);
         c.setMatchData(matchData);
         c.proteinFeatures("P38398");
+    }
+
+    @Test
+    public void testSimpleProteinValueOf()    {
+        SimpleProtein sp = SimpleProtein.valueOf(sampleProtein(), entryHierarchy);
+        assertEquals("A0A314", sp.getAc());
     }
 
     @Test
@@ -73,12 +80,13 @@ public class ProteinViewControllerTest {
     }
 
     /**
-     * Returns protein for given accession number
+     * Returns sample protein
      *
-     * @param  ac   Protein accession, for example "P38398"
-     * @return Protein for given accession
+     * @return Sample protein
      */
-    private Protein sampleProtein(String ac) {
+    private Protein sampleProtein() {
+
+        // TODO: This is a really bad example -- we should replace this with a an XML file containing real protein data injected as a Spring resource
 
         // Create protein
         Protein p = new Protein.Builder("MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG\n" +
@@ -87,12 +95,16 @@ public class ProteinViewControllerTest {
                 .crossReference(new ProteinXref("UniProt", "A0A314", "RR12_COFAR", "30S ribosomal protein S12, chloroplastic"))
                 .build();
 
+        // Signature library
+        SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.0");
+
         // Add matches
         Set<Hmmer3Match.Hmmer3Location> l1 = new HashSet<Hmmer3Match.Hmmer3Location>();
         l1.add(new Hmmer3Match.Hmmer3Location(1, 123, -8.9, 0.28, 63, 82, 114, 73, 94));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("G3DSA:2.40.50.140")
                         .name("Nucleic acid-binding proteins")
+                        .signatureLibraryRelease(release)
                         .entry(new Entry.Builder("IPR012340")
                                 .description("Nucleic acid-binding, OB-fold")
                                 .type(EntryType.DOMAIN)
@@ -110,12 +122,14 @@ public class ProteinViewControllerTest {
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("SSF50249")
                         .name("Nucleic_acid_OB")
+                        .signatureLibraryRelease(release)
                         .entry(entry)
                         .build(),
                 -8.9, 0.28, l2));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("SSF50250")
                         .name("Made up name")
+                        .signatureLibraryRelease(release)
                         .entry(entry)
                         .build(),
                 -8.9, 0.28, l2));
