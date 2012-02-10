@@ -179,18 +179,22 @@ public class EntryHierarchy {
     /**
      * Compare the hierarchy level of two entries
      *
-     * @param ac1 First entry accession
-     * @param ac2 Second entry accession
+     * @param e1 First entry accession
+     * @param e2 Second entry accession
      * @return 0 if the same, -1 or 1
      */
-    public int compareHierarchyLevels(String ac1, String ac2) {
-        if (this.entryHierarchyDataMap.containsKey(ac1) && this.entryHierarchyDataMap.containsKey(ac2)) {
-            EntryHierarchyData data1 = this.entryHierarchyDataMap.get(ac1);
-            EntryHierarchyData data2 = this.entryHierarchyDataMap.get(ac2);
-            Integer level1 = data1.getHierarchyLevel();
-            Integer level2 = data2.getHierarchyLevel();
-            return level1.compareTo(level2);
+    public int compareHierarchyLevels(SimpleEntry e1, SimpleEntry e2) {
+        if (e1.getHierarchyLevel() == null || e2.getHierarchyLevel() == null) {
+            return 0;
         }
-        return 0;
+        return e1.getHierarchyLevel().compareTo(e2.getHierarchyLevel());
+    }
+
+    public Integer getHierarchyLevel(String ac) {
+        if (this.entryHierarchyDataMap.containsKey(ac)) {
+            EntryHierarchyData data = this.entryHierarchyDataMap.get(ac);
+            return data.getHierarchyLevel();
+        }
+        return null;
     }
 }

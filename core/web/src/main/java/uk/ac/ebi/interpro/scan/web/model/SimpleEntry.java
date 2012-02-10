@@ -17,22 +17,35 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
     private final String shortName;
     private final String name;
     private final String type;
+    private Integer hierarchyLevel;
     private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
     private Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
     private static EntryHierarchy entryHierarchy;
 
     public SimpleEntry(String ac, String shortName, String name, String type, EntryHierarchy entryHierarchy) {
-        this.ac         = ac;
-        this.shortName  = shortName;
-        this.name       = name;
-        this.type       = type;
-        if (SimpleEntry.entryHierarchy == null){
+        this.ac = ac;
+        this.shortName = shortName;
+        this.name = name;
+        this.type = type;
+        if (SimpleEntry.entryHierarchy == null) {
             SimpleEntry.entryHierarchy = entryHierarchy;
+        }
+        if (entryHierarchy != null) {
+            this.hierarchyLevel = entryHierarchy.getHierarchyLevel(ac);
         }
     }
 
     public String getAc() {
         return ac;
+    }
+
+    /**
+     * Returns the hierarchy level for the entry, or null if it is not in any hierarchy.
+     *
+     * @return the hierarchy level for the entry, or null if it is not in any hierarchy.
+     */
+    public Integer getHierarchyLevel() {
+        return hierarchyLevel;
     }
 
     public String getShortName() {
@@ -76,7 +89,8 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
         return (ac != null && !ac.equals(""));
     }
 
-    @Override public int compareTo(SimpleEntry that) {
+    @Override
+    public int compareTo(SimpleEntry that) {
 
         if (this == that) {
             return 0;
@@ -85,24 +99,21 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
         // No supermatch locations (un-integrated signatures)
         if (this.ac == null || this.ac.equals("")) {
             return 1;
-        }
-        else if (that.ac == null || that.ac.equals("")) {
+        } else if (that.ac == null || that.ac.equals("")) {
             return -1;
         }
 
         // Entry type
         final EntryType thisType = EntryType.parseName(this.getType());
         final EntryType thatType = EntryType.parseName(that.getType());
-        if ( thisType != null && thatType != null) {
+        if (thisType != null && thatType != null) {
             final int compare = thisType.compareTo(thatType);
             if (compare != 0) {
                 return compare;
             }
-        }
-        else if (thisType != null){
+        } else if (thisType != null) {
             return -1;
-        }
-        else if (thatType != null){
+        } else if (thatType != null) {
             return 1;
         }
 
@@ -110,7 +121,7 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
         if (!this.ac.equals(that.ac)) {
             if (SimpleEntry.entryHierarchy.areInSameHierarchy(this.ac, that.ac)) {
                 // Sort based upon level in hierarchy
-                final int hierarchyComparison = SimpleEntry.entryHierarchy.compareHierarchyLevels(this.ac, that.ac);
+                final int hierarchyComparison = SimpleEntry.entryHierarchy.compareHierarchyLevels(this, that);
                 if (hierarchyComparison != 0) {
                     return hierarchyComparison;
                 }
@@ -121,12 +132,13 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
         return Collections.min(this.locations).compareTo(Collections.min(that.locations));
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof SimpleEntry))
             return false;
-        return this.ac.equals(((SimpleEntry)o).ac);
+        return this.ac.equals(((SimpleEntry) o).ac);
     }
 
 }
