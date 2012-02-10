@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
+import uk.ac.ebi.interpro.scan.io.sequence.FastaEntryWriter;
 import uk.ac.ebi.interpro.scan.model.Protein;
 
 import java.io.*;
@@ -100,19 +101,7 @@ public class FastaFileWriter implements Serializable {
                 if (protein.getId() == null) {
                     throw new FastaFileWritingException("The FastaFileWriter class can only write out Protein objects that have already been persisted to the database as it uses the database primary key as the protein ID in the fasta file.", filePath);
                 }
-                // Write ID line.
-                writer.write('>');
-                writer.write(protein.getId().toString());
-                writer.write('\n');
-
-                for (int index = 0; index < seq.length(); index += sequenceLineLength) {
-                    if (seq.length() > index + sequenceLineLength) {
-                        writer.write(seq.substring(index, index + sequenceLineLength));
-                    } else {
-                        writer.write(seq.substring(index));
-                    }
-                    writer.write('\n');
-                }
+                FastaEntryWriter.writeFastaFileEntry(writer, protein.getId().toString(), seq, sequenceLineLength);
             }
         } finally {
             if (writer != null) {

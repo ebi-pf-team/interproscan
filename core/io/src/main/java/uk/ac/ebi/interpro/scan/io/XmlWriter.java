@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.io;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import uk.ac.ebi.interpro.scan.model.MatchesHolder;
+import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
@@ -28,7 +28,7 @@ public class XmlWriter {
         this.marshaller = marshaller;
     }
 
-    public void writeMatches(final File file, final MatchesHolder matchesHolder) throws IOException {
+    public void writeMatches(final File file, final IMatchesHolder matchesHolder) throws IOException {
         if (file.exists()) {
             if (!file.delete()) {
                 throw new IllegalStateException("The file " + file.getAbsolutePath() + " already exists and cannot be deleted.");

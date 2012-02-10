@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
+import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
@@ -52,7 +53,8 @@ public class AmqInterProScanMaster implements Master {
 
     private String outputFile;
 
-    private String outputFormat = "tsv";
+    /* Default value, if no output format is specified */
+    private FileOutputFormat outputFormat = FileOutputFormat.TSV;
 
     private String[] analyses;
 
@@ -69,6 +71,11 @@ public class AmqInterProScanMaster implements Master {
      * n: nucleic acid (DNA or RNA)
      */
     private String sequenceType = "p";
+
+    /**
+     * Minimum nucleotide size of ORF to report (Any integer value). Default value is 50.
+     */
+    private String minSize;
 
     private boolean onlyFarmOutNonDatabaseProcesses;
 
@@ -308,6 +315,10 @@ public class AmqInterProScanMaster implements Master {
             Map<String, String> params = new HashMap<String, String>();
             params.put(RunGetOrfStep.SEQUENCE_FILE_PATH_KEY, fastaFilePath);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
+            //If no sequence type is specified, the default type should be overridden
+            if (this.outputFormat.equals(FileOutputFormat.TSV)) {
+                this.outputFormat = FileOutputFormat.GFF3;
+            }
             createBlackBoxParams(params);
             stepInstancesCreated = createStepInstancesForJob("jobLoadNucleicAcidSequence", params);
         } else {
@@ -328,14 +339,15 @@ public class AmqInterProScanMaster implements Master {
 
         String outputFilePath = outputFile;
         if (outputFilePath == null) {
-            outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + "." + outputFormat.toLowerCase();
+            outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + "." + outputFormat.getFileExtension();
         }
         params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
-        params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat);
+        params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat.getFileExtension());
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
+        params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
     }
 
     /**
@@ -434,6 +446,17 @@ public class AmqInterProScanMaster implements Master {
     }
 
     /**
+     * Parameter passed in on command line to set minimum nucleotide size of ORF to report (EMBOSS getorf parameter).
+     * Default size for InterProScan is 50 nucleic acids (which overwrites the getorf default value of 30).<br>
+     * This option is also configurable within the interproscan.properties file, but will be overwritten by the command value if specified.
+     *
+     * @param minSize Minimum nucleotide size of ORF to report (EMBOSS getorf parameter).
+     */
+    public void setMinSize(String minSize) {
+        this.minSize = minSize;
+    }
+
+    /**
      * If the Run class has created a TCP URI message transport
      * with a random port number, this method injects the URI
      * into the Master, so that the Master can create Workers
@@ -464,7 +487,7 @@ public class AmqInterProScanMaster implements Master {
      */
     @Override
     public void setOutputFormat(String outputFormat) {
-        this.outputFormat = outputFormat;
+        this.outputFormat = FileOutputFormat.stringToFileOutputFormat(outputFormat);
     }
 
     /**

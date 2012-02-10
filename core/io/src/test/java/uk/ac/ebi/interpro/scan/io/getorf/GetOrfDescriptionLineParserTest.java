@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Tests {@link uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser}.
@@ -40,13 +40,11 @@ public class GetOrfDescriptionLineParserTest {
     @Before
     public void init() {
         orfs = new HashSet<OpenReadingFrame>();
-        orfs.add(new OpenReadingFrame(735, 1112, NucleotideSequenceStrand.SENSE));
-        orfs.add(new OpenReadingFrame(49, 465, NucleotideSequenceStrand.ANTISENSE));
-        orfs.add(new OpenReadingFrame(1, 231, NucleotideSequenceStrand.SENSE));
-    }
-
-    @Test
-    public void testExistenceOfInputFile() {
+        orfs.add(new OpenReadingFrame(10, 1100, NucleotideSequenceStrand.SENSE));
+        orfs.add(new OpenReadingFrame(50, 400, NucleotideSequenceStrand.ANTISENSE));
+        orfs.add(new OpenReadingFrame(1, 230, NucleotideSequenceStrand.SENSE));
+        orfs.add(new OpenReadingFrame(10, 230, NucleotideSequenceStrand.ANTISENSE));
+        assertNotNull("Parser shouldn't be NULL before running test.", parser);
         assertNotNull("GetORF test file doesn't exist!", getOrfTestFile);
     }
 
@@ -60,6 +58,42 @@ public class GetOrfDescriptionLineParserTest {
             assertTrue("ORF (" + orf.getStrand() + ") " + orf.getStart() + ":" + orf.getEnd() + " should be an item of the result set!", orfs.contains(orf));
         }
     }
+
+    @Test
+    public void testGetIdentifier() {
+        String actual = parser.getIdentifier("");
+        assertNull("Return value should be NULL!", actual);
+        //
+        actual = parser.getIdentifier(null);
+        assertNull("Return value should be NULL!", actual);
+        //
+        actual = parser.getIdentifier("test");
+        assertEquals("test", actual);
+        //
+        actual = parser.getIdentifier("test_test");
+        assertEquals("test", actual);
+        //
+        String expected = "test";
+        actual = parser.getIdentifier("test_1 [230 - 10] (REVERSE SENSE)");
+        assertNotNull("Actual shouldn't be NULL!", actual);
+//        assertEquals("Strings should have the same length!", expected.length(), actual.length());
+        assertEquals(expected, actual);
+        //
+        expected = "reverse translation of P22298";
+        //getorf result: reverse_1 [2 - 76] translation of P22298
+        actual = parser.getIdentifier("reverse_1 [2 - 76] translation of P22298");
+        assertEquals(expected, actual);
+        //
+        expected = "reverse translation of P22298";
+        actual = parser.getIdentifier("reverse_7 [394 - 224] (REVERSE SENSE) translation of P22298");
+        assertEquals(expected, actual);
+        //
+        expected = "seq1";
+        //getorf result: seq1_1 [2 - 76]
+        actual = parser.getIdentifier("seq1_1 [2 - 76]");
+        assertEquals(expected, actual);
+    }
+
 
     private Set<String> read(org.springframework.core.io.Resource resource) throws IOException {
         final Set<String> descriptions = new HashSet<String>();

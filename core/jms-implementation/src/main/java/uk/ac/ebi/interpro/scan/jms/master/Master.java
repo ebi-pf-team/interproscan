@@ -65,6 +65,15 @@ public interface Master extends Runnable {
     void setSequenceType(String sequenceType);
 
     /**
+     * Parameter passed in on command line to set minimum nucleotide size of ORF to report (EMBOSS getorf parameter).
+     * Default size for InterProScan is 50 nucleic acids (which overwrites the getorf default value of 30).<br>
+     * This option is also configurable within the interproscan.properties file, but will be overwritten by the command value if specified.
+     *
+     * @param minSize Minimum nucleotide size of ORF to report (EMBOSS getorf parameter).
+     */
+    void setMinSize(String minSize);
+
+    /**
      * If the Run class has created a TCP URI message transport
      * with a random port number, this method injects the URI
      * into the Master, so that the Master can create Workers
