@@ -5,9 +5,33 @@
  * @version $Id$
  */
 
+body {
+    font-family: Verdana, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
 abbr {
     border-bottom: 1px dotted black;
     cursor: help;
+}
+
+.hierarch.ul {
+    /* The tree icon is 12px wide. */
+    padding-left: 14px;
+    margin: 0;
+}
+
+.hierarch li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-indent: 0em;
+}
+
+.hierarch ul li {
+    list-style: url(../images/copiedFromInterPro/ico_tree.png);
+    margin: 0;
+    padding-left: 0.7em;
 }
 
 ol.entries, ol.signatures, ol.structural-features, ol.structural-predictions {
@@ -33,7 +57,7 @@ li.entry:hover, li.signature:hover, li.structural-feature:hover, li.structural-p
 div.scale {
     /*border:     0.1em solid black; *//* Line height and colour */
     position: relative;
-    width: 95%;
+    width: 92%;
     height: 1em;
     background-color: #eeeeee;
 }
@@ -50,7 +74,7 @@ span.scale {
 div.match {
     border: 0.1em solid black; /* Line height and colour */
     position: relative;
-    width: 95%;
+    width: 92%;
 }
 
 /* div for a supermatch, with 0.8em spacing between divs (padding-bottom) */
@@ -58,7 +82,7 @@ div.supermatchline {
     /*border:     0.1em solid black; *//* Line height and colour */
     border-style: none;
     position: relative;
-    width: 95%;
+    width: 92%;
     padding-bottom: 0.7em;
     display: inline-block;
 }
@@ -66,7 +90,7 @@ div.supermatchline {
 span.supermatchType {
     font-size: 0.7em;
     vertical-align: top;
-    padding-left: 20px;
+    padding-left: 8px;
 }
 
 /* Individual match */
@@ -155,3 +179,130 @@ span.MODBASE {
 /*table.match tr.entry {*/
 /*background-color:   #dcdcdc;*/
 /*}*/
+
+/*TODO - __COPIED__ from interpro.css line 879.  Need to work out a better way of maintaining this css. */
+
+.menu-filter {
+    width: 154px;
+    clear: left;
+    float: left;
+    display: block;
+    border: 1px solid #d3d3d3;
+    margin-top: 40px;
+    padding: 6px 10px;
+    -moz-border-radius: 0 10px 0 10px;
+    -khtml-border-radius: 0 10px 0 10px;
+    -webkit-border-radius: 0 10px 0 10px;
+    border-radius: 0 10px 0 10px;
+    font-size: 110%;
+    background-color: #efefef;
+}
+
+.menu-filter H1 {
+    color: #434343;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.menu-filter fieldset {
+    padding-top: 12px;
+}
+
+.menu-filter fieldset label.view_all {
+    padding-left: 19px;
+    padding-top: 5px;
+    background: url(../images/copiedFromInterPro/ico_type_all.png) no-repeat 0 2px;
+    font-weight: bold;
+}
+
+.menu-filter div {
+    margin-bottom: 10px;
+}
+
+.menu-filter div H1 {
+    color: #2e5882;
+    font-size: 110%;
+    font-weight: bold;
+    background-color: #f2f6f8;
+    border: 1px solid #9eb6ce;
+    padding: 4px 10px;
+}
+
+.menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {
+    box-shadow: 0px 2px 2px #adadad;
+    -moz-box-shadow: 0px 2px 2px #adadad;
+    -khtml-box-shadow: 0px 2px 2px #adadad;
+    -webkit-box-shadow: 0px 2px 2px #adadad;
+}
+
+.menu-filter div fieldset {
+    border: 1px solid #d1d1d1;
+    margin: 0;
+}
+
+.menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-colour div {
+    display: block;
+}
+
+.menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {
+    background-color: #fff;
+    padding-top: 6px;
+    border-top: 0;
+    -moz-border-radius: 0 0 4px 4px;
+    -khtml-border-radius: 0 0 4px 4px;
+    -webkit-border-radius: 0 0 4px 4px;
+    border-radius: 0 0 4px 4px;
+}
+
+.menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label {
+    border: 0px green solid;
+    padding-left: 19px;
+    padding-top: 5px;
+}
+
+.menu-filter .menu-filter-type label.family {
+    background: url(../images/copiedFromInterPro/ico_type_family.png) no-repeat 0 2px;
+}
+
+.menu-filter .menu-filter-type label.domains {
+    background: url(../images/copiedFromInterPro/ico_type_domain.png) no-repeat 0 2px;
+}
+
+.menu-filter .menu-filter-type label.repeats {
+    background: url(../images/copiedFromInterPro/ico_type_repeat.png) no-repeat 0 2px;
+}
+
+.menu-filter .menu-filter-type label.site {
+    background: url(../images/copiedFromInterPro/ico_type_site.png) no-repeat 0 2px;
+}
+
+.menu-filter .menu-filter-status label.uni {
+    background: url(../images/copiedFromInterPro/ico_type_uni.png) no-repeat 0 2px;
+}
+
+.menu-filter .menu-filter-colour {
+    font-size: 90%;
+}
+
+.menu-filter .menu-filter-colour legend {
+    font-size: 100%;
+    font-weight: bold;
+}
+
+.menu-filter .menu-filter-colour fieldset {
+    border-top: 1px solid #d1d1d1;
+}
+
+div#content {
+    width: 1000px;
+}
+
+div#left-menu {
+    width: 170px;
+    float: left;
+}
+
+div#tracks {
+    width: 800px;
+    float: right;
+}

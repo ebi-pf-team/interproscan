@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
+
+import java.util.*;
 
 /**
  * @author Phil Jones
@@ -52,6 +52,32 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
     public Set<SimpleEntry> getEntries() {
         return entries;
     }
+
+    public Set<SimpleEntry> getEntriesHierarchyOrder() {
+        final Set<SimpleEntry> hierarchySortedSet = new TreeSet<SimpleEntry>(HIERARCHY_COMPARATOR);
+        hierarchySortedSet.addAll(entries);
+        return hierarchySortedSet;
+    }
+
+    private static final Comparator<SimpleEntry> HIERARCHY_COMPARATOR = new Comparator<SimpleEntry>() {
+
+        public int compare(SimpleEntry e1, SimpleEntry e2) {
+            if ((e1 == null || e2 == null) || (e1 == e2) || (e1.equals(e2))) {
+                return 0;
+            }
+            EntryHierarchy eh = SimpleEntry.getEntryHierarchy();
+            int comparison = eh.compareHierarchyLevels(e1, e2);
+            if (comparison == 0) {
+                // Siblings!
+                comparison = e1.getName().compareTo(e2.getName());
+            }
+            if (comparison == 0) {
+                comparison = e1.getAc().compareTo(e2.getAc());
+            }
+            return comparison;
+        }
+
+    };
 
     public void addEntry(SimpleEntry entry) {
         this.entries.add(entry);
