@@ -3,10 +3,8 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
-import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
-import uk.ac.ebi.interpro.scan.model.OpenReadingFrame;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.ProteinXref;
+import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
@@ -55,9 +53,6 @@ public class ProteinLoader implements SequenceLoader {
     private boolean isGetOrfOutput;
 
     private GetOrfDescriptionLineParser descriptionLineParser;
-
-    //This is simply a collection of all create open reading frames (they are created while calling the store method)
-    private Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 
     public void setProteinLookup(PrecalculatedProteinLookup proteinLookup) {
         this.proteinLookup = proteinLookup;
@@ -113,31 +108,16 @@ public class ProteinLoader implements SequenceLoader {
             Protein protein = new Protein(sequence);
             if (crossReferences != null) {
                 for (String crossReference : crossReferences) {
-                    ProteinXref xref = new ProteinXref(crossReference);
+                    ProteinXref xref = XrefParser.getProteinXref(crossReference);
                     protein.addCrossReference(xref);
 
                     // TODO - At this point, if this is the output of GetOrf being parsed, need to
                     // parse out the start and end coordinates relative to the nucleic acid,
                     // retrieve the correct nucleic acid and create an OpenReadingFrame object
                     // to relate the Protein to the NucleicAcid.
-                    if (isGetOrfOutput) {
-                        String[] chunks = descriptionLineParser.parseGetOrfDescriptionLine(crossReference);
-                        OpenReadingFrame orf = descriptionLineParser.createORFFromParsingResult(chunks);
-                        if (orf != null) {
-                            String identifier = descriptionLineParser.getIdentifier(chunks[0]);
-                            NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(identifier);
-                            if (nucleotide != null) {
-                                //attach protein sequence
-                                orf.setProtein(protein);
-                                //attach nucleotide sequence
-                                orf.setNucleotideSequence(nucleotide);
-                                //collecting ORF
-                                orfs.add(orf);
-                            }
-                        } else {
-                            LOGGER.warn("Couldn't create any ORF object by the specified chunks: " + chunks + "!");
-                        }
-                    }
+//                    if (isGetOrfOutput) {
+//                    TODO: Moved this part to a different method called createAndPersistNewORFs()
+//                    }
                 }
             }
             proteinsAwaitingPrecalcLookup.add(protein);
@@ -204,6 +184,9 @@ public class ProteinLoader implements SequenceLoader {
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
+            if (isGetOrfOutput) {
+                createAndPersistNewORFs(persistedProteins);
+            }
             proteinsAwaitingPersistence.clear();
         }
     }
@@ -249,12 +232,6 @@ public class ProteinLoader implements SequenceLoader {
         }
 
         sequenceLoadListener.sequencesLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
-        if (isGetOrfOutput && orfs.size() > 0) {
-            //persisting open reading frames
-            openReadingFrameDAO.insert(orfs);
-            openReadingFrameDAO.flush();
-        }
-
         // Prepare the ProteinLoader for another set of proteins.
         resetBounds();
     }
@@ -265,5 +242,53 @@ public class ProteinLoader implements SequenceLoader {
     private void resetBounds() {
         bottomProteinId = null;
         topProteinId = null;
+    }
+
+    private void createAndPersistNewORFs(final ProteinDAO.PersistedProteins persistedProteins) {
+        //Holder for new ORFs which should be persisted
+        Set<OpenReadingFrame> orfsAwaitingPersistence = new HashSet<OpenReadingFrame>();
+
+        Set<Protein> newProteins = persistedProteins.getNewProteins();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Persisted " + newProteins.size() + " new proteins and their cross references.");
+            LOGGER.debug("Iterating over all new proteins and their xrefs...");
+        }
+        for (Protein newProtein : newProteins) {
+            Set<ProteinXref> xrefs = newProtein.getCrossReferences();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Protein with ID " + newProtein.getId() + " has " + xrefs.size() + " cross references.");
+            }
+            for (ProteinXref xref : xrefs) {
+                //
+                String identifier = xref.getIdentifier();
+                String[] chunks = descriptionLineParser.parseGetOrfDescriptionLine(identifier);
+                OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(chunks);
+                if (newOrf != null) {
+                    String nucleotideId = descriptionLineParser.getIdentifier(identifier);
+                    NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
+                    //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
+                    //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
+                    if (nucleotide == null) {
+                        nucleotide = nucleotideSequenceDAO.retrieveByXrefName(nucleotideId);
+                    }
+                    if (nucleotide != null) {
+                        newOrf.setNucleotideSequence(nucleotide);
+                        newOrf.setProtein(newProtein);
+                        newProtein.addOpenReadingFrame(newOrf);
+                        orfsAwaitingPersistence.add(newOrf);
+                    } else {
+                        LOGGER.warn("Couldn't find nucleotide sequence by the following identifier: " + nucleotideId);
+                    }
+                } else {
+                    LOGGER.warn("Couldn't create any ORF object by the specified chunks: " + chunks + "!");
+                }
+            }
+        }
+        //Finally persist open reading frames
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Persisting " + orfsAwaitingPersistence.size() + " new open reading frames.");
+        }
+        openReadingFrameDAO.insert(orfsAwaitingPersistence);
+        openReadingFrameDAO.flush();
     }
 }

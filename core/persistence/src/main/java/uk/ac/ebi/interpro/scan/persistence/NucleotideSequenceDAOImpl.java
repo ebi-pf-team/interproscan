@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
-import uk.ac.ebi.interpro.scan.model.Signature;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -46,6 +45,27 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
                         "SELECT s FROM NucleotideSequence s INNER JOIN s.xrefs x " +
                                 "WHERE x.identifier like :identifier");
         query.setParameter("identifier", '%' + identifier + '%');
+        @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * SELECT * FROM NUCLEOTIDE_SEQUENCE s
+     * inner join NUCLEOTIDE_SEQUENCE_XREF x
+     * on s.ID=x.SEQUENCE_ID
+     * where x.NAME like '%AACH01000026.1%';
+     *
+     * @return
+     */
+    public NucleotideSequence retrieveByXrefName(String name) {
+        final Query query =
+                entityManager.createQuery(
+                        "SELECT s FROM NucleotideSequence s INNER JOIN s.xrefs x " +
+                                "WHERE x.name like :name");
+        query.setParameter("name", '%' + name + '%');
         @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             return list.get(0);

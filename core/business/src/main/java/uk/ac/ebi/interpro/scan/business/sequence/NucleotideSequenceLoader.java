@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
@@ -42,7 +43,7 @@ public class NucleotideSequenceLoader implements SequenceLoader {
             NucleotideSequence nucleotideSequence = new NucleotideSequence(sequence);
             if (crossReferences != null) {
                 for (String crossReference : crossReferences) {
-                    NucleotideSequenceXref xref = new NucleotideSequenceXref(crossReference);
+                    NucleotideSequenceXref xref = XrefParser.getNucleotideSequenceXref(crossReference);
                     nucleotideSequence.addCrossReference(xref);
                 }
             } else {

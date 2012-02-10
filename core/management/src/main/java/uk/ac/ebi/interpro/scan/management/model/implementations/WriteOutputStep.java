@@ -2,11 +2,14 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.XmlWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.*;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.MatchesHolder;
+import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
+import uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder;
+import uk.ac.ebi.interpro.scan.model.ProteinMatchesHolder;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
@@ -20,6 +23,9 @@ import java.util.Map;
  * Writes all matches for a slice of proteins to a file.
  * <p/>
  * Should be run once analysis is complete.
+ *
+ * @author ?
+ * @author Maxim Scheremetjew
  */
 
 public class WriteOutputStep extends Step {
@@ -58,7 +64,8 @@ public class WriteOutputStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.info("Starting step with Id " + this.getId());
         final Map<String, String> parameters = stepInstance.getParameters();
-        final String outputFormat = parameters.get(OUTPUT_FILE_FORMAT);
+        final String outputFormatStr = parameters.get(OUTPUT_FILE_FORMAT);
+        final FileOutputFormat outputFormat = FileOutputFormat.stringToFileOutputFormat(outputFormatStr);
         final File outputFile = new File(parameters.get(OUTPUT_FILE_PATH_KEY));
         if (outputFile.exists()) {
             if (!outputFile.delete()) {
@@ -66,16 +73,18 @@ public class WriteOutputStep extends Step {
             }
         }
         try {
-            if ("tsv".equalsIgnoreCase(outputFormat)) {
-                LOGGER.info("Writing out TSV file");
-                outputToTSV(outputFile, stepInstance);
-            } else if ("xml".equalsIgnoreCase(outputFormat)) {
-                LOGGER.info("Writing out XML file");
-                outputToXML(outputFile, stepInstance);
-            } else if ("gff".equalsIgnoreCase(outputFormat)) {
-                LOGGER.info("Writing out GFF file (version 3)");
-                final String sequenceType = parameters.get(SEQUENCE_TYPE);
-                outputToGFF(outputFile, stepInstance, sequenceType);
+            LOGGER.info("Writing out " + outputFormat + " file");
+            final String sequenceType = parameters.get(SEQUENCE_TYPE);
+            switch (outputFormat) {
+                case TSV:
+                    outputToTSV(outputFile, stepInstance);
+                    break;
+                case XML:
+                    outputToXML(outputFile, stepInstance, sequenceType);
+                    break;
+                case GFF3:
+                    outputToGFF(outputFile, stepInstance, sequenceType);
+                    break;
             }
         } catch (IOException ioe) {
             throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan", ioe);
@@ -100,11 +109,16 @@ public class WriteOutputStep extends Step {
         LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 
-    private void outputToXML(File outputFile, StepInstance stepInstance) throws IOException {
+    private void outputToXML(File outputFile, StepInstance stepInstance, String sequenceType) throws IOException {
         final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        MatchesHolder matches = new MatchesHolder();
-        matches.addProteins(proteins);
-        xmlWriter.writeMatches(outputFile, matches);
+        IMatchesHolder matchesHolder;
+        if (sequenceType.equalsIgnoreCase("n")) {
+            matchesHolder = new NucleicAcidMatchesHolder();
+        } else {
+            matchesHolder = new ProteinMatchesHolder();
+        }
+        matchesHolder.addProteins(proteins);
+        xmlWriter.writeMatches(outputFile, matchesHolder);
     }
 
     private void outputToTSV(File file, StepInstance stepInstance) throws IOException {

@@ -65,15 +65,9 @@ public class OpenReadingFrame implements Serializable {
     }
 
     public OpenReadingFrame(int start, int end, NucleotideSequenceStrand strand) {
-        this(start, end, strand, null, null);
-    }
-
-    public OpenReadingFrame(int start, int end, NucleotideSequenceStrand strand, Protein protein, NucleotideSequence nucleotideSequence) {
         this.start = start;
         this.end = end;
         this.strand = strand;
-        this.protein = protein;
-        this.nucleotideSequence = nucleotideSequence;
     }
 
     @XmlAttribute(required = true)
@@ -150,5 +144,4 @@ public class OpenReadingFrame implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
 }
