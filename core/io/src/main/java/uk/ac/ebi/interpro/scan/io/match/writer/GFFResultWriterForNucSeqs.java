@@ -1,11 +1,10 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
-import org.springframework.util.StringUtils;
+import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
 import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -23,12 +22,26 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
+    private String nucleotideId;
 
+    /**
+     * For testing only *
+     */
+    protected GFFResultWriterForNucSeqs() {
+        super();
+    }
 
     public GFFResultWriterForNucSeqs(File file) throws IOException {
         super(file);
     }
 
+    private String getNucleotideId() {
+        return nucleotideId;
+    }
+
+    private void setNucleotideId(String nucleotideId) {
+        this.nucleotideId = super.getValidGFF3SeqId(nucleotideId);
+    }
 
     /**
      * Writes out a Protein object to a GFF version 3 file
@@ -38,71 +51,104 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
     public int write(Protein protein) throws IOException {
-        //Get protein accession
-        String proteinAcc = getProteinAccession(protein);
         int sequenceLength = protein.getSequenceLength();
         String date = dmyFormat.format(new Date());
         Set<Match> matches = protein.getMatches();
-        //Write sequence region information
+        String proteinIdFromGetorf;
+        String proteinIdForGFF = null;
         if (matches.size() > 0) {
-            //##sequence-region seqid start end
-            super.gffWriter.write("##sequence-region " + proteinAcc + " 1 " + sequenceLength);
-            writeReferenceLine(proteinAcc, sequenceLength);
-            addFASTASeqToMap(proteinAcc, protein.getSequence());
+            for (ProteinXref proteinXref : protein.getCrossReferences()) {
+                proteinIdFromGetorf = proteinXref.getIdentifier();
+                //Write nucleotide sequences and ORFs
+                Set<OpenReadingFrame> orfs = protein.getOpenReadingFrames();
+                if (orfs != null && orfs.size() > 0) {
+                    //Write nucleic acid and returns ORF of interest
+                    OpenReadingFrame orf = writeNucleotideAcidLine(orfs, proteinXref.getIdentifier());
+                    //Build protein identifier for GFF3
+                    proteinIdForGFF = buildProteinIdentifier(orf);
+                    proteinIdForGFF = super.getValidGFF3SeqId(proteinIdForGFF);
+
+                    //Write sequence to the FASTA part
+                    addFASTASeqToMap(proteinIdForGFF, protein.getSequence());
+                    //Write ORF
+                    super.gffWriter.write(getORFLine(orf, proteinIdFromGetorf, proteinIdForGFF, protein.getSequenceLength()));
+                    //Write polypeptide
+                    super.gffWriter.write(getPolypeptideLine(sequenceLength, proteinIdForGFF));
+                }
+                processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
+
+            }//end protein xrefs loop
         }
-        for (Match match : matches) {
-            final Signature signature = match.getSignature();
-            final String signatureAc = signature.getAccession();
-            final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
-            final String analysis = signatureLibrary.getName();
-            final String description = match.getSignature().getDescription();
+        return 0;
+    }
 
-            Set<Location> locations = match.getLocations();
-            if (locations != null) {
-                for (Location location : locations) {
-                    String score = "-";
-                    String status = "T";
-
-                    if (location instanceof HmmerLocation) {
-                        score = Double.toString(((HmmerLocation) location).getEvalue());
-                    }
-
-                    final List<String> gffFeature = new ArrayList<String>();
-                    gffFeature.add(proteinAcc);
-                    gffFeature.add(analysis);
-                    gffFeature.add("protein_match");
-                    int locStart = location.getStart();
-                    int locEnd = location.getEnd();
-                    gffFeature.add(Integer.toString(locStart));
-                    gffFeature.add(Integer.toString(locEnd));
-                    gffFeature.add(score);
-                    gffFeature.add("+");
-                    gffFeature.add("0");
-                    //Building attributes for the last column in the GFF table
-                    final List<String> gffAttributes = new ArrayList<String>();
-                    gffAttributes.add("ID=match" + match.getId());
-                    gffAttributes.add("Target=" + proteinAcc);
-                    gffAttributes.add("Name=" + signatureAc);
-                    if (description != null) {
-                        gffAttributes.add("signature_desc=" + description);
-                    }
-                    gffAttributes.add("status=" + status);
-                    gffAttributes.add("date=" + date);
-                    if (mapToInterProEntries) {
-                        addAdditionalAttr(signature, gffAttributes);
-                    }
-                    //
-                    gffFeature.add(StringUtils.collectionToDelimitedString(gffAttributes, ";"));
-                    super.gffWriter.write(gffFeature);
-                    //Add match sequence to the map
-                    StringBuilder matchId = new StringBuilder("match" + match.getId());
-                    if (locations.size() > 1) {
-                        matchId.append("_").append(locStart).append("_").append(locEnd);
-                    }
-                    addFASTASeqToMap(matchId.toString(), protein.getSequence().substring(locStart, locEnd));
+    private OpenReadingFrame writeNucleotideAcidLine(Set<OpenReadingFrame> orfs, String proteinId) throws IOException {
+        for (OpenReadingFrame orf : orfs) {
+            String id = GetOrfDescriptionLineParser.getIdentifier(proteinId);
+            NucleotideSequence ntSeq = orf.getNucleotideSequence();
+            for (NucleotideSequenceXref xref : ntSeq.getCrossReferences()) {
+                String identifier = xref.getIdentifier();
+                String name = xref.getName();
+                if ((identifier.equals(id) || identifier.contains(id) || (name != null && name.equals(id))) && proteinId.contains("" + orf.getStart()) && proteinId.contains("" + orf.getEnd())) {
+                    //Write nucleic acid
+                    setNucleotideId(xref.getIdentifier());
+                    super.gffWriter.write(getNucleicAcidLine(ntSeq));
+                    return orf;
                 }
             }
         }
-        return 0;
+        return null;
+    }
+
+    private List<String> getORFLine(OpenReadingFrame orf, String proteinIdFromGetorf, String proteinIdForGFF, int proteinLength) {
+        final String seqId = getNucleotideId();
+        final String strand = (orf.getStrand().equals(NucleotideSequenceStrand.SENSE) ? "+" : "-");
+        final String orfIdentifier = buildOrfIdentifier(orf);
+        GFF3Feature orfFeature = new GFF3Feature(seqId, "getorf", "ORF", orf.getStart(), orf.getEnd(), strand);
+        orfFeature.addAttribute("ID", orfIdentifier);
+        orfFeature.addAttribute("Name", proteinIdFromGetorf);
+        orfFeature.addAttribute("Target", proteinIdForGFF + " 1" + " " + proteinLength);
+        return orfFeature.getGFF3FeatureLine();
+    }
+
+    /**
+     * Generates an ORF identifier used in GFF3.
+     */
+    private String buildOrfIdentifier(OpenReadingFrame orf) {
+        return new StringBuilder("orf_").append(getIdentifierSuffix(orf)).toString();
+    }
+
+    /**
+     * Generates an protein identifier used in GFF3.
+     */
+    private String buildProteinIdentifier(OpenReadingFrame orf) {
+        return new StringBuilder("pp_").append(getIdentifierSuffix(orf)).toString();
+    }
+
+    private String getIdentifierSuffix(OpenReadingFrame orf) {
+        StringBuilder sb = new StringBuilder(getNucleotideId());
+        sb.append("_").append(orf.getStart()).append("_").append(orf.getEnd())
+                .append((orf.getStrand().equals(NucleotideSequenceStrand.ANTISENSE) ? "_r" : ""));
+        return sb.toString();
+    }
+
+    private List<String> getNucleicAcidLine(NucleotideSequence nucleotideSeq) {
+        String seqId = getNucleotideId();
+        int end = nucleotideSeq.getSequence().length();
+        GFF3Feature nucleicAcidFeature = new GFF3Feature(seqId, "provided_by_user", "nucleic_acid", 1, end, "+");
+        nucleicAcidFeature.addAttribute("ID", getNucleotideId());
+        nucleicAcidFeature.addAttribute("Name", getNucleotideId());
+        return nucleicAcidFeature.getGFF3FeatureLine();
+    }
+
+    /**
+     * Writes information about the target protein sequence (or reference sequence).
+     */
+    private List<String> getPolypeptideLine(int sequenceLength, String proteinIdForGFF) {
+        String seqId = getNucleotideId();
+        int end = sequenceLength;
+        GFF3Feature polypeptideFeature = new GFF3Feature(seqId, "getorf", "polypeptide", 1, end, "+");
+        polypeptideFeature.addAttribute("ID", proteinIdForGFF);
+        return polypeptideFeature.getGFF3FeatureLine();
     }
 }

@@ -29,6 +29,9 @@ public abstract class ProteinMatchesResultWriter implements IProteinMatchesWrite
 
     protected DateFormat dmyFormat;
 
+    protected ProteinMatchesResultWriter() {
+    }
+
     public ProteinMatchesResultWriter(File file) throws IOException {
         if (file.exists()) {
             if (!file.delete()) {

@@ -256,7 +256,7 @@ public class NucleotideSequence implements Serializable {
         return new EqualsBuilder()
                 .append(sequence, s.sequence)
                 .append(md5.toLowerCase(), s.md5.toLowerCase())
-                .append(orfs, s.orfs)
+//                .append(orfs, s.orfs)
                 .append(xrefs, s.xrefs)
                 .isEquals();
     }
@@ -266,7 +266,7 @@ public class NucleotideSequence implements Serializable {
         return new HashCodeBuilder(39, 47)
                 .append(sequence)
                 .append(md5)
-                .append(orfs)
+//                .append(orfs)
                 .append(xrefs)
                 .toHashCode();
     }

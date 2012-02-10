@@ -4,8 +4,6 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceStrand;
 import uk.ac.ebi.interpro.scan.model.OpenReadingFrame;
 
-import java.util.regex.Pattern;
-
 /**
  * Description line parser for GetOrf formatted FASTA files.
  *
@@ -19,11 +17,8 @@ public class GetOrfDescriptionLineParser {
 
     private static final String WHITESPACE = " ";
 
-    /*(^>(.*)_(\\d+)\\s+\\[(\\d+)\\s+-\\s+(\\d+)\\].*$)*/
-    private static final Pattern ACCESSION_EXTRACTOR_PATTERN = Pattern.compile("^\\#=GF\\s+[A-Z]{2}\\s+([A-Z0-9]+).*$");
+//    private static final Pattern ACCESSION_EXTRACTOR_PATTERN = Pattern.compile("^\\#=GF\\s+[A-Z]{2}\\s+([A-Z0-9]+).*$");
 
-
-//    public createORFByParsingDescLine
 
     /**
      * Parses out start and end position as well as the strand from the description line.
@@ -35,7 +30,7 @@ public class GetOrfDescriptionLineParser {
             LOGGER.warn("The specified description line is NULL!");
             return null;
         }
-        //Check description line format using PATTERN class
+        //TODO: Check description line format using PATTERN class
         //... e.g.
         //        Matcher acLineMatcher = ACCESSION_EXTRACTOR_PATTERN.matcher(line);
         //                    if (acLineMatcher.find()) {
@@ -71,22 +66,46 @@ public class GetOrfDescriptionLineParser {
         return null;
     }
 
-    public String getIdentifier(String chunk) {
-        int index = chunk.indexOf("_");
-        if (index > 0) {
-
+    /**
+     * Handles identifiers like<br>
+     * test_1 [230 - 10]<br>
+     * test_1 [230 - 10] codes for the lac repressor<br>
+     * test_1 [230 - 10] (REVERSE SENSE)<br>
+     * test_1 [230 - 10] (REVERSE SENSE) codes for the lac repressor
+     * OR<br>
+     * AACH01000026.1_8 [261 - 1] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence.
+     */
+    public static String getIdentifier(String chunk) {
+        if (chunk != null && chunk.length() > 0) {
+//            chunk = chunk.replaceAll(VERSION_PATTERN.pattern(), "");
+            int indexOfUnderline = chunk.indexOf("_");
+            if (indexOfUnderline > 0) {
+                String searchPattern = "SENSE)";
+                String result = chunk.substring(0, indexOfUnderline);
+                int nextIndex = chunk.indexOf(searchPattern);
+                if (nextIndex < 0) {
+                    searchPattern = "] ";
+                    //Minus 1 because of the white space at the end of the pattern
+                    nextIndex = chunk.indexOf(searchPattern) - 1;
+                }
+                if (nextIndex > -1) {
+                    nextIndex = nextIndex + searchPattern.length();
+                    return (result + chunk.substring(nextIndex)).trim();
+                } else {
+                    return result.trim();
+                }
+            } else {
+                return chunk.trim();
+            }
         }
-        return chunk.substring(0, index);
+        return null;
     }
 
-    /**
-     * @param descLine
-     * @return
-     */
     private String filterDescriptionLine(String descLine) {
-        descLine = descLine.replace("[", "");
-        descLine = descLine.replace(")", "");
-        descLine = descLine.replace("(", "");
-        return descLine.replace("]", "");
+        return descLine
+                .replace("[", "")
+                .replace(")", "")
+                .replace("(", "")
+                .replace("]", "");
     }
 }

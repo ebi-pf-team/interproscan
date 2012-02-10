@@ -34,28 +34,27 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test cases for {@link MatchesHolder}
+ * Test cases for {@link uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder}
  *
- * @author Antony Quinn
- * @version $Id$
+ * @author Maxim Scheremetjew
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class MatchesHolderTest extends AbstractTest<MatchesHolder> {
+public class NucleicAcidMatchesHolderTest extends AbstractTest<NucleicAcidMatchesHolder> {
 
-    private static final Logger LOGGER = Logger.getLogger(MatchesHolderTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(NucleicAcidMatchesHolderTest.class.getName());
 
     @Test
     public void testEquals() throws IOException, ParseException {
         // Original
-        MatchesHolder original = getPfamObject();
+        NucleicAcidMatchesHolder original = getPfamObject();
         // Copy
-        MatchesHolder copy = (MatchesHolder) SerializationUtils.clone(original);
+        NucleicAcidMatchesHolder copy = (NucleicAcidMatchesHolder) SerializationUtils.clone(original);
         // Should be equal
         assertEquals("Original and copy should be equal", original, copy);
         // Print
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(original);
+            LOGGER.debug(original.toString());
             LOGGER.debug(super.marshal(original));
         }
     }
@@ -63,25 +62,32 @@ public class MatchesHolderTest extends AbstractTest<MatchesHolder> {
     @Test
     @Ignore("Round trip does not work.  The embedded SignatureLibraryRelease element is not parsed.")
     public void testXml() throws IOException, SAXException {
-        super.testSupportsMarshalling(MatchesHolder.class);
+        super.testSupportsMarshalling(NucleicAcidMatchesHolder.class);
         super.testXmlRoundTrip();
     }
 
-    private MatchesHolder getPfamObject() {
-        // Create protein
-        Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI");
+    private NucleicAcidMatchesHolder getPfamObject() {
+        //Create nucleic acid
+        NucleotideSequence nucleotideSequence = new NucleotideSequence("cgcugggcauugcgccgugggcgguggaa");
+        nucleotideSequence.addCrossReference(new NucleotideSequenceXref("databaseName", "identifier", "name"));
+        //Create protein
+        Protein protein = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI");
         Signature signature = new Signature("PF02310", "B12-binding");
-        p.addCrossReference(new ProteinXref("A0A000_9ACTO"));
+        protein.addCrossReference(new ProteinXref("A0A000_9ACTO"));
+        //Create ORF
+        OpenReadingFrame orf = new OpenReadingFrame(10, 50, NucleotideSequenceStrand.SENSE);
+        protein.addOpenReadingFrame(orf);
+        nucleotideSequence.addOpenReadingFrame(orf);
+        //Create matches
         Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
         locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 121, 2, 108));
-        p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
+        protein.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
         // Create release
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
         signature.setSignatureLibraryRelease(release);
         // Create holder
-        MatchesHolder holder = new MatchesHolder();
-        holder.addProtein(p);
+        NucleicAcidMatchesHolder holder = new NucleicAcidMatchesHolder();
+        holder.addProtein(protein);
         return holder;
     }
-
 }

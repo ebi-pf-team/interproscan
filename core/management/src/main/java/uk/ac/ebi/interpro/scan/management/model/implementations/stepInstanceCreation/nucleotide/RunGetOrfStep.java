@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Phil Jones
@@ -25,7 +26,7 @@ public class RunGetOrfStep extends RunBinaryStep {
     private String fastaFilePath;
 
     /**
-     * Minimum nucleotide size of ORF to report (Any integer value). Default value is 30.
+     * Minimum nucleotide size of ORF to report (Any integer value). Default value is 50.
      */
     private String minSize;
 
@@ -35,6 +36,8 @@ public class RunGetOrfStep extends RunBinaryStep {
     private String maxSize;
 
     public static final String SEQUENCE_FILE_PATH_KEY = "nucleic.seq.file.path";
+
+    public static final String MIN_NUCLEOTIDE_SIZE = "minsize";
 
     /**
      * Path to getorf binary.
@@ -68,7 +71,12 @@ public class RunGetOrfStep extends RunBinaryStep {
 
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
-        final String nucleicAcidSeqFilePath = stepInstance.getParameters().get(SEQUENCE_FILE_PATH_KEY);
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final String nucleicAcidSeqFilePath = parameters.get(SEQUENCE_FILE_PATH_KEY);
+        final String minSizeCommandLine = parameters.get(MIN_NUCLEOTIDE_SIZE);
+        if (minSizeCommandLine != null && minSizeCommandLine.length() > 0) {
+            setMinSize(minSizeCommandLine);
+        }
         final String fastaFile = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePath);
         final List<String> command = new ArrayList<String>();
         command.add(fullPathToBinary);

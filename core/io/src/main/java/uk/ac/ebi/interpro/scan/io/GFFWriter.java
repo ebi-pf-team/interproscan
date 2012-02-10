@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io;
 
-import java.io.Closeable;
+import uk.ac.ebi.interpro.scan.io.sequence.FastaEntryWriter;
+
 import java.io.IOException;
 import java.io.Writer;
 
@@ -14,6 +15,6 @@ public class GFFWriter extends TSVWriter {
     }
 
     public void writeFASTASequence(String identifier, String sequence) throws IOException {
-        super.writer.write(">" + identifier + "\n" + sequence + "\n");
+        FastaEntryWriter.writeFastaFileEntry(super.writer, identifier, sequence, 60);
     }
 }

@@ -17,15 +17,16 @@ import java.util.Set;
  * Note: Not stored in database, just returned by DAO as a convenience class.
  *
  * @author Antony Quinn
+ * @author Maxim Scheremetjew
  * @version $Id$
  */
 @XmlRootElement(name = "protein-matches")
 @XmlType(name = "proteinMatchesType")
-public final class MatchesHolder implements Serializable {
+public final class ProteinMatchesHolder implements IMatchesHolder, Serializable {
 
     private final Set<Protein> proteins = new HashSet<Protein>();
 
-    public MatchesHolder() {
+    public ProteinMatchesHolder() {
     }
 
     public void addProtein(Protein protein) {
@@ -48,9 +49,9 @@ public final class MatchesHolder implements Serializable {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof MatchesHolder))
+        if (!(o instanceof ProteinMatchesHolder))
             return false;
-        final MatchesHolder s = (MatchesHolder) o;
+        final ProteinMatchesHolder s = (ProteinMatchesHolder) o;
         return new EqualsBuilder()
                 .append(proteins, s.proteins)
                 .isEquals();

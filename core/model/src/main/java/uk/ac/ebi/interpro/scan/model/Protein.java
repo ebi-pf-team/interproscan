@@ -101,6 +101,10 @@ public class Protein implements Serializable {
     // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<ProteinXref> crossReferences = new HashSet<ProteinXref>();
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
+//    @XmlElement(name = "orfs", required = true)
+    private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -111,6 +115,7 @@ public class Protein implements Serializable {
         setSequenceAndMd5(sequence);
     }
 
+    //TODO: Why does this constructor not call the previous one?
     public Protein(String sequence, Set<Match> matches) {
         setMatches(matches);
         setSequenceAndMd5(sequence);
@@ -423,6 +428,29 @@ public class Protein implements Serializable {
      */
     public void removeCrossReference(ProteinXref ProteinXref) {
         crossReferences.remove(ProteinXref);
+    }
+
+    public void addOpenReadingFrame(OpenReadingFrame orf) {
+        if (orf == null) {
+            throw new IllegalStateException("the orf argument cannot be null.");
+        }
+        orfs.add(orf);
+        orf.setProtein(this);
+    }
+
+    public void removeOpenReadingFrame(OpenReadingFrame orf) {
+        orfs.remove(orf);
+    }
+
+    @XmlTransient
+    public Set<OpenReadingFrame> getOpenReadingFrames() {
+        return orfs;
+    }
+
+    public void setOpenReadingFrames(Set<OpenReadingFrame> orfs) {
+        for (OpenReadingFrame orf : orfs) {
+            addOpenReadingFrame(orf);
+        }
     }
 
     @Override
