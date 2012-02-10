@@ -29,13 +29,8 @@
     <h3>Families, domains, repeats and sites</h3>
 
     <div id="section-domains-sites">
-        <div class="entry-signatures">
-            <input id="database" name="colour" type="checkbox" value="database"/>
-            <label for="database">Colour signature matches by database name</label>
-        </div>
-
         <!-- Scale markers -->
-        <div style="width: 95%; position: relative;">
+        <div style="width: 92%; position: relative;">
             <!-- Position labels -->
             <c:forTokens items="${scale}" delims="," var="scaleMarker">
                 <span style="left:  ${(scaleMarker / protein.length) * 100}%; position: absolute;">
@@ -91,7 +86,7 @@
                 <c:set var="containerId" value="${entry.ac}-signatures"/>
 
                 <!-- Now display the entry on the page using these variables -->
-                <li class="entry">
+                <li class="entry ${entry.type}-row">
                     <p>
                             <%-- Use InterPro 5.2 image paths for now (see mvc-config.xml) --%>
                             <%-- Better to pass in param from DBML instead so can use normal resource: --%>
@@ -116,20 +111,22 @@
 </c:if>
 
 <c:if test="${not empty protein.unintegratedSignatures}">
-    <a name="unintegrated-signatures"></a>
-    <img src="/interpro/images/ico_type_uni_small.png" alt="Unintegrated signatures"
-         title="Unintegrated signatures"/> no IPR
-    Unintegrated signatures
-    <ol class="signatures">
-        <c:forEach var="signature" items="${protein.unintegratedSignatures}">
-            <li class="signature">
-                <h:signature protein="${protein}"
-                             signature="${signature}"
-                             entryTypeTitle="Unintegrated"
-                             colourClass="uni"/>
-            </li>
-        </c:forEach>
-    </ol>
+    <div id="unintegrated">
+        <a name="unintegrated-signatures"></a>
+        <img src="/interpro/images/ico_type_uni_small.png" alt="Unintegrated signatures"
+             title="Unintegrated signatures"/> no IPR
+        Unintegrated signatures
+        <ol class="signatures">
+            <c:forEach var="signature" items="${protein.unintegratedSignatures}">
+                <li class="signature">
+                    <h:signature protein="${protein}"
+                                 signature="${signature}"
+                                 entryTypeTitle="Unintegrated"
+                                 colourClass="uni"/>
+                </li>
+            </c:forEach>
+        </ol>
+    </div>
 </c:if>
 
 <%--Not sure why we need this break, but table gets right-aligned without it...--%>

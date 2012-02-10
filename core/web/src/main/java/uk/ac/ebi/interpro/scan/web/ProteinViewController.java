@@ -61,6 +61,17 @@ public class ProteinViewController {
     }
 
     /**
+     * Returns protein page with a left-hand filter
+     *
+     * @param id Protein accession or MD5 checksum, for example "P38398"
+     * @return Protein page with a left-hand filter menu
+     */
+    @RequestMapping(value = "/{id}/standalone")
+    public ModelAndView proteinStandalone(@PathVariable String id) {
+        return new ModelAndView("standalone-protein-page", buildModelMap(retrieve(id)));
+    }
+
+    /**
      * Returns protein features for inclusion in DBML
      *
      * @param id Protein accession or MD5 checksum, for example "P38398"

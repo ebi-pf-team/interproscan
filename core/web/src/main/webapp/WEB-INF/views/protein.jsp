@@ -13,17 +13,18 @@
         </c:otherwise>
     </c:choose>
     <meta name="description" content="Protein matches">
-    <meta name="author"      content="InterPro Team, European Bioinformatics Institute">
+    <meta name="author" content="InterPro Team, European Bioinformatics Institute">
     <%--<link href="http://www.ebi.ac.uk/inc/css/contents.css"      rel="stylesheet" type="text/css" />--%>
     <%--<link href="http://www.ebi.ac.uk/inc/css/userstyles.css"    rel="stylesheet" type="text/css" />--%>
     <%--<link href="http://wwwdev.ebi.ac.uk/interpro/toolkits/interpro/interpro.css" rel="stylesheet" type="text/css" />--%>
-    <link href="<c:url value="/resources/css/protein.css" />" rel="stylesheet"  type="text/css" />
-    <link href="<c:url value="/resources/css/domain.css" />"  rel="stylesheet"  type="text/css" />
-    <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet"  type="text/css" />
-    <link href="<c:url value="/resources/javascript/qtip2/jquery.qtip.css" />"  rel="stylesheet"  type="text/css" />
+    <link href="<c:url value="/resources/css/protein.css" />" rel="stylesheet" type="text/css"/>
+    <link href="<c:url value="/resources/css/domain.css" />" rel="stylesheet" type="text/css"/>
+    <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet" type="text/css"/>
+    <link href="<c:url value="/resources/javascript/qtip2/jquery.qtip.css" />" rel="stylesheet" type="text/css"/>
     <script src="<c:url value="/resources/javascript/jquery/jquery-1.7.1.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/qtip2/jquery.qtip.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/jquery/jquery.jscroll.min.js"/>" type="text/javascript"></script>
 </head>
 <body>
 <c:choose>
@@ -49,27 +50,16 @@
         </footer>
     </c:otherwise>
 </c:choose>
-
 <!-- JavaScript placed near the end </body> tag as this ensures the DOM is loaded before manipulation
-of it occurs. This is not a requirement, simply a useful tip! -->
+of it occurs. This is not a requirement, simply a useful tip!
+
+ Actually - the JQuery $(document).ready event is fired immediately after the DOM is loaded, so it doesn't matter
+ where you put the script.  (You can also have as many $(document).ready events as you like in the same page,
+ however there is no guarantee of the order in which they are run).
+
+ http://docs.jquery.com/Tutorials:Introducing_$(document).ready()-->
 <script type="text/javascript">
     $(document).ready(function() {
-
-        // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
-//    if($.cookie("css")) {
-//        var id = $.cookie("colour-by-database");
-//        ...
-//    }
-
-        // CSS switching
-        var checkbox = $("input[type=checkbox]");
-        configureStylesheets(checkbox.checked); // initialise
-        checkbox.click(function() {
-            configureStylesheets(this.checked);
-            // Save in cookie
-            //$.cookie("colour-by-database", this.checked, {expires: 365, path: '/'});
-        });
-
         $('span[id*="location-"]').each(
                 function(i) {
                     preparePopup(this.id);
