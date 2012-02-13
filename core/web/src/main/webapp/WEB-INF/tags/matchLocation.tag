@@ -22,7 +22,6 @@
             colourClass="${colourClass}"/>
 
 <div id="${prefix}-popup-${id}" style="display: none;">
-    ${links}<br />
-    Start: ${location.start}<br />
-    End: ${location.end}
+    ${links}<br /><br />
+    ${location.start} - ${location.end}<br />
 </div>

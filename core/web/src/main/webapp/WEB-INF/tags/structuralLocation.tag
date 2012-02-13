@@ -81,6 +81,5 @@
 
 <div id="match-popup-${id}" style="display: none;">
     ${links}<br />
-    Start: ${location.start}<br />
-    End: ${location.end}
+    ${location.start} - ${location.end}<br />
 </div>
