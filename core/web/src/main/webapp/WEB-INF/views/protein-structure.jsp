@@ -54,6 +54,10 @@
 <!-- JavaScript placed near the end </body> tag as this ensures the DOM is loaded before manipulation
 of it occurs. This is not a requirement, simply a useful tip! -->
 <script type="text/javascript">
+    // Match all <A/> links with a title tag and use it as the content (default).
+    $('a[title]').qtip();
+
+    // Tie the extra popup DIV to it's match SPAN
     $(document).ready(function() {
         $('span[id*="location-"]').each(
                 function(i) {
