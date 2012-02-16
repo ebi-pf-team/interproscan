@@ -27,29 +27,22 @@
 </head>
 <body>
 
-<c:choose>
-    <c:when test="${empty protein.structuralDatabases}">
-        Sorry, no structural data found for this protein.
-    </c:when>
-    <c:otherwise>
-        <header>
-            <nav>
-                <div class="breadcrumb">
-                    <a href="<c:url value="/protein-structures"/>">Protein structures</a> > ${protein.name} (${protein.ac})
-                </div>
-            </nav>
-        </header>
-        <div id="main" role="main" class="main-content">
-            <div class="contents" id="contents">
-                    <%--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!--%>
-                <c:import url="protein-structure-body.jsp"/>
-            </div>
+<header>
+    <nav>
+        <div class="breadcrumb">
+            <a href="<c:url value="/protein-structures"/>">Protein structures</a> > ${protein.name} (${protein.ac})
         </div>
-        <footer>
+    </nav>
+</header>
+<div id="main" role="main" class="main-content">
+    <div class="contents" id="contents">
+        <%--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!--%>
+        <c:import url="protein-structure-body.jsp"/>
+    </div>
+</div>
+<footer>
 
-        </footer>
-    </c:otherwise>
-</c:choose>
+</footer>
 
 <!-- JavaScript placed near the end </body> tag as this ensures the DOM is loaded before manipulation
 of it occurs. This is not a requirement, simply a useful tip! -->
