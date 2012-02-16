@@ -37,7 +37,7 @@ public class AnalyseStructuralMatchDataResultTest {
         assertEquals(4, structuralDatabases.size());
 
         for(SimpleStructuralDatabase database : structuralDatabases) {
-            assertNotNull(database.getDatabaseName());
+            assertNotNull(database.getDataSource());
             assertNotNull(database.getStructuralMatches());
         }
     }

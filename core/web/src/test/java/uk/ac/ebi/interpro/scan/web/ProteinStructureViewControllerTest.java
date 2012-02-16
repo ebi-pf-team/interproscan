@@ -6,6 +6,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
+import uk.ac.ebi.interpro.scan.web.model.MatchDataSource;
 import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
 import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase;
 
@@ -53,7 +54,7 @@ public class ProteinStructureViewControllerTest {
          * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	CATH	1w91A02	3.20.20.80	15	248
          * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	CATH	1w91A02	3.20.20.80	251	361
          */
-        String cathDatabaseName = "CATH";
+        MatchDataSource cathDatabase = MatchDataSource.parseName("CATH");
         String cathDomainId1 = "1w91A01";
         String cathDomainId2 = "1w91A02";
         String cathClassId1 = "2.60.40.1500";
@@ -63,7 +64,7 @@ public class ProteinStructureViewControllerTest {
         SimpleLocation cathLocation3 = new SimpleLocation(449, 483);
         SimpleLocation cathLocation4 = new SimpleLocation(15, 248);
         SimpleLocation cathLocation5 = new SimpleLocation(251, 361);
-        SimpleStructuralDatabase cath = new SimpleStructuralDatabase(cathDatabaseName);
+        SimpleStructuralDatabase cath = new SimpleStructuralDatabase(cathDatabase);
         cath.addStructuralMatch(cathClassId1, cathDomainId1, cathLocation1);
         cath.addStructuralMatch(cathClassId1, cathDomainId1, cathLocation2);
         cath.addStructuralMatch(cathClassId1, cathDomainId1, cathLocation3);
@@ -81,14 +82,14 @@ public class ProteinStructureViewControllerTest {
          * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	PDB	1w91C	1w91	251	446
          * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	PDB	1w91C	1w91	449	504
          */
-        String pdbDatabaseName = "PDB";
+        MatchDataSource pdbDatabase = MatchDataSource.parseName("PDB");
         String pdbDomainId1 = "1w91B";
         String pdbDomainId2 = "1w91C";
         String pdbClassId = "1w91";
         SimpleLocation pdbLocation1 = new SimpleLocation(1, 248);
         SimpleLocation pdbLocation2 = new SimpleLocation(251, 446);
         SimpleLocation pdbLocation3 = new SimpleLocation(449, 504);
-        SimpleStructuralDatabase pdb = new SimpleStructuralDatabase(pdbDatabaseName);
+        SimpleStructuralDatabase pdb = new SimpleStructuralDatabase(pdbDatabase);
         pdb.addStructuralMatch(pdbClassId, pdbDomainId1, pdbLocation1);
         pdb.addStructuralMatch(pdbClassId, pdbDomainId1, pdbLocation2);
         pdb.addStructuralMatch(pdbClassId, pdbDomainId1, pdbLocation3);
@@ -102,11 +103,11 @@ public class ProteinStructureViewControllerTest {
          * PROTEIN_ACCESSION	PROTEIN_ID	PROTEIN_LENGTH	MD5	CRC64	database_name	domain_id	class_id	pos_from	pos_to
          * Q9ZFM2	XYNB_GEOSE	504	08BF24654296C1128D571BD0780824EC	59518E75200A18B1	MODBASE	MB_Q9ZFM2	MB_Q9ZFM2	1	502
          */
-        String modBaseDatabaseName = "MODBASE";
+        MatchDataSource modBaseDatabase = MatchDataSource.parseName("MODBASE");
         String modbaseClassId = "MB_P38398";
         String modbaseDomainId = "MB_P38398";
         SimpleLocation modbaseLocation = new SimpleLocation(1, 502);
-        SimpleStructuralDatabase modBase = new SimpleStructuralDatabase(modBaseDatabaseName);
+        SimpleStructuralDatabase modBase = new SimpleStructuralDatabase(modBaseDatabase);
         modBase.addStructuralMatch(modbaseClassId, modbaseDomainId, modbaseLocation);
 
         // Add the databases to a list
@@ -118,9 +119,9 @@ public class ProteinStructureViewControllerTest {
         // Test the structural matches sort correctly
         Collections.sort(structuralDatabases);
         assertEquals(3, structuralDatabases.size());
-        assertEquals(cathDatabaseName, structuralDatabases.get(0).getDatabaseName());
-        assertEquals(modBaseDatabaseName, structuralDatabases.get(1).getDatabaseName());
-        assertEquals(pdbDatabaseName, structuralDatabases.get(2).getDatabaseName());
+        assertEquals(cathDatabase, structuralDatabases.get(0).getDataSource());
+        assertEquals(modBaseDatabase, structuralDatabases.get(1).getDataSource());
+        assertEquals(pdbDatabase, structuralDatabases.get(2).getDataSource());
     }
 
 }

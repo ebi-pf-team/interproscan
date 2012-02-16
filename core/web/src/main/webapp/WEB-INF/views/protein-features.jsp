@@ -9,11 +9,6 @@
     pageContext.setAttribute("REPEAT", uk.ac.ebi.interpro.scan.web.model.EntryType.REPEAT.toString());
     pageContext.setAttribute("REGION", uk.ac.ebi.interpro.scan.web.model.EntryType.REGION.toString());
     pageContext.setAttribute("UNKNOWN", uk.ac.ebi.interpro.scan.web.model.EntryType.UNKNOWN.toString());
-
-    // Data source names
-    pageContext.setAttribute("CATH", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.CATH.toString());
-    pageContext.setAttribute("SCOP", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.SCOP.toString());
-    pageContext.setAttribute("MODBASE", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.MODBASE.toString());
 %>
 
 <%--Returns protein features for inclusion in DBML--%>
@@ -92,7 +87,7 @@
                             <%-- Better to pass in param from DBML instead so can use normal resource: --%>
                             <%--<c:url value="/resources/images/ico_type_uni_small.png"/>--%>
                         <img src="/interpro/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/>
-                        <a href="IEntry?ac=${entry.ac}" title="${title}">${entry.ac}</a> ${entry.name}
+                        <a href="http://wwwdev.ebi.ac.uk/interpro/IEntrySummary?ac=${entry.ac}" title="${title}">${entry.ac}</a> ${entry.name}
                     </p>
                     <ol class="signatures">
                         <c:forEach var="signature" items="${entry.signatures}">
@@ -128,36 +123,3 @@
         </ol>
     </div>
 </c:if>
-
-<%--Not sure why we need this break, but table gets right-aligned without it...--%>
-<div><br/></div>
-
-<%--TODO: Could use HTML5 Canvas to highlight matches in graphic and table when hover over--%>
-<%--<table class="match">--%>
-<%--<tr>--%>
-<%--<th>Entry</th>--%>
-<%--<th>Signature</th>--%>
-<%--<th>Start</th>--%>
-<%--<th>End</th>--%>
-<%--</tr>--%>
-<%--<c:forEach var="entry" items="${protein.entries}">--%>
-<%--<c:forEach var="location" items="${entry.locations}">--%>
-<%--<tr class="entry">--%>
-<%--<td><a href="IEntry?ac=${entry.ac}">${entry.name}</a> (${entry.ac})</td>--%>
-<%--<td></td>--%>
-<%--<td align="right">${location.start}</td>--%>
-<%--<td align="right">${location.end}</td>--%>
-<%--</tr>--%>
-<%--<c:forEach var="signature" items="${entry.signatures}">--%>
-<%--<c:forEach var="location" items="${signature.locations}">--%>
-<%--<tr>--%>
-<%--<td></td>--%>
-<%--<td><a href="ISignature?ac=${signature.ac}">${signature.name}</a> (${signature.ac})</td>--%>
-<%--<td align="right">${location.start}</td>--%>
-<%--<td align="right">${location.end}</td>--%>
-<%--</tr>--%>
-<%--</c:forEach>--%>
-<%--</c:forEach>--%>
-<%--</c:forEach>--%>
-<%--</c:forEach>--%>
-<%--</table>--%>

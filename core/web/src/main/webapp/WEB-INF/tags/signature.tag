@@ -8,7 +8,7 @@
 
 <div>
     <p>
-        ${signature.ac} (<a href="ISignature?ac=${signature.ac}" title="${entryTypeTitle} (${signature.database})">${signature.name}</a>)
+        ${signature.ac} (<a href="${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}" title="${entryTypeTitle} (${signature.dataSource})">${signature.name}</a>)
     </p>
 
     <c:set var="locationId" value="0" scope="request" />
@@ -18,7 +18,7 @@
             <c:set var="locationId" value="${locationId + 1}" />
             <c:set var="dbClass">
                 <c:if test="${colourClass != 'uni'}">
-                    ${fn:replace(fn:toLowerCase(signature.database), ' ', '-')}
+                    ${fn:replace(fn:toLowerCase(signature.dataSource), ' ', '-')}
                 </c:if>
             </c:set>
             <h:matchLocation  id="${locationId}"
