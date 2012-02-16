@@ -25,27 +25,38 @@
 
         <%-- Now display the signature accession --%>
         <c:choose>
-            <c:when test="${acLength > maxAcLength}">
-                <%--Accession is too long, need to truncate it--%>
-                ${fn:substring(signature.ac, 0, maxAcLength - 3)}...
+        <c:when test="${signature.ac != signature.name}">
+        <a href="${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}" title="${signature.ac} ${signature.name}: ${entryTypeTitle} (${signature.dataSource})">
             </c:when>
             <c:otherwise>
-                ${signature.ac}
-            </c:otherwise>
-        </c:choose>
+            <a href="${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}" title="${signature.ac}: ${entryTypeTitle} (${signature.dataSource})">
+                </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${acLength > maxAcLength}">
+                        <%--Accession is too long, need to truncate it--%>
+                        ${fn:substring(signature.ac, 0, maxAcLength - 3)}...
+                    </c:when>
+                    <c:otherwise>
+                        ${signature.ac}
+                    </c:otherwise>
+                </c:choose>
+            </a>
 
-        <%-- Now display the signature name --%>
-        (<a href="${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}" title="${signature.name} - ${entryTypeTitle} (${signature.dataSource})">
-        <c:choose>
-        <c:when test="${nameLength > maxNameLength}">
-            <%--Name is too long, need to truncate it--%>
-            ${fn:substring(signature.name, 0, maxNameLength - 3)}...</a>
-        </c:when>
-        <c:otherwise>
-            ${signature.name}
-        </c:otherwise>
-        </c:choose>
-        </a>)
+            <%-- Now display the signature name (if not identical to the accession) --%>
+            <c:if test="${signature.ac != signature.name}">
+            (
+            <c:choose>
+            <c:when test="${nameLength > maxNameLength}">
+                <%--Name is too long, need to truncate it--%>
+                ${fn:substring(signature.name, 0, maxNameLength - 3)}...
+            </c:when>
+            <c:otherwise>
+                ${signature.name}
+            </c:otherwise>
+            </c:choose>
+            )
+            </c:if>
     </p>
 
     <c:set var="locationId" value="0" scope="request" />
