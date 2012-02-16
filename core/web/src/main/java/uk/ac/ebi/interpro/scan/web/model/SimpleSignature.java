@@ -14,13 +14,13 @@ public final class SimpleSignature implements Comparable<SimpleSignature>  {
 
     private final String ac;
     private final String name;
-    private final String database;
+    private final MatchDataSource dataSource;
     private final List<SimpleLocation> locations;
 
-    public SimpleSignature(String ac, String name, String database) {
+    public SimpleSignature(String ac, String name, String databaseName) {
         this.ac = ac;
         this.name = name;
-        this.database = database;
+        this.dataSource = MatchDataSource.parseName(databaseName);
         this.locations  = new ArrayList<SimpleLocation>();
     }
 
@@ -32,12 +32,8 @@ public final class SimpleSignature implements Comparable<SimpleSignature>  {
         return name;
     }
 
-    public String getDatabase() {
-        return database;
-    }
-
-    public String getDatabaseDescription() {
-        return MatchDataSource.parseName(database).getDescription();
+    public MatchDataSource getDataSource() {
+        return dataSource;
     }
 
     public List<SimpleLocation> getLocations() {
@@ -48,7 +44,8 @@ public final class SimpleSignature implements Comparable<SimpleSignature>  {
         this.locations.add(location);
     }
 
-    @Override public int compareTo(SimpleSignature that) {
+    @Override
+    public int compareTo(SimpleSignature that) {
         if (this == that || this.equals(that)) {
             return 0;
         }

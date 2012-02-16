@@ -11,11 +11,11 @@ import java.util.*;
  */
 public final class SimpleStructuralDatabase implements Comparable<SimpleStructuralDatabase> {
 
-    private final String databaseName; // Unique structural member database name
+    private final MatchDataSource dataSource; // Structural member database details (name, description etc)
     private Map<SimpleLocation, SimpleStructuralMatchData> structuralMatches = new HashMap<SimpleLocation, SimpleStructuralMatchData>();
 
-    public SimpleStructuralDatabase(String databaseName) {
-        this.databaseName = databaseName;
+    public SimpleStructuralDatabase(MatchDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void addStructuralMatch(String classId, String domainId, SimpleLocation location) {
@@ -32,19 +32,22 @@ public final class SimpleStructuralDatabase implements Comparable<SimpleStructur
     }
 
 
-    public String getDatabaseName() {
-        return databaseName;
+    public MatchDataSource getDataSource() {
+        return dataSource;
     }
 
     public Map<SimpleLocation, SimpleStructuralMatchData> getStructuralMatches() {
         return structuralMatches;
     }
 
+    /**
+     * Order alphabetically by database name.
+     */
     @Override
     public int compareTo(SimpleStructuralDatabase that) {
         if (this == that) {
             return 0;
         }
-        return this.databaseName.compareTo(that.getDatabaseName());
+        return this.dataSource.name().compareTo(that.getDataSource().name());
     }
 }
