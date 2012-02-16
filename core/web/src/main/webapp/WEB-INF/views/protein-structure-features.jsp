@@ -1,19 +1,9 @@
-<%@ page import="uk.ac.ebi.interpro.scan.web.model.EntryType" %>
-<%@ page import="uk.ac.ebi.interpro.scan.web.model.MatchDataSource" %>
-<%@ page import="uk.ac.ebi.interpro.scan.web.model.SimpleLocation" %>
 <%@ taglib prefix="h"  tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%
-    // Data source names
-    pageContext.setAttribute("CATH", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.CATH.toString());
-    pageContext.setAttribute("SCOP", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.SCOP.toString());
-    pageContext.setAttribute("MODBASE", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.MODBASE.toString());
-%>
-
 <p>
-    <b>TODO: Supermatch summary view goes here!</b>
+    <c:import url="condensed-view.jsp"/>
 </p>
 
 <%--Returns protein structure features for inclusion in DBML--%>
