@@ -6,13 +6,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%
-    // Entry type names
-//    pageContext.setAttribute("FAMILY", uk.ac.ebi.interpro.scan.web.model.EntryType.FAMILY.toString());
-//    pageContext.setAttribute("DOMAIN", uk.ac.ebi.interpro.scan.web.model.EntryType.DOMAIN.toString());
-//    pageContext.setAttribute("REPEAT", uk.ac.ebi.interpro.scan.web.model.EntryType.REPEAT.toString());
-//    pageContext.setAttribute("REGION", uk.ac.ebi.interpro.scan.web.model.EntryType.REGION.toString());
-//    pageContext.setAttribute("UNKNOWN", uk.ac.ebi.interpro.scan.web.model.EntryType.UNKNOWN.toString());
-
     // Data source names
     pageContext.setAttribute("CATH", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.CATH.toString());
     pageContext.setAttribute("SCOP", uk.ac.ebi.interpro.scan.web.model.MatchDataSource.SCOP.toString());
@@ -48,8 +41,7 @@
                     locationData (SimpleStructuralMatchData)
                     -- locationDataMap (Map<String, List<String>>)
                 -->
-                <c:set var="databaseName">${database.databaseName}</c:set>
-                    ${databaseName}
+                ${database.dataSource.name}
                 <div class="match">
                     <c:forEach var="structuralMatch" items="${database.structuralMatches}">
                         <%-- location = ${structuralMatch.key} --%>
@@ -59,7 +51,7 @@
                                               protein="${protein}"
                                               location="${structuralMatch.key}"
                                               structuralMatchData="${structuralMatch.value}"
-                                              databaseName="${databaseName}"/>
+                                              databaseMetadata="${database.dataSource}"/>
                     </c:forEach>
 
                 </div>
@@ -88,8 +80,7 @@
                     locationData (SimpleStructuralMatchData)
                     -- locationDataMap (Map<String, List<String>>)
                 -->
-                <c:set var="databaseName">${database.databaseName}</c:set>
-                    ${databaseName}
+                ${database.dataSource.name}
                 <div class="match">
                     <c:forEach var="structuralMatch" items="${database.structuralMatches}">
                         <%-- location = ${structuralMatch.key} --%>
@@ -99,7 +90,7 @@
                                               protein="${protein}"
                                               location="${structuralMatch.key}"
                                               structuralMatchData="${structuralMatch.value}"
-                                              databaseName="${databaseName}"/>
+                                              databaseMetadata="${database.dataSource}"/>
                     </c:forEach>
 
                 </div>

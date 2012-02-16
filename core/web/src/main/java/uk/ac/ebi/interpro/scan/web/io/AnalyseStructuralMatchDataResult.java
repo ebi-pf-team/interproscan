@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.web.io;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
+import uk.ac.ebi.interpro.scan.web.model.MatchDataSource;
 import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
 import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase;
 
@@ -111,9 +112,15 @@ public class AnalyseStructuralMatchDataResult {
             }
             else {
                 // New structural match database that needs initialising and adding to the map
-                SimpleStructuralDatabase structuralDatabase = new SimpleStructuralDatabase(databaseName);
-                structuralDatabase.addStructuralMatch(classId, domainId, location);
-                structuralMatchDatabases.put(databaseName, structuralDatabase);
+                MatchDataSource databaseMetadata = MatchDataSource.parseName(databaseName);
+                if (databaseMetadata != null) {
+                    SimpleStructuralDatabase structuralDatabase = new SimpleStructuralDatabase(databaseMetadata);
+                    structuralDatabase.addStructuralMatch(classId, domainId, location);
+                    structuralMatchDatabases.put(databaseName, structuralDatabase);
+                }
+                else {
+                    LOGGER.warn("No match data source found with name " + databaseName);
+                }
             }
 
             queryOutputText += line + "\n";

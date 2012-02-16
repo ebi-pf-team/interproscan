@@ -111,7 +111,7 @@ public final class SimpleProtein {
     public List<SimpleStructuralDatabase> getStructuralFeatures() {
         final List<SimpleStructuralDatabase> features = new ArrayList<SimpleStructuralDatabase>();
         for (SimpleStructuralDatabase db : this.structuralDatabases) {
-            if (MatchDataSource.isStructuralFeature(db.getDatabaseName())) {
+            if (MatchDataSource.isStructuralFeature(db.getDataSource())) {
                 features.add(db);
             }
         }
@@ -122,7 +122,7 @@ public final class SimpleProtein {
     public List<SimpleStructuralDatabase> getStructuralPredictions() {
         final List<SimpleStructuralDatabase> predictions = new ArrayList<SimpleStructuralDatabase>();
         for (SimpleStructuralDatabase db : this.structuralDatabases) {
-            if (MatchDataSource.isStructuralPrediction(db.getDatabaseName())) {
+            if (MatchDataSource.isStructuralPrediction(db.getDataSource())) {
                 predictions.add(db);
             }
         }
