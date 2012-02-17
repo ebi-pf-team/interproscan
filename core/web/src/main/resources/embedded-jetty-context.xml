@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Manually start server after setting parent context. (init-method="start") -->
+    <bean id="jettyServer"
+          class="org.mortbay.jetty.Server"
+          destroy-method="stop">
+        <property name="connectors">
+            <list>
+                <bean id="Connector"
+                      class="org.mortbay.jetty.nio.SelectChannelConnector"
+                      p:port="8080"/>
+            </list>
+        </property>
+        <property name="handlers">
+            <list>
+                <bean class="org.mortbay.jetty.handler.ResourceHandler">
+                    <property name="resourceBase" value="classpath*:/"/>
+                </bean>
+                <bean id="contextHandler" class="org.mortbay.jetty.servlet.Context">
+                    <property name="contextPath" value="/"/>
+                    <property name="sessionHandler">
+                        <bean class="org.mortbay.jetty.servlet.SessionHandler"/>
+                    </property>
+                    <property name="servletHandler">
+                        <bean class="org.mortbay.jetty.servlet.ServletHandler">
+                            <property name="servlets">
+                                <list>
+                                    <bean id="servletHolder" class="org.mortbay.jetty.servlet.ServletHolder">
+                                        <property name="name" value="mvc-dispatcher"/>
+                                        <property name="servlet">
+                                            <bean class="org.springframework.web.servlet.DispatcherServlet"/>
+                                        </property>
+                                        <property name="initParameters">
+                                            <map>
+                                                <!--TODO: Work out how to define the config location-->
+                                                <entry key="contextConfigLocation"
+                                                       value="file:/webapp/WEB-INF/spring/jetty-app-config.xml"/>
+                                            </map>
+                                        </property>
+                                    </bean>
+                                </list>
+                            </property>
+                            <property name="servletMappings">
+                                <list>
+                                    <bean class="org.mortbay.jetty.servlet.ServletMapping"
+                                          p:servletName="mvc-dispatcher"
+                                          p:pathSpec="/"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="org.mortbay.jetty.handler.DefaultHandler"/>
+                <bean class="org.mortbay.jetty.handler.RequestLogHandler"/>
+            </list>
+        </property>
+    </bean>
+</beans>

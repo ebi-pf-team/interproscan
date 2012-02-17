@@ -17,14 +17,16 @@
     <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init"
           scope="singleton">
         <property name="entryColourPropertiesFile">
-            <util:properties location="file:${entry.colours.file.loc}"/>
+            <util:properties
+                    location="file:/home/maxim/projects/interproscan/core/web/src/main/resources/entry_colours.properties"/>
         </property>
         <property name="entryHierarchyDataResource" ref="entryHierarchyResource"/>
         <property name="entryHierarchyDataResourceReader" ref="entryHierarchyReader"/>
     </bean>
     <bean id="entryHierarchyReader" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
     <bean id="entryHierarchyResource" class="org.springframework.core.io.UrlResource">
-        <constructor-arg value="file:${entry.hierarchy.file.loc}"/>
+        <constructor-arg
+                value="file:/home/maxim/projects/interproscan/core/web/src/main/resources/entry_hierarchy.csv"/>
     </bean>
 
     <!-- AnalyseMatchDataResult -->
@@ -46,8 +48,8 @@
     <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData">
         <constructor-arg ref="matchAnalyser"/>
         <constructor-arg ref="structuralMatchAnalyser"/>
-        <constructor-arg value="${match.data.webservice.url}"/>
-        <constructor-arg value="${structural.match.data.webservice.url}"/>
+        <constructor-arg value="http://tc-test-3.ebi.ac.uk:9750/interpro-rest/match/"/>
+        <constructor-arg value="http://tc-test-3.ebi.ac.uk:9750/interpro-rest/structure/"/>
     </bean>
 
     <bean id="jaxb2" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
