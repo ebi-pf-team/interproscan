@@ -117,7 +117,7 @@ public class WriteOutputStep extends Step {
         } else {
             matchesHolder = new ProteinMatchesHolder();
         }
-        matchesHolder.addProteins(proteins);
+        matchesHolder.setProteins(proteins);
         xmlWriter.writeMatches(outputFile, matchesHolder);
     }
 
