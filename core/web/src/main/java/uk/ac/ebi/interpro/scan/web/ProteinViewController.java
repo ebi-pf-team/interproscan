@@ -1,18 +1,26 @@
 package uk.ac.ebi.interpro.scan.web;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.UrlResource;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +31,7 @@ import java.util.Map;
  * @version $Id$
  */
 @Controller
+@Component
 @RequestMapping(value = "/proteins", method = RequestMethod.GET)
 public class ProteinViewController {
 
@@ -32,6 +41,12 @@ public class ProteinViewController {
     // Spring managed beans
     private EntryHierarchy entryHierarchy;
     private CreateSimpleProteinFromMatchData matchData;
+    private Jaxb2Marshaller marshaller;
+
+    @Resource(name = "jaxb2")
+    public void setMarshaller(Jaxb2Marshaller marshaller) {
+        this.marshaller = marshaller;
+    }
 
     @RequestMapping
     public String index() {
@@ -80,6 +95,56 @@ public class ProteinViewController {
     @RequestMapping(value = "/{id}/features")
     public ModelAndView proteinFeatures(@PathVariable String id) {
         return new ModelAndView("protein-features", buildModelMap(retrieve(id)));
+    }
+
+    /**
+     * Takes care of rendering the protein view for a given XML resource (a serialized Protein or ProteinMatchesHolder).
+     *
+     * @param url XML resource.
+     * @return Rendered protein view.
+     */
+    @RequestMapping(value = "/render", method = RequestMethod.GET)
+    public ModelAndView protein(final @RequestParam UrlResource url) {
+        Protein protein = deserialise(url);
+        if (protein != null) {
+            return new ModelAndView("protein", buildModelMap(SimpleProtein.valueOf(protein, entryHierarchy)));
+        }
+        return new ModelAndView("render-warning");
+    }
+
+//    private ModelAndView getMAVFormProteinMatchesHolder(final UrlResource url) {
+//        ProteinMatchesHolder proteinMatchesHolder = deserialise(url);
+//        if (proteinMatchesHolder != null) {
+//            Set<Protein> proteins = proteinMatchesHolder.getProteins();
+//            //At the moment the protein view only works for 1 protein
+//            //Thats why we build the protein view for the first element of the set, if the set contains more than 1 protein
+//            for (Protein protein : proteins) {
+//                return new ModelAndView("protein", buildModelMap(SimpleProtein.valueOf(protein, entryHierarchy)));
+//            }
+//        }
+//        return new ModelAndView("render-warning");
+//    }
+
+
+    protected Protein deserialise(final UrlResource urlResource) {
+        if (urlResource.isReadable()) {
+            InputStream is = null;
+            try {
+                is = urlResource.getInputStream();
+                return (Protein) marshaller.unmarshal(new StreamSource(new InputStreamReader(is)));
+            } catch (IOException e) {
+                LOGGER.warn("Couldn't get file from specified URL resource!", e);
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        LOGGER.error("Couldn't close URL resource input stream!", e);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private Map<String, Object> buildModelMap(SimpleProtein p) {

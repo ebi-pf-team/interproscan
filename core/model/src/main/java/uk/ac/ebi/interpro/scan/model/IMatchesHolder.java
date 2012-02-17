@@ -14,5 +14,5 @@ public interface IMatchesHolder {
 
     public void addProtein(Protein protein);
 
-    public void addProteins(Collection<Protein> proteins);
+    public void setProteins(Collection<Protein> proteins);
 }
