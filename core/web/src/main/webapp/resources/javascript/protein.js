@@ -65,7 +65,8 @@ function displayType(checkbox) {
 }
 
 function displayUnintegrated(checkbox) {
-    $.cookie('#check-6', checkbox.checked, { path: '/' });
+    var checked = checkbox.checked;
+    $.cookie('#' + checkbox.id, checked, { path: '/' });
     if (checkbox.checked) {
         $('#unintegrated').show("blind", { direction: "vertical" }, 300);
     }
