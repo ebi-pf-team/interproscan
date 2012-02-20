@@ -74,10 +74,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
-//    if($.cookie("css")) {
-//        var id = $.cookie("colour-by-database");
-//        ...
-//    }
+
         // Retrieve existing cookies and set checkbox states accordingly
         var checkBoxIDs = ["#check-2", "#check-3", "#check-4", "#check-5", "#check-6"];
         for (i = 0; i < checkBoxIDs.length; i++) {
