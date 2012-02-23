@@ -2,14 +2,15 @@ package uk.ac.ebi.interpro.scan.io.pirsf;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Run tests for parsing the pirsf.dat file.
@@ -44,9 +45,30 @@ public class PirsfDatParserTest extends TestCase {
                 new String[]{"358.270731707317", "40.8471702485214", "47.1", "486.230487804878", "168.540809659098"},
                 true);
 
+        final String MODEL_ACC_3 = "PIRSF016158";
+        Set<String> subFams = new HashSet<String>();
+        subFams.add("PIRSF500165");
+        subFams.add("PIRSF500166");
+        PirsfDatRecord pirsfDat3 = new PirsfDatRecord(
+                MODEL_ACC_3,
+                "Methenyltetrahydromethanopterin dehydrogenase, Hmd type",
+                new String[]{"343.416666666667", "12.4422910294134", "550.9", "678.941666666667", "75.8024760729346"},
+                false, subFams);
+
+        final String MODEL_ACC_4 = "PIRSF000331";
+        subFams = new HashSet<String>();
+        subFams.add("PIRSF500125");
+        PirsfDatRecord pirsfDat4 = new PirsfDatRecord(
+                MODEL_ACC_4,
+                "4-hydroxyphenylacetate 3-monooxygenase/4-hydroxyphenylacetate-3-hydroxylase",
+                new String[]{"500.683168316832", "19.8690365609757", "187.3", "739.055445544554", "234.211730908273"},
+                true, subFams);
+
         Map<String, PirsfDatRecord> expectedResult = new HashMap<String, PirsfDatRecord>();
         expectedResult.put(MODEL_ACC_1, pirsfDat1);
         expectedResult.put(MODEL_ACC_2, pirsfDat2);
+        expectedResult.put(MODEL_ACC_3, pirsfDat3);
+        expectedResult.put(MODEL_ACC_4, pirsfDat4);
 
         // Run test method
         PirsfDatFileParser parser = new PirsfDatFileParser();
@@ -63,7 +85,7 @@ public class PirsfDatParserTest extends TestCase {
         assertNotNull("Expected result should be null at this time!", expectedResult);
         assertNotNull("Actual result should be null at this time!", actualResult);
         // Compare actual result with expected result
-        assertEquals("The expected result size is different to the actual!", 2, actualResult.size());
+        assertEquals("The expected result size is different to the actual!", 4, actualResult.size());
         assertEquals("The expected result size is different to the actual!", expectedResult.size(), actualResult.size());
         // Test model accession 1
         assertEquals("Attribute blast required is different to the expected one!", expectedResult.get(MODEL_ACC_1).isBlastRequired(), actualResult.get(MODEL_ACC_1).isBlastRequired());
@@ -83,5 +105,14 @@ public class PirsfDatParserTest extends TestCase {
         assertEquals("Attribute model name is different to the expected one!", expectedResult.get(MODEL_ACC_2).getModelName(), actualResult.get(MODEL_ACC_2).getModelName());
         assertEquals("Attribute standard deviation score is different to the expected one!", expectedResult.get(MODEL_ACC_2).getStdDevScore(), actualResult.get(MODEL_ACC_2).getStdDevScore());
         assertEquals("Attribute standard deviation sequence length is different to the expected one!", expectedResult.get(MODEL_ACC_2).getStdDevSeqLen(), actualResult.get(MODEL_ACC_2).getStdDevSeqLen());
+        // Test model accession 3
+        assertEquals("Attribute blast required is different to the expected one!", expectedResult.get(MODEL_ACC_3).isBlastRequired(), actualResult.get(MODEL_ACC_3).isBlastRequired());
+        assertEquals("Attribute mean score is different to the expected one!", expectedResult.get(MODEL_ACC_3).getMeanScore(), actualResult.get(MODEL_ACC_3).getMeanScore());
+        assertEquals("Attribute mean sequence length is different to the expected one!", expectedResult.get(MODEL_ACC_3).getMeanSeqLen(), actualResult.get(MODEL_ACC_3).getMeanSeqLen());
+        assertEquals("Attribute min score is different to the expected one!", expectedResult.get(MODEL_ACC_3).getMinScore(), actualResult.get(MODEL_ACC_3).getMinScore());
+        assertEquals("Attribute model accession is different to the expected one!", expectedResult.get(MODEL_ACC_3).getModelAccession(), actualResult.get(MODEL_ACC_3).getModelAccession());
+        assertEquals("Attribute model name is different to the expected one!", expectedResult.get(MODEL_ACC_3).getModelName(), actualResult.get(MODEL_ACC_3).getModelName());
+        assertEquals("Attribute standard deviation score is different to the expected one!", expectedResult.get(MODEL_ACC_3).getStdDevScore(), actualResult.get(MODEL_ACC_3).getStdDevScore());
+        assertEquals("Attribute standard deviation sequence length is different to the expected one!", expectedResult.get(MODEL_ACC_3).getStdDevSeqLen(), actualResult.get(MODEL_ACC_3).getStdDevSeqLen());
     }
 }
