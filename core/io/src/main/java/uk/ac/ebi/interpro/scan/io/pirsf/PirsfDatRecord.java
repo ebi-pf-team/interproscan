@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PirsfDatRecord implements Serializable {
 
@@ -21,8 +23,13 @@ public class PirsfDatRecord implements Serializable {
     private double meanScore;
     private double stdDevScore;
     private boolean blastRequired = false; // Default to Blast not required for this model
+    private Set<String> subFamilies = new HashSet<String>();
 
     public PirsfDatRecord(String modelAccession, String modelName, String[] values, boolean blastRequired) {
+        this(modelAccession, modelName, values, blastRequired, new HashSet<String>());
+    }
+
+    public PirsfDatRecord(String modelAccession, String modelName, String[] values, boolean blastRequired, Set<String> subFamilies) {
         this.modelAccession = modelAccession;
         this.modelName = modelName;
         this.meanSeqLen = Double.parseDouble(values[INDEX_MEAN_SEQ_LEN].trim());
@@ -31,6 +38,7 @@ public class PirsfDatRecord implements Serializable {
         this.meanScore = Double.parseDouble(values[INDEX_MEAN_SCORE].trim());
         this.stdDevScore = Double.parseDouble(values[INDEX_STD_DEV_SCORE].trim());
         this.blastRequired = blastRequired;
+        addSubFamilies(subFamilies);
     }
 
     public String getModelAccession() {
@@ -63,6 +71,20 @@ public class PirsfDatRecord implements Serializable {
 
     public boolean isBlastRequired() {
         return blastRequired;
+    }
+
+    public Set<String> getSubFamilies() {
+        return subFamilies;
+    }
+
+    private void addSubFamilies(Set<String> subFamilies) {
+        for (String subfamily : subFamilies) {
+            addSubFamily(subfamily);
+        }
+    }
+
+    public void addSubFamily(String subfamily) {
+        this.subFamilies.add(subfamily);
     }
 
     public void setModelAccession(String modelAccession) {
@@ -110,6 +132,7 @@ public class PirsfDatRecord implements Serializable {
                     castedObj.getModelName().equals(getModelName()) &&
                     castedObj.getStdDevScore() == getStdDevScore() &&
                     castedObj.getStdDevSeqLen() == getStdDevSeqLen() &&
+                    castedObj.getSubFamilies().equals(getSubFamilies()) &&
                     castedObj.isBlastRequired() == isBlastRequired()) {
                 return true;
             }
@@ -128,6 +151,7 @@ public class PirsfDatRecord implements Serializable {
                 .append(meanScore)
                 .append(stdDevScore)
                 .append(blastRequired)
+                .append(subFamilies)
                 .toHashCode();
     }
 
