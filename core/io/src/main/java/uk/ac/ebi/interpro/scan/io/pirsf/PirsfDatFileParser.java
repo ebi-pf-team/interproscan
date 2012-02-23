@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,10 +24,16 @@ import java.util.regex.Pattern;
 public class PirsfDatFileParser implements Serializable {
 
     /*
-     * Example file content:
+     * Example file content (superfamily only):
      * >PIRSF000077
      * Thioredoxin
      * 110.136452241715 9.11541109440914 20.3 167.482261208577 57.6586203540026
+     * BLAST: No
+     *
+     * Example file content (subfamilies included):
+     * >PIRSF016158 child: PIRSF500165 PIRSF500166
+     * Methenyltetrahydromethanopterin dehydrogenase, Hmd type
+     * 343.416666666667 12.4422910294134 550.9 678.941666666667 75.8024760729346
      * BLAST: No
      *
      * [where "110.136452241715 9.11541109440914 20.3 167.482261208577 57.6586203540026" is
@@ -38,7 +46,21 @@ public class PirsfDatFileParser implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(PirsfDatFileParser.class.getName());
 
-    private static final Pattern PIRSF_DAT_PATTERN = Pattern.compile("^>PIRSF[0-9]{6}$");
+    //Pattern for superfamily only
+    private static final Pattern PIRSF_DAT_PATTERN_SUPERFAM = Pattern.compile("^>PIRSF[0-9]{6}$");
+    //Pattern for superfamily and subfamilies
+    private static final Pattern PIRSF_DAT_PATTERN_SUBFAM = Pattern.compile("^>PIRSF[0-9]{6}[a-zA-Z0-9 :]+$");
+
+    private int row = 1;
+
+    private String modelName;
+
+    private String[] values;
+
+    private boolean isBlastRequired = false;
+
+    private String modelAccession;
+
 
     public Map<String, PirsfDatRecord> parse(Resource pirsfDatFileResource) throws IOException {
         if (pirsfDatFileResource == null) {
@@ -54,21 +76,19 @@ public class PirsfDatFileParser implements Serializable {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(pirsfDatFileResource.getInputStream()));
-            String line = null;
-            String modelAccession = null;
-            String modelName = null;
-            String[] values = null;
-            boolean isBlastRequired = false;
-            int row = 1;
+            String line;
+//            String modelAccession = null;
+            Set<String> subfamilies = new HashSet<String>();
+//            String modelName = null;
+//            String[] values = null;
+//            boolean isBlastRequired = false;
+//            int row = 1;
             while ((line = reader.readLine()) != null) {
-                Matcher modelStart = PIRSF_DAT_PATTERN.matcher(line);
+                Matcher modelStart = PIRSF_DAT_PATTERN_SUPERFAM.matcher(line);
                 if (modelStart.find()) {
-                    // New accession
-                    row = 1;
+                    // New accession without sub families
+                    setUpNewAccession();
                     modelAccession = line.substring(1);
-                    modelName = null;
-                    values = null;
-                    isBlastRequired = false;
                 } else if (row == 2) {
                     // Model name
                     modelName = line;
@@ -80,9 +100,16 @@ public class PirsfDatFileParser implements Serializable {
                         line = line.substring(index + 1).trim();
                     }
                     isBlastRequired = (true ? line.equalsIgnoreCase("YES") : false);
-                    data.put(modelAccession, new PirsfDatRecord(modelAccession, modelName, values, isBlastRequired));
+                    data.put(modelAccession, new PirsfDatRecord(modelAccession, modelName, values, isBlastRequired, subfamilies));
                 } else {
-                    LOGGER.warn("Unexpected line in pirsf.dat: " + line);
+                    modelStart = PIRSF_DAT_PATTERN_SUBFAM.matcher(line);
+                    if (modelStart.find()) {
+                        // New accession with sub families
+                        setUpNewAccession();
+                        getModelAccessionAndSubFamilies(line, subfamilies);
+                    } else {
+                        LOGGER.warn("Unexpected line in pirsf.dat: " + line);
+                    }
                 }
                 row++;
             }
@@ -94,5 +121,23 @@ public class PirsfDatFileParser implements Serializable {
         return data;
     }
 
+    private void getModelAccessionAndSubFamilies(String line, Set<String> subfamilies) {
+        String[] chunks = line.split(" ");
+        for (int i = 0; i < chunks.length; i++) {
+            if (i == 0) {
+                if (chunks[i].length() > 1) {
+                    modelAccession = chunks[i].substring(1);
+                }
+            } else if (i > 1) {
+                subfamilies.add(chunks[i]);
+            }
+        }
+    }
 
+    private void setUpNewAccession() {
+        row = 1;
+        modelName = null;
+        values = null;
+        isBlastRequired = false;
+    }
 }
