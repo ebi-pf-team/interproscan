@@ -6,20 +6,28 @@
 
     <c:set var="superMatchId" value="0" scope="request"/>
 
-    <div id="condensed">
-        <c:forEach var="line" items="${condensedView.lines}">
-            <c:set var="type" value="null"/><%-- Need the type var scoped outside the forEach loop --%>
-            <div class="supermatchline">
+
+
+ <c:forEach var="line" items="${condensedView.lines}">
+ <c:set var="type" value="${line.type}"/>
+ <li id="${containerId}" class="signature entry-signatures">
+ <!-- the order of the divs is important , first right column fixed-->
+    <div class="bot-row-signame">${type}</div>
+    <div class="bot-row-line">
+    <div class="matches">
                 <c:forEach var="superMatch" items="${line.superMatchList}">
                     <c:set var="superMatchId" value="${superMatchId + 1}"/>
-                    <c:set var="type" value="${superMatch.type}"/>
                     <h:supermatchLocation id="supermatch-location-${superMatchId}"
                                           colourClass="c${entryColours[superMatch.firstEntry.ac]} ${type}"
                                           protein="${protein}"
                                           supermatch="${superMatch}"/>
+
                 </c:forEach>
-            </div>
-            <span class="supermatchType">${type}</span>
-        </c:forEach>
     </div>
+    </div>
+ </li>
+        </c:forEach>
+
 </c:if>
+
+
