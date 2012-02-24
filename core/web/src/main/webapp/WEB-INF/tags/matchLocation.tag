@@ -8,8 +8,6 @@
 <%@ taglib prefix="h"  tagdir="/WEB-INF/tags" %>
 
 <c:set var="title" value="${signature.ac}"/>
-<c:set var="link" value="<a href='${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}' title='${signature.dataSource.name}: ${signature.ac}'>${signature.ac}</a>"/>
-
 <%--Signatures like "G3DSA:3.20.20.80" cause issues, remove special characters --%>
 <%--TODO? Try http://stackoverflow.com/questions/296264/using-regular-expressions-in-jsp-el--%>
 <c:set var="prefix" value="${fn:replace(signature.ac,':','')}"/>
@@ -22,8 +20,10 @@
             colourClass="${colourClass}"/>
 
 <div id="${prefix}-popup-${id}" style="display: none;">
-    ${link}<br />
-    <%--(<a href="${signature.dataSource.homeUrl}" title="${signature.dataSource.description}">${signature.dataSource.name}</a>)<br />--%>
-    <br />
-    ${location.start} - ${location.end}<br />
+    <div class="popup_topl"><span class="${colourClass} caption_puce"></span>${location.start} - ${location.end}</div>
+    <div class="popup_botl">    <strong>${signature.dataSource.name}</strong> signature (<a href="#" title="${signature.dataSource.description}" >?</a>) <br/>
+    <a href='${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}' title="${signature.ac} (${signature.name})" class="ext">${signature.ac} </a> <span>(${signature.name})</span> <br/>  
+
+   </div>
+
 </div>
