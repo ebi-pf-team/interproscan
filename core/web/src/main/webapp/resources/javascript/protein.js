@@ -2,7 +2,7 @@
  * Behaviour for protein.jsp
  *
  * @author  Antony Quinn
- * @version $Id$
+ * @version $Id: protein.js,v 1.6 2012/02/20 12:09:41 matthew Exp $
  */
 
 // Prepare protein match popup
@@ -18,21 +18,24 @@ function preparePopup(spanId) {
         content: {
             text: $('#'.concat(popupId)),
             title: {
-                text: 'Location data',
+                text: '',
                 button: true // Close button
             }
         },
         position: {
-            my: 'top center',
-            at: 'bottom center',
+            my: 'bottom center',
+            at: 'top center',
             viewport: $(window), // Keep the tooltip on-screen at all times
             effect: true // Positioning animation
         },
         show: {
             event: 'click',
-            solo: false // Show one tooltip at a time?
+            solo: true // Show one tooltip at a time?
         },
-        hide: 'close',
+//        hide: 'close',
+        hide: {
+            event: 'unfocus'
+   },
         style: {
             classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-shadow'
         }
@@ -65,8 +68,7 @@ function displayType(checkbox) {
 }
 
 function displayUnintegrated(checkbox) {
-    var checked = checkbox.checked;
-    $.cookie('#' + checkbox.id, checked, { path: '/' });
+    $.cookie('#check-6', checkbox.checked, { path: '/' });
     if (checkbox.checked) {
         $('#unintegrated').show("blind", { direction: "vertical" }, 300);
     }
