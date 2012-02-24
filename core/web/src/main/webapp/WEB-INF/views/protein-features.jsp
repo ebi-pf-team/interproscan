@@ -15,36 +15,44 @@
 
 <c:if test="${not empty protein.entries}">
 
-    <p>
-        <c:import url="condensed-view.jsp"/>
-    </p>
+    <div class="prot_sum">
+            <%--<h1>Sequence summary</h1>--%>
 
-    <a name="domains-sites"></a>
+                <div class="top-row">
+                    <div class="top-row-id"><h1>Summary view</h1></div>
+                    <div class="top-row-opt"><a href="#" title="Open sequence summary view in a new window"><span class="opt1"></span></a></div>
+                </div>
 
-    <h3>Families, domains, repeats and sites</h3>
+                <div class="bot-row">
+                    <div class="bot-row-line-top"></div>
+                    <ol class="signatures">
 
-    <div id="section-domains-sites">
-        <!-- Scale markers -->
-        <div style="width: 92%; position: relative;">
-            <!-- Position labels -->
-            <c:forTokens items="${scale}" delims="," var="scaleMarker">
-                <span style="left:  ${(scaleMarker / protein.length) * 100}%; position: absolute;">
-                        ${scaleMarker}
-                </span>
-            </c:forTokens>
-        </div>
-        <br/>
+                    <c:import url="condensed-view.jsp"/>
 
-        <div class="scale">
-            <!-- Position marker lines -->
-            <c:forTokens items="${scale}" delims="," var="scaleMarker">
-            <span class="scale"
-                  style="left:  ${(scaleMarker / protein.length) * 100}%;"
-                  title="${scaleMarker}">
-            </span>
-            </c:forTokens>
-        </div>
+                    </ol>
+                    <div class="bot-row-line-bot"></div>
+                </div>
 
+        <div class="prot_scale">
+          <div class="bot-row">
+
+                  <div class="bot-row-line">
+                        <div style="position:relative;">
+                        <!-- Position marker lines -->
+                        <c:forTokens items="${scale}" delims="," var="scaleMarker">
+                       <!-- to build an exception for 0 -->
+                       <span class="scale_bar" style="left:${(scaleMarker / protein.length) * 100}%;" title="${scaleMarker}"></span>
+                       <span class="scale_numb" style="left:${(scaleMarker / protein.length) * 100}%;">${scaleMarker}</span>
+                       </c:forTokens>
+                       </div>
+             </div>
+
+          </div>
+     </div>
+    </div>
+
+    <div class="prot_entries">
+        <h1>Sequence features</h1>
         <ol class="entries">
             <c:forEach var="entry" items="${protein.entries}">
                 <!-- Prepare required variables for this entry -->
@@ -82,16 +90,19 @@
 
                 <!-- Now display the entry on the page using these variables -->
                 <li class="entry ${entry.type}-row">
-                    <p>
-                            <%-- Use InterPro 5.2 image paths for now (see mvc-config.xml) --%>
-                            <%-- Better to pass in param from DBML instead so can use normal resource: --%>
-                            <%--<c:url value="/resources/images/ico_type_uni_small.png"/>--%>
-                        <img src="/interpro/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/>
-                        <a href="http://wwwdev.ebi.ac.uk/interpro/IEntrySummary?ac=${entry.ac}" title="${title}">${entry.ac}</a> ${entry.name}
-                    </p>
-                    <ol class="signatures">
+
+                <div class="top-row">
+                    <div class="top-row-id"><img src="/interpro/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/> <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" title="${entry.name} (${entry.ac})">${entry.ac}</a> </div>
+                    <div class="top-row-name"><a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" title="${entry.name} (${entry.ac})" class="neutral">${entry.name}</a></div>
+                </div>
+
+                <div class="bot-row">
+                    <div class="bot-row-line-top"></div>
+                    <ol class="signatures"  style="border:0px solid pink;">
+
                         <c:forEach var="signature" items="${entry.signatures}">
-                            <li id="${containerId}" class="signature entry-signatures">
+
+                            <li id="${containerId}" class="signature entry-signatures" >
                                 <h:signature protein="${protein}"
                                              signature="${signature}"
                                              entryTypeTitle="${title}"
@@ -99,6 +110,8 @@
                             </li>
                         </c:forEach>
                     </ol>
+                    <div class="bot-row-line-bot"></div>
+                </div>
                 </li>
             </c:forEach>
         </ol>
@@ -106,12 +119,14 @@
 </c:if>
 
 <c:if test="${not empty protein.unintegratedSignatures}">
-    <div id="unintegrated">
-        <a name="unintegrated-signatures"></a>
-        <img src="/interpro/images/ico_type_uni_small.png" alt="Unintegrated signatures"
-             title="Unintegrated signatures"/> no IPR
-        Unintegrated signatures
-        <ol class="signatures">
+    <div class="prot_entries" id="uni">
+        <div class="top-row">
+             <div class="top-row-id"><img src="/interpro/images/ico_type_uni_small.png" alt="Unintegrated signatures" title="Unintegrated signatures"/> no IPR </div>
+             <div class="top-row-name">Unintegrated signatures</div>
+        </div>
+        <div class="bot-row">
+            <div class="bot-row-line-top"></div>
+            <ol class="signatures">
             <c:forEach var="signature" items="${protein.unintegratedSignatures}">
                 <li class="signature">
                     <h:signature protein="${protein}"
@@ -120,6 +135,9 @@
                                  colourClass="uni"/>
                 </li>
             </c:forEach>
-        </ol>
+            </ol>
+            <div class="bot-row-line-bot"></div>
+        </div>
     </div>
 </c:if>
+
