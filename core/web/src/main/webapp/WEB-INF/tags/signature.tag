@@ -5,10 +5,12 @@
 <%@ attribute name="signature" required="true" type="uk.ac.ebi.interpro.scan.web.model.SimpleSignature" %>
 <%@ attribute name="entryTypeTitle" required="false" %>
 <%@ attribute name="colourClass"    required="true" %>
+     
+    <c:set var="locationId" value="0" scope="request" />
 
-<div>
-    <p>
-        <%--
+    <!-- the order of the divs is important , first right column fixed-->
+        <div class="bot-row-signame"><!-- link to modify -->
+         <%--
         Setup variables ready for displaying signature information,
         e.g. could condense "G3DSA:2.40.20.10 (Pept_Ser_Cys)" to "G3DSA:2.40.2... (Pept_S...)".
         NOTE: PLEASE ENSURE THAT maxOverallLength >= maxAcLength + 4
@@ -26,10 +28,10 @@
         <%-- Now display the signature accession --%>
         <c:choose>
         <c:when test="${signature.ac != signature.name}">
-        <a href="${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}" title="${signature.ac} ${signature.name}: ${entryTypeTitle} (${signature.dataSource})">
+        <a href="${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}" title="${signature.ac} (${signature.name})"  class="neutral">
             </c:when>
             <c:otherwise>
-            <a href="${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}" title="${signature.ac}: ${entryTypeTitle} (${signature.dataSource})">
+            <a href="${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}" title="${signature.ac} (${signature.name})" class="neutral" >
                 </c:otherwise>
                 </c:choose>
                 <c:choose>
@@ -45,35 +47,34 @@
 
             <%-- Now display the signature name (if not identical to the accession) --%>
             <c:if test="${signature.ac != signature.name}">
-            (
-            <c:choose>
+             <c:choose>
             <c:when test="${nameLength > maxNameLength}">
                 <%--Name is too long, need to truncate it--%>
-                ${fn:substring(signature.name, 0, maxNameLength - 3)}...
+                   <span>(${fn:substring(signature.name, 0, maxNameLength - 3)}...)</span>
             </c:when>
             <c:otherwise>
-                ${signature.name}
+               <span>(${signature.name})</span>
             </c:otherwise>
             </c:choose>
-            )
             </c:if>
-    </p>
 
-    <c:set var="locationId" value="0" scope="request" />
+           </div>
+        <div class="bot-row-line">
+        <div class="matches">
 
-    <div class="match">
-        <c:forEach var="location" items="${signature.locations}">
-            <c:set var="locationId" value="${locationId + 1}" />
-            <c:set var="dbClass">
-                <c:if test="${colourClass != 'uni'}">
-                    ${fn:replace(fn:toLowerCase(signature.dataSource), ' ', '-')}
-                </c:if>
-            </c:set>
-            <h:matchLocation  id="${locationId}"
-                              protein="${protein}"
-                              signature="${signature}"
-                              location="${location}"
-                              colourClass="${dbClass} ${colourClass}"/>
-        </c:forEach>
-    </div>
-</div>
+            <c:forEach var="location" items="${signature.locations}">
+                <c:set var="locationId" value="${locationId + 1}" />
+                <c:set var="dbClass">
+                    <c:if test="${colourClass != 'uni'}">
+                        ${fn:replace(fn:toLowerCase(signature.dataSource), ' ', '-')}
+                    </c:if>
+                </c:set>
+                <h:matchLocation  id="${locationId}"
+                                  protein="${protein}"
+                                  signature="${signature}"
+                                  location="${location}"
+                                  colourClass="${dbClass} ${colourClass}"/>
+            </c:forEach>
+        </div>
+
+        </div>
