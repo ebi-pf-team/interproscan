@@ -18,19 +18,22 @@
     <c:set var="currentLevel" value="0"/>
     <c:set var="depth" value="0"/>
     <%--<c:set var="first" value="true"/>--%>
+     <div class="popup_topl"><span class="${colourClass} caption_puce"></span>${supermatch.location.start} - ${supermatch.location.end}</div>
     <c:forEach var="entry" items="${supermatch.entriesHierarchyOrder}">
     <c:if test="${depth eq 0 or (entry.hierarchyLevel != null and currentLevel < entry.hierarchyLevel)}">
-    <ul class="hierarch">
+        <c:if test="${depth eq 0}">
+
+        </c:if>
+        <ul>
         <c:set var="depth" value="${depth + 1}"/>
         </c:if>
         <li>
-                <a href="http://wwwdev.ebi.ac.uk/interpro/IEntrySummary?ac=${entry.ac}" title="View entry ${entry.ac} on the InterPro website">${entry.name}</a> ${entry.ac}
+      <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" class="neutral" title=" ${entry.name} (${entry.ac})">${entry.name} <span>(${entry.ac})</span></a>
         </li>
         <c:set var="currentLevel" value="${entry.hierarchyLevel}"/>
         </c:forEach>
         <c:forEach begin="0" end="${depth}">
     </ul>
     </c:forEach>
-    ${supermatch.location.start} - ${supermatch.location.end}<br/>
 
 </div>
