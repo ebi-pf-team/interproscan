@@ -6,6 +6,7 @@
 
     <!-- Import common beans -->
     <import resource="jobPfamA-context.xml"/>
+    <import resource="jobPfamA-26.0-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
     <import resource="jobPanther-context.xml"/>
@@ -43,6 +44,7 @@
 
                 <!-- Analyses -->
                 <ref bean="jobPfamA"/>
+                <ref bean="jobPfamA-26.0"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobGene3d"/>
                 <ref bean="jobPanther"/>
