@@ -13,6 +13,7 @@
     <import resource="jobPrints-context.xml"/>
     <import resource="jobCoils-context.xml"/>
     <import resource="jobHAMAP-context.xml"/>
+    <import resource="jobHAMAP-140911-context.xml"/>
     <import resource="jobPrositeProfiles-context.xml"/>
     <import resource="jobPrositePatterns-context.xml"/>
     <import resource="jobSignalP-EUK-4.0-context.xml"/>
@@ -51,6 +52,7 @@
                 <ref bean="jobPRINTS"/>
                 <ref bean="jobCoils"/>
                 <ref bean="jobHAMAP"/>
+                <ref bean="jobHAMAP-140911"/>
                 <ref bean="jobProDom-2006.1"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
