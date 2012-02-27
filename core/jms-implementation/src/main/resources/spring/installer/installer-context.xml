@@ -37,6 +37,13 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPfamA"/>
                 </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="PFAM"/>
+                    <property name="releaseVersionNumber" value="26.0"/>
+                    <property name="modelFile" value="file:${Pfam-A.hmm.path.26.0}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPfamA-26.0"/>
+                </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
                     <property name="signatureLibrary" value="PRINTS"/>
                     <property name="releaseVersionNumber" value="41.1"/>
