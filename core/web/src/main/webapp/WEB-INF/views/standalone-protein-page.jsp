@@ -120,6 +120,9 @@
         // Initialise un-integrated.
         displayUnintegrated($("#check-6"));
 
+        // Match all <A/> links with a title tag and use it as the content (default).
+        $('a[title]').qtip();
+
         $('span[id*="location-"]').each(
                 function(i) {
                     preparePopup(this.id);
