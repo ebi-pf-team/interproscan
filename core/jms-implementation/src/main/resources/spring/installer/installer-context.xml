@@ -116,6 +116,22 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPrositeProfiles"/>
                 </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+                    <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
+                    <property name="releaseVersionNumber" value="20.72"/>
+                    <property name="modelFile" value="file:${prosite.models.path.20.72}"/>
+                    <property name="prositeModelType" value="PATTERNS"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPrositePatterns-20.72"/>
+                </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+                    <property name="signatureLibrary" value="PROSITE_PROFILES"/>
+                    <property name="releaseVersionNumber" value="20.72"/>
+                    <property name="modelFile" value="file:${prosite.models.path.20.72}"/>
+                    <property name="prositeModelType" value="PROFILES"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPrositeProfiles-20.72"/>
+                </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
                     <property name="releaseVersionNumber" value="7.0"/>
