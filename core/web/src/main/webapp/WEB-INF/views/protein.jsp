@@ -14,13 +14,10 @@
     </c:choose>
     <meta name="description" content="Protein matches">
     <meta name="author" content="InterPro Team, European Bioinformatics Institute">
-    <%--<link href="http://www.ebi.ac.uk/inc/css/contents.css"      rel="stylesheet" type="text/css" />--%>
-    <%--<link href="http://www.ebi.ac.uk/inc/css/userstyles.css"    rel="stylesheet" type="text/css" />--%>
-    <%--<link href="http://wwwdev.ebi.ac.uk/interpro/toolkits/interpro/interpro.css" rel="stylesheet" type="text/css" />--%>
-    <link href="<c:url value="/resources/css/protein.css" />" rel="stylesheet" type="text/css"/>
-    <link href="<c:url value="/resources/css/domain.css" />" rel="stylesheet" type="text/css"/>
-    <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet" type="text/css"/>
     <link href="<c:url value="/resources/javascript/qtip2/jquery.qtip.css" />" rel="stylesheet" type="text/css"/>
+    <link href="<c:url value="/resources/css/protein.css" />" rel="stylesheet" type="text/css"/>
+    <link href="<c:url value="/resources/css/type_colours.css" />" rel="stylesheet" type="text/css"/>
+    <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet" type="text/css"/>
     <script src="<c:url value="/resources/javascript/jquery/jquery-1.7.1.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/qtip2/jquery.qtip.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
