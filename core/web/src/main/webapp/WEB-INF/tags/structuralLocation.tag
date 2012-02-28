@@ -22,8 +22,8 @@
             <c:if test="${!vs.first}">
                 <c:set var="title" value="${title}, "/>
             </c:if>
-            <c:set var="title" value="${title}${dataEntry.key}"/>
-            <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl,'$0',dataEntry.key)}'>${dataEntry.key}</a><br/>"/>
+            <c:set var="title" value="${dataEntry.key}"/>
+            <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl,'$0',dataEntry.key)}'  title='${title} (${databaseMetadata.name})' class='ext'>${dataEntry.key}</a><br/>"/>
         </c:forEach>
     </c:when>
 
@@ -36,8 +36,8 @@
                 <c:if test="${!vs.first}">
                     <c:set var="title" value="${title}, "/>
                 </c:if>
-                <c:set var="title" value="${title}${domainId}"/>
-                <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl, '$0', dataEntry.key)}'>${domainId}</a><br/>"/>
+                <c:set var="title" value="${domainId}"/>
+                <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl, '$0', dataEntry.key)}'  title='${title} (${databaseMetadata.name})' class='ext'>${domainId}</a><br/>"/>
             </c:forEach>
         </c:forEach>
     </c:when>
@@ -53,9 +53,14 @@
             location="${location}"
             colourClass="${databaseName}"/>
 
+
 <div id="match-popup-${id}" style="display: none;">
-    ${links}
-    <%--(<a href="${databaseMetadata.homeUrl}" title="${databaseMetadata.description}">${databaseMetadata.name}</a>)<br />--%>
-    <br />
-    ${location.start} - ${location.end}<br />
+
+    <div class="popup_topl"><span class="${databaseName} caption_puce"></span>${location.start} - ${location.end}</div>
+     <div class="popup_botl"><strong>${databaseMetadata.name}</strong> <img src="images/ico_help.png" alt="help" title="${databaseMetadata.description}" > <br/>
+     ${links} <br/>
+
+   </div>
+    <%--(<a href="${databaseMetadata.homeUrl}"></a>)<br />--%>
+
 </div>
