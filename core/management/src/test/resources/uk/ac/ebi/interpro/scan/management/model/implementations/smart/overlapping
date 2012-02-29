@@ -1,43 +1,5 @@
-     name     |    domain    |  typ  | number 
+     name     |    domain    |  typ  | number
 --------------+--------------+-------+--------
  DEXDc        | DEXDc2       | merge |      2
  DEXDc        | DEXDc        | merge |      1
  DEXDc        | DEXDc3       | merge |      3
- EGF_like     | EGF_like     | split |      4
- EGF_like     | EGF          | split |      3
- EGF_like     | EGF_CA       | split |      1
- EGF_like     | EGF_Lam      | split |      2
- HELICc       | HELICc       | merge |      1
- HELICc       | HELICc2      | merge |      2
- HELICc       | HELICc3      | merge |      3
- IG_like      | IGv          | split |      1
- IG_like      | IGc1         | split |      2
- IG_like      | IGc2         | split |      3
- IG_like      | IG_like      | split |      5
- IG_like      | IG           | split |      4
- Kinasen      | TyrKc        | split |      1
- Kinasen      | S_TKc        | split |      2
- Kinasen      | STYKc        | split |      3
- LRR          | LRR_CC       | split |      4
- LRR          | LRR_RI       | split |      5
- LRR          | LRR_TYP      | split |      6
- LRR          | LRR          | split |      7
- LRR          | LRR_SD22     | split |      2
- LRR          | LRR_BAC      | split |      1
- PTPc_DSPc    | PTPc         | split |      1
- PTPc_DSPc    | DSPc         | split |      2
- PTPc_DSPc    | PTPc_motif   | split |      3
- PTPc_DSPc    | PTPc_DSPc    | split |      4
- RRM          | RRM_1        | merge |      2
- RRM          | RRM_2        | merge |      3
- RRM          | RRM          | merge |      1
- VWC          | VWC          | merge |      1
- VWC          | VWC_def      | merge |      3
- VWC          | VWC_out      | merge |      2
- small_GTPase | RAS          | split |      1
- small_GTPase | RHO          | split |      2
- small_GTPase | RAB          | split |      3
- small_GTPase | RAN          | split |      4
- small_GTPase | ARF          | split |      5
- small_GTPase | SAR          | split |      6
- small_GTPase | small_GTPase | split |      7

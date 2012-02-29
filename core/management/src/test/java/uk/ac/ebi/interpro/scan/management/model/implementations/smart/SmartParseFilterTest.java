@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * Tests {@link HmmPfamParser<SmartRawMatch>} and {@link SmartPostProcessing}.
@@ -86,13 +87,15 @@ public class SmartParseFilterTest {
 
 
         // TODO: Why getRawMatchesForProteinIdsInRange() in specific Smart class and not the standard RawMatchDAO.getProteinsByIdRange() ?
-        // Read raw matches        
+        // Read raw matches
         Map<String, RawProtein<SmartRawMatch>> rawMatches =
                 rawMatchDAO.getRawMatchesForProteinIdsInRange(bottomProtein, topProtein, parser.getSignatureLibraryRelease());
         assertEquals(expectedRawMatches.longValue(), getMatchCount(rawMatches.values()));
 
         // Filter raw matches
         Map<String, RawProtein<SmartRawMatch>> filteredMatches = postProcessor.process(rawMatches);
+        assertNotNull(filteredMatches);
+        assertEquals(expectedProteins.longValue(), filteredMatches.values().size());
         assertEquals(expectedFilteredMatches.longValue(), getMatchCount(filteredMatches.values()));
 
         // TODO: The remainder is only required to test persistence of filtered matches -- need to fix LazyInitializationError first:
@@ -115,7 +118,7 @@ public class SmartParseFilterTest {
 
         // Insert signatures -- we're saving time and memory by only inserting the signatures we need
 //        SignatureLibraryRelease release =
-//                new SignatureLibraryRelease(SignatureLibrary.SMART, parser.getSignatureLibraryRelease());        
+//                new SignatureLibraryRelease(SignatureLibrary.SMART, parser.getSignatureLibraryRelease());
 //        for (RawProtein<SmartRawMatch> p : filteredMatches.values()) {
 //            for (SmartRawMatch m : p.getMatches()) {
 //                String id = m.getModelId();
