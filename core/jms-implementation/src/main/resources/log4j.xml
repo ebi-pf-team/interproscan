@@ -14,7 +14,6 @@
 
     <!-- File appender -->
     <appender name="fileappender" class="org.apache.log4j.RollingFileAppender">
-        <!--<param name="File" value="/home/maxim/projects/ebi-metagenomics/memi/memi_log.txt"/>-->
         <param name="File" value="${log4j.log.file}"/>
         <param name="Append" value="true"/>
         <param name="MaxFileSize" value="2MB"/>
