@@ -3,8 +3,8 @@ HMMER 2.3.2 (Oct 2003)
 Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
 Freely distributed under the GNU General Public License (GPL)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-HMM file:                 /ebi/sp/pro1/interpro/data/members/smart/6.1/smart.HMMs.bin
-Sequence file:            UPI0000000030.fasta
+HMM file:                 data/smart/6.1/smart.HMMs.bin
+Sequence file:            ../../business/src/test/resources/uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030.fasta
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Query sequence: 1
@@ -12,47 +12,13 @@ Accession:      [none]
 Description:    status=active
 
 Scores for sequence family classification (score includes all domains):
-Model               Description                         Score    E-value  N 
---------            -----------                         -----    ------- ---
-SM00327                                                 170.0    5.9e-49   2
-SM00295                                                 -73.7        1.8   1
-SM00322                                                 -10.5        2.7   1
-SM00330                                                -249.8        3.6   1
-SM00164                                                -101.5        4.2   1
-SM00464                                                 -87.2        4.4   1
-SM00332                                                 -97.0        4.6   1
-SM00813                                                 -94.3          5   1
-SM00724                                                -100.9        5.2   1
-SM00917                                                 -60.7        5.4   1
-SM00041                                                 -43.4        6.6   1
-SM00937                                                 -84.7          7   1
-SM00430                                                 -45.8        7.1   1
-SM00194                                                -165.1        7.3   1
-SM00745                                                 -27.6        8.4   1
-SM00652                                                 -50.7        8.6   1
-SM00050                                                 -77.4        8.8   1
-SM00434                                                -364.8        9.5   1
+Model    Description                                    Score    E-value  N
+-------- -----------                                    -----    ------- ---
+SM00327                                                 170.0    1.3e-51   2
 
 Parsed for domains:
-Model               Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
---------            ------- ----- -----    ----- -----      -----  -------
-SM00327               1/2       1   155 [.     1   193 []    54.4  3.7e-14
-SM00164               1/1       1   666 [.     1   310 []  -101.5      4.2
-SM00813               1/1      18   609 ..     1   226 []   -94.3        5
-SM00434               1/1      24   668 ..     1   516 []  -364.8      9.5
-SM00332               1/1      57   700 ..     1   338 []   -97.0      4.6
-SM00194               1/1      62   643 ..     1   308 []  -165.1      7.3
-SM00295               1/1      74   650 ..     1   232 []   -73.7      1.8
-SM00724               1/1      76   663 ..     1   230 []  -100.9      5.2
-SM00464               1/1      96   653 ..     1   241 []   -87.2      4.4
-SM00330               1/1      98   640 ..     1   438 []  -249.8      3.6
-SM00937               1/1      98   165 ..     1   138 []   -84.7        7
-SM00917               1/1     119   639 ..     1   135 []   -60.7      5.4
-SM00430               1/1     149   619 ..     1   158 []   -45.8      7.1
-SM00041               1/1     158   557 ..     1    94 []   -43.4      6.6
-SM00050               1/1     498   542 ..     1    81 []   -77.4      8.8
-SM00327               2/2     537   718 ..     1   193 []   115.6  1.4e-32
-SM00322               1/1     549   610 ..     1    63 []   -10.5      2.7
-SM00745               1/1     587   661 ..     1    81 []   -27.6      8.4
-SM00652               1/1     643   714 ..     1    92 []   -50.7      8.6
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00327    1/2       1   155 [.     1   193 []    54.4  8.3e-17
+SM00327    2/2     537   718 ..     1   193 []   115.6  3.2e-35
 //

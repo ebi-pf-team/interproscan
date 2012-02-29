@@ -16,12 +16,10 @@ import java.text.NumberFormat;
 import java.util.*;
 
 /**
- * Smart post-processing -> requires 2 Smart files for threshold and overlapping data
- *
- * Algorithm:
- *
+ * Smart post-processing requires 2 licensed files that need to be obtained from Smart for threshold and overlap data.
+ * The "overlapping" and "THRESHOLDS" files are not included with an InterProScan by default, and if one or both are
+ * not present then no filtering is performed (all raw matches become filtered matches).
  */
-
 public class SmartPostProcessing implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(SmartPostProcessing.class.getName());
@@ -54,18 +52,34 @@ public class SmartPostProcessing implements Serializable {
         this.overlappingFileParser = overlappingFileParser;
     }
 
-    @Required
+    /**
+     * Required for post processing to happen - if not present then match filtering is not performed (all raw matches
+     * becomes filtered matches).
+     *
+     * @param thresholdFileResource The location of the Smart threshold data file, e.g. "THRESHOLDS"
+     */
     public void setThresholdFileResource(Resource thresholdFileResource) {
         this.thresholdFileResource = thresholdFileResource;
     }
 
-    @Required
+    /**
+     * Required for post processing to happen - if not present then match filtering is not performed (all raw matches
+     * becomes filtered matches).
+     *
+     * @param overlappingFileResource The location of the Smart overlap data file, e.g. "overlapping"
+     */
     public void setOverlappingFileResource(Resource overlappingFileResource) {
         this.overlappingFileResource = overlappingFileResource;
     }
 
-    //Map<String, RawProtein<SmartRawMatch>> filteredMatches = postProcessor.process(rawMatches);
-    public Map<String, RawProtein<SmartRawMatch>> process(Map<String, RawProtein<SmartRawMatch>> proteinIdToRawMatchMap) throws IOException {
+    /**
+     * Perform post processing.
+     *
+     * @param proteinIdToRawProteinMap Map of protein accessions to raw proteins to process
+     * @return The filtered (processed) map of protein accessions to raw proteins
+     * @throws IOException If a required file resource could not be accessed
+     */
+    public Map<String, RawProtein<SmartRawMatch>> process(Map<String, RawProtein<SmartRawMatch>> proteinIdToRawProteinMap) throws IOException {
 
         // FIX: Moved from module level
         Map<String, SmartThresholdFileParser.SmartThreshold> smartThresholdMap;
@@ -74,17 +88,45 @@ public class SmartPostProcessing implements Serializable {
         Map<String, String> accessionMap = new HashMap<String, String>();
         Map<String, String> mergeMap = new HashMap<String, String>();
 
-        smartThresholdMap = thresholdFileParser.parse(thresholdFileResource);
-        smartOverlapMap = overlappingFileParser.parse(overlappingFileResource);
-
-        //need hashmap of accession, family name, only where no. family members is > 1 and family name is not serine kinase (other kinase??)
-        populateFamilyMap(smartThresholdMap, accessionMap, familyMap);
-        populateMergeMap(smartOverlapMap, accessionMap, mergeMap);
-
-        // Fix: module-level var was keeping previous results!!!
         Map<String, RawProtein<SmartRawMatch>> allFilteredMatches = new HashMap<String, RawProtein<SmartRawMatch>>();
-        for (String s : proteinIdToRawMatchMap.keySet()) {
-            processProtein(proteinIdToRawMatchMap.get(s), allFilteredMatches, smartThresholdMap, smartOverlapMap, familyMap, mergeMap);
+
+        if (thresholdFileResource == null || overlappingFileResource == null) {
+            // One of the thresholds and overlapping files was not present (possibly the user is using an unlicensed
+            // version of SMART), therefore no filtering can be performed
+            if (thresholdFileResource == null) {
+                LOGGER.warn("Smart threshold file resource is not configured - Smart post processing skipped");
+            }
+            if (overlappingFileResource == null) {
+                LOGGER.warn("Smart overlapping file resource is not configured - Smart post processing skipped");
+            }
+            // All raw matches become filtered matches
+            for (String proteinId : proteinIdToRawProteinMap.keySet()) {
+                RawProtein<SmartRawMatch> matchRawProtein = proteinIdToRawProteinMap.get(proteinId);
+                for (SmartRawMatch smartRawMatch : matchRawProtein.getMatches()) {
+                    String matchId = smartRawMatch.getSequenceIdentifier();
+                    RawProtein<SmartRawMatch> p;
+                    if (allFilteredMatches.containsKey(matchId)) {
+                        p = allFilteredMatches.get(matchId);
+                    } else {
+                        p = new RawProtein<SmartRawMatch>(matchId);
+                        allFilteredMatches.put(matchId, p);
+                    }
+                    p.addMatch(smartRawMatch);
+                }
+            }
+        }
+        else {
+            // Thresholds and overlapping files are present, therefore filtering can be performed
+            smartThresholdMap = thresholdFileParser.parse(thresholdFileResource);
+            smartOverlapMap = overlappingFileParser.parse(overlappingFileResource);
+
+            // Need hashmap of accession, family name, only where no. family members is > 1 and family name is not serine kinase (other kinase??)
+            populateFamilyMap(smartThresholdMap, accessionMap, familyMap);
+            populateMergeMap(smartOverlapMap, accessionMap, mergeMap);
+
+            for (String proteinId : proteinIdToRawProteinMap.keySet()) {
+                processProtein(proteinIdToRawProteinMap.get(proteinId), allFilteredMatches, smartThresholdMap, smartOverlapMap, familyMap, mergeMap);
+            }
         }
 
         return allFilteredMatches;
@@ -97,10 +139,7 @@ public class SmartPostProcessing implements Serializable {
                                  Map<String, String> familyMap,
                                  Map<String, String> mergeMap) {
 
-        //RawProtein<SmartRawMatch> filteredMatches = new RawProtein<SmartRawMatch>(matchRawProtein.getProteinIdentifier());
-
         Map<String, Integer> repeatsCntHM = new HashMap<String, Integer>();
-
         Map<String, List<SmartRawMatch>> siblingsHits = new HashMap<String, List<SmartRawMatch>>();
 
         for (SmartRawMatch smartRawMatch : matchRawProtein.getMatches()) {
@@ -134,7 +173,7 @@ public class SmartPostProcessing implements Serializable {
                 // the hit is a false positive => reject it.
 
             } else if (repeatsCutoffDomain != null && setEval2NPrec(singleHitEVal, getRequiredPrecForComparisonTo(repeatsCutoff)) > repeatsCutoff) {
-               //reject
+                //reject
 
             } else if (minRepeatsInSeqS != null) {
                 // The repeat hit either doesn't have repeatsCutoffD set, or satisfies it;
@@ -146,7 +185,7 @@ public class SmartPostProcessing implements Serializable {
                 int repeatsCount = 1;
                 if (repeatsCntHM.containsKey(methodAc)) {
                     repeatsCount = repeatsCntHM.get(methodAc) + 1;
-                  }
+                }
                 repeatsCntHM.put(methodAc, repeatsCount);
                 /** Assumption: There are currently no signatures in SMART which are family members and have
                  * minRepeatsInSeq set; therefore we don't need to consider hits in potentialRepeatMatches for
@@ -195,7 +234,9 @@ public class SmartPostProcessing implements Serializable {
                     String fam = (String) familyMap.get(methodAc); // get family of methodAc in the current match
 
                     if (setEval2NPrec(singleHitEVal, getRequiredPrecForComparisonTo(domainCutoff)) > domainCutoff) {
-                        LOGGER.debug("Rejecting sibling hit because " + setEval2NPrec(singleHitEVal, getRequiredPrecForComparisonTo(domainCutoff)) + " > " + domainCutoff);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Rejecting sibling hit because " + setEval2NPrec(singleHitEVal, getRequiredPrecForComparisonTo(domainCutoff)) + " > " + domainCutoff);
+                        }
                     } else {
                         try {
                             checkOverlapsWithSiblings(smartRawMatch, siblingsHits, smartOverlapMap, mergeMap, fam, smartThresholdMap);
@@ -204,8 +245,9 @@ public class SmartPostProcessing implements Serializable {
                         }
                     }
                 } else { // a true positive hit which is neither a kinase nor in a multi-member family -> simply persist it
-                    LOGGER.debug("Accepting hit with status 'T' as wholeSeqEVal = " + setEval2NPrec(wholeSeqEVal, getRequiredPrecForComparisonTo(domainCutoff)) + " < domainCutoff = " + domainCutoff);
-                    //filteredMatches.addMatch(smartRawMatch);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Accepting hit with status 'T' as wholeSeqEVal = " + setEval2NPrec(wholeSeqEVal, getRequiredPrecForComparisonTo(domainCutoff)) + " < domainCutoff = " + domainCutoff);
+                    }
                     String id = smartRawMatch.getSequenceIdentifier();
                     RawProtein<SmartRawMatch> p;
                     if (filteredMatches.containsKey(id)) {
@@ -214,7 +256,7 @@ public class SmartPostProcessing implements Serializable {
                         p = new RawProtein<SmartRawMatch>(id);
                         filteredMatches.put(id, p);
                     }
-                    p.addMatch(smartRawMatch);                    
+                    p.addMatch(smartRawMatch);
                 }
             }
 
@@ -227,7 +269,7 @@ public class SmartPostProcessing implements Serializable {
                                            Map<String, SmartOverlappingFileParser.SmartOverlap> smartOverlapMap,
                                            Map<String, String> mergeMap,
                                            String family,
-                                         Map<String, SmartThresholdFileParser.SmartThreshold> smartThresholdMap)
+                                           Map<String, SmartThresholdFileParser.SmartThreshold> smartThresholdMap)
             throws Exception {
 
         boolean overlaps = false;
@@ -246,112 +288,132 @@ public class SmartPostProcessing implements Serializable {
         if (siblingsMatchesForFam != null) {
             for (SmartRawMatch smartRawMatch : siblingsMatchesForFam) {
                 while (!matchRejectedForSplit) {
-                // First find out which hits starts earlier
-                int eE, lS, lE; // earlier hit start and end/ later hit start and end
-                if (match.getLocationStart() <= smartRawMatch.getLocationStart()) {
-                    eE = match.getLocationEnd();
-                    lS = smartRawMatch.getLocationStart();
-                    lE = smartRawMatch.getLocationEnd();
-                } else {
-                    eE = smartRawMatch.getLocationEnd();
-                    lS = match.getLocationStart();
-                    lE = match.getLocationEnd();
+                    // First find out which hits starts earlier
+                    int eE, lS, lE; // earlier hit start and end/ later hit start and end
+                    if (match.getLocationStart() <= smartRawMatch.getLocationStart()) {
+                        eE = match.getLocationEnd();
+                        lS = smartRawMatch.getLocationStart();
+                        lE = smartRawMatch.getLocationEnd();
+                    } else {
+                        eE = smartRawMatch.getLocationEnd();
+                        lS = match.getLocationStart();
+                        lE = match.getLocationEnd();
+                    }
+
+                    /**  Three cases:
+                     *  eS_________________eE
+                     *          lS_________________lE
+                     *
+                     *       eS________________________eE
+                     *          lS_________________lE
+                     *
+                     *   eS_________eE
+                     *                 lS_________________lE
+                     * In all cases, overlapLength = min(eE, lE) - lS. Note that in the last case, overlapLength < 0.
+                     */
+                    int overlapLen = min(eE, lE) - lS + 1;
+
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Overlap checking for family: " + family + "; OverlapLen = " + overlapLen + " between: " + match.getModelId() + "and a previously stored sibling hit: " + smartRawMatch.getModelId());
+                    }
+
+                    if (overlapLen > SIBLINGS_OVERLAP_THRESHOLD) {
+                        // If the current hit overlaps with the best hit so far for that sequence range within that family
+                        overlaps = true;
+                        // Getting ovlResType for just one method will do, as all methods in one family have the same ovlResType
+                        String ovlResType = smartOverlapMap.get(match.getModelId()).getResolutionType();
+                        if (ovlResType == null) {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("smartPP: Overlap Resolution Type missing for " + match.getModelId());
+                            }
+                            throw new Exception("handled");
+                        }
+                        Integer bestHitSoFarForThisSeqRange_ResPriorityI = smartOverlapMap.get(smartRawMatch.getModelId()).getPriority();
+                        Integer match_ResPriorityI = smartOverlapMap.get(match.getModelId()).getPriority();
+
+                        if (bestHitSoFarForThisSeqRange_ResPriorityI != null && match_ResPriorityI != null) {
+                            if (ovlResType.equals(SMART_SPLIT_TAG)) {
+                                if (bestHitSoFarForThisSeqRange_ResPriorityI < match_ResPriorityI) {
+                                    // The lesser priority, the better; 1 is the best
+                                    if (LOGGER.isDebugEnabled()) {
+                                        LOGGER.debug("SPLIT: Rejecting hit (family: " + family + ") of priority: " + match_ResPriorityI + "; overlap resolution type: " + ovlResType + " (" +
+                                                match.getModelId() + ") " + "as it overlaps by more than 10aa's with a sibling hit of higher priority: (" + bestHitSoFarForThisSeqRange_ResPriorityI +
+                                                "; overlap resolution type: " + ovlResType + " (" + smartRawMatch.getModelId() + ") )");
+                                    }
+
+                                    siblingsToBeRemovedForMatch = null;
+                                    matchRejectedForSplit = true; // this will break out of the main overlaps processing loop
+                                } else {
+                                    // The current hit is better - take it instead of bestHitSoFarForThisSeqRange
+                                    if (LOGGER.isDebugEnabled()) {
+                                        LOGGER.debug("SPLIT: Marking for removal best hit so far (family: " + family + ") of priority: " + bestHitSoFarForThisSeqRange_ResPriorityI + "; overlap resolution type: " + ovlResType + " (" +
+                                                smartRawMatch.getModelId() + ") " + "as it overlaps by more than 10aa's with a sibling hit of higher priority: (" + match_ResPriorityI +
+                                                "; overlap resolution type: " + ovlResType + " (" + match.getModelId() + ") )");
+                                    }
+                                    if (siblingsToBeRemovedForMatch == null)
+                                        siblingsToBeRemovedForMatch = new HashSet<SmartRawMatch>();
+                                    siblingsToBeRemovedForMatch.add(smartRawMatch);
+                                }
+
+                            } else if (ovlResType.equals(SMART_MERGE_TAG)) {
+                                /**
+                                 * Since the raw HMMER output query returns results sorted by evalue in asc order,
+                                 * and we already have a bestHitSoFarForThisSeqRange hit, it is bound to be better or
+                                 * equal than match, so we reject match.
+                                 */
+                                if (LOGGER.isDebugEnabled()) {
+                                    LOGGER.debug("MERGE: Rejecting hit (family: " + family + ") of priority: " + match_ResPriorityI + "; overlap resolution type: " + ovlResType + " (" +
+                                            match.getModelId() + ") " + " as it overlaps by more than 10aa's with a sibling hit of better evalue: (" + bestHitSoFarForThisSeqRange_ResPriorityI +
+                                            "; overlap resolution type: " + ovlResType + " (" + smartRawMatch.getModelId() + ") )");
+                                }
+                                /**
+                                 * Note that now that we have established that the overlap existed, according to Consts.SMART_MERGE_RESOLUTION_TYPE,
+                                 * we also need to replace methodAc in bestHitSoFarForThisSeqRange with mergeMethodAc =
+                                 * methods2OvlMergeMethods.get(bestHitSoFarForThisSeqRange.methodAc)
+                                 */
+                                smartRawMatch.setModelId(mergeMap.get(smartThresholdMap.get(smartRawMatch.getModelId()).getFamilyName()));
+                            }
+                        } else {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Overlap Resolution Priority missing for " + bestHitSoFarForThisSeqRange_ResPriorityI == null ? smartRawMatch.getModelId() : match.getModelId());
+                            }
+                            throw new Exception("handled");
+                        }
+                    } // if (overlapLen > SIBLINGS_OVERLAP_THRESHOLD) { - end
+                } // while (iter.hasNext() && ret) { - end
+            }// if (siblingsMatchesForFam != null) { - end
+
+            if (!overlaps) {
+                // Add match to siblingsHits as it doesn't overlap with any hits in that family encountered so far
+                List<SmartRawMatch> al = (siblingsHits.keySet().contains(family) ? siblingsHits.get(family) : new ArrayList<SmartRawMatch>());
+                al.add(match);
+                siblingsHits.put(family, al);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Adding best hit so far to siblingHits (family: " + family + ") as no others detected so far...");
+                }
+            } else if (siblingsToBeRemovedForMatch == null) {
+                //  SMART_MERGE_RESOLUTION_TYPE or (SMART_SPLIT_RESOLUTION_TYPE and match was rejected by one of the existsing hits)
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Rejecting hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(match.getModelId()).getResolutionType() + ") because there had been overlaps with already existing better hits");
+                }
+            } else if (siblingsToBeRemovedForMatch != null) {
+                // SMART_SPLIT_RESOLUTION_TYPE - match won against all the overlapping hits in siblingsToBeRemovedForMatch
+                // First remove all the current hits which overlap with the better hit in match
+                for (SmartRawMatch s : siblingsToBeRemovedForMatch) {
+                    siblingsMatchesForFam.remove(s);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("SPLIT: Rejecting hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(s.getModelId()).getResolutionType() + ") because there are overlaps with the new (better) hit");
+                    }
+                }
+                // Now add match to siblingsMatchesForFam
+                siblingsMatchesForFam.add(match);
+                siblingsHits.put(family, siblingsMatchesForFam);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("SPLIT: Adding hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(match.getModelId()).getResolutionType() + ") because there had been overlaps with already existing (worse) hits");
                 }
 
-                /**  Three cases:
-                 *  eS_________________eE
-                 *          lS_________________lE
-                 *
-                 *       eS________________________eE
-                 *          lS_________________lE
-                 *
-                 *   eS_________eE
-                 *                 lS_________________lE
-                 * In all cases, overlapLength = min(eE, lE) - lS. Note that in the last case, overlapLength < 0.
-                 */
-                int overlapLen = min(eE, lE) - lS + 1;
-
-                LOGGER.debug("Overlap checking for family: " + family + "; OverlapLen = " + overlapLen + " between: " + match.getModelId() + "and a previously stored sibling hit: " + smartRawMatch.getModelId());
-
-                if (overlapLen > SIBLINGS_OVERLAP_THRESHOLD) {
-                    // If the current hit overlaps with the best hit so far for that sequence range within that family
-                    overlaps = true;
-                    // Getting ovlResType for just one method will do, as all methods in one family have the same ovlResType
-                    String ovlResType = smartOverlapMap.get(match.getModelId()).getResolutionType();
-                    if (ovlResType == null) {
-                        LOGGER.debug("smartPP: Overlap Resolution Type missing for " + match.getModelId());
-                        throw new Exception("handled");
-                    }
-                    Integer bestHitSoFarForThisSeqRange_ResPriorityI = smartOverlapMap.get(smartRawMatch.getModelId()).getPriority();
-                    Integer match_ResPriorityI = smartOverlapMap.get(match.getModelId()).getPriority();
-
-                    if (bestHitSoFarForThisSeqRange_ResPriorityI != null && match_ResPriorityI != null) {
-                        if (ovlResType.equals(SMART_SPLIT_TAG)) {
-                            if (bestHitSoFarForThisSeqRange_ResPriorityI < match_ResPriorityI) {
-                                // The lesser priority, the better; 1 is the best
-                                LOGGER.debug("SPLIT: Rejecting hit (family: " + family + ") of priority: " + match_ResPriorityI + "; overlap resolution type: " + ovlResType + " (" +
-                                        match.getModelId() + ") " + "as it overlaps by more than 10aa's with a sibling hit of higher priority: (" + bestHitSoFarForThisSeqRange_ResPriorityI +
-                                        "; overlap resolution type: " + ovlResType + " (" + smartRawMatch.getModelId() + ") )");
-
-                                siblingsToBeRemovedForMatch = null;
-                                matchRejectedForSplit = true; // this will break out of the main overlaps processing loop
-                            } else {
-                                // The current hit is better - take it instead of bestHitSoFarForThisSeqRange
-                                LOGGER.debug("SPLIT: Marking for removal best hit so far (family: " + family + ") of priority: " + bestHitSoFarForThisSeqRange_ResPriorityI + "; overlap resolution type: " + ovlResType + " (" +
-                                        smartRawMatch.getModelId() + ") " + "as it overlaps by more than 10aa's with a sibling hit of higher priority: (" + match_ResPriorityI +
-                                        "; overlap resolution type: " + ovlResType + " (" + match.getModelId() + ") )");
-                                if (siblingsToBeRemovedForMatch == null)
-                                    siblingsToBeRemovedForMatch = new HashSet<SmartRawMatch>();
-                                siblingsToBeRemovedForMatch.add(smartRawMatch);
-                            }
-
-                        } else if (ovlResType.equals(SMART_MERGE_TAG)) {
-                            /**
-                             * Since the raw HMMER output query returns results sorted by evalue in asc order,
-                             * and we already have a bestHitSoFarForThisSeqRange hit, it is bound to be better or
-                             * equal than match, so we reject match.
-                             */
-                            LOGGER.debug("MERGE: Rejecting hit (family: " + family + ") of priority: " + match_ResPriorityI + "; overlap resolution type: " + ovlResType + " (" +
-                                        match.getModelId() + ") " + " as it overlaps by more than 10aa's with a sibling hit of better evalue: (" + bestHitSoFarForThisSeqRange_ResPriorityI +
-                                        "; overlap resolution type: " + ovlResType + " (" + smartRawMatch.getModelId() + ") )");
-                            /**
-                             * Note that now that we have established that the overlap existed, according to Consts.SMART_MERGE_RESOLUTION_TYPE,
-                             * we also need to replace methodAc in bestHitSoFarForThisSeqRange with mergeMethodAc =
-                             * methods2OvlMergeMethods.get(bestHitSoFarForThisSeqRange.methodAc)
-                             */
-                            smartRawMatch.setModelId(mergeMap.get(smartThresholdMap.get(smartRawMatch.getModelId()).getFamilyName()));
-                        }
-                    } else {
-                        LOGGER.debug("Overlap Resolution Priority missing for " + bestHitSoFarForThisSeqRange_ResPriorityI == null ? smartRawMatch.getModelId() : match.getModelId());
-                        throw new Exception("handled");
-                    }
-                } // if (overlapLen > SIBLINGS_OVERLAP_THRESHOLD) { - end
-            } // while (iter.hasNext() && ret) { - end
-        }// if (siblingsMatchesForFam != null) { - end
-
-        if (!overlaps) {
-            // Add match to siblingsHits as it doesn't overlap with any hits in that family encountered so far
-            List<SmartRawMatch> al = (siblingsHits.keySet().contains(family) ? siblingsHits.get(family) : new ArrayList<SmartRawMatch>());
-            al.add(match);
-            siblingsHits.put(family, al);
-            LOGGER.debug("Adding best hit so far to siblingHits (family: " + family + ") as no others detected so far...");
-        } else if (siblingsToBeRemovedForMatch == null) {
-            //  SMART_MERGE_RESOLUTION_TYPE or (SMART_SPLIT_RESOLUTION_TYPE and match was rejected by one of the existsing hits)
-            LOGGER.debug("Rejecting hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(match.getModelId()).getResolutionType() + ") because there had been overlaps with already existing better hits");
-        } else if (siblingsToBeRemovedForMatch != null) {
-            // SMART_SPLIT_RESOLUTION_TYPE - match won against all the overlapping hits in siblingsToBeRemovedForMatch
-            // First remove all the current hits which overlap with the better hit in match
-            for (SmartRawMatch s : siblingsToBeRemovedForMatch) {
-                siblingsMatchesForFam.remove(s);
-                LOGGER.debug("SPLIT: Rejecting hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(s.getModelId()).getResolutionType() + ") because there are overlaps with the new (better) hit");
-            }
-            // Now add match to siblingsMatchesForFam
-            siblingsMatchesForFam.add(match);
-            siblingsHits.put(family, siblingsMatchesForFam);
-            LOGGER.debug("SPLIT: Adding hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(match.getModelId()).getResolutionType() + ") because there had been overlaps with already existing (worse) hits");
-
-        } //  if (!overlaps) { - end
-    } }// checkOverlapsWithSiblings() - end
+            } //  if (!overlaps) { - end
+        } }// checkOverlapsWithSiblings() - end
 
     private int getRequiredPrecForComparisonTo(double val) {
         int ret;
@@ -423,7 +485,7 @@ public class SmartPostProcessing implements Serializable {
         if ((lambda * (bitScore - mu)) <= -1.0 * Math.log(-1.0 * Math.log(DBL_EPSILON)))
             return 1.0;
 
-        // avoid underflow fp exceptions near P=0.0*/
+            // avoid underflow fp exceptions near P=0.0*/
         else if ((lambda * (bitScore - mu)) >= 2.3 * (double) DBL_MAX_10_EXP)
             return 0.0;
 
@@ -442,10 +504,10 @@ public class SmartPostProcessing implements Serializable {
         String eValS = nf.format(eVal);
         return Double.parseDouble(eValS);
     }
-    
+
     private void smartKinaseHackRegex(SmartRawMatch match,
-                                             Map<Integer, SmartRawMatch> serThrKinaseMatches,
-                                             Map<Integer, SmartRawMatch> tyrKinaseMatches) throws Exception {
+                                      Map<Integer, SmartRawMatch> serThrKinaseMatches,
+                                      Map<Integer, SmartRawMatch> tyrKinaseMatches) throws Exception {
 
         ProteinDAO dao = new ProteinDAOImpl();
         Protein protein = dao.getProteinAndMatchesById(match.getNumericSequenceId());

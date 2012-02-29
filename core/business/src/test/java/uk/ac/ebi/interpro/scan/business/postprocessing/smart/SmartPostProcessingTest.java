@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.*;
 
 /**
@@ -27,7 +28,6 @@ import static org.junit.Assert.*;
  * @author Antony Quinn
  * @version $Id$
  */
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class SmartPostProcessingTest {
@@ -53,8 +53,8 @@ public class SmartPostProcessingTest {
     private SmartPostProcessing postProcessor;
 
     // Parse hmmerOutput using io class then run post-processing
-    @Ignore
     @Test
+    @Ignore
     public void testParseAndFilter() throws IOException {
 
         // Read raw matches
@@ -73,8 +73,14 @@ public class SmartPostProcessingTest {
         final Map<String, RawProtein<SmartRawMatch>> filteredProteins = postProcessor.process(rawProteins);
 
         // Check
+        assertNotNull(expectedFilteredProteins);
+        assertNotNull(filteredProteins);
         assertEquals(expectedFilteredProteins.size(), filteredProteins.size());
-        assertEquals(expectedFilteredProteins, filteredProteins);
+        for (String id : filteredProteins.keySet()) {
+            RawProtein<SmartRawMatch> expectedProtein = expectedFilteredProteins.get(id);
+            RawProtein<SmartRawMatch> filteredProtein = filteredProteins.get(id);
+            assertEquals(expectedProtein, filteredProtein);
+        }
 
     }
 
@@ -93,9 +99,37 @@ public class SmartPostProcessingTest {
         final Map<String, RawProtein<SmartRawMatch>> filteredProteins = postProcessor.process(rawProteins);
 
         // Check
+        assertNotNull(filteredProteins);
         assertEquals(expectedFilteredProteins.size(), filteredProteins.size());
         assertEquals(expectedFilteredProteins, filteredProteins);
+    }
 
+    /**
+     * When the overlapping and THRESHOLDS files are null then no filtering occurs. Raw matches become filtered matches.
+     *
+     * @throws IOException If a file cannot be read.
+     */
+    @Test
+    public void testFilteringDisabled() throws IOException {
+
+        // Read raw matches
+        final Map<String, RawProtein<SmartRawMatch>> rawProteins =
+                new HashMap<String, RawProtein<SmartRawMatch>>(parseRawMatches(true, rawMatches));
+
+        // Read expected filtered matches
+        final Map<String, RawProtein<SmartRawMatch>> expectedFilteredProteins =
+                new HashMap<String, RawProtein<SmartRawMatch>>(parseRawMatches(false, filteredMatches));
+
+        // Would filter raw matches, but overlapping and THRESHOLDS files are null therefore should skip post processing
+        postProcessor.setOverlappingFileResource(null);
+        postProcessor.setThresholdFileResource(null);
+        final Map<String, RawProtein<SmartRawMatch>> filteredProteins = postProcessor.process(rawProteins);
+
+
+        // Check
+        assertNotNull(filteredProteins);
+        assertEquals(expectedFilteredProteins.size(), filteredProteins.size());
+        assertEquals(expectedFilteredProteins, filteredProteins);
     }
 
     private Map<String, RawProtein<SmartRawMatch>> parseRawMatches(boolean isRawMatches, org.springframework.core.io.Resource f)
@@ -131,10 +165,10 @@ public class SmartPostProcessingTest {
             // Ignore first row
             if (line.startsWith("ANALYSIS_TYPE_ID")) {
                 return null;
-            }            
+            }
             Scanner s = new Scanner(line);
             try {
-                
+
                 // SMART_ANALYSIS_C:
                 // "ANALYSIS_TYPE_ID"	"UPI"	"METHOD_AC"	"RELNO_MAJOR"	"RELNO_MINOR"	"SEQ_START"	"SEQ_END"	"HMM_START"	"HMM_END"	"HMM_BOUNDS"	"SCORE"	"SEQSCORE"	"TIMESTAMP"	"EVALUE"
                 // 11	"UPI0000000030"	"SM00327"	6	1	1	155	1	193	"[]"	54.4	170	17-AUG-10	-11.07572078704834

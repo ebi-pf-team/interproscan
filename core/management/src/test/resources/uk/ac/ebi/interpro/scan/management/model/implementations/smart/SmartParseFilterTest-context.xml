@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-    
+
     <import resource="classpath:/spring-persistence-config.xml"/>
 
     <bean id="proteinDAO"                  class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
@@ -33,12 +33,12 @@
     </bean>
 
     <bean id="expectedRawMatches" class="java.lang.Long">
-        <constructor-arg value="19"/>
+        <constructor-arg value="2"/>
     </bean>
 
     <bean id="expectedFilteredMatches" class="java.lang.Long">
         <constructor-arg value="2"/>
-    </bean>        
+    </bean>
 
     <bean id="parser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
         <property name="signatureLibrary"        value="SMART"/>
@@ -49,7 +49,7 @@
             </bean>
         </property>
     </bean>
-   
+
     <bean id="postProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
         <property name="overlappingFileParser">
             <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"/>
@@ -69,7 +69,7 @@
                 <!--<constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/overlapping"/>-->
                 <constructor-arg value="uk/ac/ebi/interpro/scan/management/model/implementations/smart/overlapping"/>
             </bean>
-        </property>        
+        </property>
     </bean>
 
 </beans>
