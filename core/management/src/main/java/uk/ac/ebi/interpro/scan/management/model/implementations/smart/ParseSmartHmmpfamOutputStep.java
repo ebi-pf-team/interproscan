@@ -56,7 +56,9 @@ public class ParseSmartHmmpfamOutputStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         delayForNfs();
-        LOGGER.debug("Running Parser HMMER2 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Running Parser HMMER2 Output Step for proteins " + stepInstance.getBottomProtein() + " to " + stepInstance.getTopProtein());
+        }
         InputStream is = null;
         try {
             final String hmmerOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, hmmerOutputFilePathTemplate);
@@ -64,15 +66,15 @@ public class ParseSmartHmmpfamOutputStep extends Step {
             final Set<RawProtein<SmartRawMatch>> parsedResults = parser.parse(is);
             smartRawMatchDAO.insertProteinMatches(parsedResults);
         }
-
         catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to read " + hmmerOutputFilePathTemplate, e);
-        } finally {
+        }
+        finally {
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    LOGGER.error("Duh - parsed OK, but can't close the input stream?", e);
+                    LOGGER.error("Parsed OK, but can't close the input stream?", e);
                 }
             }
         }

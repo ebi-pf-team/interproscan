@@ -36,11 +36,11 @@
     <bean id="stepPrositePatternRunBinary-20.72"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
           parent="abstractPrositePatternStep-20.72">
-        <!-- Command lines...
+        <!-- In example command line below, replace _ with -
           Prosite Profiles:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.72/prosite.dat --pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
+          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.72/prosite.dat _-pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
           Prosite Patterns:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.72/prosite.dat --pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.72/evaluator.dat -s -o ipro -->
+          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.72/prosite.dat _-pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.72/evaluator.dat -s -o ipro -->
         <property name="dependsUpon" ref="stepPrositePatternWriteFastaFile-20.72"/>
         <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
         <property name="binarySwitches" value="-r -s -o ipro"/>

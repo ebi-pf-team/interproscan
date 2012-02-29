@@ -80,7 +80,7 @@
             </bean>
         </property>
         <property name="serialGroup" value="PARSE_PFAM_A"/>
-        <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
+        <property name="rawMatchDAO" ref="pfamRawMatchDAO-26.0"/>
         <property name="retries" value="3"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
@@ -112,7 +112,7 @@
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" value="26.0"/>
         <property name="signatureLibrary" value="PFAM"/>
-        <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
+        <property name="rawMatchDAO" ref="pfamRawMatchDAO-26.0"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
         </property>
@@ -120,6 +120,6 @@
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <bean id="pfamRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl"/>
+    <bean id="pfamRawMatchDAO-26.0" class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl"/>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
