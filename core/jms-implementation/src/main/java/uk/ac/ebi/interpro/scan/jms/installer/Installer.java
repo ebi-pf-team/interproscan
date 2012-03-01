@@ -72,8 +72,10 @@ public class Installer implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.info("Schema creation");
-        LOGGER.info("Running installer in mode " + mode);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Schema creation");
+            LOGGER.info("Running installer in mode " + mode);
+        }
         // By Magic!
 
         if (mode.equals(InstallerMode.LOAD_NONE)) {
