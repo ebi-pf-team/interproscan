@@ -19,26 +19,39 @@
     <c:when test="${databaseName == 'CATH' || databaseName == 'SCOP' || databaseName == 'MODBASE'}">
         <c:forEach var="dataEntry" items="${structuralMatchData.locationDataMap}" varStatus="vs">
             <%-- classId = ${dataEntry.key} --%>
-            <c:if test="${!vs.first}">
-                <c:set var="title" value="${title}, "/>
-            </c:if>
-            <c:set var="title" value="${dataEntry.key}"/>
-            <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl,'$0',dataEntry.key)}'  title='${title} (${databaseMetadata.name})' class='ext'>${dataEntry.key}</a><br/>"/>
+            <c:set var="link" value="${fn:replace(dataEntry.key, 'MB_', '')}" /> <%--MODBASE MB_P38398 converted to P38398--%>
+            <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl,'$0', link)}'  title='${dataEntry.key} (${databaseMetadata.name})' class='ext'>${dataEntry.key}</a><br/>"/>
         </c:forEach>
     </c:when>
 
     <%--Link on domainId--%>
-    <c:when test="${databaseName == 'PDB' || databaseName == 'SWISS-MODEL'}">
+    <c:when test="${databaseName == 'SWISS-MODEL'}">
         <c:forEach var="dataEntry" items="${structuralMatchData.locationDataMap}">
+            <%-- classId = ${dataEntry.key} --%>
+            <%-- domainIds = ${dataEntry.value} --%>
+            <c:forEach var="domainId" items="${dataEntry.value}" varStatus="vs">
+                <c:set var="link" value="${fn:replace(dataEntry.key, 'SW_', '')}" /> <%--SWISS-MODEL SW_P38398 converted to P38398--%>
+                <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl, '$0', link)}'  title='${domainId} (${databaseMetadata.name})' class='ext'>${domainId}</a><br/>"/>
+            </c:forEach>
+        </c:forEach>
+    </c:when>
+    <c:when test="${databaseName == 'PDB'}">
+        <%--Link title shows domain Ids "2r0iA, 2r0iB". Link on class Id with strains shown in brackets "2r0i (A, B)" --%>
+        <c:forEach var="dataEntry" items="${structuralMatchData.locationDataMap}">
+            <c:set var="title" value="" />
+            <c:set var="strains" value="(" />
             <%-- classId = ${dataEntry.key} --%>
             <%-- domainIds = ${dataEntry.value} --%>
             <c:forEach var="domainId" items="${dataEntry.value}" varStatus="vs">
                 <c:if test="${!vs.first}">
                     <c:set var="title" value="${title}, "/>
+                    <c:set var="strains" value="${strains}, "/>
                 </c:if>
-                <c:set var="title" value="${domainId}"/>
-                <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl, '$0', dataEntry.key)}'  title='${title} (${databaseMetadata.name})' class='ext'>${domainId}</a><br/>"/>
+                <c:set var="title" value="${title}${domainId}"/>
+                <c:set var="strains" value="${strains}${fn:replace(domainId, dataEntry.key, '')}"/>
             </c:forEach>
+            <c:set var="strains" value="${strains})" />
+            <c:set var="links" value="<a href='${fn:replace(databaseMetadata.linkUrl, '$0', dataEntry.key)}'  title='${title} (${databaseMetadata.name})' class='ext'>${dataEntry.key}</a> ${strains}<br/>"/>
         </c:forEach>
     </c:when>
 
