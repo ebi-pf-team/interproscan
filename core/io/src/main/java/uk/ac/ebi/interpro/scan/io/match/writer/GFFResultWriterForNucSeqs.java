@@ -122,7 +122,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      * Generates an protein identifier used in GFF3.
      */
     private String buildProteinIdentifier(OpenReadingFrame orf) {
-        return new StringBuilder("pp_").append(getIdentifierSuffix(orf)).toString();
+        return new StringBuilder("pep_").append(getIdentifierSuffix(orf)).toString();
     }
 
     private String getIdentifierSuffix(OpenReadingFrame orf) {
