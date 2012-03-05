@@ -5,7 +5,7 @@
 <%@ attribute name="signature" required="true" type="uk.ac.ebi.interpro.scan.web.model.SimpleSignature" %>
 <%@ attribute name="entryTypeTitle" required="false" %>
 <%@ attribute name="colourClass"    required="true" %>
-     
+
     <c:set var="locationId" value="0" scope="request" />
 
     <!-- the order of the divs is important , first right column fixed-->
@@ -66,7 +66,9 @@
                 <c:set var="locationId" value="${locationId + 1}" />
                 <c:set var="dbClass">
                     <c:if test="${colourClass != 'uni'}">
-                        ${fn:replace(fn:toLowerCase(signature.dataSource), ' ', '-')}
+                        <%-- Make the data source name lowercase and replace whitespace and underscores with hyphens,
+                        e.g. "PROSITE_PROFILES" becomes "prosite-profiles" --%>
+                        ${fn:replace(fn:replace(fn:toLowerCase(signature.dataSource), ' ', '-'), '_', '-')}
                     </c:if>
                 </c:set>
                 <h:matchLocation  id="${locationId}"

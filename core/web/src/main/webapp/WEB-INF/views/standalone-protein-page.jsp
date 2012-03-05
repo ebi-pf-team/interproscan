@@ -26,20 +26,18 @@
 
 
     <link href="<c:url value="/resources/css/type_colours.css" />" rel="stylesheet" type="text/css"/>
-    <link href="<c:url value="/resources/css/database.css" />" rel="stylesheet" type="text/css"/>
+    <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet"  type="text/css" />
     <link href="<c:url value="/resources/javascript/qtip2/jquery.qtip.css" />" rel="stylesheet" type="text/css"/>
-     <link href="<c:url value="/resources/css/protein.css" />" rel="stylesheet" type="text/css"/>
-     <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
-
+    <link href="<c:url value="/resources/css/protein.css" />" rel="stylesheet" type="text/css"/>
     <link href="<c:url value="/resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css" />"
           rel="stylesheet" type="text/css"/>
     <script src="<c:url value="/resources/javascript/jquery/jquery-1.7.1.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js"/>"
             type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/qtip2/jquery.qtip.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/jquery.cookie.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/jquery/jquery.jscroll.min.js"/>" type="text/javascript"></script>
-
 </head>
 <body>
 <div class="contentsarea">
@@ -55,15 +53,15 @@
             </c:when>
             <c:otherwise>
                 <%--<header>--%>
-                    <%--<nav>--%>
-                        <%--<div class="breadcrumb">--%>
-                            <%--<a href="<c:url value="/proteins"/>">Proteins</a> > ${protein.name} (${protein.ac})--%>
-                        <%--</div>--%>
-                    <%--</nav>--%>
+                <%--<nav>--%>
+                <%--<div class="breadcrumb">--%>
+                <%--<a href="<c:url value="/proteins"/>">Proteins</a> > ${protein.name} (${protein.ac})--%>
+                <%--</div>--%>
+                <%--</nav>--%>
                 <%--</header>--%>
 
-                            <%--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!--%>
-                        <c:import url="protein-body.jsp"/>                                  
+                <%--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!--%>
+                <c:import url="protein-body.jsp"/>
             </c:otherwise>
         </c:choose>
     </div>
@@ -120,9 +118,18 @@
         // Initialise un-integrated.
         displayUnintegrated($("#check-6"));
 
+        // Qtip2 popups
         // Match all <A/> links with a title tag and use it as the content (default).
-        $('a[title]').qtip();
-
+        $('a[title]').qtip({
+            position: {
+                viewport: $(window) // Keep the tooltip on-screen at all times
+            }
+        });
+        $('img[title]').qtip({
+            position: {
+                viewport: $(window) // Keep the tooltip on-screen at all times
+            }
+        });
         $('span[id*="location-"]').each(
                 function(i) {
                     preparePopup(this.id);
