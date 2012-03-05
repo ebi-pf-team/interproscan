@@ -21,8 +21,8 @@
 
 <div id="${prefix}-popup-${id}" style="display: none;">
     <div class="popup_topl"><span class="${colourClass} caption_puce"></span>${location.start} - ${location.end}</div>
-    <div class="popup_botl">    <strong>${signature.dataSource.name}</strong> signature (<a href="#" title="${signature.dataSource.description}" >?</a>) <br/>
-    <a href='${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}' title="${signature.ac} (${signature.name})" class="ext">${signature.ac} </a> <span>(${signature.name})</span> <br/>  
+    <div class="popup_botl">    <strong>${signature.dataSource.name}</strong> <img src="images/ico_help.png" alt="help" title="${signature.dataSource.description}" > <br/>
+    <a href='${fn:replace(signature.dataSource.linkUrl, '$0', signature.ac)}' title="${signature.ac} (${signature.name})" class="ext">${signature.ac} </a> <span>(${signature.name})</span> <br/>
 
    </div>
 
