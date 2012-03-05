@@ -58,7 +58,16 @@ of it occurs. This is not a requirement, simply a useful tip!
 <script type="text/javascript">
     $(document).ready(function() {
         // Match all <A/> links with a title tag and use it as the content (default).
-        $('a[title]').qtip();
+        $('a[title]').qtip({
+            position: {
+                viewport: $(window) // Keep the tooltip on-screen at all times
+            }
+        });
+        $('img[title]').qtip({
+            position: {
+                viewport: $(window) // Keep the tooltip on-screen at all times
+            }
+        });
 
         // Tie the extra popup DIV to it's match SPAN
         $('span[id*="location-"]').each(
