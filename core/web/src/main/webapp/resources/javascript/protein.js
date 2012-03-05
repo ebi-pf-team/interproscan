@@ -70,9 +70,9 @@ function displayType(checkbox) {
 function displayUnintegrated(checkbox) {
     $.cookie('#check-6', checkbox.checked, { path: '/' });
     if (checkbox.checked) {
-        $('#unintegrated').show("blind", { direction: "vertical" }, 300);
+        $('#uni').show("blind", { direction: "vertical" }, 300);
     }
     else {
-        $('#unintegrated').hide("blind", { direction: "vertical" }, 300);
+        $('#uni').hide("blind", { direction: "vertical" }, 300);
     }
 }
