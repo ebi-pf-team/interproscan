@@ -4,24 +4,25 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <!-- Import common beans -->
-    <import resource="jobPfamA-24.0-context.xml"/>
+    <!--Import common beans-->
+    <!--Old versions are switched off because they aren't in the database anymore-->
+    <!--<import resource="jobPfamA-24.0-context.xml"/>-->
     <import resource="jobPfamA-26.0-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
     <import resource="jobPanther-context.xml"/>
     <import resource="jobPrints-context.xml"/>
     <import resource="jobCoils-context.xml"/>
-    <import resource="jobHAMAP-180510-context.xml"/>
+    <!--<import resource="jobHAMAP-180510-context.xml"/>-->
     <import resource="jobHAMAP-140911-context.xml"/>
-    <import resource="jobPrositeProfiles-20.66-context.xml"/>
-    <import resource="jobPrositePatterns-20.66-context.xml"/>
+    <!--<import resource="jobPrositeProfiles-20.66-context.xml"/>-->
+    <!--<import resource="jobPrositePatterns-20.66-context.xml"/>-->
     <import resource="jobPrositeProfiles-20.72-context.xml"/>
     <import resource="jobPrositePatterns-20.72-context.xml"/>
     <import resource="jobSignalP-EUK-4.0-context.xml"/>
     <import resource="jobSignalP-GRAM_POSITIVE-4.0-context.xml"/>
     <import resource="jobSignalP-GRAM_NEGATIVE-4.0-context.xml"/>
-    <import resource="jobSMART-6.1-context.xml"/>
+    <!--<import resource="jobSMART-6.1-context.xml"/>-->
     <import resource="jobSMART-6.2-context.xml"/>
     <!--<import resource="jobTIGRFAM-9.0-context.xml"/>-->
     <import resource="jobTIGRFAM-10.1-context.xml"/>
