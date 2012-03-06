@@ -9,10 +9,10 @@ import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
-import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents the persistence step of the filtered raw matches at the end of the post processing workflow.
@@ -28,14 +28,12 @@ public class PirsfPersistStep extends Step {
     private static final Logger LOGGER = Logger.getLogger(PirsfPersistStep.class.getName());
 
     // Matches passed post processing (no blast required)
-    private String filteredMatchesFileName;
+    protected String filteredMatchesFileName;
 
     // Matches passed post processing (blast required)
-    private String blastedMatchesFileName;
+    protected String blastedMatchesFileName;
 
     private String signatureLibraryRelease;
-
-    private RawMatchDAO<PIRSFHmmer2RawMatch> rawMatchDAO;
 
     private FilteredMatchDAO<PIRSFHmmer2RawMatch, Hmmer2Match> filteredMatchDAO;
 
@@ -52,11 +50,6 @@ public class PirsfPersistStep extends Step {
     @Required
     public void setSignatureLibraryRelease(String signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
-    }
-
-    @Required
-    public void setRawMatchDAO(RawMatchDAO<PIRSFHmmer2RawMatch> rawMatchDAO) {
-        this.rawMatchDAO = rawMatchDAO;
     }
 
     @Required
@@ -79,39 +72,42 @@ public class PirsfPersistStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        double signatureLibraryReleaseValue = Double.parseDouble(signatureLibraryRelease);
+        if (signatureLibraryReleaseValue <= 2.74d) {
+            Set<RawProtein<PIRSFHmmer2RawMatch>> filteredRawMatches = new HashSet<RawProtein<PIRSFHmmer2RawMatch>>();
 
-        Set<RawProtein<PIRSFHmmer2RawMatch>> filteredRawMatches = new HashSet<RawProtein<PIRSFHmmer2RawMatch>>();
-
-        // Retrieve list of filtered matches from temporary file - blast wasn't required for these
-        final String filteredMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, filteredMatchesFileName);
-        try {
-            Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches =  PirsfMatchTempParser.parse(filteredMatchesFilePath);
-            filteredRawMatches.addAll(rawMatches);
-        } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when parsing filtered matches file " + filteredMatchesFilePath);
-        }
-
-        // Retrieve list of filtered matches from temporary file - blast WAS required for these
-        final String blastedMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastedMatchesFileName);
-        try {
-            Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches =  PirsfMatchTempParser.parse(blastedMatchesFilePath);
-            filteredRawMatches.addAll(rawMatches);
-        } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when parsing blasted matches file " + blastedMatchesFilePath);
-        }
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("PIRSF: Retrieved " + filteredRawMatches.size() + " proteins.");
-            int matchCount = 0;
-            for (final RawProtein rawProtein : filteredRawMatches) {
-                matchCount += rawProtein.getMatches().size();
+            // Retrieve list of filtered matches from temporary file - blast wasn't required for these
+            final String filteredMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, filteredMatchesFileName);
+            try {
+                Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches = PirsfMatchTempParser.parse(filteredMatchesFilePath);
+                filteredRawMatches.addAll(rawMatches);
+            } catch (IOException e) {
+                throw new IllegalStateException("IOException thrown when parsing filtered matches file " + filteredMatchesFilePath);
             }
-            LOGGER.debug("PIRSF: A total of " + matchCount + " raw matches.");
+
+            // Retrieve list of filtered matches from temporary file - blast WAS required for these
+            final String blastedMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastedMatchesFileName);
+            try {
+                Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches = PirsfMatchTempParser.parse(blastedMatchesFilePath);
+                filteredRawMatches.addAll(rawMatches);
+            } catch (IOException e) {
+                throw new IllegalStateException("IOException thrown when parsing blasted matches file " + blastedMatchesFilePath);
+            }
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("PIRSF: Retrieved " + filteredRawMatches.size() + " proteins.");
+                int matchCount = 0;
+                for (final RawProtein rawProtein : filteredRawMatches) {
+                    matchCount += rawProtein.getMatches().size();
+                }
+                LOGGER.debug("PIRSF: A total of " + matchCount + " raw matches.");
+            }
+
+            // Persist the remaining (filtered) raw matches
+            LOGGER.info("Persisting filtered raw matches...");
+            filteredMatchDAO.persist(filteredRawMatches);
+        } else {
+            throw new IllegalStateException("Step instance with ID " + stepInstance.getId() + " only supports signature library release version <= 2.74");
         }
-
-        // Persist the remaining (filtered) raw matches
-        LOGGER.info("Persisting filtered raw matches...");
-        filteredMatchDAO.persist(filteredRawMatches);
     }
-
 }

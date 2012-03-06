@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.pirsf;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -20,12 +19,8 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PirsfDatParserTest extends TestCase {
-    private static final Logger LOGGER = Logger.getLogger(PirsfDatParserTest.class.getName());
-
+public class PirsfDatFileParserTest extends TestCase {
     private static final String TEST_FILE_NAME = "data/pirsf/pirsf.dat";
-
-    private static final String TEST_RELEASE_VERSION = "274";
 
     @Test
     public void testPirsfDatParser() {
@@ -96,6 +91,7 @@ public class PirsfDatParserTest extends TestCase {
         assertEquals("Attribute model name is different to the expected one!", expectedResult.get(MODEL_ACC_1).getModelName(), actualResult.get(MODEL_ACC_1).getModelName());
         assertEquals("Attribute standard deviation score is different to the expected one!", expectedResult.get(MODEL_ACC_1).getStdDevScore(), actualResult.get(MODEL_ACC_1).getStdDevScore());
         assertEquals("Attribute standard deviation sequence length is different to the expected one!", expectedResult.get(MODEL_ACC_1).getStdDevSeqLen(), actualResult.get(MODEL_ACC_1).getStdDevSeqLen());
+        assertEquals("Attribute subfamilies is different to the expected one!", expectedResult.get(MODEL_ACC_1).getSubFamilies(), actualResult.get(MODEL_ACC_1).getSubFamilies());
         // Test model accession 2
         assertEquals("Attribute blast required is different to the expected one!", expectedResult.get(MODEL_ACC_2).isBlastRequired(), actualResult.get(MODEL_ACC_2).isBlastRequired());
         assertEquals("Attribute mean score is different to the expected one!", expectedResult.get(MODEL_ACC_2).getMeanScore(), actualResult.get(MODEL_ACC_2).getMeanScore());
@@ -105,6 +101,7 @@ public class PirsfDatParserTest extends TestCase {
         assertEquals("Attribute model name is different to the expected one!", expectedResult.get(MODEL_ACC_2).getModelName(), actualResult.get(MODEL_ACC_2).getModelName());
         assertEquals("Attribute standard deviation score is different to the expected one!", expectedResult.get(MODEL_ACC_2).getStdDevScore(), actualResult.get(MODEL_ACC_2).getStdDevScore());
         assertEquals("Attribute standard deviation sequence length is different to the expected one!", expectedResult.get(MODEL_ACC_2).getStdDevSeqLen(), actualResult.get(MODEL_ACC_2).getStdDevSeqLen());
+        assertEquals("Attribute subfamilies is different to the expected one!", expectedResult.get(MODEL_ACC_2).getSubFamilies(), actualResult.get(MODEL_ACC_2).getSubFamilies());
         // Test model accession 3
         assertEquals("Attribute blast required is different to the expected one!", expectedResult.get(MODEL_ACC_3).isBlastRequired(), actualResult.get(MODEL_ACC_3).isBlastRequired());
         assertEquals("Attribute mean score is different to the expected one!", expectedResult.get(MODEL_ACC_3).getMeanScore(), actualResult.get(MODEL_ACC_3).getMeanScore());
@@ -114,5 +111,16 @@ public class PirsfDatParserTest extends TestCase {
         assertEquals("Attribute model name is different to the expected one!", expectedResult.get(MODEL_ACC_3).getModelName(), actualResult.get(MODEL_ACC_3).getModelName());
         assertEquals("Attribute standard deviation score is different to the expected one!", expectedResult.get(MODEL_ACC_3).getStdDevScore(), actualResult.get(MODEL_ACC_3).getStdDevScore());
         assertEquals("Attribute standard deviation sequence length is different to the expected one!", expectedResult.get(MODEL_ACC_3).getStdDevSeqLen(), actualResult.get(MODEL_ACC_3).getStdDevSeqLen());
+        assertEquals("Attribute subfamilies is different to the expected one!", expectedResult.get(MODEL_ACC_3).getSubFamilies(), actualResult.get(MODEL_ACC_3).getSubFamilies());
+        // Test model accession 4
+        assertEquals("Attribute blast required is different to the expected one!", expectedResult.get(MODEL_ACC_4).isBlastRequired(), actualResult.get(MODEL_ACC_4).isBlastRequired());
+        assertEquals("Attribute mean score is different to the expected one!", expectedResult.get(MODEL_ACC_4).getMeanScore(), actualResult.get(MODEL_ACC_4).getMeanScore());
+        assertEquals("Attribute mean sequence length is different to the expected one!", expectedResult.get(MODEL_ACC_4).getMeanSeqLen(), actualResult.get(MODEL_ACC_4).getMeanSeqLen());
+        assertEquals("Attribute min score is different to the expected one!", expectedResult.get(MODEL_ACC_4).getMinScore(), actualResult.get(MODEL_ACC_4).getMinScore());
+        assertEquals("Attribute model accession is different to the expected one!", expectedResult.get(MODEL_ACC_4).getModelAccession(), actualResult.get(MODEL_ACC_4).getModelAccession());
+        assertEquals("Attribute model name is different to the expected one!", expectedResult.get(MODEL_ACC_4).getModelName(), actualResult.get(MODEL_ACC_4).getModelName());
+        assertEquals("Attribute standard deviation score is different to the expected one!", expectedResult.get(MODEL_ACC_4).getStdDevScore(), actualResult.get(MODEL_ACC_4).getStdDevScore());
+        assertEquals("Attribute standard deviation sequence length is different to the expected one!", expectedResult.get(MODEL_ACC_4).getStdDevSeqLen(), actualResult.get(MODEL_ACC_4).getStdDevSeqLen());
+        assertEquals("Attribute subfamilies is different to the expected one!", expectedResult.get(MODEL_ACC_4).getSubFamilies(), actualResult.get(MODEL_ACC_4).getSubFamilies());
     }
 }

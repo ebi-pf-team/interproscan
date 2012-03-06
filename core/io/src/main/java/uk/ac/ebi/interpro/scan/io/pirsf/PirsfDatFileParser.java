@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
  * Class to read in the pirsf.dat file.
  *
  * @author Matthew Fraser
+ * @author Maxim Scheremetjew
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -61,6 +62,8 @@ public class PirsfDatFileParser implements Serializable {
 
     private String modelAccession;
 
+    private Set<String> subfamilies;
+
 
     public Map<String, PirsfDatRecord> parse(Resource pirsfDatFileResource) throws IOException {
         if (pirsfDatFileResource == null) {
@@ -77,12 +80,6 @@ public class PirsfDatFileParser implements Serializable {
         try {
             reader = new BufferedReader(new InputStreamReader(pirsfDatFileResource.getInputStream()));
             String line;
-//            String modelAccession = null;
-            Set<String> subfamilies = new HashSet<String>();
-//            String modelName = null;
-//            String[] values = null;
-//            boolean isBlastRequired = false;
-//            int row = 1;
             while ((line = reader.readLine()) != null) {
                 Matcher modelStart = PIRSF_DAT_PATTERN_SUPERFAM.matcher(line);
                 if (modelStart.find()) {
@@ -139,5 +136,6 @@ public class PirsfDatFileParser implements Serializable {
         modelName = null;
         values = null;
         isBlastRequired = false;
+        subfamilies = new HashSet<String>();
     }
 }

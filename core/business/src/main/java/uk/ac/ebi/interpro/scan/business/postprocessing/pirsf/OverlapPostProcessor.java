@@ -3,13 +3,14 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.io.pirsf.PirsfFileUtil;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
+import uk.ac.ebi.interpro.scan.io.pirsf.PirsfFileUtil;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -78,32 +79,34 @@ public class OverlapPostProcessor implements Serializable {
     /**
      * Perform overlap post processing.
      *
-     * @param rawMatches Raw matches to post process.
-     * @param proteinLengthsMap Map of protein Id to sequence length.
+     * @param rawMatches              Raw matches to post process.
+     * @param proteinLengthsMap       Map of protein Id to sequence length.
      * @param filteredMatchesFilePath Temporary file path and name for recording which protein Ids passed this
      *                                filtering step and DO NOT need to be blasted.
-     * @param blastMatchesFilePath Temporary file path and name for recording which protein Ids passed this
-     *                             filtering step but also DO need to be blasted next.
+     * @param blastMatchesFilePath    Temporary file path and name for recording which protein Ids passed this
+     *                                filtering step but also DO need to be blasted next.
      * @throws java.io.IOException If pirsf.dat file could not be read
      */
     public void process(Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches,
                         Map<Long, Integer> proteinLengthsMap,
-                        String filteredMatchesFilePath,
-                        String blastMatchesFilePath) throws IOException {
+                        final String filteredMatchesFilePath,
+                        final String blastMatchesFilePath,
+                        final String subFamiliesFilePath,
+                        final double signatureLibraryReleaseValue) throws IOException {
 
-        // Read in pirsf.dat file
         Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileParser.parse(pirsfDatFileResource);
 
-        // A Map between protein IDs and the match with the best match (smallest e-value)
+        // A Map between protein IDs and the best match (smallest e-value)
         Map<String, PIRSFHmmer2RawMatch> proteinIdBestMatchMap = new HashMap<String, PIRSFHmmer2RawMatch>(); // Blast not required
         Map<String, PIRSFHmmer2RawMatch> proteinIdBestMatchToBeBlastedMap = new HashMap<String, PIRSFHmmer2RawMatch>(); // Blast required
 
+        final Map<String, String> subFamToSuperFamMap = new HashMap<String, String>();
         // Loop through the proteins and see if the matches need to be excluded (filtered) or not
         for (RawProtein<PIRSFHmmer2RawMatch> protein : rawMatches) {
             // Retrieve data necessary to perform filtering on this protein
             String proteinId = protein.getProteinIdentifier();
             int proteinLength = proteinLengthsMap.get(Long.parseLong(proteinId));
-            PIRSFHmmer2RawMatch bestMatch = doOverlapFiltering(protein, pirsfDatRecordMap, proteinLength);
+            PIRSFHmmer2RawMatch bestMatch = doOverlapFiltering(protein, pirsfDatRecordMap, proteinLength, subFamToSuperFamMap);
             if (bestMatch != null) {
                 if (doBlastCheck(proteinId, bestMatch, pirsfDatRecordMap)) {
                     // Protein has passed this filtering step but some blast post processing is still required later
@@ -118,9 +121,12 @@ public class OverlapPostProcessor implements Serializable {
 
         // Ready for persistence now - no blast check required
         PirsfFileUtil.writeProteinBestMatchesToFile(filteredMatchesFilePath, proteinIdBestMatchMap);
-
         // Need to be blasted in final filtering step
         PirsfFileUtil.writeProteinBestMatchesToFile(blastMatchesFilePath, proteinIdBestMatchToBeBlastedMap);
+        //Writes subfamilies to file
+        if (signatureLibraryReleaseValue >= 2.75d && subFamiliesFilePath != null) {
+            PirsfFileUtil.writeSubFamiliesToFile(subFamiliesFilePath, subFamToSuperFamMap);
+        }
     }
 
     /**
@@ -151,7 +157,8 @@ public class OverlapPostProcessor implements Serializable {
      */
     private PIRSFHmmer2RawMatch doOverlapFiltering(RawProtein<PIRSFHmmer2RawMatch> protein,
                                                    Map<String, PirsfDatRecord> pirsfDatRecordMap,
-                                                   int proteinLength) {
+                                                   int proteinLength,
+                                                   Map<String, String> subFamToSuperFamMap) {
 
         Double minEvalue = null;
         PIRSFHmmer2RawMatch matchWithMinEvalue = null;
@@ -164,7 +171,11 @@ public class OverlapPostProcessor implements Serializable {
                 LOGGER.warn("Model Id " + modelId + " not found in the pirsf.dat file, raw match rejected: " + match);
                 continue;
             }
-
+            //We add subfamilies to the map before filtering, because even if a superfamily doesn't qualify its subfamily is a potential qualifier
+            match.addSubFamilies(pirsfDatRecord.getSubFamilies());
+            for (String subFam : match.getSubFamilies()) {
+                subFamToSuperFamMap.put(subFam, match.getModelId());
+            }
             // Perform first filtering check
             if (!checkOverlapCriterion(proteinLength, match, pirsfDatRecord)) {
                 if (LOGGER.isInfoEnabled()) {

@@ -25,8 +25,8 @@
     <import resource="jobSMART-6.2-context.xml"/>
     <!--<import resource="jobTIGRFAM-9.0-context.xml"/>-->
     <import resource="jobTIGRFAM-10.1-context.xml"/>
-    <import resource="jobPIRSF-2.74-context.xml"/>
-    <!--<import resource="jobPIRSF-2.78-context.xml"/>-->
+    <!--<import resource="jobPIRSF-2.74-context.xml"/>-->
+    <import resource="jobPIRSF-2.78-context.xml"/>
     <import resource="jobProDom-2006.1-context.xml"/>
     <import resource="jobSuperFamily-1.75-context.xml"/>
     <!--<import resource="jobTMHMM-2.0c-context.xml"/>-->
@@ -68,8 +68,8 @@
                 <!--<ref bean="jobSMART-6.2"/>-->
                 <!--<ref bean="jobTIGRFAM-9.0"/>-->
                 <ref bean="jobTIGRFAM-10.1"/>
-                <ref bean="jobPIRSF-2.74"/>
-                <!--<ref bean="jobPIRSF-2.78"/>-->
+                <!--<ref bean="jobPIRSF-2.74"/>-->
+                <ref bean="jobPIRSF-2.78"/>
                 <ref bean="jobSuperFamily-1.75"/>
                 <!--<ref bean="jobTMHMM"/>-->
             </list>

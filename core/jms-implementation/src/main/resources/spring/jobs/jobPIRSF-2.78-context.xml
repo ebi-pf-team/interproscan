@@ -21,7 +21,7 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <!-- STEP: Writes target protein sequences to a FASTA file with new sequence IDs-->
+    <!-- STEP 1: Writes target protein sequences to a FASTA file with new sequence IDs-->
     <bean id="stepPIRSFWriteFasta-2.78"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractPIRSFStep-2.78">
@@ -31,8 +31,8 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP: Runs HMMR from binary and writes the raw result to the specified output file-->
-    <bean id="stepPIRSFRunBinary-2.78"
+    <!-- STEP 2: Runs HMMR from binary and writes the raw result to the specified output file-->
+    <bean id="stepPIRSFRunBinarySuperfam-2.78"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPIRSFStep-2.78">
         <!-- In example command line below, replace _ with -
@@ -50,12 +50,12 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!-- STEP: Reads the raw HMMR result output and persists it in the H2 memory database-->
-    <bean id="stepPIRSFStoreRawMatches-2.78"
+    <!-- STEP 3: Reads the raw HMMR result output and persists it in the H2 memory database-->
+    <bean id="stepPIRSFStoreSuperfamRawMatches-2.78"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
           parent="abstractPIRSFStep-2.78">
         <!--General step properties-->
-        <property name="dependsUpon" ref="stepPIRSFRunBinary-2.78"/>
+        <property name="dependsUpon" ref="stepPIRSFRunBinarySuperfam-2.78"/>
         <property name="stepDescription" value="Parse the HMMER 2 binary output and store as raw matches."/>
         <!--More specific properties-->
         <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
@@ -74,58 +74,117 @@
         </property>
     </bean>
 
-    <!-- TEST STEP: Simple test implementation to check and to print out if all HMMR 2 raw matches are stored in the H2 database-->
-    <!--<bean id="stepPIRSFRawData_TEST-2.78"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.test.TestRawDataStoredStep"-->
-    <!--parent="abstractPIRSFStep-2.78">-->
-    <!--<property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.78"/>-->
-    <!--<property name="stepDescription" value="Test raw matches"/>-->
-    <!--<property name="rawMatchDAO" ref="rawMatchDAO_TEST-2.78"/>-->
-    <!--</bean>-->
-
-    <!-- STEP: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
+    <!-- STEP 4: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
     <bean id="stepPirsfOverlapPostProcessing-2.78"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.OverlapPostProcessingStep"
           parent="abstractPIRSFStep-2.78">
         <!--General step properties-->
         <property name="stepDescription"
                   value="First step of the Pirsf post processing. Checks overlap criterion for HMMR 2 raw matches."/>
-        <property name="dependsUpon" ref="stepPIRSFStoreRawMatches-2.78"/>
+        <property name="dependsUpon" ref="stepPIRSFStoreSuperfamRawMatches-2.78"/>
         <property name="signatureLibraryRelease" value="2.78"/>
         <!--More specific properties-->
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.78"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
-                <property name="pirsfDatFileParser">
-                    <bean class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
-                </property>
+                <property name="pirsfDatFileParser" ref="pirsfDatFileParser-2.78"/>
                 <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.78}"/>
             </bean>
         </property>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="blastMatchesFileName" ref="blastMatchesFileName-2.78"/>
         <property name="filteredMatchesFileName" ref="filteredMatchesFileName-2.78"/>
+        <property name="subfamToSuperfamMapFileName" ref="subfamMapFileName-2.78"/>
     </bean>
 
-    <!-- STEP: Write blast input file -->
+    <!-- STEP 5: Runs HMMR from binary and writes the raw result to the specified output file-->
+    <!-- The binary will only run if the content of the subfamilies into file isn't empty-->
+    <bean id="stepPIRSFRunBinarySubfam-2.78"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfRunHmmerBinaryStep"
+          parent="abstractPIRSFStep-2.78">
+        <!-- In example command line below, replace _ with -
+        /ebi/production/interpro/binaries/64_bit_Linux/hmmpfam  -A 0 _-cpu 1 _-acc -E 0.01 /ebi/sp/pro1/interpro/data/members/pirsf/278/sf_hmm_subf.bin  -->
+        <!--General step properties-->
+        <property name="dependsUpon" ref="stepPirsfOverlapPostProcessing-2.78"/>
+        <property name="stepDescription"
+                  value="Run Hmmer2 Binary for selected proteins on HMM models for sub families"/>
+        <property name="retries" value="3"/>
+        <!--More specific properties-->
+        <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
+        <property name="binarySwitches" value="-A 0 --cpu 1 --acc -E 0.01"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplateSubFam-2.78"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="fullPathToHmmFile" value="${pirsf.hmm.subf.bin.path.2.78}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+        <property name="subFamiliesFileName" ref="subfamMapFileName-2.78"/>
+        <property name="subfamilyFileParser" ref="pirsfSubfamFileParser-2.78"/>
+    </bean>
+
+    <!-- STEP 6: Reads the raw HMMR result output and persists it in the H2 memory database-->
+    <bean id="stepPIRSFStoreSubfamRawMatches-2.78"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
+          parent="abstractPIRSFStep-2.78">
+        <!--General step properties-->
+        <property name="dependsUpon" ref="stepPIRSFRunBinarySubfam-2.78"/>
+        <property name="stepDescription" value="Parse the HMMER 2 binary output and store as raw matches."/>
+        <!--More specific properties-->
+        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplateSubFam-2.78"/>
+        <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.78"/>
+        <property name="serialGroup" value="PARSE_PIRSF"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+                <property name="signatureLibrary" value="PIRSF"/>
+                <property name="signatureLibraryRelease" value="2.78"/>
+                <property name="hmmer2ParserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.PirsfHmmer2ParserSupport">
+                        <property name="signatureLibraryRelease" value="2.78"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- STEP 7: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
+    <bean id="stepPirsfSubfamPostProcessing-2.78"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.SubfamilyPostProcessingStep"
+          parent="abstractPIRSFStep-2.78">
+        <!--General step properties-->
+        <property name="stepDescription"
+                  value="Post processes all sub families. Checks score and e-value criteria for HMMR 2 raw matches."/>
+        <property name="dependsUpon" ref="stepPIRSFStoreSubfamRawMatches-2.78"/>
+        <property name="signatureLibraryRelease" value="2.78"/>
+        <!--More specific properties-->
+        <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.78"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.SubfamilyPostProcessor">
+                <property name="pirsfDatFileParser" ref="pirsfDatFileParser-2.78"/>
+                <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.78}"/>
+                <property name="subfamilyFileParser" ref="pirsfSubfamFileParser-2.78"/>
+            </bean>
+        </property>
+        <property name="subFamilyMatchesFileName" ref="subfamMatchesFileName-2.78"/>
+        <property name="subFamilyMapFileName" ref="subfamMapFileName-2.78"/>
+    </bean>
+
+
+    <!-- STEP 8: Write blast input file -->
     <bean id="stepPIRSFWriteFastaForBlast-2.78"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.WriteFastaFileForBlastStep"
           parent="abstractPIRSFStep-2.78">
         <property name="stepDescription" value="Create FASTA file for proteins to BLAST."/>
-        <property name="dependsUpon" ref="stepPirsfOverlapPostProcessing-2.78"/>
+        <property name="dependsUpon" ref="stepPirsfSubfamPostProcessing-2.78"/>
 
         <property name="blastMatchesFileName" ref="blastMatchesFileName-2.78"/>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="fastaFilePathTemplate" ref="fastaToBlastFileName-2.78"/>
     </bean>
 
-    <!-- STEP: Run BLAST from binary -->
+    <!-- STEP 9: Run BLAST from binary -->
     <bean id="stepPirsfBlast-2.78"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfBlastStep"
           parent="abstractPIRSFStep-2.78">
         <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
         <property name="dependsUpon" ref="stepPIRSFWriteFastaForBlast-2.78"/>
-
         <!--Resources properties-->
         <property name="blastDbFileResource" value="file:${pirsf.sf.seq.path.2.78}"/>
         <!--String properties-->
@@ -136,7 +195,7 @@
     </bean>
 
 
-    <!-- STEP: BLAST post processing step-->
+    <!-- STEP 10: BLAST post processing step-->
     <bean id="stepBlastPostProcessing-2.78"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.BlastPostProcessingStep"
           parent="abstractPIRSFStep-2.78">
@@ -144,9 +203,7 @@
         <property name="dependsUpon" ref="stepPirsfBlast-2.78"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor">
-                <property name="sfTbFileParser">
-                    <bean class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
-                </property>
+                <property name="sfTbFileParser" ref="pirsfSfTbFileParser-2.78"/>
                 <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.78}"/>
             </bean>
         </property>
@@ -155,9 +212,9 @@
         <property name="blastedMatchesFileName" ref="blastedMatchesFileName-2.78"/>
     </bean>
 
-    <!-- STEP: Persist filtered matches step-->
+    <!-- STEP 11: Persist filtered matches step-->
     <bean id="stepPirsfPersist-2.78"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfPersistStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfSubfamPersistStep"
           parent="abstractPIRSFStep-2.78">
         <property name="serialGroup" value="HMMER2_POST_PROCESSING"/>
         <property name="stepDescription" value="Persists filtered matches."/>
@@ -168,10 +225,13 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer2FilteredMatchDAOImpl"/>
         </property>
-        <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.78"/>
+        <property name="subfamMatchesFileName" ref="subfamMatchesFileName-2.78"/>
+        <property name="subFamilyMapFileName" ref="subfamMapFileName-2.78"/>
+        <property name="subfamilyFileParser" ref="pirsfSubfamFileParser-2.78"/>
+        <property name="persistenceProcessor" ref="pirsfSubfamPersistenceProcessor-2.78"/>
     </bean>
 
-    <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
+    <!-- STEP 12: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
                writing to the directory at the same time) -->
     <bean id="stepPirsfDeleteTempFiles-2.78"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
@@ -201,13 +261,33 @@
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch"/>
     </bean>
 
-    <!--<bean id="rawMatchDAO_TEST-2.78"-->
-    <!--class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">-->
-    <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.RawMatch"/>-->
-    <!--</bean>-->
+    <!--Parses subfam.out file-->
+    <bean id="pirsfSubfamFileParser-2.78" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfSubfamilyFileParser"/>
+    <!--Parses PIRSF file with .tb extension-->
+    <bean id="pirsfSfTbFileParser-2.78" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
+    <!--Parses PIRSF file with .dat extension-->
+    <bean id="pirsfDatFileParser-2.78" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
+
+    <bean id="pirsfSubfamPersistenceProcessor-2.78"
+          class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.SubfamilyPersistenceProcessor">
+        <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.78"/>
+    </bean>
+
 
     <bean id="filteredMatchesFileName-2.78" class="java.lang.String">
-        <constructor-arg value="[PROTSTART]_[PROTEND].filterMatches.out"/>
+        <constructor-arg value="[PROTSTART]_[PROTEND].filteredMatches.out"/>
+    </bean>
+
+    <bean id="subfamMatchesFileName-2.78" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].subfamMatches.out"/>
+    </bean>
+
+    <bean id="subfamMapFileName-2.78" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].subfam.out"/>
+    </bean>
+
+    <bean id="rawAnalaysisOutputFileTemplateSubFam-2.78" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].subfam.raw.out"/>
     </bean>
 
     <bean id="blastMatchesFileName-2.78" class="java.lang.String">

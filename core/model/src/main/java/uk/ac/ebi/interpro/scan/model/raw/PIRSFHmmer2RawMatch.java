@@ -4,6 +4,9 @@ import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Specific raw match class for PIRSF.
@@ -27,11 +30,29 @@ public class PIRSFHmmer2RawMatch extends Hmmer2RawMatch {
 
     public static final String TABLE_NAME = "PIRSF_HMMER2_RAW_MATCH";
 
+    /* Set of subfamily identifiers for this PIRSF match */
+    @Transient
+    private Set<String> subFamilies = new HashSet<String>();
+
     protected PIRSFHmmer2RawMatch() {
 
     }
 
     public PIRSFHmmer2RawMatch(String sequenceIdentifier, String model, SignatureLibrary signatureLibrary, String signatureLibraryRelease, int locationStart, int locationEnd, double evalue, double score, int hmmStart, int hmmEnd, String hmmBounds, double locationEvalue, double locationScore) {
         super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd, evalue, score, hmmStart, hmmEnd, hmmBounds, locationEvalue, locationScore);
+    }
+
+    private void addSubFamily(String subFamilyID) {
+        subFamilies.add(subFamilyID);
+    }
+
+    public void addSubFamilies(Set<String> subFamilies) {
+        for (String subFamilyID : subFamilies) {
+            addSubFamily(subFamilyID);
+        }
+    }
+
+    public Set<String> getSubFamilies() {
+        return subFamilies;
     }
 }

@@ -137,7 +137,6 @@ public class BlastPostProcessor implements Serializable {
             String[] text = proteinIdModelId.split("-");
             if (text.length == 2) {
                 Integer numberOfBlastHits = blastResultMap.get(proteinIdModelId);
-                long proteinId = Long.parseLong(text[0]);
                 String modelId = text[1];
                 Integer sfTbValue = sfTbMap.get(modelId);
 
