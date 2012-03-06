@@ -47,8 +47,10 @@ public class PirsfFileUtil {
                     writer.write('-');
                     writer.write(bestMatch.getModelId());
                     writer.write(',');
+                    // Signature release (e.g. 2.74 or 2.78)
+                    writer.write(bestMatch.getSignatureLibraryRelease());
+                    writer.write(',');
                     // Signature library = PIRSF
-                    // Signature release = 2.74
                     writer.write(String.valueOf(bestMatch.getLocationStart()));
                     writer.write(',');
                     writer.write(String.valueOf(bestMatch.getLocationEnd()));
@@ -94,4 +96,24 @@ public class PirsfFileUtil {
         return file;
     }
 
+    public static void writeSubFamiliesToFile(String filePath, Map<String, String> subFamToSuperFamMap) throws IOException {
+        BufferedWriter writer = null;
+        try {
+            File file = createTmpFile(filePath);
+            if (!file.exists()) {
+                throw new IllegalStateException("Could not create file: " + filePath);
+            }
+            writer = new BufferedWriter(new FileWriter(file));
+            for (String subFamilyId : subFamToSuperFamMap.keySet()) {
+                writer.write(subFamilyId);
+                writer.write("/t");
+                writer.write(subFamToSuperFamMap.get(subFamilyId));
+                writer.newLine();
+            }
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf;
 
+import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.AbstractParseHmmpfamOutputStep;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 
@@ -13,4 +15,19 @@ import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
  */
 public class ParsePIRSFHmmpfamOutputStep extends AbstractParseHmmpfamOutputStep<PIRSFHmmer2RawMatch> {
 
+    private static final Logger LOGGER = Logger.getLogger(ParsePIRSFHmmpfamOutputStep.class.getName());
+
+    @Override
+    public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        try {
+            super.execute(stepInstance, temporaryFileDirectory);
+        } catch (Exception e) {
+            if (e instanceof IllegalStateException) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Skipped step instance with ID " + stepInstance.getId() + " which usually store subfamilies raw matches (for cases the run binary step for subfams didn't " +
+                            "produce any result file which needs to be parse.");
+                }
+            }
+        }
+    }
 }

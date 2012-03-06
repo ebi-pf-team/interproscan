@@ -90,39 +90,43 @@ abstract public class RunBinaryStep extends Step {
             outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
         }
         List<String> command = createCommand(stepInstance, temporaryFileDirectory);
-        LOGGER.info("Running the following command: " + command);
+        if (command != null && command.size() > 0) {
+            LOGGER.info("Running the following command: " + command);
 
-        CommandLineConversation clc = new CommandLineConversationImpl();
-        try {
-            clc.setOutputPathToFile(outputFileName, true, false);
-            clc.setCommandInputStream(createCommandInputStream(stepInstance, temporaryFileDirectory));
-        } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when attempting to configure binary", e);
-        }
-
-        int exitStatus;
-        try {
-            exitStatus = clc.runCommand(false, command);
-        } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when attempting to run binary", e);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException("InterruptedException thrown when attempting to run binary", e);
-        }
-        if (exitStatus == 0) {
-            LOGGER.debug("binary finished successfully!");
-        } else {
-            StringBuffer failureMessage = new StringBuffer();
-            failureMessage.append("Command line failed with exit code: ")
-                    .append(exitStatus)
-                    .append("\nCommand: ");
-            for (String element : command) {
-                failureMessage.append(element).append(' ');
+            CommandLineConversation clc = new CommandLineConversationImpl();
+            try {
+                clc.setOutputPathToFile(outputFileName, true, false);
+                clc.setCommandInputStream(createCommandInputStream(stepInstance, temporaryFileDirectory));
+            } catch (IOException e) {
+                throw new IllegalStateException("IOException thrown when attempting to configure binary", e);
             }
-            failureMessage.append("\nError output from binary:\n");
-            failureMessage.append(clc.getErrorMessage());
-            LOGGER.error(failureMessage);
-            // TODO Look for a more specific Exception to throw here...
-            throw new IllegalStateException(failureMessage.toString());
+
+            int exitStatus;
+            try {
+                exitStatus = clc.runCommand(false, command);
+            } catch (IOException e) {
+                throw new IllegalStateException("IOException thrown when attempting to run binary", e);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("InterruptedException thrown when attempting to run binary", e);
+            }
+            if (exitStatus == 0) {
+                LOGGER.debug("binary finished successfully!");
+            } else {
+                StringBuffer failureMessage = new StringBuffer();
+                failureMessage.append("Command line failed with exit code: ")
+                        .append(exitStatus)
+                        .append("\nCommand: ");
+                for (String element : command) {
+                    failureMessage.append(element).append(' ');
+                }
+                failureMessage.append("\nError output from binary:\n");
+                failureMessage.append(clc.getErrorMessage());
+                LOGGER.error(failureMessage);
+                // TODO Look for a more specific Exception to throw here...
+                throw new IllegalStateException(failureMessage.toString());
+            }
+        } else {
+            LOGGER.info("Command list is NULL or empty! Skipping this step...");
         }
         LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
