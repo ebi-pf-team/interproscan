@@ -168,7 +168,6 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer2FilteredMatchDAOImpl"/>
         </property>
-        <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
     </bean>
 
     <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads

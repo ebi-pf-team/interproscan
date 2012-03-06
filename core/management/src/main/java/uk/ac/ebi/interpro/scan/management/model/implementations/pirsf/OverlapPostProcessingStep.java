@@ -44,6 +44,9 @@ public class OverlapPostProcessingStep extends Step {
     // Matches that passed this post processing but now need to be sent to blast
     private String blastMatchesFileName;
 
+    // Name of the file which maps subfamilies to superfamilies
+    private String subfamToSuperfamMapFileName;
+
 
     @Required
     public void setPostProcessor(OverlapPostProcessor postProcessor) {
@@ -73,6 +76,10 @@ public class OverlapPostProcessingStep extends Step {
     @Required
     public void setBlastMatchesFileName(String blastMatchesFileName) {
         this.blastMatchesFileName = blastMatchesFileName;
+    }
+
+    public void setSubfamToSuperfamMapFileName(String subfamToSuperfamMapFileName) {
+        this.subfamToSuperfamMapFileName = subfamToSuperfamMapFileName;
     }
 
     /**
@@ -111,14 +118,16 @@ public class OverlapPostProcessingStep extends Step {
             LOGGER.debug("PIRSF: A total of " + matchCount + " raw matches.");
         }
 
-
         // Prepare temporary filenames required by this step
         final String filteredMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, filteredMatchesFileName);
         final String blastMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
-
-
+        double signatureLibraryReleaseValue = Double.parseDouble(signatureLibraryRelease);
+        String subFamiliesFilePath = null;
+        if (signatureLibraryReleaseValue >= 2.75d && subfamToSuperfamMapFileName != null) {
+            subFamiliesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, subfamToSuperfamMapFileName);
+        }
         try {
-            postProcessor.process(rawMatches, proteinLengthMap, filteredMatchesFilePath, blastMatchesFilePath);
+            postProcessor.process(rawMatches, proteinLengthMap, filteredMatchesFilePath, blastMatchesFilePath, subFamiliesFilePath, signatureLibraryReleaseValue);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to write flat files for filtered matches and " +
                     "matches which have to be BLASTed!", e);

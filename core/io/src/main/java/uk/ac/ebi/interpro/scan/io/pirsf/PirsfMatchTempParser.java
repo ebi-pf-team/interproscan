@@ -19,8 +19,10 @@ import java.util.regex.Pattern;
  * Part of the mechanism that allows data to be passed between steps in a job.
  *
  * @author Matthew Fraser, EMBL-EBI, InterPro
+ * @author Maxim Scheremetjew
  * @version $Id$
- * @since 1.0 */
+ * @since 1.0
+ */
 public class PirsfMatchTempParser {
     private static final Logger LOGGER = Logger.getLogger(PirsfMatchTempParser.class.getName());
 
@@ -62,7 +64,7 @@ public class PirsfMatchTempParser {
                 if (modelStart.find()) {
                     // New accession
                     String[] text = line.split(",");
-                    if (text != null && text.length != 10) {
+                    if (text != null && text.length != 11) {
                         LOGGER.warn("Unexpected line format in blast matches file: " + line);
                     } else {
                         String[] proteinIdModelId = text[0].split("-");
@@ -75,23 +77,22 @@ public class PirsfMatchTempParser {
                                 PIRSFHmmer2RawMatch bestMatch = new PIRSFHmmer2RawMatch(proteinId,
                                         modelId,
                                         SignatureLibrary.PIRSF, // Signature library
-                                        "2.74", // Signature release
-                                        Integer.parseInt(text[1]), // Location start
-                                        Integer.parseInt(text[2]), // Location end
-                                        Double.parseDouble(text[3]), // E-value
-                                        Double.parseDouble(text[4]), // Score
-                                        Integer.parseInt(text[5]), // HMM start
-                                        Integer.parseInt(text[6]), // HMM end
-                                        text[7], // HMM bounds
-                                        Double.parseDouble(text[8]), // Location e-value
-                                        Double.parseDouble(text[9]) // Location score
+                                        text[1], // Signature release
+                                        Integer.parseInt(text[2]), // Location start
+                                        Integer.parseInt(text[3]), // Location end
+                                        Double.parseDouble(text[4]), // E-value
+                                        Double.parseDouble(text[5]), // Score
+                                        Integer.parseInt(text[6]), // HMM start
+                                        Integer.parseInt(text[7]), // HMM end
+                                        text[8], // HMM bounds
+                                        Double.parseDouble(text[9]), // Location e-value
+                                        Double.parseDouble(text[10]) // Location score
                                 );
 
                                 RawProtein<PIRSFHmmer2RawMatch> protein = new RawProtein<PIRSFHmmer2RawMatch>(proteinId);
                                 protein.addMatch(bestMatch);
                                 data.add(protein);
-                            }
-                            catch (NumberFormatException e) {
+                            } catch (NumberFormatException e) {
                                 LOGGER.error("Error parsing PIRSF temporary match file line (ignoring): " + line + " - Exception " + e.getMessage());
                             }
                         }
