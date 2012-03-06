@@ -48,25 +48,26 @@
                 <ref bean="jobWriteOutput"/>
 
                 <!-- Analyses -->
-                <ref bean="jobPfamA-24.0"/>
-                <!--<ref bean="jobPfamA-26.0"/>-->
+                <!--Old versions are switched off because they aren't in the database anymore-->
+                <!--<ref bean="jobPfamA-24.0"/>-->
+                <ref bean="jobPfamA-26.0"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobGene3d"/>
                 <ref bean="jobPanther"/>
                 <ref bean="jobPRINTS"/>
                 <ref bean="jobCoils"/>
-                <ref bean="jobHAMAP-180510"/>
-                <!--<ref bean="jobHAMAP-140911"/>-->
+                <!--<ref bean="jobHAMAP-180510"/>-->
+                <ref bean="jobHAMAP-140911"/>
                 <ref bean="jobProDom-2006.1"/>
-                <ref bean="jobPrositeProfiles-20.66"/>
-                <ref bean="jobPrositePatterns-20.66"/>
-                <!--<ref bean="jobPrositeProfiles-20.72"/>-->
-                <!--<ref bean="jobPrositePatterns-20.72"/>-->
+                <!--<ref bean="jobPrositeProfiles-20.66"/>-->
+                <!--<ref bean="jobPrositePatterns-20.66"/>-->
+                <ref bean="jobPrositeProfiles-20.72"/>
+                <ref bean="jobPrositePatterns-20.72"/>
                 <ref bean="jobSignalP-EUK-4.0"/>
                 <ref bean="jobSignalP-GRAM_POSITIVE-4.0"/>
                 <ref bean="jobSignalP-GRAM_NEGATIVE-4.0"/>
-                <ref bean="jobSMART-6.1"/>
-                <!--<ref bean="jobSMART-6.2"/>-->
+                <!--<ref bean="jobSMART-6.1"/>-->
+                <ref bean="jobSMART-6.2"/>
                 <!--<ref bean="jobTIGRFAM-9.0"/>-->
                 <ref bean="jobTIGRFAM-10.1"/>
                 <!--<ref bean="jobPIRSF-2.74"/>-->
