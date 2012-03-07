@@ -18,7 +18,7 @@ function preparePopup(spanId) {
         content: {
             text: $('#'.concat(popupId)),
             title: {
-                text: '',
+                text: 'Location data', // Popup text in the title bar
                 button: true // Close button
             }
         },
@@ -29,15 +29,25 @@ function preparePopup(spanId) {
             effect: true // Positioning animation
         },
         show: {
-            event: 'click',
-            solo: true // Show one tooltip at a time?
+            event: 'mouseenter',
+            solo: false // Show one tooltip at a time?
         },
-//        hide: 'close',
         hide: {
-            event: 'unfocus'
-   },
+            fixed: true, // If the user mouses out of the span to the popup then keep the popup open
+            delay: 500
+        },
         style: {
             classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-shadow'
+        },
+        events: {
+            render: function(event, api) {
+                api.elements.target.bind('click', function() {
+                    api.set('hide.event', false);
+                });
+            },
+            hide: function(event, api) {
+                api.set('hide.event', 'mouseleave');
+            }
         }
     });
 }
