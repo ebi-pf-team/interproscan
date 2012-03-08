@@ -60,6 +60,7 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         }
     }
 
+    // TODO: Fix UnsupportedOperationException -- the @Ignore annotation was added in June 2011 (http://tinyurl.com/6tq8nz4), yet the comment is not correct -- the SignatureLibraryRelease element does *not* cause the exception  
     @Test
     @Ignore("Round trip does not work.  The embedded SignatureLibraryRelease element is not parsed.")
     public void testXml() throws IOException, SAXException {

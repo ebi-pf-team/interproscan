@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
@@ -167,6 +168,32 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
         assertEquals(1, signature.getModels().size());
         signature.removeModel(m2);
         assertEquals(0, signature.getModels().size());
+    }
+
+    @Test
+    public void testSignatureLibraryReleaseShallow() throws IOException, SAXException {
+
+        super.testSupportsMarshalling(Signature.class);
+
+        // Expected XML
+        String expectedXml =
+            "<signature xmlns='http://www.ebi.ac.uk/schema/interpro' ac='G3DSA:2.40.50.140' name='Nucleic acid-binding proteins'>" +
+            "   <signature-library-release library='GENE3D' version='3.1.0'/>" +
+            "</signature>";
+
+        // Expected object
+        Signature expectedObject = new Signature("G3DSA:2.40.50.140", "Nucleic acid-binding proteins");
+        SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.1.0");
+        expectedObject.setSignatureLibraryRelease(release);
+
+        // Actual
+        Signature actualObject = super.unmarshal(expectedXml);
+        String actualXml = super.marshal(actualObject);
+
+        // Check
+        assertEquals("Objects do not match", expectedObject, actualObject);
+        assertXmlEquals("XML does not match", expectedXml, actualXml);
+
     }
 
 }
