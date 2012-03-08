@@ -17,7 +17,7 @@
             <list>
                 <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
                     <property name="signatureLibrary" value="TMHMM"/>
-                    <property name="releaseVersionNumber" value="2.5.1"/>
+                    <property name="releaseVersionNumber" value="2.0"/>
                     <property name="analysisJobId" value="jobTMHMM"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.coils.CoilsDummyParser">
