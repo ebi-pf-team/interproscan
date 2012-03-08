@@ -148,7 +148,6 @@ public class SignatureLibraryRelease implements Serializable {
         return new EqualsBuilder()
                 .append(library, s.library)
                 .append(version, s.version)
-                .append(signatures, s.signatures)
                 .isEquals();
     }
 
@@ -157,7 +156,6 @@ public class SignatureLibraryRelease implements Serializable {
         return new HashCodeBuilder(19, 39)
                 .append(library)
                 .append(version)
-                .append(signatures)
                 .toHashCode();
     }
 
@@ -166,7 +164,6 @@ public class SignatureLibraryRelease implements Serializable {
         return new ToStringBuilder(this)
                 .append("library", library)
                 .append("version", version)
-                .append("signatures", signatures)
                 .toString();
     }
 

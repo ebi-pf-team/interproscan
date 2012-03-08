@@ -421,6 +421,10 @@ public class Signature implements Serializable {
         return signatureLibraryRelease;
     }
 
+    void setSignatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease) {
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }    
+
     @XmlElement(name = "signature-library-release")
     private SignatureLibraryRelease getSignatureLibraryReleaseShallow() {
         if (this.signatureLibraryRelease == null) {
@@ -429,7 +433,8 @@ public class Signature implements Serializable {
         return new SignatureLibraryRelease(this.signatureLibraryRelease.getLibrary(), this.signatureLibraryRelease.getVersion());
     }
 
-    void setSignatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease) {
+    // Corresponding setter for "shallow" version for XML marshalling and unmarshalling
+    private void setSignatureLibraryReleaseShallow(SignatureLibraryRelease signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
