@@ -92,8 +92,8 @@
                 <li class="entry ${entry.type}-row">
 
                 <div class="top-row">
-                    <div class="top-row-id"><img src="/interpro/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/> <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" title="${entry.name} (${entry.ac})">${entry.ac}</a> </div>
-                    <div class="top-row-name"><a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" title="${entry.name} (${entry.ac})" class="neutral">${entry.name}</a></div>
+                    <div class="top-row-id"><img src="/interpro/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/> <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}">${entry.ac}</a> </div>
+                    <div class="top-row-name"><a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" class="neutral">${entry.name}</a></div>
                 </div>
 
                 <div class="bot-row">
