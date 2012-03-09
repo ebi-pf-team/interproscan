@@ -15,6 +15,7 @@ function preparePopup(spanId) {
     //alert('spanId: '.concat(spanId, ', prefix: ', prefix, ', postfix: ', postfix, ', popupId: ', popupId));
 
     $('#'.concat(spanId)).qtip({
+        prerender: true, // Render all popups at page load time?
         content: {
             text: $('#'.concat(popupId)),
             title: {
@@ -30,7 +31,8 @@ function preparePopup(spanId) {
         },
         show: {
             event: 'mouseenter',
-            solo: false // Show one tooltip at a time?
+            solo: false, // Show one tooltip at a time?
+            delay: 250 // Avoid a mass of popups when moving mouse across the screen!
         },
         hide: {
             fixed: true, // If the user mouses out of the span to the popup then keep the popup open
@@ -46,7 +48,7 @@ function preparePopup(spanId) {
                 });
             },
             hide: function(event, api) {
-                api.set('hide.event', 'mouseleave');
+                api.set('hide.event', 'mouseout');
             }
         }
     });
