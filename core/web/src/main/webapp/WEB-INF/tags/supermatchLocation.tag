@@ -28,7 +28,7 @@
         <c:set var="depth" value="${depth + 1}"/>
         </c:if>
         <li>
-      <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" class="neutral" title=" ${entry.name} (${entry.ac})">${entry.name} <span>(${entry.ac})</span></a>
+      <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" class="neutral">${entry.name} <span>(${entry.ac})</span></a>
         </li>
         <c:set var="currentLevel" value="${entry.hierarchyLevel}"/>
         </c:forEach>
