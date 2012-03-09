@@ -322,3 +322,7 @@ margin-left:14px; list-style-type: none; padding-left: 26px; background: url(../
 
 .ui-tooltip .popup_topl {padding-bottom:4px; font-weight:bold;font-size:90%;}
 .ui-tooltip .popup_topl .caption_puce {width:6px; height:6px; border:1px solid #393939; float:left; margin: 2px 4px 0 0;zoom:1; /* for IE7 and IE6 to visualise the span and background without content*/}
+
+acronym {
+    cursor: help;
+}

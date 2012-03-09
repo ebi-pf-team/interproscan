@@ -20,7 +20,7 @@
         <c:forEach var="dataEntry" items="${structuralMatchData.locationDataMap}" varStatus="vs">
             <%-- classId = ${dataEntry.key} --%>
             <c:set var="link" value="${fn:replace(dataEntry.key, 'MB_', '')}" /> <%--MODBASE MB_P38398 converted to P38398--%>
-            <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl,'$0', link)}'  title='${dataEntry.key} (${databaseMetadata.name})' class='ext'>${dataEntry.key}</a><br/>"/>
+            <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl,'$0', link)}' class='ext'>${dataEntry.key}</a><br/>"/>
         </c:forEach>
     </c:when>
 
@@ -31,7 +31,7 @@
             <%-- domainIds = ${dataEntry.value} --%>
             <c:forEach var="domainId" items="${dataEntry.value}" varStatus="vs">
                 <c:set var="link" value="${fn:replace(dataEntry.key, 'SW_', '')}" /> <%--SWISS-MODEL SW_P38398 converted to P38398--%>
-                <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl, '$0', link)}'  title='${domainId} (${databaseMetadata.name})' class='ext'>${domainId}</a><br/>"/>
+                <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl, '$0', link)}' class='ext'>${domainId}</a><br/>"/>
             </c:forEach>
         </c:forEach>
     </c:when>
@@ -51,7 +51,7 @@
                 <c:set var="strains" value="${strains}${fn:replace(domainId, dataEntry.key, '')}"/>
             </c:forEach>
             <c:set var="strains" value="${strains})" />
-            <c:set var="links" value="<a href='${fn:replace(databaseMetadata.linkUrl, '$0', dataEntry.key)}'  title='${title} (${databaseMetadata.name})' class='ext'>${dataEntry.key}</a> ${strains}<br/>"/>
+            <c:set var="links" value="<a href='${fn:replace(databaseMetadata.linkUrl, '$0', dataEntry.key)}' class='ext'>${dataEntry.key}</a> ${strains}<br/>"/>
         </c:forEach>
     </c:when>
 
@@ -70,7 +70,7 @@
 <div id="match-popup-${id}" style="display: none;">
 
     <div class="popup_topl"><span class="${databaseName} caption_puce"></span>${location.start} - ${location.end}</div>
-     <div class="popup_botl"><strong>${databaseMetadata.name}</strong> <img src="images/ico_help.png" alt="help" title="${databaseMetadata.description}" > <br/>
+     <div class="popup_botl"><acronym title="${databaseMetadata.description}">${databaseMetadata.name}</acronym><br/>
      ${links} <br/>
 
    </div>
