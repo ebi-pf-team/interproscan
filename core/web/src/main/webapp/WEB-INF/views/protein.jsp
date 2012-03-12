@@ -20,8 +20,8 @@
     <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet" type="text/css"/>
     <script src="<c:url value="/resources/javascript/jquery/jquery-1.7.1.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/qtip2/jquery.qtip.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/resources/javascript/jquery/jquery.jscroll.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/common.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/protein-popups.js"/>" type="text/javascript"></script>
 </head>
 <body>
 <c:choose>
@@ -57,23 +57,6 @@ of it occurs. This is not a requirement, simply a useful tip!
  http://docs.jquery.com/Tutorials:Introducing_$(document).ready()-->
 <script type="text/javascript">
     $(document).ready(function() {
-        // Match all <A/> links with a title tag and use it as the content (default).
-        $('a[title]').qtip({
-            position: {
-                viewport: $(window) // Keep the tooltip on-screen at all times
-            }
-        });
-        $('img[title]').qtip({
-            position: {
-                viewport: $(window) // Keep the tooltip on-screen at all times
-            }
-        });
-        $('acronym[title]').qtip({
-            position: {
-                viewport: $(window) // Keep the tooltip on-screen at all times
-            }
-        });
-
         // Tie the extra popup DIV to it's match SPAN
         $('span[id*="location-"]').each(
                 function(i) {

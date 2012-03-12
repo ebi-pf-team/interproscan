@@ -19,7 +19,8 @@
     <link href="<c:url value="/resources/css/type_colours.css" />"  rel="stylesheet"  type="text/css" />
     <script src="<c:url value="/resources/javascript/jquery/jquery-1.7.1.min.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/qtip2/jquery.qtip.min.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/common.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/protein-popups.js"/>" type="text/javascript"></script>
 </head>
 <body>
 
@@ -43,23 +44,6 @@
 <!-- JavaScript placed near the end </body> tag as this ensures the DOM is loaded before manipulation
 of it occurs. This is not a requirement, simply a useful tip! -->
 <script type="text/javascript">
-    // Match all <A/> links with a title tag and use it as the content (default).
-    $('a[title]').qtip({
-        position: {
-            viewport: $(window) // Keep the tooltip on-screen at all times
-        }
-    });
-    $('img[title]').qtip({
-        position: {
-            viewport: $(window) // Keep the tooltip on-screen at all times
-        }
-    });
-    $('acronym[title]').qtip({
-        position: {
-            viewport: $(window) // Keep the tooltip on-screen at all times
-        }
-    });
-
     // Tie the extra popup DIV to it's match SPAN
     $(document).ready(function() {
         $('span[id*="location-"]').each(
