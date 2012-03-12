@@ -35,8 +35,10 @@
     <script src="<c:url value="/resources/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js"/>"
             type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/qtip2/jquery.qtip.min.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/common.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/protein.js"/>" type="text/javascript"></script>
-    <script src="<c:url value="/resources/javascript/jquery.cookie.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/protein-popups.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="/resources/javascript/jquery/jquery.cookie.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/jquery/jquery.jscroll.min.js"/>" type="text/javascript"></script>
 </head>
 <body>
@@ -118,18 +120,6 @@
         // Initialise un-integrated.
         displayUnintegrated($("#check-6"));
 
-        // Qtip2 popups
-        // Match all <A/> links with a title tag and use it as the content (default).
-        $('a[title]').qtip({
-            position: {
-                viewport: $(window) // Keep the tooltip on-screen at all times
-            }
-        });
-        $('img[title]').qtip({
-            position: {
-                viewport: $(window) // Keep the tooltip on-screen at all times
-            }
-        });
         $('span[id*="location-"]').each(
                 function(i) {
                     preparePopup(this.id);
