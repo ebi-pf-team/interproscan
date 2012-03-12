@@ -436,7 +436,8 @@ public class Entry implements Serializable {
         // TODO: Example: Actual:   Xref[protein=<null>]
         // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
         // TODO: JAXB or do we have to use an XmlAdapter?
-        return Collections.unmodifiableSet(goXRefs);
+//        return Collections.unmodifiableSet(goXRefs);
+        return goXRefs;
     }
 
     public void setGoXRefs(Set<GoXref> xrefs) {
@@ -547,7 +548,8 @@ public class Entry implements Serializable {
             at uk.ac.ebi.interpro.scan.model.AbstractTest.unmarshal(AbstractTest.java:150)
          */
         //@XmlElement(name="signature")
-        return Collections.unmodifiableSet(signatures);
+//        return Collections.unmodifiableSet(signatures);
+        return signatures;
     }
 
     private void setSignatures(Set<Signature> signatures) {

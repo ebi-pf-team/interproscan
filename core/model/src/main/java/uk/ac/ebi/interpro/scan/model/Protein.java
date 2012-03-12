@@ -28,7 +28,10 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -228,7 +231,8 @@ public class Protein implements Serializable {
     @XmlElement(name = "matches", required = true)
     @XmlJavaTypeAdapter(Match.MatchAdapter.class)
     public Set<Match> getMatches() {
-        return Collections.unmodifiableSet(matches);
+//        return Collections.unmodifiableSet(matches);
+        return matches;
     }
 
     private void setMatches(Set<Match> matches) {
@@ -396,7 +400,8 @@ public class Protein implements Serializable {
     // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
     // TODO: JAXB or do we have to use an XmlAdapter?
     public Set<ProteinXref> getCrossReferences() {
-        return Collections.unmodifiableSet(crossReferences);
+//        return Collections.unmodifiableSet(crossReferences);
+        return crossReferences;
     }
 
     private void setCrossReferences(Set<ProteinXref> crossReferences) {

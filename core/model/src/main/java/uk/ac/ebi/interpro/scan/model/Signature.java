@@ -423,7 +423,7 @@ public class Signature implements Serializable {
 
     void setSignatureLibraryRelease(SignatureLibraryRelease signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
-    }    
+    }
 
     @XmlElement(name = "signature-library-release")
     private SignatureLibraryRelease getSignatureLibraryReleaseShallow() {
@@ -470,7 +470,8 @@ public class Signature implements Serializable {
 
     @XmlJavaTypeAdapter(ModelAdapter.class)
     public Map<String, Model> getModels() {
-        return (models == null ? null : Collections.unmodifiableMap(models));
+//        return (models == null ? null : Collections.unmodifiableMap(models));
+        return models;
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
@@ -574,7 +575,8 @@ public class Signature implements Serializable {
         // TODO: Example: Actual:   Xref[protein=<null>]
         // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
         // TODO: JAXB or do we have to use an XmlAdapter?
-        return Collections.unmodifiableSet(crossReferences);
+//        return Collections.unmodifiableSet(crossReferences);
+        return crossReferences;
     }
 
     private void setCrossReferences(Set<SignatureXref> crossReferences) {
