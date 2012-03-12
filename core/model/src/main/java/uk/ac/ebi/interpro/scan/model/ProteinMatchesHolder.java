@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,7 +35,8 @@ public final class ProteinMatchesHolder implements IMatchesHolder, Serializable 
 
     @XmlElement(name = "protein")
     public Set<Protein> getProteins() {
-        return Collections.unmodifiableSet(proteins);
+//        return Collections.unmodifiableSet(proteins);
+        return proteins;
     }
 
     public void setProteins(Collection<Protein> proteins) {

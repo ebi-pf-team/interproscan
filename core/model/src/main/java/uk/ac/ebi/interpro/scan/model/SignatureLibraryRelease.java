@@ -101,7 +101,8 @@ public class SignatureLibraryRelease implements Serializable {
     // TODO: is not used (JAXB accesses the field directly).
     // TODO: This needs fixing! (tried XmlAdapter to no avail -- see below)
     public Set<Signature> getSignatures() {
-        return (signatures == null ? null : Collections.unmodifiableSet(signatures));
+//        return (signatures == null ? null : Collections.unmodifiableSet(signatures));
+        return signatures;
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection

@@ -6,7 +6,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +48,8 @@ public final class RawProtein<T extends RawMatch> implements Serializable {
     }
 
     public Collection<T> getMatches() {
-        return Collections.unmodifiableCollection(matches);
+//        return Collections.unmodifiableCollection(matches);
+        return matches;
     }
 
     @Override

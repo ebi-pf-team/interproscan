@@ -102,7 +102,8 @@ public abstract class Match<T extends Location> implements Serializable {
     @Transient
     @XmlJavaTypeAdapter(Location.LocationAdapter.class)
     public Set<T> getLocations() {
-        return Collections.unmodifiableSet(locations);
+//        return Collections.unmodifiableSet(locations);
+        return locations;
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
@@ -222,6 +223,7 @@ public abstract class Match<T extends Location> implements Serializable {
             matches.addAll(matchTypes.getCoilsMatches());
             matches.addAll(matchTypes.getPantherMatches());
             matches.addAll(matchTypes.getSignalPMatches());
+            matches.addAll(matchTypes.getTmhmmMatches());
             return matches;
         }
 
