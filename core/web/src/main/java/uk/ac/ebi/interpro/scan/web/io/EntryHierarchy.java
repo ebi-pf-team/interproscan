@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.web.model.EntryHierarchyData;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -16,23 +17,24 @@ import java.util.*;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class EntryHierarchy {
+public class EntryHierarchy implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(EntryHierarchy.class.getName());
 
     private Properties entryColourPropertiesFile;
     private Map<String, Integer> entryColourMap = null;
-    private Resource entryHierarchyDataResource;
-    private EntryHierarchyDataResourceReader entryHierarchyDataResourceReader;
+    private transient Resource entryHierarchyDataResource;
+    private transient EntryHierarchyDataResourceReader entryHierarchyDataResourceReader;
     private Map<String, EntryHierarchyData> entryHierarchyDataMap = null;
 
     /**
      * Initialise the singleton.
      */
     public void init() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("\n#############################\nEntryHierarchy.init() method called\n#############################\n");
         // Build entry colour map
         entryColourMap = buildEntryColourMap();
-
         // Build entry hierarchy data map
         try {
             entryHierarchyDataMap = entryHierarchyDataResourceReader.read(entryHierarchyDataResource);
@@ -191,7 +193,7 @@ public class EntryHierarchy {
     }
 
     public Integer getHierarchyLevel(String ac) {
-        if (this.entryHierarchyDataMap.containsKey(ac)) {
+        if (this.entryHierarchyDataMap != null && this.entryHierarchyDataMap.containsKey(ac)) {
             EntryHierarchyData data = this.entryHierarchyDataMap.get(ac);
             return data.getHierarchyLevel();
         }

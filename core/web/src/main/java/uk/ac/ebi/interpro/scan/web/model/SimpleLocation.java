@@ -1,12 +1,14 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import java.io.Serializable;
+
 /**
  * Location of a match.
  *
  * @author Antony Quinn
  * @version $Id$
  */
-public final class SimpleLocation implements Comparable<SimpleLocation> {
+public final class SimpleLocation implements Comparable<SimpleLocation>, Serializable {
 
     private final int start;
     private final int end;
@@ -64,5 +66,19 @@ public final class SimpleLocation implements Comparable<SimpleLocation> {
         int result = start;
         result = 31 * result + end;
         return result;
+    }
+
+    public int getLength() {
+        return Math.abs(end - start) + 1;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("SimpleLocation");
+        sb.append("{start=").append(start);
+        sb.append(", end=").append(end);
+        sb.append('}');
+        return sb.toString();
     }
 }

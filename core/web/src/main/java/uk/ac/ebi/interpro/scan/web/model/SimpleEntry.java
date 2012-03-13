@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.web.model;
 
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -11,27 +12,40 @@ import java.util.*;
  * @author Matthew Fraser
  * @version $Id$
  */
-public final class SimpleEntry implements Comparable<SimpleEntry> {
+public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable {
 
     private final String ac;
     private final String shortName;
     private final String name;
     private final String type;
     private Integer hierarchyLevel;
+    private final EntryHierarchyData hierarchyData;
     private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
     private Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
     private static EntryHierarchy entryHierarchy;
 
-    public SimpleEntry(String ac, String shortName, String name, String type, EntryHierarchy entryHierarchy) {
+    private static final Object ehLock = new Object();
+
+    public SimpleEntry(String ac, String shortName, String name, String type, final EntryHierarchy entryHierarchy) {
         this.ac = ac;
         this.shortName = shortName;
         this.name = name;
         this.type = type;
-        if (SimpleEntry.entryHierarchy == null) {
-            SimpleEntry.entryHierarchy = entryHierarchy;
+
+        if (entryHierarchy != null && SimpleEntry.entryHierarchy == null) {
+            synchronized (ehLock) {
+                if (SimpleEntry.entryHierarchy == null) {
+                    SimpleEntry.entryHierarchy = entryHierarchy;
+                }
+            }
         }
+
         if (entryHierarchy != null) {
             this.hierarchyLevel = entryHierarchy.getHierarchyLevel(ac);
+            this.hierarchyData = entryHierarchy.getEntryHierarchyData(ac);
+        } else {
+//            this.hierarchyLevel = 1;  // TODO - Is this desirable?  Current algorithm probably allows for this being null.
+            this.hierarchyData = new EntryHierarchyData(ac, 1, ac);
         }
     }
 
@@ -46,6 +60,10 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
      */
     public Integer getHierarchyLevel() {
         return hierarchyLevel;
+    }
+
+    public EntryHierarchyData getHierarchyData() {
+        return hierarchyData;
     }
 
     public String getShortName() {
@@ -141,4 +159,8 @@ public final class SimpleEntry implements Comparable<SimpleEntry> {
         return this.ac.equals(((SimpleEntry) o).ac);
     }
 
+    @Override
+    public String toString() {
+        return ac;
+    }
 }

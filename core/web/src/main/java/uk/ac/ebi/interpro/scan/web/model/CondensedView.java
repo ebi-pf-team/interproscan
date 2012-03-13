@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -9,7 +10,7 @@ import java.util.*;
  *         Comprises the lines for the condensed view and is responsible for
  *         building this structure.
  */
-public class CondensedView {
+public class CondensedView implements Serializable {
 
     private final SimpleProtein protein;
 
@@ -28,8 +29,19 @@ public class CondensedView {
         // matches to entries in the same hierarchy.
         final List<SuperMatchBucket> buckets = buildBuckets(superMatches);
 
+        // Fix any SuperMatchBuckets that have overlaps within them.
+        fixOverlaps(buckets);
+
         // Finally, add the buckets to the lines, aiming for the least number of lines possible.
         buildLines(buckets);
+    }
+
+    private void fixOverlaps(List<SuperMatchBucket> buckets) {
+        List<SuperMatchBucket> newBuckets = new ArrayList<SuperMatchBucket>();
+        for (SuperMatchBucket bucket : buckets) {
+            newBuckets.addAll(bucket.ensureNoOverlaps());
+        }
+        buckets.addAll(newBuckets);
     }
 
     /**
@@ -67,8 +79,8 @@ public class CondensedView {
         for (SimpleSuperMatch superMatch : superMatches) {
             boolean inList = false;
             for (final SuperMatchBucket bucket : superMatchBucketList) {
-                // addIfSameHierarchy also merges matches into supermatches.
-                inList = bucket.addIfSameHierarchy(superMatch);
+                // addIfSameHierarchyMergeIfOverlap also merges matches into supermatches.
+                inList = bucket.addIfSameHierarchyMergeIfOverlap(superMatch);
                 if (inList) break; // Will be only one bucket per hierarchy, so no need to go further.
             }
             if (!inList) {

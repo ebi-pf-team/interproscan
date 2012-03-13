@@ -12,7 +12,7 @@ import java.util.*;
  * Analyse query results and construct a more understandable
  * {@link SimpleProtein} object.
  *
- * @author  Matthew Fraser
+ * @author Matthew Fraser
  * @version $Id$
  */
 public class AnalyseMatchDataResult {
@@ -67,8 +67,7 @@ public class AnalyseMatchDataResult {
 
         try {
             records = reader.read(resource);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Could not read from query resource: " + resource.getDescription());
 //            e.printStackTrace();
             return null;
@@ -131,8 +130,7 @@ public class AnalyseMatchDataResult {
                     // Signature already exists
                     SimpleSignature signature = signatures.get(methodAc);
                     signature.addLocation(location);
-                }
-                else {
+                } else {
                     // New signature for this entry, add it to the map
                     SimpleSignature signature =
                             new SimpleSignature(methodAc, methodName, methodDatabase);
@@ -140,8 +138,7 @@ public class AnalyseMatchDataResult {
                     signatures.put(methodAc, signature);
                 }
 
-            }
-            else {
+            } else {
                 // New entry for this protein, add it to the map
                 SimpleEntry entry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
                 SimpleSignature signature =
@@ -151,16 +148,15 @@ public class AnalyseMatchDataResult {
                 entries.add(entry);
             }
 
-            queryOutputText += line + "\n";
+            queryOutputText += line + '\n';
 
         }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Query returned:\n" + queryOutputText);
         }
 
-        // Start to calculate the supermatches for each entry
         if (protein == null) {
-            throw new IllegalStateException("Protein is still NULL, therefore cannot calculate supermatches");
+            throw new IllegalStateException("Protein is still NULL - no parsable data present?");
         }
         List<SimpleEntry> entries = protein.getAllEntries();
         for (SimpleEntry entry : entries) {
@@ -168,49 +164,15 @@ public class AnalyseMatchDataResult {
                 // Un-integrated signatures do not have supermatches
                 continue;
             }
-            List<SimpleLocation> superLocations = new ArrayList<SimpleLocation>();
             List<SimpleLocation> locations = new ArrayList<SimpleLocation>();
             Map<String, SimpleSignature> signatures = entry.getSignaturesMap();
-            for (SimpleSignature signature: signatures.values()) {
+            for (SimpleSignature signature : signatures.values()) {
                 locations.addAll(signature.getLocations());
             }
             if (locations.size() > 0) {
-                Collections.sort(locations); // Ordered list of all locations for this entry
-                Integer superPosStart = null;
-                Integer superPosEnd = null;
-                for (SimpleLocation location : locations) {
-                    // Loop through locations, ordered by start position then end position (ascending)
-                    if (superPosStart == null) {
-                        // Looking at the first location
-                        superPosStart = location.getStart();
-                        superPosEnd = location.getEnd();
-                        continue;
-                    }
-                    int posStart = location.getStart();
-                    int posEnd = location.getEnd();
-                    if (posStart < superPosEnd) {
-                        // This match overlaps with the current supermatch under construction, so incorporate this match
-                        if (posEnd > superPosEnd) {
-                            superPosEnd = posEnd;
-                        }
-                    }
-                    else {
-                        // Doesn't overlap with the current supermatch under construction, so can add that supermatch and
-                        // begin constructing the next one.
-                        superLocations.add(new SimpleLocation(superPosStart, superPosEnd));
-                        superPosStart = posStart;
-                        superPosEnd = posEnd;
-                    }
-                }
-                try {
-                    superLocations.add(new SimpleLocation(superPosStart, superPosEnd)); // Don't forget the final supermatch
-                }
-                catch (NullPointerException e) {
-                    throw new IllegalStateException("Supermatch location start/end position was invalid, start: " + superPosStart + ", end: " + superPosEnd);
-                }
-                Collections.sort(superLocations);
+                Collections.sort(locations);
             }
-            entry.setLocations(superLocations); // Add the supermatches to this entry
+            entry.setLocations(locations);
         }
 
         return protein;

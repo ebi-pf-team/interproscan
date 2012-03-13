@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.web.model;
 
 import org.apache.log4j.Logger;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  *         in the same hierarchy.  This is used to ensure non-overlapping matches in
  *         the same hierarchy appear on the same line.
  */
-public class SuperMatchBucket {
+public class SuperMatchBucket implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(SuperMatchBucket.class.getName());
 
@@ -64,7 +65,7 @@ public class SuperMatchBucket {
      * @param candidate to test for addition and add if possible.
      * @return true if the candidate SimpleSuperMatch could be added to this bucket.
      */
-    public boolean addIfSameHierarchy(final SimpleSuperMatch candidate) {
+    public boolean addIfSameHierarchyMergeIfOverlap(final SimpleSuperMatch candidate) {
         if (candidate == null || !type.equals(candidate.getType()) || !candidate.inSameHierarchy(supermatches.get(0))) {
             return false;
         }
@@ -76,6 +77,14 @@ public class SuperMatchBucket {
             }
         }
         if (mergedMatch == null) {  // Need to add the candidate separately.
+            // Does this match overlap (absolutely) with any of the other SuperMatches?
+            // If so, return false - not in this bucket.
+//            for (SimpleSuperMatch superMatch : supermatches) {
+//                if (candidate.matchesOverlap(superMatch, true)){
+//                    return false;
+//                }
+//            }
+
             supermatches.add(candidate);
         } else {
             // Now need to compare all of the other supermatches with the newly merged one
@@ -107,6 +116,49 @@ public class SuperMatchBucket {
             LOGGER.debug("Placing match to " + candidate.getFirstEntry().getAc() + ", " + candidate.getLocation().getStart() + " - " + candidate.getLocation().getEnd() +
                     " into bucket " + this.toString());
         }
+        return true;
+    }
+
+    public List<SuperMatchBucket> ensureNoOverlaps() {
+        List<SuperMatchBucket> newBuckets = new ArrayList<SuperMatchBucket>();
+        int currentCount = 0;
+        int previousCount = supermatches.size();
+        while (currentCount < previousCount) {
+            previousCount = currentCount;
+            List<SimpleSuperMatch> toRemove = new ArrayList<SimpleSuperMatch>();
+            for (int outerIndex = 0; outerIndex < supermatches.size(); outerIndex++) {
+                SimpleSuperMatch smOne = supermatches.get(outerIndex);
+                handleSmOne:
+                for (int innerIndex = outerIndex + 1; innerIndex < supermatches.size(); innerIndex++) {
+                    SimpleSuperMatch smTwo = supermatches.get(innerIndex);
+                    if (smOne.matchesOverlap(smTwo, true)) {
+                        toRemove.add(smOne);
+                        // Found overlapping matches.
+                        // Remove one.  See if it fits into an existing new bucket, or create a new bucket if not.
+                        for (SuperMatchBucket otherBucket : newBuckets) {
+                            if (otherBucket.addIfNoExactOverlap(smOne)) {
+                                continue handleSmOne;
+                            }
+                        }
+
+                        // No suitable existing bucket, so create one
+                        newBuckets.add(new SuperMatchBucket(smOne));
+                    }
+                }
+            }
+            this.supermatches.removeAll(toRemove);
+            currentCount = supermatches.size();
+        }
+        return newBuckets;
+    }
+
+    private boolean addIfNoExactOverlap(SimpleSuperMatch candidate) {
+        for (SimpleSuperMatch matchAlreadyInBucket : this.getSupermatches()) {
+            if (candidate.matchesOverlap(matchAlreadyInBucket, true)) {
+                return false;
+            }
+        }
+        this.supermatches.add(candidate);
         return true;
     }
 }
