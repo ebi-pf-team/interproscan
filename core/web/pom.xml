@@ -82,15 +82,21 @@
         </dependency>
         <!--Packages to use embedded Jetty server-->
         <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty-embedded</artifactId>
-            <version>6.1H.22</version>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>8.1.1.v20120215</version>
         </dependency>
         <!---->
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
             <version>2.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+            <version>2.5.1</version>
         </dependency>
     </dependencies>
 
@@ -112,6 +118,29 @@
                 </includes>
             </resource>
         </resources>
+        <plugins>
+            <!-- begin - precompiling jsps -->
+            <!--<plugin>-->
+            <!--<groupId>org.codehaus.mojo</groupId>-->
+            <!--<artifactId>jspc-maven-plugin</artifactId>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>jspc</id>-->
+            <!--<goals>-->
+            <!--<goal>compile</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-war-plugin</artifactId>-->
+            <!--<configuration>-->
+            <!--<webXml>${basedir}/target/jspweb.xml</webXml>-->
+            <!--</configuration>-->
+            <!--</plugin>-->
+            <!-- end - precompiling jsps -->
+        </plugins>
     </build>
 
     <profiles>
