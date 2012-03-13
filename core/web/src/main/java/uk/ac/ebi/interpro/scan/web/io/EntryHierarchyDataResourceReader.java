@@ -84,19 +84,41 @@ public class EntryHierarchyDataResourceReader {
                             } // Else first entry in the text file, e.g. "IPR000014"
                             entriesInSameHierarchy = new HashSet<String>();
                             entriesInSameHierarchy.add(entryAc);
-                        }
-                        else {
+                        } else {
                             // Part way through a hierarchy, e.g. "IPR013655"
                             entriesInSameHierarchy.add(entryAc);
                         }
-                        EntryHierarchyData data = new EntryHierarchyData(entryAc, hierarchyLevel, parentEntryAc);
+                        final EntryHierarchyData data = new EntryHierarchyData(entryAc, hierarchyLevel, parentEntryAc);
+
+
                         entryHierarchyMap.put(entryAc, data);
-                    }
-                    else {
+
+                        if (hierarchyLevel == 1) {
+                            data.setRootEntry(data);
+                        } else {
+                            // Get the parent
+                            for (String rootAc : entriesInSameHierarchy) {
+                                EntryHierarchyData candidate = entryHierarchyMap.get(rootAc);
+                                if (candidate != null && candidate.getHierarchyLevel() == 1) {
+                                    data.setRootEntry(candidate);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (parentEntryAc != null) {
+                            // This entry has a parent.  Add this entry to the parents immediate children.
+                            EntryHierarchyData parent = entryHierarchyMap.get(parentEntryAc);
+                            if (parent == null) {
+                                throw new IllegalStateException("Attempting to retrieve a parent Entry that should have appeared in the entry hierarchy file first - however it cannot be found.");
+                            }
+                            parent.addImmediateChild(data);
+                        }
+
+                    } else {
                         LOGGER.warn("Ignoring line in unexpected format: " + line);
                     }
-                }
-                else {
+                } else {
                     LOGGER.warn("Ignoring line in unexpected format: " + line);
                 }
             }
@@ -107,12 +129,10 @@ public class EntryHierarchyDataResourceReader {
                         entryHierarchyMap.get(ac).setEntriesInSameHierarchy(entriesInSameHierarchy);
                     }
                 }
-            }
-            else {
+            } else {
                 LOGGER.warn("Resource file line format not recognised, entry hierarchy data parsing failed");
             }
-        }
-        finally {
+        } finally {
             if (reader != null) {
                 reader.close();
             }

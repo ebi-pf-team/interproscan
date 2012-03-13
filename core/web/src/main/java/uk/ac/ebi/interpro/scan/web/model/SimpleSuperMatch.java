@@ -1,8 +1,10 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -12,11 +14,15 @@ import java.util.*;
  *         <p/>
  *         Captures super matches that are displayed on the protein overview tracks
  */
-public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
+public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializable {
+
+    private static final Logger LOGGER = Logger.getLogger(SimpleSuperMatch.class.getName());
 
     private String type;
 
     private SimpleLocation location;
+
+    private static final int ABSOLUTE_OVERLAP_REQUIRED = 3;
 
     /**
      * Deliberately not using TreeSet - the ordering is not important
@@ -51,6 +57,22 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
 
     public Set<SimpleEntry> getEntries() {
         return entries;
+    }
+
+    /**
+     * Finds the root Entry for this Supermatch.
+     *
+     * @return the EntryHierarchyData representing the root entry for this entry.
+     */
+    public EntryHierarchyData getRootEntryData() {
+        if (entries.size() == 0) {
+            return null;
+        }
+        EntryHierarchyData hierarchyData = entries.iterator().next().getHierarchyData();
+        if (hierarchyData == null) {
+            return null;
+        }
+        return hierarchyData.getRootEntry();
     }
 
     public Set<SimpleEntry> getEntriesHierarchyOrder() {
@@ -106,6 +128,9 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
         for (final SimpleEntry thisEntry : entries) {
             for (final SimpleEntry thatEntry : superMatch.entries) {
                 if (thisEntry != null && thatEntry != null) {
+                    if (SimpleEntry.getEntryHierarchy() == null) {
+                        throw new IllegalStateException("The static reference to the EntryHierarchy is null.");
+                    }
                     inSameHierarchy = SimpleEntry.getEntryHierarchy().areInSameHierarchy(thisEntry, thatEntry);
                     // If any of the Entries are in a different hierarchy - barf out straight away.
                     if (!inSameHierarchy) return false;
@@ -129,9 +154,9 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
 
         SimpleSuperMatch that = (SimpleSuperMatch) o;
 
-        if (!entries.equals(that.entries)) return false;
-        if (!location.equals(that.location)) return false;
         if (!type.equals(that.type)) return false;
+        if (!location.equals(that.location)) return false;
+        if (!entries.equals(that.entries)) return false;
 
         return true;
     }
@@ -144,15 +169,24 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
     }
 
     /**
-     * Determines if domains overlap overlap.
+     * Determines if domains overlap.
      *
-     * @param that SimpleSuperMatch to compare with.
+     * @param that         SimpleSuperMatch to compare with.
+     * @param exactOverlap if even 1 amino acid overlap is considered as overlap.  If false,
+     *                     overlap is only true if the overlap is greater than ABSOLUTE_OVERLAP_REQUIRED of the total length of the two features.
      * @return true if the two domain matches overlap.
      */
-    public boolean matchesOverlap(SimpleSuperMatch that) {
-        return !
-                ((this.getLocation().getStart() > that.getLocation().getEnd()) ||
-                        (that.getLocation().getStart() > this.getLocation().getEnd()));
+    public boolean matchesOverlap(SimpleSuperMatch that, boolean exactOverlap) {
+        int minimumOverlap = 0;
+        if (!exactOverlap) {
+            minimumOverlap = ABSOLUTE_OVERLAP_REQUIRED;
+        }
+
+        int minEnd = (Math.min(this.getLocation().getEnd(), that.getLocation().getEnd()));
+        int maxStart = (Math.max(this.getLocation().getStart(), that.getLocation().getStart()));
+        int overlap = minEnd - maxStart + 1;
+
+        return overlap > minimumOverlap;
     }
 
     @Override
@@ -167,7 +201,7 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
      * Merges candidate with this SuperMatch if they overlap.
      *
      * @param candidate to Merge with this SuperMatch.
-     * @return true if the mergeIfOverlap criteria are met and the candidate is merged. false if
+     * @return SimpleSuperMatch if the mergeIfOverlap criteria are met and the candidate is merged. null if
      *         the criteria are not met.
      */
     public SimpleSuperMatch mergeIfOverlap(SimpleSuperMatch candidate) {
@@ -177,7 +211,7 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
         if (!this.inSameHierarchy(candidate)) {
             return null;
         }
-        if (!this.matchesOverlap(candidate)) {
+        if (!this.matchesOverlap(candidate, false)) {
             return null;
         }
         // Reset location to widest bounds of overlapping matches
@@ -194,5 +228,16 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch> {
         // Add entries from the candidate
         this.entries.addAll(candidate.getEntries());
         return this;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("SimpleSuperMatch");
+        sb.append("{type='").append(type).append('\'');
+        sb.append(", location=").append(location);
+        sb.append(", entries=").append(entries);
+        sb.append('}');
+        return sb.toString();
     }
 }

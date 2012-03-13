@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,7 +11,7 @@ import java.util.TreeSet;
  *         <p/>
  *         Comprises the supermatches that will be displayed together on a single line.
  */
-public class CondensedLine implements Comparable<CondensedLine> {
+public class CondensedLine implements Comparable<CondensedLine>, Serializable {
 
     /**
      * To ensure only features of the same type can be added.
@@ -98,7 +99,7 @@ public class CondensedLine implements Comparable<CondensedLine> {
         }
         for (SimpleSuperMatch candidate : superMatchBucket.getSupermatches()) {
             for (SimpleSuperMatch existingMatch : superMatchList) {
-                if (candidate.matchesOverlap(existingMatch)) {
+                if (candidate.matchesOverlap(existingMatch, true)) {
                     return false;
                 }
             }
