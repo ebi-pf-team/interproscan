@@ -26,7 +26,7 @@
 
 
     <link href="<c:url value="/resources/css/type_colours.css" />" rel="stylesheet" type="text/css"/>
-    <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet"  type="text/css" />
+    <link class="database" href="<c:url value="/resources/css/database.css" />" rel="stylesheet" type="text/css"/>
     <link href="<c:url value="/resources/javascript/qtip2/jquery.qtip.css" />" rel="stylesheet" type="text/css"/>
     <link href="<c:url value="/resources/css/protein.css" />" rel="stylesheet" type="text/css"/>
     <link href="<c:url value="/resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css" />"
@@ -40,6 +40,7 @@
     <script src="<c:url value="/resources/javascript/protein-popups.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/jquery/jquery.cookie.js"/>" type="text/javascript"></script>
     <script src="<c:url value="/resources/javascript/jquery/jquery.jscroll.min.js"/>" type="text/javascript"></script>
+
 </head>
 <body>
 <div class="contentsarea">
