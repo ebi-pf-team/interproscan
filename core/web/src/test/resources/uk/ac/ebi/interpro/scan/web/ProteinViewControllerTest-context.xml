@@ -4,13 +4,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <import resource="io/EntryHierarchy-context.xml" />
+    <import resource="io/EntryHierarchy-context.xml"/>
 
     <bean id="matchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult">
         <constructor-arg>
             <bean class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
         </constructor-arg>
-        <constructor-arg ref="entryHierarchy" />
+        <constructor-arg ref="entryHierarchy"/>
     </bean>
 
     <bean id="structuralMatchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseStructuralMatchDataResult">
@@ -19,16 +19,16 @@
         </constructor-arg>
     </bean>
 
-    <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData">
-        <constructor-arg ref="matchAnalyser" />
-        <constructor-arg ref="structuralMatchAnalyser" />
-        <constructor-arg ref="matchDataWebserviceUrl" />
-        <constructor-arg ref="structMatchDataWebserviceUrl" />
+    <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchDataImpl">
+        <constructor-arg ref="matchAnalyser"/>
+        <constructor-arg ref="structuralMatchAnalyser"/>
+        <constructor-arg ref="matchDataWebserviceUrl"/>
+        <constructor-arg ref="structMatchDataWebserviceUrl"/>
     </bean>
 
     <!-- URL to use for InterPro webservices that provide the match and structural match data -->
     <bean id="websrvicesProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:uk/ac/ebi/interpro/scan/web/webservices.properties" />
+        <property name="location" value="classpath:uk/ac/ebi/interpro/scan/web/webservices.properties"/>
     </bean>
     <bean id="matchDataWebserviceUrl" class="java.lang.String">
         <constructor-arg value="${match.data.webservice.url}"/>

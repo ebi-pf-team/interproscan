@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -10,7 +9,6 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase;
 
 import javax.annotation.Resource;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -18,12 +16,12 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 /**
-* Tests for {@link CreateSimpleProteinFromMatchData}
-*
-* @author  Matthew Fraser
-* @author  Antony Quinn
-* @version $Id$
-*/
+ * Tests for {@link CreateSimpleProteinFromMatchDataImpl}
+ *
+ * @author Matthew Fraser
+ * @author Antony Quinn
+ * @version $Id$
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class CreateSimpleProteinFromMatchDataTest {
@@ -43,7 +41,10 @@ public class CreateSimpleProteinFromMatchDataTest {
     @Test
     public void queryByAccessionTest() throws IOException {
         // TODO: This is really an integration test (relies on web service), so should not be part of usual unit tests - use main() method instead?
-        CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchData(matchAnalyser,
+
+        // TODO: To fix this - the rest service can be simulated using the file: protocol, using local files.  Restructure test data
+        // TODO: in to directories proteins/ and protein-structures/ and rename files
+        CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchDataImpl(matchAnalyser,
                 structuralMatchAnalyser,
                 matchDataWebserviceUrl,
                 structMatchDataWebserviceUrl);
