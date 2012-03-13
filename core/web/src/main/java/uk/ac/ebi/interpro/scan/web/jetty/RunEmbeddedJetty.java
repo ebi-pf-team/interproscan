@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.web.jetty;
 
 
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -32,9 +32,9 @@ public class RunEmbeddedJetty {
         ServletContext servletContext = null;
 
         for (Handler handler : jettyServer.getHandlers()) {
-            if (handler instanceof Context) {
-                Context context = (Context) handler;
-                servletContext = context.getServletContext();
+            if (handler instanceof ContextHandler.Context) {
+                ContextHandler.Context context = (ContextHandler.Context) handler;
+                servletContext = context.getContext("/");
             }
         }
 

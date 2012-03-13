@@ -1,16 +1,17 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
-* TODO: Add description
-*
-* @author Antony Quinn
-* @version $Id$
-*/
-public final class SimpleSignature implements Comparable<SimpleSignature>  {
+ * TODO: Add description
+ *
+ * @author Antony Quinn
+ * @version $Id$
+ */
+public final class SimpleSignature implements Comparable<SimpleSignature>, Serializable {
 
     private final String ac;
     private final String name;
@@ -21,7 +22,7 @@ public final class SimpleSignature implements Comparable<SimpleSignature>  {
         this.ac = ac;
         this.name = name;
         this.dataSource = MatchDataSource.parseName(databaseName);
-        this.locations  = new ArrayList<SimpleLocation>();
+        this.locations = new ArrayList<SimpleLocation>();
     }
 
     public String getAc() {
@@ -49,7 +50,11 @@ public final class SimpleSignature implements Comparable<SimpleSignature>  {
         if (this == that || this.equals(that)) {
             return 0;
         }
-        return Collections.min(this.locations).compareTo(Collections.min(that.locations));
+        int comparison = this.getAc().compareTo(that.getAc());
+        if (comparison == 0) {
+            comparison = Collections.min(this.locations).compareTo(Collections.min(that.locations));
+        }
+        return comparison;
     }
 
 }

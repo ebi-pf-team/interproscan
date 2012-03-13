@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -13,7 +14,7 @@ import java.util.TreeSet;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class SimpleStructuralMatchData {
+public class SimpleStructuralMatchData implements Serializable {
 
     private Map<String, SortedSet<String>> locationDataMap = new HashMap<String, SortedSet<String>>();
 
@@ -27,8 +28,7 @@ public class SimpleStructuralMatchData {
         if (locationDataMap.containsKey(classId)) {
             SortedSet<String> domainIds = locationDataMap.get(classId);
             domainIds.add(domainId);
-        }
-        else {
+        } else {
             SortedSet<String> domainIds = new TreeSet<String>();
             domainIds.add(domainId);
             locationDataMap.put(classId, domainIds);

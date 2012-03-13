@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A wrapper object that associates a member database with it's structural matches.
@@ -9,7 +11,7 @@ import java.util.*;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public final class SimpleStructuralDatabase implements Comparable<SimpleStructuralDatabase> {
+public final class SimpleStructuralDatabase implements Comparable<SimpleStructuralDatabase>, Serializable {
 
     private final MatchDataSource dataSource; // Structural member database details (name, description etc)
     private Map<SimpleLocation, SimpleStructuralMatchData> structuralMatches = new HashMap<SimpleLocation, SimpleStructuralMatchData>();
@@ -23,8 +25,7 @@ public final class SimpleStructuralDatabase implements Comparable<SimpleStructur
             // There is already a structural match for this database and location, therefore add to the existing data
             SimpleStructuralMatchData structuralMatchData = structuralMatches.get(location);
             structuralMatchData.addStructuralMatchData(classId, domainId);
-        }
-        else {
+        } else {
             SimpleStructuralMatchData structuralMatchData = new SimpleStructuralMatchData(classId, domainId);
             structuralMatches.put(location, structuralMatchData);
         }

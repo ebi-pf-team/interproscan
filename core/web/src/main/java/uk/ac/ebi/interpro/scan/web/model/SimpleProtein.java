@@ -3,11 +3,12 @@ package uk.ac.ebi.interpro.scan.web.model;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class SimpleProtein {
+public final class SimpleProtein implements Serializable {
 
     private final String ac;      // eg. P38398
     private final String id;      // BRCA1_HUMAN
@@ -133,25 +134,28 @@ public final class SimpleProtein {
     /**
      * Returns a {@link SimpleProtein} from a {@link uk.ac.ebi.interpro.scan.model.Protein}
      *
-     * @param p                 Protein
-     * @param entryHierarchy    Entry hierarchy
+     * @param protein        Protein
+     * @param entryHierarchy Entry hierarchy
      * @return A {@link SimpleProtein} from a {@link uk.ac.ebi.interpro.scan.model.Protein}
      */
-    public static SimpleProtein valueOf(Protein p, EntryHierarchy entryHierarchy) {
+    public static SimpleProtein valueOf(Protein protein, EntryHierarchy entryHierarchy) {
+        if (entryHierarchy == null) {
+            throw new IllegalArgumentException("SimpleProtein.valueOf method: the EntryHierarchy parameter must not be null.");
+        }
         // Get protein info
         String proteinAc = "Unknown";
         String proteinName = "Unknown";
         String proteinDesc = "Unknown";
-        if (!p.getCrossReferences().isEmpty()) {
-            ProteinXref x = p.getCrossReferences().iterator().next();
+        if (!protein.getCrossReferences().isEmpty()) {
+            ProteinXref x = protein.getCrossReferences().iterator().next();
             proteinAc = x.getIdentifier();
             proteinName = x.getName();
             proteinDesc = x.getDescription();
         }
-        SimpleProtein sp = new SimpleProtein(proteinAc, proteinName, proteinDesc, p.getSequenceLength(),
-                p.getMd5(), null, 0, null, null);// TODO Populate values properly instead of null or 0!
+        SimpleProtein simpleProtein = new SimpleProtein(proteinAc, proteinName, proteinDesc, protein.getSequenceLength(),
+                protein.getMd5(), null, 0, null, null);// TODO Populate values properly instead of null or 0!
         // Get entries and corresponding signatures
-        for (Match m : p.getMatches()) {
+        for (Match m : protein.getMatches()) {
             // Signature
             Signature s = m.getSignature();
             String signatureAc = s.getAccession();
@@ -163,12 +167,12 @@ public final class SimpleProtein {
             // Entry
             Entry e = s.getEntry();
             SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName(), entryHierarchy);
-            if (sp.getAllEntries().contains(se)) {
+            if (simpleProtein.getAllEntries().contains(se)) {
                 // Entry already exists, so get it
-                se = sp.getAllEntries().get(sp.getAllEntries().indexOf(se));
+                se = simpleProtein.getAllEntries().get(simpleProtein.getAllEntries().indexOf(se));
             } else {
                 // Create new entry
-                sp.getAllEntries().add(se);
+                simpleProtein.getAllEntries().add(se);
             }
 //                if (sp.getEntriesMap().containsKey(entryAc)) {
 //                    // Entry already exists
@@ -184,7 +188,7 @@ public final class SimpleProtein {
             // Add signature to entry
             se.getSignaturesMap().put(signatureAc, ss);
         }
-        for (SimpleEntry se : sp.entries) {
+        for (SimpleEntry se : simpleProtein.entries) {
             // TODO: Calculate super-match start and end locations from signature matches
             if (se.getAc().equals("IPR012340")) {
                 se.getLocations().add(new SimpleLocation(1, 123));
@@ -194,7 +198,7 @@ public final class SimpleProtein {
                 se.getLocations().add(new SimpleLocation(80, 110));
             }
         }
-        return sp;
+        return simpleProtein;
     }
 
 }
