@@ -8,6 +8,7 @@
 // Disables or enables stylesheets for database colouring
 function configureStylesheets(disable) {
     $.cookie("colour-by-domain", disable, { path: '/' });
+    // References the html <link/> element with class 'database' and enables / disables it.
     $("link.database").each(function(i) {
         this.disabled = disable;
     });
