@@ -47,5 +47,15 @@
                 </property>
             </bean>
         </property>
+        <property name="imageResources">
+            <bean class="uk.ac.ebi.interpro.scan.web.model.ImageResources">
+                <property name="resources">
+                    <map>
+                        <entry key="img_resource_path"
+                               value="${pathToImages}"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
     </bean>
 </beans>
