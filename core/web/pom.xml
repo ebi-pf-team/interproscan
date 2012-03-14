@@ -349,7 +349,16 @@ cd ~/Projects/i5/interproscan/core/web; svn up; mvn -Plocalhost-tomcat clean tom
                 </plugins>
             </build>
         </profile>
-
+        <profile>
+            <id>i5-web</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <resourceWebPath>/resources</resourceWebPath>
+                <pathToImages>/interpro</pathToImages>
+            </properties>
+        </profile>
     </profiles>
 
 </project>
