@@ -1,15 +1,5 @@
 <#import "../macros/signature.ftl" as signatureMacro>
-<#--<%-->
-    <#--// Entry type names-->
-    <#--pageContext.setAttribute("FAMILY", uk.ac.ebi.interpro.scan.web.model.EntryType.FAMILY.toString());-->
-    <#--pageContext.setAttribute("DOMAIN", uk.ac.ebi.interpro.scan.web.model.EntryType.DOMAIN.toString());-->
-    <#--pageContext.setAttribute("REPEAT", uk.ac.ebi.interpro.scan.web.model.EntryType.REPEAT.toString());-->
-    <#--pageContext.setAttribute("REGION", uk.ac.ebi.interpro.scan.web.model.EntryType.REGION.toString());-->
-    <#--pageContext.setAttribute("UNKNOWN", uk.ac.ebi.interpro.scan.web.model.EntryType.UNKNOWN.toString());-->
-<#--%>-->
-
 <#--Returns protein features for inclusion in DBML-->
-
 <#if protein.entries??>
 
     <div class="prot_sum">
@@ -80,7 +70,7 @@
                 <li class="entry ${entry.type}-row">
 
                 <div class="top-row">
-                    <div class="top-row-id"><img src="resources/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/> <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}">${entry.ac}</a> </div>
+                    <div class="top-row-id"><img src="${img_resource_path}/images/ico_type_${icon}_small.png" alt="${title}" title="${title}"/> <a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}">${entry.ac}</a> </div>
                     <div class="top-row-name"><a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}" class="neutral">${entry.name}</a></div>
                 </div>
 
@@ -107,7 +97,7 @@
 
     <div class="prot_entries" id="uni">
         <div class="top-row">
-             <div class="top-row-id"><img src="resources/images/ico_type_uni_small.png" alt="Unintegrated signatures" title="Unintegrated signatures"/> no IPR </div>
+             <div class="top-row-id"><img src="${img_resource_path}/images/ico_type_uni_small.png" alt="Unintegrated signatures" title="Unintegrated signatures"/> no IPR </div>
              <div class="top-row-name">Unintegrated signatures</div>
         </div>
         <div class="bot-row">

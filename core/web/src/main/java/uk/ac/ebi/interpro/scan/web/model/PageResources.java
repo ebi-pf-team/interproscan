@@ -1,12 +1,14 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Represents a page resources,
+ * Represents page resources like CSS, JavaScript OR images,
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
@@ -18,13 +20,11 @@ public class PageResources {
 
     private CSSResources cssResources;
 
+    private ImageResources imageResources;
+
     @Required
     public void setJavaScriptResources(JavaScriptResources javaScriptResources) {
         this.javaScriptResources = javaScriptResources;
-    }
-
-    public Map<String, String> getJavaScriptResourcesMap() {
-        return Collections.unmodifiableMap(javaScriptResources.getResources());
     }
 
     @Required
@@ -32,7 +32,16 @@ public class PageResources {
         this.cssResources = cssResources;
     }
 
-    public Map<String, String> getCssResourcesMap() {
-        return Collections.unmodifiableMap(cssResources.getResources());
+    @Required
+    public void setImageResources(ImageResources imageResources) {
+        this.imageResources = imageResources;
+    }
+
+    public Map<String, String> getResourcesMap() {
+        Map<String, String> result = new HashMap<String, String>();
+        result.putAll(cssResources.getResources());
+        result.putAll(javaScriptResources.getResources());
+        result.putAll(imageResources.getResources());
+        return Collections.unmodifiableMap(result);
     }
 }
