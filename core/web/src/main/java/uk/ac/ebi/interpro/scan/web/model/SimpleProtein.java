@@ -148,9 +148,15 @@ public final class SimpleProtein implements Serializable {
         String proteinDesc = "Unknown";
         if (!protein.getCrossReferences().isEmpty()) {
             ProteinXref x = protein.getCrossReferences().iterator().next();
-            proteinAc = x.getIdentifier();
-            proteinName = x.getName();
-            proteinDesc = x.getDescription();
+            if (x.getIdentifier() != null) {
+                proteinAc = x.getIdentifier();
+            }
+            if (x.getName() != null) {
+                proteinName = x.getName();
+            }
+            if (x.getDescription() != null) {
+                proteinDesc = x.getDescription();
+            }
         }
         SimpleProtein simpleProtein = new SimpleProtein(proteinAc, proteinName, proteinDesc, protein.getSequenceLength(),
                 protein.getMd5(), null, 0, null, null);// TODO Populate values properly instead of null or 0!
