@@ -18,7 +18,8 @@
     <script src="${js_resource_jquery171}" type="text/javascript"></script>
     <script src="${js_resource_jquery_qtip2}" type="text/javascript"></script>
     <script src="${js_resource_protein}" type="text/javascript"></script>
-    <script src="${js_resource_jquery_jscroll}" type="text/javascript"></script>
+    <script src="${js_resource_common}" type="text/javascript"></script>
+    <script src="${js_resource_protein_popups}" type="text/javascript"></script>
 </head>
 <body>
 <#if protein??>
