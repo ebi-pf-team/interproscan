@@ -1,24 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<!-- Configures the @Controller programming model -->
-	<mvc:annotation-driven />        
+    <!-- Configures the @Controller programming model -->
+    <mvc:annotation-driven/>
 
-	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
-	<mvc:resources mapping="/resources/**" location="/resources/" />
+    <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
 
     <!-- Handle image requests from DBML - can remove when InterProWeb 5.2 retired -->
-    <mvc:resources mapping="/interpro/images/**" location="/resources/images/" />
+    <mvc:resources mapping="/interpro/images/**" location="/resources/images/"/>
 
-	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/views directory -->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/views/"/>
-		<property name="suffix" value=".jsp"/>
-	</bean>
+    <!-- Configures View resolver (JSP (jsp-config.xml) or Freemarker (freemarker-config.xml) available at the moment)-->
+    <import resource="freemarker-config.xml"/>
 
+    <bean class="uk.ac.ebi.interpro.scan.web.model.PageResources">
+        <property name="javaScriptResources">
+            <bean class="uk.ac.ebi.interpro.scan.web.model.JavaScriptResources">
+                <property name="resources">
+                    <map>
+                        <entry key="js_resource_jquery171"
+                               value="${resourceWebPath}/javascript/jquery/jquery-1.7.1.min.js"/>
+                        <entry key="js_resource_jquery_qtip2"
+                               value="${resourceWebPath}/javascript/qtip2/jquery.qtip.min.js"/>
+                        <entry key="js_resource_protein" value="${resourceWebPath}/javascript/protein.js"/>
+                        <entry key="js_resource_jquery_jscroll"
+                               value="${resourceWebPath}/javascript/jquery/jquery.jscroll.min.js"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="cssResources">
+            <bean class="uk.ac.ebi.interpro.scan.web.model.CSSResources">
+                <property name="resources">
+                    <map>
+                        <entry key="css_resource_jquery_qtip2"
+                               value="${resourceWebPath}/javascript/qtip2/jquery.qtip.css"/>
+                        <entry key="css_resource_protein" value="${resourceWebPath}/css/protein.css"/>
+                        <entry key="css_resource_type_colours" value="${resourceWebPath}/css/type_colours.css"/>
+                        <entry key="css_resource_database" value="${resourceWebPath}/css/database.css"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
 </beans>

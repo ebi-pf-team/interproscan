@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.web.model;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
+import uk.ac.ebi.interpro.scan.web.io.HierachyElementBuilder;
 
 import java.io.Serializable;
 import java.util.*;
@@ -239,5 +240,9 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
         sb.append(", entries=").append(entries);
         sb.append('}');
         return sb.toString();
+    }
+
+    public String getEntryHierachy() {
+        return new HierachyElementBuilder(this).build().toString();
     }
 }

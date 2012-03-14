@@ -1,10 +1,12 @@
 package uk.ac.ebi.interpro.scan.web;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +16,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.PageResources;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
@@ -42,6 +45,12 @@ public class ProteinViewController {
     private EntryHierarchy entryHierarchy;
     private CreateSimpleProteinFromMatchData matchData;
     private Jaxb2Marshaller marshaller;
+    private PageResources pageResources;
+
+    @Resource
+    public void setPageResources(PageResources pageResources) {
+        this.pageResources = pageResources;
+    }
 
     @Resource(name = "jaxb2")
     public void setMarshaller(Jaxb2Marshaller marshaller) {
@@ -154,6 +163,16 @@ public class ProteinViewController {
             m.put("condensedView", new CondensedView(p));
             m.put("entryColours", entryHierarchy.getEntryColourMap());
             m.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
+            if (pageResources != null) {
+                Map<String, String> cssResources = pageResources.getCssResourcesMap();
+                for (String key : cssResources.keySet()) {
+                    m.put(key, cssResources.get(key));
+                }
+                Map<String, String> jsResources = pageResources.getJavaScriptResourcesMap();
+                for (String key : jsResources.keySet()) {
+                    m.put(key, jsResources.get(key));
+                }
+            }
         } // Else no match data was found for the protein therefore nothing to display
         return m;
     }

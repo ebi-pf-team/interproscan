@@ -5,7 +5,7 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>i5-svn-revision-1559</version>
+        <version>${i5.svn.revision}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -15,7 +15,7 @@
     <packaging>war</packaging>
 
     <name>InterProScan Web</name>
-    <version>i5-svn-revision-1559</version>
+    <version>${i5.svn.revision}</version>
     <description>InterProScan Web</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
@@ -24,12 +24,12 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>i5-svn-revision-1559</version>
+            <version>${i5.svn.revision}</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>i5-svn-revision-1559</version>
+            <version>${i5.svn.revision}</version>
         </dependency>
 
         <!--  Spring -->
@@ -92,7 +92,17 @@
             <artifactId>htmlunit</artifactId>
             <version>2.9</version>
         </dependency>
-
+        <!--Spring mock test-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-mock</artifactId>
+            <version>2.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.18</version>
+        </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache-core</artifactId>
@@ -118,29 +128,6 @@
                 </includes>
             </resource>
         </resources>
-        <plugins>
-            <!-- begin - precompiling jsps -->
-            <!--<plugin>-->
-            <!--<groupId>org.codehaus.mojo</groupId>-->
-            <!--<artifactId>jspc-maven-plugin</artifactId>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<id>jspc</id>-->
-            <!--<goals>-->
-            <!--<goal>compile</goal>-->
-            <!--</goals>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-war-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<webXml>${basedir}/target/jspweb.xml</webXml>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
-            <!-- end - precompiling jsps -->
-        </plugins>
     </build>
 
     <profiles>
