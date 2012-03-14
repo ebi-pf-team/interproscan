@@ -15,6 +15,6 @@
         <property name="prefix" value="views/"/>
         <property name="suffix" value=".ftl"/>
         <!-- if you want to use the Spring FreeMarker macros, set this property to true -->
-        <property name="exposeSpringMacroHelpers" value="true"/>
+        <property name="exposeSpringMacroHelpers" value="false"/>
     </bean>
 </beans>
