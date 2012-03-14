@@ -14,14 +14,15 @@
     </c:choose>
     <meta name="description" content="Protein matches">
     <meta name="author" content="InterPro Team, European Bioinformatics Institute">
-    <link href="<c:url value="${css_resource_jquery_qtip2}" />" rel="stylesheet" type="text/css"/>
+    <link href="<c:url value="${css_resource_jquery_qtip2}"/>" rel="stylesheet" type="text/css"/>
     <link href="<c:url value="${css_resource_protein}" />" rel="stylesheet" type="text/css"/>
     <link href="<c:url value="${css_resource_type_colours}" />" rel="stylesheet" type="text/css"/>
     <link class="database" href="<c:url value="${css_resource_database}" />" rel="stylesheet" type="text/css"/>
     <script src="<c:url value="${js_resource_jquery171}"/>" type="text/javascript"></script>
     <script src="<c:url value="${js_resource_jquery_qtip2}"/>" type="text/javascript"></script>
     <script src="<c:url value="${js_resource_protein}"/>" type="text/javascript"></script>
-    <script src="<c:url value="${js_resource_jquery_jscroll}"/>" type="text/javascript"></script>
+    <script src="<c:url value="${js_resource_common}"/>" type="text/javascript"></script>
+    <script src="<c:url value="${js_resource_protein_popups}"/>" type="text/javascript"></script>
 </head>
 <body>
 <c:choose>
