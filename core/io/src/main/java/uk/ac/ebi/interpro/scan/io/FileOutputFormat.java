@@ -8,7 +8,7 @@ package uk.ac.ebi.interpro.scan.io;
  * @since 1.0-SNAPSHOT
  */
 public enum FileOutputFormat {
-    TSV("tsv"), XML("xml"), GFF3("gff3");
+    TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html");
 
     private String fileExtension;
 
@@ -24,10 +24,12 @@ public enum FileOutputFormat {
     }
 
     public static FileOutputFormat stringToFileOutputFormat(String outputFormat) {
-        if (outputFormat.equalsIgnoreCase("xml")) {
+        if (outputFormat.equalsIgnoreCase(XML.getFileExtension())) {
             return XML;
-        } else if (outputFormat.equalsIgnoreCase("gff3") || outputFormat.equalsIgnoreCase("gff")) {
+        } else if (outputFormat.equalsIgnoreCase(GFF3.getFileExtension()) || outputFormat.equalsIgnoreCase("gff")) {
             return GFF3;
+        } else if (outputFormat.equalsIgnoreCase(HTML.getFileExtension())) {
+            return HTML;
         } else {
             return TSV;
         }
