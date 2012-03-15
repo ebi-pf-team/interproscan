@@ -27,10 +27,9 @@ public interface Master extends Runnable {
      * Allows the output format to be changed from the default XML.  If no value is specified for outputFile, this
      * value will be ignored.
      *
-     * @param outputFormat the output format.  If no value is specified for outputFile, this format
-     *                     value will be ignored.
+     * @param outputFormats The comma separated list of output formats.
      */
-    void setOutputFormat(String outputFormat);
+    void setOutputFormats(String[] outputFormats);
 
     /**
      * Optionally, set the analyses that should be run.

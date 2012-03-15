@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -49,7 +50,7 @@ public class WriteOutputStep extends Step {
     }
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
-    public static final String OUTPUT_FILE_FORMAT = "OUTPUT_FORMAT";
+    public static final String OUTPUT_FILE_FORMATS = "OUTPUT_FORMATS";
     public static final String MAP_TO_INTERPRO_ENTRIES = "MAP_TO_INTERPRO_ENTRIES";
     public static final String MAP_TO_GO = "MAP_TO_GO";
     public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
@@ -62,32 +63,45 @@ public class WriteOutputStep extends Step {
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        LOGGER.info("Starting step with Id " + this.getId());
-        final Map<String, String> parameters = stepInstance.getParameters();
-        final String outputFormatStr = parameters.get(OUTPUT_FILE_FORMAT);
-        final FileOutputFormat outputFormat = FileOutputFormat.stringToFileOutputFormat(outputFormatStr);
-        final File outputFile = new File(parameters.get(OUTPUT_FILE_PATH_KEY));
-        if (outputFile.exists()) {
-            if (!outputFile.delete()) {
-                throw new IllegalStateException("The output file already exists and cannot be overwritten.");
-            }
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Starting step with Id " + this.getId());
         }
-        try {
-            LOGGER.info("Writing out " + outputFormat + " file");
-            final String sequenceType = parameters.get(SEQUENCE_TYPE);
-            switch (outputFormat) {
-                case TSV:
-                    outputToTSV(outputFile, stepInstance);
-                    break;
-                case XML:
-                    outputToXML(outputFile, stepInstance, sequenceType);
-                    break;
-                case GFF3:
-                    outputToGFF(outputFile, stepInstance, sequenceType);
-                    break;
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final String outputFormatStr = parameters.get(OUTPUT_FILE_FORMATS);
+        final Set<FileOutputFormat> outputFormats = FileOutputFormat.stringToFileOutputFormats(outputFormatStr);
+        final String filePathName = parameters.get(OUTPUT_FILE_PATH_KEY);
+
+        for (FileOutputFormat outputFormat : outputFormats){
+            File outputFile = new File(filePathName + '.' + outputFormat.getFileExtension());
+            if (outputFile.exists()) {
+                if (!outputFile.delete()) {
+                    throw new IllegalStateException("The output file already exists and cannot be overwritten.");
+                }
             }
-        } catch (IOException ioe) {
-            throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan", ioe);
+            try {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Writing out " + outputFormat + " file");
+                }
+                final String sequenceType = parameters.get(SEQUENCE_TYPE);
+                switch (outputFormat) {
+                    case TSV:
+                        outputToTSV(outputFile, stepInstance);
+                        break;
+                    case XML:
+                        outputToXML(outputFile, stepInstance, sequenceType);
+                        break;
+                    case GFF3:
+                        outputToGFF(outputFile, stepInstance, sequenceType);
+                        break;
+                    case HTML:
+                        outputToHTML(outputFile, stepInstance);
+                        break;
+                    default:
+                        LOGGER.warn("Unrecognised output format " + outputFormat + " - cannot write the output file.");
+                }
+            } catch (IOException ioe) {
+                throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan", ioe);
+            }
         }
 
 
@@ -106,7 +120,9 @@ public class WriteOutputStep extends Step {
                 LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
-        LOGGER.info("Step with Id " + this.getId() + " finished.");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Step with Id " + this.getId() + " finished.");
+        }
     }
 
     private void outputToXML(File outputFile, StepInstance stepInstance, String sequenceType) throws IOException {
@@ -152,6 +168,19 @@ public class WriteOutputStep extends Step {
         }
     }
 
+    private void outputToHTML(File file, StepInstance stepInstance) throws IOException {
+        // TODO Implement all this!
+//        ProteinMatchesHTMLResultWriter writer = new ProteinMatchesHTMLResultWriter(file);
+//        try {
+//            writeProteinMatches(writer, stepInstance);
+//        } finally {
+//            if (writer != null) {
+//                writer.close();
+//            }
+//        }
+    }
+
+
     private void writeFASTASequences(ProteinMatchesGFFResultWriter writer) throws IOException {
         Map<String, String> identifierToSeqMap = writer.getIdentifierToSeqMap();
         for (String key : identifierToSeqMap.keySet()) {
@@ -168,7 +197,9 @@ public class WriteOutputStep extends Step {
         writer.setMapToInterProEntries(mapToInterProEntries);
         writer.setMapToGo(mapToGO);
         writer.setMapToPathway(mapToPathway);
-        LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
+        }
         int locationCount = 0;
         if (proteins != null) {
             if (LOGGER.isInfoEnabled()) {

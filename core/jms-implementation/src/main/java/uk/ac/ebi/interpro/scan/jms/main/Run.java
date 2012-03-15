@@ -71,8 +71,8 @@ public class Run {
     private enum I5Option {
         MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
         FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
-        OUTPUT_FORMAT("format", "F", false, "Output format. Supported formats are TSV(default), XML and GFF3 (default format for nucleotide sequence scan).", "OUTPUT-FORMAT", false),
-        OUT_FILE("out-file", "o", false, "Optional output file path/name.", "OUTPUT-FILE-PATH", false),
+        OUTPUT_FORMATS("format", "F", false, "Optional comma separated list of output formats. Supported formats are TSV(default), XML, GFF3 (default format for nucleotide sequence scan) and HTML.", "OUTPUT-FORMAT", true),
+        OUT_FILE("out-file", "o", false, "Optional output file path/name (the file extension for the output format will be added automatically).", "OUTPUT-FILE-PATH", false),
         ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true),
         PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false),
         IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation", null, false),
@@ -234,8 +234,6 @@ public class Run {
             System.out.println("Welcome to InterProScan v5.");
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
-//                LOGGER.info("Welcome to InterProScan v5");
-
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
                 LOGGER.info("Running as: " + mode);
             }
@@ -279,8 +277,8 @@ public class Run {
                     if (parsedCommandLine.hasOption(I5Option.OUT_FILE.getLongOpt())) {
                         master.setOutputFile(parsedCommandLine.getOptionValue(I5Option.OUT_FILE.getLongOpt()));
                     }
-                    if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMAT.getLongOpt())) {
-                        master.setOutputFormat(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FORMAT.getLongOpt()));
+                    if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
+                        master.setOutputFormats(parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt()));
                     }
                     if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                         master.setAnalyses(parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt()));
@@ -292,11 +290,15 @@ public class Run {
                     if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                         String sequenceType = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt());
                         if (sequenceType.equalsIgnoreCase("n")) {
-                            String outputFormat = parsedCommandLine.getOptionValue(I5Option.OUTPUT_FORMAT.getLongOpt());
-                            if (outputFormat != null && outputFormat.equalsIgnoreCase("tsv")) {
-                                LOGGER.warn("TSV format is not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 (Default) and XML.");
-                                System.exit(1);
+                            String[] outputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
+                            if (outputFormats != null) {
+                                for (String outputFormat : outputFormats) {
+                                    if (outputFormat.equalsIgnoreCase("tsv") || outputFormat.equalsIgnoreCase("html")) {
+                                        LOGGER.warn("TSV and HTML formats are not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 (Default) and XML.");
+                                        System.exit(1);
 //                                throw new IllegalArgumentException("TSV format is not supported if you run I5 against nucleotide sequences. Supported format are GFF3 (Default) and XML.");
+                                    }
+                                }
                             }
                         }
                         master.setSequenceType(sequenceType);
