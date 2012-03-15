@@ -41,6 +41,10 @@ public final class SimpleStructuralDatabase implements Comparable<SimpleStructur
         return structuralMatches;
     }
 
+    public SimpleStructuralMatchData getSimpleStructuralMatchData(SimpleLocation location) {
+        return getStructuralMatches().get(location);
+    }
+
     /**
      * Order alphabetically by database name.
      */
