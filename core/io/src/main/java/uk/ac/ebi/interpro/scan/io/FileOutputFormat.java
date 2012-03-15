@@ -1,5 +1,9 @@
 package uk.ac.ebi.interpro.scan.io;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Simple enum to describe file output formats (Introduced for more code consistency).
  *
@@ -23,6 +27,11 @@ public enum FileOutputFormat {
         return fileExtension;
     }
 
+    /**
+     * Given the file extension as a string lookup the appropriate FileOutputFormat
+     * @param outputFormat File extension
+     * @return File output format
+     */
     public static FileOutputFormat stringToFileOutputFormat(String outputFormat) {
         if (outputFormat.equalsIgnoreCase(XML.getFileExtension())) {
             return XML;
@@ -34,4 +43,27 @@ public enum FileOutputFormat {
             return TSV;
         }
     }
+
+    /**
+     * Given a comma separated string of file extensions produce a set of FileOutputFormats
+     * @param outputFormats File extensions
+     * @return File output formats
+     */
+    public static Set<FileOutputFormat> stringToFileOutputFormats(String outputFormats) {
+        Set<FileOutputFormat> fileOutputFormats = new HashSet<FileOutputFormat>();
+        String[] formats = outputFormats.split(",");
+        for (String format : formats){
+            if (format.equalsIgnoreCase(XML.getFileExtension())) {
+                fileOutputFormats.add(XML);
+            } else if (outputFormats.equalsIgnoreCase(GFF3.getFileExtension()) || outputFormats.equalsIgnoreCase("gff")) {
+                fileOutputFormats.add(GFF3);
+            } else if (outputFormats.equalsIgnoreCase(HTML.getFileExtension())) {
+                fileOutputFormats.add(HTML);
+            } else {
+                fileOutputFormats.add(TSV);
+            }
+        }
+        return fileOutputFormats;
+    }
+
 }

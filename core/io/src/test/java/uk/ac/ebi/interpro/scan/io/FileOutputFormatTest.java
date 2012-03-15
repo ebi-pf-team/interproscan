@@ -25,6 +25,7 @@ public class FileOutputFormatTest {
         assertEquals("TSV format expected!", FileOutputFormat.TSV, FileOutputFormat.stringToFileOutputFormat("tsv"));
         assertEquals("XML format expected!", FileOutputFormat.XML, FileOutputFormat.stringToFileOutputFormat("xml"));
         assertEquals("GFF3 format expected!", FileOutputFormat.GFF3, FileOutputFormat.stringToFileOutputFormat("gff3"));
+        assertEquals("HTML format expected!", FileOutputFormat.HTML, FileOutputFormat.stringToFileOutputFormat("html"));
     }
 
     @Test
@@ -32,5 +33,6 @@ public class FileOutputFormatTest {
         assertEquals("TSV format expected!", "tsv", FileOutputFormat.TSV.getFileExtension());
         assertEquals("XML format expected!", "xml", FileOutputFormat.XML.getFileExtension());
         assertEquals("GFF3 format expected!", "gff3", FileOutputFormat.GFF3.getFileExtension());
+        assertEquals("HTML format expected!", "html", FileOutputFormat.HTML.getFileExtension());
     }
 }
