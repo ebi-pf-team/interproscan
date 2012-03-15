@@ -19,10 +19,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCrea
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep;
 
 import javax.jms.JMSException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Master Controller for InterProScan 5.
@@ -54,7 +51,7 @@ public class AmqInterProScanMaster implements Master {
     private String outputFile;
 
     /* Default value, if no output format is specified */
-    private FileOutputFormat outputFormat = FileOutputFormat.TSV;
+    private String[] outputFormats;
 
     private String[] analyses;
 
@@ -177,6 +174,7 @@ public class AmqInterProScanMaster implements Master {
                 }
                 LOGGER.debug("Database loaded.");
             }
+
             int stepInstancesCreatedByLoadStep;
             if ("n".equalsIgnoreCase(this.sequenceType)) {
                 stepInstancesCreatedByLoadStep = createNucleicAcidLoadStepInstance();
@@ -310,14 +308,14 @@ public class AmqInterProScanMaster implements Master {
         int stepInstancesCreated = 0;
         if (fastaFilePath != null) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("creating nucleic acid load step.");
+                LOGGER.debug("Creating nucleic acid load step.");
             }
             Map<String, String> params = new HashMap<String, String>();
             params.put(RunGetOrfStep.SEQUENCE_FILE_PATH_KEY, fastaFilePath);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
-            //If no sequence type is specified, the default type should be overridden
-            if (this.outputFormat.equals(FileOutputFormat.TSV)) {
-                this.outputFormat = FileOutputFormat.GFF3;
+            if (this.outputFormats == null || this.outputFormats.length < 1) {
+                //If no output format is specified, default it here
+                this.outputFormats = new String[] { FileOutputFormat.GFF3.getFileExtension() };
             }
             createBlackBoxParams(params);
             stepInstancesCreated = createStepInstancesForJob("jobLoadNucleicAcidSequence", params);
@@ -328,7 +326,8 @@ public class AmqInterProScanMaster implements Master {
     }
 
     private void createBlackBoxParams(final Map<String, String> params) {
-        if (analyses != null) {
+        // Analyses as a comma separated list
+        if (analyses != null && analyses.length > 0) {
             List<String> jobNameList = new ArrayList<String>();
             for (String analysisName : analyses) {
                 jobNameList.add("job" + analysisName);
@@ -337,12 +336,25 @@ public class AmqInterProScanMaster implements Master {
         }
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
+        // Output formats as a comma separated list
+        if (outputFormats != null && outputFormats.length > 0) {
+            List<String> outputFormatList = new ArrayList<String>();
+            for (String outputFormat : outputFormats) {
+                outputFormatList.add(outputFormat);
+            }
+            params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
+        }
+        else {
+            // Default to TSV
+            params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, FileOutputFormat.TSV.getFileExtension());
+        }
+
         String outputFilePath = outputFile;
         if (outputFilePath == null) {
-            outputFilePath = fastaFilePath.replaceAll("\\.fasta", "") + "." + outputFormat.getFileExtension();
+            // If no file path name provided just use the same name as the input fasta file (extension will be added later)
+            outputFilePath = fastaFilePath.replaceAll("\\.fasta", "");
         }
         params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
-        params.put(WriteOutputStep.OUTPUT_FILE_FORMAT, outputFormat.getFileExtension());
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
@@ -471,7 +483,7 @@ public class AmqInterProScanMaster implements Master {
 
     /**
      * @param outputFile if set, then the results will be output to this file in the format specified in
-     *                   the field outputFormat (defaulting to XML).
+     *                   the field outputFormats (defaulting to TSV only).
      */
     @Override
     public void setOutputFile(String outputFile) {
@@ -479,15 +491,15 @@ public class AmqInterProScanMaster implements Master {
     }
 
     /**
-     * Allows the output format to be changed from the default XML.  If no value is specified for outputFile, this
+     * Allows the output format to be changed from the default TSV.  If no value is specified for outputFile, this
      * value will be ignored.
      *
-     * @param outputFormat the output format.  If no value is specified for outputFile, this format
+     * @param outputFormats The comma separated list of output formats.  If no value is specified for outputFile, this format
      *                     value will be ignored.
      */
     @Override
-    public void setOutputFormat(String outputFormat) {
-        this.outputFormat = FileOutputFormat.stringToFileOutputFormat(outputFormat);
+    public void setOutputFormats(String[] outputFormats) {
+        this.outputFormats = outputFormats;
     }
 
     /**
