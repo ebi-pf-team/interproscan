@@ -248,6 +248,8 @@
                 <ref bean="fastaToBlastFileName-2.78"/>
                 <ref bean="blastResultOutputFileName-2.78"/>
                 <ref bean="blastedMatchesFileName-2.78"/>
+                <ref bean="subfamMatchesFileName-2.78"/>
+                <ref bean="subfamMapFileName-2.78"/>
             </list>
         </property>
     </bean>

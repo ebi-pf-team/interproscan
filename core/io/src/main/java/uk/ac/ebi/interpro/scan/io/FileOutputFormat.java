@@ -55,9 +55,9 @@ public enum FileOutputFormat {
         for (String format : formats){
             if (format.equalsIgnoreCase(XML.getFileExtension())) {
                 fileOutputFormats.add(XML);
-            } else if (outputFormats.equalsIgnoreCase(GFF3.getFileExtension()) || outputFormats.equalsIgnoreCase("gff")) {
+            } else if (format.equalsIgnoreCase(GFF3.getFileExtension()) || format.equalsIgnoreCase("gff")) {
                 fileOutputFormats.add(GFF3);
-            } else if (outputFormats.equalsIgnoreCase(HTML.getFileExtension())) {
+            } else if (format.equalsIgnoreCase(HTML.getFileExtension())) {
                 fileOutputFormats.add(HTML);
             } else {
                 fileOutputFormats.add(TSV);
