@@ -141,6 +141,7 @@
                 inconsistencies! But that's OK, Jetty profile is used for development, not production! -->
                 <entry.colours.file.loc>${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
                 <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
                 <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
@@ -219,6 +220,8 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 </entry.colours.file.loc>
                 <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv
                 </entry.hierarchy.file.loc>
+                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv
+                </entry.go.file.loc>
                 <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/

@@ -2,54 +2,14 @@ package uk.ac.ebi.interpro.scan.web.io;
 
 import uk.ac.ebi.interpro.scan.web.model.EntryHierarchyData;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
-import uk.ac.ebi.interpro.scan.web.model.SimpleSuperMatch;
 
 import java.io.IOException;
 
 /**
- * Builder class that can create a set of nested ul / li for
- * a hierarchy of domains or families.
- *
- * @author Maxim Scheremetjew, EMBL-EBI, InterPro
- * @author Phil Jones,EMBL-EBI, InterPro
- * @version $Id$
- * @since 1.0-SNAPSHOT
+ * @author Phil Jones
+ *         Date: 15/03/12
  */
-public class HierachyElementBuilder {
-
-    // Required parameters
-    private final SimpleSuperMatch superMatch;
-
-    public HierachyElementBuilder(SimpleSuperMatch superMatch) {
-        this.superMatch = superMatch;
-    }
-
-    public StringBuilder build() {
-        StringBuilder result = new StringBuilder();
-        try {
-            EntryHierarchyData entryHierarchyData = superMatch.getRootEntryData();
-            if (entryHierarchyData != null) {
-                StringBuilder list = siblings(entryHierarchyData);
-
-                if (list.indexOf("<li>") == 0) {
-                    result.append("<ul>");
-                    result.append(list);
-                    result.append("</ul>");
-                } else {
-                    result.append(list);
-                }
-
-            } else {
-                // This entry is not in any hierarchy - just spit it out flat.
-                result.append("<ul>");
-                appendEntry(superMatch.getFirstEntry(), result);
-                result.append("</li></ul>");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+public abstract class AbstractHierarchyElementBuilder {
 
     /**
      * Processes a "sibling", i.e. a single Entry.  If this entry is matched,
@@ -60,7 +20,7 @@ public class HierachyElementBuilder {
      * @return a StringBuilder (possibly empty) containing the details of this entry
      * @throws java.io.IOException
      */
-    private StringBuilder siblings(EntryHierarchyData sibling) throws IOException {
+    protected StringBuilder siblings(EntryHierarchyData sibling) throws IOException {
         StringBuilder siblings = new StringBuilder();
         final SimpleEntry includedEntry = entryDataMatched(sibling);
         if (includedEntry != null) {
@@ -81,7 +41,7 @@ public class HierachyElementBuilder {
      * @param entry to be rendered
      * @param sb    the StringBuilder to append this list item to.
      */
-    private void appendEntry(SimpleEntry entry, StringBuilder sb) {
+    protected void appendEntry(SimpleEntry entry, StringBuilder sb) {
         if (entry == null) return;
         sb.append("<li>");
         sb.append("<a href=\"http://www.ebi.ac.uk/interpro/IEntry?ac=");
@@ -102,14 +62,7 @@ public class HierachyElementBuilder {
      * @return the SimpleEntry object if this node in the hierarchy is matched
      *         and should therefore be displayed.
      */
-    private SimpleEntry entryDataMatched(EntryHierarchyData ehd) {
-        for (SimpleEntry entry : superMatch.getEntries()) {
-            if (ehd != null && entry != null && ehd.getEntryAc().equals(entry.getAc())) {
-                return entry;
-            }
-        }
-        return null;
-    }
+    protected abstract SimpleEntry entryDataMatched(EntryHierarchyData ehd);
 
     /**
      * This method takes a parent entry and iterates over its children, recursing into them
@@ -117,7 +70,7 @@ public class HierachyElementBuilder {
      *
      * @param parent for which children should be considered
      * @return a StringBuilder object containing an &lt;ul/&gt; for any rendered children
-     * @throws IOException
+     * @throws java.io.IOException
      */
     private StringBuilder children(EntryHierarchyData parent) throws IOException {
         StringBuilder children = new StringBuilder();

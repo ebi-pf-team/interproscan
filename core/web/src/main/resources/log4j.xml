@@ -28,6 +28,14 @@
         <level value="${third.party.log.level}"/>
     </logger>
 
+    <!--<logger name="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <logger name="uk.ac.ebi.interpro.scan.web.model.SimpleSuperMatch">
+        <level value="debug"/>
+    </logger>
+
     <!-- Root Logger -->
     <root>
         <priority value="${default.log.level}"/>
