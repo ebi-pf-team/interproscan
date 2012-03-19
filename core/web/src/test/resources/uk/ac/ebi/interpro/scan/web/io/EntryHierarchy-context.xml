@@ -12,14 +12,22 @@
         <property name="entryColourPropertiesFile">
             <util:properties location="classpath:/data/entry_colours.properties"/>
         </property>
-        <property name="entryHierarchyDataResource" ref="entryHierarchyResource" />
-        <property name="entryHierarchyDataResourceReader" ref="entryHierarchyReader" />
+        <property name="entryHierarchyDataResource">
+            <bean class="org.springframework.core.io.ClassPathResource">
+                <constructor-arg value="data/entry_hierarchy.csv"/>
+            </bean>
+        </property>
+        <property name="entryHierarchyDataResourceReader">
+            <bean class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
+        </property>
+        <property name="entryToGoDataResourceReader">
+            <bean class="uk.ac.ebi.interpro.scan.web.io.EntryToGoDataResourceReader"/>
+        </property>
+        <property name="entryToGoDataResource">
+            <bean class="org.springframework.core.io.ClassPathResource">
+                <constructor-arg value="data/entry_to_go.psv"/>
+            </bean>
+        </property>
     </bean>
 
-    <bean id="entryHierarchyReader" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
-
-    <bean id="entryHierarchyResource" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/entry_hierarchy.csv"/>
-    </bean>
-
- </beans>
+</beans>

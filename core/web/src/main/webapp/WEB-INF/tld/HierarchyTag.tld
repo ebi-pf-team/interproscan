@@ -10,12 +10,24 @@
     <uri>http://www.ebi.ac.uk/interpro/i5/tld/entryHierarchy</uri>
     <!-- Invoke 'Generate' action to add tags or functions -->
     <tag>
-        <name>hierarchyTag</name>
-        <tag-class>uk.ac.ebi.interpro.scan.web.tag.HierarchyTag</tag-class>
+        <name>supermatchHierarchyTag</name>
+        <tag-class>uk.ac.ebi.interpro.scan.web.tag.SupermatchHierarchyTag</tag-class>
         <body-content>empty</body-content>
 
         <attribute>
             <name>supermatch</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>familyHierarchyTag</name>
+        <tag-class>uk.ac.ebi.interpro.scan.web.tag.FamilyHierarchyTag</tag-class>
+        <body-content>empty</body-content>
+
+        <attribute>
+            <name>simpleProtein</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>

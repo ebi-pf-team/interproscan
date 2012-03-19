@@ -20,6 +20,6 @@
 
     <div class="popup_topl"><span class="${colourClass} caption_puce"></span>${supermatch.location.start}
         - ${supermatch.location.end}</div>
-    <entry:hierarchyTag supermatch="${supermatch}"/>
+    <entry:supermatchHierarchyTag supermatch="${supermatch}"/>
 </div>
 

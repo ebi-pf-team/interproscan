@@ -1,12 +1,12 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
+import uk.ac.ebi.interpro.scan.web.io.FamilyHierachyElementBuilder;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public final class SimpleProtein implements Serializable {
 
@@ -20,7 +20,9 @@ public final class SimpleProtein implements Serializable {
     private final String taxScienceName;
     private final String taxFullName;
     private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
+    private Set<SimpleEntry> familyEntries = null;
     private final List<SimpleStructuralDatabase> structuralDatabases = new ArrayList<SimpleStructuralDatabase>();
+
 
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
                          int taxId, String taxScienceName, String taxFullName) {
@@ -97,6 +99,59 @@ public final class SimpleProtein implements Serializable {
         Collections.sort(entries);
         return entries;
     }
+
+    /**
+     * Returns a Set containing the family SimpleEntry's for this Protein. (Lazy creation of Set)
+     *
+     * @return a Set containing the family SimpleEntry's for this Protein.
+     */
+    public Set<SimpleEntry> getFamilyEntries() {
+        if (familyEntries == null) {
+            familyEntries = new HashSet<SimpleEntry>();
+            for (SimpleEntry entry : entries) {
+                if (entry.isIntegrated() && "family".equalsIgnoreCase(entry.getType())) {
+                    familyEntries.add(entry);
+                }
+            }
+        }
+        return familyEntries;
+    }
+
+    public Set<GoTerm> getGoTerms(GoTerm.GoRoot root) {
+        final List<SimpleEntry> entries = this.getEntries();
+        if (entries == null || entries.size() == 0) {
+            return Collections.emptySet();
+        }
+        final Set<GoTerm> terms = new TreeSet<GoTerm>();
+        for (final SimpleEntry entry : entries) {
+            for (final GoTerm term : entry.getGoTerms()) {
+                if (term.getRoot() == root) {
+                    terms.add(term);
+                }
+            }
+        }
+        return terms;
+    }
+
+    private Set<GoTerm> processGoTerms;
+
+    private Set<GoTerm> componentGoTerms;
+
+    private Set<GoTerm> functionGoTerms;
+
+
+    public Set<GoTerm> getProcessGoTerms() {
+        return getGoTerms(GoTerm.GoRoot.BIOLOGICAL_PROCESS);
+    }
+
+    public Set<GoTerm> getComponentGoTerms() {
+        return getGoTerms(GoTerm.GoRoot.CELLULAR_COMPONENT);
+    }
+
+    public Set<GoTerm> getFunctionGoTerms() {
+        return getGoTerms(GoTerm.GoRoot.MOLECULAR_FUNCTION);
+    }
+
 
     public List<SimpleSignature> getUnintegratedSignatures() {
         final List<SimpleSignature> signatures = new ArrayList<SimpleSignature>();
@@ -205,6 +260,10 @@ public final class SimpleProtein implements Serializable {
             }
         }
         return simpleProtein;
+    }
+
+    public String getFamilyHierarchy() {
+        return new FamilyHierachyElementBuilder(this).build().toString();
     }
 
 }
