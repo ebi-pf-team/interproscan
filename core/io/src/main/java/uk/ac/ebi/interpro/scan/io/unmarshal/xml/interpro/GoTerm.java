@@ -14,7 +14,7 @@ import java.util.Map;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public final class GoTerm implements Serializable {
+public final class GoTerm implements Serializable, Comparable<GoTerm> {
 
     private final GoRoot root;
 
@@ -23,7 +23,7 @@ public final class GoTerm implements Serializable {
     private final String termName;
 
 
-    GoTerm(String goRootName, String accession, String termName) {
+    public GoTerm(String goRootName, String accession, String termName) {
         if (goRootName == null || accession == null || termName == null) {
             throw new IllegalArgumentException("No parameters may be null when instantiating a new GoTerm object. rootName: " +
                     goRootName + ", accession: " + accession + ", termName: " + termName);
@@ -46,6 +46,13 @@ public final class GoTerm implements Serializable {
 
     public String getTermName() {
         return termName;
+    }
+
+    public int compareTo(GoTerm that) {
+        if (this == that) {
+            return 0;
+        }
+        return this.getAccession().compareTo(that.getAccession());
     }
 
     public static enum GoRoot {
@@ -72,9 +79,21 @@ public final class GoTerm implements Serializable {
         }
 
         public static GoRoot getRootByName(String rootName) {
-            return rootNameToGoRoot.get(rootName);
+            GoRoot root = rootNameToGoRoot.get(rootName);
+            if (root != null) {
+                return root;
+            }
+            // Try a more general approach approach
+            for (GoRoot candidate : GoRoot.values()) {
+                if (candidate.getRootName().toLowerCase().contains(rootName.toLowerCase())) {
+                    return candidate;
+                }
+            }
+            // Tried every which way - cannot determine which root has been requested.
+            throw new IllegalArgumentException("Cannot determine which GO root is required from the String " + rootName);
         }
     }
+
 
     @Override
     public String toString() {
@@ -88,18 +107,13 @@ public final class GoTerm implements Serializable {
 
         GoTerm goTerm = (GoTerm) o;
 
-        if (root != goTerm.root) return false;
         if (!accession.equals(goTerm.accession)) return false;
-        if (!termName.equals(goTerm.termName)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = root.hashCode();
-        result = 31 * result + accession.hashCode();
-        result = 31 * result + termName.hashCode();
-        return result;
+        return accession.hashCode();
     }
 }
