@@ -1,0 +1,70 @@
+IPR000003|GO:0003677|DNA binding|function
+IPR000003|GO:0003707|steroid hormone receptor activity|function
+IPR000003|GO:0005634|nucleus|component
+IPR000003|GO:0006355|regulation of transcription, DNA-dependent|process
+IPR000003|GO:0008270|zinc ion binding|function
+IPR000006|GO:0046872|metal ion binding|function
+IPR000008|GO:0005515|protein binding|function
+IPR000009|GO:0000159|protein phosphatase type 2A complex|component
+IPR000009|GO:0007165|signal transduction|process
+IPR000009|GO:0008601|protein phosphatase type 2A regulator activity|function
+IPR000010|GO:0004869|cysteine-type endopeptidase inhibitor activity|function
+IPR000011|GO:0006464|protein modification process|process
+IPR000011|GO:0008641|small protein activating enzyme activity|function
+IPR000012|GO:0019058|viral infectious cycle|process
+IPR000012|GO:0042025|host cell nucleus|component
+IPR000013|GO:0004222|metalloendopeptidase activity|function
+IPR000013|GO:0005576|extracellular region|component
+IPR000013|GO:0006508|proteolysis|process
+IPR000013|GO:0008270|zinc ion binding|function
+IPR000014|GO:0004871|signal transducer activity|function
+IPR000014|GO:0007165|signal transduction|process
+IPR000015|GO:0005215|transporter activity|function
+IPR000015|GO:0006810|transport|process
+IPR000015|GO:0016020|membrane|component
+IPR000018|GO:0016021|integral to membrane|component
+IPR000018|GO:0035589|G-protein coupled purinergic nucleotide receptor signaling pathway|process
+IPR000018|GO:0045028|G-protein coupled purinergic nucleotide receptor activity|function
+IPR000020|GO:0005576|extracellular region|component
+IPR000021|GO:0016020|membrane|component
+IPR000022|GO:0016874|ligase activity|function
+IPR000023|GO:0003872|6-phosphofructokinase activity|function
+IPR000023|GO:0005945|6-phosphofructokinase complex|component
+IPR000023|GO:0006096|glycolysis|process
+IPR000025|GO:0007186|G-protein coupled receptor signaling pathway|process
+IPR000025|GO:0008502|melatonin receptor activity|function
+IPR000025|GO:0016021|integral to membrane|component
+IPR000026|GO:0003723|RNA binding|function
+IPR000026|GO:0004521|endoribonuclease activity|function
+IPR000028|GO:0004601|peroxidase activity|function
+IPR000031|GO:0006189|'de novo' IMP biosynthetic process|process
+IPR000031|GO:0034023|5-(carboxyamino)imidazole ribonucleotide mutase activity|function
+IPR000032|GO:0005351|sugar:hydrogen symporter activity|function
+IPR000032|GO:0009401|phosphoenolpyruvate-dependent sugar phosphotransferase system|process
+IPR000035|GO:0003905|alkylbase DNA N-glycosylase activity|function
+IPR000035|GO:0006281|DNA repair|process
+IPR000036|GO:0004175|endopeptidase activity|function
+IPR000036|GO:0006508|proteolysis|process
+IPR000036|GO:0009279|cell outer membrane|component
+IPR000037|GO:0003723|RNA binding|function
+IPR000038|GO:0005525|GTP binding|function
+IPR000038|GO:0007049|cell cycle|process
+IPR000039|GO:0003735|structural constituent of ribosome|function
+IPR000039|GO:0005622|intracellular|component
+IPR000039|GO:0005840|ribosome|component
+IPR000039|GO:0006412|translation|process
+IPR000040|GO:0003677|DNA binding|function
+IPR000040|GO:0005524|ATP binding|function
+IPR000040|GO:0005634|nucleus|component
+IPR000040|GO:0006355|regulation of transcription, DNA-dependent|process
+IPR000043|GO:0004013|adenosylhomocysteinase activity|function
+IPR000043|GO:0006730|one-carbon metabolic process|process
+IPR000044|GO:0016020|membrane|component
+IPR000045|GO:0004190|aspartic-type endopeptidase activity|function
+IPR000045|GO:0016020|membrane|component
+IPR000046|GO:0004995|tachykinin receptor activity|function
+IPR000046|GO:0005886|plasma membrane|component
+IPR000046|GO:0007186|G-protein coupled receptor signaling pathway|process
+IPR000046|GO:0016021|integral to membrane|component
+IPR000047|GO:0000976|transcription regulatory region sequence-specific DNA binding|function
+IPR000048|GO:0005515|protein binding|function

@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import java.io.Serializable;
@@ -162,5 +163,13 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
     @Override
     public String toString() {
         return ac;
+    }
+
+    public List<GoTerm> getGoTerms() {
+        List<GoTerm> terms = SimpleEntry.getEntryHierarchy().getGoTerms(this.getAc());
+        if (terms == null) {
+            return Collections.emptyList();
+        }
+        return terms;
     }
 }

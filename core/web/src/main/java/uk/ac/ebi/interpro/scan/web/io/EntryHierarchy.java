@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.web.io;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
+import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.web.model.EntryHierarchyData;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 
@@ -22,10 +23,13 @@ public class EntryHierarchy implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(EntryHierarchy.class.getName());
 
     private Properties entryColourPropertiesFile;
-    private Map<String, Integer> entryColourMap = null;
+    private Map<String, Integer> entryColourMap;
     private transient Resource entryHierarchyDataResource;
+    private transient Resource entryToGoDataResource;
     private transient EntryHierarchyDataResourceReader entryHierarchyDataResourceReader;
-    private Map<String, EntryHierarchyData> entryHierarchyDataMap = null;
+    private transient EntryToGoDataResourceReader entryToGoDataResourceReader;
+    private Map<String, EntryHierarchyData> entryHierarchyDataMap;
+    private Map<String, List<GoTerm>> entryToGoTerms;
 
     /**
      * Initialise the singleton.
@@ -38,8 +42,18 @@ public class EntryHierarchy implements Serializable {
         // Build entry hierarchy data map
         try {
             entryHierarchyDataMap = entryHierarchyDataResourceReader.read(entryHierarchyDataResource);
+
+
         } catch (IOException e) {
             LOGGER.warn("Problem reading entry hierarchy data resource: " + e.getMessage());
+            throw new IllegalStateException("Problem reading entry hierarchy data resource.  Cannot initialise.", e);
+        }
+
+        try {
+            entryToGoTerms = entryToGoDataResourceReader.read(entryToGoDataResource);
+        } catch (IOException e) {
+            LOGGER.warn("Unable to load Entry to GO mapping file.  Cannot initialise. " + e.getMessage());
+            throw new IllegalStateException("Unable to load Entry to GO mapping file.  Cannot initialise.", e);
         }
     }
 
@@ -110,6 +124,17 @@ public class EntryHierarchy implements Serializable {
         this.entryHierarchyDataResourceReader = entryHierarchyDataResourceReader;
     }
 
+    @Required
+    public void setEntryToGoDataResource(Resource entryToGoDataResource) {
+        this.entryToGoDataResource = entryToGoDataResource;
+    }
+
+    @Required
+    public void setEntryToGoDataResourceReader(EntryToGoDataResourceReader entryToGoDataResourceReader) {
+        this.entryToGoDataResourceReader = entryToGoDataResourceReader;
+    }
+
+
     /**
      * Return the entry accession to colour map (unmodifiable).
      *
@@ -139,6 +164,16 @@ public class EntryHierarchy implements Serializable {
      */
     public Map<String, EntryHierarchyData> getEntryHierarchyDataMap() {
         return Collections.unmodifiableMap(this.entryHierarchyDataMap);
+    }
+
+    /**
+     * Returns the GoTerm objects associated with the entry passed in as argument.
+     *
+     * @param entryAccession for which to retrieve mapped GO terms
+     * @return a List containing all of the mapped goterms.
+     */
+    public List<GoTerm> getGoTerms(String entryAccession) {
+        return entryToGoTerms.get(entryAccession);
     }
 
     /**

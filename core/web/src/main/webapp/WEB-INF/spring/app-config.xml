@@ -36,13 +36,24 @@
         <property name="entryColourPropertiesFile">
             <util:properties location="file:${entry.colours.file.loc}"/>
         </property>
-        <property name="entryHierarchyDataResource" ref="entryHierarchyResource"/>
-        <property name="entryHierarchyDataResourceReader" ref="entryHierarchyReader"/>
+        <property name="entryHierarchyDataResource">
+            <bean class="org.springframework.core.io.UrlResource">
+                <constructor-arg value="file:${entry.hierarchy.file.loc}"/>
+            </bean>
+        </property>
+        <property name="entryHierarchyDataResourceReader">
+            <bean class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
+        </property>
+        <property name="entryToGoDataResourceReader">
+            <bean class="uk.ac.ebi.interpro.scan.web.io.EntryToGoDataResourceReader"/>
+        </property>
+        <property name="entryToGoDataResource">
+            <bean class="org.springframework.core.io.UrlResource">
+                <constructor-arg value="file:${entry.go.file.loc}"/>
+            </bean>
+        </property>
     </bean>
-    <bean id="entryHierarchyReader" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
-    <bean id="entryHierarchyResource" class="org.springframework.core.io.UrlResource">
-        <constructor-arg value="file:${entry.hierarchy.file.loc}"/>
-    </bean>
+
 
     <!-- AnalyseMatchDataResult -->
     <bean id="matchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult">
