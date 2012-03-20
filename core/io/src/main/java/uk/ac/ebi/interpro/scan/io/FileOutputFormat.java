@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io;
 
+import org.apache.log4j.Logger;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,6 +14,8 @@ import java.util.Set;
  */
 public enum FileOutputFormat {
     TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html");
+
+    private static final Logger LOGGER = Logger.getLogger(FileOutputFormat.class.getName());
 
     private String fileExtension;
 
@@ -26,6 +29,21 @@ public enum FileOutputFormat {
     public String getFileExtension() {
         return fileExtension;
     }
+
+    /**
+     * Is the provided file extension string present in the file output format enum?
+     * @param extension The file extension string to check
+     * @return True if present, otherwise false
+     */
+    public static boolean isExtensionValid(String extension) {
+        for ( FileOutputFormat format : FileOutputFormat.values()) {
+            if (extension.equalsIgnoreCase(format.getFileExtension())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Given the file extension as a string lookup the appropriate FileOutputFormat
@@ -51,7 +69,7 @@ public enum FileOutputFormat {
      */
     public static Set<FileOutputFormat> stringToFileOutputFormats(String outputFormats) {
         Set<FileOutputFormat> fileOutputFormats = new HashSet<FileOutputFormat>();
-        String[] formats = outputFormats.split(",");
+        String[] formats = outputFormats.split(",\\s*");
         for (String format : formats){
             if (format.equalsIgnoreCase(XML.getFileExtension())) {
                 fileOutputFormats.add(XML);
@@ -59,8 +77,10 @@ public enum FileOutputFormat {
                 fileOutputFormats.add(GFF3);
             } else if (format.equalsIgnoreCase(HTML.getFileExtension())) {
                 fileOutputFormats.add(HTML);
-            } else {
+            } else if (format.equalsIgnoreCase(TSV.getFileExtension())) {
                 fileOutputFormats.add(TSV);
+            } else {
+                LOGGER.warn("File format " + format + " was not a recognised option so will be ignored");
             }
         }
         return fileOutputFormats;
