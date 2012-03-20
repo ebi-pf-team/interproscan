@@ -313,10 +313,6 @@ public class AmqInterProScanMaster implements Master {
             Map<String, String> params = new HashMap<String, String>();
             params.put(RunGetOrfStep.SEQUENCE_FILE_PATH_KEY, fastaFilePath);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
-            if (this.outputFormats == null || this.outputFormats.length < 1) {
-                //If no output format is specified, default it here
-                this.outputFormats = new String[] { FileOutputFormat.GFF3.getFileExtension() };
-            }
             createBlackBoxParams(params);
             stepInstancesCreated = createStepInstancesForJob("jobLoadNucleicAcidSequence", params);
         } else {
@@ -336,23 +332,27 @@ public class AmqInterProScanMaster implements Master {
         }
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
-        // Output formats as a comma separated list
-        if (outputFormats != null && outputFormats.length > 0) {
-            List<String> outputFormatList = new ArrayList<String>();
-            for (String outputFormat : outputFormats) {
-                outputFormatList.add(outputFormat);
-            }
-            params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
-        }
-        else {
-            // Default to TSV
-            params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, FileOutputFormat.TSV.getFileExtension());
-        }
+        List<String> outputFormatList = validateOutputFormatList();
+        params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
 
         String outputFilePath = outputFile;
-        if (outputFilePath == null) {
+        if (outputFilePath == null || outputFilePath.equals("")) {
             // If no file path name provided just use the same name as the input fasta file (extension will be added later)
             outputFilePath = fastaFilePath.replaceAll("\\.fasta", "");
+        }
+        else if (outputFilePath.contains(".")) {
+            // User should not include file extension (.tsv, .html etc) on supplied outputFilePath, but if they did then remove it!
+            int outputFilePathLength = outputFilePath.length();
+            for (FileOutputFormat format : FileOutputFormat.values()) {
+                String extension = '.' + format.getFileExtension();
+                int extensionLength = extension.length();
+                if (outputFilePathLength >= extensionLength) {
+                    if (outputFilePath.substring(outputFilePathLength - extensionLength).equalsIgnoreCase(extension)) {
+                        outputFilePath = outputFilePath.substring(0, outputFilePathLength - extensionLength);
+                        break;
+                    }
+                }
+            }
         }
         params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
@@ -360,6 +360,61 @@ public class AmqInterProScanMaster implements Master {
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
+    }
+
+    /**
+     * Validate and tidy the comma separated list of output formats specified by the user:
+     * - Do the formats exist?
+     * - Is the format valid for this sequence type?
+     * - If no valid formats specified then use the default (all available for that sequence type)
+     * @return The tidied list of file extensions
+     */
+    private List<String> validateOutputFormatList() {
+        List<String> outputFormatList = new ArrayList<String>();
+        // TODO With org.apache.commons.cli v2 could use EnumValidator instead, but currently we use cli v1.2
+        if (outputFormats != null && outputFormats.length > 0) {
+            // The user manually specified at least one output format, now check it's OK
+            for (String formatText : outputFormats) {
+                String[] formats = formatText.split(","); // E.g. "tsv,bbb,html"
+                for (String format : formats) {
+                    format = format.trim();
+                    if (FileOutputFormat.isExtensionValid(format)) {
+                        if ("n".equalsIgnoreCase(this.sequenceType)) {
+                            // For nucleotide sequences TSV and HTML formats are not allowed
+                            if (format.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
+                                LOGGER.warn("TSV output format is not valid for sequence type " + this.sequenceType + " so will be ignored.");
+                                continue;
+                            }
+                            else if (format.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
+                                LOGGER.warn("HTML output format is not valid for sequence type " + this.sequenceType + " so will be ignored");
+                                continue;
+                            }
+                        }
+                        outputFormatList.add(format);
+                    }
+                    else {
+                        LOGGER.warn("User specified output file format " + format + " is not recognised and shall be ignored");
+                    }
+                }
+            }
+        }
+        if (outputFormatList.isEmpty()) {
+            // It seems that no valid output formats were specified, so just default to all
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("No valid output formats specified, therefore use the default (all for sequence type " + this.sequenceType + ")");
+            }
+            for (FileOutputFormat outputFormat : FileOutputFormat.values()) {
+                String extension = outputFormat.getFileExtension();
+                if ("n".equalsIgnoreCase(this.sequenceType)) {
+                    if (extension.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension()) || extension.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
+                        // For nucleotide sequences TSV and HTML formats are not allowed
+                        continue;
+                    }
+                }
+                outputFormatList.add(extension);
+            }
+        }
+        return outputFormatList;
     }
 
     /**
@@ -482,8 +537,8 @@ public class AmqInterProScanMaster implements Master {
     }
 
     /**
-     * @param outputFile if set, then the results will be output to this file in the format specified in
-     *                   the field outputFormats (defaulting to TSV only).
+     * @param outputFile If set, then the results will be output to this file in the format specified in
+     *                   the field outputFormats. The application will apply the appropriate file extension automatically.
      */
     @Override
     public void setOutputFile(String outputFile) {
@@ -491,11 +546,9 @@ public class AmqInterProScanMaster implements Master {
     }
 
     /**
-     * Allows the output format to be changed from the default TSV.  If no value is specified for outputFile, this
-     * value will be ignored.
+     * Allows the output format to be changed from the default (all available formats for that sequence type).
      *
-     * @param outputFormats The comma separated list of output formats.  If no value is specified for outputFile, this format
-     *                     value will be ignored.
+     * @param outputFormats The comma separated list of output formats.
      */
     @Override
     public void setOutputFormats(String[] outputFormats) {

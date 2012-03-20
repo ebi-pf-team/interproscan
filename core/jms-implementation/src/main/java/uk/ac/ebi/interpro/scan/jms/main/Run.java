@@ -71,7 +71,7 @@ public class Run {
     private enum I5Option {
         MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
         FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
-        OUTPUT_FORMATS("format", "F", false, "Optional comma separated list of output formats. Supported formats are TSV(default), XML, GFF3 (default format for nucleotide sequence scan) and HTML.", "OUTPUT-FORMAT", true),
+        OUTPUT_FORMATS("format", "F", false, "Optional comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences is all formats, or for nucleotide sequence scan GFF3 and XML.", "OUTPUT-FORMATS", true),
         OUT_FILE("out-file", "o", false, "Optional output file path/name (the file extension for the output format will be added automatically).", "OUTPUT-FILE-PATH", false),
         ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true),
         PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false),
@@ -79,7 +79,6 @@ public class Run {
         GOTERMS("goterms", "goterms", false, "Switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false),
         PATHWAY_LOOKUP("pathways", "pa", false, "Switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false),
         MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false),
-        // TODO - put back SEQUENCE_TYPE, once the nucleic acid analysis is completed.
         SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false),
         MIN_SIZE("minsize", "ms", false, "Minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
                 "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false),
@@ -286,7 +285,6 @@ public class Run {
                     if (tcpConnectionString != null) {
                         master.setTcpUri(tcpConnectionString);
                     }
-                    // TODO - put back SEQUENCE_TYPE once the nucleic acid sequence analysis stuff is finished.
                     if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                         String sequenceType = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt());
                         if (sequenceType.equalsIgnoreCase("n")) {
