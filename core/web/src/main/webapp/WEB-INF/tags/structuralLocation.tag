@@ -31,7 +31,7 @@
             <%-- domainIds = ${dataEntry.value} --%>
             <c:forEach var="domainId" items="${dataEntry.value}" varStatus="vs">
                 <c:set var="link" value="${fn:replace(dataEntry.key, 'SW_', '')}" /> <%--SWISS-MODEL SW_P38398 converted to P38398--%>
-                <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl, '$0', link)}' class='ext'>${domainId}</a><br/>"/>
+                <c:set var="links" value="${links}<a href='${fn:replace(databaseMetadata.linkUrl,'$0', link)}' class='ext'>${domainId}</a><br/>"/>
             </c:forEach>
         </c:forEach>
     </c:when>
