@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.PageResources;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
@@ -32,6 +33,12 @@ public class ProteinStructureViewController {
     // Spring managed beans
     private EntryHierarchy entryHierarchy;
     private CreateSimpleProteinFromMatchData matchData;
+    private PageResources pageResources;
+
+    @Resource
+    public void setPageResources(PageResources pageResources) {
+        this.pageResources = pageResources;
+    }
 
     @RequestMapping
     public String index() {
@@ -78,6 +85,12 @@ public class ProteinStructureViewController {
             m.put("condensedView", new CondensedView(p));
             m.put("entryColours", entryHierarchy.getEntryColourMap());
             m.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
+            if (pageResources != null) {
+                Map<String, String> pageResourcesMap = pageResources.getResourcesMap();
+                for (String key : pageResourcesMap.keySet()) {
+                    m.put(key, pageResourcesMap.get(key));
+                }
+            }
         } // Else no match data was found for the protein therefore nothing to display
         return m;
     }

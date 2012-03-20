@@ -8,6 +8,6 @@
 </span>
 
 <#list scale?split(",") as scaleMarker>
-<span class="grade" style="left:${(scaleMarker?number / protein.length) * 100}%;" title="${scaleMarker}"></span>
+<span class="grade" style="left:${(scaleMarker?number?int / protein.length) * 100}%;" title="${scaleMarker}"></span>
 </#list>
 </#macro>
