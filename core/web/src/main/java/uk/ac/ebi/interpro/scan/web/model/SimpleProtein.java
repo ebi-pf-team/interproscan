@@ -201,6 +201,10 @@ public final class SimpleProtein implements Serializable {
         String proteinAc = "Unknown";
         String proteinName = "Unknown";
         String proteinDesc = "Unknown";
+        //TODO: Check if it is possible to grab these information from somewhere (especially if we run I5 standalone)
+        String crc64 = "Unknown";
+        String taxScienceName = "Unknown";
+        String taxFullName = "Unknown";
         if (!protein.getCrossReferences().isEmpty()) {
             ProteinXref x = protein.getCrossReferences().iterator().next();
             if (x.getIdentifier() != null) {
@@ -214,7 +218,7 @@ public final class SimpleProtein implements Serializable {
             }
         }
         SimpleProtein simpleProtein = new SimpleProtein(proteinAc, proteinName, proteinDesc, protein.getSequenceLength(),
-                protein.getMd5(), null, 0, null, null);// TODO Populate values properly instead of null or 0!
+                protein.getMd5(), crc64, 0, taxScienceName, taxFullName);
         // Get entries and corresponding signatures
         for (Match m : protein.getMatches()) {
             // Signature
