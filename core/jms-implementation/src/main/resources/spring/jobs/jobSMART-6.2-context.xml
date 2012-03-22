@@ -113,11 +113,11 @@
                 <property name="overlappingFileParser">
                     <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"/>
                 </property>
-                <property name="overlappingFileResource" value="${smart.overlapping.path.6.2}"/>
+                <property name="overlappingFileResource" value="file:${smart.overlapping.path.6.2}"/>
                 <property name="thresholdFileParser">
                     <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser"/>
                 </property>
-                <property name="thresholdFileResource" value="${smart.threshold.path.6.2}"/>
+                <property name="thresholdFileResource" value="file:${smart.threshold.path.6.2}"/>
             </bean>
         </property>
         <property name="serialGroup" value="HMMER2_POST_PROCESSING"/>
