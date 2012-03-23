@@ -226,6 +226,7 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
+                <resourceWebPath>resources</resourceWebPath>
             </properties>
 
             <build>
