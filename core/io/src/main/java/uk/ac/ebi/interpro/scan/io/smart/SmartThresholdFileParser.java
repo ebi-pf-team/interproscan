@@ -39,20 +39,16 @@ public class SmartThresholdFileParser implements Serializable {
     private static final Pattern SMART_THRESHOLD_PATTERN = Pattern.compile("^SM[0-9]{5}.+$");
 
     public Map<String, SmartThreshold> parse(Resource thresholdFileResource) throws IOException {
-        if (thresholdFileResource == null) {
-            throw new NullPointerException("Resource is null");
+        String errorMessage = checkForResourceProblems(thresholdFileResource);
+        if (errorMessage != null) {
+            throw new IllegalStateException(errorMessage);
         }
-        if (!thresholdFileResource.exists()) {
-            throw new IllegalStateException(thresholdFileResource.getFilename() + " does not exist");
-        }
-        if (!thresholdFileResource.isReadable()) {
-            throw new IllegalStateException(thresholdFileResource.getFilename() + " is not readable");
-        }
+
         final Map<String, SmartThreshold> accessionThresholds = new HashMap<String, SmartThreshold>();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(thresholdFileResource.getInputStream()));
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 Matcher thresholdData = SMART_THRESHOLD_PATTERN.matcher(line);
                 if (thresholdData.find()) {
@@ -67,6 +63,24 @@ public class SmartThresholdFileParser implements Serializable {
             }
         }
         return accessionThresholds;
+    }
+
+    /**
+     * Ensure the provided file resource is OK (exists and can be read).
+     * @param thresholdFileResource The resource to check
+     * @return An error string if there was a problem, or NULL if all was OK
+     */
+    public String checkForResourceProblems(Resource thresholdFileResource) {
+        if (thresholdFileResource == null) {
+            return "Smart threshold file resource is null";
+        }
+        if (!thresholdFileResource.exists()) {
+            return "Smart threshold file resource " + thresholdFileResource.getFilename() + " does not exist";
+        }
+        if (!thresholdFileResource.isReadable()) {
+            return "Smart threshold file resource " + thresholdFileResource.getFilename() + " is not readable";
+        }
+        return null; // All is OK!
     }
 
     public class SmartThreshold {
