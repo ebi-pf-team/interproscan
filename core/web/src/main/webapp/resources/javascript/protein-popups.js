@@ -12,7 +12,7 @@ function preparePopup(spanId) {
         content: {
             text: $('#'.concat(popupId)),
             title: {
-                text: 'Location data', // Popup text in the title bar
+                text: ' ', // Popup text in the title bar
                 button: true // Close button
             }
         },
