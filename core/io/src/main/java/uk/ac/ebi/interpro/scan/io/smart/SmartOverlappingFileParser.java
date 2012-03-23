@@ -27,15 +27,11 @@ public class SmartOverlappingFileParser implements Serializable {
     private static final String HEADER_LINE = "-----";
 
     public Map<String, SmartOverlap> parse(Resource overlappingFileResource) throws IOException {
-        if (overlappingFileResource == null) {
-            throw new NullPointerException("Resource is null");
+        String errorMessage = checkForResourceProblems(overlappingFileResource);
+        if (errorMessage != null) {
+            throw new IllegalStateException(errorMessage);
         }
-        if (!overlappingFileResource.exists()) {
-            throw new IllegalStateException(overlappingFileResource.getFilename() + " does not exist");
-        }
-        if (!overlappingFileResource.isReadable()) {
-            throw new IllegalStateException(overlappingFileResource.getFilename() + " is not readable");
-        }
+
         final Map<String, SmartOverlap> accessionOverlaps = new HashMap<String, SmartOverlap>();
         BufferedReader reader = null;
         try {
@@ -63,6 +59,25 @@ public class SmartOverlappingFileParser implements Serializable {
         return accessionOverlaps;
     }
 
+    /**
+     * Ensure the provided file resource is OK (exists and can be read).
+     * @param overlappingFileResource The resource to check
+     * @return An error string if there was a problem, or NULL if all was OK
+     */
+    public String checkForResourceProblems(Resource overlappingFileResource) {
+        if (overlappingFileResource == null) {
+            return "Smart overlapping file resource is null";
+        }
+        if (!overlappingFileResource.exists()) {
+            return "Smart overlapping file resource " + overlappingFileResource.getFilename() + " does not exist";
+        }
+        if (!overlappingFileResource.isReadable()) {
+            return "Smart overlapping file resource " + overlappingFileResource.getFilename() + " is not readable";
+        }
+        return null; // All is OK!
+    }
+
+
     public class SmartOverlap {
 
         private String familyName;
@@ -82,7 +97,7 @@ public class SmartOverlappingFileParser implements Serializable {
 
         public String getFamilyName() {
             return familyName;
-        }        
+        }
 
         public String getDomainName() {
             return domainName;
