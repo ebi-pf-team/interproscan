@@ -226,7 +226,7 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
-                <resourceWebPath>resources</resourceWebPath>
+                <resourceWebPath>/interpro5/resources</resourceWebPath>
             </properties>
 
             <build>
@@ -309,6 +309,7 @@ cd ~/Projects/i5/interproscan/core/web; svn up; mvn -Plocalhost-tomcat clean tom
                 inconsistencies! But that's OK, this profile is used for development/testing, not production! -->
                 <entry.colours.file.loc>${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
                 <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
                 <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
