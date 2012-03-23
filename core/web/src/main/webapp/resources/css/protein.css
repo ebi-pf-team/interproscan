@@ -738,15 +738,14 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
 }
 
 .ui-tooltip-light .ui-tooltip-titlebar, .ui-tooltip-light .ui-tooltip-content {
-    border-radius: 6px 6px;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 4px 2px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 4px 4px rgba(0, 0, 0, 0.1);
     border-color: #c0c0c0;
     color: #393939;
 }
+.ui-tooltip-light .ui-tooltip-titlebar {border-radius: 6px 6px 0 0;-moz-border-radius: 6px 6px 0 0;-webkit-border-radius: 6px 6px 0 0;}
+.ui-tooltip-light .ui-tooltip-content {border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;}
 
 .ui-tooltip-content {
     padding: 12px 6px;
