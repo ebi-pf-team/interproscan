@@ -90,14 +90,16 @@ public class SmartPostProcessing implements Serializable {
 
         Map<String, RawProtein<SmartRawMatch>> allFilteredMatches = new HashMap<String, RawProtein<SmartRawMatch>>();
 
-        if (thresholdFileResource == null || overlappingFileResource == null) {
+        String thresholdErrorMessage = thresholdFileParser.checkForResourceProblems(thresholdFileResource);
+        String overlappingErrorMessage = overlappingFileParser.checkForResourceProblems(overlappingFileResource);
+        if (thresholdErrorMessage != null || overlappingErrorMessage != null) {
             // One of the thresholds and overlapping files was not present (possibly the user is using an unlicensed
             // version of SMART), therefore no filtering can be performed
-            if (thresholdFileResource == null) {
-                LOGGER.warn("Smart threshold file resource is not configured - Smart post processing skipped");
+            if (thresholdErrorMessage != null) {
+                LOGGER.warn("Smart threshold file resource is not available or readable - Smart post processing skipped");
             }
-            if (overlappingFileResource == null) {
-                LOGGER.warn("Smart overlapping file resource is not configured - Smart post processing skipped");
+            if (overlappingErrorMessage != null) {
+                LOGGER.warn("Smart overlapping file resource is not available or readable - Smart post processing skipped");
             }
             // All raw matches become filtered matches
             for (String proteinId : proteinIdToRawProteinMap.keySet()) {
