@@ -12,7 +12,8 @@
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-web</artifactId>
 
-    <packaging>war</packaging>
+    <!--Default packaging is JAR, but the WAR file is build at the same time by simply running the MAVEN install goal-->
+    <packaging>jar</packaging>
 
     <name>InterProScan Web</name>
     <version>i5-svn-revision-1559</version>
@@ -28,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
-            <artifactId>interproscan-io</artifactId>
+            <artifactId>interproscan-business</artifactId>
             <version>i5-svn-revision-1559</version>
         </dependency>
 
@@ -122,7 +123,43 @@
                     <include>interpro5.xml</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>src/main/webapp/</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>WEB-INF/tags/**</exclude>
+                    <exclude>WEB-INF/jsp/**</exclude>
+                    <exclude>WEB-INF/web.xml</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/webapp/</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/classes/</targetPath>
+                <excludes>
+                    <exclude>WEB-INF/tags/**</exclude>
+                    <exclude>WEB-INF/jsp/**</exclude>
+                    <exclude>WEB-INF/web.xml</exclude>
+                </excludes>
+            </resource>
         </resources>
+
+        <!--Plugin allows to create the WAR file at the same time as the JAR file by running simply mvn clean install goal-->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-a-war</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
@@ -139,13 +176,20 @@
                 and entry hierarchy CSV file in version control. NOTE: This data may not have been generated recently,
                 or from the protein database you are currently using (IPPRO, IWEBPRO1 etc) therefore will introduce
                 inconsistencies! But that's OK, Jetty profile is used for development, not production! -->
-                <entry.colours.file.loc>${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
-                <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
-                <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
                 <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
+                <!--Model creation files-->
+                <!--Entry hierarchy data-->
+                <entryHierarchyDataResourceId>entryHierarchyDataClassPathResourceId</entryHierarchyDataResourceId>
+                <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <!--Entry GO data-->
+                <entryToGoDataResourceId>entryToGoDataClassPathResourceId</entryToGoDataResourceId>
+                <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
+                <!--Entry colours-->
+                <entry.colours.file.loc>file:${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
+                <entry.colours.file.loc.classpath>classpath:entry_colours.properties</entry.colours.file.loc.classpath>
             </properties>
             <build>
                 <plugins>
@@ -216,17 +260,20 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
                 NOTE: These should have been generated at the time of the last release, therefore will be consistent
                 with the current public database -->
-                <entry.colours.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
-                </entry.colours.file.loc>
-                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv
-                </entry.hierarchy.file.loc>
-                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv
-                </entry.go.file.loc>
                 <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
                 <resourceWebPath>/interpro5/resources</resourceWebPath>
+                <!--Model creation files-->
+                <!--Entry hierarchy data-->
+                <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
+                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <!--Entry GO data-->
+                <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
+                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv</entry.go.file.loc>
+                <!--Entry colours-->
+                <entry.colours.file.loc>file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties</entry.colours.file.loc>
             </properties>
 
             <build>
@@ -307,13 +354,19 @@ cd ~/Projects/i5/interproscan/core/web; svn up; mvn -Plocalhost-tomcat clean tom
                 and entry hierarchy CSV file in version control. NOTE: This data may not have been generated recently,
                 or from the protein database you are currently using (IPPRO, IWEBPRO1 etc) therefore will introduce
                 inconsistencies! But that's OK, this profile is used for development/testing, not production! -->
-                <entry.colours.file.loc>${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
-                <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
-                <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
                 <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
+                <!--Model creation files-->
+                <!--Entry hierarchy data-->
+                <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
+                <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <!--Entry GO data-->
+                <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
+                <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
+                <!--Entry colours-->
+                <entry.colours.file.loc>file:${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
             </properties>
 
             <build>
@@ -365,5 +418,4 @@ cd ~/Projects/i5/interproscan/core/web; svn up; mvn -Plocalhost-tomcat clean tom
             </properties>
         </profile>
     </profiles>
-
 </project>

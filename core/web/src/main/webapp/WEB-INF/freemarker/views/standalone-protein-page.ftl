@@ -21,21 +21,19 @@
     <meta name="author" content="InterPro Team, European Bioinformatics Institute">
 
 
-    <link href="/resources/css/type_colours.css" rel="stylesheet" type="text/css"/>
-    <link class="database" href="/resources/css/database.css" rel="stylesheet" type="text/css"/>
-    <link href="/resources/javascript/qtip2/jquery.qtip.css" rel="stylesheet" type="text/css"/>
-    <link href="/resources/css/protein.css" rel="stylesheet" type="text/css"/>
-    <link href="/resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css"
-          rel="stylesheet" type="text/css"/>
-    <script src="/resources/javascript/jquery/jquery-1.7.1.min.js" type="text/javascript"></script>
-    <script src="/resources/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js"
-            type="text/javascript"></script>
-    <script src="/resources/javascript/qtip2/jquery.qtip.min.js" type="text/javascript"></script>
-    <script src="/resources/javascript/common.js" type="text/javascript"></script>
-    <script src="/resources/javascript/protein.js" type="text/javascript"></script>
-    <script src="/resources/javascript/protein-popups.js" type="text/javascript"></script>
-    <script src="/resources/javascript/jquery/jquery.cookie.js" type="text/javascript"></script>
-    <script src="/resources/javascript/jquery/jquery.jscroll.min.js" type="text/javascript"></script>
+    <link href="${css_resource_type_colours}" rel="stylesheet" type="text/css"/>
+    <link class="database" href="${css_resource_database}" rel="stylesheet" type="text/css"/>
+    <link href="${css_resource_jquery_qtip2}" rel="stylesheet" type="text/css"/>
+    <link href="${css_resource_protein}" rel="stylesheet" type="text/css"/>
+    <link href="${css_resource_jquery_ui1817_custom}" rel="stylesheet" type="text/css"/>
+    <script src="${js_resource_jquery171}" type="text/javascript"></script>
+    <script src="${js_resource_jquery_ui1817_custom}" type="text/javascript"></script>
+    <script src="${js_resource_jquery_qtip2}" type="text/javascript"></script>
+    <script src="${js_resource_common}" type="text/javascript"></script>
+    <script src="${js_resource_protein}" type="text/javascript"></script>
+    <script src="${js_resource_protein_popups}" type="text/javascript"></script>
+    <script src="${js_resource_protein_jquery_cookie}" type="text/javascript"></script>
+    <script src="${js_resource_jquery_jscroll}" type="text/javascript"></script>
 
 </head>
 <body>
