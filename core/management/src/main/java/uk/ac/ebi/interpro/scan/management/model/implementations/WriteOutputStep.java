@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
@@ -7,10 +8,12 @@ import uk.ac.ebi.interpro.scan.io.XmlWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.*;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter;
+import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
 import uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder;
-import uk.ac.ebi.interpro.scan.model.ProteinMatchesHolder;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.ProteinMatchesHolder;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import java.io.File;
@@ -38,6 +41,20 @@ public class WriteOutputStep extends Step {
     private boolean deleteWorkingDirectoryOnCompletion;
 
     private XmlWriter xmlWriter;
+
+    private ProteinMatchesHTMLResultWriter htmlResultWriter;
+
+    private boolean compressHtmlOutput;
+
+    @Required
+    public void setCompressHtmlOutput(boolean compressHtmlOutput) {
+        this.compressHtmlOutput = compressHtmlOutput;
+    }
+
+    @Required
+    public void setHtmlResultWriter(ProteinMatchesHTMLResultWriter htmlResultWriter) {
+        this.htmlResultWriter = htmlResultWriter;
+    }
 
     @Required
     public void setXmlWriter(XmlWriter xmlWriter) {
@@ -71,7 +88,7 @@ public class WriteOutputStep extends Step {
         final Set<FileOutputFormat> outputFormats = FileOutputFormat.stringToFileOutputFormats(outputFormatStr);
         final String filePathName = parameters.get(OUTPUT_FILE_PATH_KEY);
 
-        for (FileOutputFormat outputFormat : outputFormats){
+        for (FileOutputFormat outputFormat : outputFormats) {
             File outputFile = new File(filePathName + '.' + outputFormat.getFileExtension());
             if (outputFile.exists()) {
                 if (!outputFile.delete()) {
@@ -133,7 +150,7 @@ public class WriteOutputStep extends Step {
         } else {
             matchesHolder = new ProteinMatchesHolder();
         }
-        matchesHolder.setProteins(proteins);
+        matchesHolder.addProteins(proteins);
         xmlWriter.writeMatches(outputFile, matchesHolder);
     }
 
@@ -169,15 +186,43 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToHTML(File file, StepInstance stepInstance) throws IOException {
-        // TODO Implement all this!
-//        ProteinMatchesHTMLResultWriter writer = new ProteinMatchesHTMLResultWriter(file);
-//        try {
-//            writeProteinMatches(writer, stepInstance);
-//        } finally {
-//            if (writer != null) {
-//                writer.close();
-//            }
-//        }
+        //TODO: Think about how to add cross-references to protein object!
+        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        if (proteins != null && proteins.size() > 0) {
+            for (Protein protein : proteins) {
+                htmlResultWriter.write(protein);
+            }
+            //Build and pack archive
+            String tarArchiveName = buildTarArchiveName(file.getName(), compressHtmlOutput);
+            File tarFile = new File(tarArchiveName);
+            List<File> resultFiles = htmlResultWriter.getResultFiles();
+            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, tarFile, compressHtmlOutput);
+            tarArchiveBuilder.buildTarArchive();
+            //Delete result files in the temp directory at the end
+            for (File resultFile : resultFiles) {
+                boolean isDeleted = resultFile.delete();
+                if (LOGGER.isEnabledFor(Level.WARN)) {
+                    if (!isDeleted) {
+                        LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
+                    }
+                }
+            }
+        }
+    }
+
+    private String buildTarArchiveName(String fileName, boolean compressHtmlOutput) {
+        String fileExtension = (compressHtmlOutput ? ".tar.gz" : ".tar");
+        if (fileName != null && fileName.length() > 0) {
+            String chunks[] = fileName.split("\\.");
+            if (chunks.length == 2) {
+                return chunks[0] + fileExtension;
+            } else {
+                LOGGER.warn("Unexpected file name format: " + fileName);
+            }
+        } else {
+            LOGGER.warn("Empty file detected.");
+        }
+        return fileName;
     }
 
 

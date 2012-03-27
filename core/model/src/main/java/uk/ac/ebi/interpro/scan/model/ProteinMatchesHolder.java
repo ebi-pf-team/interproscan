@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,15 +40,27 @@ public final class ProteinMatchesHolder implements IMatchesHolder, Serializable 
         return proteins;
     }
 
-    public void setProteins(Collection<Protein> proteins) {
+    public void addProteins(Collection<Protein> proteins) {
         if (proteins == null) {
             throw new IllegalArgumentException("'Proteins' must not be null");
         }
-        for (Protein protein : proteins) {
-            addProtein(protein);
-        }
-//        this.proteins.addAll(proteins);
+        this.proteins.addAll(proteins);
     }
+
+//    @XmlElement(name = "protein")
+//    public Set<Protein> getProteins() {
+//        return Collections.unmodifiableSet(proteins);
+//    }
+//
+//    public void setProteins(Collection<Protein> proteins) {
+//        if (proteins == null) {
+//            throw new IllegalArgumentException("'Proteins' must not be null");
+//        }
+//        for (Protein protein : proteins) {
+//            addProtein(protein);
+//        }
+////        this.proteins.addAll(proteins);
+//    }
 
     @Override
     public boolean equals(Object o) {
