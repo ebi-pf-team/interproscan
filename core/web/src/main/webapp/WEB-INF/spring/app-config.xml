@@ -34,7 +34,7 @@
     <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init"
           scope="singleton" lazy-init="false">
         <property name="entryColourPropertiesFile">
-            <util:properties location="${entry.colours.file.loc.classpath}"/>
+            <util:properties location="${entry.colours.file.loc}"/>
         </property>
         <property name="entryHierarchyDataResource" ref="${entryHierarchyDataResourceId}"/>
         <property name="entryHierarchyDataResourceReader">

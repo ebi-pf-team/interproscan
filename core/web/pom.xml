@@ -188,8 +188,7 @@
                 <entryToGoDataResourceId>entryToGoDataClassPathResourceId</entryToGoDataResourceId>
                 <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
                 <!--Entry colours-->
-                <entry.colours.file.loc>file:${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
-                <entry.colours.file.loc.classpath>classpath:entry_colours.properties</entry.colours.file.loc.classpath>
+                <entry.colours.file.loc>classpath:entry_colours.properties</entry.colours.file.loc>
             </properties>
             <build>
                 <plugins>
