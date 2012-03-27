@@ -27,7 +27,7 @@ public final class NucleicAcidMatchesHolder implements IMatchesHolder, Serializa
     public NucleicAcidMatchesHolder() {
     }
 
-    public void setProteins(Collection<Protein> proteins) {
+    public void addProteins(Collection<Protein> proteins) {
         for (Protein protein : proteins) {
             addProtein(protein);
         }
