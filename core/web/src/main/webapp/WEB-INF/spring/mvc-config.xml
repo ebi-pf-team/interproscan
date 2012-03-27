@@ -34,6 +34,8 @@
                                value="${resourceWebPath}/javascript/qtip2/jquery.qtip.min.js"/>
                         <entry key="js_resource_common" value="${resourceWebPath}/javascript/common.js"/>
                         <entry key="js_resource_protein_popups" value="${resourceWebPath}/javascript/protein-popups.js"/>
+                        <entry key="js_resource_jquery_ui1817_custom" value="${resourceWebPath}/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js"/>
+                        <entry key="js_resource_protein_jquery_cookie" value="${resourceWebPath}/javascript/jquery/jquery.cookie.js"/>
                     </map>
                 </property>
             </bean>
@@ -47,6 +49,7 @@
                         <entry key="css_resource_protein" value="${resourceWebPath}/css/protein.css"/>
                         <entry key="css_resource_type_colours" value="${resourceWebPath}/css/type_colours.css"/>
                         <entry key="css_resource_database" value="${resourceWebPath}/css/database.css"/>
+                        <entry key="css_resource_jquery_ui1817_custom" value="${resourceWebPath}/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css"/>
                     </map>
                 </property>
             </bean>

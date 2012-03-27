@@ -34,24 +34,16 @@
     <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init"
           scope="singleton" lazy-init="false">
         <property name="entryColourPropertiesFile">
-            <util:properties location="file:${entry.colours.file.loc}"/>
+            <util:properties location="${entry.colours.file.loc.classpath}"/>
         </property>
-        <property name="entryHierarchyDataResource">
-            <bean class="org.springframework.core.io.UrlResource">
-                <constructor-arg value="file:${entry.hierarchy.file.loc}"/>
-            </bean>
-        </property>
+        <property name="entryHierarchyDataResource" ref="${entryHierarchyDataResourceId}"/>
         <property name="entryHierarchyDataResourceReader">
             <bean class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
         </property>
         <property name="entryToGoDataResourceReader">
             <bean class="uk.ac.ebi.interpro.scan.web.io.EntryToGoDataResourceReader"/>
         </property>
-        <property name="entryToGoDataResource">
-            <bean class="org.springframework.core.io.UrlResource">
-                <constructor-arg value="file:${entry.go.file.loc}"/>
-            </bean>
-        </property>
+        <property name="entryToGoDataResource" ref="${entryToGoDataResourceId}"/>
     </bean>
 
 
@@ -103,4 +95,20 @@
         </property>
     </bean>
 
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="entryHierarchyDataURLResourceId" class="org.springframework.core.io.UrlResource">
+        <constructor-arg value="file:${entry.hierarchy.file.loc}"/>
+    </bean>
+
+    <bean id="entryHierarchyDataClassPathResourceId" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="entry_hierarchy.csv"/>
+    </bean>
+
+    <bean id="entryToGoDataURLResourceId" class="org.springframework.core.io.UrlResource">
+        <constructor-arg value="file:${entry.go.file.loc}"/>
+    </bean>
+
+    <bean id="entryToGoDataClassPathResourceId" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="entry_to_go.psv"/>
+    </bean>
 </beans>
