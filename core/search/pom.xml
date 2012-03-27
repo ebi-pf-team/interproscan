@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.interpro.scan.search</groupId>
+    <artifactId>interpro-search-client</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>InterPro Search Client</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>1.4</version>
+        </dependency>
+    </dependencies>
+
+    <!--
+
+     To run a quick test:
+     mvn clean compile exec:exec
+
+     To build the executable jar and run it:
+     mvn clean package
+     java -jar target/interpro-search-client-1.0-SNAPSHOT.jar cxxc
+     java -jar target/interpro-search-client-1.0-SNAPSHOT.jar "tyrosine kinase"
+     java -jar target/interpro-search-client-1.0-SNAPSHOT.jar "tyrosine -kinase"
+
+    -->
+
+    <build>
+        <plugins>
+            <!-- Use Java 6 language features -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <!-- Generate source code from WSDL: mvn generate-sources -->
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <!--TODO: Add profile so can use frontier.ebi.ac.uk instead-->
+                                    <wsdl>http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl</wsdl>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Run main method with sample argument: mvn exec:exec -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <!-- Uncomment below for debugging with CXF. -->
+                        <!--argument>
+                        -Djava.util.logging.config.file=${env.CXF_HOME}/etc/logging.properties
+                        </argument-->
+                        <argument>uk.ac.ebi.interpro.scan.search.EbiSearchClient</argument>
+                        <!-- Modify argument below for the item you wish to search for. -->
+                        <argument>kinase</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+            <!--Executable JAR-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>uk.ac.ebi.interpro.scan.search.EbiSearchClient</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
