@@ -1,4 +1,7 @@
-<assembly>
+<!--<assembly >-->
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
     <id>dist</id>
     <formats>
         <format>dir</format>
@@ -27,7 +30,6 @@
             </includes>
         </fileSet>
 
-        
 
         <fileSet>
             <directory>${mvn.ebi.interproscan5.support}</directory>
@@ -59,6 +61,25 @@
             <outputDirectory>/lib</outputDirectory>
             <unpack>false</unpack>
             <scope>runtime</scope>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>data/freemarker</outputDirectory>
+            <includes>
+                <include>uk.ac.ebi.interpro.scan:interproscan-web</include>
+            </includes>
+            <unpack>true</unpack>
+            <unpackOptions>
+                <!--<filtered>true</filtered>-->
+                <includes>
+                    <include>resources/**</include>
+                    <include>WEB-INF/freemarker/**</include>
+                    <include>WEB-INF/spring/**</include>
+                    <include>entry_hierarchy.csv</include>
+                    <include>entry_colours.properties</include>
+                    <include>entry_to_go.psv</include>
+                </includes>
+            </unpackOptions>
         </dependencySet>
     </dependencySets>
 </assembly>
