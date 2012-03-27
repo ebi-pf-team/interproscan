@@ -231,29 +231,29 @@ public final class SimpleProtein implements Serializable {
             }
             // Entry
             Entry e = s.getEntry();
-            if (e != null) {
-                SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName(), entryHierarchy);
-                if (simpleProtein.getAllEntries().contains(se)) {
-                    // Entry already exists, so get it
-                    se = simpleProtein.getAllEntries().get(simpleProtein.getAllEntries().indexOf(se));
-                } else {
-                    // Create new entry
-                    simpleProtein.getAllEntries().add(se);
-                }
-                //                if (sp.getEntriesMap().containsKey(entryAc)) {
-                //                    // Entry already exists
-                //                    se = sp.getEntriesMap().get(entryAc);
-                //                }
-                //                else {
-                //                    // Create new entry
-                //                    Entry e = s.getEntry();
-                //                    se = new SimpleEntry(entryAc, e.getDescription(), e.getType().getName());
-                //                    // Add to protein
-                //                    sp.getEntriesMap().put(entryAc, se);
-                //                }
-                // Add signature to entry
-                se.getSignaturesMap().put(signatureAc, ss);
+//            if (e != null) {
+            SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName(), entryHierarchy);
+            if (simpleProtein.getAllEntries().contains(se)) {
+                // Entry already exists, so get it
+                se = simpleProtein.getAllEntries().get(simpleProtein.getAllEntries().indexOf(se));
+            } else {
+                // Create new entry
+                simpleProtein.getAllEntries().add(se);
             }
+            //                if (sp.getEntriesMap().containsKey(entryAc)) {
+            //                    // Entry already exists
+            //                    se = sp.getEntriesMap().get(entryAc);
+            //                }
+            //                else {
+            //                    // Create new entry
+            //                    Entry e = s.getEntry();
+            //                    se = new SimpleEntry(entryAc, e.getDescription(), e.getType().getName());
+            //                    // Add to protein
+            //                    sp.getEntriesMap().put(entryAc, se);
+            //                }
+            // Add signature to entry
+            se.getSignaturesMap().put(signatureAc, ss);
+//            }
         }
         for (SimpleEntry se : simpleProtein.entries) {
             // TODO: Calculate super-match start and end locations from signature matches
