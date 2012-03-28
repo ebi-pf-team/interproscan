@@ -132,7 +132,7 @@ public class ProteinMatchesHTMLResultWriter {
         return 0;
     }
 
-    private static SimpleHash buildModelMap(SimpleProtein p, EntryHierarchy entryHierarchy) {
+    private SimpleHash buildModelMap(SimpleProtein p, EntryHierarchy entryHierarchy) {
         final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
         SimpleHash model = new SimpleHash();
         if (p != null) {
