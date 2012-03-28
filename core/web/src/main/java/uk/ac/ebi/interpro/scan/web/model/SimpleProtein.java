@@ -225,7 +225,11 @@ public final class SimpleProtein implements Serializable {
             // Signature
             Signature signature = match.getSignature();
             String signatureAc = signature.getAccession();
-            SimpleSignature ss = new SimpleSignature(signatureAc, signature.getName(), signature.getSignatureLibraryRelease().getLibrary().getName());
+            String signatureName = signature.getName();
+            if (signatureName == null || signatureName.length() == 0){
+                signatureName = signatureAc;
+            }
+            SimpleSignature ss = new SimpleSignature(signatureAc, signatureName, signature.getSignatureLibraryRelease().getLibrary().getName());
             for (Object o : match.getLocations()) {
                 Location l = (Location) o;
                 ss.getLocations().add(new SimpleLocation(l.getStart(), l.getEnd()));
