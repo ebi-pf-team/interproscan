@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.EntryType;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.io.FamilyHierachyElementBuilder;
 
@@ -9,6 +11,8 @@ import java.io.Serializable;
 import java.util.*;
 
 public final class SimpleProtein implements Serializable {
+
+    private static final Logger LOGGER = Logger.getLogger(SimpleProtein.class.getName());
 
     private final String ac;      // eg. P38398
     private final String id;      // BRCA1_HUMAN
@@ -206,39 +210,44 @@ public final class SimpleProtein implements Serializable {
         String taxScienceName = "Unknown";
         String taxFullName = "Unknown";
         if (!protein.getCrossReferences().isEmpty()) {
-            ProteinXref x = protein.getCrossReferences().iterator().next();
-            if (x.getIdentifier() != null) {
-                proteinAc = x.getIdentifier();
+            ProteinXref xref = protein.getCrossReferences().iterator().next();
+            proteinAc = xref.getIdentifier();
+            if (xref.getName() != null) {
+                proteinName = xref.getName();
             }
-            if (x.getName() != null) {
-                proteinName = x.getName();
-            }
-            if (x.getDescription() != null) {
-                proteinDesc = x.getDescription();
+            if (xref.getDescription() != null) {
+                proteinDesc = xref.getDescription();
             }
         }
         SimpleProtein simpleProtein = new SimpleProtein(proteinAc, proteinName, proteinDesc, protein.getSequenceLength(),
                 protein.getMd5(), crc64, 0, taxScienceName, taxFullName);
         // Get entries and corresponding signatures
-        for (Match m : protein.getMatches()) {
+        for (Match match : protein.getMatches()) {
             // Signature
-            Signature s = m.getSignature();
-            String signatureAc = s.getAccession();
-            SimpleSignature ss = new SimpleSignature(signatureAc, s.getName(), s.getSignatureLibraryRelease().getLibrary().getName());
-            for (Object o : m.getLocations()) {
+            Signature signature = match.getSignature();
+            String signatureAc = signature.getAccession();
+            SimpleSignature ss = new SimpleSignature(signatureAc, signature.getName(), signature.getSignatureLibraryRelease().getLibrary().getName());
+            for (Object o : match.getLocations()) {
                 Location l = (Location) o;
                 ss.getLocations().add(new SimpleLocation(l.getStart(), l.getEnd()));
             }
             // Entry
-            Entry e = s.getEntry();
+            Entry entry = signature.getEntry();
 //            if (e != null) {
-            SimpleEntry se = new SimpleEntry(e.getAccession(), e.getName(), e.getDescription(), e.getType().getName(), entryHierarchy);
-            if (simpleProtein.getAllEntries().contains(se)) {
+            if (entry == null && LOGGER.isDebugEnabled()) {
+                LOGGER.debug("For Signature " + signature.getAccession() + " the Entry is null.");
+            }
+            EntryType entryType = entry.getType();
+            if (entryType == null && LOGGER.isDebugEnabled()) {
+                LOGGER.debug("For Signature " + signature.getAccession() + " the Entry is NOT null, however the EntryType IS null.  About to barf...");
+            }
+            SimpleEntry simpleEntry = new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), entryType.getName(), entryHierarchy);
+            if (simpleProtein.getAllEntries().contains(simpleEntry)) {
                 // Entry already exists, so get it
-                se = simpleProtein.getAllEntries().get(simpleProtein.getAllEntries().indexOf(se));
+                simpleEntry = simpleProtein.getAllEntries().get(simpleProtein.getAllEntries().indexOf(simpleEntry));
             } else {
                 // Create new entry
-                simpleProtein.getAllEntries().add(se);
+                simpleProtein.getAllEntries().add(simpleEntry);
             }
             //                if (sp.getEntriesMap().containsKey(entryAc)) {
             //                    // Entry already exists
@@ -252,7 +261,7 @@ public final class SimpleProtein implements Serializable {
             //                    sp.getEntriesMap().put(entryAc, se);
             //                }
             // Add signature to entry
-            se.getSignaturesMap().put(signatureAc, ss);
+            simpleEntry.getSignaturesMap().put(signatureAc, ss);
 //            }
         }
         for (SimpleEntry se : simpleProtein.entries) {
