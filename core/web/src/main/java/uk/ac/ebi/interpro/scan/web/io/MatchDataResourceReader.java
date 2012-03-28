@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.web.io;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.AbstractResourceReader;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
@@ -12,7 +13,7 @@ import java.util.regex.Pattern;
  * Reads the TSV output from the web service query, each output row becomes a Java object.
  * See {@see uk.ac.ebi.interpro.scan.web.biomart.MatchDataRecord}
  *
- * @author  Matthew Fraser
+ * @author Matthew Fraser
  * @version $Id$
  */
 public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRecord> {
@@ -24,19 +25,17 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
 
     @Override
     protected MatchDataRecord createRecord(String line) {
-        if (line == null || line.isEmpty())   {
+        if (line == null || line.isEmpty()) {
             return null;
         }
         if (line.startsWith(HEADER_LINE)) {
             // Ignore first line of the output (column headers)
             return null;
-        }
-        else if (line.startsWith("PROTEIN_ACCESSION\t")) {
+        } else if (line.startsWith("PROTEIN_ACCESSION\t")) {
             // Looks like the column headers from the web service have changed to an un-expected format
             throw new IllegalStateException("Column heading line in un-expected format: " + line);
-        }
-        else if (line.startsWith(NO_RESULTS)) {
-             // No result to parse
+        } else if (line.startsWith(NO_RESULTS)) {
+            // No result to parse
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Do not parse line: " + line);
             }
@@ -79,8 +78,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
         score = null;
         try {
             score = scanner.nextDouble();
-        }
-        catch (InputMismatchException e) {
+        } catch (InputMismatchException e) {
             // Sometimes score is empty (e.g. PROSITE profiles)
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Signature " + methodAc + " has no match score, so ignoring");
@@ -93,14 +91,13 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
             entryShortName = scanner.next();
             entryName = scanner.next();
             entryType = scanner.next();
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             // Un-integerated signature, has no associated InterPro entry
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Signature " + methodAc + " for protein " + proteinAc + " is un-integrated");
             }
-            entryShortName = "Unintegrated";
-            entryName = "Unintegrated";
+            entryShortName = SimpleEntry.UNINTEGRATED;
+            entryName = SimpleEntry.UNINTEGRATED;
             entryType = null;
         }
 
