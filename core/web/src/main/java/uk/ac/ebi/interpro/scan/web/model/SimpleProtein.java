@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.web.model;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.model.EntryType;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.io.FamilyHierachyElementBuilder;
 
@@ -233,15 +232,14 @@ public final class SimpleProtein implements Serializable {
             }
             // Entry
             Entry entry = signature.getEntry();
+
+            SimpleEntry simpleEntry;
 //            if (e != null) {
-            if (entry == null && LOGGER.isDebugEnabled()) {
-                LOGGER.debug("For Signature " + signature.getAccession() + " the Entry is null.");
+            if (entry == null) {
+                simpleEntry = new SimpleEntry(SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, null, entryHierarchy);
+            } else {
+                simpleEntry = new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), entry.getType().getName(), entryHierarchy);
             }
-            EntryType entryType = entry.getType();
-            if (entryType == null && LOGGER.isDebugEnabled()) {
-                LOGGER.debug("For Signature " + signature.getAccession() + " the Entry is NOT null, however the EntryType IS null.  About to barf...");
-            }
-            SimpleEntry simpleEntry = new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), entryType.getName(), entryHierarchy);
             if (simpleProtein.getAllEntries().contains(simpleEntry)) {
                 // Entry already exists, so get it
                 simpleEntry = simpleProtein.getAllEntries().get(simpleProtein.getAllEntries().indexOf(simpleEntry));
