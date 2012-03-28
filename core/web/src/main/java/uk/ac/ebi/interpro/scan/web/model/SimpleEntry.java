@@ -27,6 +27,8 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
 
     private static final Object ehLock = new Object();
 
+    public static final String UNINTEGRATED = "Unintegrated";
+
     public SimpleEntry(String ac, String shortName, String name, String type, final EntryHierarchy entryHierarchy) {
         this.ac = ac;
         this.shortName = shortName;
