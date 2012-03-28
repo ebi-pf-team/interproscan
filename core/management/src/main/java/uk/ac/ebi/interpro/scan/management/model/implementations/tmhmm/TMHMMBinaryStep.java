@@ -70,15 +70,15 @@ public final class TMHMMBinaryStep extends RunBinaryStep {
         List<String> command = new ArrayList<String>();
         //Add command
         command.add(this.pathToTmhmmBinary);
+        // Add TMHMM model
+        command.add(this.pathToTmhmmModel);
+        // FASTA file
+        command.add(fastaFilePath);
         // Arguments
         command.addAll(this.getBinarySwitchesAsList());
         //Add background argument
         command.add("-background");
         command.add(this.binaryBackgroundSwitch);
-        // Add TMHMM model
-        command.add(this.pathToTmhmmModel);
-        // FASTA file
-        command.add(fastaFilePath);
         return command;
     }
 }
