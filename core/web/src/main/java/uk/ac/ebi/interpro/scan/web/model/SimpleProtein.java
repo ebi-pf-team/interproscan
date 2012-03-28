@@ -236,7 +236,7 @@ public final class SimpleProtein implements Serializable {
             SimpleEntry simpleEntry;
 //            if (e != null) {
             if (entry == null) {
-                simpleEntry = new SimpleEntry(SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, null, entryHierarchy);
+                simpleEntry = new SimpleEntry("", SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, "", entryHierarchy);
             } else {
                 simpleEntry = new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), entry.getType().getName(), entryHierarchy);
             }
