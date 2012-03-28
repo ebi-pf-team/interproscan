@@ -71,6 +71,10 @@
     <!--<level value="debug"/>-->
     <!--</logger>-->
 
+    <logger name="uk.ac.ebi.interpro.scan.web.model.SimpleProtein">
+        <level value="debug"/>
+    </logger>
+
     <!-- Root Logger -->
     <root>
         <priority value="warn"/>
