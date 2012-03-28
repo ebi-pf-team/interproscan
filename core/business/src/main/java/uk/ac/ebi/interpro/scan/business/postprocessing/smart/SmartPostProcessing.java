@@ -146,13 +146,12 @@ public class SmartPostProcessing implements Serializable {
 
         for (SmartRawMatch smartRawMatch : matchRawProtein.getMatches()) {
             String methodAc = smartRawMatch.getModelId();
-            // TODO: Score and seqscore wrong way round?
-            Double score = smartRawMatch.getScore();
-            Double seqScore = smartRawMatch.getLocationScore();
+            Double score = smartRawMatch.getLocationScore();
+            Double seqScore = smartRawMatch.getScore();
             SmartThresholdFileParser.SmartThreshold smartThreshold = smartThresholdMap.get(methodAc);
             // Create the eValue for the match, according to Smart THRESHOLDS file
             double wholeSeqEVal = hmmerCalcEValue(seqScore.floatValue(), smartThreshold.getMuValue(), smartThreshold.getLambdaValue(), smartThreshold.getDbSize());
-            double singleHitEVal =hmmerCalcEValue(score.floatValue(), smartThreshold.getMuValue(), smartThreshold.getLambdaValue(), smartThreshold.getDbSize());
+            double singleHitEVal = hmmerCalcEValue(score.floatValue(), smartThreshold.getMuValue(), smartThreshold.getLambdaValue(), smartThreshold.getDbSize());
 
             // FIX: Moved from module level
             double domainCutoff = Double.NaN;
