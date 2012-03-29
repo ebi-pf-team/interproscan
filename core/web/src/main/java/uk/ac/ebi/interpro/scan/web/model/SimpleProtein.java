@@ -226,14 +226,10 @@ public final class SimpleProtein implements Serializable {
             Signature signature = match.getSignature();
             String signatureAc = signature.getAccession();
             String signatureName = signature.getName();
-            if (signatureName == null || signatureName.length() == 0){
+            if (signatureName == null || signatureName.length() == 0) {
                 signatureName = signatureAc;
             }
-            SimpleSignature ss = new SimpleSignature(signatureAc, signatureName, signature.getSignatureLibraryRelease().getLibrary().getName());
-            for (Object o : match.getLocations()) {
-                Location l = (Location) o;
-                ss.getLocations().add(new SimpleLocation(l.getStart(), l.getEnd()));
-            }
+
             // Entry
             Entry entry = signature.getEntry();
 
@@ -244,6 +240,16 @@ public final class SimpleProtein implements Serializable {
             } else {
                 simpleEntry = new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), entry.getType().getName(), entryHierarchy);
             }
+            // Add the locations to the Entry from the Signatures
+            SimpleSignature ss = new SimpleSignature(signatureAc, signatureName, signature.getSignatureLibraryRelease().getLibrary().getName());
+            for (Object o : match.getLocations()) {
+                Location location = (Location) o;
+                SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
+                // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
+                ss.getLocations().add(simpleLocation);
+                simpleEntry.getLocations().add(simpleLocation);
+            }
+
             if (simpleProtein.getAllEntries().contains(simpleEntry)) {
                 // Entry already exists, so get it
                 simpleEntry = simpleProtein.getAllEntries().get(simpleProtein.getAllEntries().indexOf(simpleEntry));
@@ -251,30 +257,8 @@ public final class SimpleProtein implements Serializable {
                 // Create new entry
                 simpleProtein.getAllEntries().add(simpleEntry);
             }
-            //                if (sp.getEntriesMap().containsKey(entryAc)) {
-            //                    // Entry already exists
-            //                    se = sp.getEntriesMap().get(entryAc);
-            //                }
-            //                else {
-            //                    // Create new entry
-            //                    Entry e = s.getEntry();
-            //                    se = new SimpleEntry(entryAc, e.getDescription(), e.getType().getName());
-            //                    // Add to protein
-            //                    sp.getEntriesMap().put(entryAc, se);
-            //                }
-            // Add signature to entry
+
             simpleEntry.getSignaturesMap().put(signatureAc, ss);
-//            }
-        }
-        for (SimpleEntry se : simpleProtein.entries) {
-            // TODO: Calculate super-match start and end locations from signature matches
-            if (se.getAc().equals("IPR012340")) {
-                se.getLocations().add(new SimpleLocation(1, 123));
-            } else {
-                se.getLocations().add(new SimpleLocation(10, 30));
-                se.getLocations().add(new SimpleLocation(35, 60));
-                se.getLocations().add(new SimpleLocation(80, 110));
-            }
         }
         return simpleProtein;
     }
