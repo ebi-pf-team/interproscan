@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import org.apache.log4j.Logger;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -11,6 +13,8 @@ import java.util.*;
  *         building this structure.
  */
 public class CondensedView implements Serializable {
+
+    private static final Logger LOG = Logger.getLogger(CondensedView.class.getName());
 
     private final SimpleProtein protein;
 

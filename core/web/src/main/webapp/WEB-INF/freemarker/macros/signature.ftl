@@ -56,7 +56,7 @@
         ${signature.dataSource?lower_case?replace(" ","-")?replace("_","-")}
         </#assign>
             <#assign dbClass=dbClass?trim>
-            <@matchLocationMacro.matchLocation id=locationId protein=protein signature=signature location=location colourClass=dbClass+" "+colourClass/>
+            <@matchLocationMacro.matchLocation smid=locationId protein=protein signature=signature location=location colourClass=dbClass+" "+colourClass/>
         </#list>
     </div>
 
