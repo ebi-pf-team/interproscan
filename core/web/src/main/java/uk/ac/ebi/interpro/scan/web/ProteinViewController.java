@@ -1,18 +1,17 @@
 package uk.ac.ebi.interpro.scan.web;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
@@ -116,7 +115,24 @@ public class ProteinViewController {
     public ModelAndView protein(final @RequestParam UrlResource url) {
         Protein protein = deserialise(url);
         if (protein != null) {
-            return new ModelAndView("protein", buildModelMap(SimpleProtein.valueOf(protein, entryHierarchy)));
+            // Handle the possibilities that the Protein object has no Xref, one xref or multiple xrefs.
+            ProteinXref xref;
+            if (protein.getCrossReferences().size() == 0) {
+                // No Xref - create Xref "Unknown"
+                xref = new ProteinXref("Unknown");
+            } else if (protein.getCrossReferences().size() > 1) {
+                // Multiple Xrefs - concatenate them together
+                StringBuilder combinedAcs = new StringBuilder();
+                for (ProteinXref x : protein.getCrossReferences()) {
+                    if (combinedAcs.length() > 0) combinedAcs.append(", ");
+                    combinedAcs.append(x.getIdentifier());
+                }
+                xref = new ProteinXref(combinedAcs.toString());
+            } else {
+                // One xref - use it directly.
+                xref = protein.getCrossReferences().iterator().next();
+            }
+            return new ModelAndView("protein", buildModelMap(SimpleProtein.valueOf(protein, xref, entryHierarchy)));
         }
         return new ModelAndView("render-warning");
     }

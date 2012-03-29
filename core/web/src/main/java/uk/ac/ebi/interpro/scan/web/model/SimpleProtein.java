@@ -189,62 +189,48 @@ public final class SimpleProtein implements Serializable {
         return predictions;
     }
 
+    private static final String UNKNOWN = "Unknown";
+
     /**
      * Returns a {@link SimpleProtein} from a {@link uk.ac.ebi.interpro.scan.model.Protein}
      *
      * @param protein        Protein
+     * @param xref           The ProteinXref currently being considered
      * @param entryHierarchy Entry hierarchy
      * @return A {@link SimpleProtein} from a {@link uk.ac.ebi.interpro.scan.model.Protein}
      */
-    public static SimpleProtein valueOf(Protein protein, EntryHierarchy entryHierarchy) {
+    public static SimpleProtein valueOf(Protein protein, ProteinXref xref, EntryHierarchy entryHierarchy) {
         if (entryHierarchy == null) {
             throw new IllegalArgumentException("SimpleProtein.valueOf method: the EntryHierarchy parameter must not be null.");
         }
-        // Get protein info
-        String proteinAc = "Unknown";
-        String proteinName = "Unknown";
-        String proteinDesc = "Unknown";
-        //TODO: Check if it is possible to grab these information from somewhere (especially if we run I5 standalone)
-        String crc64 = "Unknown";
-        String taxScienceName = "Unknown";
-        String taxFullName = "Unknown";
-        if (!protein.getCrossReferences().isEmpty()) {
-            ProteinXref xref = protein.getCrossReferences().iterator().next();
-            proteinAc = xref.getIdentifier();
-            if (xref.getName() != null) {
-                proteinName = xref.getName();
-            }
-            if (xref.getDescription() != null) {
-                proteinDesc = xref.getDescription();
-            }
-        }
-        SimpleProtein simpleProtein = new SimpleProtein(proteinAc, proteinName, proteinDesc, protein.getSequenceLength(),
+        String crc64 = UNKNOWN;
+        String taxScienceName = UNKNOWN;
+        String taxFullName = UNKNOWN;
+        final String proteinAc = xref.getIdentifier();
+        final String proteinName = (xref.getName() == null) ? UNKNOWN : xref.getName();
+        final String proteinDesc = (xref.getDescription() == null) ? UNKNOWN : xref.getDescription();
+        final SimpleProtein simpleProtein = new SimpleProtein(proteinAc, proteinName, proteinDesc, protein.getSequenceLength(),
                 protein.getMd5(), crc64, 0, taxScienceName, taxFullName);
         // Get entries and corresponding signatures
-        for (Match match : protein.getMatches()) {
+        for (final Match match : protein.getMatches()) {
             // Signature
-            Signature signature = match.getSignature();
-            String signatureAc = signature.getAccession();
-            String signatureName = signature.getName();
-            if (signatureName == null || signatureName.length() == 0) {
-                signatureName = signatureAc;
-            }
+            final Signature signature = match.getSignature();
+            final String signatureAc = signature.getAccession();
+            final String signatureName = (signature.getName() == null || signature.getName().length() == 0)
+                    ? signatureAc
+                    : signature.getName();
 
             // Entry
-            Entry entry = signature.getEntry();
+            final Entry entry = signature.getEntry();
 
-            SimpleEntry simpleEntry;
-//            if (e != null) {
-            if (entry == null) {
-                simpleEntry = new SimpleEntry("", SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, "", entryHierarchy);
-            } else {
-                simpleEntry = new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), entry.getType().getName(), entryHierarchy);
-            }
+            SimpleEntry simpleEntry = (entry == null)
+                    ? new SimpleEntry("", SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, "", entryHierarchy)
+                    : new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), entry.getType().getName(), entryHierarchy);
             // Add the locations to the Entry from the Signatures
-            SimpleSignature ss = new SimpleSignature(signatureAc, signatureName, signature.getSignatureLibraryRelease().getLibrary().getName());
+            final SimpleSignature ss = new SimpleSignature(signatureAc, signatureName, signature.getSignatureLibraryRelease().getLibrary().getName());
             for (Object o : match.getLocations()) {
-                Location location = (Location) o;
-                SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
+                final Location location = (Location) o;
+                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
                 // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
                 ss.getLocations().add(simpleLocation);
                 simpleEntry.getLocations().add(simpleLocation);

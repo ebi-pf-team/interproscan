@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
@@ -90,7 +91,7 @@ public class ProteinMatchesHTMLResultWriter {
      * @return the number of rows printed (i.e. the number of Locations on Matches).
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
-    public int write(Protein protein) throws IOException {
+    public int write(final Protein protein) throws IOException {
         if (entryHierarchy == null) {
             if (appContext != null && entryHierarchyBeanId != null) {
                 this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
@@ -101,18 +102,16 @@ public class ProteinMatchesHTMLResultWriter {
             }
         }
         if (entryHierarchy != null) {
-            if (protein.getMatches().size() > 0) {
-                SimpleProtein simpleProtein = SimpleProtein.valueOf(protein, entryHierarchy);
+            for (ProteinXref xref : protein.getCrossReferences()) {
+                final SimpleProtein simpleProtein = SimpleProtein.valueOf(protein, xref, entryHierarchy);
                 if (simpleProtein != null) {
-                    //Get protein accession which is used as a file name
-                    String accession = simpleProtein.getAc();
                     //Build model for FreeMarker
-                    SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
+                    final SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
                     //Render template and write result to a file
                     Writer writer = null;
                     try {
-                        Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
-                        File newResultFile = new File(tempDirectory + accession + ".html");
+                        final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
+                        final File newResultFile = new File(tempDirectory + xref.getIdentifier() + ".html");
                         resultFiles.add(newResultFile);
                         writer = new PrintWriter(new FileWriter(newResultFile));
                         temp.process(model, writer);
