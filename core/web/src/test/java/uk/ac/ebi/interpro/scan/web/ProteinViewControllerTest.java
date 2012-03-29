@@ -19,7 +19,7 @@ import static junit.framework.Assert.assertEquals;
 /**
  * Tests for {@link ProteinViewController}
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,7 +33,7 @@ public class ProteinViewControllerTest {
     private CreateSimpleProteinFromMatchData matchData;
 
     @Test
-    public void testProtein()    {
+    public void testProtein() {
         ProteinViewController c = new ProteinViewController();
         c.setEntryHierarchy(entryHierarchy);
         c.setMatchData(matchData);
@@ -41,8 +41,9 @@ public class ProteinViewControllerTest {
     }
 
     @Test
-    public void testSimpleProteinValueOf()    {
-        SimpleProtein sp = SimpleProtein.valueOf(sampleProtein(), entryHierarchy);
+    public void testSimpleProteinValueOf() {
+        final Protein protein = sampleProtein();
+        SimpleProtein sp = SimpleProtein.valueOf(protein, protein.getCrossReferences().iterator().next(), entryHierarchy);
         assertEquals("A0A314", sp.getAc());
     }
 

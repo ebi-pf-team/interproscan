@@ -1,6 +1,9 @@
 package uk.ac.ebi.interpro.scan.web.freemarker;
 
-import freemarker.template.*;
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.SimpleHash;
+import freemarker.template.Template;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -82,6 +85,6 @@ public class FreemarkerTest {
                                                             EntryHierarchy entryHierarchy) throws IOException {
         Resource resource = new ClassPathResource("protein-freemarker.xml");
         Protein protein = (Protein) marshaller.unmarshal(new StreamSource(resource.getInputStream()));
-        return SimpleProtein.valueOf(protein, entryHierarchy);
+        return SimpleProtein.valueOf(protein, protein.getCrossReferences().iterator().next(), entryHierarchy);
     }
 }
