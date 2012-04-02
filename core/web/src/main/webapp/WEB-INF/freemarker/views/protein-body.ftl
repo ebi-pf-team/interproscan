@@ -1,4 +1,5 @@
 <#--Returns main body of protein page for inclusion in DBML-->
+<#-- remove the option for export
 <div class="r_option">
     <a href="ISpy?ac={spy:proteinAc}&amp;mode=fasta" title="Download protein sequences in FASTA format" class="export"
        target="_blank">
@@ -12,7 +13,7 @@
         Use a GET so the user can bookmark/link to the results page if they desire.
         If you change the query parameter text in the future then please ensure that the maximum
         URL length does not go beyond 2,083 characters (won't work in IE). We're fine at the moment!
-        -->
+        &ndash;&gt;
         <input type="hidden" id="query" name="query" value="{pp:get_supermatch_BioMartQuery}"/>
     </form>
     <a href="javascript: void(0);" onclick="document.bioMartForm.submit();return false;"
@@ -20,7 +21,7 @@
        class="export">
         <div class="exp_tsv"></div>
         Export list TSV</a>
-</div>
+</div>-->
 
 <div class="tab">
     <div class="Protein_tab">Protein</div>
@@ -47,12 +48,12 @@
 
         <div class="prot_gal_bloc">
             <div class="prot_gal_col"><h1>Length</h1></div>
-            <div class="prot_gal_desc">${protein.length} AA
-            </div>
+            <div class="prot_gal_desc">${protein.length} AA</div>
+        </div>
 
             <div class="prot_gal_source">Source: <span>UniProtKB/Swiss-Prot</span></div>
             <hr/>
-        </div>
+    </div>
         <div class="prot_tree">
         <#if (protein.familyEntries?has_content)>
             <div class="prot_tree_desc">
@@ -67,7 +68,7 @@
 
     <#include "protein-features.ftl"/>
         <div class="prot_go">
-            <h1>GO Term Prediction</h1>
+            <h1>GO Term prediction</h1>
 
             <div class="go_terms">
 
@@ -113,4 +114,4 @@
                 </div>
             </div>
         </div>
-    </div>
+</div>
