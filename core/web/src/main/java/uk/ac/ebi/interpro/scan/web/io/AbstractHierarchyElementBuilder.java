@@ -48,7 +48,7 @@ public abstract class AbstractHierarchyElementBuilder {
         sb.append(entry.getAc());
         sb.append("\" class=\"neutral\">");
         sb.append(entry.getName());
-        sb.append("<span>(");
+        sb.append("<span> (");
         sb.append(entry.getAc());
         sb.append(")</span></a>");
     }
