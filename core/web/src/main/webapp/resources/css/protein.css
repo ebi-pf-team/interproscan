@@ -395,7 +395,7 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
 
 .prot_tree .prot_tree_desc a.neutral:link {
     text-decoration: none;
-    color: #393939;
+    color: #0072FE;
 }
 
 .prot_tree .prot_tree_desc a.neutral:hover, .prot_tree .prot_tree_desc a.neutral:active, .prot_tree .prot_tree_desc .a.neutral:focus {
@@ -403,8 +403,11 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
 }
 
 .prot_tree .prot_tree_desc a.neutral span {
-    color: #0072FE;
+    color: #393939;
 }
+
+.prot_tree .prot_tree_desc ul { margin:0;padding:0;}
+.prot_tree .prot_tree_desc ul li { margin:0;}
 
 .prot_tree .prot_tree_desc div {
     margin: 0 0 3px;
@@ -747,9 +750,7 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
 .ui-tooltip-light .ui-tooltip-titlebar {border-radius: 6px 6px 0 0;-moz-border-radius: 6px 6px 0 0;-webkit-border-radius: 6px 6px 0 0;}
 .ui-tooltip-light .ui-tooltip-content {border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;}
 
-.ui-tooltip-content {
-    padding: 12px 6px;
-}
+.ui-tooltip-content {border:1px solid red; padding: 0 6px 12px 6px;}
 
 .ui-tooltip-shadow {
     webkit-box-shadow: none;
@@ -779,25 +780,8 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
     font-weight: normal;
 }
 
-.ui-tooltip-content ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.ui-tooltip-content ul li {
-    list-style-type: none;
-    padding-left: 26px;
-    background: url(../images/ico_tree_d.png) no-repeat 0 0;
-}
-
-.ui-tooltip-content ul li ul li {
-    margin-left: 14px;
-    list-style-type: none;
-    padding-left: 26px;
-    background: url(../images/ico_tree_d.png) no-repeat 0 0;
-    border: 0px solid red;
-}
+.ui-tooltip-content ul {margin: 0; padding: 0; list-style: none;}
+.ui-tooltip-content ul li {margin-top: 3px; list-style-type: none; padding-left: 26px; background: url(../images/ico_tree_d.png) no-repeat 0 0;}
 
 .ui-tooltip .popup_topl {
     padding-bottom: 4px;
