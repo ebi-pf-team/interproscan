@@ -40,15 +40,14 @@ public class CreateSimpleProteinFromMatchDataTest {
 
     @Test
     public void queryByAccessionTest() throws IOException {
-        // TODO: This is really an integration test (relies on web service), so should not be part of usual unit tests - use main() method instead?
-
-        // TODO: To fix this - the rest service can be simulated using the file: protocol, using local files.  Restructure test data
-        // TODO: in to directories proteins/ and protein-structures/ and rename files
+        // TODO: Restructure test data in to directories proteins/ and protein-structures/ and rename files
         CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchDataImpl(matchAnalyser,
                 structuralMatchAnalyser,
                 matchDataWebserviceUrl,
                 structMatchDataWebserviceUrl);
+
         SimpleProtein protein = data.queryByAccession("P38398");
+
         assertNotNull(protein);
         assertEquals("P38398", protein.getAc());
         assertEquals("BRCA1_HUMAN", protein.getId());

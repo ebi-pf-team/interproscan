@@ -93,17 +93,30 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
     }
 
     private String createMatchesUrl(String proteinAc, boolean isProteinAc) {
+        if (matchDataWebserviceUrl.startsWith("classpath:")) {
+            // If using a manually supplied file on the classpath then just use that location (good for testing)
+            return matchDataWebserviceUrl;
+        }
+        // User has just supplied the protein accession, so build up the REST URL from that
         return buildUrl(proteinAc, isProteinAc, true);
     }
 
     private String createStructuralMatchesUrl(String proteinAc, boolean isProteinAc) {
+        if (structMatchDataWebserviceUrl.startsWith("classpath:")) {
+            // If using a manually supplied file on the classpath then just use that location (good for testing)
+            return structMatchDataWebserviceUrl;
+        }
+        // User has just supplied the protein accession, so build up the REST URL from that
         return buildUrl(proteinAc, isProteinAc, false);
     }
 
     private String buildUrl(String proteinAc, boolean isProteinAc, boolean isMatchUrl) {
-        String prefix = structMatchDataWebserviceUrl;
+        String prefix;
         if (isMatchUrl) {
             prefix = matchDataWebserviceUrl;
+        }
+        else {
+            prefix = structMatchDataWebserviceUrl;
         }
         String extension = EXTENSION;
         if (useLocalData()) {
