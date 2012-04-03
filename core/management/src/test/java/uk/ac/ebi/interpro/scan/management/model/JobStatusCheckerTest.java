@@ -17,10 +17,10 @@ import static org.junit.Assert.*;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class JobsTest {
+public class JobStatusCheckerTest {
 
     @Test
-    public void testCheckMandatoryParams() {
+    public void testGetJobStatus() {
         Job job1 = new Job();
 
         Map<String, String> mandatoryParams = new HashMap<String, String>();
@@ -36,15 +36,15 @@ public class JobsTest {
         job3.setMandatoryParameters(mandatoryParams);
 
         Jobs jobs = new Jobs();
-        assertTrue("The check for job1 should return true!", jobs.checkMandatoryParams(job1));
-        assertTrue("The check for job2 should return true!", jobs.checkMandatoryParams(job2));
-        assertFalse("The check for job3 should return false!", jobs.checkMandatoryParams(job3));
+        assertEquals("Job status of job 1 should be ACTIVE!", JobStatusChecker.getJobStatus(job1).getJobStatus(), JobStatusWrapper.JobStatus.ACTIVE);
+        assertEquals("Job status of job 2 should be ACTIVE!", JobStatusChecker.getJobStatus(job2).getJobStatus(), JobStatusWrapper.JobStatus.ACTIVE);
+        assertEquals("Job status of job 3 should be DEACTIVATED!", JobStatusChecker.getJobStatus(job3).getJobStatus(), JobStatusWrapper.JobStatus.DEACTIVATED);
 
         List<Job> jobsList = new ArrayList<Job>();
         jobsList.add(job1);
         jobsList.add(job2);
         jobsList.add(job3);
-        jobs = new Jobs(jobsList);
+        jobs = new Jobs(jobsList, true);
         assertNotNull(jobs.getJobList());
         assertEquals(2, jobs.getJobList().size());
         assertTrue("Job1 should exist in the job list!", jobs.getJobList().contains(job1));
