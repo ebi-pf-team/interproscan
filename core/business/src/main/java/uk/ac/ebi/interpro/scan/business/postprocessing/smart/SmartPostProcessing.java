@@ -143,8 +143,15 @@ public class SmartPostProcessing implements Serializable {
 
         Map<String, Integer> repeatsCntHM = new HashMap<String, Integer>();
         Map<String, List<SmartRawMatch>> siblingsHits = new HashMap<String, List<SmartRawMatch>>();
+        List<SmartRawMatch> potentialRepeatMatches = new ArrayList<SmartRawMatch>();
+        Map<Integer, SmartRawMatch> serThrKinaseMatches = null;
+        Map<Integer, SmartRawMatch> tyrKinaseMatches = null;
+        Map<String, Integer> minSeqRepeats = new HashMap<String, Integer>();
+        List<SmartRawMatch> rawMatches = new ArrayList<SmartRawMatch>(matchRawProtein.getMatches());
+        Collections.sort(rawMatches);
 
-        for (SmartRawMatch smartRawMatch : matchRawProtein.getMatches()) {
+
+        for (SmartRawMatch smartRawMatch : rawMatches) {
             String methodAc = smartRawMatch.getModelId();
             Double score = smartRawMatch.getLocationScore();
             Double seqScore = smartRawMatch.getScore();
@@ -158,9 +165,6 @@ public class SmartPostProcessing implements Serializable {
             double repeatsCutoff = Double.MAX_VALUE;
             Double repeatsCutoffDomain = null;
             String minRepeatsInSeqS = null;
-            List<SmartRawMatch> potentialRepeatMatches = new ArrayList<SmartRawMatch>();
-            Map<Integer, SmartRawMatch> serThrKinaseMatches = null;
-            Map<Integer, SmartRawMatch> tyrKinaseMatches = null;
 
             domainCutoff = smartThreshold.getCutoff();
             repeatsCutoffDomain = smartThreshold.getRepeat_cut();
@@ -180,8 +184,13 @@ public class SmartPostProcessing implements Serializable {
                 // The repeat hit either doesn't have repeatsCutoffD set, or satisfies it;
                 // now, if enough repeats are present (repeatsCnt >= minRepeatsInSeq), this hit will be accepted =>
                 // store it in potentialRepeatMatches for now
-                if (potentialRepeatMatches == null)
+                if (potentialRepeatMatches == null)   {
                     potentialRepeatMatches = new ArrayList<SmartRawMatch>();
+                }
+                //store the minimum number of repeats needed for this method
+                if (!minSeqRepeats.containsKey(methodAc)) {
+                    minSeqRepeats.put(methodAc, Integer.parseInt(minRepeatsInSeqS));
+                }
 
                 int repeatsCount = 1;
                 if (repeatsCntHM.containsKey(methodAc)) {
@@ -263,6 +272,10 @@ public class SmartPostProcessing implements Serializable {
 
 
         }
+        addKinaseMatches(serThrKinaseMatches, tyrKinaseMatches, filteredMatches);
+        persistWinningSiblingsHits(siblingsHits, filteredMatches);
+        persistRepeatMatches(repeatsCntHM, minSeqRepeats, potentialRepeatMatches, filteredMatches);
+
     }
 
     private void checkOverlapsWithSiblings(SmartRawMatch match,
@@ -288,7 +301,7 @@ public class SmartPostProcessing implements Serializable {
 
         if (siblingsMatchesForFam != null) {
             for (SmartRawMatch smartRawMatch : siblingsMatchesForFam) {
-                while (!matchRejectedForSplit) {
+
                     // First find out which hits starts earlier
                     int eE, lS, lE; // earlier hit start and end/ later hit start and end
                     if (match.getLocationStart() <= smartRawMatch.getLocationStart()) {
@@ -343,7 +356,8 @@ public class SmartPostProcessing implements Serializable {
                                     }
 
                                     siblingsToBeRemovedForMatch = null;
-                                    matchRejectedForSplit = true; // this will break out of the main overlaps processing loop
+                                    // this will break out of the main overlaps processing loop
+                                    break;
                                 } else {
                                     // The current hit is better - take it instead of bestHitSoFarForThisSeqRange
                                     if (LOGGER.isDebugEnabled()) {
@@ -381,40 +395,41 @@ public class SmartPostProcessing implements Serializable {
                             throw new Exception("handled");
                         }
                     } // if (overlapLen > SIBLINGS_OVERLAP_THRESHOLD) { - end
-                } // while (iter.hasNext() && ret) { - end
-            }// if (siblingsMatchesForFam != null) { - end
 
-            if (!overlaps) {
-                // Add match to siblingsHits as it doesn't overlap with any hits in that family encountered so far
-                List<SmartRawMatch> al = (siblingsHits.keySet().contains(family) ? siblingsHits.get(family) : new ArrayList<SmartRawMatch>());
-                al.add(match);
-                siblingsHits.put(family, al);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Adding best hit so far to siblingHits (family: " + family + ") as no others detected so far...");
-                }
-            } else if (siblingsToBeRemovedForMatch == null) {
-                //  SMART_MERGE_RESOLUTION_TYPE or (SMART_SPLIT_RESOLUTION_TYPE and match was rejected by one of the existsing hits)
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Rejecting hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(match.getModelId()).getResolutionType() + ") because there had been overlaps with already existing better hits");
-                }
-            } else if (siblingsToBeRemovedForMatch != null) {
-                // SMART_SPLIT_RESOLUTION_TYPE - match won against all the overlapping hits in siblingsToBeRemovedForMatch
-                // First remove all the current hits which overlap with the better hit in match
-                for (SmartRawMatch s : siblingsToBeRemovedForMatch) {
-                    siblingsMatchesForFam.remove(s);
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("SPLIT: Rejecting hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(s.getModelId()).getResolutionType() + ") because there are overlaps with the new (better) hit");
-                    }
-                }
-                // Now add match to siblingsMatchesForFam
-                siblingsMatchesForFam.add(match);
-                siblingsHits.put(family, siblingsMatchesForFam);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("SPLIT: Adding hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(match.getModelId()).getResolutionType() + ") because there had been overlaps with already existing (worse) hits");
-                }
+            } //for (SmartRawMatch smartRawMatch : siblingsMatchesForFam) { - end
+        }// if (siblingsMatchesForFam != null) { - end
 
-            } //  if (!overlaps) { - end
-        } }// checkOverlapsWithSiblings() - end
+        if (!overlaps) {
+            // Add match to siblingsHits as it doesn't overlap with any hits in that family encountered so far
+            List<SmartRawMatch> al = (siblingsHits.keySet().contains(family) ? siblingsHits.get(family) : new ArrayList<SmartRawMatch>());
+            al.add(match);
+            siblingsHits.put(family, al);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Adding best hit so far to siblingHits (family: " + family + ") as no others detected so far...");
+            }
+        } else if (siblingsToBeRemovedForMatch == null) {
+            //  SMART_MERGE_RESOLUTION_TYPE or (SMART_SPLIT_RESOLUTION_TYPE and match was rejected by one of the existsing hits)
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Rejecting hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(match.getModelId()).getResolutionType() + ") because there had been overlaps with already existing better hits");
+            }
+        } else if (siblingsToBeRemovedForMatch != null) {
+            // SMART_SPLIT_RESOLUTION_TYPE - match won against all the overlapping hits in siblingsToBeRemovedForMatch
+            // First remove all the current hits which overlap with the better hit in match
+            for (SmartRawMatch s : siblingsToBeRemovedForMatch) {
+                siblingsMatchesForFam.remove(s);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("SPLIT: Rejecting hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(s.getModelId()).getResolutionType() + ") because there are overlaps with the new (better) hit");
+                }
+            }
+            // Now add match to siblingsMatchesForFam
+            siblingsMatchesForFam.add(match);
+            siblingsHits.put(family, siblingsMatchesForFam);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("SPLIT: Adding hit (family: " + family + "; ovlResType = " + smartOverlapMap.get(match.getModelId()).getResolutionType() + ") because there had been overlaps with already existing (worse) hits");
+            }
+
+        } //  if (!overlaps) { - end
+    }// checkOverlapsWithSiblings() - end
 
     private int getRequiredPrecForComparisonTo(double val) {
         int ret;
@@ -583,4 +598,116 @@ public class SmartPostProcessing implements Serializable {
             }
         }
     }
+
+
+    /** Add the processed kinase matches to filtered matches
+     *
+     * @param serThrKinaseMatches
+     * @param tyrKinaseMatches
+     * @param filteredMatches
+     */
+    private static void addKinaseMatches(Map<Integer, SmartRawMatch> serThrKinaseMatches, Map<Integer, SmartRawMatch> tyrKinaseMatches,
+                                         Map<String, RawProtein<SmartRawMatch>> filteredMatches) {
+
+        Iterator<Integer> iter = null;
+        if (serThrKinaseMatches != null && serThrKinaseMatches.keySet() != null) {
+            // But first persist any matches which are left-over after the kinase hack
+            iter = serThrKinaseMatches.keySet().iterator();
+            while (iter.hasNext()) {
+                SmartRawMatch smartRawMatch = serThrKinaseMatches.get(iter.next());
+                String id = smartRawMatch.getSequenceIdentifier();
+                RawProtein<SmartRawMatch> p;
+                if (filteredMatches.containsKey(id)) {
+                    p = filteredMatches.get(id);
+                } else {
+                    p = new RawProtein<SmartRawMatch>(id);
+                    filteredMatches.put(id, p);
+                }
+                p.addMatch(smartRawMatch);
+            }
+        } // if (serThrKinaseMatches != null) {
+
+        if (tyrKinaseMatches != null && tyrKinaseMatches.keySet() != null) {
+            iter = tyrKinaseMatches.keySet().iterator();
+            while (iter.hasNext()) {
+                SmartRawMatch smartRawMatch = tyrKinaseMatches.get(iter.next());
+                String id = smartRawMatch.getSequenceIdentifier();
+                RawProtein<SmartRawMatch> p;
+                if (filteredMatches.containsKey(id)) {
+                    p = filteredMatches.get(id);
+                } else {
+                    p = new RawProtein<SmartRawMatch>(id);
+                    filteredMatches.put(id, p);
+                }
+                p.addMatch(smartRawMatch);
+            }
+        }
+    }
+
+    private static void persistWinningSiblingsHits(Map<String, List<SmartRawMatch>> siblingsHits, Map<String, RawProtein<SmartRawMatch>> filteredMatches)              {
+
+
+        for (String curFam: siblingsHits.keySet())   {
+
+            List<SmartRawMatch> siblingsMatchesForFam = siblingsHits.get(curFam);
+            if (siblingsMatchesForFam != null) {
+
+                for (SmartRawMatch smartRawMatch : siblingsMatchesForFam)  {
+                    String id = smartRawMatch.getSequenceIdentifier();
+                    RawProtein<SmartRawMatch> p;
+                    if (filteredMatches.containsKey(id)) {
+                        p = filteredMatches.get(id);
+                    } else {
+                        p = new RawProtein<SmartRawMatch>(id);
+                        filteredMatches.put(id, p);
+                    }
+                    p.addMatch(smartRawMatch);
+
+
+                }
+            }
+        }
+    }
+
+
+    private static void persistRepeatMatches(Map<String, Integer> repeatsCntHM,
+                                             Map<String, Integer> minSeqRepeats,
+                                             List<SmartRawMatch> potentialRepeatMatches,
+                                             Map<String, RawProtein<SmartRawMatch>> filteredMatches)
+           {
+        int minRepeatsInSeq;
+        int repeatsCnt;
+
+        if (potentialRepeatMatches != null) {
+
+            for (SmartRawMatch smartRawMatch : potentialRepeatMatches) {
+
+                String methodAc = smartRawMatch.getModelId();
+                /**  Give it true status regardless of the individual repeats eValues; until we hear from Smart otherwise,
+                 * the current thinking is that if there are enough repeats, we should accept them all if the eValue
+                 * derived from the cumulative sequence score is less than the domain cutoff in the THRESHOLDS file.
+                 * However, in all cases of repeats I observed, the eValue derived from the sequence score is much, much
+                 * smaller than the (usually lenient in the case of repeat methods) domain cutoff.
+                 * Hence in here we don't even bother to check that condition.
+                 */
+                minRepeatsInSeq = minSeqRepeats.get(methodAc);
+                repeatsCnt = repeatsCntHM.get(methodAc);
+
+                if (repeatsCnt > 0 && repeatsCnt >= minRepeatsInSeq) {
+                    String id = smartRawMatch.getSequenceIdentifier();
+                    RawProtein<SmartRawMatch> p;
+                    if (filteredMatches.containsKey(id)) {
+                        p = filteredMatches.get(id);
+                    } else {
+                        p = new RawProtein<SmartRawMatch>(id);
+                        filteredMatches.put(id, p);
+                    }
+                    p.addMatch(smartRawMatch);
+                }
+            }
+
+        }
+    } //persistRepeatMatches() - end
+
+
 }
