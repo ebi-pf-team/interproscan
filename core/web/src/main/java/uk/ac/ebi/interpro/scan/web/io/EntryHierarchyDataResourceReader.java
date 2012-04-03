@@ -119,7 +119,9 @@ public class EntryHierarchyDataResourceReader {
                         LOGGER.warn("Ignoring line in unexpected format: " + line);
                     }
                 } else {
-                    LOGGER.warn("Ignoring line in unexpected format: " + line);
+                    if (!line.isEmpty()) {
+                        LOGGER.warn("Ignoring line in unexpected format: " + line);
+                    }
                 }
             }
             // End of the text file, don't forget to add the final hierarchy!
