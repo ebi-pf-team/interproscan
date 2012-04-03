@@ -9,8 +9,8 @@
 
 <div id="${prefix}-popup-${smid}" style="display: none;">
     <div class="popup_topl"><span class="${colourClass} caption_puce"></span>${location.start} - ${location.end}</div>
-    <div class="popup_botl"><acronym
-            title="${signature.dataSource.description}">${signature.dataSource.sourceName}</acronym><br/>
+    <div class="popup_botl"><abbr
+            title="${signature.dataSource.description}">${signature.dataSource.sourceName}</abbr><br/>
         <a href='${signature.dataSource.linkUrl?replace("$0", signature.ac)}' class="ext">${signature.ac} </a>
         <span>(${signature.name})</span> <br/>
 
