@@ -393,7 +393,7 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
     font-size: 120%;
 }
 
-.prot_tree .prot_tree_desc a.neutral:link {
+.prot_tree .prot_tree_desc a.neutral {
     text-decoration: none;
     color: #0072FE;
 }
@@ -813,6 +813,4 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
     border: 0px solid red;
 }
 
-acronym {
-    cursor: help;
-}
+abbr {border-bottom: 1px dotted grey;cursor: help;}
