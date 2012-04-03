@@ -58,8 +58,8 @@
 <div id="match-popup-${smid}" style="display: none;">
 
     <div class="popup_topl"><span class="${databaseName} caption_puce"></span>${location.start} - ${location.end}</div>
-    <div class="popup_botl"><acronym
-            title="${databaseMetadata.description}">${databaseMetadata.sourceName}</acronym><br/>
+    <div class="popup_botl"><abbr
+            title="${databaseMetadata.description}">${databaseMetadata.sourceName}</abbr><br/>
     ${links}<br/>
 
     </div>
