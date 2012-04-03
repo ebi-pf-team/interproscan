@@ -9,10 +9,25 @@
     <!-- ##### JOB: TMHMM - Prediction of transmembrane helices in proteins ############################  -->
     <!-- Used by the UniProt team in their "Annabel" automatic annotation pipeline. -->
 
+    <bean id="pathToBinaryFileId" class="java.lang.String">
+        <constructor-arg value="${binary.tmhmm.path}"/>
+    </bean>
+
+    <bean id="pathToModelFileId" class="java.lang.String">
+        <constructor-arg value="${tmhmm.model.path}"/>
+    </bean>
+
     <bean id="jobTMHMM" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
                   value="Prediction of transmembrane helices in proteins"/>
         <property name="analysis" value="true"/>
+        <!--Check mechanism for licensed binaries-->
+        <property name="mandatoryParameters">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="pathToBinaryFile" value-ref="pathToBinaryFileId"/>
+                <entry key="pathToModelFile" value-ref="pathToModelFileId"/>
+            </map>
+        </property>
     </bean>
 
     <bean id="abstractTMHMMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -66,14 +81,14 @@
         <property name="dependsUpon" ref="stepTMHMMWriteFastaFile"/>
         <property name="stepDescription" value="Run TMHMM binary for selected protein sequences"/>
         <!--Add path to binary-->
-        <property name="pathToTmhmmBinary" value="${binary.tmhmm.path}"/>
+        <property name="pathToTmhmmBinary" ref="pathToBinaryFileId"/>
         <!--Add different parameters-->
         <property name="binarySwitches" value="-N 1 -PrintNumbers"/>
         <!--Add background parameter-->
         <property name="binaryBackgroundSwitch"
                   value="0.081 0.015 0.054 0.061 0.040 0.068 0.022 0.057 0.056 0.093 0.025 0.045 0.049 0.039 0.057 0.068 0.058 0.067 0.013 0.032"/>
         <!--Add TMHMM model-->
-        <property name="pathToTmhmmModel" value="${tmhmm.model.path}"/>
+        <property name="pathToTmhmmModel" ref="pathToModelFileId"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>

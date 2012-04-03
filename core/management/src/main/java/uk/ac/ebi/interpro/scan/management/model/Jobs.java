@@ -23,7 +23,11 @@ public class Jobs {
 
     private String baseDirectoryTemporaryFiles;
 
+    /* Represents all active (non deactivated) jobs. */
     private Map<String, Job> jobMap;
+
+    /* Represents all deactivated jobs (most of the time licensed analysis with no specified path to the binary) */
+    final Map<Job, JobStatusWrapper> deactivatedJobs = new HashMap<Job, JobStatusWrapper>();
 
     private Map<String, Step> stepMap;
 
@@ -48,6 +52,17 @@ public class Jobs {
         return new ArrayList<Job>(jobMap.values());
     }
 
+    public Jobs getAllJobs() {
+        List<Job> allJobs = new ArrayList<Job>();
+        if (jobMap != null) {
+            allJobs.addAll(jobMap.values());
+        }
+        if (deactivatedJobs != null) {
+            allJobs.addAll(deactivatedJobs.keySet());
+        }
+        return new Jobs(allJobs);
+    }
+
     /**
      * Spring constructor
      */
@@ -55,21 +70,33 @@ public class Jobs {
     }
 
     public Jobs(List<Job> jobList) {
-        setJobList(jobList);
+        if (jobList != null) {
+            this.jobMap = new HashMap<String, Job>(jobList.size());
+            for (Job jobListItem : jobList) {
+                jobMap.put(jobListItem.getId(), jobListItem);
+            }
+        }
     }
+
 
     @Required
     public void setJobList(List<Job> jobList) {
         this.jobMap = new HashMap<String, Job>(jobList.size());
         for (Job job : jobList) {
-            if (checkMandatoryParams(job)) {
+            JobStatusWrapper jobStatusWrapper = JobStatusChecker.getJobStatus(job);
+            //Check which jobs are active
+            if (jobStatusWrapper.getJobStatus().equals(JobStatusWrapper.JobStatus.ACTIVE)) {
                 jobMap.put(job.getId(), job);
-            } else {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Missing mandatory job parameter(s), discarding job: " + job.toString());
-                }
+            }
+            //Check which jobs are deactivated
+            else if (jobStatusWrapper.getJobStatus().equals(JobStatusWrapper.JobStatus.DEACTIVATED)) {
+                deactivatedJobs.put(job, jobStatusWrapper);
             }
         }
+    }
+
+    public Map<Job, JobStatusWrapper> getDeactivatedJobs() {
+        return deactivatedJobs;
     }
 
     /**
@@ -133,36 +160,16 @@ public class Jobs {
      * @return a new Jobs object, containing the restricted set of Jobs.
      */
     public Jobs subset(String[] jobIds) {
-        final List<Job> subsetJobs = new ArrayList<Job>();
-        final List<String> nonExistentJobs = new ArrayList<String>();
-        for (String id : jobIds) {
-            boolean foundRequestedJob = false;
-            for (String candidate : jobMap.keySet()) {
-                if (candidate.contains(id)) {
-                    foundRequestedJob = true;
-                    subsetJobs.add(jobMap.get(candidate));
-                }
-            }
-            if (!foundRequestedJob) {
-                nonExistentJobs.add(id);
+        final List<Job> subsetResult = new ArrayList<Job>();
+        //Assume that existence check was already done in a very early stage
+        //So no need to check existence again
+        for (String jobId : jobIds) {
+            Job job = jobMap.get(jobId);
+            if (job.isAnalysis()) {
+                subsetResult.add(job);
             }
         }
-        if (!nonExistentJobs.isEmpty()) {
-            StringBuilder badJobsSentence = new StringBuilder();
-            boolean first = true;
-            for (String badJob : nonExistentJobs) {
-                if (first) {
-                    first = false;
-                } else {
-                    badJobsSentence.append(", ");
-                }
-                badJobsSentence.append(badJob.substring(3)); //Substring to remove "job" from the front.
-            }
-            System.out.println("\n\nYou have requested the following analyses / applications that are not available in this distribution of InterProScan: " + badJobsSentence + ".  Please run interproscan.sh with no arguments for a list of available analyses.\n\n");
-            System.exit(100);
-        }
-
-        return new Jobs(subsetJobs);
+        return new Jobs(subsetResult);
     }
 
     @Override
@@ -174,6 +181,4 @@ public class Jobs {
         sb.append('}');
         return sb.toString();
     }
-
-
 }

@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.freemarker;
 
+import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.SimpleHash;
@@ -37,8 +38,8 @@ public class FreemarkerTest {
         String testView = "views/protein-structure.ftl";
 
         Configuration cfg = new Configuration();
-        cfg.setDirectoryForTemplateLoading(
-                new File(directoryForTemplateLoading));
+        FileTemplateLoader loader = new FileTemplateLoader(new File(directoryForTemplateLoading));
+        cfg.setTemplateLoader(loader);
         Map<String, Object> variables = new HashMap<String, Object>();
         variables.put("css_resource_jquery_qtip2", "resources/javascript/qtip2/jquery.qtip.css");
         variables.put("css_resource_protein", "resources/css/protein.css");
@@ -51,6 +52,9 @@ public class FreemarkerTest {
         variables.put("img_resource_path", "resources");
         variables.put("js_resource_common", "resources/javascript/common.js");
         variables.put("js_resource_protein_popups", "resources/javascript/protein-popups.js");
+        variables.put("js_resource_jquery_ui1817_custom", "resources/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js");
+        variables.put("css_resource_jquery_ui1817_custom", "resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css");
+        variables.put("js_resource_protein_jquery_cookie", "resources/javascript/jquery/jquery.cookie.js");
         cfg.setAllSharedVariables(new SimpleHash(variables, new DefaultObjectWrapper()));
 
         final AbstractApplicationContext ctx = new FileSystemXmlApplicationContext(pathToAppContextFile);
@@ -59,7 +63,7 @@ public class FreemarkerTest {
         Jaxb2Marshaller marshaller = (Jaxb2Marshaller) ctx.getBean("jaxb2");
         CreateSimpleProteinFromMatchData matchData = (CreateSimpleProteinFromMatchData) ctx.getBean("matchData");
 
-        SimpleProtein simpleProtein = matchData.queryByAccession("P38398");
+        SimpleProtein simpleProtein = matchData.queryByAccession("Q97R95");
 
         SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
 

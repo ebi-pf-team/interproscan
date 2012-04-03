@@ -64,6 +64,8 @@
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToSignalPBinary" ref="fullPathToSignalPBinary"/>
+        <!--Path to a Perl library directory (in this case a Perl library provided by SignalP which is necessary to run the script)-->
+        <property name="perlLibrary" value="${signalp.4.0.perl.library.dir}"/>
     </bean>
 
     <!-- STEP: Parse the SignalP binary output and persist the results in the database. No post processing required. -->
