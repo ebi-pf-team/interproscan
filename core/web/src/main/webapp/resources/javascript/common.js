@@ -12,7 +12,7 @@ $(document).ready(function() {
             viewport: $(window) // Keep the tooltip on-screen at all times
         }
     });
-    $('acronym[title]').qtip({
+    $('abbr[title]').qtip({
         position: {
             viewport: $(window) // Keep the tooltip on-screen at all times
         }
