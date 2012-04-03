@@ -6,11 +6,13 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.management.model.Job;
+import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 
 import java.io.IOException;
@@ -18,9 +20,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * The main entry point for the the master and workers in a
@@ -252,17 +252,74 @@ public class Run {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 
+            Jobs jobs = (Jobs) ctx.getBean("jobs");
+            //Get deactivated jobs
+            final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
+            //Info about active and de-active jobs is shown in the manual instruction (help) as well
             if (args.length == 0) {
                 printHelp();
                 System.out.println("Available analyses in this installation:");    // LEAVE as System.out
-                Jobs jobs = (Jobs) ctx.getBean("jobs");
-
                 for (Job job : jobs.getAnalysisJobs().getJobList()) {
-                    // Print out jobs available
+                    // Print out available jobs
                     System.out.printf("    %20s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
+                }
+                System.out.println("\nCurrently deactivated analyses in this installation:");
+                for (Job deactivatedJob : deactivatedJobs.keySet()) {
+                    JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
+                    // Print out deactivated jobs
+                    System.out.printf("    %30s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning() +
+                            " Please open properties file 'interproscan.propties.' and specify a valid path.");
                 }
                 System.exit(1);
             }
+
+            //Check existence of user-specified analyses
+            //Expecting 1 entry regardless how many analyses are specified
+            String[] parsedAnalyses = parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt());
+            if (parsedAnalyses != null && parsedAnalyses.length == 1) {
+                parsedAnalyses = StringUtils.commaDelimitedListToStringArray(parsedAnalyses[0]);
+            }
+
+            //Get the following information by iterating once over the list of analysis jobs
+            //Which user-specified analyses do exist, therefore store job IDs in a first instance
+            final Set<String> realJobIDs = new HashSet<String>();
+            for (Job job : jobs.getAllJobs().getJobList()) {
+                //Store job IDs for existence check
+                realJobIDs.add(job.getId());
+            }
+            final Map<String, String> parsedAnalysesExistentAnalysesMap = getRealAnalysesNames(parsedAnalyses, realJobIDs);
+
+            StringBuilder nonexistentAnalysis = new StringBuilder();
+            if (parsedAnalyses != null && parsedAnalyses.length > 0) {
+                boolean doExit = false;
+                for (String parsedAnalysisName : parsedAnalyses) {
+                    if (parsedAnalysesExistentAnalysesMap.containsKey(parsedAnalysisName)) {
+                        //Check if they are deactivated
+                        String realJobId = parsedAnalysesExistentAnalysesMap.get(parsedAnalysisName);
+                        for (Job deactivatedJob : deactivatedJobs.keySet()) {
+                            if (deactivatedJob.getId().equalsIgnoreCase(realJobId)) {
+                                JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
+                                System.out.println("\n\n" + jobStatusWrapper.getWarning() + "\n\n");
+                                doExit = true;
+                            }
+                        }
+                    } else {
+                        if (nonexistentAnalysis.length() > 0) {
+                            nonexistentAnalysis.append(",");
+                        }
+                        nonexistentAnalysis.append(parsedAnalysisName);
+                    }
+                }
+                if (nonexistentAnalysis.length() > 0) {
+                    System.out.println("\n\nYou have requested the following analyses / applications that are not available in this distribution of InterProScan: " + nonexistentAnalysis.toString() + ".  Please run interproscan.sh with no arguments for a list of available analyses.\n\n");
+                    doExit = true;
+                }
+                if (doExit) {
+                    System.exit(1);
+                }
+            }
+
+            parsedAnalyses = StringUtils.toStringArray(parsedAnalysesExistentAnalysesMap.values());
 
             if (mode.getRunnableBean() != null) {
                 Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
@@ -280,7 +337,7 @@ public class Run {
                         master.setOutputFormats(parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt()));
                     }
                     if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
-                        master.setAnalyses(parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt()));
+                        master.setAnalyses(parsedAnalyses);
                     }
                     if (tcpConnectionString != null) {
                         master.setTcpUri(tcpConnectionString);
@@ -292,7 +349,7 @@ public class Run {
                             if (outputFormats != null) {
                                 for (String outputFormat : outputFormats) {
                                     if (outputFormat.equalsIgnoreCase("tsv") || outputFormat.equalsIgnoreCase("html")) {
-                                        LOGGER.warn("TSV and HTML formats are not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 (Default) and XML.");
+                                        System.out.println("\n\nTSV and HTML formats are not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 (Default) and XML.");
                                         System.exit(1);
 //                                throw new IllegalArgumentException("TSV format is not supported if you run I5 against nucleotide sequences. Supported format are GFF3 (Default) and XML.");
                                     }
@@ -363,6 +420,28 @@ public class Run {
             LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
             System.exit(1);
         }
+    }
+
+    /**
+     * Determines real job names from parsed analyses names.
+     *
+     * @param parsedAnalyses
+     * @param realJobIDs
+     * @return Map of parsed analysis name to real analysis name.
+     */
+    private static Map<String, String> getRealAnalysesNames(String[] parsedAnalyses, Set<String> realJobIDs) {
+        Map<String, String> result = new HashMap<String, String>();
+        if (parsedAnalyses != null && parsedAnalyses.length > 0) {
+            for (String analysisName : parsedAnalyses) {
+                for (String realJobID : realJobIDs) {
+                    if (realJobID.toLowerCase().contains(analysisName.toLowerCase())) {
+                        result.put(analysisName, realJobID);
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     private static final String PORT_EXCLUSION_LIST_BEAN_ID = "portExclusionList";

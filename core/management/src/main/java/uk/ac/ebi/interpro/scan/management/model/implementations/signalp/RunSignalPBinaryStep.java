@@ -21,6 +21,7 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
     private String perlCommand;
     private String fullPathToSignalPBinary;
     private String fastaFileNameTemplate;
+    private String perlLibrary;
 
     @Required
     public void setPerlCommand(String perlCommand) {
@@ -37,12 +38,17 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
         this.fastaFileNameTemplate = fastaFilePathNameTemplate;
     }
 
+    @Required
+    public void setPerlLibrary(String perlLibrary) {
+        this.perlLibrary = perlLibrary;
+    }
+
     /**
      * Create the command ready to run the binary.
      * <p/>
      * Example:
      * <p/>
-     * perl bin/signalp/4.0/signalp -t euk -f summary -c 70 bin/signalp/4.0/test/euk10.fsa
+     * perl bin/signalp/4.0/signalp -I bin/signalp/4.0/lib  -t euk -f summary -c 70 bin/signalp/4.0/test/euk10.fsa
      *
      * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory is the relative path in which files are stored.
@@ -53,6 +59,9 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.fastaFileNameTemplate);
         List<String> command = new ArrayList<String>();
         command.add(this.perlCommand); // Run the perl script using installed version of Perl
+        //Add Perl parameter
+        command.add("-I");
+        command.add(this.perlLibrary);
         command.add(this.fullPathToSignalPBinary);
         command.addAll(this.getBinarySwitchesAsList());
         command.add("-T");

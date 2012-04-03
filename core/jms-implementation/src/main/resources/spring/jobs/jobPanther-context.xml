@@ -52,8 +52,8 @@
         <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
         <!--Add Perl command-->
         <property name="perlCommand" value="${perl.command}"/>
-        <!--Add Perl parameter (in this case the Perl PERL5LIB)-->
-        <property name="perlLibrary" value="${panther.perl.library}"/>
+        <!--Path to a Perl library directory (in this case a Perl library provided by Panther which is necessary to run the script)-->
+        <property name="perlLibrary" value="${panther.perl.library.dir}"/>
         <!--Panther Perl script-->
         <property name="scriptPath" value="${binary.panther.path}"/>
         <!--Add Panther models-->
