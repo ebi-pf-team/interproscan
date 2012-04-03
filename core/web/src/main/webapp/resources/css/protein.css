@@ -284,9 +284,7 @@ span.MODBASE {
     font-weight: bold;
 }
 
-.menu-filter .menu-filter-colour fieldset {
-    border-top: 1px solid #d1d1d1;
-}
+
 
 /*BEGIN protein page*/
 .prot_gal, .prot_tree, .prot_sum, .prot_entries, .prot_go {
