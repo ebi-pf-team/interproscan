@@ -45,9 +45,12 @@
         </div>
 
         <div class="menu-filter-colour">
-            <fieldset>
-                <legend>Colour by</legend>
-                <div>
+            <div style="border:1px pink solid; overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;">
+            <div style=" float:left;color: #2e5882; font-size: 110%;  font-weight: bold;margin-bottom: 0px;">Colours</div>
+            <div style=" float:right;margin-bottom: 0px;"><a href="../../resources/images/colour_key_MD.png" target="_blank">view key</a></div></div>
+             <fieldset>
+            <div style="background-color:white;">
+            <div >
                     <input type="radio" name="blobColour" id="domainColour" value="domainColour" checked="checked"/>
                     <label for="domainColour">domain relationship</label>
                 </div>
@@ -55,7 +58,8 @@
                     <input type="radio" name="blobColour" id="databaseColour" value="databaseColour"/>
                     <label for="databaseColour">source database</label>
                 </div>
-            </fieldset>
+            </div>
+            </fieldset>    
         </div>
     </div>
 </div>
