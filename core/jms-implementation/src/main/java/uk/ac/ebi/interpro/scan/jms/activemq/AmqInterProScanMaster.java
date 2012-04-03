@@ -326,7 +326,7 @@ public class AmqInterProScanMaster implements Master {
         if (analyses != null && analyses.length > 0) {
             List<String> jobNameList = new ArrayList<String>();
             for (String analysisName : analyses) {
-                jobNameList.add("job" + analysisName);
+                jobNameList.add(analysisName);
             }
             params.put(StepInstanceCreatingStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
         }
