@@ -84,7 +84,7 @@
         <groovy.version>1.6.3</groovy.version>
         <hsqldb.version>1.8.0.10</hsqldb.version>
         <mysql.version>5.1.12</mysql.version>
-        <slf4j.version>1.6.1</slf4j.version>
+        <slf4j.version>1.5.11</slf4j.version>
         <xmlunit.version>1.3</xmlunit.version>
         <!--<jaxb-api.version>2.1</jaxb-api.version>-->
         <jaxb-api.version>2.2.2</jaxb-api.version>
