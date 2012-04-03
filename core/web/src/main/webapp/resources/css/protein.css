@@ -814,3 +814,4 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
 }
 
 abbr {border-bottom: 1px dotted grey;cursor: help;}
+.disabled {border:0px solid red; opacity:0.3; filter:alpha(opacity=30); /* For IE8 and earlier */}
