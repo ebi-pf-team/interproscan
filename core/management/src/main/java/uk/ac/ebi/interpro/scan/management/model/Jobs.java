@@ -70,53 +70,63 @@ public class Jobs {
     }
 
     public Jobs(List<Job> jobList) {
+        this(jobList, false);
+    }
+
+    public Jobs(List<Job> jobList, boolean doPreProcessing) {
         if (jobList != null) {
             this.jobMap = new HashMap<String, Job>(jobList.size());
-            for (Job jobListItem : jobList) {
-                jobMap.put(jobListItem.getId(), jobListItem);
+            if (doPreProcessing) {
+                preProcessJobs(jobList);
+            } else {
+                for (Job jobListItem : jobList) {
+                    jobMap.put(jobListItem.getId(), jobListItem);
+                }
             }
         }
     }
 
 
+    /**
+     * Divides jobs into active and deactivated jobs.
+     *
+     * @param jobList
+     */
     @Required
     public void setJobList(List<Job> jobList) {
-        this.jobMap = new HashMap<String, Job>(jobList.size());
-        for (Job job : jobList) {
-            JobStatusWrapper jobStatusWrapper = JobStatusChecker.getJobStatus(job);
-            //Check which jobs are active
-            if (jobStatusWrapper.getJobStatus().equals(JobStatusWrapper.JobStatus.ACTIVE)) {
-                jobMap.put(job.getId(), job);
-            }
-            //Check which jobs are deactivated
-            else if (jobStatusWrapper.getJobStatus().equals(JobStatusWrapper.JobStatus.DEACTIVATED)) {
-                deactivatedJobs.put(job, jobStatusWrapper);
-            }
+        if (jobList != null) {
+            this.jobMap = new HashMap<String, Job>(jobList.size());
+            preProcessJobs(jobList);
         }
     }
+
 
     public Map<Job, JobStatusWrapper> getDeactivatedJobs() {
         return deactivatedJobs;
     }
 
+
+    private void preProcessJobs(List<Job> jobList) {
+        for (Job jobListItem : jobList) {
+            checkJobStatusAndAddToMap(jobListItem);
+        }
+    }
+
     /**
-     * If a mandatory parameter is empty then returns false, otherwise true.
+     * Checks if the job status is ACTIVE or DEACTIVATED.
      *
      * @param job Job to check.
-     * @return Are mandatory params supplied?
      */
-    protected boolean checkMandatoryParams(Job job) {
-        Map<String, String> mandatoryParams = job.getMandatoryParameters();
-        if (mandatoryParams != null) {
-            for (String paramKey : mandatoryParams.keySet()) {
-                String paramValue = mandatoryParams.get(paramKey);
-                if (paramValue == null || paramValue.trim().length() == 0) {
-                    LOGGER.warn("Analysis " + job.getId().replace("job", "") + " is deactivated, because parameter " + paramKey + " is not specified!");
-                    return false;
-                }
-            }
+    private void checkJobStatusAndAddToMap(Job job) {
+        JobStatusWrapper jobStatusWrapper = JobStatusChecker.getJobStatus(job);
+        //Check which jobs are active
+        if (jobStatusWrapper.getJobStatus().equals(JobStatusWrapper.JobStatus.ACTIVE)) {
+            jobMap.put(job.getId(), job);
         }
-        return true;
+        //Check which jobs are deactivated
+        else if (jobStatusWrapper.getJobStatus().equals(JobStatusWrapper.JobStatus.DEACTIVATED)) {
+            deactivatedJobs.put(job, jobStatusWrapper);
+        }
     }
 
     public String getBaseDirectoryTemporaryFiles() {

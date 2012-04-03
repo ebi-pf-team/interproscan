@@ -287,7 +287,7 @@ public class Run {
                 //Store job IDs for existence check
                 realJobIDs.add(job.getId());
             }
-            final Map<String, String> parsedAnalysesExistentAnalysesMap = getRealAnalysesNames(parsedAnalyses, realJobIDs);
+            final Map<String, Set<String>> parsedAnalysesExistentAnalysesMap = getRealAnalysesNames(parsedAnalyses, realJobIDs);
 
             StringBuilder nonexistentAnalysis = new StringBuilder();
             if (parsedAnalyses != null && parsedAnalyses.length > 0) {
@@ -295,12 +295,14 @@ public class Run {
                 for (String parsedAnalysisName : parsedAnalyses) {
                     if (parsedAnalysesExistentAnalysesMap.containsKey(parsedAnalysisName)) {
                         //Check if they are deactivated
-                        String realJobId = parsedAnalysesExistentAnalysesMap.get(parsedAnalysisName);
+                        Set<String> realJobIdSet = parsedAnalysesExistentAnalysesMap.get(parsedAnalysisName);
                         for (Job deactivatedJob : deactivatedJobs.keySet()) {
-                            if (deactivatedJob.getId().equalsIgnoreCase(realJobId)) {
-                                JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
-                                System.out.println("\n\n" + jobStatusWrapper.getWarning() + "\n\n");
-                                doExit = true;
+                            for (String realJobId : realJobIdSet) {
+                                if (deactivatedJob.getId().equalsIgnoreCase(realJobId)) {
+                                    JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
+                                    System.out.println("\n\n" + jobStatusWrapper.getWarning() + "\n\n");
+                                    doExit = true;
+                                }
                             }
                         }
                     } else {
@@ -319,7 +321,7 @@ public class Run {
                 }
             }
 
-            parsedAnalyses = StringUtils.toStringArray(parsedAnalysesExistentAnalysesMap.values());
+            parsedAnalyses = getAnalysesToRun(parsedAnalysesExistentAnalysesMap);
 
             if (mode.getRunnableBean() != null) {
                 Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
@@ -423,20 +425,39 @@ public class Run {
     }
 
     /**
+     * Assembles all analyses jobs for that run.
+     *
+     * @param parsedAnalysesExistentAnalysesMap
+     *
+     * @return Array of analyses jobs.
+     */
+    private static String[] getAnalysesToRun(Map<String, Set<String>> parsedAnalysesExistentAnalysesMap) {
+        Set<String> result = new HashSet<String>();
+        for (Set<String> realJobIds : parsedAnalysesExistentAnalysesMap.values()) {
+            result.addAll(realJobIds);
+        }
+        return StringUtils.toStringArray(result);
+    }
+
+    /**
      * Determines real job names from parsed analyses names.
      *
      * @param parsedAnalyses
      * @param realJobIDs
      * @return Map of parsed analysis name to real analysis name.
      */
-    private static Map<String, String> getRealAnalysesNames(String[] parsedAnalyses, Set<String> realJobIDs) {
-        Map<String, String> result = new HashMap<String, String>();
+    private static Map<String, Set<String>> getRealAnalysesNames(String[] parsedAnalyses, Set<String> realJobIDs) {
+        Map<String, Set<String>> result = new HashMap<String, Set<String>>();
         if (parsedAnalyses != null && parsedAnalyses.length > 0) {
             for (String analysisName : parsedAnalyses) {
                 for (String realJobID : realJobIDs) {
                     if (realJobID.toLowerCase().contains(analysisName.toLowerCase())) {
-                        result.put(analysisName, realJobID);
-                        break;
+                        Set<String> realJobNames = result.get(analysisName);
+                        if (realJobNames == null) {
+                            realJobNames = new HashSet<String>();
+                        }
+                        realJobNames.add(realJobID);
+                        result.put(analysisName, realJobNames);
                     }
                 }
             }
