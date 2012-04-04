@@ -22,7 +22,7 @@ public class SuperMatchBucket implements Serializable {
 
     private final List<SimpleSuperMatch> supermatches = new ArrayList<SimpleSuperMatch>();
 
-    private final String type;
+    private final EntryType type;
 
     public List<SimpleSuperMatch> getSupermatches() {
         return supermatches;
@@ -53,7 +53,7 @@ public class SuperMatchBucket implements Serializable {
      *
      * @return the type of the bucket (Domain, repeat etc.)
      */
-    public String getType() {
+    public EntryType getType() {
         return type;
     }
 
@@ -66,7 +66,7 @@ public class SuperMatchBucket implements Serializable {
      * @return true if the candidate SimpleSuperMatch could be added to this bucket.
      */
     public boolean addIfSameHierarchyMergeIfOverlap(final SimpleSuperMatch candidate) {
-        if (candidate == null || !type.equals(candidate.getType()) || !candidate.inSameHierarchy(supermatches.get(0))) {
+        if (candidate == null || type != candidate.getType() || !candidate.inSameHierarchy(supermatches.get(0))) {
             return false;
         }
         SimpleSuperMatch mergedMatch = null;

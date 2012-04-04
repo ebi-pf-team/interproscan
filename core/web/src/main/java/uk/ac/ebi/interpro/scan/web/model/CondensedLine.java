@@ -16,7 +16,7 @@ public class CondensedLine implements Comparable<CondensedLine>, Serializable {
     /**
      * To ensure only features of the same type can be added.
      */
-    private final String type;
+    private final EntryType type;
 
     private Set<SimpleSuperMatch> superMatchList = new TreeSet<SimpleSuperMatch>();
 
@@ -29,7 +29,7 @@ public class CondensedLine implements Comparable<CondensedLine>, Serializable {
         return superMatchList;
     }
 
-    public String getType() {
+    public EntryType getType() {
         return type;
     }
 
@@ -54,9 +54,7 @@ public class CondensedLine implements Comparable<CondensedLine>, Serializable {
         if (this == other || this.equals(other)) {
             return 0;
         }
-        // Being a bit cheeky here - the
-        // (potential) required order "Family", "Domain", "Repeat", "Site" just so happens to be alphabetical ;-)
-        int comp = this.type.toLowerCase().compareTo(other.type.toLowerCase());
+        int comp = this.type.compareTo(other.type);
 
         if (comp == 0) {
             final Integer thisStart = this.getStart();

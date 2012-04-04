@@ -19,7 +19,7 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
 
     private static final Logger LOGGER = Logger.getLogger(SimpleSuperMatch.class.getName());
 
-    private String type;
+    private EntryType type;
 
     private SimpleLocation location;
 
@@ -40,11 +40,11 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
         entries.add(firstEntry);
     }
 
-    public String getType() {
+    public EntryType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(EntryType type) {
         this.type = type;
     }
 
@@ -206,7 +206,7 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
      *         the criteria are not met.
      */
     public SimpleSuperMatch mergeIfOverlap(SimpleSuperMatch candidate) {
-        if (!this.type.equals(candidate.getType())) {
+        if (this.type != candidate.getType()) {
             return null;
         }
         if (!this.inSameHierarchy(candidate)) {

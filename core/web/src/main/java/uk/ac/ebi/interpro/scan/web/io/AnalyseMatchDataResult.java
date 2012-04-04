@@ -109,11 +109,15 @@ public class AnalyseMatchDataResult {
             String entryAc = record.getEntryAc();
             String entryShortName = record.getEntryShortName();
             String entryName = record.getEntryName();
-            String entryType = record.getEntryType();
+            String entryTypeString = record.getEntryType();
+            EntryType entryType = EntryType.parseName(entryTypeString);
+            if (entryType == null) {
+                throw new IllegalStateException("Cannot convert entry type String " + entryTypeString + " to an EntryType object.");
+            }
 
             // Check if unreleased entry
-            if (!entryAc.equals("") && entryType.equals("")) {
-                entryType = EntryType.UNKNOWN.toString();
+            if (!entryAc.equals("") && entryTypeString.equals("")) {
+                entryTypeString = EntryType.UNKNOWN.toString();
             }
 
             // Need to eventually associate this match location with the existing SimpleProtein object

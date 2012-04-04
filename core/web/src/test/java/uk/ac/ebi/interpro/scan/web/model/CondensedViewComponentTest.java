@@ -63,31 +63,31 @@ public class CondensedViewComponentTest {
     @Before
     public void setup() {
         IPR000276_24_67 = new SimpleSuperMatch(
-                new SimpleEntry("IPR000276", "tstNm1", "testName1", DOMAIN, entryHierarchy), new SimpleLocation(24, 67)
+                new SimpleEntry("IPR000276", "tstNm1", "testName1", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(24, 67)
         );
 
         IPR001671_64_99 = new SimpleSuperMatch(
-                new SimpleEntry("IPR001671", "tstNm2", "testName2", DOMAIN, entryHierarchy), new SimpleLocation(64, 99)
+                new SimpleEntry("IPR001671", "tstNm2", "testName2", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(64, 99)
         );
 
         IPR001908_212_276 = new SimpleSuperMatch(
-                new SimpleEntry("IPR001908", "tstNm3", "testName3", DOMAIN, entryHierarchy), new SimpleLocation(212, 276)
+                new SimpleEntry("IPR001908", "tstNm3", "testName3", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(212, 276)
         );
 
         IPR002122_264_312 = new SimpleSuperMatch(
-                new SimpleEntry("IPR002122", "tstNm4", "testName4", DOMAIN, entryHierarchy), new SimpleLocation(264, 312)
+                new SimpleEntry("IPR002122", "tstNm4", "testName4", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(264, 312)
         );
 
         IPR000020_12_24 = new SimpleSuperMatch(
-                new SimpleEntry("IPR000020", "tstNm5", "testName5", REPEAT, entryHierarchy), new SimpleLocation(12, 24)
+                new SimpleEntry("IPR000020", "tstNm5", "testName5", EntryType.REPEAT, entryHierarchy), new SimpleLocation(12, 24)
         );
 
         IPR018081_20_24 = new SimpleSuperMatch(
-                new SimpleEntry("IPR018081", "tstNm6", "testName6", REPEAT, entryHierarchy), new SimpleLocation(20, 24)
+                new SimpleEntry("IPR018081", "tstNm6", "testName6", EntryType.REPEAT, entryHierarchy), new SimpleLocation(20, 24)
         );
 
         IPR001840_36_48 = new SimpleSuperMatch(
-                new SimpleEntry("IPR001840", "tstNm7", "testName7", REPEAT, entryHierarchy), new SimpleLocation(36, 48)
+                new SimpleEntry("IPR001840", "tstNm7", "testName7", EntryType.REPEAT, entryHierarchy), new SimpleLocation(36, 48)
         );
 
         superMatchList = new ArrayList<SimpleSuperMatch>();
