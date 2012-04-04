@@ -27,9 +27,13 @@ public enum EntryType {
     // Optimised lookup of types by name or alternative name.
     static {
         for (EntryType m : EntryType.values()) {
+            TYPE_NAME_TO_TYPE.put(m.name(), m);
             TYPE_NAME_TO_TYPE.put(m.toString(), m);
+            TYPE_NAME_TO_TYPE.put(m.toString().toLowerCase(), m);
             for (String alternativeName : m.alternativeNames) {
                 TYPE_NAME_TO_TYPE.put(alternativeName, m);
+                TYPE_NAME_TO_TYPE.put(alternativeName.toUpperCase(), m);
+                TYPE_NAME_TO_TYPE.put(alternativeName.toLowerCase(), m);
             }
         }
     }
@@ -37,6 +41,39 @@ public enum EntryType {
 
     private EntryType(String name) {
         this.name = name;
+    }
+
+    /**
+     * Method that takes any uk.ac.ebi.interpro.scan.model.EntryType and
+     * returns the appropriate uk.ac.ebi.interpro.scan.web.model.EntryType
+     *
+     * @param modelEntryType to convert
+     * @return the appropriate EntryType from the web module.
+     */
+    public static EntryType mapFromModelEntryType(uk.ac.ebi.interpro.scan.model.EntryType modelEntryType) {
+        switch (modelEntryType) {
+            case ACTIVE_SITE:
+            case BINDING_SITE:
+            case CONSERVED_SITE:
+            case PTM:
+                return SITE;
+
+            case DOMAIN:
+                return DOMAIN;
+
+            case FAMILY:
+                return FAMILY;
+
+            case REGION:
+                return REGION;
+
+            case REPEAT:
+                return REPEAT;
+
+            case UNKNOWN:
+            default:
+                return UNKNOWN;
+        }
     }
 
     private EntryType(String... names) {
@@ -58,4 +95,7 @@ public enum EntryType {
         return name;
     }
 
+    public List<String> getAlternativeNames() {
+        return alternativeNames;
+    }
 }

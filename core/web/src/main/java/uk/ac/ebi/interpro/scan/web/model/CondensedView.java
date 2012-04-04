@@ -18,7 +18,7 @@ public class CondensedView implements Serializable {
 
     private final SimpleProtein protein;
 
-    private static final List<String> INCLUDED_TYPES = Arrays.asList("domain", "repeat");
+    private static final List<EntryType> INCLUDED_TYPES = Arrays.asList(EntryType.DOMAIN, EntryType.REPEAT);
 
     // The CondensedLines in this Set are ordered by their lineNumber,
     // 0 indexed.
@@ -61,7 +61,7 @@ public class CondensedView implements Serializable {
         final List<SimpleSuperMatch> superMatchList = new ArrayList<SimpleSuperMatch>();
         // Initially the SimpleSuperMatches are just matches - the merging occurs in the next method call.
         for (final SimpleEntry entry : protein.getAllEntries()) {
-            if (INCLUDED_TYPES.contains(entry.getType().toLowerCase())) {
+            if (INCLUDED_TYPES.contains(entry.getType())) {
                 for (final SimpleLocation location : entry.getLocations()) {
                     superMatchList.add(new SimpleSuperMatch(entry, location));
                 }

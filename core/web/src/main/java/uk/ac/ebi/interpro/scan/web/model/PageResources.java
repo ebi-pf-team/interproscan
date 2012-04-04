@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.Collections;

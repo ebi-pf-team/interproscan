@@ -35,7 +35,7 @@ public class SimpleEntryTest {
     @Before
     public void init() {
         // All tests compare another entry with this one
-        entry1 = new SimpleEntry("IPR011992", "EF-hand-like_dom", "EF-hand-like domain", "Domain", this.entryHierarchy);
+        entry1 = new SimpleEntry("IPR011992", "EF-hand-like_dom", "EF-hand-like domain", EntryType.DOMAIN, this.entryHierarchy);
         List<SimpleLocation> locations = new ArrayList<SimpleLocation>();
         locations.add(new SimpleLocation(244, 321));
         locations.add(new SimpleLocation(322, 395));
@@ -50,7 +50,7 @@ public class SimpleEntryTest {
 
     @Test
     public void testSimpleEntrySorting() {
-        SimpleEntry entry2 = new SimpleEntry("IPR00001", "Test", "Test", "Domain", this.entryHierarchy);
+        SimpleEntry entry2 = new SimpleEntry("IPR00001", "Test", "Test", EntryType.DOMAIN, this.entryHierarchy);
         List<SimpleLocation> locations = new ArrayList<SimpleLocation>();
         locations.add(new SimpleLocation(44, 121));
         entry2.setLocations(locations);
