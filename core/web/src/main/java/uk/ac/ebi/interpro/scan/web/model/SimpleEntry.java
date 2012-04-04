@@ -18,7 +18,7 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
     private final String ac;
     private final String shortName;
     private final String name;
-    private final String type;
+    private final EntryType type;
     private Integer hierarchyLevel;
     private final EntryHierarchyData hierarchyData;
     private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
@@ -29,7 +29,7 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
 
     public static final String UNINTEGRATED = "Unintegrated";
 
-    public SimpleEntry(String ac, String shortName, String name, String type, final EntryHierarchy entryHierarchy) {
+    public SimpleEntry(String ac, String shortName, String name, EntryType type, final EntryHierarchy entryHierarchy) {
         this.ac = ac;
         this.shortName = shortName;
         this.name = name;
@@ -77,7 +77,7 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
         return name;
     }
 
-    public String getType() {
+    public EntryType getType() {
         return type;
     }
 
@@ -125,16 +125,14 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
         }
 
         // Entry type
-        final EntryType thisType = EntryType.parseName(this.getType());
-        final EntryType thatType = EntryType.parseName(that.getType());
-        if (thisType != null && thatType != null) {
-            final int compare = thisType.compareTo(thatType);
+        if (type != null && that.type != null) {
+            final int compare = type.compareTo(that.type);
             if (compare != 0) {
                 return compare;
             }
-        } else if (thisType != null) {
+        } else if (type != null) {
             return -1;
-        } else if (thatType != null) {
+        } else if (that.type != null) {
             return 1;
         }
 

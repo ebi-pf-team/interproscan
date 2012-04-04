@@ -52,7 +52,7 @@ public class ProteinViewControllerTest {
     public void testSimpleEntrySort() {
         List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
 
-        SimpleEntry entry1 = new SimpleEntry("IPR000001", "Kringle", "Name not available", "Domain", this.entryHierarchy);
+        SimpleEntry entry1 = new SimpleEntry("IPR000001", "Kringle", "Name not available", uk.ac.ebi.interpro.scan.web.model.EntryType.DOMAIN, this.entryHierarchy);
         List<SimpleLocation> locations1 = new ArrayList<SimpleLocation>();
         SimpleLocation location1 = new SimpleLocation(55, 66);
         locations1.add(location1);
@@ -66,7 +66,7 @@ public class ProteinViewControllerTest {
         entry2.setLocations(locations2);
         entries.add(entry2);
 
-        SimpleEntry entry3 = new SimpleEntry("IPR000007", "Tubby_C", "Name not available", "Domain", this.entryHierarchy);
+        SimpleEntry entry3 = new SimpleEntry("IPR000007", "Tubby_C", "Name not available", uk.ac.ebi.interpro.scan.web.model.EntryType.DOMAIN, this.entryHierarchy);
         List<SimpleLocation> locations3 = new ArrayList<SimpleLocation>();
         SimpleLocation location3 = new SimpleLocation(11, 22);
         locations3.add(location3);

@@ -118,7 +118,7 @@ public final class SimpleProtein implements Serializable {
         if (familyEntries == null) {
             familyEntries = new HashSet<SimpleEntry>();
             for (SimpleEntry entry : entries) {
-                if (entry.isIntegrated() && "family".equalsIgnoreCase(entry.getType())) {
+                if (entry.isIntegrated() && EntryType.FAMILY == entry.getType()) {
                     familyEntries.add(entry);
                 }
             }
@@ -148,20 +148,38 @@ public final class SimpleProtein implements Serializable {
 
     private Set<GoTerm> functionGoTerms;
 
-
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
     public Set<GoTerm> getProcessGoTerms() {
         return getGoTerms(GoTerm.GoRoot.BIOLOGICAL_PROCESS);
     }
 
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
     public Set<GoTerm> getComponentGoTerms() {
         return getGoTerms(GoTerm.GoRoot.CELLULAR_COMPONENT);
     }
 
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
     public Set<GoTerm> getFunctionGoTerms() {
         return getGoTerms(GoTerm.GoRoot.MOLECULAR_FUNCTION);
     }
 
-
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
     public List<SimpleSignature> getUnintegratedSignatures() {
         final List<SimpleSignature> signatures = new ArrayList<SimpleSignature>();
         for (SimpleEntry entry : this.entries) {
@@ -173,6 +191,11 @@ public final class SimpleProtein implements Serializable {
         return signatures;
     }
 
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
     public List<SimpleStructuralDatabase> getStructuralFeatures() {
         final List<SimpleStructuralDatabase> features = new ArrayList<SimpleStructuralDatabase>();
         for (SimpleStructuralDatabase db : this.structuralDatabases) {
@@ -184,6 +207,11 @@ public final class SimpleProtein implements Serializable {
         return features;
     }
 
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
     public List<SimpleStructuralDatabase> getStructuralPredictions() {
         final List<SimpleStructuralDatabase> predictions = new ArrayList<SimpleStructuralDatabase>();
         for (SimpleStructuralDatabase db : this.structuralDatabases) {
@@ -194,6 +222,63 @@ public final class SimpleProtein implements Serializable {
         Collections.sort(predictions);
         return predictions;
     }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute class="disabled" if there is no
+     * match to an Entry of the specified type.
+     *
+     * @param type of the Entry, e.g. domain, family, site etc.
+     * @return the number of matches of the specified type.
+     */
+    public String disabledStyleIfNoMatches(String type) {
+        return (hasMatches(type)) ? "" : "class=\"disabled\"";
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute disabled="disabled" if there is no
+     * match to an Entry of the specified type.
+     *
+     * @param type of the Entry, e.g. domain, family, site etc.
+     * @return the number of matches of the specified type.
+     */
+    public String disableIfNoMatches(String type) {
+        return (hasMatches(type)) ? "" : "disabled=\"disabled\"";
+    }
+
+
+    private final Map<String, Boolean> hasMatchCache = new HashMap<String, Boolean>();
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute class="disabled" if there is no
+     * match to an Entry of the specified type.
+     *
+     * @param type of the Entry, e.g. domain, family, site etc.
+     * @return the number of matches of the specified type.
+     */
+    public boolean hasMatches(String type) {
+        if (hasMatchCache.containsKey(type)) {
+            return hasMatchCache.get(type);
+        }
+        EntryType entryType = EntryType.valueOf(type);
+        if (entryType == null) {
+            throw new IllegalArgumentException("The argument to hasMatches MUST be the name of a member of the uk.ac.ebi.interpro.scan.web.model.EntryType enum.");
+        }
+        for (final SimpleEntry entry : entries) {
+            if (entryType == entry.getType()) {
+                hasMatchCache.put(type, true);
+                return true;
+            }
+        }
+        hasMatchCache.put(type, false);
+        return false;
+    }
+
 
     private static final String UNKNOWN = "Unknown";
 
@@ -231,8 +316,8 @@ public final class SimpleProtein implements Serializable {
             final Entry entry = signature.getEntry();
 
             SimpleEntry simpleEntry = (entry == null)
-                    ? new SimpleEntry("", SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, "", entryHierarchy)
-                    : new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), entry.getType().getName(), entryHierarchy);
+                    ? new SimpleEntry("", SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, EntryType.UNKNOWN, entryHierarchy)
+                    : new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), EntryType.mapFromModelEntryType(entry.getType()), entryHierarchy);
             // Add the locations to the Entry from the Signatures
             final SimpleSignature ss = new SimpleSignature(signatureAc, signatureName, signature.getSignatureLibraryRelease().getLibrary().getName());
             for (Object o : match.getLocations()) {

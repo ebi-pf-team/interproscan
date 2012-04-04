@@ -69,7 +69,7 @@ public class ProteinViewController {
      */
     @RequestMapping(value = "/{id}")
     public ModelAndView protein(@PathVariable String id) {
-        return new ModelAndView("protein", buildModelMap(retrieve(id)));
+        return new ModelAndView("standalone-protein-page", buildModelMap(retrieve(id), true));
     }
 
     /**
@@ -80,18 +80,7 @@ public class ProteinViewController {
      */
     @RequestMapping(value = "/{id}/body")
     public ModelAndView proteinBody(@PathVariable String id) {
-        return new ModelAndView("protein-body", buildModelMap(retrieve(id)));
-    }
-
-    /**
-     * Returns protein page with a left-hand filter
-     *
-     * @param id Protein accession or MD5 checksum, for example "P38398"
-     * @return Protein page with a left-hand filter menu
-     */
-    @RequestMapping(value = "/{id}/standalone")
-    public ModelAndView proteinStandalone(@PathVariable String id) {
-        return new ModelAndView("standalone-protein-page", buildModelMap(retrieve(id)));
+        return new ModelAndView("protein-body", buildModelMap(retrieve(id), false));
     }
 
     /**
@@ -102,7 +91,7 @@ public class ProteinViewController {
      */
     @RequestMapping(value = "/{id}/features")
     public ModelAndView proteinFeatures(@PathVariable String id) {
-        return new ModelAndView("protein-features", buildModelMap(retrieve(id)));
+        return new ModelAndView("protein-features", buildModelMap(retrieve(id), false));
     }
 
     /**
@@ -132,7 +121,7 @@ public class ProteinViewController {
                 // One xref - use it directly.
                 xref = protein.getCrossReferences().iterator().next();
             }
-            return new ModelAndView("protein", buildModelMap(SimpleProtein.valueOf(protein, xref, entryHierarchy)));
+            return new ModelAndView("protein", buildModelMap(SimpleProtein.valueOf(protein, xref, entryHierarchy), true));
         }
         return new ModelAndView("render-warning");
     }
@@ -172,12 +161,13 @@ public class ProteinViewController {
         return null;
     }
 
-    private Map<String, Object> buildModelMap(SimpleProtein p) {
+    private Map<String, Object> buildModelMap(SimpleProtein p, boolean standalone) {
         Map<String, Object> m = new HashMap<String, Object>();
         if (p != null) {
             m.put("protein", p);
             m.put("condensedView", new CondensedView(p));
             m.put("entryColours", entryHierarchy.getEntryColourMap());
+            m.put("standalone", standalone);
             m.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
             if (pageResources != null) {
                 Map<String, String> pageResourcesMap = pageResources.getResourcesMap();
