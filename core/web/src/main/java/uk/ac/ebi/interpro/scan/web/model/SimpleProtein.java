@@ -22,13 +22,14 @@ public final class SimpleProtein implements Serializable {
     private final int taxId;
     private final String taxScienceName;
     private final String taxFullName;
+    private final boolean isProteinFragment;
     private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
     private Set<SimpleEntry> familyEntries = null;
     private final List<SimpleStructuralDatabase> structuralDatabases = new ArrayList<SimpleStructuralDatabase>();
 
 
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
-                         int taxId, String taxScienceName, String taxFullName) {
+                         int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
         this.ac = ac;
         this.id = id;
         this.name = name;
@@ -38,6 +39,7 @@ public final class SimpleProtein implements Serializable {
         this.taxId = taxId;
         this.taxScienceName = taxScienceName;
         this.taxFullName = taxFullName;
+        this.isProteinFragment = isProteinFragment;
     }
 
     public String getAc() {
@@ -74,6 +76,10 @@ public final class SimpleProtein implements Serializable {
 
     public String getTaxFullName() {
         return taxFullName;
+    }
+
+    public boolean isProteinFragment() {
+        return isProteinFragment;
     }
 
     public List<SimpleEntry> getAllEntries() {
@@ -206,11 +212,12 @@ public final class SimpleProtein implements Serializable {
         String crc64 = UNKNOWN;
         String taxScienceName = UNKNOWN;
         String taxFullName = UNKNOWN;
+        boolean isProteinFragment = false;
         final String proteinAc = xref.getIdentifier();
         final String proteinName = (xref.getName() == null) ? UNKNOWN : xref.getName();
         final String proteinDesc = (xref.getDescription() == null) ? UNKNOWN : xref.getDescription();
         final SimpleProtein simpleProtein = new SimpleProtein(proteinAc, proteinName, proteinDesc, protein.getSequenceLength(),
-                protein.getMd5(), crc64, 0, taxScienceName, taxFullName);
+                protein.getMd5(), crc64, 0, taxScienceName, taxFullName, isProteinFragment);
         // Get entries and corresponding signatures
         for (final Match match : protein.getMatches()) {
             // Signature

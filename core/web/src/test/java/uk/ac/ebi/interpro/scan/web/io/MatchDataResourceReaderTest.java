@@ -16,7 +16,7 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * Tests for {@link MatchDataResourceReader}
  *
- * @author  Matthew Fraser
+ * @author Matthew Fraser
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,6 +33,6 @@ public class MatchDataResourceReaderTest {
     public void testRead() throws IOException {
         Collection<MatchDataRecord> result = reader.read(file);
         assertNotNull(result);
-        assertEquals(35, result.size());
+        assertEquals("Size should be 35.", 35, result.size());
     }
 }

@@ -37,7 +37,7 @@
         <div class="prot_gal_bloc">
             <div class="prot_gal_col"><h1>Accession</h1></div>
             <div class="prot_gal_desc"><a href="http://www.uniprot.org/uniprot/${protein.ac}" class="ext"
-                                          title="{spy:description} (${protein.ac})">${protein.ac}</a> (${protein.id})
+                                          title="${protein.name} (${protein.ac})">${protein.ac}</a> (${protein.id})
             </div>
         </div>
 
@@ -46,72 +46,77 @@
             <div class="prot_gal_desc">${protein.taxFullName}</div>
         </div>
 
+    <#--Work out if protein sequence is a fragment or not-->
+    <#assign isProteinFragment=protein.proteinFragment />
         <div class="prot_gal_bloc">
             <div class="prot_gal_col"><h1>Length</h1></div>
-            <div class="prot_gal_desc">${protein.length} AA</div>
+            <div class="prot_gal_desc">${protein.length} AA
+            <#--Work out if protein sequence is a fragment or not-->
+            <#if isProteinFragment>(fragment)</#if>
+            </div>
         </div>
 
-            <div class="prot_gal_source">Source: <span>UniProtKB/Swiss-Prot</span></div>
-            <hr/>
+        <div class="prot_gal_source">Source: <span>UniProtKB/Swiss-Prot</span></div>
+        <hr/>
     </div>
-        <div class="prot_tree">
-        <#if (protein.familyEntries?has_content)>
-            <div class="prot_tree_desc">
-                <h1>Protein family membership:</h1>
-            ${protein.familyHierarchy}
-            </div>
-            <#else>
-                <div style="float: left;"><h1>Protein family membership:</h1></div>
-                <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
-        </#if>
+    <div class="prot_tree">
+    <#if (protein.familyEntries?has_content)>
+        <div class="prot_tree_desc">
+            <h1>Protein family membership:</h1>
+        ${protein.familyHierarchy}
         </div>
+        <#else>
+            <div style="float: left;"><h1>Protein family membership:</h1></div>
+            <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+    </#if>
+    </div>
 
-    <#include "protein-features.ftl"/>
-        <div class="prot_go">
-            <h1>GO Term prediction</h1>
+<#include "protein-features.ftl"/>
+    <div class="prot_go">
+        <h1>GO Term prediction</h1>
 
-            <div class="go_terms">
+        <div class="go_terms">
 
-                <div class="go_terms_box">
-                    <h2>Biological Process</h2>
-                <#assign hasGo=false/>
-                <#list protein.processGoTerms as goTerm>
-                    <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
-                       class="ext">${goTerm.accession}</a> ${goTerm.termName}
-                    <#assign hasGo=true/>
-                    <br/>
-                </#list>
-                <#if !hasGo>
-                    No biological process GO terms.
-                </#if>
-                </div>
+            <div class="go_terms_box">
+                <h2>Biological Process</h2>
+            <#assign hasGo=false/>
+            <#list protein.processGoTerms as goTerm>
+                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                   class="ext">${goTerm.accession}</a> ${goTerm.termName}
+                <#assign hasGo=true/>
+                <br/>
+            </#list>
+            <#if !hasGo>
+                No biological process GO terms.
+            </#if>
+            </div>
 
-                <div class="go_terms_box">
-                    <h2>Molecular Function</h2>
-                <#assign hasGo=false/>
-                <#list protein.functionGoTerms as goTerm>
-                    <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
-                       class="ext">${goTerm.accession}</a> ${goTerm.termName}
-                    <#assign hasGo=true/>
-                    <br/>
-                </#list>
-                <#if !hasGo>
-                    No molecular function GO terms.
-                </#if>
-                </div>
-                <div class="go_terms_box">
-                    <h2>Cellular Component</h2>
-                <#assign hasGo=false/>
-                <#list protein.componentGoTerms as goTerm>
-                    <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
-                       class="ext">${goTerm.accession}</a> ${goTerm.termName}
-                    <#assign hasGo=true/>
-                    <br/>
-                </#list>
-                <#if !hasGo>
-                    No cellular component GO terms.
-                </#if>
-                </div>
+            <div class="go_terms_box">
+                <h2>Molecular Function</h2>
+            <#assign hasGo=false/>
+            <#list protein.functionGoTerms as goTerm>
+                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                   class="ext">${goTerm.accession}</a> ${goTerm.termName}
+                <#assign hasGo=true/>
+                <br/>
+            </#list>
+            <#if !hasGo>
+                No molecular function GO terms.
+            </#if>
+            </div>
+            <div class="go_terms_box">
+                <h2>Cellular Component</h2>
+            <#assign hasGo=false/>
+            <#list protein.componentGoTerms as goTerm>
+                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                   class="ext">${goTerm.accession}</a> ${goTerm.termName}
+                <#assign hasGo=true/>
+                <br/>
+            </#list>
+            <#if !hasGo>
+                No cellular component GO terms.
+            </#if>
             </div>
         </div>
+    </div>
 </div>

@@ -25,7 +25,7 @@ public class CondensedViewTest {
     @Test
     @Ignore
     public void testCondensedView() {
-        final SimpleProtein protein = new SimpleProtein("P99999", "A_PROTEIN", "This is a protein", 400, "ABCDEF123456789", "23948239", 9606, "Homo sapiens", "Homo sapiens (Human)");
+        final SimpleProtein protein = new SimpleProtein("P99999", "A_PROTEIN", "This is a protein", 400, "ABCDEF123456789", "23948239", 9606, "Homo sapiens", "Homo sapiens (Human)",false);
 
     }
 }
