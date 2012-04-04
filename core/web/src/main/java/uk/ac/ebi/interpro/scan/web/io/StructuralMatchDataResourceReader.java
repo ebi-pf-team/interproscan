@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * Reads the TSV output from the web service query, each output row becomes a Java object.
  * See {@see uk.ac.ebi.interpro.scan.web.biomart.StructuralMatchDataRecord}
  *
- * @author  Matthew Fraser
+ * @author Matthew Fraser
  * @version $Id$
  */
 public class StructuralMatchDataResourceReader extends AbstractResourceReader<StructuralMatchDataRecord> {
@@ -22,19 +22,16 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
 
     @Override
     protected StructuralMatchDataRecord createRecord(String line) {
-        if (line == null || line.isEmpty())   {
+        if (line == null || line.isEmpty()) {
             return null;
-        }
-        else if (line.startsWith(HEADER_LINE)) {
+        } else if (line.startsWith(HEADER_LINE)) {
             // Ignore first line of the output (column headers)
             return null;
-        }
-        else if (line.startsWith("PROTEIN_ACCESSION\t")) {
+        } else if (line.startsWith("PROTEIN_ACCESSION\t")) {
             // Looks like the column headers from the web service have changed to an un-expected format
             throw new IllegalStateException("Column heading line in un-expected format: " + line);
-        }
-        else if (line.startsWith(NO_RESULTS)) {
-             // No result to parse
+        } else if (line.startsWith(NO_RESULTS)) {
+            // No result to parse
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Do not parse line: " + line);
             }
@@ -51,6 +48,7 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
         String classId;
         int posFrom;
         int posTo;
+        boolean isProteinFragment = false;
 
         Pattern pattern = Pattern.compile("\t");
         Scanner scanner = new Scanner(line).useDelimiter(pattern);
@@ -65,10 +63,14 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
         classId = scanner.next();
         posFrom = scanner.nextInt();
         posTo = scanner.nextInt();
+        String isProteinFragmentString = scanner.next();
+        if (isProteinFragmentString.equalsIgnoreCase("Y")) {
+            isProteinFragment = true;
+        }
 
         return new StructuralMatchDataRecord(proteinAc, proteinId, proteinLength, md5, crc64,
                 databaseName, domainId, classId,
-                posFrom, posTo);
+                posFrom, posTo, isProteinFragment);
     }
 
 }

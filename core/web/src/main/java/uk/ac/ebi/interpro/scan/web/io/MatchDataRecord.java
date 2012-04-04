@@ -8,10 +8,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * Java object to hold the results of the match data REST web service query.
  * Each row becomes a MatchDataRecord.
  *
- * @author  Matthew Fraser
+ * @author Matthew Fraser
  * @version $Id$
  */
-public final class MatchDataRecord {
+public final class MatchDataRecord extends AbstractDataRecord {
 
     /*
      * Protein matches TSV column headings:
@@ -34,18 +34,12 @@ public final class MatchDataRecord {
      * TAXONOMY_ID
      * TAXONOMY_SCIENCE_NAME
      * TAXONOMY_FULL_NAME
+     * PROTEIN_FRAGMENT
      */
 
-    private final String proteinAc;
-    private final String proteinId;
-    private final int proteinLength;
-    private final String md5;
-    private final String crc64;
     private final String methodAc;
     private final String methodName;
     private final String methodDatabase;
-    private final int posFrom;
-    private final int posTo;
     private final Double score; // Could be NULL
     private final String entryAc;
     private final String entryShortName;
@@ -56,20 +50,14 @@ public final class MatchDataRecord {
     private final String taxFullName;
 
     public MatchDataRecord(String proteinAc, String proteinId, int proteinLength, String md5, String crc64,
-                              String methodAc, String methodName, String methodDatabase,
-                              int posFrom, int posTo, Double score,
-                              String entryAc, String entryShortName, String entryName, String entryType,
-                              int taxId, String taxScienceName, String taxFullName){
-        this.proteinAc = proteinAc;
-        this.proteinId = proteinId;
-        this.proteinLength = proteinLength;
-        this.md5 = md5;
-        this.crc64 = crc64;
+                           String methodAc, String methodName, String methodDatabase,
+                           int posFrom, int posTo, Double score,
+                           String entryAc, String entryShortName, String entryName, String entryType,
+                           int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
+        super(proteinAc, proteinId, proteinLength, md5, crc64, posFrom, posTo, isProteinFragment);
         this.methodAc = methodAc;
         this.methodName = methodName;
         this.methodDatabase = methodDatabase;
-        this.posFrom = posFrom;
-        this.posTo = posTo;
         this.score = score;
         this.entryAc = entryAc;
         this.entryShortName = entryShortName;
@@ -78,26 +66,6 @@ public final class MatchDataRecord {
         this.taxId = taxId;
         this.taxScienceName = taxScienceName;
         this.taxFullName = taxFullName;
-    }
-
-    public String getProteinAc() {
-        return proteinAc;
-    }
-
-    public String getProteinId() {
-        return proteinId;
-    }
-
-    public int getProteinLength() {
-        return proteinLength;
-    }
-
-    public String getMd5() {
-        return md5;
-    }
-
-    public String getCrc64() {
-        return crc64;
     }
 
     public String getMethodAc() {
@@ -110,14 +78,6 @@ public final class MatchDataRecord {
 
     public String getMethodDatabase() {
         return methodDatabase;
-    }
-
-    public int getPosFrom() {
-        return posFrom;
-    }
-
-    public int getPosTo() {
-        return posTo;
     }
 
     public Double getScore() {
@@ -161,16 +121,16 @@ public final class MatchDataRecord {
         final MatchDataRecord r = (MatchDataRecord) o;
 
         return new EqualsBuilder()
-                .append(proteinAc, r.proteinAc)
-                .append(proteinId, r.proteinId)
-                .append(proteinLength, r.proteinLength)
-                .append(md5, r.md5)
-                .append(crc64, r.crc64)
+                .append(getProteinAc(), r.getProteinAc())
+                .append(getProteinId(), r.getProteinId())
+                .append(getProteinLength(), r.getProteinLength())
+                .append(getMd5(), r.getMd5())
+                .append(getCrc64(), r.getCrc64())
                 .append(methodAc, r.methodAc)
                 .append(methodName, r.methodName)
                 .append(methodDatabase, r.methodDatabase)
-                .append(posFrom, r.posFrom)
-                .append(posTo, r.posTo)
+                .append(getPosFrom(), r.getPosFrom())
+                .append(getPosTo(), r.getPosTo())
                 .append(score, r.score)
                 .append(entryAc, r.entryAc)
                 .append(entryShortName, r.entryShortName)
@@ -179,22 +139,23 @@ public final class MatchDataRecord {
                 .append(taxId, r.taxId)
                 .append(taxScienceName, r.taxScienceName)
                 .append(taxFullName, r.taxFullName)
+                .append(isProteinFragment(), r.isProteinFragment())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(23, 15)
-                .append(proteinAc)
-                .append(proteinId)
-                .append(proteinLength)
-                .append(md5)
-                .append(crc64)
+                .append(getProteinAc())
+                .append(getProteinId())
+                .append(getProteinLength())
+                .append(getMd5())
+                .append(getCrc64())
                 .append(methodAc)
                 .append(methodName)
                 .append(methodDatabase)
-                .append(posFrom)
-                .append(posTo)
+                .append(getPosFrom())
+                .append(getPosTo())
                 .append(score)
                 .append(entryAc)
                 .append(entryShortName)
@@ -203,12 +164,13 @@ public final class MatchDataRecord {
                 .append(taxId)
                 .append(taxScienceName)
                 .append(taxFullName)
+                .append(isProteinFragment())
                 .toHashCode();
     }
 
 
     @Override
-    public String toString()  {
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 }
