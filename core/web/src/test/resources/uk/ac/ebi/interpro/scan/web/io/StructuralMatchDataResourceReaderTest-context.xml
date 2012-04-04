@@ -7,7 +7,7 @@
     <bean id="reader" class="uk.ac.ebi.interpro.scan.web.io.StructuralMatchDataResourceReader"/>
 
     <bean id="file" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/P38398_structural_matches.tsv"/>
+        <constructor-arg value="data/proteinStructures/P38398.tsv"/>
     </bean>
 
  </beans>

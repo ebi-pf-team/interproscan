@@ -16,7 +16,7 @@
     </bean>
 
     <bean id="resource" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/P38398_matches.tsv"/>
+        <constructor-arg value="data/proteins/P38398.tsv"/>
     </bean>
 
  </beans>
