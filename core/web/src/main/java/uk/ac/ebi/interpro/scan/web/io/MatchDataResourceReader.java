@@ -60,6 +60,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
         int taxId;
         String taxScienceName;
         String taxFullName;
+        boolean isProteinFragment = false;
 
         Pattern pattern = Pattern.compile("\t");
         Scanner scanner = new Scanner(line).useDelimiter(pattern);
@@ -104,12 +105,16 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
         taxId = scanner.nextInt();
         taxScienceName = scanner.next();
         taxFullName = scanner.next();
+        String isProteinFragmentString = scanner.next();
+        if (isProteinFragmentString.equalsIgnoreCase("Y")) {
+            isProteinFragment = true;
+        }
 
         return new MatchDataRecord(proteinAc, proteinId, proteinLength, md5, crc64,
                 methodAc, methodName, methodDatabase,
                 posFrom, posTo, score,
                 entryAc, entryShortName, entryName, entryType,
-                taxId, taxScienceName, taxFullName);
+                taxId, taxScienceName, taxFullName, isProteinFragment);
     }
 
 }
