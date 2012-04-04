@@ -93,7 +93,7 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
     }
 
     private String createMatchesUrl(String proteinAc, boolean isProteinAc) {
-        if (matchDataWebserviceUrl.startsWith("classpath:")) {
+        if (matchDataWebserviceUrl.startsWith("classpath:") || matchDataWebserviceUrl.startsWith("file:")) {
             // If using a manually supplied file on the classpath then just use that location (good for testing)
             return matchDataWebserviceUrl;
         }
@@ -102,7 +102,7 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
     }
 
     private String createStructuralMatchesUrl(String proteinAc, boolean isProteinAc) {
-        if (structMatchDataWebserviceUrl.startsWith("classpath:")) {
+        if (structMatchDataWebserviceUrl.startsWith("classpath:") || structMatchDataWebserviceUrl.startsWith("file:")) {
             // If using a manually supplied file on the classpath then just use that location (good for testing)
             return structMatchDataWebserviceUrl;
         }
@@ -118,20 +118,18 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
         else {
             prefix = structMatchDataWebserviceUrl;
         }
-        String extension = EXTENSION;
         if (useLocalData()) {
             String currentDir = System.getProperty("user.dir");
             currentDir = currentDir.replace(File.separatorChar, '/');
             prefix = "file://" + currentDir + "/src/test/resources/data/";
             if (isMatchUrl) {
-                extension = "-match";
+                prefix += "proteins/";
             } else {
-                extension = "-structure";
+                prefix += "proteinStructures/";
             }
-            extension += EXTENSION;
         }
         // TODO: Use MD5 as filter if not proteinAc
-        return prefix + proteinAc + extension;
+        return prefix + proteinAc + EXTENSION;
     }
 
     // Only use for testing -- means we don't need a connection to data source

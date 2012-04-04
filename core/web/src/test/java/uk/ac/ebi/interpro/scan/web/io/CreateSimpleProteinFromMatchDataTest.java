@@ -40,7 +40,7 @@ public class CreateSimpleProteinFromMatchDataTest {
 
     @Test
     public void queryByAccessionTest() throws IOException {
-        // TODO: Restructure test data in to directories proteins/ and protein-structures/ and rename files
+
         CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchDataImpl(matchAnalyser,
                 structuralMatchAnalyser,
                 matchDataWebserviceUrl,

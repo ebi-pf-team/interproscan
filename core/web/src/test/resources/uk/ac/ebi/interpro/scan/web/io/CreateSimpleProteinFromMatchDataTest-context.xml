@@ -26,10 +26,10 @@
         <property name="location" value="classpath:uk/ac/ebi/interpro/scan/web/webservices.properties" />
     </bean>
     <bean id="matchDataWebserviceUrl" class="java.lang.String">
-        <constructor-arg value="classpath:data/P38398-match.tsv"/>
+        <constructor-arg value="classpath:data/proteins/P38398.tsv"/>
     </bean>
     <bean id="structMatchDataWebserviceUrl" class="java.lang.String">
-        <constructor-arg value="classpath:data/P38398-structure.tsv"/>
+        <constructor-arg value="classpath:data/proteinStructures/P38398.tsv"/>
     </bean>
 
 
