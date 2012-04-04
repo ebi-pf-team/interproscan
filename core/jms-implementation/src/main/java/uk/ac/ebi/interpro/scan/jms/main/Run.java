@@ -268,7 +268,7 @@ public class Run {
                     JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
                     // Print out deactivated jobs
                     System.out.printf("    %30s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning() +
-                            " Please open properties file 'interproscan.propties.' and specify a valid path.");
+                            " Please open properties file 'interproscan.properties' and specify a valid path.");
                 }
                 System.exit(1);
             }
