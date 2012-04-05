@@ -20,7 +20,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
 
     private static final Logger LOGGER = Logger.getLogger(MatchDataResourceReader.class.getName());
 
-    private static final String HEADER_LINE = "PROTEIN_ACCESSION\tPROTEIN_ID\tPROTEIN_LENGTH\tMD5\tCRC64\tMETHOD_AC\tMETHOD_NAME\tMETHOD_DATABASE_NAME\tPOS_FROM\tPOS_TO\tMATCH_SCORE\tENTRY_AC\tENTRY_SHORT_NAME\tENTRY_NAME\tENTRY_TYPE\tTAXONOMY_ID\tTAXONOMY_SCIENCE_NAME\tTAXONOMY_FULL_NAME";
+    private static final String HEADER_LINE = "PROTEIN_ACCESSION\tPROTEIN_ID\tPROTEIN_LENGTH\tCRC64\tMETHOD_AC\tMETHOD_NAME\tMETHOD_DATABASE_NAME\tPOS_FROM\tPOS_TO\tMATCH_SCORE\tENTRY_AC\tENTRY_SHORT_NAME\tENTRY_NAME\tENTRY_TYPE\tTAXONOMY_ID\tTAXONOMY_SCIENCE_NAME\tTAXONOMY_FULL_NAME";
     private static final String NO_RESULTS = "No results found";
 
     @Override
@@ -45,7 +45,6 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
         String proteinAc;
         String proteinId;
         int proteinLength;
-        String md5;
         String crc64;
         String methodAc;
         String methodName;
@@ -68,7 +67,6 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
         proteinAc = scanner.next();
         proteinId = scanner.next();
         proteinLength = scanner.nextInt();
-        md5 = scanner.next();
         crc64 = scanner.next();
         methodAc = scanner.next();
         methodName = scanner.next();
@@ -110,7 +108,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
             isProteinFragment = true;
         }
 
-        return new MatchDataRecord(proteinAc, proteinId, proteinLength, md5, crc64,
+        return new MatchDataRecord(proteinAc, proteinId, proteinLength, crc64,
                 methodAc, methodName, methodDatabase,
                 posFrom, posTo, score,
                 entryAc, entryShortName, entryName, entryType,

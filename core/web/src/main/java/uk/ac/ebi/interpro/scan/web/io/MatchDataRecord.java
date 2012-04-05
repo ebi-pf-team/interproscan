@@ -19,7 +19,6 @@ public final class MatchDataRecord extends AbstractDataRecord {
      * PROTEIN_ACCESSION
      * PROTEIN_ID
      * PROTEIN_LENGTH
-     * MD5
      * CRC64
      * METHOD_AC
      * METHOD_NAME
@@ -49,12 +48,12 @@ public final class MatchDataRecord extends AbstractDataRecord {
     private final String taxScienceName;
     private final String taxFullName;
 
-    public MatchDataRecord(String proteinAc, String proteinId, int proteinLength, String md5, String crc64,
+    public MatchDataRecord(String proteinAc, String proteinId, int proteinLength, String crc64,
                            String methodAc, String methodName, String methodDatabase,
                            int posFrom, int posTo, Double score,
                            String entryAc, String entryShortName, String entryName, String entryType,
                            int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
-        super(proteinAc, proteinId, proteinLength, md5, crc64, posFrom, posTo, isProteinFragment);
+        super(proteinAc, proteinId, proteinLength, crc64, posFrom, posTo, isProteinFragment);
         this.methodAc = methodAc;
         this.methodName = methodName;
         this.methodDatabase = methodDatabase;
@@ -124,7 +123,6 @@ public final class MatchDataRecord extends AbstractDataRecord {
                 .append(getProteinAc(), r.getProteinAc())
                 .append(getProteinId(), r.getProteinId())
                 .append(getProteinLength(), r.getProteinLength())
-                .append(getMd5(), r.getMd5())
                 .append(getCrc64(), r.getCrc64())
                 .append(methodAc, r.methodAc)
                 .append(methodName, r.methodName)
@@ -149,7 +147,6 @@ public final class MatchDataRecord extends AbstractDataRecord {
                 .append(getProteinAc())
                 .append(getProteinId())
                 .append(getProteinLength())
-                .append(getMd5())
                 .append(getCrc64())
                 .append(methodAc)
                 .append(methodName)
