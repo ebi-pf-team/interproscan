@@ -17,7 +17,7 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
 
     private static final Logger LOGGER = Logger.getLogger(StructuralMatchDataResourceReader.class.getName());
 
-    private static final String HEADER_LINE = "PROTEIN_ACCESSION\tPROTEIN_ID\tPROTEIN_LENGTH\tMD5\tCRC64\tdatabase_name\tdomain_id\tclass_id\tpos_from\tpos_to";
+    private static final String HEADER_LINE = "PROTEIN_ACCESSION\tPROTEIN_ID\tPROTEIN_LENGTH\tCRC64\tdatabase_name\tdomain_id\tclass_id\tpos_from\tpos_to";
     private static final String NO_RESULTS = "No results found";
 
     @Override
@@ -41,7 +41,6 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
         String proteinAc;
         String proteinId;
         int proteinLength;
-        String md5;
         String crc64;
         String databaseName;
         String domainId;
@@ -56,7 +55,6 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
         proteinAc = scanner.next();
         proteinId = scanner.next();
         proteinLength = scanner.nextInt();
-        md5 = scanner.next();
         crc64 = scanner.next();
         databaseName = scanner.next();
         domainId = scanner.next();
@@ -68,7 +66,7 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
             isProteinFragment = true;
         }
 
-        return new StructuralMatchDataRecord(proteinAc, proteinId, proteinLength, md5, crc64,
+        return new StructuralMatchDataRecord(proteinAc, proteinId, proteinLength, crc64,
                 databaseName, domainId, classId,
                 posFrom, posTo, isProteinFragment);
     }

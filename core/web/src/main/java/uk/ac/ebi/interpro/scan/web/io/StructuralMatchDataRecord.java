@@ -18,7 +18,6 @@ public class StructuralMatchDataRecord extends AbstractDataRecord {
      * PROTEIN_ACCESSION
      * PROTEIN_ID
      * PROTEIN_LENGTH
-     * MD5
      * CRC64
      * database_name
      * domain_id
@@ -31,9 +30,9 @@ public class StructuralMatchDataRecord extends AbstractDataRecord {
     private final String domainId;
     private final String classId;
 
-    public StructuralMatchDataRecord(String proteinAc, String proteinId, int proteinLength, String md5, String crc64,
+    public StructuralMatchDataRecord(String proteinAc, String proteinId, int proteinLength, String crc64,
                                      String databaseName, String domainId, String classId, int posFrom, int posTo, boolean isProteinFragment) {
-        super(proteinAc, proteinId, proteinLength, md5, crc64, posFrom, posTo, isProteinFragment);
+        super(proteinAc, proteinId, proteinLength, crc64, posFrom, posTo, isProteinFragment);
         this.databaseName = databaseName;
         this.domainId = domainId;
         this.classId = classId;
@@ -63,7 +62,6 @@ public class StructuralMatchDataRecord extends AbstractDataRecord {
                 .append(getProteinAc(), r.getProteinAc())
                 .append(getProteinId(), r.getProteinId())
                 .append(getProteinLength(), r.getProteinLength())
-                .append(getMd5(), r.getMd5())
                 .append(getCrc64(), r.getCrc64())
                 .append(databaseName, r.databaseName)
                 .append(domainId, r.domainId)
@@ -80,7 +78,6 @@ public class StructuralMatchDataRecord extends AbstractDataRecord {
                 .append(getProteinAc())
                 .append(getProteinAc())
                 .append(getProteinLength())
-                .append(getMd5())
                 .append(getCrc64())
                 .append(databaseName)
                 .append(domainId)

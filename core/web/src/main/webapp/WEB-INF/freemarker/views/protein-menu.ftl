@@ -52,10 +52,13 @@
         <div class="menu-filter-colour">
             <div style="border:1px pink solid; overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;">
                 <div style=" float:left;color: #2e5882; font-size: 110%;  font-weight: bold;margin-bottom: 0px;">
-                    Colours
+                    Colour by
                 </div>
-                <div style=" float:right;margin-bottom: 0px;"><a href="../../resources/images/colour_key_MD.png"
-                                                                 target="_blank">view key</a></div>
+
+                <#if ! standalone>
+                    <div style=" float:right;margin-bottom: 0px;"><a href="http://wwwdev.ebi.ac.uk/interpro/user_manual.html#25"
+                                                                 target="_blank">help</a></div>
+                </#if>
             </div>
             <fieldset>
                 <div style="background-color:white;">

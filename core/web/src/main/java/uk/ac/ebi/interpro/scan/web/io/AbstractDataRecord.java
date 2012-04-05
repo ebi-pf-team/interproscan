@@ -12,19 +12,16 @@ public class AbstractDataRecord {
     private final String proteinAc;
     private final String proteinId;
     private final int proteinLength;
-    private final String md5;
     private final String crc64;
-    //
     private final int posFrom;
     private final int posTo;
     private final boolean isProteinFragment;
 
-    public AbstractDataRecord(String proteinAc, String proteinId, int proteinLength, String md5,
+    public AbstractDataRecord(String proteinAc, String proteinId, int proteinLength,
                               String crc64, int posFrom, int posTo, boolean proteinFragment) {
         this.proteinAc = proteinAc;
         this.proteinId = proteinId;
         this.proteinLength = proteinLength;
-        this.md5 = md5;
         this.crc64 = crc64;
         this.posFrom = posFrom;
         this.posTo = posTo;
@@ -41,10 +38,6 @@ public class AbstractDataRecord {
 
     public int getProteinLength() {
         return proteinLength;
-    }
-
-    public String getMd5() {
-        return md5;
     }
 
     public String getCrc64() {
