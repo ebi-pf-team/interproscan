@@ -29,15 +29,24 @@
 
 <div class="main-box">
     <h1>
-    ${protein.name} <span>(${protein.ac})</span>
+        <#if standalone>
+            ${protein.ac}
+        <#else>
+            ${protein.name} <span>(${protein.ac})</span>
+        </#if>
     </h1>
 
     <div class="prot_gal">
 
         <div class="prot_gal_bloc">
             <div class="prot_gal_col"><h1>Accession</h1></div>
-            <div class="prot_gal_desc"><a href="http://www.uniprot.org/uniprot/${protein.ac}" class="ext"
-                                          title="${protein.name} (${protein.ac})">${protein.ac}</a> (${protein.id})
+            <div class="prot_gal_desc">
+                <#if standalone>
+                    ${protein.ac} (${protein.id})
+                <#else>
+                    <a href="http://www.uniprot.org/uniprot/${protein.ac}" class="ext"
+                                              title="${protein.name} (${protein.ac})">${protein.ac}</a> (${protein.id})
+                </#if>
             </div>
         </div>
     <#if ! standalone>
