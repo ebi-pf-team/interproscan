@@ -26,34 +26,17 @@ public final class EbiSearchClient {
     // "Domain" in this sense means the name of the index in the EBI search engine
     private static String DOMAIN = "interpro";
 
-    /**
-     * Any letter of the alphabet allowed because, in UniParc at least:
-     *
-     * (1) Following are allowed in addition to the 20 standard amino acids:
-     *     Selenocysteine	                    U
-     *     Pyrrolysine	                        O
-     *
-     * (2) Placeholders are used where chemical or crystallographic analysis of a peptide or protein
-     *     cannot conclusively determine the identity of a residue:
-     *     Asparagine or aspartic acid		    B
-     *     Glutamine or glutamic acid		    Z
-     *     Leucine or Isoleucine		        J
-     *     Unspecified or unknown amino acid	X
-     */
-    private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-Z-*]+$");
-
-    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
-
-    // Minimum sequence length
-    // TODO: Is minimum sequence length realistic?
-    private static final int MIN_SEQUENCE_LENGTH = 30;
-
     // TODO: Configure in Spring
     private EBeyeClient client = null;
 
     public EbiSearchClient() {
         client = new EBeyeClient();
         //client.setServiceEndPoint("http://frontier.ebi.ac.uk/");
+    }
+
+    public EbiSearchClient(String endPointUrl) {
+        client = new EBeyeClient();
+        client.setServiceEndPoint(endPointUrl);
     }
 
     public Page search(String query, int pageNumber, int resultsPerPage, boolean includeDescription) {
@@ -145,6 +128,42 @@ public final class EbiSearchClient {
 
     }
 
+    public static final class Query {
+
+        /**
+         * Any letter of the alphabet allowed because, in UniParc at least:
+         *
+         * (1) Following are allowed in addition to the 20 standard amino acids:
+         *     Selenocysteine	                    U
+         *     Pyrrolysine	                        O
+         *
+         * (2) Placeholders are used where chemical or crystallographic analysis of a peptide or protein
+         *     cannot conclusively determine the identity of a residue:
+         *     Asparagine or aspartic acid		    B
+         *     Glutamine or glutamic acid		    Z
+         *     Leucine or Isoleucine		        J
+         *     Unspecified or unknown amino acid	X
+         */
+        private static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-Z-*]+$");
+
+        private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
+
+        // Minimum sequence length
+        // TODO: Is minimum sequence length realistic?
+        private static final int MIN_SEQUENCE_LENGTH = 30;
+
+        // Improvement: don't replace whitespace, but instead get text before first whitespace (if any) -- if more than eg. 20 letters can assume is sequence
+        public static boolean isSequence(String query) {
+            String s = normalise(query);
+            return (s.length() > MIN_SEQUENCE_LENGTH && AMINO_ACID_PATTERN.matcher(s).matches());
+        }
+
+        public static String normalise(String query) {
+            return WHITESPACE_PATTERN.matcher(query).replaceAll("");//.toUpperCase();
+        }
+
+    }
+
     public static void main(String[] args) {
 
         if (args.length == 0) {
@@ -158,11 +177,12 @@ public final class EbiSearchClient {
         }
 
         // Amino acid sequence? Would be even better to just take MD5 of the query string and check against search index for any hits
-        // Improvement: don't replace whitespace, but instead get text before first whitespace (if any) -- if more than eg. 20 letters can assume is sequence
-        String s = WHITESPACE_PATTERN.matcher(query).replaceAll("");//.toUpperCase();
-        if (s.length() > MIN_SEQUENCE_LENGTH && AMINO_ACID_PATTERN.matcher(s).matches()) {
+        if (Query.isSequence(query)) {
+            //String s = WHITESPACE_PATTERN.matcher(query).replaceAll("");//.toUpperCase();
+            //if (s.length() > MIN_SEQUENCE_LENGTH && AMINO_ACID_PATTERN.matcher(s).matches()) {
             // Looks like a sequence...
-            String sequence = s.toUpperCase();
+            //String sequence = s.toUpperCase();
+            String sequence = Query.normalise(query).toUpperCase();
             String md5 = Md5Helper.calculateMd5(sequence);
             System.out.println("Check InterPro database for MD5: " + md5);
             // Following is based on uk.ac.ebi.interpro.web.pageObjects.InterProScanClient in DBML:
