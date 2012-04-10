@@ -53,7 +53,7 @@ public class ProteinStructureViewController {
      */
     @RequestMapping(value = "/{id}")
     public ModelAndView protein(@PathVariable String id) {
-        return new ModelAndView("protein-structure", buildModelMap(retrieve(id)));
+        return new ModelAndView("protein-structure", buildModelMap(retrieve(id), true));
     }
 
     /**
@@ -64,7 +64,7 @@ public class ProteinStructureViewController {
      */
     @RequestMapping(value = "/{id}/body")
     public ModelAndView proteinBody(@PathVariable String id) {
-        return new ModelAndView("protein-structure-body", buildModelMap(retrieve(id)));
+        return new ModelAndView("protein-structure-body", buildModelMap(retrieve(id), false));
     }
 
     /**
@@ -75,15 +75,16 @@ public class ProteinStructureViewController {
      */
     @RequestMapping(value = "/{id}/features")
     public ModelAndView proteinFeatures(@PathVariable String id) {
-        return new ModelAndView("protein-structure-features", buildModelMap(retrieve(id)));
+        return new ModelAndView("protein-structure-features", buildModelMap(retrieve(id), false));
     }
 
-    private Map<String, Object> buildModelMap(SimpleProtein p) {
+    private Map<String, Object> buildModelMap(SimpleProtein p, boolean standalone) {
         Map<String, Object> m = new HashMap<String, Object>();
         if (p != null) {
             m.put("protein", p);
             m.put("condensedView", new CondensedView(p));
             m.put("entryColours", entryHierarchy.getEntryColourMap());
+            m.put("standalone", standalone);
             m.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
             if (pageResources != null) {
                 Map<String, String> pageResourcesMap = pageResources.getResourcesMap();

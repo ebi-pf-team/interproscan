@@ -12,11 +12,13 @@
     <#--TODO: see http://html5boilerplate.com/-->
     <meta charset="utf-8" content="text/html">
     <#--Check if protein exists-->
+    <title>
     <#if protein??>
-        <title>${protein.name} (${protein.ac}) - InterPro</title>
+        ${protein.ac} - InterPro
     <#else>
         No data for this protein - InterPro
     </#if>
+    </title>
     <meta name="description" content="InterProScan result page: Protein matches and sequence features">
     <meta name="author" content="InterPro Team, European Bioinformatics Institute">
 
