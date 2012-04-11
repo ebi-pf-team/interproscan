@@ -30,6 +30,7 @@ public final class RawProtein<T extends RawMatch> implements Serializable {
 
     private final String proteinIdentifier;
     private final Collection<T> matches = new HashSet<T>();
+    private Long proteinDatabaseId;
 
     private RawProtein() {
         this.proteinIdentifier = null;
@@ -44,12 +45,19 @@ public final class RawProtein<T extends RawMatch> implements Serializable {
     }
 
     public void addMatch(T match) {
+        if (proteinDatabaseId == null) {
+            proteinDatabaseId = match.getNumericSequenceId();
+        }
         matches.add(match);
     }
 
     public Collection<T> getMatches() {
 //        return Collections.unmodifiableCollection(matches);
         return matches;
+    }
+
+    public Long getProteinDatabaseId() {
+        return proteinDatabaseId;
     }
 
     @Override

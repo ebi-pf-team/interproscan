@@ -6,10 +6,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  */
@@ -36,56 +32,40 @@ public class SmartThresholdFileParser implements Serializable {
 
     private static final String NO_VALUE_MARKER = "-";
 
-    private static final Pattern SMART_THRESHOLD_PATTERN = Pattern.compile("^SM[0-9]{5}.+$");
+    private static final double DBL_EPSILON = 2.220446049250313E-16;
+    private static final int DBL_MAX_10_EXP = 308;
 
-    public Map<String, SmartThreshold> parse(Resource thresholdFileResource) throws IOException {
-        String errorMessage = checkForResourceProblems(thresholdFileResource);
-        if (errorMessage != null) {
-            throw new IllegalStateException(errorMessage);
-        }
 
-        final Map<String, SmartThreshold> accessionThresholds = new HashMap<String, SmartThreshold>();
+    /**
+     * Returns a Map of model accession to a Threshold record.
+     *
+     * @param thresholdFileResource to be parsed
+     * @return a Map of model accession to a Threshold record.
+     * @throws IOException
+     */
+    public SmartThresholds parse(final Resource thresholdFileResource) throws IOException {
+        final SmartThresholds holder = new SmartThresholds();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(thresholdFileResource.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                Matcher thresholdData = SMART_THRESHOLD_PATTERN.matcher(line);
-                if (thresholdData.find()) {
+                if (line.startsWith("SM")) {
                     String[] lineInput = line.split("\\s+");
-                    accessionThresholds.put(lineInput[INDEX_MODEL_ACCESSION], new SmartThreshold(lineInput));
+                    holder.addThreshold(new SmartThreshold(lineInput));
                 }
             }
-        }
-        finally {
+        } finally {
             if (reader != null) {
                 reader.close();
             }
         }
-        return accessionThresholds;
-    }
-
-    /**
-     * Ensure the provided file resource is OK (exists and can be read).
-     * @param thresholdFileResource The resource to check
-     * @return An error string if there was a problem, or NULL if all was OK
-     */
-    public String checkForResourceProblems(Resource thresholdFileResource) {
-        if (thresholdFileResource == null) {
-            return "Smart threshold file resource is null";
-        }
-        if (!thresholdFileResource.exists()) {
-            return "Smart threshold file resource " + thresholdFileResource.getFilename() + " does not exist";
-        }
-        if (!thresholdFileResource.isReadable()) {
-            return "Smart threshold file resource " + thresholdFileResource.getFilename() + " is not readable";
-        }
-        return null; // All is OK!
+        return holder;
     }
 
     public class SmartThreshold {
 
-        private String id;
+        private String modelId;
 
         private String domainName;
 
@@ -93,9 +73,9 @@ public class SmartThresholdFileParser implements Serializable {
 
         private int dbSize;
 
-        private String muValue;
+        private double mu;
 
-        private String lambdaValue;
+        private double lambda;
 
         private Double cutoff;
 
@@ -103,32 +83,35 @@ public class SmartThresholdFileParser implements Serializable {
 
         private Double family = null;
 
-        private String repeats = null;
+        private Integer repeats = null;
 
         private Double repeat_cut = null;
 
         public SmartThreshold(String[] input) {
-            this.id = input[INDEX_MODEL_ACCESSION].trim();
-            this.domainName = input[INDEX_DOMAIN_NAME].trim();
-            this.familyName = input[INDEX_FAMILY_NAME].trim();
-            this.dbSize = Integer.parseInt(input[INDEX_DBSIZE].trim());
-            this.muValue = input[INDEX_MU].trim();
-            this.lambdaValue = input[INDEX_LAMBDA].trim();
-            this.cutoff = Double.parseDouble(input[INDEX_CUTOFF].trim());
-            this.cut_low = Double.parseDouble(input[INDEX_CUT_LOW].trim());
-            if (!input[INDEX_FAMILY_EVAL].trim().equals(NO_VALUE_MARKER)) {
-                this.family = Double.parseDouble(input[INDEX_FAMILY_EVAL].trim());
-            }
+            this.modelId = input[INDEX_MODEL_ACCESSION];
+            this.domainName = input[INDEX_DOMAIN_NAME];
+            this.familyName = input[INDEX_FAMILY_NAME];
+            this.dbSize = Integer.parseInt(input[INDEX_DBSIZE]);
+            this.mu = Double.parseDouble(input[INDEX_MU]);
+            this.lambda = Double.parseDouble(input[INDEX_LAMBDA]);
+            this.cutoff = Double.parseDouble(input[INDEX_CUTOFF]);
+            this.cut_low = Double.parseDouble(input[INDEX_CUT_LOW]);
+            this.family = doubleOrNull(input[INDEX_FAMILY_EVAL]);
             if (!input[INDEX_REPEATS].trim().equals(NO_VALUE_MARKER)) {
-                this.repeats = input[INDEX_REPEATS].trim();
+                this.repeats = Integer.parseInt(input[INDEX_REPEATS]);
             }
-            if (!input[INDEX_REPEAT_CUT].trim().equals(NO_VALUE_MARKER)) {
-                this.repeat_cut = Double.parseDouble(input[INDEX_REPEAT_CUT].trim());
-            }
+            this.repeat_cut = doubleOrNull(input[INDEX_REPEAT_CUT]);
         }
 
-        public String getId() {
-            return id;
+        private Double doubleOrNull(String val) {
+            if (val != null || NO_VALUE_MARKER.equals(val)) {
+                return null;
+            }
+            return Double.parseDouble(val);
+        }
+
+        public String getModelId() {
+            return modelId;
         }
 
         public String getDomainName() {
@@ -137,18 +120,6 @@ public class SmartThresholdFileParser implements Serializable {
 
         public String getFamilyName() {
             return familyName;
-        }
-
-        public int getDbSize() {
-            return dbSize;
-        }
-
-        public String getMuValue() {
-            return muValue;
-        }
-
-        public String getLambdaValue() {
-            return lambdaValue;
         }
 
         public Double getCutoff() {
@@ -163,12 +134,62 @@ public class SmartThresholdFileParser implements Serializable {
             return family;
         }
 
-        public String getRepeats() {
+        public Integer getRepeats() {
             return repeats;
         }
 
         public Double getRepeat_cut() {
             return repeat_cut;
+        }
+
+        public double getDerivedEvalue(double score) {
+            return (double) dbSize * getPValue(score);
+        }
+
+        private double getPValue(double score) {
+            double pVal;
+
+            // the bound from Bayes
+            if (score >= sreLOG2(Double.MAX_VALUE)) {
+                pVal = 0.0;
+            } else if (score <= -1.0 * sreLOG2(Double.MAX_VALUE)) {
+                pVal = 1.0;
+            } else {
+                pVal = 1.0 / (1.0 + sreEXP2(score));
+            }
+
+            // try for a better estimate from EVD fit
+            return Math.min(pVal, extremeValueP(score));
+        }
+
+        private double sreLOG2(double x) {
+            return ((x) > 0 ? Math.log(Double.MAX_VALUE) * 1.44269504 : -9999.0);
+        }
+
+        private double sreEXP2(double x) {
+            return (Math.exp((x) * 0.69314718));
+        }
+
+        private double extremeValueP(double score) {
+            // avoid exceptions near P=1.0
+            // typical 32-bit sys: if () < -3.6, return 1.0
+            if ((lambda * (score - mu)) <= -1.0 * Math.log(-1.0 * Math.log(DBL_EPSILON))) {
+                return 1.0;
+            }
+
+            // avoid underflow fp exceptions near P=0.0*/
+            if ((lambda * (score - mu)) >= 2.3 * (double) DBL_MAX_10_EXP) {
+                return 0.0;
+            }
+
+            // a roundoff issue arises; use 1 - e^-x --> x for small x */
+            final double ret = Math.exp(-1.0 * lambda * (score - mu));
+
+            if (ret < 1e-7) {
+                return ret;
+            } else {
+                return (1.0 - Math.exp(-1.0 * ret));
+            }
         }
     }
 }

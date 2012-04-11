@@ -11,8 +11,8 @@ import uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
-import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.SmartHmmer2RawMatchDAO;
 
@@ -33,6 +33,7 @@ public class SmartPostProcessingStep extends Step {
 
     private FilteredMatchDAO<SmartRawMatch, Hmmer2Match> filteredMatchDAO;
 
+
     @Required
     public void setPostProcessor(SmartPostProcessing postProcessor) {
         this.postProcessor = postProcessor;
@@ -52,6 +53,7 @@ public class SmartPostProcessingStep extends Step {
     public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
     }
+
 
     /**
      * This method is called to execute the action that the StepInstance must perform.

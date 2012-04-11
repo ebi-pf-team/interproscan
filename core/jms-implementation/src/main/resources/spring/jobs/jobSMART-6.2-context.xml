@@ -49,7 +49,7 @@
 
     <!-- STEP 2 -->
     <bean id="stepSMARTRunBinary-6.2"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.smart.RunSmartBinaryStep"
           parent="abstractSMARTStep-6.2">
         <!-- In example command line below, replace _ with -
         /ebi/production/interpro/binaries/64_bit_Linux/hmmpfam _-cpu 1 _-acc -A 0 /ebi/sp/pro1/interpro/data/members/smart/6.2/smart.HMMs.bin  XXX.fasta -->
@@ -63,6 +63,12 @@
         <property name="retries" value="3"/>
         <property name="fullPathToHmmFile" ref="fullPathToHmmFile-6.2"/>
         <property name="requiresDatabaseAccess" value="false"/>
+        <property name="smartResourceManager" ref="smartResourceManager"/>
+    </bean>
+
+    <bean id="smartResourceManager" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartResourceManager">
+        <property name="overlappingFileResource" value="file:${smart.overlapping.path.6.2}"/>
+        <property name="thresholdFileResource" value="file:${smart.threshold.path.6.2}"/>
     </bean>
 
     <bean id="stepSMARTDeleteFastaFile-6.2"
@@ -110,14 +116,14 @@
         <property name="stepDescription" value="Performs post processing and Match persistence on SMART data"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
+                <property name="smartResourceManager" ref="smartResourceManager"/>
                 <property name="overlappingFileParser">
                     <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"/>
                 </property>
-                <property name="overlappingFileResource" value="file:${smart.overlapping.path.6.2}"/>
                 <property name="thresholdFileParser">
                     <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser"/>
                 </property>
-                <property name="thresholdFileResource" value="file:${smart.threshold.path.6.2}"/>
+                <property name="proteinDAO" ref="proteinDAO"/>
             </bean>
         </property>
         <property name="serialGroup" value="HMMER2_POST_PROCESSING"/>

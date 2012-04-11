@@ -13,20 +13,14 @@
     <import resource="jobPanther-context.xml"/>
     <import resource="jobPrints-context.xml"/>
     <import resource="jobCoils-context.xml"/>
-    <!--<import resource="jobHAMAP-180510-context.xml"/>-->
     <import resource="jobHAMAP-140911-context.xml"/>
-    <!--<import resource="jobPrositeProfiles-20.66-context.xml"/>-->
-    <!--<import resource="jobPrositePatterns-20.66-context.xml"/>-->
     <import resource="jobPrositeProfiles-20.72-context.xml"/>
     <import resource="jobPrositePatterns-20.72-context.xml"/>
     <import resource="jobSignalP-EUK-4.0-context.xml"/>
     <import resource="jobSignalP-GRAM_POSITIVE-4.0-context.xml"/>
     <import resource="jobSignalP-GRAM_NEGATIVE-4.0-context.xml"/>
-    <!--<import resource="jobSMART-6.1-context.xml"/>-->
     <import resource="jobSMART-6.2-context.xml"/>
-    <!--<import resource="jobTIGRFAM-9.0-context.xml"/>-->
     <import resource="jobTIGRFAM-10.1-context.xml"/>
-    <!--<import resource="jobPIRSF-2.74-context.xml"/>-->
     <import resource="jobPIRSF-2.78-context.xml"/>
     <import resource="jobProDom-2006.1-context.xml"/>
     <import resource="jobSuperFamily-1.75-context.xml"/>
@@ -49,28 +43,21 @@
 
                 <!-- Analyses -->
                 <!--Old versions are switched off because they aren't in the database anymore-->
-                <!--<ref bean="jobPfamA-24.0"/>-->
                 <ref bean="jobPfamA-26.0"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobGene3d"/>
                 <ref bean="jobPanther"/>
                 <ref bean="jobPRINTS"/>
                 <ref bean="jobCoils"/>
-                <!--<ref bean="jobHAMAP-180510"/>-->
                 <ref bean="jobHAMAP-140911"/>
                 <ref bean="jobProDom-2006.1"/>
-                <!--<ref bean="jobPrositeProfiles-20.66"/>-->
-                <!--<ref bean="jobPrositePatterns-20.66"/>-->
                 <ref bean="jobPrositeProfiles-20.72"/>
                 <ref bean="jobPrositePatterns-20.72"/>
                 <ref bean="jobSignalP-EUK-4.0"/>
                 <ref bean="jobSignalP-GRAM_POSITIVE-4.0"/>
                 <ref bean="jobSignalP-GRAM_NEGATIVE-4.0"/>
-                <!--<ref bean="jobSMART-6.1"/>-->
                 <ref bean="jobSMART-6.2"/>
-                <!--<ref bean="jobTIGRFAM-9.0"/>-->
                 <ref bean="jobTIGRFAM-10.1"/>
-                <!--<ref bean="jobPIRSF-2.74"/>-->
                 <ref bean="jobPIRSF-2.78"/>
                 <ref bean="jobSuperFamily-1.75"/>
                 <ref bean="jobTMHMM"/>
@@ -300,7 +287,8 @@
                         <entry key="css_resource_protein" value="resources/css/protein.css"/>
                         <entry key="css_resource_type_colours" value="resources/css/type_colours.css"/>
                         <entry key="css_resource_database" value="resources/css/database.css"/>
-                        <entry key="css_resource_jquery_ui1817_custom" value="resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css"/>
+                        <entry key="css_resource_jquery_ui1817_custom"
+                               value="resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css"/>
                         <entry key="js_resource_jquery171" value="resources/javascript/jquery/jquery-1.7.1.min.js"/>
                         <entry key="js_resource_jquery_qtip2" value="resources/javascript/qtip2/jquery.qtip.min.js"/>
                         <entry key="js_resource_protein" value="resources/javascript/protein.js"/>
@@ -309,8 +297,10 @@
                         <entry key="img_resource_path" value="resources"/>
                         <entry key="js_resource_common" value="resources/javascript/common.js"/>
                         <entry key="js_resource_protein_popups" value="resources/javascript/protein-popups.js"/>
-                        <entry key="js_resource_jquery_ui1817_custom" value="resources/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js"/>
-                        <entry key="js_resource_protein_jquery_cookie" value="resources/javascript/jquery/jquery.cookie.js"/>
+                        <entry key="js_resource_jquery_ui1817_custom"
+                               value="resources/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js"/>
+                        <entry key="js_resource_protein_jquery_cookie"
+                               value="resources/javascript/jquery/jquery.cookie.js"/>
                     </map>
                 </constructor-arg>
                 <constructor-arg ref="defaultWrapper"/>
