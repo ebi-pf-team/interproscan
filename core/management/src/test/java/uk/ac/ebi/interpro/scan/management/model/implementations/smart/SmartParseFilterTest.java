@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.smart;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -78,6 +79,7 @@ public class SmartParseFilterTest {
     private Long expectedFilteredMatches;
 
     @Test
+    @Ignore("This test appears to be reproducing some testing already run in the business module.")
     public void testFilter() throws IOException {
 
         // Parse and store raw matches

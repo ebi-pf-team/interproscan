@@ -11,8 +11,8 @@ import uk.ac.ebi.interpro.scan.io.ResourceReader;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser;
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -20,7 +20,6 @@ import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.*;
 
 /**
  * Tests {@link SmartPostProcessing}.
@@ -81,7 +80,6 @@ public class SmartPostProcessingTest {
             RawProtein<SmartRawMatch> filteredProtein = filteredProteins.get(id);
             assertEquals(expectedProtein, filteredProtein);
         }
-
     }
 
     @Test
@@ -121,8 +119,6 @@ public class SmartPostProcessingTest {
                 new HashMap<String, RawProtein<SmartRawMatch>>(parseRawMatches(false, filteredMatches));
 
         // Would filter raw matches, but overlapping and THRESHOLDS files are null therefore should skip post processing
-        postProcessor.setOverlappingFileResource(null);
-        postProcessor.setThresholdFileResource(null);
         final Map<String, RawProtein<SmartRawMatch>> filteredProteins = postProcessor.process(rawProteins);
 
 
@@ -156,10 +152,13 @@ public class SmartPostProcessingTest {
      */
     private static final class OnionResourceReader extends AbstractResourceReader<SmartRawMatch> {
         private final boolean isAnalysisTable;
+
         OnionResourceReader(boolean isAnalysisTable) {
             this.isAnalysisTable = isAnalysisTable;
         }
-        @Override protected SmartRawMatch createRecord(String line) {
+
+        @Override
+        protected SmartRawMatch createRecord(String line) {
             // Remove quotes
             line = line.replaceAll("\"", "");
             // Ignore first row
@@ -179,27 +178,26 @@ public class SmartPostProcessingTest {
 
                 // Read columns
                 String analysisId = s.next();
-                String seqId    = s.next();
-                String modelId  = s.next();
-                String release  = s.next() + "." + s.next();
-                int locStart    = s.nextInt();
-                int locEnd      = s.nextInt();
-                int hmmStart    = s.nextInt();
-                int hmmEnd      = s.nextInt();
+                String seqId = s.next();
+                String modelId = s.next();
+                String release = s.next() + "." + s.next();
+                int locStart = s.nextInt();
+                int locEnd = s.nextInt();
+                int hmmStart = s.nextInt();
+                int hmmEnd = s.nextInt();
                 String hmmBounds = s.next();
                 double locScore = s.nextDouble(); // "score" in Onion
-                double score    = s.nextDouble(); // "seqScore" in Onion
+                double score = s.nextDouble(); // "seqScore" in Onion
                 if (isAnalysisTable) {
                     String timestamp = s.next();
                 }
-                double evalue   = PersistenceConversion.get(s.nextDouble());
+                double evalue = PersistenceConversion.get(s.nextDouble());
                 //double locEvalue = PersistenceConversion.get(s.nextDouble());
                 double locEvalue = evalue; // TODO: Location e-value not stored in Onion - do we need it?
                 // TODO: No need for SignatureLibrary in raw match constructor
                 return new SmartRawMatch(seqId, modelId, SignatureLibrary.SMART, release, locStart, locEnd, evalue, score,
                         hmmStart, hmmEnd, hmmBounds, locScore, locEvalue);
-            }
-            catch (InputMismatchException e) {
+            } catch (InputMismatchException e) {
                 LOGGER.error("Error reading line: " + line);
                 throw e;
             }
