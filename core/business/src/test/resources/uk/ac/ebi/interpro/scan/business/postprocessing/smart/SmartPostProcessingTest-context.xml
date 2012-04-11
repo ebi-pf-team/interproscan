@@ -34,13 +34,14 @@
     </bean>
 
     <bean id="rawMatches" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-SMART_ANALYSIS_C.tsv"/>
+        <constructor-arg
+                value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-SMART_ANALYSIS_C.tsv"/>
     </bean>
 
     <bean id="filteredMatches" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-IPRSCAN.tsv"/>
     </bean>
-   
+
     <bean id="postProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
         <property name="overlappingFileParser">
             <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"/>
@@ -48,18 +49,18 @@
         <property name="thresholdFileParser">
             <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser"/>
         </property>
-        <!--<property name="thresholdFileResource"   value="file:${smart.threshold.path}"/>-->
-        <property name="thresholdFileResource">
-            <bean class="org.springframework.core.io.ClassPathResource">
-                <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/THRESHOLDS"/>
-            </bean>
-        </property>
-        <!--<property name="overlappingFileResource" value="file:${smart.overlapping.path}"/>-->
-        <property name="overlappingFileResource">
-            <bean class="org.springframework.core.io.ClassPathResource">
-                <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/overlapping"/>
-            </bean>
-        </property>        
+        <property name="smartResourceManager" ref="smartResourceManager"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <bean id="proteinDAO"
+          class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.DummyProteinDAOImpl"/>
+
+    <bean id="smartResourceManager" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartResourceManager">
+        <property name="overlappingFileResource"
+                  value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/overlapping"/>
+        <property name="thresholdFileResource"
+                  value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/THRESHOLDS"/>
     </bean>
 
 </beans>
