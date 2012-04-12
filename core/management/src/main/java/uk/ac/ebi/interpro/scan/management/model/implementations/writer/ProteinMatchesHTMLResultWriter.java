@@ -138,6 +138,7 @@ public class ProteinMatchesHTMLResultWriter {
             model.put("protein", p);
             model.put("condensedView", new CondensedView(p));
             model.put("entryColours", entryHierarchy.getEntryColourMap());
+            model.put("standalone", true);
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
         }
         return model;
