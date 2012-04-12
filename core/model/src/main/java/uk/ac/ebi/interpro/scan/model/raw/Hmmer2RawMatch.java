@@ -3,7 +3,10 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.HmmBounds;
+import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
+import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,11 +40,11 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
     }
 
     public double getLocationEvalue() {
-        return PersistenceConversion.get(locationEvalue);
+        return locationEvalue;
     }
 
     private void setLocationEvalue(double locationEvalue) {
-        this.locationEvalue = PersistenceConversion.set(locationEvalue);
+        this.locationEvalue = locationEvalue;
     }
 
     @Override
@@ -125,7 +128,7 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
                 m.getLocationStart(),
                 m.getLocationEnd(),
                 m.getLocationScore(),
-                m.getEvalue(),
+                m.getLocationEvalue(),
                 m.getHmmStart(),
                 m.getHmmEnd(),
                 HmmBounds.parseSymbol(m.getHmmBounds())

@@ -25,23 +25,25 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
     @Column(nullable = false)
     private double evalue;
 
-    protected SuperFamilyHmmer3Match() {}
+    protected SuperFamilyHmmer3Match() {
+    }
 
     public SuperFamilyHmmer3Match(Signature signature, double evalue, Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations) {
         super(signature, locations);
         setEvalue(evalue);
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public double getEvalue() {
-        return PersistenceConversion.get(evalue);
+        return evalue;
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = PersistenceConversion.set(evalue);
+        this.evalue = evalue;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof SuperFamilyHmmer3Match))
@@ -53,14 +55,16 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
                 PersistenceConversion.equivalent(evalue, m.evalue);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 49)
                 .appendSuper(super.hashCode())
                 .append(evalue)
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
