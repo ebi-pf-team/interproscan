@@ -23,11 +23,11 @@ public class PantherPostProcessor implements Serializable {
     private double eValueCutoff;
 
     public PantherPostProcessor(double eValue) {
-        this.eValueCutoff = PersistenceConversion.set(eValue);
+        this.eValueCutoff = eValue;
     }
 
     public double geteValueCutoff() {
-        return PersistenceConversion.get(eValueCutoff);
+        return eValueCutoff;
     }
 
     /**
