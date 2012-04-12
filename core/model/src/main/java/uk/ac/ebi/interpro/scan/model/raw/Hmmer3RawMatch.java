@@ -3,7 +3,10 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.HmmBounds;
+import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
+import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -96,19 +99,19 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
     }
 
     public double getDomainCeValue() {
-        return PersistenceConversion.get(domainCeValue);
+        return domainCeValue;
     }
 
     private void setDomainCeValue(double domainCeValue) {
-        this.domainCeValue = PersistenceConversion.set(domainCeValue);
+        this.domainCeValue = domainCeValue;
     }
 
     public double getDomainIeValue() {
-        return PersistenceConversion.get(domainIeValue);
+        return domainIeValue;
     }
 
     private void setDomainIeValue(double domainIeValue) {
-        this.domainIeValue = PersistenceConversion.set(domainIeValue);
+        this.domainIeValue = domainIeValue;
     }
 
     public double getDomainBias() {

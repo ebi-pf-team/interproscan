@@ -20,25 +20,28 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * Location(s) of match on protein sequence
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
  */
 @Entity
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
-@XmlType(name="HmmerLocationType", propOrder={"score", "evalue", "hmmStart", "hmmEnd", "hmmLength"})
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@XmlType(name = "HmmerLocationType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd", "hmmLength"})
 public abstract class HmmerLocation extends Location {
 
-    @Column(nullable = false, name="hmm_start")
+    @Column(nullable = false, name = "hmm_start")
     private int hmmStart;
 
-    @Column (nullable = false, name="hmm_end")
+    @Column(nullable = false, name = "hmm_end")
     private int hmmEnd;
 
 //    @Column (nullable = false, name="hmm_bounds")
@@ -50,23 +53,24 @@ public abstract class HmmerLocation extends Location {
      * rather than the eval, so [], [. etc. can be stored
      * in the database.
      */
-    @Column (nullable = false, name="hmm_bounds", length = 2)
+    @Column(nullable = false, name = "hmm_bounds", length = 2)
     private String hmmBounds;
 
     // TODO: Make HMM length non-nullable?
-    @Column (name="hmm_length")
+    @Column(name = "hmm_length")
     private int hmmLength;
 
-    @Column (nullable = false, name="evalue")
+    @Column(nullable = false, name = "evalue")
     private double evalue;
 
-    @Column (nullable = false, name="score")
+    @Column(nullable = false, name = "score")
     private double score;
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected HmmerLocation() {}
+    protected HmmerLocation() {
+    }
 
     // Don't use Builder pattern because all fields are required
     public HmmerLocation(int start, int end, double score, double evalue,
@@ -90,7 +94,7 @@ public abstract class HmmerLocation extends Location {
         setScore(score);
     }
 
-    @XmlAttribute(name="hmm-start", required=true)
+    @XmlAttribute(name = "hmm-start", required = true)
     public int getHmmStart() {
         return hmmStart;
     }
@@ -99,7 +103,7 @@ public abstract class HmmerLocation extends Location {
         this.hmmStart = hmmStart;
     }
 
-    @XmlAttribute(name="hmm-end", required=true)
+    @XmlAttribute(name = "hmm-end", required = true)
     public int getHmmEnd() {
         return hmmEnd;
     }
@@ -118,7 +122,7 @@ public abstract class HmmerLocation extends Location {
         this.hmmBounds = hmmBounds.getSymbol();
     }
 
-    @XmlAttribute(name="hmm-length", required=true)
+    @XmlAttribute(name = "hmm-length", required = true)
     public int getHmmLength() {
         return hmmLength;
     }
@@ -127,16 +131,16 @@ public abstract class HmmerLocation extends Location {
         this.hmmLength = hmmLength;
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public double getEvalue() {
-        return PersistenceConversion.get(evalue);
+        return evalue;
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = PersistenceConversion.set(evalue);
+        this.evalue = evalue;
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public double getScore() {
         return score;
     }
@@ -145,7 +149,8 @@ public abstract class HmmerLocation extends Location {
         this.score = score;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof HmmerLocation))
@@ -163,7 +168,8 @@ public abstract class HmmerLocation extends Location {
                 PersistenceConversion.equivalent(evalue, h.evalue);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 53)
                 .appendSuper(super.hashCode())
                 .append(hmmStart)
@@ -175,8 +181,9 @@ public abstract class HmmerLocation extends Location {
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-    
+
 }

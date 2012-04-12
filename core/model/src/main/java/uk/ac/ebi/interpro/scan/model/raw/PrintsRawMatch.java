@@ -59,11 +59,11 @@ public class PrintsRawMatch extends RawMatch {
     }
 
     public double getEvalue() {
-        return PersistenceConversion.get(evalue);
+        return evalue;
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = PersistenceConversion.set(evalue);
+        this.evalue = evalue;
     }
 
     public String getGraphscan() {
@@ -83,11 +83,11 @@ public class PrintsRawMatch extends RawMatch {
     }
 
     public double getPvalue() {
-        return PersistenceConversion.get(pvalue);
+        return pvalue;
     }
 
     private void setPvalue(double pvalue) {
-        this.pvalue = PersistenceConversion.set(pvalue);
+        this.pvalue = pvalue;
     }
 
     public double getScore() {

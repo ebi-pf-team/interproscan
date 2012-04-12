@@ -1,12 +1,10 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import org.hibernate.annotations.Index;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * <a href="http://www.pantherdb.org/">PANTHER</a> raw match. All attributes of a Panther
@@ -58,11 +56,11 @@ public class PantherRawMatch extends RawMatch {
     }
 
     public double getEvalue() {
-        return PersistenceConversion.get(evalue);
+        return evalue;
     }
 
     public void setEvalue(double evalue) {
-        this.evalue = PersistenceConversion.set(evalue);
+        this.evalue = evalue;
     }
 
     public String getFamilyName() {
