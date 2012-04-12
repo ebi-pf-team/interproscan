@@ -30,11 +30,12 @@
 </div>
 
 <script type="text/javascript">
+
     // Tie the extra popup DIV to it's match SPAN
     $(document).ready(function() {
         $('span[id*="location-"]').each(
                 function(i) {
-                    preparePopup(this.id);
+                    preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
                 }
         );
     });
