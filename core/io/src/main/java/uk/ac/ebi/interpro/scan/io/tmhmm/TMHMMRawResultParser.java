@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Parser for TMHMM 2.0c (Prediction of transmembrane helices in proteins) raw result output.
@@ -100,33 +101,40 @@ public final class TMHMMRawResultParser {
     /**
      * Parses trans membrane protein regions out of the following line:
      * <p/>
-     * %pred N0: o 1 19, M 20 42, i 43 61, M 62 84, o 85 200
+     * %pred N0: o 1 19, M 20 42, i 43 61, M 62 84, o 85 200<p/>
+     * OR
+     * %pred NB(0): o 1 3, M 4 26, i 27 30, M 31 53, O 54 204
      *
      * @param proteinIdToMatchMap
      * @param protSeqIdentifier
      * @param line
      */
     private void parseTransmembraneRegions(final Map<String, Set<TMHMMMatch>> proteinIdToMatchMap, String protSeqIdentifier, String line) {
-        String startPattern = "%pred N0: ";
-        if (line != null && line.length() > 0 && line.startsWith(startPattern)) {
-            line = line.replace(startPattern, "").trim();
-            String[] proteinRegions = line.split(", ");
-            for (int i = 0; i < proteinRegions.length; i++) {
-                String proteinRegion = proteinRegions[i].trim();
-                if (proteinRegion != null) {
-                    String[] list = proteinRegion.split(" ");
-                    if (list.length != 3) {
-                        LOGGER.warn("Couldn't parse transmembrane region out of: " + list + ". The array should look like this [M, 200, 222] and should be of length 3.");
-                        return;
-                    } else {
-                        String signature = list[0].trim();
-                        if (signature.equals("M")) {
-                            int startPos = Integer.parseInt(list[1].trim());
-                            int endPos = Integer.parseInt(list[2].trim());
-                            saveTmhmmMatch(proteinIdToMatchMap, protSeqIdentifier, startPos, endPos, TMHMMSignature.MEMBRANE);
+        final Pattern PREDICTION_LINE_PATTERN = Pattern.compile("%pred N[B]?[(]?[0][)]?:[ ,a-zA-Z0-9]*");
+        if (line != null && line.length() > 0) {
+            if (PREDICTION_LINE_PATTERN.matcher(line).matches()) {
+                int colonIndex = line.indexOf(":");
+                line = line.substring(colonIndex + 1).trim();
+                String[] proteinRegions = line.split(", ");
+                for (int i = 0; i < proteinRegions.length; i++) {
+                    String proteinRegion = proteinRegions[i].trim();
+                    if (proteinRegion != null) {
+                        String[] list = proteinRegion.split(" ");
+                        if (list.length != 3) {
+                            LOGGER.warn("Couldn't parse transmembrane region out of: " + list + ". The array should look like this [M, 200, 222] and should be of length 3.");
+                            return;
+                        } else {
+                            String signature = list[0].trim();
+                            if (signature.equals("M")) {
+                                int startPos = Integer.parseInt(list[1].trim());
+                                int endPos = Integer.parseInt(list[2].trim());
+                                saveTmhmmMatch(proteinIdToMatchMap, protSeqIdentifier, startPos, endPos, TMHMMSignature.MEMBRANE);
+                            }
                         }
                     }
                 }
+            } else {
+                LOGGER.warn("Unexpected format within prediction line - " + line);
             }
         }
     }
