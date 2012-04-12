@@ -12,7 +12,7 @@
         <div class="prot_gal_col"><h1>Accession</h1></div>
         <div class="prot_gal_desc">
             <#if standalone>
-                ${protein.ac} (${protein.id})
+                ${protein.ac}
             <#else>
                 <a href="http://www.uniprot.org/uniprot/${protein.ac}" class="ext"
                                           title="${protein.name} (${protein.ac})">${protein.ac}</a> (${protein.id})
