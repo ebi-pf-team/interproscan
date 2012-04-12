@@ -46,3 +46,14 @@
 
 ?0 iiiiiiiiii iiiiiiiiii iiiiiiiiii iiiiiiiiii iiiiiiiiii ii
 
+
+>4
+%pred NB(0): o 1 19, M 20 42, i 43 61, M 62 84, o 85 200, M 201 223, i 224 236
+?0 oooooooooo oooooooooM MMMMMMMMMM MMMMMMMMMM MMiiiiiiii iiiiiiiiii
+
+?0 iMMMMMMMMM MMMMMMMMMM MMMMoooooo oooooooooo oooooooooo oooooooooo
+
+?0 oooooooooo oooooooooo oooooooooo oooooooooo oooooooooo oooooooooo
+
+?0 oooooooooo oooooooooo MMMMMMMMMM MMMMMMMMMM MMMiiiiiii iiiiii
+

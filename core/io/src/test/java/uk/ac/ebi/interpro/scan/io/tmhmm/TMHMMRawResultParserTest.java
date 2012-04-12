@@ -41,7 +41,7 @@ public class TMHMMRawResultParserTest {
         InputStream is = fileResource.getInputStream();
         assertNotNull("Input stream is NULL!", is);
         Set<TMHMMProtein> proteins = parser.parse(is);
-        assertEquals("Size of protein set differs from the expected one!", 3, proteins.size());
+        assertEquals("Size of protein set differs from the expected one!", 4, proteins.size());
         for (TMHMMProtein protein : proteins) {
             if (protein.getMatches().size() == 3) {
                 for (TMHMMMatch match : protein.getMatches()) {
