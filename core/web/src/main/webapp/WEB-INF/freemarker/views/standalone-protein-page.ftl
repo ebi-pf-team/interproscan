@@ -116,7 +116,7 @@
 
         $('span[id*="location-"]').each(
                 function(i) {
-                    preparePopup(this.id);
+                    preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
                 }
         );
     });

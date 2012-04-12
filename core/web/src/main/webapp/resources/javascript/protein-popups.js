@@ -1,14 +1,20 @@
 // Prepare protein match/structural match popups
 // E.g. Tie "match-location-1" span to "match-popup-1" hidden div content.
-function preparePopup(spanId) {
+function preparePopup(spanId, numSuperMatchPopups) {
     var searchString = 'location-';
     var prefix = spanId.substring(0, spanId.indexOf(searchString));
     var postfix = spanId.substring(prefix.length + searchString.length, spanId.length);
     var popupId = prefix.concat('popup-', postfix);
     //alert('spanId: '.concat(spanId, ', prefix: ', prefix, ', postfix: ', postfix, ', popupId: ', popupId));
+    var prerenderBoolean = true;
+
+    if (numSuperMatchPopups > 100) {
+        // Too many popups to prerender all on page load
+        prerenderBoolean = false;
+    }
 
     $('#'.concat(spanId)).qtip({
-        prerender: true, // Render all popups at page load time?
+        prerender: prerenderBoolean, // Render all popups at page load time?
         content: {
             text: $('#'.concat(popupId)),
             title: {

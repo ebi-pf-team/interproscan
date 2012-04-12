@@ -24,6 +24,8 @@ public class CondensedView implements Serializable {
     // 0 indexed.
     private Set<CondensedLine> lines;
 
+    private int numSuperMatchBlobs = 0;
+
     public CondensedView(final SimpleProtein protein) {
         this.protein = protein;
         // First of all, need to build SuperMatches.
@@ -118,6 +120,9 @@ public class CondensedView implements Serializable {
             if (!bucketFoundAHome) {
                 unsortedLines.add(new CondensedLine(bucket));
             }
+
+            numSuperMatchBlobs += bucket.getSupermatches().size();
+
         }
         // Sort them when finished building, by placing into a TreeSet.
         lines = new TreeSet<CondensedLine>(unsortedLines);
@@ -125,5 +130,9 @@ public class CondensedView implements Serializable {
 
     public Set<CondensedLine> getLines() {
         return lines;
+    }
+
+    public int getNumSuperMatchBlobs() {
+        return numSuperMatchBlobs;
     }
 }
