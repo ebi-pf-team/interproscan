@@ -20,23 +20,25 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Set;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * HMMER match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 @Entity
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
-@XmlType(name="HmmerMatchType")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@XmlType(name = "HmmerMatchType")
 abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements Serializable {
 
     @Column(nullable = false)
@@ -45,7 +47,8 @@ abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements S
     @Column(nullable = false)
     private double score;
 
-    protected HmmerMatch() {}
+    protected HmmerMatch() {
+    }
 
     public HmmerMatch(Signature signature, double score, double evalue, Set<T> locations) {
         super(signature, locations);
@@ -53,25 +56,26 @@ abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements S
         setEvalue(evalue);
     }
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     public double getEvalue() {
-        return PersistenceConversion.get(evalue);
+        return evalue;
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = PersistenceConversion.set(evalue);
+        this.evalue = evalue;
     }
 
     private void setScore(double score) {
         this.score = score;
     }
 
-    @XmlAttribute(name="score", required=true)
+    @XmlAttribute(name = "score", required = true)
     public double getScore() {
         return score;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof HmmerMatch))
@@ -84,7 +88,8 @@ abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements S
                 PersistenceConversion.equivalent(evalue, m.evalue);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return new HashCodeBuilder(19, 49)
                 .appendSuper(super.hashCode())
                 .append(evalue)
@@ -92,8 +97,9 @@ abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements S
                 .toHashCode();
     }
 
-    @Override public String toString()  {
+    @Override
+    public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }    
+    }
 
 }

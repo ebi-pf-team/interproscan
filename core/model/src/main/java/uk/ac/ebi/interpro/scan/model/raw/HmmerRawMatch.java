@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
@@ -56,11 +55,11 @@ public abstract class HmmerRawMatch extends RawMatch {
     }
 
     public double getEvalue() {
-        return PersistenceConversion.get(evalue);
+        return evalue;
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = PersistenceConversion.set(evalue);
+        this.evalue = evalue;
     }
 
     public double getScore() {

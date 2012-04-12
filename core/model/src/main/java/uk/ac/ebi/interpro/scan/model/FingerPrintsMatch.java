@@ -55,11 +55,11 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
 
     @XmlAttribute(required = true)
     public double getEvalue() {
-        return PersistenceConversion.get(evalue);
+        return evalue;
     }
 
     private void setEvalue(double evalue) {
-        this.evalue = PersistenceConversion.set(evalue);
+        this.evalue = evalue;
     }
 
     @XmlAttribute(required = true)
