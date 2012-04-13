@@ -41,7 +41,7 @@ public class PirsfMatchTempParser {
      *
      * @param pathToFile The file to parse
      * @return The set of raw protein objects described within the file
-     * @throws IOException
+     * @throws IOException in the event of a problem reading the file.
      */
     public static Set<RawProtein<PIRSFHmmer2RawMatch>> parse(String pathToFile) throws IOException {
         File file = new File(pathToFile);
@@ -58,7 +58,7 @@ public class PirsfMatchTempParser {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 Matcher modelStart = PATTERN.matcher(line);
                 if (modelStart.find()) {

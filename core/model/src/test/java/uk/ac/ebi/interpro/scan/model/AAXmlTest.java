@@ -34,9 +34,7 @@ public class AAXmlTest extends AbstractXmlTest<ProteinMatchesHolder> {
     @Test
     public void testXmlUnmarshalling() throws IOException {
         Assert.assertNotNull("The testXML Resource has not been set", testXML);
-        Source source = null;
-
-        source = new StreamSource(new InputStreamReader(testXML.getInputStream()));
+        Source source = new StreamSource(new InputStreamReader(testXML.getInputStream()));
         ProteinMatchesHolder pmh = unmarshal(source);
         Assert.assertNotNull("Unmarshalling of the XML has returned a null ProteinMatchesHolder object", pmh);
         boolean foundTMHMM = false;

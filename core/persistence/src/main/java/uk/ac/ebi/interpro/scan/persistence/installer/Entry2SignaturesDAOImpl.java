@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import uk.ac.ebi.interpro.scan.model.Signature;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -47,8 +46,7 @@ public class Entry2SignaturesDAOImpl implements Entry2SignaturesDAO {
                             namedParameters,
                             new RowMapper<String>() {
                                 public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                                    String methodAc = rs.getString("method_ac");
-                                    return methodAc;
+                                    return rs.getString("method_ac");
                                 }
                             });
 

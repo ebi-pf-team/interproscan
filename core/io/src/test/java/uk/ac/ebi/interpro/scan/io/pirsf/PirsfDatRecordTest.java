@@ -44,7 +44,7 @@ public class PirsfDatRecordTest {
                 "Thioredoxin",
                 new String[]{"110.136452241715", "9.11541109440914", "20.3", "167.482261208577", "57.6586203540026"},
                 false);
-        ;
+
         assertTrue("Instances should be equal!", instance1.equals(testInstance));
         assertEquals(instance1, testInstance);
     }
@@ -58,7 +58,7 @@ public class PirsfDatRecordTest {
                 "Thioredoxin",
                 new String[]{"110.136452241715", "9.11541109440914", "20.3", "167.482261208577", "57.6586203540026"},
                 false);
-        ;
+
         assertEquals("Instances should have the same hash code!", instance1, testInstance);
     }
 }

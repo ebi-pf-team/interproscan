@@ -8,11 +8,10 @@ import java.io.Serializable;
  * (Valid transitions between StepExecutionStates
  * are constrained in StepExecution.)
  *
- * @see StepInstance
- * @see StepExecution
- *
  * @author Phil Jones
  * @version $Id$
+ * @see StepInstance
+ * @see StepExecution
  * @since 1.0-SNAPSHOT
  */
 public enum StepExecutionState implements Serializable {
@@ -28,7 +27,7 @@ public enum StepExecutionState implements Serializable {
      * It is then the job of the Scheduler to take valid
      * StepInstance's and create
      * StepExecutions from them.
-     *
+     * <p/>
      * If these StepExecutions fail, then the StepInstance can
      * be given back to the scheduler to run again.
      */
@@ -55,6 +54,5 @@ public enum StepExecutionState implements Serializable {
      */
     STEP_EXECUTION_FAILED
 
-    ;
 
 }

@@ -4,15 +4,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
-import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
+import uk.ac.ebi.interpro.scan.model.OpenReadingFrame;
+import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class knows how to store protein sequences and cross references
@@ -280,7 +280,7 @@ public class ProteinLoader implements SequenceLoader {
                         LOGGER.warn("Couldn't find nucleotide sequence by the following identifier: " + nucleotideId);
                     }
                 } else {
-                    LOGGER.warn("Couldn't create any ORF object by the specified chunks: " + chunks + "!");
+                    LOGGER.warn("Couldn't create any ORF object by the specified chunks: " + Arrays.toString(chunks) + "!");
                 }
             }
         }

@@ -46,28 +46,27 @@ public class SfTbFileParser implements Serializable {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(sfTbFileResource.getInputStream()));
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 Matcher modelStart = SF_TB_PATTERN.matcher(line);
                 if (modelStart.find()) {
                     // New accession
                     String[] text = line.split("\\s++");
-                    if (text != null && text.length != 2) {
-                        LOGGER.warn("Unexpected line in sf.tb: " + line);
+                    if (text != null) {
+                        if (text.length != 2) {
+                            LOGGER.warn("Unexpected line in sf.tb: " + line);
+                        } else {
+                            String sf = text[0];
+                            Integer num = Integer.parseInt(text[1]);
+                            data.put(sf, num);
+                        }
                     }
-                    else {
-                        String sf = text[0];
-                        Integer num = Integer.parseInt(text[1]);
-                        data.put(sf, num);
-                    }
-                }
-                else {
+                } else {
                     LOGGER.warn("Unexpected line in sf.tb: " + line);
                 }
 
             }
-        }
-        finally {
+        } finally {
             if (reader != null) {
                 reader.close();
             }

@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 
@@ -23,5 +25,5 @@ public interface SuperFamilyHmmer3FilteredMatchDAO extends FilteredMatchDAO<Supe
      */
     @Transactional
     void persist(Collection<RawProtein<SuperFamilyHmmer3RawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap);
-;
+
 }

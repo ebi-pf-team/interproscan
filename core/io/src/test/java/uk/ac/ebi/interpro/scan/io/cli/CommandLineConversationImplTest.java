@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,16 +45,13 @@ public class CommandLineConversationImplTest extends TestCase {
             Assert.assertEquals("Outcome of " + testCommand.toString() + " should be 0.", 0, outcome);
             LOGGER.debug(clc.getOutput());
             LOGGER.debug(clc.getErrorMessage());
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             LOGGER.error("Check you have set JAVA_HOME and added JAVA_HOME/bin to the PATH environment variable.", e);
             Assert.fail(e.toString());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Check you have set JAVA_HOME and added JAVA_HOME/bin to the PATH environment variable.", e);
             Assert.fail(e.toString());
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             LOGGER.error(e);
             Assert.fail(e.toString());
         }
@@ -74,16 +72,13 @@ public class CommandLineConversationImplTest extends TestCase {
             Assert.assertEquals("Outcome of " + testCommand.toString() + " should be 0.", 0, outcome);
             LOGGER.debug(clc.getOutput());
             LOGGER.debug(clc.getErrorMessage());
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             LOGGER.error("Check you have set JAVA_HOME and added JAVA_HOME/bin to the PATH environment variable.", e);
             Assert.fail(e.toString());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Check you have set JAVA_HOME and added JAVA_HOME/bin to the PATH environment variable.", e);
             Assert.fail(e.toString());
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             LOGGER.error(e);
             Assert.fail(e.toString());
         }
@@ -100,24 +95,22 @@ public class CommandLineConversationImplTest extends TestCase {
         CommandLineConversation clc = new CommandLineConversationImpl();
         try {
             int outcome = clc.runCommand(false, testCommand);
-            Assert.assertNotSame("Outcome of '" + testCommand.toString() + "' should not be 0 as command is nonsense.", 0, outcome);
+            Assert.assertNotSame("Outcome of '" + Arrays.toString(testCommand) + "' should not be 0 as command is nonsense.", 0, outcome);
             Assert.assertNotNull("Error message expected in error output.", clc.getErrorMessage());
             Assert.assertNotSame("Error message expected in error output.", "", clc.getErrorMessage());
             LOGGER.debug(clc.getOutput());
             LOGGER.debug(clc.getErrorMessage());
             outcome = clc.runCommand(true, testCommand);
-            Assert.assertNotSame("Outcome of '" + testCommand.toString() + "' should not be 0 as command is nonsense.", 0, outcome);
+            Assert.assertNotSame("Outcome of '" + Arrays.toString(testCommand) + "' should not be 0 as command is nonsense.", 0, outcome);
             Assert.assertNull("Error message not expected in error output.", clc.getErrorMessage());
             Assert.assertNotNull("Error message expected in the merged output.", clc.getOutput());
             Assert.assertNotSame("Error message expected in the merged output.", "", clc.getOutput());
             LOGGER.debug(clc.getOutput());
             LOGGER.debug(clc.getErrorMessage());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(e);
             Assert.fail(e.toString());
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             LOGGER.error(e);
             Assert.fail(e.toString());
         }

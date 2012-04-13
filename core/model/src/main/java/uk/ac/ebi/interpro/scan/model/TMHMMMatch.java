@@ -6,7 +6,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.Set;
@@ -154,8 +153,6 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
                 return true;
             if (!(o instanceof TMHMMLocation))
                 return false;
-            //TODO: Look pretty much unfinished
-            final TMHMMLocation f = (TMHMMLocation) o;
             return new EqualsBuilder()
                     .appendSuper(super.equals(o))
                     .isEquals();

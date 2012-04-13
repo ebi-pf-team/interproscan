@@ -174,6 +174,6 @@ public class Installer implements Runnable {
      * LOAD_NONE - Do not load any databse models/signatures into I5 database. This mode therefore just creates an empty database.
      */
     public enum InstallerMode {
-        LOAD_MODELS, LOAD_ENTRIES, LOAD_ALL, LOAD_NONE;
+        LOAD_MODELS, LOAD_ENTRIES, LOAD_ALL, LOAD_NONE
     }
 }
