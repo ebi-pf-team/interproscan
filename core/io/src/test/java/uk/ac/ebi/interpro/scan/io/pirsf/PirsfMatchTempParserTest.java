@@ -36,7 +36,7 @@ public class PirsfMatchTempParserTest extends TestCase {
 
         // Run test method
         PirsfMatchTempParser parser = new PirsfMatchTempParser();
-        Set<RawProtein<PIRSFHmmer2RawMatch>> actualResult = parser.parse(((ClassPathResource) testFile).getURI().getPath());
+        Set<RawProtein<PIRSFHmmer2RawMatch>> actualResult = PirsfMatchTempParser.parse(testFile.getURI().getPath());
 
         // Compare actual result with expected result
         Assert.assertEquals(1, actualResult.size());

@@ -160,7 +160,7 @@ public class SubfamilyPostProcessor implements Serializable {
 
                 //Perform e-value check
                 double eValue = match.getLocationEvalue();
-                if ((minEvalue == null && matchWithMinEvalue == null) || (eValue < minEvalue)) {
+                if (minEvalue == null || eValue < minEvalue) {
                     // Can reduce the minimum mean e-value for this protein
                     minEvalue = eValue;
                     matchWithMinEvalue = match;

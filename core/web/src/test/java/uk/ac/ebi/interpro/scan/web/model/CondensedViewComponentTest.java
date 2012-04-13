@@ -121,7 +121,7 @@ public class CondensedViewComponentTest {
     public void testSuperMatchBucket() {
         SuperMatchBucket bucket = new SuperMatchBucket(IPR000276_24_67);
 
-        Assert.assertTrue(DOMAIN.equals(bucket.getType()));
+        Assert.assertTrue(EntryType.DOMAIN == bucket.getType());
         Assert.assertNotNull(bucket.getSupermatches());
         Assert.assertEquals(1, bucket.getSupermatches().size());
 

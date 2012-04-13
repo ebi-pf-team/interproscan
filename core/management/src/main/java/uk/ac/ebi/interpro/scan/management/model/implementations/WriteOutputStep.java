@@ -155,8 +155,9 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToTSV(File file, StepInstance stepInstance) throws IOException {
-        ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(file);
+        ProteinMatchesTSVResultWriter writer = null;
         try {
+            writer = new ProteinMatchesTSVResultWriter(file);
             writeProteinMatches(writer, stepInstance);
         } finally {
             if (writer != null) {
@@ -166,14 +167,15 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToGFF(File file, StepInstance stepInstance, String sequenceType) throws IOException {
-        ProteinMatchesGFFResultWriter writer;
-        if (sequenceType.equalsIgnoreCase("n")) {
-            writer = new GFFResultWriterForNucSeqs(file);
-        }//Default tsvWriter for proteins
-        else {
-            writer = new GFFResultWriterForProtSeqs(file);
-        }
+        ProteinMatchesGFFResultWriter writer = null;
         try {
+            if (sequenceType.equalsIgnoreCase("n")) {
+                writer = new GFFResultWriterForNucSeqs(file);
+            }//Default tsvWriter for proteins
+            else {
+                writer = new GFFResultWriterForProtSeqs(file);
+            }
+
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, stepInstance);
             //This step writes FASTA sequence at the end of the GFF file

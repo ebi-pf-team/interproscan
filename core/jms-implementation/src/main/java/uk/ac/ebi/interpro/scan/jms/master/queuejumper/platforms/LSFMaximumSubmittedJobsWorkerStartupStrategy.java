@@ -8,10 +8,11 @@ import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
- * @author Phil Jones
  *
- * Startup strategy that works on the assumption that (a) you are using LSF and (b)
- * you are running the master on the cluster (i.e. you can successfully call the busers command)
+ * @author Phil Jones
+ *         <p/>
+ *         Startup strategy that works on the assumption that (a) you are using LSF and (b)
+ *         you are running the master on the cluster (i.e. you can successfully call the busers command)
  */
 public class LSFMaximumSubmittedJobsWorkerStartupStrategy implements WorkerStartupStrategy {
 
@@ -63,30 +64,32 @@ username               0.5      -      0      0      0      0      0      0
         final long now = System.currentTimeMillis();
 
         // Don't call busers every time - this would be inefficient. An approximate count will do fine...
-        if (timeLastChecked + checkInterval < now){
-            synchronized (LOCK_CHECK){
-                if (timeLastChecked + checkInterval < now){
+        if (timeLastChecked + checkInterval < now) {
+            synchronized (LOCK_CHECK) {
+                if (timeLastChecked + checkInterval < now) {
                     // Check the number of submitted jobs
                     final CommandLineConversationImpl clc = new CommandLineConversationImpl();
                     try {
                         int exitStatus = clc.runCommand(false, "busers", linuxAccountName);
-                        if (exitStatus != 0){
+                        if (exitStatus != 0) {
                             LOG.warn("Unable to run busers command to find out the number of submitted jobs on LSF");
                         }
                         final String busersOut = clc.getOutput();
-                        if (busersOut == null){
+                        if (busersOut == null) {
                             LOG.warn("No output retrieved from the busers command:");
                         }
-                        String[] lines = busersOut.split("\\n");
-                        if (lines.length != 2){
-                            LOG.warn("Unable to parse the output from the busers command:\n" + busersOut);
-                        }
-                        String[] fields = lines[1].split("\\s+");
-                        if (fields.length < 9){
-                            LOG.warn("Unable to parse the output from the busers command:\n" + busersOut);
-                        }
-                        submittedJobs = Integer.parseInt(fields[3]);
+                        if (busersOut != null) {
+                            String[] lines = busersOut.split("\\n");
 
+                            if (lines.length != 2) {
+                                LOG.warn("Unable to parse the output from the busers command:\n" + busersOut);
+                            }
+                            String[] fields = lines[1].split("\\s+");
+                            if (fields.length < 9) {
+                                LOG.warn("Unable to parse the output from the busers command:\n" + busersOut);
+                            }
+                            submittedJobs = Integer.parseInt(fields[3]);
+                        }
                     } catch (IOException e) {
                         LOG.warn("Unable to run busers command to find out the number of submitted jobs on LSF", e);
                     } catch (InterruptedException e) {
@@ -98,7 +101,7 @@ username               0.5      -      0      0      0      0      0      0
                 }
             }
         }
-        if (submittedJobs < maximumSubmittedJobs){
+        if (submittedJobs < maximumSubmittedJobs) {
             submittedJobs++;
             return true;
         }

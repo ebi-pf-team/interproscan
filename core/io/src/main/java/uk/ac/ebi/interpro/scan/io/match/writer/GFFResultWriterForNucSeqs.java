@@ -146,8 +146,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      */
     private List<String> getPolypeptideLine(int sequenceLength, String proteinIdForGFF) {
         String seqId = getNucleotideId();
-        int end = sequenceLength;
-        GFF3Feature polypeptideFeature = new GFF3Feature(seqId, "getorf", "polypeptide", 1, end, "+");
+        GFF3Feature polypeptideFeature = new GFF3Feature(seqId, "getorf", "polypeptide", 1, sequenceLength, "+");
         polypeptideFeature.addAttribute("ID", proteinIdForGFF);
         return polypeptideFeature.getGFF3FeatureLine();
     }

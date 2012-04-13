@@ -73,7 +73,7 @@ public final class TMHMMPredictionTableParser {
         int startPos = 0;
         int currentAAPos = -1;
         TMHMMSignature prevPrediction = null;
-        TMHMMSignature prediction = null;
+        TMHMMSignature prediction;
         List<Float> scores = new ArrayList<Float>();
         BufferedReader reader = null;
 

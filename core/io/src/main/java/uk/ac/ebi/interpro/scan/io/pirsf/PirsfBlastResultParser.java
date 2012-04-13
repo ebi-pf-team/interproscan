@@ -2,7 +2,10 @@ package uk.ac.ebi.interpro.scan.io.pirsf;
 
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,9 +66,9 @@ public class PirsfBlastResultParser {
     /**
      * Parses all PIRSF IDs out of the BLAST standard output (line by line) and counts the occurrence of each ID.
      * The result is stored in a hash map.
-     *
+     * <p/>
      * Example blast results file:
-     *
+     * <p/>
      * 3	A1FUJ0	41.40	314	180	3	3	315	20	330	3.5e-55	218.4
      * 3	Q0I9F4-SF000729	35.99	364	225	3	7	363	5	367	4.5e-55	218.0
      * 3	Q011Y4	43.01	286	157	4	6	288	10	292	4.5e-55	218.0
@@ -78,15 +81,18 @@ public class PirsfBlastResultParser {
      * 4	Q9F4C3-SF000350	34.57	457	293	3	6	462	85	535	6.0e-74	281.2
      * 4	Q3Y2B1-SF000210	36.60	459	268	6	3	457	2	441	1.7e-73	279.6
      * 4	Q2BTS5-SF000210	36.78	454	266	7	9	458	7	443	1.7e-73	279.6
-     *
+     * <p/>
      * Required output after parsing (HashMap):
-     *
+     * <p/>
      * 3-SF000729 -> 2
      * 4-SF000210 -> 5
-     *
+     * <p/>
      * Note: We are only interested in the number of hits for the FIRST (lowest e-value therefore best) blast match for
      * each protein Id, so no need to record number of hits for SF000350 match.
      *
+     * @param pathToFile path to the File.
+     * @return A Map of ID to count.
+     * @throws java.io.IOException in the event of a problem reading the file.
      */
     public static Map<String, Integer> parseBlastOutputFile(String pathToFile) throws IOException {
         Map<String, Integer> pirsfIdHitNumberMap = new HashMap<String, Integer>();
@@ -100,11 +106,10 @@ public class PirsfBlastResultParser {
         if (!blastOutputFile.canRead()) {
             throw new IllegalStateException(blastOutputFile.getName() + " is not readable");
         }
-        final Map<Long, String> data = new HashMap<Long, String>();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(blastOutputFile));
-            String readline = null;
+            String readline;
             Long currentProteinId = null;
             String currentModelId = null;
             while ((readline = reader.readLine()) != null) {
@@ -117,8 +122,7 @@ public class PirsfBlastResultParser {
                     if (currentProteinId == null) {
                         // First result line for the blast output file
                         currentProteinId = proteinId;
-                    }
-                    else if (currentProteinId != proteinId) {
+                    } else if (currentProteinId != proteinId) {
                         // First line of results for this protein Id
                         currentProteinId = proteinId;
                         currentModelId = null;
@@ -133,8 +137,7 @@ public class PirsfBlastResultParser {
                             currentModelId = dividedMatchId[1];
                             String key = currentProteinId.toString() + '-' + currentModelId;
                             pirsfIdHitNumberMap.put(key, 1);
-                        }
-                        else {
+                        } else {
                             modelId = dividedMatchId[1];
                             if (currentModelId.equals(modelId)) {
                                 // Another match for the best modelId for this
@@ -143,16 +146,14 @@ public class PirsfBlastResultParser {
                                     Integer numOfHits = pirsfIdHitNumberMap.get(key);
                                     numOfHits++;
                                     pirsfIdHitNumberMap.put(key, numOfHits);
-                                }
-                                else {
+                                } else {
                                     // Should never happen! Sanity check.
                                     LOGGER.warn("Could not increment number of hits for this protein Id and best match model Id");
                                 }
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     LOGGER.warn("Skip line - wrong number of columns in blast output file for line: " + readline);
                 }
             }

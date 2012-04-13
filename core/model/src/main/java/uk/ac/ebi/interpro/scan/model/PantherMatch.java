@@ -136,7 +136,6 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
                 return true;
             if (!(o instanceof PantherLocation))
                 return false;
-            final PantherLocation f = (PantherLocation) o;
             return new EqualsBuilder()
                     .appendSuper(super.equals(o))
                     .isEquals();

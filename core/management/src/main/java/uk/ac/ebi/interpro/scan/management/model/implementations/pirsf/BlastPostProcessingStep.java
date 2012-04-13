@@ -75,20 +75,18 @@ public class BlastPostProcessingStep extends Step {
         final String blastOutputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastResultOutputFileName); // Blast output
         final String blastedMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastedMatchesFileName); // Matches that passed the blast filtering step
 
-        Set<RawProtein<PIRSFHmmer2RawMatch>> proteinsToBlast = null;
+        Set<RawProtein<PIRSFHmmer2RawMatch>> proteinsToBlast;
         try {
             // Matches to blast
             proteinsToBlast = PirsfMatchTempParser.parse(matchesToBlastFilePath);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when parsing blast matches file " + matchesToBlastFilePath);
         }
 
         try {
             Map<String, Integer> blastResultMap = PirsfBlastResultParser.parseBlastOutputFile(blastOutputFileName);
             postProcessor.process(proteinsToBlast, blastResultMap, blastedMatchesFilePath);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to read BLAST result output file.", e);
         }
     }
