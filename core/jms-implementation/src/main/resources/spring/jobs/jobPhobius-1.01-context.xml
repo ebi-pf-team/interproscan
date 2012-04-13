@@ -7,13 +7,14 @@
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <!-- ######################## JOB: job_phobius ############################  -->
-    <bean id="jobPhobius" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobPhobius-1.01" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="A combined transmembrane topology and signal peptide predictor"/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePhobius-1.01"/>
     </bean>
 
     <bean id="abstractPhobiusStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobPhobius"/>
+        <property name="job" ref="jobPhobius-1.01"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.PHOBIUS}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
@@ -95,4 +96,10 @@
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: job_phobius  !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="signatureLibraryReleasePhobius-1.01" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PHOBIUS"/>
+        <constructor-arg type="java.lang.String" value="1.01"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

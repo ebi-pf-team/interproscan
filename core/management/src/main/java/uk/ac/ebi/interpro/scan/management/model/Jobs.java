@@ -14,6 +14,7 @@ import java.util.Map;
  *
  * @author Phil Jones
  * @author David Binns
+ * @author Maxim Scheremetjew
  * @version $Id$
  * @since 1.0
  */
@@ -50,6 +51,10 @@ public class Jobs {
 
     public List<Job> getJobList() {
         return new ArrayList<Job>(jobMap.values());
+    }
+
+    public List<String> getJobIdList() {
+        return new ArrayList<String>(jobMap.keySet());
     }
 
     public Jobs getAllJobs() {

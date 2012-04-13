@@ -7,13 +7,14 @@
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <!-- ######################## JOB: Coils ############################  -->
-    <bean id="jobCoils" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobCoils-2.2" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="Prediction of Coiled Coil Regions in Proteins"/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseCoils-2.2"/>
     </bean>
 
     <bean id="abstractCoilsStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobCoils"/>
+        <property name="job" ref="jobCoils-2.2"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.COILS}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
@@ -82,4 +83,10 @@
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="signatureLibraryReleaseCoils-2.2" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="COILS"/>
+        <constructor-arg type="java.lang.String" value="2.2"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

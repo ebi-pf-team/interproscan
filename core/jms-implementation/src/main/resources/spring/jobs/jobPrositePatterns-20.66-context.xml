@@ -11,6 +11,7 @@
         <property name="description"
                   value="PROSITE consists of documentation entries describing protein domains, families and functional sites as well as associated patterns and profiles to identify them"/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePrositePatterns-20.66"/>
     </bean>
 
     <bean id="abstractPrositePatternStep-20.66" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -120,6 +121,12 @@
     <!-- ######################## Dependencies ############################  -->
     <bean id="prositePatternRawMatchDAO-20.66" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>
+    </bean>
+
+    <bean id="signatureLibraryReleasePrositePatterns-20.66"
+          class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PROSITE_PATTERNS"/>
+        <constructor-arg type="java.lang.String" value="20.66"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
