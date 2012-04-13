@@ -17,10 +17,11 @@
         <constructor-arg value="${tmhmm.model.path}"/>
     </bean>
 
-    <bean id="jobTMHMM" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobTMHMM-2.0c" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
                   value="Prediction of transmembrane helices in proteins"/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryRelease"/>
         <!--Check mechanism for licensed binaries-->
         <property name="mandatoryParameters">
             <map key-type="java.lang.String" value-type="java.lang.String">
@@ -31,7 +32,7 @@
     </bean>
 
     <bean id="abstractTMHMMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobTMHMM"/>
+        <property name="job" ref="jobTMHMM-2.0c"/>
         <property name="maxProteins" value="50"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
@@ -123,7 +124,7 @@
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <!--&lt;!&ndash; ######################## Dependencies ############################  &ndash;&gt;-->
+    <!-- ######################## Dependencies ############################  -->
     <bean id="signatureLibraryRelease" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="TMHMM"/>
         <constructor-arg type="java.lang.String" value="${tmhmm.model.version}"/>
@@ -136,4 +137,6 @@
     <bean id="tmhmmFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAOImpl">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryRelease"/>
     </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

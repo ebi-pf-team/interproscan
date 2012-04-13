@@ -11,6 +11,7 @@
         <property name="description"
                   value="A large collection of protein families, each represented by multiple sequence alignments and hidden Markov models (HMMs)"/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePfamA-26.0"/>
     </bean>
 
     <bean id="abstractPfamAStep-26.0" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -121,5 +122,10 @@
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="pfamRawMatchDAO-26.0" class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl"/>
+
+    <bean id="signatureLibraryReleasePfamA-26.0" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PFAM"/>
+        <constructor-arg type="java.lang.String" value="26.0"/>
+    </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

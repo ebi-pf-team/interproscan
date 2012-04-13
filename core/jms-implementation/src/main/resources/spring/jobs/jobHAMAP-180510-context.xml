@@ -10,6 +10,7 @@
     <bean id="jobHAMAP-180510" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="High-quality Automated and Manual Annotation of Microbial Proteomes"/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseHAMAP-180510"/>
     </bean>
 
     <bean id="abstractHamapStep-180510" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -119,6 +120,10 @@
     <!-- ######################## Dependencies ############################  -->
     <bean id="hamapRawMatchDAO-180510" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch"/>
+    </bean>
+    <bean id="signatureLibraryReleaseHAMAP-180510" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="HAMAP"/>
+        <constructor-arg type="java.lang.String" value="180510"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

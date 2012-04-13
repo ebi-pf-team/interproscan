@@ -14,6 +14,8 @@ import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
@@ -266,7 +268,7 @@ public class Run {
                     JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
                     // Print out deactivated jobs
                     System.out.printf("    %30s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning() +
-                            " Please open properties file 'interproscan.properties' and specify a valid path.");
+                            " Please open properties file 'interproscan.' and specify a valid path.");
                 }
                 System.exit(1);
             }
@@ -278,25 +280,26 @@ public class Run {
                 parsedAnalyses = StringUtils.commaDelimitedListToStringArray(parsedAnalyses[0]);
             }
 
-            //Get the following information by iterating once over the list of analysis jobs
-            //Which user-specified analyses do exist, therefore store job IDs in a first instance
-            final Set<String> realJobIDs = new HashSet<String>();
-            for (Job job : jobs.getAllJobs().getJobList()) {
-                //Store job IDs for existence check
-                realJobIDs.add(job.getId());
-            }
-            final Map<String, Set<String>> parsedAnalysesExistentAnalysesMap = getRealAnalysesNames(parsedAnalyses, realJobIDs);
+            //Before running analyses we need to do some checks
+            //The algorithm works as following:
+            //1. If analyses are specified via appl parameter:
+            //1. a) Existence check - Check if specified analysis name does exist -> print warning if NOT
+            //1. b) Job status check (deactivation check) - Check if one of the specified analyses is deactivated or not -> print warning if so
+            //2. If analyses are specified via appl parameter or not
+            //2. a) Version check - Check if multiple versions of the same analysis occur
+            final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap = getRealAnalysesNames(parsedAnalyses, jobs.getAllJobs().getJobList());
 
+            //Existence and job status checks
             StringBuilder nonexistentAnalysis = new StringBuilder();
             if (parsedAnalyses != null && parsedAnalyses.length > 0) {
                 boolean doExit = false;
                 for (String parsedAnalysisName : parsedAnalyses) {
-                    if (parsedAnalysesExistentAnalysesMap.containsKey(parsedAnalysisName)) {
+                    if (parsedAnalysesRealAnalysesMap.containsKey(parsedAnalysisName)) {
                         //Check if they are deactivated
-                        Set<String> realJobIdSet = parsedAnalysesExistentAnalysesMap.get(parsedAnalysisName);
+                        Set<Job> realAnalyses = parsedAnalysesRealAnalysesMap.get(parsedAnalysisName);
                         for (Job deactivatedJob : deactivatedJobs.keySet()) {
-                            for (String realJobId : realJobIdSet) {
-                                if (deactivatedJob.getId().equalsIgnoreCase(realJobId)) {
+                            for (Job realAnalysis : realAnalyses) {
+                                if (deactivatedJob.getId().equalsIgnoreCase(realAnalysis.getId())) {
                                     JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
                                     System.out.println("\n\n" + jobStatusWrapper.getWarning() + "\n\n");
                                     doExit = true;
@@ -319,7 +322,21 @@ public class Run {
                 }
             }
 
-            parsedAnalyses = getAnalysesToRun(parsedAnalysesExistentAnalysesMap);
+            parsedAnalyses = getAnalysesToRun(parsedAnalysesRealAnalysesMap);
+            String analysesPrintOutStr = "Running the following analyses:\n";
+            //Version check
+            if (parsedAnalyses.length > 0) {
+                Set<Job> jobsToCheckMultipleVersionsSet = new HashSet<Job>();
+                for (Set<Job> jobsToCheck : parsedAnalysesRealAnalysesMap.values()) {
+                    jobsToCheckMultipleVersionsSet.addAll(jobsToCheck);
+                }
+                List<Job> jobsToCheckMultipleVersionsList = new ArrayList<Job>(jobsToCheckMultipleVersionsSet);
+                checkAnalysisJobsVersions(jobsToCheckMultipleVersionsList);
+                System.out.println(analysesPrintOutStr + Arrays.asList(parsedAnalyses));
+            } else {
+                checkAnalysisJobsVersions(jobs.getAnalysisJobs().getJobList());
+                System.out.println(analysesPrintOutStr + jobs.getAnalysisJobs().getJobIdList());
+            }
 
             if (mode.getRunnableBean() != null) {
                 Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
@@ -423,39 +440,88 @@ public class Run {
     }
 
     /**
+     * Checks if different versions of the same analyses occur.
+     *
+     * @param jobsToCheckMultipleVersion
+     */
+    private static void checkAnalysisJobsVersions(List<Job> jobsToCheckMultipleVersion) {
+        final Map<SignatureLibrary, Set<Job>> libraryToJobsMap = clusterJobsBySignatureLibrary(jobsToCheckMultipleVersion);
+        //
+        for (SignatureLibrary library : libraryToJobsMap.keySet()) {
+            if (libraryToJobsMap.get(library).size() > 1) {
+                String previousVersion = null;
+                String currentAnalysisVersion = null;
+                for (Job jobToCheck : libraryToJobsMap.get(library)) {
+                    currentAnalysisVersion = jobToCheck.getLibraryRelease().getVersion();
+                    if (previousVersion == null) {
+                        previousVersion = currentAnalysisVersion;
+                    }
+                }
+                System.out.println("\n\n" + "Found different versions (e.g. " + previousVersion + " AND " + currentAnalysisVersion + ") of the same analysis - " + library +
+                        " which is not allowed in this version of InterProScan 5." + "\n\n");
+                System.exit(1);
+            }
+        }
+    }
+
+    /**
+     * Clusters jobs of the same library(analysis).
+     *
+     * @param jobs
+     * @return
+     */
+    private static Map<SignatureLibrary, Set<Job>> clusterJobsBySignatureLibrary(List<Job> jobs) {
+        Map<SignatureLibrary, Set<Job>> result = new HashMap<SignatureLibrary, Set<Job>>();
+        for (Job job : jobs) {
+            SignatureLibraryRelease release = job.getLibraryRelease();
+            if (release != null) {
+                SignatureLibrary library = release.getLibrary();
+                Set<Job> jobsForLibrary = result.get(library);
+                if (jobsForLibrary == null) {
+                    jobsForLibrary = new HashSet<Job>();
+                }
+                jobsForLibrary.add(job);
+                result.put(library, jobsForLibrary);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Assembles all analyses jobs for that run.
      *
-     * @param parsedAnalysesExistentAnalysesMap
-     *
+     * @param parsedAnalysesRealAnalysesMap
      * @return Array of analyses jobs.
      */
-    private static String[] getAnalysesToRun(Map<String, Set<String>> parsedAnalysesExistentAnalysesMap) {
+    private static String[] getAnalysesToRun(final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap) {
         Set<String> result = new HashSet<String>();
-        for (Set<String> realJobIds : parsedAnalysesExistentAnalysesMap.values()) {
-            result.addAll(realJobIds);
+        for (Set<Job> realJobs : parsedAnalysesRealAnalysesMap.values()) {
+            for (Job realJob : realJobs) {
+                result.add(realJob.getId());
+            }
         }
         return StringUtils.toStringArray(result);
     }
 
     /**
-     * Determines real job names from parsed analyses names.
+     * Determines real jobs for the parsed analyses names.
      *
      * @param parsedAnalyses
-     * @param realJobIDs
+     * @param realJobs
      * @return Map of parsed analysis name to real analysis name.
      */
-    private static Map<String, Set<String>> getRealAnalysesNames(String[] parsedAnalyses, Set<String> realJobIDs) {
-        Map<String, Set<String>> result = new HashMap<String, Set<String>>();
+    private static Map<String, Set<Job>> getRealAnalysesNames(String[] parsedAnalyses, List<Job> realJobs) {
+        Map<String, Set<Job>> result = new HashMap<String, Set<Job>>();
         if (parsedAnalyses != null && parsedAnalyses.length > 0) {
             for (String analysisName : parsedAnalyses) {
-                for (String realJobID : realJobIDs) {
-                    if (realJobID.toLowerCase().contains(analysisName.toLowerCase())) {
-                        Set<String> realJobNames = result.get(analysisName);
-                        if (realJobNames == null) {
-                            realJobNames = new HashSet<String>();
+                for (Job realJob : realJobs) {
+                    if (realJob.getId().toLowerCase().contains(analysisName.toLowerCase())) {
+                        Set<Job> mappedJobs = result.get(analysisName);
+                        if (mappedJobs == null) {
+                            mappedJobs = new HashSet<Job>();
                         }
-                        realJobNames.add(realJobID);
-                        result.put(analysisName, realJobNames);
+                        mappedJobs.add(realJob);
+                        result.put(analysisName, mappedJobs);
                     }
                 }
             }

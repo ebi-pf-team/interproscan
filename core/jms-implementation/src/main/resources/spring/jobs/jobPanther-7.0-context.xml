@@ -8,14 +8,15 @@
 
     <!-- ######################## JOB: PANTHER ############################  -->
 
-    <bean id="jobPanther" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobPanther-7.0" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
                   value="The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a unique resource that classifies genes by their functions, using published scientific experimental evidence and evolutionary relationships to predict function even in the absence of direct experimental evidence."/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePanther-7.0"/>
     </bean>
 
     <bean id="abstractPantherStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobPanther"/>
+        <property name="job" ref="jobPanther-7.0"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.PANTHER}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
@@ -128,4 +129,10 @@
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="pantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>
+
+    <bean id="signatureLibraryReleasePanther-7.0" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PANTHER"/>
+        <constructor-arg type="java.lang.String" value="7.0"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

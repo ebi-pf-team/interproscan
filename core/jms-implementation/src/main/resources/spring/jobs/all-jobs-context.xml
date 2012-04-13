@@ -8,11 +8,11 @@
     <!--Old versions are switched off because they aren't in the database anymore-->
     <!--<import resource="jobPfamA-24.0-context.xml"/>-->
     <import resource="jobPfamA-26.0-context.xml"/>
-    <import resource="jobPhobius-context.xml"/>
-    <import resource="jobGene3d-context.xml"/>
-    <import resource="jobPanther-context.xml"/>
-    <import resource="jobPrints-context.xml"/>
-    <import resource="jobCoils-context.xml"/>
+    <import resource="jobPhobius-1.01-context.xml"/>
+    <import resource="jobGene3d-3.3.0-context.xml"/>
+    <import resource="jobPanther-7.0-context.xml"/>
+    <import resource="jobPrints-41.1-context.xml"/>
+    <import resource="jobCoils-2.2-context.xml"/>
     <import resource="jobHAMAP-140911-context.xml"/>
     <import resource="jobPrositeProfiles-20.72-context.xml"/>
     <import resource="jobPrositePatterns-20.72-context.xml"/>
@@ -44,11 +44,11 @@
                 <!-- Analyses -->
                 <!--Old versions are switched off because they aren't in the database anymore-->
                 <ref bean="jobPfamA-26.0"/>
-                <ref bean="jobPhobius"/>
-                <ref bean="jobGene3d"/>
-                <ref bean="jobPanther"/>
-                <ref bean="jobPRINTS"/>
-                <ref bean="jobCoils"/>
+                <ref bean="jobPhobius-1.01"/>
+                <ref bean="jobGene3d-3.3.0"/>
+                <ref bean="jobPanther-7.0"/>
+                <ref bean="jobPRINTS-41.1"/>
+                <ref bean="jobCoils-2.2"/>
                 <ref bean="jobHAMAP-140911"/>
                 <ref bean="jobProDom-2006.1"/>
                 <ref bean="jobPrositeProfiles-20.72"/>
@@ -60,7 +60,7 @@
                 <ref bean="jobTIGRFAM-10.1"/>
                 <ref bean="jobPIRSF-2.78"/>
                 <ref bean="jobSuperFamily-1.75"/>
-                <ref bean="jobTMHMM"/>
+                <ref bean="jobTMHMM-2.0c"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>

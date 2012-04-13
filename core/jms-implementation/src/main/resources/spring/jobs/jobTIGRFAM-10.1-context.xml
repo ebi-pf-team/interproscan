@@ -10,6 +10,7 @@
     <bean id="jobTIGRFAM-10.1" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="TIGRFAMs are protein families based on Hidden Markov Models or HMMs"/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseTigrfam-10.1"/>
     </bean>
 
     <bean id="abstractTIGRFAMStep-10.1" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -120,6 +121,11 @@
     <!--<bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">-->
     <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>-->
     <!--</bean>-->
+
+    <bean id="signatureLibraryReleaseTigrfam-10.1" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="TIGRFAM"/>
+        <constructor-arg type="java.lang.String" value="10.1"/>
+    </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
