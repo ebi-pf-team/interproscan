@@ -155,6 +155,22 @@
         </profile>
 
         <profile>
+            <id>production</id>
+            <properties>
+                <description>
+                    This isn't a property - just a convenient way of including a description...
+
+                    This profile is for deployment of the real server in Tomcat on tomcat-17.ebi.ac.uk.
+                </description>
+                <deployment.folder>/nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc/deploy/
+                </deployment.folder>
+                <berkeleydb.path.md5>berkely.db.data/md5_db</berkeleydb.path.md5>
+                <berkeleydb.path.matches>berkely.db.data/match_db
+                </berkeleydb.path.matches>
+            </properties>
+        </profile>
+
+        <profile>
             <id>war</id>
             <build>
                 <plugins>

@@ -142,113 +142,133 @@ public class CreateMatchDBFromOnion {
             // Connect to the Onion database.
             Class.forName("oracle.jdbc.OracleDriver");
             onionConn = DriverManager.getConnection(onionDBUrl, onionUsername, onionPassword);
-
-            PreparedStatement targetPs = onionConn.prepareStatement(SIGNAL_P_QUERY);
-            targetPs.setString(1, maxUPI);
-            ResultSet targetRS = targetPs.executeQuery();
-            int sigPcount = 0;
-            while (targetRS.next()) {
-                final BerkeleyLocation location = new BerkeleyLocation();
-                location.setStart(1);
-                location.setEnd(targetRS.getInt(3));
-                if (targetRS.wasNull()) {
-                    continue;
+            PreparedStatement targetPs = null;
+            ResultSet targetRS = null;
+            try {
+                targetPs = onionConn.prepareStatement(SIGNAL_P_QUERY);
+                targetPs.setString(1, maxUPI);
+                targetRS = targetPs.executeQuery();
+                int sigPcount = 0;
+                while (targetRS.next()) {
+                    final BerkeleyLocation location = new BerkeleyLocation();
+                    location.setStart(1);
+                    location.setEnd(targetRS.getInt(3));
+                    if (targetRS.wasNull()) {
+                        continue;
+                    }
+                    final String signatureLibraryName = targetRS.getString(2);
+                    if (targetRS.wasNull() || signatureLibraryName == null || SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) {
+                        continue;
+                    }
+                    final BerkeleyMatch match = new BerkeleyMatch();
+                    match.addLocation(location);
+                    match.setSignatureLibraryName(signatureLibraryName);
+                    match.setSignatureLibraryRelease("3.0");
+                    match.setProteinMD5(targetRS.getString(1));
+                    match.setSignatureAccession("SignalPeptide");
+                    if (++sigPcount % 100000 == 0) {
+                        System.out.println("Stored " + sigPcount + " signal P matches.");
+                    }
+                    primIDX.put(match);
                 }
-                final String signatureLibraryName = targetRS.getString(2);
-                if (targetRS.wasNull() || signatureLibraryName == null || SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) {
-                    continue;
+            } finally {
+                if (targetRS != null) {
+                    targetRS.close();
                 }
-                final BerkeleyMatch match = new BerkeleyMatch();
-                match.addLocation(location);
-                match.setSignatureLibraryName(signatureLibraryName);
-                match.setSignatureLibraryRelease("3.0");
-                match.setProteinMD5(targetRS.getString(1));
-                match.setSignatureAccession("SignalPeptide");
-                if (++sigPcount % 100000 == 0) {
-                    System.out.println("Stored " + sigPcount + " signal P matches.");
+                if (targetPs != null) {
+                    targetPs.close();
                 }
-                primIDX.put(match);
             }
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            try {
+                ps = onionConn.prepareStatement(MATCH_QUERY);
+                ps.setString(1, maxUPI);
+                rs = ps.executeQuery();
+                BerkeleyMatch match = null;
 
+                int locationCount = 0, matchCount = 0;
 
-            PreparedStatement ps = onionConn.prepareStatement(MATCH_QUERY);
-            ps.setString(1, maxUPI);
-            ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    // Only process if the SignatureLibraryName is recognised.
+                    final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
+                    if (rs.wasNull() || signatureLibraryName == null) continue;
+                    if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
 
-            BerkeleyMatch match = null;
+                    // Now collect rest of the data and test for mandatory fields.
+                    final int sequenceStart = rs.getInt(COL_IDX_SEQ_START);
+                    if (rs.wasNull()) continue;
 
-            int locationCount = 0, matchCount = 0;
+                    final int sequenceEnd = rs.getInt(COL_IDX_SEQ_END);
+                    if (rs.wasNull()) continue;
 
-            while (rs.next()) {
-                // Only process if the SignatureLibraryName is recognised.
-                final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
-                if (rs.wasNull() || signatureLibraryName == null) continue;
-                if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
+                    final String proteinMD5 = rs.getString(COL_IDX_MD5);
+                    if (proteinMD5 == null || proteinMD5.length() == 0) continue;
 
-                // Now collect rest of the data and test for mandatory fields.
-                final int sequenceStart = rs.getInt(COL_IDX_SEQ_START);
-                if (rs.wasNull()) continue;
+                    final String sigLibRelease = rs.getString(COL_IDX_SIG_LIB_RELEASE);
+                    if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
 
-                final int sequenceEnd = rs.getInt(COL_IDX_SEQ_END);
-                if (rs.wasNull()) continue;
+                    final String signatureAccession = rs.getString(COL_IDX_SIG_ACCESSION);
+                    if (signatureAccession == null || signatureAccession.length() == 0) continue;
 
-                final String proteinMD5 = rs.getString(COL_IDX_MD5);
-                if (proteinMD5 == null || proteinMD5.length() == 0) continue;
+                    Integer hmmStart = rs.getInt(COL_IDX_HMM_START);
+                    if (rs.wasNull()) hmmStart = null;
 
-                final String sigLibRelease = rs.getString(COL_IDX_SIG_LIB_RELEASE);
-                if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
+                    Integer hmmEnd = rs.getInt(COL_IDX_HMM_END);
+                    if (rs.wasNull()) hmmEnd = null;
 
-                final String signatureAccession = rs.getString(COL_IDX_SIG_ACCESSION);
-                if (signatureAccession == null || signatureAccession.length() == 0) continue;
+                    String hmmBounds = rs.getString(COL_IDX_HMM_BOUNDS);
 
-                Integer hmmStart = rs.getInt(COL_IDX_HMM_START);
-                if (rs.wasNull()) hmmStart = null;
+                    Double sequenceScore = rs.getDouble(COL_IDX_SEQ_SCORE);
+                    if (rs.wasNull()) sequenceScore = null;
 
-                Integer hmmEnd = rs.getInt(COL_IDX_HMM_END);
-                if (rs.wasNull()) hmmEnd = null;
-
-                String hmmBounds = rs.getString(COL_IDX_HMM_BOUNDS);
-
-                Double sequenceScore = rs.getDouble(COL_IDX_SEQ_SCORE);
-                if (rs.wasNull()) sequenceScore = null;
-
-                Double eValue = rs.getDouble(COL_IDX_EVALUE);
-                if (rs.wasNull()) {
-                    eValue = null;
-                } else {
-                    // Stored in Onion as Log Base 10.  Convert back...
-                    eValue = PersistenceConversion.get(eValue);
-                }
-
-
-                /// arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmmBounds column...
-
-                final BerkeleyLocation location = new BerkeleyLocation();
-                location.setStart(sequenceStart);
-                location.setEnd(sequenceEnd);
-                location.setHmmStart(hmmStart);
-                location.setHmmEnd(hmmEnd);
-                location.setHmmBounds(hmmBounds);
-                location.seteValue(eValue);
-                locationCount++;
-
-                if (match != null) {
-                    if (
-                            proteinMD5.equals(match.getProteinMD5()) &&
-                                    signatureLibraryName.equals(match.getSignatureLibraryName()) &&
-                                    sigLibRelease.equals(match.getSignatureLibraryRelease()) &&
-                                    signatureAccession.equals(match.getSignatureAccession()) &&
-                                    (match.getSequenceScore() == null && sequenceScore == null || (sequenceScore != null && sequenceScore.equals(match.getSequenceScore())))) {
-                        // Same Match as previous, so just add a new BerkeleyLocation
-                        match.addLocation(location);
+                    Double eValue = rs.getDouble(COL_IDX_EVALUE);
+                    if (rs.wasNull()) {
+                        eValue = null;
                     } else {
-                        // Store last match
-                        primIDX.put(match);
-                        matchCount++;
-                        if (matchCount % 100000 == 0) {
-                            System.out.println("Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
-                        }
+                        // Stored in Onion as Log Base 10.  Convert back...
+                        eValue = PersistenceConversion.get(eValue);
+                    }
 
+
+                    /// arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmmBounds column...
+
+                    final BerkeleyLocation location = new BerkeleyLocation();
+                    location.setStart(sequenceStart);
+                    location.setEnd(sequenceEnd);
+                    location.setHmmStart(hmmStart);
+                    location.setHmmEnd(hmmEnd);
+                    location.setHmmBounds(hmmBounds);
+                    location.seteValue(eValue);
+                    locationCount++;
+
+                    if (match != null) {
+                        if (
+                                proteinMD5.equals(match.getProteinMD5()) &&
+                                        signatureLibraryName.equals(match.getSignatureLibraryName()) &&
+                                        sigLibRelease.equals(match.getSignatureLibraryRelease()) &&
+                                        signatureAccession.equals(match.getSignatureAccession()) &&
+                                        (match.getSequenceScore() == null && sequenceScore == null || (sequenceScore != null && sequenceScore.equals(match.getSequenceScore())))) {
+                            // Same Match as previous, so just add a new BerkeleyLocation
+                            match.addLocation(location);
+                        } else {
+                            // Store last match
+                            primIDX.put(match);
+                            matchCount++;
+                            if (matchCount % 100000 == 0) {
+                                System.out.println("Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
+                            }
+
+                            // Create new match and add location to it
+                            match = new BerkeleyMatch();
+                            match.setProteinMD5(proteinMD5);
+                            match.setSignatureLibraryName(signatureLibraryName);
+                            match.setSignatureLibraryRelease(sigLibRelease);
+                            match.setSignatureAccession(signatureAccession);
+                            match.setSequenceScore(sequenceScore);
+                            match.addLocation(location);
+                        }
+                    } else {
                         // Create new match and add location to it
                         match = new BerkeleyMatch();
                         match.setProteinMD5(proteinMD5);
@@ -258,20 +278,15 @@ public class CreateMatchDBFromOnion {
                         match.setSequenceScore(sequenceScore);
                         match.addLocation(location);
                     }
-                } else {
-                    // Create new match and add location to it
-                    match = new BerkeleyMatch();
-                    match.setProteinMD5(proteinMD5);
-                    match.setSignatureLibraryName(signatureLibraryName);
-                    match.setSignatureLibraryRelease(sigLibRelease);
-                    match.setSignatureAccession(signatureAccession);
-                    match.setSequenceScore(sequenceScore);
-                    match.addLocation(location);
                 }
-            }
-            // Don't forget the last match!
-            if (match != null) {
-                primIDX.put(match);
+
+                // Don't forget the last match!
+                if (match != null) {
+                    primIDX.put(match);
+                }
+            } finally {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
             }
         } catch (DatabaseException dbe) {
             throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
