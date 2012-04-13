@@ -7,14 +7,15 @@
     <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
 
     <!-- ######################## JOB: PRINTS ############################  -->
-    <bean id="jobPRINTS" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobPRINTS-41.1" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
                   value="A fingerprint is a group of conserved motifs used to characterise a protein family"/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePrints-41.1"/>
     </bean>
 
     <bean id="abstractPrintsStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobPRINTS"/>
+        <property name="job" ref="jobPRINTS-41.1"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.PRINTS}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
@@ -106,4 +107,10 @@
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="printsRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAOImpl"/>
+
+    <bean id="signatureLibraryReleasePrints-41.1" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PRINTS"/>
+        <constructor-arg type="java.lang.String" value="41.1"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

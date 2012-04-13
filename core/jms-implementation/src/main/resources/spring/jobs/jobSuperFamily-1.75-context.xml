@@ -11,6 +11,7 @@
         <property name="description"
                   value="SUPERFAMILY is a database of structural and functional annotation for all proteins and genomes."/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseSuperfamily-1.75"/>
     </bean>
 
     <bean id="abstractSuperFamilyStep-1.75" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -122,6 +123,11 @@
 
     <bean id="superFamilyBinaryStandardOutputFileTemplate-1.75" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].ass3.std.out"/>
+    </bean>
+
+    <bean id="signatureLibraryReleaseSuperfamily-1.75" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="SUPERFAMILY"/>
+        <constructor-arg type="java.lang.String" value="1.75"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

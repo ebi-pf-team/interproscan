@@ -11,6 +11,7 @@
         <property name="description"
                   value="The PIRSF concept is being used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships."/>
         <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePirsf-2.74"/>
     </bean>
 
     <bean id="abstractPIRSFStep-2.74" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -223,6 +224,11 @@
 
     <bean id="blastedMatchesFileName-2.74" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].blastedMatches.out"/>
+    </bean>
+
+    <bean id="signatureLibraryReleasePirsf-2.74" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSF"/>
+        <constructor-arg type="java.lang.String" value="2.74"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
