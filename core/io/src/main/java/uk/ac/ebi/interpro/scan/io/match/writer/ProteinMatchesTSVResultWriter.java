@@ -81,7 +81,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             if (mapToGO) {
                                 Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
                                 if (goXRefs != null && goXRefs.size() > 0) {
-                                    StringBuffer sb = new StringBuffer();
+                                    StringBuilder sb = new StringBuilder();
                                     for (GoXref xref : goXRefs) {
                                         if (sb.length() > 0) {
                                             sb.append(VALUE_SEPARATOR);
@@ -96,12 +96,15 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             if (mapToPathway) {
                                 Collection<PathwayXref> pathwayXRefs = interProEntry.getPathwayXRefs();
                                 if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
-                                    StringBuffer sb = new StringBuffer();
+                                    StringBuilder sb = new StringBuilder();
                                     for (PathwayXref xref : pathwayXRefs) {
                                         if (sb.length() > 0) {
                                             sb.append(VALUE_SEPARATOR);
                                         }
-                                        sb.append(xref.getDatabaseName() + ": " + xref.getIdentifier());
+                                        sb
+                                                .append(xref.getDatabaseName())
+                                                .append(": ")
+                                                .append(xref.getIdentifier());
                                     }
                                     mappingFields.add(sb.toString());
                                 } else {

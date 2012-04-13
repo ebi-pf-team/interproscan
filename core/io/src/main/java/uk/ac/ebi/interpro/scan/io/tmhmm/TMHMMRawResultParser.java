@@ -41,6 +41,8 @@ import java.util.regex.Pattern;
  */
 public final class TMHMMRawResultParser {
 
+    private static final Pattern PREDICTION_LINE_PATTERN = Pattern.compile("%pred N[B]?[(]?[0][)]?:[ ,a-zA-Z0-9]*");
+
     private static final Logger LOGGER = Logger.getLogger(TMHMMRawResultParser.class.getName());
 
     private final SignatureLibraryRelease signatureLibraryRelease;
@@ -101,27 +103,24 @@ public final class TMHMMRawResultParser {
     /**
      * Parses trans membrane protein regions out of the following line:
      * <p/>
-     * %pred N0: o 1 19, M 20 42, i 43 61, M 62 84, o 85 200<p/>
-     * OR
-     * %pred NB(0): o 1 3, M 4 26, i 27 30, M 31 53, O 54 204
+     * %pred N0: o 1 19, M 20 42, i 43 61, M 62 84, o 85 200
      *
      * @param proteinIdToMatchMap
      * @param protSeqIdentifier
      * @param line
      */
     private void parseTransmembraneRegions(final Map<String, Set<TMHMMMatch>> proteinIdToMatchMap, String protSeqIdentifier, String line) {
-        final Pattern PREDICTION_LINE_PATTERN = Pattern.compile("%pred N[B]?[(]?[0][)]?:[ ,a-zA-Z0-9]*");
         if (line != null && line.length() > 0) {
             if (PREDICTION_LINE_PATTERN.matcher(line).matches()) {
                 int colonIndex = line.indexOf(":");
                 line = line.substring(colonIndex + 1).trim();
                 String[] proteinRegions = line.split(", ");
-                for (int i = 0; i < proteinRegions.length; i++) {
-                    String proteinRegion = proteinRegions[i].trim();
+                for (String proteinRegion1 : proteinRegions) {
+                    String proteinRegion = proteinRegion1.trim();
                     if (proteinRegion != null) {
                         String[] list = proteinRegion.split(" ");
                         if (list.length != 3) {
-                            LOGGER.warn("Couldn't parse transmembrane region out of: " + list + ". The array should look like this [M, 200, 222] and should be of length 3.");
+                            LOGGER.warn("Couldn't parse transmembrane region out of: " + Arrays.toString(list) + ". The array should look like this [M, 200, 222] and should be of length 3.");
                             return;
                         } else {
                             String signature = list[0].trim();

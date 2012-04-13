@@ -96,7 +96,7 @@ public class PirsfDatFileParser implements Serializable {
                     if (index > -1 && line.length() >= index + 1) {
                         line = line.substring(index + 1).trim();
                     }
-                    isBlastRequired = (true ? line.equalsIgnoreCase("YES") : false);
+                    isBlastRequired = line.equalsIgnoreCase("YES");
                     data.put(modelAccession, new PirsfDatRecord(modelAccession, modelName, values, isBlastRequired, subfamilies));
                 } else {
                     modelStart = PIRSF_DAT_PATTERN_SUBFAM.matcher(line);

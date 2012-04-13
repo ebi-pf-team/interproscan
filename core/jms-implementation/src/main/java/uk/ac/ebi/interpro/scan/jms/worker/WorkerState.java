@@ -147,7 +147,6 @@ public class WorkerState implements Serializable, Comparable {
     }
 
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -155,7 +154,7 @@ public class WorkerState implements Serializable, Comparable {
 
         WorkerState that = (WorkerState) o;
         // If its the same JVM, its the same worker.
-        if (this.getWorkerIdentification().equals (that.getWorkerIdentification())) {
+        if (this.getWorkerIdentification().equals(that.getWorkerIdentification())) {
             return true;
         }
 
@@ -241,22 +240,21 @@ public class WorkerState implements Serializable, Comparable {
      */
     @Override
     public int compareTo(Object o) {
-        WorkerState other = (WorkerState)o;
-        if (this == other || this.equals(other)){
+        WorkerState other = (WorkerState) o;
+        if (this == other || this.equals(other)) {
             return 0;
         }
-        int comparator = 0;
         int thisSingle = (this.isSingleUseOnly()) ? 0 : 1;
         int otherSingle = (other.isSingleUseOnly()) ? 0 : 1;
-        comparator = otherSingle - thisSingle;
-        if (comparator == 0){
+        int comparator = otherSingle - thisSingle;
+        if (comparator == 0) {
             comparator = this.getHostName().compareTo(other.getHostName());
         }
-        if (comparator == 0){
+        if (comparator == 0) {
             comparator = (this.getWorkerIdentification().compareTo(other.getWorkerIdentification()));
         }
-        if (comparator == 0){
-            this.getJobId().compareTo(other.getJobId());
+        if (comparator == 0) {
+            comparator = this.getJobId().compareTo(other.getJobId());
         }
         return comparator;
     }

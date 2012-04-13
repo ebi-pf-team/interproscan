@@ -54,13 +54,17 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return a Map of proteinIds to a List of filtered matches.
      */
     public Map<String, RawProtein<PfamHmmer3RawMatch>> process(Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawMatchMap) throws IOException {
+
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Pfam A Post Processing: Number of proteins being considered: " + ((proteinIdToRawMatchMap == null) ? 0 : proteinIdToRawMatchMap.size()));
         }
         if (clanData == null) {
             clanData = clanFileParser.getClanData();
         }
-        Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<PfamHmmer3RawMatch>>();
+        final Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<PfamHmmer3RawMatch>>();
+        if (proteinIdToRawMatchMap == null) {
+            return proteinIdToRawProteinMap;
+        }
         long startNanos = System.nanoTime();
         // Iterate over UniParc IDs in range and processBatch them
         SeedAlignmentDataRetriever.SeedAlignmentData seedAlignmentData = null;

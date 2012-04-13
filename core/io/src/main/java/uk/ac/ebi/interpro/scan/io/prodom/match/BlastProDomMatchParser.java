@@ -76,7 +76,7 @@ public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMat
             return null;
         }
 
-        String token = null;
+        String token;
 
         String sequenceIdentifier = null;
         int sequenceStart = 0;
@@ -89,7 +89,7 @@ public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMat
         double evalue = 0.0;
         int numDomainsInFamily = 0;
         StringBuilder descAndLength = new StringBuilder();
-        String description = null;
+        String description;
 
         String[] values = line.split("\\s+");
         int i = 0;
@@ -138,8 +138,7 @@ public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMat
                     case 8:
                         if (token.startsWith("S=")) {
                             score = Integer.parseInt(token.substring(2));
-                        }
-                        else {
+                        } else {
                             if (LOGGER.isInfoEnabled()) {
                                 LOGGER.info("ProDom score: " + token + " ignored as it looks invalid. Line: " + line);
                             }
@@ -149,8 +148,7 @@ public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMat
                     case 9:
                         if (token.startsWith("E=")) {
                             evalue = Double.parseDouble(token.substring(2));
-                        }
-                        else {
+                        } else {
                             if (LOGGER.isInfoEnabled()) {
                                 LOGGER.info("ProDom evalue: " + token + " ignored as it looks invalid. Line: " + line);
                             }
@@ -160,8 +158,7 @@ public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMat
                     case 11:
                         if (token.startsWith("(") && token.endsWith(")")) {
                             numDomainsInFamily = Integer.parseInt(token.substring(1, token.indexOf(')')));
-                        }
-                        else {
+                        } else {
                             if (LOGGER.isInfoEnabled()) {
                                 LOGGER.info("ProDom number of domains in family: " + token + " ignored as it looks invalid. Line: " + line);
                             }
@@ -175,8 +172,7 @@ public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMat
                         }
                         break;
                 }
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 LOGGER.error("Error parsing ProDom match output file line (ignoring): " + line + " - Exception " + e.getMessage());
                 return null;
             }
@@ -195,15 +191,13 @@ public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMat
                 // NOTE: Match length can be derived so no need to store it
                 //matchLength = Integer.parseInt(description.substring(keyPos + key.length()));
                 description = description.substring(0, description.indexOf(key) - 1);
-            }
-            else {
+            } else {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("ProDom description/length text: " + description + " ignored as it looks invalid. Line: " + line);
                 }
                 return null;
             }
-        }
-        else {
+        } else {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("ProDom description/length text: " + description + " ignored as it looks invalid. Line: " + line);
             }

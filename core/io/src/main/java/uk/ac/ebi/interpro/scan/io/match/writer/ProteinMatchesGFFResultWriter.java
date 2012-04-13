@@ -26,6 +26,8 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
 
     protected final static String MATCH_STRING_SEPARATOR = "$";
 
+    private final static String ESCAPED_MATCH_STRING_SEPARATOR = "\\" + MATCH_STRING_SEPARATOR;
+
     protected final static String MATCH_STRING = "match" + MATCH_STRING_SEPARATOR;
 
     protected final String VALUE_SEPARATOR_GFF3 = ",";
@@ -74,31 +76,38 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
 
     protected void addAdditionalAttr(Entry interProEntry, final GFF3Feature matchFeature) {
         if (interProEntry != null) {
-            StringBuilder dbxrefAttributeValue = new StringBuilder("\"InterPro:" + interProEntry.getAccession() + "\"");
+            StringBuilder dbxrefAttributeValue = new StringBuilder("\"InterPro:");
+            dbxrefAttributeValue
+                    .append(interProEntry.getAccession())
+                    .append('"');
 //            gffAttributes.add("interPro_entry_desc=" + interProEntry.getDescription());
             if (mapToPathway) {
                 Collection<PathwayXref> pathwayXRefs = interProEntry.getPathwayXRefs();
                 if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     for (PathwayXref xref : pathwayXRefs) {
                         if (sb.length() > 0) {
                             sb.append(VALUE_SEPARATOR_GFF3);
                         }
-                        sb.append("\"" + xref.getDatabaseName() + ":" + xref.getIdentifier() + "\"");
+                        sb
+                                .append('"')
+                                .append(xref.getDatabaseName())
+                                .append(':')
+                                .append(xref.getIdentifier()).append('"');
                     }
-                    dbxrefAttributeValue.append(VALUE_SEPARATOR_GFF3 + sb.toString());
+                    dbxrefAttributeValue.append(VALUE_SEPARATOR_GFF3).append(sb.toString());
                 }
             }
             matchFeature.addAttribute("Dbxref", dbxrefAttributeValue.toString());
             if (mapToGO) {
                 Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
                 if (goXRefs != null && goXRefs.size() > 0) {
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     for (GoXref xref : goXRefs) {
                         if (sb.length() > 0) {
                             sb.append(VALUE_SEPARATOR_GFF3);
                         }
-                        sb.append("\"" + xref.getIdentifier() + "\""); // Just writeComment the GO identifier to the output
+                        sb.append('"').append(xref.getIdentifier()).append('"'); // Just writeComment the GO identifier to the output
                     }
                     matchFeature.addAttribute("Ontology_term", sb.toString());
                 }
@@ -110,8 +119,8 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
 
         public int compare(String s1, String s2) {
             if (s1.startsWith(MATCH_STRING) && s2.startsWith(MATCH_STRING)) {
-                String[] chunksOfS1 = s1.split("\\" + MATCH_STRING_SEPARATOR);
-                String[] chunksOfS2 = s2.split("\\" + MATCH_STRING_SEPARATOR);
+                String[] chunksOfS1 = s1.split(ESCAPED_MATCH_STRING_SEPARATOR);
+                String[] chunksOfS2 = s2.split(ESCAPED_MATCH_STRING_SEPARATOR);
                 if (chunksOfS1.length == 2 && chunksOfS2.length == 2) {
                     String[] numericalChunksS1 = chunksOfS1[1].split("_");
                     String[] numericalChunksS2 = chunksOfS2[1].split("_");
@@ -202,7 +211,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
             final String analysis = signatureLibrary.getName();
             final String description = match.getSignature().getDescription();
-            final String matchId = new String(MATCH_STRING + getMatchCounter());
+            final String matchId = MATCH_STRING + getMatchCounter();
 
             final Set<Location> locations = match.getLocations();
             if (locations != null) {

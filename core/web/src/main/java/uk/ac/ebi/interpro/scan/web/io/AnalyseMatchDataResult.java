@@ -54,17 +54,7 @@ public class AnalyseMatchDataResult {
          * P38398	BRCA1_HUMAN	1863	89C6D83FF56312AF	G3DSA:3.40.50.10190	G3DSA:3.40.50.10190	GENE3D	1648	1754	5.1000000000000426766658650783671814604E-40					9606	Homo sapiens	Homo sapiens (Human)    N
          * ...
          */
-
-        String proteinAc;
-        String proteinId;
-        int proteinLength;
-        String md5;
-        String crc64;
-        int taxId;
-        String taxScienceName;
-        String taxFullName;
         Collection<MatchDataRecord> records;
-        boolean isProteinFragment = false;
 
         try {
             records = reader.read(resource);
@@ -87,17 +77,17 @@ public class AnalyseMatchDataResult {
 
             if (protein == null) {
                 // First line of the query results, so we'll need to initialise the SimpleProtein
-                proteinAc = record.getProteinAc();
-                proteinId = record.getProteinId();
-                proteinLength = record.getProteinLength();
-                md5 = "N/A"; // TODO May need to get this from UAREAD in the future
-                crc64 = record.getCrc64();
-                taxId = record.getTaxId();
-                taxScienceName = record.getTaxScienceName();
-                taxFullName = record.getTaxFullName();
-                isProteinFragment = record.isProteinFragment();
-                protein = new SimpleProtein(proteinAc, proteinId, "Name not available",
-                        proteinLength, md5, crc64, taxId, taxScienceName, taxFullName, isProteinFragment);
+                protein = new SimpleProtein(
+                        record.getProteinAc(),
+                        record.getProteinId(),
+                        "Name not available",
+                        record.getProteinLength(),
+                        "N/A",
+                        record.getCrc64(),
+                        record.getTaxId(),
+                        record.getTaxScienceName(),
+                        record.getTaxFullName(),
+                        record.isProteinFragment());
             }
 
             String methodAc = record.getMethodAc();

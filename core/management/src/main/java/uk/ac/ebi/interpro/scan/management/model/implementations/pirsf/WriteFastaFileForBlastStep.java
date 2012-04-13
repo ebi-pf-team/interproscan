@@ -13,7 +13,10 @@ import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import javax.persistence.Transient;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This Step write Fasta files for the range of proteins requested.
@@ -61,7 +64,7 @@ public class WriteFastaFileForBlastStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Read in raw matches that need to be blasted
         final String blastMatchesFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, blastMatchesFileName);
-        Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches = null;
+        Set<RawProtein<PIRSFHmmer2RawMatch>> rawMatches;
         try {
             rawMatches = PirsfMatchTempParser.parse(blastMatchesFilePath);
         } catch (IOException e) {
@@ -72,7 +75,7 @@ public class WriteFastaFileForBlastStep extends Step {
         Set<Long> proteinIds = new HashSet<Long>();
         Iterator<RawProtein<PIRSFHmmer2RawMatch>> i = rawMatches.iterator();
         RawProtein<PIRSFHmmer2RawMatch> rawProtein = null;
-        Long proteinId = null;
+        Long proteinId;
         while (i.hasNext()) {
             rawProtein = i.next();
             proteinId = Long.parseLong(rawProtein.getProteinIdentifier());

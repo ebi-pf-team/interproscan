@@ -325,9 +325,7 @@ public class AmqInterProScanMaster implements Master {
         // Analyses as a comma separated list
         if (analyses != null && analyses.length > 0) {
             List<String> jobNameList = new ArrayList<String>();
-            for (String analysisName : analyses) {
-                jobNameList.add(analysisName);
-            }
+            Collections.addAll(jobNameList, analyses);
             params.put(StepInstanceCreatingStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
         }
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
@@ -339,8 +337,7 @@ public class AmqInterProScanMaster implements Master {
         if (outputFilePath == null || outputFilePath.equals("")) {
             // If no file path name provided just use the same name as the input fasta file (extension will be added later)
             outputFilePath = fastaFilePath.replaceAll("\\.fasta", "");
-        }
-        else if (outputFilePath.contains(".")) {
+        } else if (outputFilePath.contains(".")) {
             // User should not include file extension (.tsv, .html etc) on supplied outputFilePath, but if they did then remove it!
             int outputFilePathLength = outputFilePath.length();
             for (FileOutputFormat format : FileOutputFormat.values()) {
@@ -367,6 +364,7 @@ public class AmqInterProScanMaster implements Master {
      * - Do the formats exist?
      * - Is the format valid for this sequence type?
      * - If no valid formats specified then use the default (all available for that sequence type)
+     *
      * @return The tidied list of file extensions
      */
     private List<String> validateOutputFormatList() {
@@ -384,15 +382,13 @@ public class AmqInterProScanMaster implements Master {
                             if (format.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
                                 LOGGER.warn("TSV output format is not valid for sequence type " + this.sequenceType + " so will be ignored.");
                                 continue;
-                            }
-                            else if (format.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
+                            } else if (format.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                                 LOGGER.warn("HTML output format is not valid for sequence type " + this.sequenceType + " so will be ignored");
                                 continue;
                             }
                         }
                         outputFormatList.add(format);
-                    }
-                    else {
+                    } else {
                         LOGGER.warn("User specified output file format " + format + " is not recognised and shall be ignored");
                     }
                 }

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.parsemodel;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Provides a match for a Domain line in hmmsearch output format. e.g.
@@ -42,7 +43,7 @@ public class Hmmer2HmmPfamDomainMatch implements Serializable {
     public Hmmer2HmmPfamDomainMatch(String domainLine) {
         String[] lineParts = domainLine.trim().split("\\s+");
         if (lineParts.length != 10) {
-            throw new IllegalStateException("The hmmpfam domain line parser is not splitting up the line correctly. Here's the bits: " + lineParts);
+            throw new IllegalStateException("The hmmpfam domain line parser is not splitting up the line correctly. Here's the bits: " + Arrays.toString(lineParts));
         }
         this.modelAccession = lineParts[0];
         this.seqFrom = Integer.parseInt(lineParts[2]);
