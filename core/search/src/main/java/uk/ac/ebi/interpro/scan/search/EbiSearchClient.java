@@ -149,9 +149,13 @@ public final class EbiSearchClient {
         private static final String AMINO_ACID = "^[A-Z]";
 
         // Minimum sequence length (estimate from http://en.wikipedia.org/wiki/Longest_word_in_English)
-        private static final String MIN_LENGTH    = "{30,}";
+        private static final String MIN_LENGTH = "{30,}";
 
-        private static final Pattern MIN_LEN_AMINO_ACID_PATTERN = Pattern.compile(AMINO_ACID + MIN_LENGTH);
+        // Match anything
+        private static final String ANY_CHAR   = ".*";
+
+        // Line breaks are not significant (http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#DOTALL)
+        private static final Pattern MIN_LEN_AMINO_ACID_PATTERN = Pattern.compile(AMINO_ACID + MIN_LENGTH + ANY_CHAR, Pattern.DOTALL);
 
         private static final Pattern FASTA_HEADER_PATTERN = Pattern.compile(">.+\\s*", Pattern.MULTILINE);
 
