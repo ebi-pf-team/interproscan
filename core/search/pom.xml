@@ -97,7 +97,7 @@
                         <!--argument>
                         -Djava.util.logging.config.file=${env.CXF_HOME}/etc/logging.properties
                         </argument-->
-                        <argument>uk.ac.ebi.interpro.scan.search.EbiSearchClient</argument>
+                        <argument>uk.ac.ebi.interpro.scan.search.TextSearch</argument>
                         <!-- Modify argument below for the item you wish to search for. -->
                         <argument>kinase</argument>
                     </arguments>
@@ -118,7 +118,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>uk.ac.ebi.interpro.scan.search.EbiSearchClient</mainClass>
+                                    <mainClass>uk.ac.ebi.interpro.scan.search.TextSearch</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
