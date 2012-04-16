@@ -2,7 +2,7 @@
                                                     
 # ps_scan - a PROSITE scanning program
 #
-# $Revision: 1.67 $
+# $Revision: 1.63 $
 #
 # Copyright (C) 2001-2006 Swiss Institute of Bioinformatics
 # Authors: 
@@ -36,7 +36,7 @@ use Carp qw(confess cluck);
 use vars qw(@ISA $VERSION $errpos $errstr);
 
 
-# Subs from integrated Prosite.pm module:
+# Subs form integrated Prosite.pm module:
 
 # scan a sequence with a perl pattern
 sub scanPattern {
@@ -501,7 +501,7 @@ sub parseProsite {
 # initializations & parameters processing
 
 BEGIN {
-   $VERSION = '$Revision: 1.67 $';
+   $VERSION = '$Revision: 1.63 $';
    $VERSION =~ s/\$Revision: //;
    $VERSION =~ s/ \$$//;
 }
@@ -857,28 +857,28 @@ my $postProcessDispatchTable = {
     'COMPETES_HIT_WITH'=> sub {
         my ($hit_set_a,$hit_set_b,$overlap) = @_;
         return unless $hit_set_a and $hit_set_b;
-      
+        
         my @set_a = sort {$a->[1] <=> $b->[1] || $a->[2] <=> $b->[2]} 
-                    #grep {$_->[1]||=0;$_->[2]||=0;$_->[8]>=0} 
+                    grep {$_->[1]||=0;$_->[2]||=0;$_->[8]>=0} 
                     @$hit_set_a;
-                            # create array of () hits sorted by 
-                            # position in set a
+                            # create array of level>=0 hits (sorted by 
+                            # position) in set a
         my @set_b = sort {$a->[1] <=> $b->[1] || $a->[2] <=> $b->[2]} 
-                    #grep {$_->[1]||=0;$_->[2]||=0;$_->[8]>=0} 
+                    grep {$_->[1]||=0;$_->[2]||=0;$_->[8]>=0} 
                         @$hit_set_b;
-                            # create array of () hits sorted by 
-                            # position in set b                   
+                            # create array of level>=0 hits (sorted by 
+                            # position) in set b
         return unless @set_a and @set_b;
-        (my $ac_a = $hit_set_a->[0]->[3] || '') =~ s/\|\w+$//;
-        (my $ac_b = $hit_set_b->[0]->[3] || '') =~ s/\|\w+$//; 
         $overlap=0 if !$overlap || $overlap!~m/^\d+$/;
             # allowed overlap size (only consider overlap matches if 
-            # overlap size > this value)      
+            # overlap size > this value)
+        
         foreach my $hit_a (@set_a) {
         # for each (sorted) level>=0 hits in set a
             my $a_start = $hit_a->[1] + $overlap;
             my $a_stop = $hit_a->[2] - $overlap;
-            next if $a_start > $a_stop;            
+            next if $a_start > $a_stop;
+            
             foreach my $hit_b (@set_b) {
             # for each (sorted) level>=0 hits in set b	
                 next if $a_start > $hit_b->[2];
@@ -889,11 +889,11 @@ my $postProcessDispatchTable = {
                 # overlap: demote hit with lowest score
                 if		($hit_b->[7]<$hit_a->[7]) {
                     $hit_b->[8]--; 
-                    $hit_b->[9] = "OUTCOMPETED_HIT_BY_$ac_a";
+                    $hit_b->[9] = "OUTCOMPETED_HIT_BY_$hit_a->[3]";
                 }
                 elsif	($hit_a->[7]<$hit_b->[7]) {
                     $hit_a->[8]--;
-                    $hit_a->[9] = "OUTCOMPETED_HIT_BY_$ac_b";
+                    $hit_a->[9] = "OUTCOMPETED_HIT_BY_$hit_b->[3]";
                 }
             }
         }
@@ -903,21 +903,19 @@ my $postProcessDispatchTable = {
     'COMPETES_SEQ_WITH'=> sub {
         my ($hit_set_a,$hit_set_b) = @_;
         return unless $hit_set_a and $hit_set_b;
-        (my $ac_a = $hit_set_a->[0]->[3] || '') =~ s/\|\w+$//;
-        (my $ac_b = $hit_set_b->[0]->[3] || '') =~ s/\|\w+$//; 
         
         my $max_a=0.0;map {$max_a=$_->[7] if ($_->[7]>$max_a)} @$hit_set_a;
         my $max_b=0.0;map {$max_b=$_->[7] if ($_->[7]>$max_b)} @$hit_set_b;
         if ($max_a>$max_b) {
             map {
                 $_->[8]--; 
-                $_->[9] = "OUTCOMPETED_SEQ_BY_$ac_a" 
+                $_->[9] = "OUTCOMPETED_SEQ_BY_$hit_set_a->[0]->[3]" 
             } @$hit_set_b
         }
         else {
             map {
                 $_->[8]--; 
-                $_->[9] = "OUTCOMPETED_SEQ_BY_$ac_b" 
+                $_->[9] = "OUTCOMPETED_SEQ_BY_$hit_set_b->[0]->[3]" 
             } @$hit_set_a
         }
     },
@@ -986,13 +984,6 @@ my $postProcessDispatchTable = {
         } 
     },
 
-};
-
-my $allowBidirectionalPP = {
-    'PROMOTED_BY'=> 1,
-    # note: COMPETES_... are 'bidirectional' inside their 
-    # $postProcessDispatchTable sub but we don't wan't them to be called 
-    # bidirectionally (in pp_scan)...
 };
 
 
@@ -1392,21 +1383,18 @@ sub scanSeqFile {
                     if (not (@entries) or
                         grep {my $ent=$_; grep{$_ eq $ent} @id,@ac} @entries) {
                         my $id = $id[0];
-                        $entry =~ /^DE   (?:Rec|Sub)Name: Full=(.+);/m;
-                        my $de = $1 || '';
-                        unless ($de) {# old DE format
-                            my @de = $entry =~ /^\s*DE\s+(.+)/mg;
-                            my $add_space = 0;
-                            for (@de) {
-                                $de .= " " if $add_space;
-                                $de .= $_;
-                                $add_space = !/-$/;
-                            }
+                        my @de = $entry =~ /^\s*DE\s+(.+)/mg;
+                        my $de = @ac ? "($ac[0]) " : "";
+                        my $add_space = 0;
+                        for (@de) {
+                            $de .= " " if $add_space;
+                            $de .= $_;
+                            $add_space = !/-$/;
                         }
-
                         if ($entry =~ /^\s*SQ\s+SEQUENCE\b.*\n((.+\n)+)/m) {
                             my $sq = $1;
                             $sq =~ tr/A-Z//cd;
+                            $de = "$id $de" if $id and $de;
                             # $all_hits_bypsac_byseqid->{$id} = 
                             # scanSeq($id, \@ac, $de || $id, $sq);
                             # note: do not store hits (by ac) into 
@@ -1515,7 +1503,7 @@ sub scanSeq {
                         $opt_max_x, $opt_miniprofiles], $psid);
             $hits_by_motif_ac->{$psac} = $hits if @$hits;
         }
-        dispHits(undef, $sq, $hits, $id, $de, $aclist, $psac, $psid, $psde) 
+        dispHits(undef, $sq, $hits, $id,$de, $aclist, $psac, $psid, $psde) 
             if $opt_no_postprocessing;
     }
     unless ($opt_no_postprocessing) {
@@ -1529,7 +1517,7 @@ sub scanSeq {
         foreach (@MotifInfo) {
             my ($psac, $psid, $type, $psde, $pat, $skip) = @$_;
             my $hits = $hits_by_motif_ac->{$psac} or next;
-            dispHits(undef, $sq, $hits, $id, $de, $aclist, $psac, $psid, $psde);
+            dispHits(undef, $sq, $hits, $id,$de, $aclist, $psac, $psid, $psde);
         }
     } 
     return $hits_by_motif_ac;
@@ -1726,23 +1714,21 @@ sub pp_scan {
             # loops through all motif associated pp 
             # (order = order of PP lines...) 
             # (+filter for intra/inter pp...)
-            #print STDERR "##PP ($intra_not_inter) target [$target_psac]", 
-            #"-> pp effector[$potential_pp->{effector}] ",
-            #"type[$potential_pp->{type}] value[$potential_pp->{value}]\n";
+            # print "##PP ($intra_not_inter) target [$target_psac] 
+            # -> pp effector[$potential_pp->{effector}] 
+            # type[$potential_pp->{type}] value[$potential_pp->{value}]\n";
             my $effector_psac = $potential_pp->{effector} or next;
-            my $pp_type = $potential_pp->{type} or next;
-            next if $seen->{$pp_type}->{$target_psac}->{$effector_psac};
+            next if $seen->{$target_psac}->{$effector_psac};
                 # next if 'reverse' (target<->effector) pp was already seen! 
                 # might happen with COMPETE_ PPs where PP is specified in 
                 # both effector & target...
-            $seen->{$pp_type}->{$effector_psac}->{$target_psac} = 1 
-                unless $allowBidirectionalPP->{$pp_type};
+            $seen->{$effector_psac}->{$target_psac} = 1;
 
             my $hit_effector_set = $hits->{$effector_psac};
             next unless $hit_effector_set or 
                 $potential_pp->{allow_no_effector_matches};
             next if $hit_effector_set && !@$hit_effector_set;                
-
+            my $pp_type = $potential_pp->{type} or next;
             my $pp_value = $potential_pp->{value};
             # perform post-processing on target:
             if ($postProcessDispatchTable->{$pp_type}) { 
