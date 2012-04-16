@@ -82,7 +82,8 @@ public class Run {
         SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false),
         MIN_SIZE("minsize", "ms", false, "Minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
                 "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false),
-        TEMP_DIRECTORY("tempdirname", "td", false, "Used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false);
+        TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false),
+        TEMP_DIRECTORY("tempdir", "T", false, "Specify temporary file directory. Default is /temp", "TEMP-DIR", false);
 
         private String longOpt;
 
@@ -261,13 +262,15 @@ public class Run {
                 System.out.println("Available analyses in this installation:");    // LEAVE as System.out
                 for (Job job : jobs.getAnalysisJobs().getJobList()) {
                     // Print out available jobs
-                    System.out.printf("    %20s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
+                    System.out.printf("    %25s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
                 }
-                System.out.println("\nCurrently deactivated analyses in this installation:");
+                if (deactivatedJobs.size() > 0) {
+                    System.out.println("\nCurrently deactivated analyses in this installation:");
+                }
                 for (Job deactivatedJob : deactivatedJobs.keySet()) {
                     JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
                     // Print out deactivated jobs
-                    System.out.printf("    %30s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning() +
+                    System.out.printf("    %25s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning() +
                             " Please open properties file 'interproscan.' and specify a valid path.");
                 }
                 System.exit(1);
@@ -380,6 +383,11 @@ public class Run {
                         master.setMinSize(parsedCommandLine.getOptionValue(I5Option.MIN_SIZE.getLongOpt()));
                     }
 
+                    //process tmp dir parameter capital T
+                    if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
+                        master.setTemporaryDirectory(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()));
+                    }
+
                     // GO terms and/or pathways will also imply IPR lookup
                     final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
                     master.setMapToGOAnnotations(mapToGo);
@@ -388,6 +396,7 @@ public class Run {
                     master.setMapToInterProEntries(mapToGo || mapToPathway || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
                 }
 
+                // Set command line parameters on distributed worker.
                 if (runnable instanceof DistributedWorkerController) {
 //                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt()) || parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
                     final DistributedWorkerController workerController = (DistributedWorkerController) runnable;
@@ -402,8 +411,8 @@ public class Run {
                         final String masterUri = parsedCommandLine.getOptionValue(I5Option.MASTER_URI.getLongOpt());
                         workerController.setMasterUri(masterUri);
                     }
-                    if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
-                        final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt());
+                    if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {
+                        final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("Have a temporary directory name passed in: " + temporaryDirectoryName);
                         // Attempt to modify the TemporaryDirectoryManager by retrieving it by name from the context.

@@ -54,6 +54,7 @@
         <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
         <property name="onlyFarmOutNonDatabaseProcesses" value="false"/>
         <property name="hasInVmWorker" value="false"/>
+        <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
     </bean>
 
     <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.EmailErrorAndContinueErrorStrategy"/>
