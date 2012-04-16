@@ -69,7 +69,7 @@ public class Run {
      * -pathways    Switch on look up of corresponding Pathway annotation  (requires -iprlookup option to be used too)
      */
     private enum I5Option {
-        MODE("mode", "m", false, "MANDATORY Mode in which InterProScan is being run.  Must be one of: " + Mode.getCommaSepModeList(), "MODE-NAME", false),
+        MODE("mode", "m", false, "Optional, the mode in which InterProScan is being run, the default mode is " + Mode.STANDALONE.getRunnableBean() + ". Must be one of: " + Mode.getCommaSepModeList() + ".", "MODE-NAME", false),
         FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
         OUTPUT_FORMATS("format", "F", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences is all formats, or for nucleotide sequence scan GFF3 and XML.", "OUTPUT-FORMATS", true),
         OUT_FILE("out-file", "o", false, "Optional output file path/name (the file extension for the output format will be added automatically).", "OUTPUT-FILE-PATH", false),
