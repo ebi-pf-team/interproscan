@@ -295,7 +295,7 @@ public class SmartPostProcessing implements Serializable {
      * @return filtered matches.
      */
     private RawProtein<SmartRawMatch> processProteinUnlicensed(RawProtein<SmartRawMatch> matchRawProtein) {
-        LOGGER.warn("Smart licensed file resources are not available or readable - Smart post processing in unlicensed mode.");
+        LOGGER.info("Smart licensed file resources are not available or readable - Smart post processing in unlicensed mode.");
         return filterKinaseHack(matchRawProtein);
     }
 
