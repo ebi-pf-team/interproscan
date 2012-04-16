@@ -82,6 +82,7 @@
         </property>
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="hasInVmWorker" value="true"/>
+        <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">

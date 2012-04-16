@@ -80,6 +80,10 @@ public class AmqInterProScanMaster implements Master {
 
     private boolean hasInVmWorker;
 
+    private String baseDirectoryTemporaryFiles;
+
+    private String temporaryFileDirSuffix;
+
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
     }
@@ -157,6 +161,11 @@ public class AmqInterProScanMaster implements Master {
         this.unrecoverableErrorStrategy = unrecoverableErrorStrategy;
     }
 
+    @Required
+    public void setTemporaryFileDirSuffix(String temporaryFileDirSuffix) {
+        this.temporaryFileDirSuffix = temporaryFileDirSuffix;
+    }
+
     /**
      * Run the Master Application.
      */
@@ -182,6 +191,13 @@ public class AmqInterProScanMaster implements Master {
                 stepInstancesCreatedByLoadStep = createFastaFileLoadStepInstance();
             }
 
+            //Change base dir temp directory if
+            if (baseDirectoryTemporaryFiles != null) {
+                if (!baseDirectoryTemporaryFiles.endsWith("/")) {
+                    baseDirectoryTemporaryFiles = baseDirectoryTemporaryFiles + "/";
+                }
+                jobs.setBaseDirectoryTemporaryFiles(baseDirectoryTemporaryFiles + temporaryFileDirSuffix);
+            }
 
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
@@ -530,6 +546,11 @@ public class AmqInterProScanMaster implements Master {
     @Override
     public void setTcpUri(String tcpUri) {
         this.tcpUri = tcpUri;
+    }
+
+    @Override
+    public void setTemporaryDirectory(String temporaryDirectory) {
+        this.baseDirectoryTemporaryFiles = temporaryDirectory;
     }
 
     /**
