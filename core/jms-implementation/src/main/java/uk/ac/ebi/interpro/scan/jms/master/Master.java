@@ -81,4 +81,11 @@ public interface Master extends Runnable {
      * @param tcpConnectionString created by the Run class.
      */
     void setTcpUri(String tcpConnectionString);
+
+    /**
+     * Parameter passed in on command line to set a customised temporary directory.
+     *
+     * @param temporaryDirectory Specified as a command-line option. Will overwrite the default ([I5-home]/temp) one.
+     */
+    void setTemporaryDirectory(String temporaryDirectory);
 }
