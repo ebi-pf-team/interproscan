@@ -202,29 +202,43 @@ public class WriteOutputStep extends Step {
             tarArchiveBuilder.buildTarArchive();
             //Delete result files in the temp directory at the end
             for (File resultFile : resultFiles) {
-                boolean isDeleted = resultFile.delete();
-                if (LOGGER.isEnabledFor(Level.WARN)) {
-                    if (!isDeleted) {
-                        LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
+                //Only delete HTML files, but not the resource directory which is also part of the result files list
+                if (resultFile.isFile()) {
+                    boolean isDeleted = resultFile.delete();
+                    if (LOGGER.isEnabledFor(Level.WARN)) {
+                        if (!isDeleted) {
+                            LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
+                        }
                     }
                 }
             }
         }
     }
 
+    /**
+     * Builds a sensible tarball file name.<br>
+     * e.g. for a compressed file it would be: file-name.tar.gz
+     * <p/>
+     * The expected file format would be <file-name>.<extension>
+     *
+     * @param fileName
+     * @param compressHtmlOutput If TRUE,do compress tarball as well.
+     * @return
+     */
     private String buildTarArchiveName(String fileName, boolean compressHtmlOutput) {
         String fileExtension = (compressHtmlOutput ? ".tar.gz" : ".tar");
         if (fileName != null && fileName.length() > 0) {
             String chunks[] = fileName.split("\\.");
+            //The expected file format would be <file-name>.<extension>
             if (chunks.length == 2) {
                 return chunks[0] + fileExtension;
             } else {
                 LOGGER.warn("Unexpected file name format: " + fileName);
             }
         } else {
-            LOGGER.warn("Empty file detected.");
+            LOGGER.warn("Empty file name detected.");
         }
-        return fileName;
+        return fileName + fileExtension;
     }
 
 
