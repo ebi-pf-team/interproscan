@@ -56,7 +56,7 @@ public final class TMHMMBinaryStep extends RunBinaryStep {
      * -PostLabProb
      * -PrintNumbers
      * -background '0.081 0.015 0.054 0.061 0.040 0.068 0.022 0.057 0.056 0.093 0.025 0.045 0.049 0.039 0.057 0.068 0.058 0.067 0.013 0.032'
-     * support-mini-x86-32/data/tmhmm/model/2.5.1/TMHMM2.5.1.model
+     * support-mini-x86-32/data/tmhmm/model/2.0/TMHMM2.0.model
      * support-mini-x86-32/data/tmhmm/test_seqs.fasta
      *
      * @param stepInstance           containing the parameters for executing.

@@ -6,11 +6,22 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: job_phobius ############################  -->
+    <!-- ######################## JOB: Phobius ############################  -->
+
+    <bean id="pathToPhobiusPerlScript" class="java.lang.String">
+        <constructor-arg value="${binary.phobius.pl.path.1.01}"/>
+    </bean>
+
     <bean id="jobPhobius-1.01" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="A combined transmembrane topology and signal peptide predictor"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePhobius-1.01"/>
+        <!--Check mechanism for licensed binaries-->
+        <property name="mandatoryParameters">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="fullPathToBinary" value-ref="pathToPhobiusPerlScript"/>
+            </map>
+        </property>
     </bean>
 
     <bean id="abstractPhobiusStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -53,7 +64,7 @@
           parent="abstractPhobiusStep">
         <property name="dependsUpon" ref="stepPhobiusWriteFastaFile"/>
         <property name="stepDescription" value="Run Phobius Binary for selected proteins"/>
-        <property name="fullPathToBinary" value="${binary.phobius.pl.path.1.01}"/>
+        <property name="fullPathToBinary" ref="pathToPhobiusPerlScript"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="retries" value="3"/>
