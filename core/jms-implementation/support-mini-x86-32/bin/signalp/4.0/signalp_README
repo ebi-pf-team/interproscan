@@ -1,7 +1,0 @@
-Why is this directory empty?
-
-SignalP is licensed software, therefore the SignalP binaries have not been included with InterProScan 5.
-
-To use SignalP the following files are required in this directory:
-
-- nnhowplayer.Linux_i386, nnhowplayer.Linux_ia64 or nnhowplayer.Linux_x86_64
