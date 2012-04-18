@@ -83,7 +83,7 @@ public class Run {
         MIN_SIZE("minsize", "ms", false, "Minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
                 "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false),
         TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false),
-        TEMP_DIRECTORY("tempdir", "T", false, "Specify temporary file directory. Default is /temp", "TEMP-DIR", false);
+        TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. Default is /temp", "TEMP-DIR", false);
 
         private String longOpt;
 
