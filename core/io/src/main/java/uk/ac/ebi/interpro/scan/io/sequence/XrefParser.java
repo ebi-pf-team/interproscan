@@ -17,6 +17,8 @@ public class XrefParser {
 
     private static final String REGEX = "\\|";
 
+    // TODO Unit test
+
     public static NucleotideSequenceXref getNucleotideSequenceXref(String crossReference) {
         if (crossReference != null) {
             if (crossReference.contains(SEPARATOR)) {
@@ -26,11 +28,9 @@ public class XrefParser {
                     String identifier = chunks[1];
                     String name = chunks[2];
                     return new NucleotideSequenceXref(database, identifier, name);
-
                 }
-            } else {
-                return new NucleotideSequenceXref(crossReference);
             }
+            return new NucleotideSequenceXref(crossReference);
         }
         return null;
     }
@@ -44,11 +44,9 @@ public class XrefParser {
                     String identifier = chunks[1];
                     String name = chunks[2];
                     return new ProteinXref(database, identifier, name);
-
                 }
-            } else {
-                return new ProteinXref(crossReference);
             }
+            return new ProteinXref(crossReference);
         }
         return null;
     }
