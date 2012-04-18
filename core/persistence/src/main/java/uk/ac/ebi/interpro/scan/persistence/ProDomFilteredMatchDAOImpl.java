@@ -72,7 +72,8 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
                         new BlastProDomMatch.BlastProDomLocation(
                                 rawMatch.getLocationStart(),
                                 rawMatch.getLocationEnd(),
-                                rawMatch.getScore()
+                                rawMatch.getScore(),
+                                rawMatch.getEvalue()
                         )
                 );
                 lastRawMatch = rawMatch;
