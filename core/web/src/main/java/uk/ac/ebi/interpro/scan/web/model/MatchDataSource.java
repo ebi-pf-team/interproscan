@@ -187,10 +187,26 @@ public enum MatchDataSource {
         return name;
     }
 
+    /**
+     * Lookup the member database enum from a text string that represents it
+     * @param name The text to parse
+     * @return The member database enum value, or UNKNOWN if not found
+     */
     public static MatchDataSource parseName(String name) {
-        for (MatchDataSource m : MatchDataSource.values()) {
-            if (name.equals(m.toString())) {
-                return m;
+        if (name != null) {
+            for (MatchDataSource m : MatchDataSource.values()) {
+                if (name.equals(m.toString())) {
+                    // E.g. "SMART"
+                    return m;
+                }
+                else {
+                    // E.g. Match "PROSITE profiles" from InterPro database with "ProSiteProfiles" from I5
+                    name = name.toLowerCase().replaceAll("\\s+", "");
+                    String mName = m.toString().toLowerCase().replaceAll("\\s+", "");
+                    if (name.equals(mName)) {
+                        return m;
+                    }
+                }
             }
         }
         return UNKNOWN;

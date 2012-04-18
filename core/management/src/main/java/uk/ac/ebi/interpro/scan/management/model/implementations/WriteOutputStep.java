@@ -221,23 +221,22 @@ public class WriteOutputStep extends Step {
      * <p/>
      * The expected file format would be <file-name>.<extension>
      *
-     * @param fileName
+     * @param fileName Input filename without extension
      * @param compressHtmlOutput If TRUE,do compress tarball as well.
-     * @return
+     * @return Tarball filename with extension added
      */
     private String buildTarArchiveName(String fileName, boolean compressHtmlOutput) {
-        String fileExtension = (compressHtmlOutput ? ".tar.gz" : ".tar");
-        if (fileName != null && fileName.length() > 0) {
-            String chunks[] = fileName.split("\\.");
-            //The expected file format would be <file-name>.<extension>
-            if (chunks.length == 2) {
-                return chunks[0] + fileExtension;
-            } else {
-                LOGGER.warn("Unexpected file name format: " + fileName);
-            }
-        } else {
-            LOGGER.warn("Empty file name detected.");
+        if (fileName == null) {
+            throw new IllegalStateException("HTML output file name was NULL");
         }
+        else if (fileName.length() == 0) {
+            throw new IllegalStateException("HTML output file name was empty");
+        }
+        String fileExtension = (compressHtmlOutput ? ".tar.gz" : ".tar");
+        if (fileName.endsWith(fileExtension)) {
+            return fileName;
+        }
+
         return fileName + fileExtension;
     }
 
