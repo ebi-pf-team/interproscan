@@ -56,14 +56,18 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         @Column(nullable = false)
         private double score;
 
+        @Column(nullable = false)
+        private double evalue;
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
         protected BlastProDomLocation() {}
 
-        public BlastProDomLocation(int start, int end, double score) {
+        public BlastProDomLocation(int start, int end, double score, double evalue) {
             super(start, end);
             setScore(score);
+            setEvalue(evalue);
         }
 
         @XmlAttribute(required=true)
@@ -75,6 +79,16 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
             this.score = score;
         }
 
+        @XmlAttribute(required=true)
+        public double getEvalue() {
+            return evalue;
+        }
+
+        private void setEvalue(double evalue) {
+            this.evalue = evalue;
+        }
+
+
         @Override public boolean equals(Object o) {
             if (this == o)
                 return true;
@@ -84,6 +98,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
             return new EqualsBuilder()
                     .appendSuper(super.equals(o))
                     .append(score, f.score)
+                    .append(evalue, f.evalue)
                     .isEquals();
         }
 
@@ -91,6 +106,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
             return new HashCodeBuilder(19, 21)
                     .appendSuper(super.hashCode())
                     .append(score)
+                    .append(evalue)
                     .toHashCode();
         }
 
