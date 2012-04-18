@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.io.match.writer;
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -53,11 +54,26 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
             if (locations != null) {
                 locationCount += locations.size();
                 for (Location location : locations) {
+                    //Default score
                     String score = "-";
                     String status = "T";
 
+                    // To maintain compatibility, we output the same value for the score column as I4
+                    // In some cases we have to take the value from the match
+                    if (match instanceof SuperFamilyHmmer3Match) {
+                        score = Double.toString( ((SuperFamilyHmmer3Match) match).getEvalue());
+                    } else if (match instanceof PantherMatch) {
+                        score = Double.toString( ((PantherMatch) match).getEvalue());
+                    } else if (match instanceof FingerPrintsMatch) {
+                        score = Double.toString(((FingerPrintsMatch) match).getEvalue());
+                    }
+                    //In other cases we have to take the value from the location
                     if (location instanceof HmmerLocation) {
                         score = Double.toString(((HmmerLocation) location).getEvalue());
+                    } else if (location instanceof BlastProDomMatch.BlastProDomLocation) {
+                        score = Double.toString( ((BlastProDomMatch.BlastProDomLocation) location).getEvalue() );
+                    }  else if (location instanceof ProfileScanMatch.ProfileScanLocation)  {
+                        score = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore() );
                     }
 
                     final List<String> mappingFields = new ArrayList<String>();
