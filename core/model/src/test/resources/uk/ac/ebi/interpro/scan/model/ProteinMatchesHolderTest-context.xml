@@ -391,7 +391,7 @@
                 p.addCrossReference(new ProteinXref("UniParc", "UPI000048E726", "UPI000048E726"));
                 Signature signature = new Signature("PD001061");
                 Set<BlastProDomMatch.BlastProDomLocation> locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
-                locations.add(new BlastProDomMatch.BlastProDomLocation(9, 150, 763));
+                locations.add(new BlastProDomMatch.BlastProDomLocation(9, 150, 763, 1e-80));
                 p.addMatch(new BlastProDomMatch(signature, locations));
 
                 // Create release
@@ -422,13 +422,13 @@
                                     <signature-library-release library="PRODOM" version="2006.1" />
                                 </signature>
                                 <locations>
-                                    <blastprodom-location start="9" end="150" score="763.0" />
+                                    <blastprodom-location start="9" end="150" score="763.0" evalue="1e-80"/>
                                 </locations>
                             </blastprodom-match>
                             <!--<blastprodom-match>-->
                                 <!--<signature ac="PD596253"/>-->
                                 <!--<locations>-->
-                                    <!--<blastprodom-location start="151" end="245" score="496.0"/>-->
+                                    <!--<blastprodom-location start="151" end="245" score="496.0" evalue="1e-49"/>-->
                                 <!--</locations>-->
                             <!--</blastprodom-match>-->
                         </matches>
