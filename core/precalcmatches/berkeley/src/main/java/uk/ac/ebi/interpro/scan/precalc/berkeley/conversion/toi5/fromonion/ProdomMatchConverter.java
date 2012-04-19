@@ -27,7 +27,7 @@ public class ProdomMatchConverter extends BerkeleyMatchConverter<BlastProDomMatc
         Set<BlastProDomMatch.BlastProDomLocation> locations = new HashSet<BlastProDomMatch.BlastProDomLocation>(berkeleyMatch.getLocations().size());
         for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
             locations.add(new BlastProDomMatch.BlastProDomLocation(
-                    berkeleyLocation.getStart(), berkeleyLocation.getEnd(), valueOrZero(berkeleyLocation.getScore())
+                    berkeleyLocation.getStart(), berkeleyLocation.getEnd(), valueOrZero(berkeleyLocation.getScore()), valueOrZero(berkeleyLocation.geteValue())
             ));
         }
 
