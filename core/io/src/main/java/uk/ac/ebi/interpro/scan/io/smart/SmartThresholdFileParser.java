@@ -104,7 +104,7 @@ public class SmartThresholdFileParser implements Serializable {
         }
 
         private Double doubleOrNull(String val) {
-            if (val != null || NO_VALUE_MARKER.equals(val)) {
+            if (val == null || NO_VALUE_MARKER.equals(val)) {
                 return null;
             }
             return Double.parseDouble(val);
