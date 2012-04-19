@@ -253,93 +253,99 @@ public class Run {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 
-            Jobs jobs = (Jobs) ctx.getBean("jobs");
-            //Get deactivated jobs
-            final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
-            //Info about active and de-active jobs is shown in the manual instruction (help) as well
-            if (args.length == 0) {
-                printHelp();
-                System.out.println("Available analyses in this installation:");    // LEAVE as System.out
-                for (Job job : jobs.getAnalysisJobs().getJobList()) {
-                    // Print out available jobs
-                    System.out.printf("    %25s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
-                }
-                if (deactivatedJobs.size() > 0) {
-                    System.out.println("\nCurrently deactivated analyses in this installation:");
-                }
-                for (Job deactivatedJob : deactivatedJobs.keySet()) {
-                    JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
-                    // Print out deactivated jobs
-                    System.out.printf("    %25s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning() +
-                            " Please open properties file 'interproscan.properties' and specify a valid path.");
-                }
-                System.exit(1);
+            String[] parsedAnalyses = null;
+            if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
+                parsedAnalyses = parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt());
             }
-
-            //Check existence of user-specified analyses
-            //Expecting 1 entry regardless how many analyses are specified
-            String[] parsedAnalyses = parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt());
-            if (parsedAnalyses != null && parsedAnalyses.length == 1) {
-                parsedAnalyses = StringUtils.commaDelimitedListToStringArray(parsedAnalyses[0]);
-            }
-
-            //Before running analyses we need to do some checks
-            //The algorithm works as following:
-            //1. If analyses are specified via appl parameter:
-            //1. a) Existence check - Check if specified analysis name does exist -> print warning if NOT
-            //1. b) Job status check (deactivation check) - Check if one of the specified analyses is deactivated or not -> print warning if so
-            //2. If analyses are specified via appl parameter or not
-            //2. a) Version check - Check if multiple versions of the same analysis occur
-            final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap = getRealAnalysesNames(parsedAnalyses, jobs.getAllJobs().getJobList());
-
-            //Existence and job status checks
-            StringBuilder nonexistentAnalysis = new StringBuilder();
-            if (parsedAnalyses != null && parsedAnalyses.length > 0) {
-                boolean doExit = false;
-                for (String parsedAnalysisName : parsedAnalyses) {
-                    if (parsedAnalysesRealAnalysesMap.containsKey(parsedAnalysisName)) {
-                        //Check if they are deactivated
-                        Set<Job> realAnalyses = parsedAnalysesRealAnalysesMap.get(parsedAnalysisName);
-                        for (Job deactivatedJob : deactivatedJobs.keySet()) {
-                            for (Job realAnalysis : realAnalyses) {
-                                if (deactivatedJob.getId().equalsIgnoreCase(realAnalysis.getId())) {
-                                    JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
-                                    System.out.println("\n\n" + jobStatusWrapper.getWarning() + "\n\n");
-                                    doExit = true;
-                                }
-                            }
-                        }
-                    } else {
-                        if (nonexistentAnalysis.length() > 0) {
-                            nonexistentAnalysis.append(",");
-                        }
-                        nonexistentAnalysis.append(parsedAnalysisName);
+            //The following code does work for INSTALLER mode for instance
+            if (mode != Mode.INSTALLER) {
+                Jobs jobs = (Jobs) ctx.getBean("jobs");
+                //Get deactivated jobs
+                final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
+                //Info about active and de-active jobs is shown in the manual instruction (help) as well
+                if (args.length == 0) {
+                    printHelp();
+                    System.out.println("Available analyses in this installation:");    // LEAVE as System.out
+                    for (Job job : jobs.getAnalysisJobs().getJobList()) {
+                        // Print out available jobs
+                        System.out.printf("    %25s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
                     }
-                }
-                if (nonexistentAnalysis.length() > 0) {
-                    System.out.println("\n\nYou have requested the following analyses / applications that are not available in this distribution of InterProScan: " + nonexistentAnalysis.toString() + ".  Please run interproscan.sh with no arguments for a list of available analyses.\n\n");
-                    doExit = true;
-                }
-                if (doExit) {
+                    if (deactivatedJobs.size() > 0) {
+                        System.out.println("\nCurrently deactivated analyses in this installation:");
+                    }
+                    for (Job deactivatedJob : deactivatedJobs.keySet()) {
+                        JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
+                        // Print out deactivated jobs
+                        System.out.printf("    %25s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning() +
+                                " Please open properties file 'interproscan.properties' and specify a valid path.");
+                    }
                     System.exit(1);
                 }
-            }
 
-            parsedAnalyses = getAnalysesToRun(parsedAnalysesRealAnalysesMap);
-            String analysesPrintOutStr = "Running the following analyses:\n";
-            //Version check
-            if (parsedAnalyses.length > 0) {
-                Set<Job> jobsToCheckMultipleVersionsSet = new HashSet<Job>();
-                for (Set<Job> jobsToCheck : parsedAnalysesRealAnalysesMap.values()) {
-                    jobsToCheckMultipleVersionsSet.addAll(jobsToCheck);
+                //Check existence of user-specified analyses
+                //Expecting 1 entry regardless how many analyses are specified
+                if (parsedAnalyses != null && parsedAnalyses.length == 1) {
+                    parsedAnalyses = StringUtils.commaDelimitedListToStringArray(parsedAnalyses[0]);
                 }
-                List<Job> jobsToCheckMultipleVersionsList = new ArrayList<Job>(jobsToCheckMultipleVersionsSet);
-                checkAnalysisJobsVersions(jobsToCheckMultipleVersionsList);
-                System.out.println(analysesPrintOutStr + Arrays.asList(parsedAnalyses));
-            } else {
-                checkAnalysisJobsVersions(jobs.getAnalysisJobs().getJobList());
-                System.out.println(analysesPrintOutStr + jobs.getAnalysisJobs().getJobIdList());
-            }
+
+                //Before running analyses we need to do some checks
+                //The algorithm works as following:
+                //1. If analyses are specified via appl parameter:
+                //1. a) Existence check - Check if specified analysis name does exist -> print warning if NOT
+                //1. b) Job status check (deactivation check) - Check if one of the specified analyses is deactivated or not -> print warning if so
+                //2. If analyses are specified via appl parameter or not
+                //2. a) Version check - Check if multiple versions of the same analysis occur
+                final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap = getRealAnalysesNames(parsedAnalyses, jobs.getAllJobs().getJobList());
+
+                //Existence and job status checks
+                StringBuilder nonexistentAnalysis = new StringBuilder();
+                if (parsedAnalyses != null && parsedAnalyses.length > 0) {
+                    boolean doExit = false;
+                    for (String parsedAnalysisName : parsedAnalyses) {
+                        if (parsedAnalysesRealAnalysesMap.containsKey(parsedAnalysisName)) {
+                            //Check if they are deactivated
+                            Set<Job> realAnalyses = parsedAnalysesRealAnalysesMap.get(parsedAnalysisName);
+                            for (Job deactivatedJob : deactivatedJobs.keySet()) {
+                                for (Job realAnalysis : realAnalyses) {
+                                    if (deactivatedJob.getId().equalsIgnoreCase(realAnalysis.getId())) {
+                                        JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
+                                        System.out.println("\n\n" + jobStatusWrapper.getWarning() + "\n\n");
+                                        doExit = true;
+                                    }
+                                }
+                            }
+                        } else {
+                            if (nonexistentAnalysis.length() > 0) {
+                                nonexistentAnalysis.append(",");
+                            }
+                            nonexistentAnalysis.append(parsedAnalysisName);
+                        }
+                    }
+                    if (nonexistentAnalysis.length() > 0) {
+                        System.out.println("\n\nYou have requested the following analyses / applications that are not available in this distribution of InterProScan: " + nonexistentAnalysis.toString() + ".  Please run interproscan.sh with no arguments for a list of available analyses.\n\n");
+                        doExit = true;
+                    }
+                    if (doExit) {
+                        System.exit(1);
+                    }
+                }
+
+                parsedAnalyses = getAnalysesToRun(parsedAnalysesRealAnalysesMap);
+                String analysesPrintOutStr = "Running the following analyses:\n";
+                //Version check
+                if (parsedAnalyses.length > 0) {
+                    Set<Job> jobsToCheckMultipleVersionsSet = new HashSet<Job>();
+                    for (Set<Job> jobsToCheck : parsedAnalysesRealAnalysesMap.values()) {
+                        jobsToCheckMultipleVersionsSet.addAll(jobsToCheck);
+                    }
+                    List<Job> jobsToCheckMultipleVersionsList = new ArrayList<Job>(jobsToCheckMultipleVersionsSet);
+                    checkAnalysisJobsVersions(jobsToCheckMultipleVersionsList);
+                    System.out.println(analysesPrintOutStr + Arrays.asList(parsedAnalyses));
+                } else {
+                    checkAnalysisJobsVersions(jobs.getAnalysisJobs().getJobList());
+                    System.out.println(analysesPrintOutStr + jobs.getAnalysisJobs().getJobIdList());
+                }
+            }//end mode check
 
             if (mode.getRunnableBean() != null) {
                 Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
