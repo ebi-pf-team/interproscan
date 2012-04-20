@@ -2,9 +2,13 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.signalp;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.signalp.SignalPTempOptionParser;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +26,8 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
     private String fullPathToSignalPBinary;
     private String fastaFileNameTemplate;
     private String perlLibrary;
+    private String tempOptionCheckOutputFileTemplate;
+    private SignalPTempOptionParser parser;
 
     @Required
     public void setPerlCommand(String perlCommand) {
@@ -43,6 +49,16 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
         this.perlLibrary = perlLibrary;
     }
 
+    @Required
+    public void setTempOptionCheckOutputFileTemplate(String tempOptionCheckOutputFileTemplate) {
+        this.tempOptionCheckOutputFileTemplate = tempOptionCheckOutputFileTemplate;
+    }
+
+    @Required
+    public void setParser(SignalPTempOptionParser parser) {
+        this.parser = parser;
+    }
+
     /**
      * Create the command ready to run the binary.
      * <p/>
@@ -57,6 +73,9 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.fastaFileNameTemplate);
+        final String tempOptionCheckOutputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.tempOptionCheckOutputFileTemplate);
+        InputStream is = null;
+        boolean isTOptionAvailable = isTOptionAvailable(tempOptionCheckOutputFileName);
         List<String> command = new ArrayList<String>();
         command.add(this.perlCommand); // Run the perl script using installed version of Perl
         //Add Perl parameter
@@ -64,8 +83,14 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
         command.add(this.perlLibrary);
         command.add(this.fullPathToSignalPBinary);
         command.addAll(this.getBinarySwitchesAsList());
-        command.add("-T");
-        command.add(temporaryFileDirectory);
+        if (isTOptionAvailable) {
+            LOGGER.info("T option is available in this version of SignalP.");
+            command.add("-T");
+            command.add(temporaryFileDirectory);
+        } else {
+            LOGGER.info("T option is not available in this version of SignalP.");
+        }
+
         command.add(fastaFilePathName);
 
         if (LOGGER.isDebugEnabled()) {
@@ -73,5 +98,23 @@ public class RunSignalPBinaryStep extends RunBinaryStep {
         }
 
         return command;
+    }
+
+    private boolean isTOptionAvailable(String tempOptionCheckOutputFileName) {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(tempOptionCheckOutputFileName);
+            return parser.parse(is);
+        } catch (IOException e) {
+            throw new IllegalStateException("IOException thrown when attempting to parse " + tempOptionCheckOutputFileName, e);
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                LOGGER.warn("Error closing input stream", e);
+            }
+        }
     }
 }

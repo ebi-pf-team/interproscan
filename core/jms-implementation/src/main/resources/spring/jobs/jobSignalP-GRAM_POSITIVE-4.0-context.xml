@@ -54,11 +54,24 @@
     ./signalp -t gram+ -f summary -c 70 test/euk10.fsa
     -->
 
+    <!-- STEP: Runs the SignalP Perl script to check if the -T option is available or unknown-->
+    <bean id="stepSignalPGramPositiveTempOptionCheck-4.0"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.signalp.RunSignalPTempOptionCheckStep"
+          parent="abstractSignalPGramPositiveStep-4.0">
+        <property name="dependsUpon" ref="stepSignalPGramPositiveWriteFastaFile-4.0"/>
+        <property name="stepDescription"
+                  value="Runs SignalP Perl script with the -T option to check if it is an unknown option"/>
+        <property name="retries" value="3"/>
+        <property name="perlCommand" value="${perl.command}"/>
+        <property name="outputFileNameTemplate" ref="tempOptionCheckOutputFileTemplate"/>
+        <property name="fullPathToSignalPBinary" ref="fullPathToSignalPBinary"/>
+    </bean>
+
     <!-- STEP: Run the SignalP binary in eukaryote mode -->
     <bean id="stepSignalPGramPositiveRunBinary-4.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.signalp.RunSignalPBinaryStep"
           parent="abstractSignalPGramPositiveStep-4.0">
-        <property name="dependsUpon" ref="stepSignalPGramPositiveWriteFastaFile-4.0"/>
+        <property name="dependsUpon" ref="stepSignalPGramPositiveTempOptionCheck-4.0"/>
         <property name="stepDescription"
                   value="Run SignalP binary for selected proteins with organism type set to gram+"/>
         <property name="binarySwitches" value="-t gram+ -f summary -c 70"/>
@@ -69,6 +82,12 @@
         <property name="fullPathToSignalPBinary" ref="fullPathToSignalPBinary"/>
         <!--Path to a Perl library directory (in this case a Perl library provided by SignalP which is necessary to run the script)-->
         <property name="perlLibrary" value="${signalp.4.0.perl.library.dir}"/>
+        <property name="tempOptionCheckOutputFileTemplate" ref="tempOptionCheckOutputFileTemplate"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.signalp.SignalPTempOptionParser">
+                <property name="tempOptionLine" value="-T   Specify temporary file directory. Default: /tmp"/>
+            </bean>
+        </property>
     </bean>
 
     <!-- STEP: Parse the SignalP binary output and persist the results in the database. No post processing required. -->
@@ -116,6 +135,10 @@
           class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="SIGNALP_GRAM_POSITIVE"/>
         <constructor-arg type="java.lang.String" value="4.0"/>
+    </bean>
+
+    <bean id="tempOptionCheckOutputFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].temp.option.check.out"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
