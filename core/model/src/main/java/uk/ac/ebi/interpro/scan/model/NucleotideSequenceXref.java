@@ -46,7 +46,11 @@ public class NucleotideSequenceXref extends Xref implements Serializable {
     }
 
     public NucleotideSequenceXref(String identifier) {
-        super(identifier);
+        this(null, identifier);
+    }
+
+    public NucleotideSequenceXref(String databaseName, String identifier) {
+        this(databaseName, identifier, null);
     }
 
     public NucleotideSequenceXref(String databaseName, String identifier, String name) {
