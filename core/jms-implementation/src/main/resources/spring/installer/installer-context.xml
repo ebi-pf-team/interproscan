@@ -30,7 +30,7 @@
                     <property name="releaseVersionNumber" value="1.01"/>
                     <property name="analysisJobId" value="jobPhobius"/>
                 </bean>
-                <!--Old version of PFAM is commented out-->
+                <!--Old version of PFAM commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
                     <!--<property name="signatureLibrary" value="PFAM"/>-->
                     <!--<property name="releaseVersionNumber" value="24.0"/>-->
@@ -64,7 +64,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobGene3d"/>
                 </bean>
-                <!--Old version of HAMAP is commented out-->
+                <!--Old version of HAMAP commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">-->
                     <!--<property name="signatureLibrary" value="HAMAP"/>-->
                     <!--<property name="releaseVersionNumber" value="180510"/>-->
@@ -81,7 +81,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobHAMAP-140911"/>
                 </bean>
-                <!--Old version of PIRSF is commented out-->
+                <!--Old version of PIRSF commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
                 <!--<property name="signatureLibrary" value="PIRSF"/>-->
                 <!--<property name="releaseVersionNumber" value="2.74"/>-->
@@ -104,7 +104,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobProDom-2006.1"/>
                 </bean>
-                <!--Old versions of PROSITE_PATTERNS and PROSITE_PROFILES is commented out-->
+                <!--Old versions of PROSITE_PATTERNS and PROSITE_PROFILES commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">-->
                 <!--<property name="signatureLibrary" value="PROSITE_PATTERNS"/>-->
                 <!--<property name="releaseVersionNumber" value="20.66"/>-->
@@ -145,7 +145,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="namesTabFile" value="names.tab"/>
                 </bean>
-                <!--Old versions of TIGRFAM is commented out-->
+                <!--Old versions of TIGRFAM commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
                     <!--<property name="signatureLibrary" value="TIGRFAM"/>-->
                     <!--<property name="releaseVersionNumber" value="9.0"/>-->
@@ -160,7 +160,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobTIGRFAM-10.1"/>
                 </bean>
-                <!--Old versions of SMART is commented out-->
+                <!--Old versions of SMART commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
                     <!--<property name="signatureLibrary" value="SMART"/>-->
                     <!--<property name="releaseVersionNumber" value="6.1"/>-->
