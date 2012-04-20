@@ -123,6 +123,7 @@
             <list>
                 <ref bean="fastaFileNameTemplate"/>
                 <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="tempOptionCheckOutputFileTemplate"/>
             </list>
         </property>
     </bean>
