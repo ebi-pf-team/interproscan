@@ -40,7 +40,8 @@ public class RunSmartBinaryStep extends RunHmmerBinaryStep {
             // Increase the stringency, to keep out the poor matches.
             command.add("-E");
             command.add("0.01");
-            // TODO - Need to set the -Z value too....  Sarah for details
+            command.add("-Z");
+            command.add("350000");
         }
         command.add(this.getFullPathToHmmFile());
         command.add(fastaFilePathName);
