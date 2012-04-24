@@ -366,6 +366,16 @@
         <property name="completionJob" ref="jobWriteOutput"/>
         <property name="jobs" ref="jobs"/>
     </bean>
+
+    <bean id="sequenceTypes" class="java.util.HashSet">
+        <constructor-arg>
+            <set>
+                <value>p</value>
+                <value>n</value>
+            </set>
+        </constructor-arg>
+    </bean>
+
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
 </beans>
