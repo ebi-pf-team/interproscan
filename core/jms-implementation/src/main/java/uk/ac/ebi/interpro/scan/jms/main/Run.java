@@ -40,7 +40,18 @@ public class Run {
 
     private static final Logger LOGGER = Logger.getLogger(Run.class.getName());
 
+    /**
+     * This is the REAL set of options that the Run class will accept
+     */
     private static final Options COMMAND_LINE_OPTIONS = new Options();
+
+    /**
+     * Same contents as COMMAND_LINE_OPTIONS, however if the I5Option enum value
+     * has includeInUsageMessage == false, the option is excluded.
+     * <p/>
+     * This is to remove clutter from the help message that may confuse users.
+     */
+    private static final Options COMMAND_LINE_OPTIONS_FOR_HELP = new Options();
 
     private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
 
@@ -69,21 +80,21 @@ public class Run {
      * -pathways    Switch on look up of corresponding Pathway annotation  (requires -iprlookup option to be used too)
      */
     private enum I5Option {
-        MODE("mode", "m", false, "Optional, the mode in which InterProScan is being run, the default mode is " + Mode.STANDALONE.getRunnableBean() + ". Must be one of: " + Mode.getCommaSepModeList() + ".", "MODE-NAME", false),
-        FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false),
-        OUTPUT_FORMATS("format", "F", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences is all formats, or for nucleotide sequence scan GFF3 and XML.", "OUTPUT-FORMATS", true),
-        OUT_FILE("out-file", "o", false, "Optional output file path/name (the file extension for the output format will be added automatically).", "OUTPUT-FILE-PATH", false),
-        ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true),
-        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false),
-        IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation", null, false),
-        GOTERMS("goterms", "goterms", false, "Switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false),
-        PATHWAY_LOOKUP("pathways", "pa", false, "Switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false),
-        MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false),
-        SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false),
+        MODE("mode", "m", false, "Optional, the mode in which InterProScan is being run, the default mode is " + Mode.STANDALONE.getRunnableBean() + ". Must be one of: " + Mode.getCommaSepModeList() + ".", "MODE-NAME", false, false),
+        FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false, true),
+        OUTPUT_FORMATS("format", "F", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences is all formats, or for nucleotide sequence scan GFF3 and XML.", "OUTPUT-FORMATS", true, true),
+        OUT_FILE("out-file", "o", false, "Optional output file path/name (the file extension for the output format will be added automatically).", "OUTPUT-FILE-PATH", false, true),
+        ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true, true),
+        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false, false),
+        IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation", null, false, true),
+        GOTERMS("goterms", "goterms", false, "Switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false, true),
+        PATHWAY_LOOKUP("pathways", "pa", false, "Switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false, true),
+        MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false, false),
+        SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false, true),
         MIN_SIZE("minsize", "ms", false, "Minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
-                "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false),
-        TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false),
-        TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. Default is /temp", "TEMP-DIR", false);
+                "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false, true),
+        TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false, false),
+        TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. Default is /temp", "TEMP-DIR", false, true);
 
         private String longOpt;
 
@@ -97,13 +108,16 @@ public class Run {
 
         private String argumentName;
 
+        private boolean includeInUsageMessage;
+
         private I5Option(
                 String longOpt,
                 String shortOpt,
                 boolean required,
                 String description,
                 String argumentName,
-                boolean multipleArgs
+                boolean multipleArgs,
+                boolean includeInUsageMessage
         ) {
             this.longOpt = longOpt;
             this.shortOpt = shortOpt;
@@ -111,6 +125,7 @@ public class Run {
             this.description = description;
             this.argumentName = argumentName;
             this.multipleArgs = multipleArgs;
+            this.includeInUsageMessage = includeInUsageMessage;
         }
 
         public String getLongOpt() {
@@ -135,6 +150,10 @@ public class Run {
 
         public boolean hasMultipleArgs() {
             return multipleArgs;
+        }
+
+        public boolean isIncludeInUsageMessage() {
+            return includeInUsageMessage;
         }
     }
 
@@ -209,10 +228,15 @@ public class Run {
 
             builder = OptionBuilder.withValueSeparator();
 
-            COMMAND_LINE_OPTIONS.addOption(
-                    (i5Option.getShortOpt() == null)
-                            ? builder.create()
-                            : builder.create(i5Option.getShortOpt()));
+            final Option option = (i5Option.getShortOpt() == null)
+                    ? builder.create()
+                    : builder.create(i5Option.getShortOpt());
+
+            COMMAND_LINE_OPTIONS.addOption(option);
+
+            if (i5Option.includeInUsageMessage) {
+                COMMAND_LINE_OPTIONS_FOR_HELP.addOption(option);
+            }
         }
     }
 
@@ -613,8 +637,9 @@ public class Run {
         }
     }
 
+
     private static void printHelp() {
-        HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, HEADER, COMMAND_LINE_OPTIONS, FOOTER);
+        HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, HEADER, COMMAND_LINE_OPTIONS_FOR_HELP, FOOTER);
     }
 
     /**
