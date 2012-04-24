@@ -7,7 +7,6 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyToI5Mode
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -94,17 +93,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches());
             }
             return protein;
-        } catch (IOException e) {
-            /* Don't overreact,  just log the error - I5 can continue and analyse the proteins
-             even if the precalc lookup service is not working / configured correctly. */
-            LOGGER.error("Non-fatal error - the pre-calculated match lookup service is not correctly configured and has thrown an IOException.  " +
-                    "InterProScan 5 will continue to analyse the proteins.  You may wish to check your configuration for more efficient " +
-                    "match calculation, or to disable the use of this service.", e);
-        } catch (IllegalStateException ise) {
-            LOGGER.error("The precalculated match lookup service has not been configured correctly and has thrown an " +
-                    "IllegalStateException.  This is NOT fatal however - InterProScan 5 will continue to " +
-                    "analyse the proteins.  You may wish to check your configuration for more efficient match " +
-                    "calculation, or to disable the use of this service." + ise);
+        } catch (Exception e) {
+            exitOnMatchServiceError();
         }
         return null;
     }
@@ -158,13 +148,27 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches());
             }
             return precalculatedProteins;
-        } catch (IOException e) {
-            /* Don't overreact,  just log the error - I5 can continue and analyse the proteins
-             even if the precalc lookup service is not working / configured correctly. */
-            LOGGER.error("Non-fatal error - the pre-calculated match lookup service is not correctly configured and has thrown an IOException.  " +
-                    "InterProScan 5 will continue to analyse the proteins.  You may wish to check your configuration for more efficient " +
-                    "match calculation, or to disable the use of this service.", e);
-            return Collections.emptySet();
+        } catch (Exception e) {
+            exitOnMatchServiceError();
         }
+        return null;
+    }
+
+    private void exitOnMatchServiceError() {
+        /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
+        System.err.println("\n\n" +
+                "Pre-calculated match lookup service failed - analysis halted\n" +
+                "============================================================\n\n" +
+                "The pre-calculated match lookup service has been configured\n" +
+                "in the interproscan.properties file. Unfortunately the web\n" +
+                "service has failed.  You can switch off the use of this service\n" +
+                "by editing the interproscan.properties file and setting the\n" +
+                "appropriate property to look like this:\n\n" +
+                "precalculated.match.lookup.service.url=\n\n" +
+                "The analysis will then continue without using the lookup service.\n\n" +
+                "Please check that this is not a firewall issue and then\n" +
+                "inform the InterPro team of this error by sending an email to:\n\ninterhelp@ebi.ac.uk\n\n");
+
+        System.exit(123);
     }
 }
