@@ -8,6 +8,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager;
+import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
@@ -280,8 +281,10 @@ public class Run {
             String[] parsedAnalyses = null;
             if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                 parsedAnalyses = parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt());
+                parsedAnalyses = tidyOptionsArray(parsedAnalyses);
             }
-            //The following code does work for INSTALLER mode for instance
+
+
             if (mode != Mode.INSTALLER) {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
                 //Get deactivated jobs
@@ -304,12 +307,6 @@ public class Run {
                                 " Please open properties file 'interproscan.properties' and specify a valid path.");
                     }
                     System.exit(1);
-                }
-
-                //Check existence of user-specified analyses
-                //Expecting 1 entry regardless how many analyses are specified
-                if (parsedAnalyses != null && parsedAnalyses.length == 1) {
-                    parsedAnalyses = StringUtils.commaDelimitedListToStringArray(parsedAnalyses[0]);
                 }
 
                 //Before running analyses we need to do some checks
@@ -369,7 +366,48 @@ public class Run {
                     checkAnalysisJobsVersions(jobs.getAnalysisJobs().getJobList());
                     System.out.println(analysesPrintOutStr + jobs.getAnalysisJobs().getJobIdList());
                 }
-            }//end mode check
+            } // End installer mode check
+
+            // Validate the output formats supplied
+            String[] parsedOutputFormats = null;
+            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
+                parsedOutputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
+                parsedOutputFormats = tidyOptionsArray(parsedOutputFormats);
+                validateOutputFormatList(parsedOutputFormats);
+            }
+
+            // Validate the sequence type
+            String sequenceType = "p";
+            if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
+                sequenceType = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt());
+
+                // Check the sequence type is "n" or "p"
+                Set<String> sequenceTypes = (HashSet<String>) ctx.getBean("sequenceTypes");
+                if (sequenceTypes != null && !sequenceTypes.contains(sequenceType)) {
+                    System.out.print("\n\nThe specified sequence type " + sequenceType + " was not recognised, expected: ");
+                    StringBuilder expectedSeqTypes = new StringBuilder();
+                    for (String seqType : sequenceTypes) {
+                        if(expectedSeqTypes.length()>0){
+                            expectedSeqTypes.append(",");
+                        }
+                        expectedSeqTypes.append(seqType);
+                    }
+                    System.out.println(expectedSeqTypes+"\n\n");
+                    System.exit(1);
+                }
+
+                // Check output format is valid for this sequence type
+                if (sequenceType.equalsIgnoreCase("n")) {
+                    if (parsedOutputFormats != null) {
+                        for (String outputFormat : parsedOutputFormats) {
+                            if (outputFormat.equalsIgnoreCase("tsv") || outputFormat.equalsIgnoreCase("html")) {
+                                System.out.println("\n\nTSV and HTML formats are not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 (Default) and XML.");
+                                System.exit(1);
+                            }
+                        }
+                    }
+                }
+            }
 
             if (mode.getRunnableBean() != null) {
                 Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
@@ -384,7 +422,7 @@ public class Run {
                         master.setOutputFile(parsedCommandLine.getOptionValue(I5Option.OUT_FILE.getLongOpt()));
                     }
                     if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
-                        master.setOutputFormats(parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt()));
+                        master.setOutputFormats(parsedOutputFormats);
                     }
                     if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                         master.setAnalyses(parsedAnalyses);
@@ -393,19 +431,6 @@ public class Run {
                         master.setTcpUri(tcpConnectionString);
                     }
                     if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
-                        String sequenceType = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt());
-                        if (sequenceType.equalsIgnoreCase("n")) {
-                            String[] outputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
-                            if (outputFormats != null) {
-                                for (String outputFormat : outputFormats) {
-                                    if (outputFormat.equalsIgnoreCase("tsv") || outputFormat.equalsIgnoreCase("html")) {
-                                        System.out.println("\n\nTSV and HTML formats are not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 (Default) and XML.");
-                                        System.exit(1);
-//                                throw new IllegalArgumentException("TSV format is not supported if you run I5 against nucleotide sequences. Supported format are GFF3 (Default) and XML.");
-                                    }
-                                }
-                            }
-                        }
                         master.setSequenceType(sequenceType);
                     }
 
@@ -479,6 +504,57 @@ public class Run {
     }
 
     /**
+     * Tidy an array of options for a command line option that takes multiple values.
+     * For example { "Pfam,", "Gene3d,SMART", ",", ",test" } becomes { "Pfam", "Gene3d", "SMART", "test" }.
+     * The validity of the options are not checked here.
+     * @param options Un-tidy array of options
+     * @return Array of options after tidying.
+     */
+    private static String[] tidyOptionsArray(String[] options) {
+        if (options == null || options.length < 1) {
+            return options;
+        }
+
+        Set<String> parsedOptions = new HashSet<String>();
+
+        // Examples of un-tidy options arrays:
+        // 1. Commons.cli stores "-appl Pfam -appl Gene3d" as an array with 2 items { "Pfam", "Gene3d" }
+        // 2. Commons.cli stores "-appl Pfam,Gene3d" as array with 1 item { "Pfam,Gene3d" }
+        // 3. The I5 code below also allows something like "-appl Pfam, Gene3d,SMART, , ,test" which comes through as an
+        //    array with 4 items { "Pfam,", "Gene3d,SMART", ",", ",test" } and needs to be tidied.
+        for (String optionsArrayItem : options) {
+            String[] optionsArrayItems = optionsArrayItem.split("[,\\s+]+");
+            for (String option : optionsArrayItems) {
+                if (option != null && !option.equals("")) {
+                    parsedOptions.add(option);
+                }
+            }
+        }
+
+        return parsedOptions.toArray(new String[parsedOptions.size()]);
+    }
+
+    /**
+     * Validate and tidy the comma separated list of output formats specified by the user:
+     * - Do the formats exist?
+     * - Is the format valid for this sequence type?
+     *
+     * @return The tidied list of file extensions
+     */
+    private static void validateOutputFormatList(String[] outputFormats) {
+        // TODO With org.apache.commons.cli v2 could use EnumValidator instead, but currently we use cli v1.2
+        if (outputFormats != null && outputFormats.length > 0) {
+            // The user manually specified at least one output format, now check it's OK
+            for (String outputFormat : outputFormats) {
+                if (!FileOutputFormat.isExtensionValid(outputFormat)) {
+                    System.out.println("\n\n" + "The specified output file format " + outputFormat + " was not recognised." + "\n\n");
+                    System.exit(1);
+                }
+            }
+        }
+    }
+
+    /**
      * Checks if different versions of the same analyses occur.
      *
      * @param jobsToCheckMultipleVersion
@@ -543,7 +619,7 @@ public class Run {
     }
 
     /**
-     * Determines real jobs for the parsed analyses names.
+     * Determines real jobs for the parsed analyses names, e.g. Pfam -> Pfam-26.0
      *
      * @param parsedAnalyses
      * @param realJobs

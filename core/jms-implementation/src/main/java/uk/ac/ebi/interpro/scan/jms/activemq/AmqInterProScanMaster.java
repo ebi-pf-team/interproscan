@@ -344,10 +344,15 @@ public class AmqInterProScanMaster implements Master {
             Collections.addAll(jobNameList, analyses);
             params.put(StepInstanceCreatingStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
         }
-        params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
-        List<String> outputFormatList = validateOutputFormatList();
-        params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
+        // Output formats as a comma separated list
+        if (outputFormats != null && outputFormats.length > 0) {
+            List<String> outputFormatList = new ArrayList<String>();
+            Collections.addAll(outputFormatList, outputFormats);
+            params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
+        }
+
+        params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
         String outputFilePath = outputFile;
         if (outputFilePath == null || outputFilePath.equals("")) {
@@ -375,59 +380,7 @@ public class AmqInterProScanMaster implements Master {
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
     }
 
-    /**
-     * Validate and tidy the comma separated list of output formats specified by the user:
-     * - Do the formats exist?
-     * - Is the format valid for this sequence type?
-     * - If no valid formats specified then use the default (all available for that sequence type)
-     *
-     * @return The tidied list of file extensions
-     */
-    private List<String> validateOutputFormatList() {
-        List<String> outputFormatList = new ArrayList<String>();
-        // TODO With org.apache.commons.cli v2 could use EnumValidator instead, but currently we use cli v1.2
-        if (outputFormats != null && outputFormats.length > 0) {
-            // The user manually specified at least one output format, now check it's OK
-            for (String formatText : outputFormats) {
-                String[] formats = formatText.split(","); // E.g. "tsv,bbb,html"
-                for (String format : formats) {
-                    format = format.trim();
-                    if (FileOutputFormat.isExtensionValid(format)) {
-                        if ("n".equalsIgnoreCase(this.sequenceType)) {
-                            // For nucleotide sequences TSV and HTML formats are not allowed
-                            if (format.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
-                                LOGGER.warn("TSV output format is not valid for sequence type " + this.sequenceType + " so will be ignored.");
-                                continue;
-                            } else if (format.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
-                                LOGGER.warn("HTML output format is not valid for sequence type " + this.sequenceType + " so will be ignored");
-                                continue;
-                            }
-                        }
-                        outputFormatList.add(format);
-                    } else {
-                        LOGGER.warn("User specified output file format " + format + " is not recognised and shall be ignored");
-                    }
-                }
-            }
-        }
-        if (outputFormatList.isEmpty()) {
-            // It seems that no valid output formats were specified, so just default to all
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("No valid output formats specified, therefore use the default (all for sequence type " + this.sequenceType + ")");
-            }
-            for (FileOutputFormat outputFormat : FileOutputFormat.values()) {
-                String extension = outputFormat.getFileExtension();
-                if ("n".equalsIgnoreCase(this.sequenceType)) {
-                    if (extension.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension()) || extension.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
-                        // For nucleotide sequences TSV and HTML formats are not allowed
-                        continue;
-                    }
-                }
-                outputFormatList.add(extension);
-            }
-        }
-        return outputFormatList;
-    }
+
 
     /**
      * Called by quartz to load proteins from UniParc.
