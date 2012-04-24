@@ -170,18 +170,18 @@ public class AmqInterProScanMaster implements Master {
      * Run the Master Application.
      */
     public void run() {
-        LOGGER.debug("Started Master run() method.");
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("Started Master run() method.");
         try {
             if (cleanDatabase) {
                 Thread databaseLoaderThread = new Thread(databaseCleaner);
-                LOGGER.debug("Loading database into memory...");
+                if (LOGGER.isDebugEnabled()) LOGGER.debug("Loading database into memory...");
                 databaseLoaderThread.start();
                 // Pause while the database is loaded from the zip backup
                 while (databaseCleaner.stillLoading()) {
                     // Takes about 1500 ms to load the database
                     Thread.sleep(200);
                 }
-                LOGGER.debug("Database loaded.");
+                if (LOGGER.isDebugEnabled()) LOGGER.debug("Database loaded.");
             }
 
             int stepInstancesCreatedByLoadStep;
@@ -379,7 +379,6 @@ public class AmqInterProScanMaster implements Master {
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
     }
-
 
 
     /**
