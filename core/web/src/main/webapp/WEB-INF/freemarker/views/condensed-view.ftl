@@ -13,7 +13,7 @@
             <div class="matches">
                 <#list line.superMatchList as superMatch>
                     <#global superMatchId=superMatchId + 1>
-                    <@supermatchLocationMacro.supermatchLocation smid="supermatch-location-"+superMatchId protein=protein supermatch=superMatch colourClass="c"+entryColours[superMatch.firstEntry.ac]+" "+type />
+                    <@supermatchLocationMacro.supermatchLocation smid=superMatchId protein=protein supermatch=superMatch colourClass="c"+entryColours[superMatch.firstEntry.ac]+" "+type />
                 </#list>
             </div>
         </div>

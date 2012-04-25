@@ -125,3 +125,14 @@
     </div>
 </div>
 </#if>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('span[id*="location-"]').each(
+                function(i) {
+                    preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
+                }
+        );
+    });
+</script>
