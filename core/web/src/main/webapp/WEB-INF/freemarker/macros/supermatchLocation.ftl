@@ -1,4 +1,3 @@
-<#--<#assign entry=JspTaglibs["http://www.ebi.ac.uk/interpro/i5/tld/entryHierarchy"]>-->
 <#import "location.ftl" as locationMacro>
 
 <#macro supermatchLocation smid protein supermatch colourClass>

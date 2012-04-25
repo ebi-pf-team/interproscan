@@ -15,7 +15,7 @@
     <!-- Handle image requests from DBML - can remove when InterProWeb 5.2 retired -->
     <mvc:resources mapping="/interpro/images/**" location="/resources/images/"/>
 
-    <!-- Configures View resolver (JSP (jsp-config.xml) or Freemarker (freemarker-config.xml) available at the moment)-->
+    <!-- Configures View resolver -->
     <import resource="freemarker-config.xml"/>
 
     <bean class="uk.ac.ebi.interpro.scan.web.model.PageResources">
