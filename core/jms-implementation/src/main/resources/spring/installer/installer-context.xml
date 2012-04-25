@@ -32,11 +32,11 @@
                 </bean>
                 <!--Old version of PFAM commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
-                    <!--<property name="signatureLibrary" value="PFAM"/>-->
-                    <!--<property name="releaseVersionNumber" value="24.0"/>-->
-                    <!--<property name="modelFile" value="file:${Pfam-A.hmm.path.24.0}"/>-->
-                    <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                    <!--<property name="analysisJobId" value="jobPfamA-24.0"/>-->
+                <!--<property name="signatureLibrary" value="PFAM"/>-->
+                <!--<property name="releaseVersionNumber" value="24.0"/>-->
+                <!--<property name="modelFile" value="file:${Pfam-A.hmm.path.24.0}"/>-->
+                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
+                <!--<property name="analysisJobId" value="jobPfamA-24.0"/>-->
                 <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PFAM"/>
@@ -66,12 +66,12 @@
                 </bean>
                 <!--Old version of HAMAP commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">-->
-                    <!--<property name="signatureLibrary" value="HAMAP"/>-->
-                    <!--<property name="releaseVersionNumber" value="180510"/>-->
-                    <!--<property name="modelFile" value="file:${hamap.profile.models.path.180510}"/>-->
-                    <!--<property name="prositeModelType" value="ALL"/>-->
-                    <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                    <!--<property name="analysisJobId" value="jobHAMAP-180510"/>-->
+                <!--<property name="signatureLibrary" value="HAMAP"/>-->
+                <!--<property name="releaseVersionNumber" value="180510"/>-->
+                <!--<property name="modelFile" value="file:${hamap.profile.models.path.180510}"/>-->
+                <!--<property name="prositeModelType" value="ALL"/>-->
+                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
+                <!--<property name="analysisJobId" value="jobHAMAP-180510"/>-->
                 <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="HAMAP"/>
@@ -123,19 +123,19 @@
                 <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
-                    <property name="releaseVersionNumber" value="20.72"/>
-                    <property name="modelFile" value="file:${prosite.models.path.20.72}"/>
+                    <property name="releaseVersionNumber" value="20.80"/>
+                    <property name="modelFile" value="file:${prosite.models.path.20.80}"/>
                     <property name="prositeModelType" value="PATTERNS"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPrositePatterns-20.72"/>
+                    <property name="analysisJobId" value="jobPrositePatterns-20.80"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PROFILES"/>
-                    <property name="releaseVersionNumber" value="20.72"/>
-                    <property name="modelFile" value="file:${prosite.models.path.20.72}"/>
+                    <property name="releaseVersionNumber" value="20.80"/>
+                    <property name="modelFile" value="file:${prosite.models.path.20.80}"/>
                     <property name="prositeModelType" value="PROFILES"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPrositeProfiles-20.72"/>
+                    <property name="analysisJobId" value="jobPrositeProfiles-20.80"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
@@ -147,11 +147,11 @@
                 </bean>
                 <!--Old versions of TIGRFAM commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
-                    <!--<property name="signatureLibrary" value="TIGRFAM"/>-->
-                    <!--<property name="releaseVersionNumber" value="9.0"/>-->
-                    <!--<property name="modelFile" value="file:${tigrfam.hmm.path.9.0}"/>-->
-                    <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                    <!--<property name="analysisJobId" value="jobTIGRFAM-9.0"/>-->
+                <!--<property name="signatureLibrary" value="TIGRFAM"/>-->
+                <!--<property name="releaseVersionNumber" value="9.0"/>-->
+                <!--<property name="modelFile" value="file:${tigrfam.hmm.path.9.0}"/>-->
+                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
+                <!--<property name="analysisJobId" value="jobTIGRFAM-9.0"/>-->
                 <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="TIGRFAM"/>
@@ -162,11 +162,11 @@
                 </bean>
                 <!--Old versions of SMART commented out-->
                 <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
-                    <!--<property name="signatureLibrary" value="SMART"/>-->
-                    <!--<property name="releaseVersionNumber" value="6.1"/>-->
-                    <!--<property name="modelFile" value="file:${smart.hmm.path.6.1}"/>-->
-                    <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                    <!--<property name="analysisJobId" value="jobSMART-6.1"/>-->
+                <!--<property name="signatureLibrary" value="SMART"/>-->
+                <!--<property name="releaseVersionNumber" value="6.1"/>-->
+                <!--<property name="modelFile" value="file:${smart.hmm.path.6.1}"/>-->
+                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
+                <!--<property name="analysisJobId" value="jobSMART-6.1"/>-->
                 <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="SMART"/>

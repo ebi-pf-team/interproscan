@@ -14,8 +14,8 @@
     <import resource="jobPrints-41.1-context.xml"/>
     <import resource="jobCoils-2.2-context.xml"/>
     <import resource="jobHAMAP-140911-context.xml"/>
-    <import resource="jobPrositeProfiles-20.72-context.xml"/>
-    <import resource="jobPrositePatterns-20.72-context.xml"/>
+    <import resource="jobPrositeProfiles-20.80-context.xml"/>
+    <import resource="jobPrositePatterns-20.80-context.xml"/>
     <import resource="jobSignalP-EUK-4.0-context.xml"/>
     <import resource="jobSignalP-GRAM_POSITIVE-4.0-context.xml"/>
     <import resource="jobSignalP-GRAM_NEGATIVE-4.0-context.xml"/>
@@ -51,8 +51,8 @@
                 <ref bean="jobCoils-2.2"/>
                 <ref bean="jobHAMAP-140911"/>
                 <ref bean="jobProDom-2006.1"/>
-                <ref bean="jobPrositeProfiles-20.72"/>
-                <ref bean="jobPrositePatterns-20.72"/>
+                <ref bean="jobPrositeProfiles-20.80"/>
+                <ref bean="jobPrositePatterns-20.80"/>
                 <ref bean="jobSignalP-EUK-4.0"/>
                 <ref bean="jobSignalP-GRAM_POSITIVE-4.0"/>
                 <ref bean="jobSignalP-GRAM_NEGATIVE-4.0"/>
