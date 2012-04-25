@@ -1,4 +1,4 @@
-<#--Entry hierachy macro definition-->
+<#--Entry hierarchy macro definition-->
 <#macro hierachy supermatch>
 <span id="${smid}"
       class="match ${colourClass}"
