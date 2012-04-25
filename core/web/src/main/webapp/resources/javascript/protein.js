@@ -1,5 +1,5 @@
 /**
- * Behaviour for protein.jsp
+ * Behaviour for protein page
  *
  * @author  Antony Quinn
  * @version $Id: protein.js,v 1.6 2012/02/20 12:09:41 matthew Exp $

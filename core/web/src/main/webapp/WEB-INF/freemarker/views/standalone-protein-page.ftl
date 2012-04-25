@@ -114,11 +114,6 @@
         // Initialise un-integrated.
         displayUnintegrated($("#check-6"));
 
-        $('span[id*="location-"]').each(
-                function(i) {
-                    preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
-                }
-        );
     });
 </script>
 </body>
