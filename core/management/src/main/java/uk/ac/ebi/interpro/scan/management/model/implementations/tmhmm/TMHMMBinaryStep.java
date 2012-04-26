@@ -1,9 +1,13 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.tmhmm;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.FileContentChecker;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +19,8 @@ import java.util.List;
  * @version $Id$
  */
 public final class TMHMMBinaryStep extends RunBinaryStep {
+
+    private static final Logger LOGGER = Logger.getLogger(TMHMMBinaryStep.class.getName());
 
     private String fastaFileNameTemplate;
 
@@ -67,18 +73,32 @@ public final class TMHMMBinaryStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePath
                 = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
-        List<String> command = new ArrayList<String>();
-        //Add command
-        command.add(this.pathToTmhmmBinary);
-        // Add TMHMM model
-        command.add(this.pathToTmhmmModel);
-        // FASTA file
-        command.add(fastaFilePath);
-        // Arguments
-        command.addAll(this.getBinarySwitchesAsList());
-        //Add background argument
-        command.add("-background");
-        command.add(this.binaryBackgroundSwitch);
-        return command;
+        final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileNameTemplate());
+        FileContentChecker fileContentChecker = new FileContentChecker(new File(fastaFilePath));
+        if (!fileContentChecker.isFileEmpty()) {
+            final List<String> command = new ArrayList<String>();
+            //Add command
+            command.add(this.pathToTmhmmBinary);
+            // Add TMHMM model
+            command.add(this.pathToTmhmmModel);
+            // FASTA file
+            command.add(fastaFilePath);
+            // Arguments
+            command.addAll(this.getBinarySwitchesAsList());
+            //Add background argument
+            command.add("-background");
+            command.add(this.binaryBackgroundSwitch);
+            return command;
+        }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Creating empty raw result out put file...");
+        }
+        File file = new File(outputFileName);
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            LOGGER.warn("Couldn't create empty raw result output file.", e);
+        }
+        return null;
     }
 }
