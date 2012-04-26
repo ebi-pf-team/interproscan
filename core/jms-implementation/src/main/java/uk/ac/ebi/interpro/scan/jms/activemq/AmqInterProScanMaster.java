@@ -345,13 +345,7 @@ public class AmqInterProScanMaster implements Master {
             params.put(StepInstanceCreatingStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
         }
 
-        // Output formats as a comma separated list
-        if (outputFormats != null && outputFormats.length > 0) {
-            List<String> outputFormatList = new ArrayList<String>();
-            Collections.addAll(outputFormatList, outputFormats);
-            params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
-        }
-
+        processOutputFormats(params, this.outputFormats);
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
         String outputFilePath = outputFile;
@@ -378,6 +372,35 @@ public class AmqInterProScanMaster implements Master {
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
+    }
+
+    /**
+     * Outputs formats as a comma separated list.
+     *
+     * @param params
+     */
+    protected void processOutputFormats(final Map<String, String> params, final String[] outputFormats) {
+        List<String> outputFormatList = new ArrayList<String>();
+        if (outputFormats != null && outputFormats.length > 0) {
+            Collections.addAll(outputFormatList, outputFormats);
+        }
+        // It seems that no valid output formats were specified, so just default to all
+        else {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("No valid output formats specified, therefore use the default (all for sequence type " + this.sequenceType + ")");
+            }
+            for (FileOutputFormat outputFormat : FileOutputFormat.values()) {
+                String extension = outputFormat.getFileExtension();
+                if ("n".equalsIgnoreCase(this.sequenceType)) {
+                    if (extension.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension()) || extension.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
+                        // For nucleotide sequences TSV and HTML formats are not allowed
+                        continue;
+                    }
+                }
+                outputFormatList.add(extension);
+            }
+        }
+        params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
     }
 
 

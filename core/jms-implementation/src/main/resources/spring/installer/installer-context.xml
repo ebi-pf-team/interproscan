@@ -91,11 +91,11 @@
                 <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="2.78"/>
+                    <property name="releaseVersionNumber" value="2.79"/>
                     <!--Concatenation of 2 model files (super and subfamily model files). Concatenation of 'sf_hmm' and 'sf_hmm_subf'.-->
-                    <property name="modelFile" value="file:${pirsf.hmm.sf_subf.path.2.78}"/>
+                    <property name="modelFile" value="file:${pirsf.hmm.sf_subf.path.2.79}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF-2.78"/>
+                    <property name="analysisJobId" value="jobPIRSF-2.79"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prodom.model.ProDomModelParser">
                     <property name="signatureLibrary" value="PRODOM"/>

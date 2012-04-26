@@ -111,6 +111,10 @@ public class WriteOutputStep extends Step {
                         outputToGFF(outputFile, stepInstance, sequenceType);
                         break;
                     case HTML:
+                        //Replace the default temp dir with the user specified one
+                        if (temporaryFileDirectory != null) {
+                            htmlResultWriter.setTempDirectory(temporaryFileDirectory);
+                        }
                         outputToHTML(outputFile, stepInstance);
                         break;
                     default:
@@ -221,15 +225,14 @@ public class WriteOutputStep extends Step {
      * <p/>
      * The expected file format would be <file-name>.<extension>
      *
-     * @param fileName Input filename without extension
+     * @param fileName           Input filename without extension
      * @param compressHtmlOutput If TRUE,do compress tarball as well.
      * @return Tarball filename with extension added
      */
     private String buildTarArchiveName(String fileName, boolean compressHtmlOutput) {
         if (fileName == null) {
             throw new IllegalStateException("HTML output file name was NULL");
-        }
-        else if (fileName.length() == 0) {
+        } else if (fileName.length() == 0) {
             throw new IllegalStateException("HTML output file name was empty");
         }
         String fileExtension = (compressHtmlOutput ? ".tar.gz" : ".tar");
