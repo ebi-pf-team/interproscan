@@ -3,11 +3,10 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.phobius;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.FileContentChecker;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,24 +43,13 @@ public class RunPhobiusBinaryStep extends RunBinaryStep {
         final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileNameTemplate());
         //Check if the input file for Phobius binary is empty
         //If so create an empty raw result output file and return NULL
-        FileInputStream fis;
-        try {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Checking if FASTA formatted file is empty...");
-            }
-            fis = new FileInputStream(new File(fastaFilePath));
-            int iByteCount = fis.read();
-            if (iByteCount != -1) {
-                final List<String> command = new ArrayList<String>();
-                command.add(fullPathToBinary);
-                command.addAll(getBinarySwitchesAsList());
-                command.add(fastaFilePath);
-                return command;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        FileContentChecker fileContentChecker = new FileContentChecker(new File(fastaFilePath));
+        if (!fileContentChecker.isFileEmpty()) {
+            final List<String> command = new ArrayList<String>();
+            command.add(fullPathToBinary);
+            command.addAll(getBinarySwitchesAsList());
+            command.add(fastaFilePath);
+            return command;
         }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Creating empty raw result out put file...");

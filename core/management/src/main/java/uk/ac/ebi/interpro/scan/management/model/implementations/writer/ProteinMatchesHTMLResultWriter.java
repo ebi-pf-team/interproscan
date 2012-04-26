@@ -111,6 +111,10 @@ public class ProteinMatchesHTMLResultWriter {
                     Writer writer = null;
                     try {
                         final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
+                        checkTempDirectory(tempDirectory);
+                        if (!tempDirectory.endsWith("/")) {
+                            tempDirectory = tempDirectory + "/";
+                        }
                         final File newResultFile = new File(tempDirectory + xref.getIdentifier() + ".html");
                         resultFiles.add(newResultFile);
                         writer = new PrintWriter(new FileWriter(newResultFile));
@@ -129,6 +133,19 @@ public class ProteinMatchesHTMLResultWriter {
             }
         }
         return 0;
+    }
+
+    private void checkTempDirectory(String tempDirectory) throws IOException {
+        File tempFileDirectory = new File(tempDirectory);
+        if (!tempFileDirectory.exists()) {
+            boolean isCreated = tempFileDirectory.createNewFile();
+            if (isCreated) {
+                LOGGER.warn("Couldn't create temp directory " + tempDirectory);
+            }
+
+        } else {
+            LOGGER.debug("Temp directory already exists, no need to create one.");
+        }
     }
 
     private SimpleHash buildModelMap(SimpleProtein p, EntryHierarchy entryHierarchy) {
