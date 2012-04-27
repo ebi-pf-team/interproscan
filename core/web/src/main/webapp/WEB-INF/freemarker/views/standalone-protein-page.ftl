@@ -6,17 +6,17 @@
   To change this template use File | Settings | File Templates.
 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <#--TODO: see http://html5boilerplate.com/-->
+<#--TODO: see http://html5boilerplate.com/-->
     <meta charset="utf-8" content="text/html">
-    <#--Check if protein exists-->
+<#--Check if protein exists-->
     <title>
     <#if protein??>
-        ${protein.ac} - InterPro
-    <#else>
-        No data for this protein - InterPro
+    ${protein.ac} - InterPro
+        <#else>
+            No data for this protein - InterPro
     </#if>
     </title>
     <meta name="description" content="InterProScan result page: Protein matches and sequence features">
@@ -41,80 +41,85 @@
 <body>
 <div class="contentsarea">
 
+<#if protein??>
     <div class="left-menu">
         <#include "protein-menu.ftl"/>
     </div>
+</#if>
 
     <div class="main-content">
+        <div class="tab">
+            <div class="Protein_tab">Protein</div>
+        </div>
+
+        <div class="main-box">
         <#if protein??>
-            <#--<header>-->
-                <#--<nav>-->
-                <#--<div class="breadcrumb">-->
-                <#--<a href="/proteins">Proteins</a> > ${protein.name} (${protein.ac})-->
-                <#--</div>-->
-                <#--</nav>-->
-                <#--</header>-->
-
-                <#--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!-->
-                <#include "protein-body.ftl"/>
-        <#else>
-            Sorry, no data found for this protein.
+            <h1>
+                <#if standalone>
+                ${protein.ac}
+                    <#else>
+                    ${protein.name} <span>(${protein.ac})</span>
+                </#if>
+            </h1>
         </#if>
+
+        <#--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!-->
+            <#include "protein-body.ftl"/>
+        </div>
     </div>
-</div>
-<script type="text/javascript">
-    $(document).ready(function() {
-        // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
 
-        // Retrieve existing cookies and set checkbox states accordingly
-        var checkBoxIDs = ["#check-2", "#check-3", "#check-4", "#check-5", "#check-6"];
-        for (i = 0; i < checkBoxIDs.length; i++) {
-            var checkBoxId = checkBoxIDs[i];
-            var cookieVal = $.cookie(checkBoxId);
-            if (cookieVal != null) {
-                $(checkBoxId).prop("checked", cookieVal == "true");
+            // Retrieve existing cookies and set checkbox states accordingly
+            var checkBoxIDs = ["#check-2", "#check-3", "#check-4", "#check-5", "#check-6"];
+            for (i = 0; i < checkBoxIDs.length; i++) {
+                var checkBoxId = checkBoxIDs[i];
+                var cookieVal = $.cookie(checkBoxId);
+                if (cookieVal != null) {
+                    $(checkBoxId).prop("checked", cookieVal == "true");
+                }
             }
-        }
 
-        // and the radio button group
-        var radioCookieVal = $.cookie("colour-by-domain");
-        if (radioCookieVal != null) {
-            if (radioCookieVal == "true") {
-                $('#domainColour').prop("checked", true);
+            // and the radio button group
+            var radioCookieVal = $.cookie("colour-by-domain");
+            if (radioCookieVal != null) {
+                if (radioCookieVal == "true") {
+                    $('#domainColour').prop("checked", true);
+                }
+                else {
+                    $('#databaseColour').prop("checked", true);
+                }
             }
-            else {
-                $('#databaseColour').prop("checked", true);
-            }
-        }
 
-        // Keep the filter menu in view
-        $("#menu").jScroll();
-        // CSS switching
-        configureStylesheets($('input[name="blobColour"]:checked').attr('id') == 'domainColour'); // initialise
+            // Keep the filter menu in view
+            $("#menu").jScroll();
+            // CSS switching
+            configureStylesheets($('input[name="blobColour"]:checked').attr('id') == 'domainColour'); // initialise
 
-        $('input[name="blobColour"]').change(function() {
-            configureStylesheets($('input[name="blobColour"]:checked').attr('id') == 'domainColour');
+            $('input[name="blobColour"]').change(function() {
+                configureStylesheets($('input[name="blobColour"]:checked').attr('id') == 'domainColour');
+            });
+
+            // Change event for type checkboxes (Family, Domain etc.)
+            $(".type").change(function() {
+                displayType(this);
+            });
+
+            // Initialise types
+            $(".type").each(function() {
+                displayType(this);
+            });
+
+            // Change event for un-integrated sig matches checkbox
+            $("#check-6").change(function() {
+                displayUnintegrated(this);
+            });
+
+            // Initialise un-integrated.
+            displayUnintegrated($("#check-6"));
+
         });
-
-        // Change event for type checkboxes (Family, Domain etc.)
-        $(".type").change(function() {
-            displayType(this);
-        });
-
-        // Initialise types
-        $(".type").each(function() {
-            displayType(this);
-        });
-
-        // Change event for un-integrated sig matches checkbox
-        $("#check-6").change(function() {
-            displayUnintegrated(this);
-        });
-
-        // Initialise un-integrated.
-        displayUnintegrated($("#check-6"));
-
-    });
-</script>
+    </script>
 </body>
 </html>
