@@ -1,16 +1,16 @@
 <!doctype html>
 <html>
 <head>
-    <#--TODO: see http://html5boilerplate.com/-->
+<#--TODO: see http://html5boilerplate.com/-->
     <meta charset="utf-8">
-        <#--Check if protein exists-->
-        <title>
-        <#if protein??>
-            ${protein.ac} - InterPro
+<#--Check if protein exists-->
+    <title>
+    <#if protein??>
+    ${protein.ac} - InterPro
         <#else>
             No data for this protein - InterPro
-        </#if>
-        </title>
+    </#if>
+    </title>
     <meta name="description" content="Protein matches">
     <meta name="author" content="InterPro Team, European Bioinformatics Institute">
     <link href="${css_resource_jquery_qtip2}" rel="stylesheet" type="text/css"/>
@@ -24,8 +24,23 @@
 <body>
 <div id="main" role="main" class="main-content">
     <div class="contents" id="contents">
-        <#--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!-->
-            <#include "protein-structure-body.ftl"/>
+    <#--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!-->
+        <div class="tab">
+            <div class="Protein_tab">Protein Structure</div>
+        </div>
+
+        <div class="main-box">
+        <#if protein??>
+            <h1>
+                <#if standalone>
+                ${protein.ac}
+                    <#else>
+                    ${protein.name} <span>(${protein.ac})</span>
+                </#if>
+            </h1>
+        </#if>
+        <#include "protein-structure-body.ftl"/>
+        </div>
     </div>
 </div>
 

@@ -1,11 +1,3 @@
-<h1>
-    <#if standalone>
-        ${protein.ac}
-    <#else>
-        ${protein.name} <span>(${protein.ac})</span>
-    </#if>
-</h1>
-
 <div class="prot_gal">
 
     <div class="prot_gal_bloc">
