@@ -80,19 +80,19 @@ public class ProteinStructureViewController {
 
     private Map<String, Object> buildModelMap(SimpleProtein p, boolean standalone) {
         Map<String, Object> m = new HashMap<String, Object>();
+        m.put("standalone", standalone);
         if (p != null) {
             m.put("protein", p);
             m.put("condensedView", new CondensedView(p));
             m.put("entryColours", entryHierarchy.getEntryColourMap());
-            m.put("standalone", standalone);
             m.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-            if (pageResources != null) {
-                Map<String, String> pageResourcesMap = pageResources.getResourcesMap();
-                for (String key : pageResourcesMap.keySet()) {
-                    m.put(key, pageResourcesMap.get(key));
-                }
-            }
         } // Else no match data was found for the protein therefore nothing to display
+        if (pageResources != null) {
+            Map<String, String> pageResourcesMap = pageResources.getResourcesMap();
+            for (String key : pageResourcesMap.keySet()) {
+                m.put(key, pageResourcesMap.get(key));
+            }
+        }
         return m;
     }
 
