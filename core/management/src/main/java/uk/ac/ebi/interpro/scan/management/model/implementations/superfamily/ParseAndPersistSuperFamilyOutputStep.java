@@ -12,7 +12,6 @@ import uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAO;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -31,7 +30,7 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
 
     private SuperFamilyHmmer3MatchParser parser;
 
-    private SuperFamilyHmmer3FilteredMatchDAO rawMatchDAO;
+    private SuperFamilyHmmer3FilteredMatchDAO filteredMatchDAO;
 
     @Required
     public void setSuperFamilyBinaryOutputFileName(String superFamilyBinaryOutputFileName) {
@@ -44,17 +43,17 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
     }
 
     @Required
-    public void setRawMatchDAO(SuperFamilyHmmer3FilteredMatchDAO rawMatchDAO) {
-        this.rawMatchDAO = rawMatchDAO;
+    public void setFilteredMatchDAO(SuperFamilyHmmer3FilteredMatchDAO filteredMatchDAO) {
+        this.filteredMatchDAO = filteredMatchDAO;
     }
 
     /**
      * Parse the output file from the SuperFamily binary and persist the results in the database.
      *
      * @param stepInstance           containing the parameters for executing. Provides utility methods as described
-     * above.
+     *                               above.
      * @param temporaryFileDirectory which can be passed into the
-     * stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate) method
+     *                               stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate) method
      */
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
@@ -68,7 +67,7 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Parsed out " + rawProteins.size() + " proteins with matches from file " + fileName);
                 int count = 0;
-                for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein: rawProteins) {
+                for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : rawProteins) {
                     count += rawProtein.getMatches().size();
                 }
                 LOGGER.debug("A total of " + count + " raw matches from file " + fileName);
@@ -89,9 +88,8 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
 
         if (rawProteins != null && rawProteins.size() > 0) {
             // Persist the matches
-            rawMatchDAO.persist(rawProteins);
-        }
-        else {
+            filteredMatchDAO.persist(rawProteins);
+        } else {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("No SuperFamily matches were persisted as none were found in the SuperFamily binary output file: " + fileName);
             }

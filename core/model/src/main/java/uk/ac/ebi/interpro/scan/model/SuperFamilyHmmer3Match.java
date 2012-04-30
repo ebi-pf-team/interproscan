@@ -80,7 +80,6 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
         }
 
         public SuperFamilyHmmer3Location(int start, int end) {
-
             super(start, end);
         }
 

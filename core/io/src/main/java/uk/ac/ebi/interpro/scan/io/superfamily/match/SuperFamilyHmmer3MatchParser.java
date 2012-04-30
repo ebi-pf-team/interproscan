@@ -4,7 +4,10 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,15 +66,13 @@ public class SuperFamilyHmmer3MatchParser {
             while ((line = reader.readLine()) != null) {
                 Set<SuperFamilyHmmer3RawMatch> rawMatches = parseLine(line);
                 SuperFamilyHmmer3RawMatch rawMatch;
-                Iterator<SuperFamilyHmmer3RawMatch> i = rawMatches.iterator();
-                while (i.hasNext()) {
-                    rawMatch = i.next();
+                for (SuperFamilyHmmer3RawMatch rawMatche : rawMatches) {
+                    rawMatch = rawMatche;
                     String sequenceId = rawMatch.getSequenceIdentifier();
                     if (data.containsKey(sequenceId)) {
                         RawProtein<SuperFamilyHmmer3RawMatch> rawProtein = data.get(sequenceId);
                         rawProtein.addMatch(rawMatch);
-                    }
-                    else {
+                    } else {
                         RawProtein<SuperFamilyHmmer3RawMatch> rawProtein = new RawProtein<SuperFamilyHmmer3RawMatch>(sequenceId);
                         rawProtein.addMatch(rawMatch);
                         data.put(sequenceId, rawProtein);
@@ -167,16 +168,14 @@ public class SuperFamilyHmmer3MatchParser {
                         default:
                             break;
                     }
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     LOGGER.error("Error parsing SuperFamily match output file line (ignoring): " + line + " - Exception " + e.getMessage());
                     return rawMatches; // Empty
                 }
 
                 i++;
             }
-        }
-        else {
+        } else {
             // Wrong number of items in the output
             LOGGER.warn("Ignoring line with unexpected format: " + line);
             return rawMatches; // Empty
@@ -186,33 +185,30 @@ public class SuperFamilyHmmer3MatchParser {
 
         Matcher matchRegionMatcher = MATCH_REGIONS_PATTERN.matcher(matchRegions);
         if (matchRegionMatcher.find()) {
-
+            final UUID splitGroup = UUID.randomUUID(); // Ensures that locations that are split from the
+            // same match are tied together with the same "splitGroup".
             String[] matchRegionArray = matchRegions.split(",");
-            for (int i = 0; i < matchRegionArray.length; i++) {
-                String[] matchStartStop = matchRegionArray[i].split("-");
+            for (String aMatchRegionArray : matchRegionArray) {
+                String[] matchStartStop = aMatchRegionArray.split("-");
                 if (matchStartStop.length == 2) {
                     int from;
                     int to;
                     try {
                         from = Integer.parseInt(matchStartStop[0]);
                         to = Integer.parseInt(matchStartStop[1]);
-                    }
-                    catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         LOGGER.warn("Ignoring line with unexpected format (of match region): " + line);
                         continue; // Raw matches will therefore be empty or incomplete
                     }
                     SuperFamilyHmmer3RawMatch match = new SuperFamilyHmmer3RawMatch(sequenceId, modelId,
                             "1.75", from, to, evalue, modelMatchStartPos,
-                            aligmentToModel, familyEvalue, scopDomainId, scopFamilyId);
+                            aligmentToModel, familyEvalue, scopDomainId, scopFamilyId, splitGroup);
                     rawMatches.add(match);
-                }
-                else {
+                } else {
                     LOGGER.warn("Ignoring line with unexpected format (of match region): " + line);
-                    continue; // Raw matches will therefore be empty or incomplete
                 }
             }
-        }
-        else {
+        } else {
             // Invalid format
             LOGGER.warn("Ignoring line with unexpected format (of match region): " + line);
             return rawMatches; // Empty
