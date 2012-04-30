@@ -42,44 +42,65 @@ public class CreateMatchDBFromOnion {
     private static final int COL_IDX_HMM_END = 10;
     private static final int COL_IDX_HMM_BOUNDS = 11;
 
-    private static final String MATCH_QUERY =
-            "select p.md5 as protein_md5, " +
-                    "       analt.name as signature_library_name, " +
-                    "       m.relno_major || '.' || m.relno_minor as signature_library_release, " +
-                    "       m.method_ac as signature_accession, " +
-                    "       m.seqscore as sequence_score, " +
-                    "       m.evalue, " +            // Log10
-                    "       m.seq_start, " +
-                    "       m.seq_end, " +
-                    "       m.hmm_start, " +
-                    "       m.hmm_end, " +
-                    "       m.hmm_bounds " +
-                    "  from onion.cv_analysis_type analt " +
-                    "       inner join " +
-                    "       onion.iprscan m  " +
-                    "       on analt.analysis_type_id = m.analysis_type_id " +
-                    "       inner join onion.uniparc_protein p " +
-                    "       on m.upi = p.upi " +
-                    " where m.status = 'T' " +
-                    "       and analt.name in ('PANTHER', 'SMART', 'PRINTS', 'PROSITE_PF', 'PROSITE_PT', 'PIRSF', 'PRODOM', 'SSF', 'HAMAP', 'PFAM_HMMER3', 'COILS', 'GENE3D_HMMER3', 'TIGRFAM_HMMER3', 'SIGNALP_EUK', 'SIGNALP_GRAM+', 'SIGNALP_GRAM-') " +
-                    "       and m.UPI <= ? " +
-                    "order by p.md5, analt.name, m.relno_major, m.method_ac, m.seqscore";
+    private static final String CREATE_TEMP_TABLE =
+            "create global temporary table  berkley_tmp_tab " +
+                    "on commit preserve rows " +
+                    "as " +
+                    "select p.md5 as protein_md5, " +
+                    "          analt.name as signature_library_name, " +
+                    "          m.relno_major || '.' || m.relno_minor as signature_library_release, " +
+                    "          m.method_ac as signature_accession, " +
+                    "          m.seqscore as sequence_score, " +
+                    "          m.evalue, " +
+                    "          m.seq_start, " +
+                    "          m.seq_end, " +
+                    "          m.hmm_start, " +
+                    "          m.hmm_end, " +
+                    "          m.hmm_bounds " +
+                    "     from onion.cv_analysis_type analt, " +
+                    "          onion.iprscan m, onion.uniparc_protein p " +
+                    "    where m.status = 'T' " +
+                    "          and analt.name in ('PANTHER', 'SMART', 'PRINTS', 'PROSITE_PF', 'PROSITE_PT', 'PIRSF', 'PRODOM', 'SSF', 'HAMAP', 'PFAM_HMMER3', 'COILS', 'GENE3D_HMMER3', 'TIGRFAM_HMMER3', 'SIGNALP_EUK', 'SIGNALP_GRAM+', 'SIGNALP_GRAM-') " +
+                    "          and m.UPI <= 'MAX_UPI' " +
+                    "          and analt.analysis_type_id = m.analysis_type_id " +
+                    "          and m.upi = p.upi ";
 
-    private static final String SIGNAL_P_QUERY =
-            "select p.md5 as protein_md5," +
-                    "   analt.name as signature_library_name, " +
-                    "   m.meand_pos as stop_coord " +
-                    " from onion.cv_analysis_type analt " +
-                    "   inner join " +
-                    "   onion.signalp_analysis m on analt.analysis_type_id = m.analysis_type_id " +
-                    "   inner join onion.uniparc_protein p on m.upi = p.upi " +
-                    " where m.meand_pred = '1' " +
-                    "       and m.upi <= ? " +
-                    " order by p.md5";
+    private static final String ADD_SIGNAL_P_DATA =
+            "insert into berkley_tmp_tab " +
+                    "select p.md5 as protein_md5, " +
+                    "     analt.name as signature_library_name, " +
+                    "     '4.0' as signature_library_release, " +
+                    "     'SignalPeptide' as signature_accession, " +
+                    "     null as sequence_score, " +
+                    "     null as evalue, " +
+                    "     1 as seq_start, " +
+                    "     m.meand_pos as seq_end, " +
+                    "     null as hmm_start, " +
+                    "     null as hmm_end, " +
+                    "     null as hmm_bounds " +
+                    "   from onion.cv_analysis_type analt " +
+                    "     inner join " +
+                    "     onion.signalp_analysis m on analt.analysis_type_id = m.analysis_type_id " +
+                    "     inner join onion.uniparc_protein p on m.upi = p.upi " +
+                    "   where m.meand_pred = '1' " +
+                    "         and m.upi <= 'MAX_UPI' " +
+                    "   order by p.md5";
+
+    private static final String QUERY_TEMPORARY_TABLE =
+            "select  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
+                    "       SEQUENCE_SCORE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS " +
+                    "       from  berkley_tmp_tab " +
+                    "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
+                    "       SEQUENCE_SCORE";
+
+    private static final String TRUNCATE_TEMPORARY_TABLE =
+            "truncate table berkley_tmp_tab";
+
+    private static final String DROP_TEMPORARY_TABLE =
+            "drop  table berkley_tmp_tab";
 
 
     public static void main(String[] args) {
-
         if (args.length < 4) {
             throw new IllegalArgumentException("Please provide the following arguments:\n\npath to berkeleyDB directory\nOnion DB URL (jdbc:oracle:thin:@host:port:SID)\nOnion DB username\nOnion DB password\nMaximum UPI");
         }
@@ -97,99 +118,93 @@ public class CreateMatchDBFromOnion {
                 onionPassword,
                 maxUPI
         );
-
-
     }
 
     void buildDatabase(String directoryPath, String onionDBUrl, String onionUsername, String onionPassword, String maxUPI) {
+        long startMillis = System.currentTimeMillis();
         Environment myEnv = null;
         EntityStore store = null;
         Connection onionConn = null;
 
         try {
-            // Start off making sure that the berkeley database directory is present and writable.
-            File berkeleyDBDirectory = new File(directoryPath);
-            if (berkeleyDBDirectory.exists()) {
-                if (!berkeleyDBDirectory.isDirectory()) {
-                    throw new IllegalStateException("The path " + directoryPath + " already exists and is not a directory, as required for a Berkeley Database.");
-                }
-                File[] directoryContents = berkeleyDBDirectory.listFiles();
-                if (directoryContents != null && directoryContents.length > 0) {
-                    throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromOnion.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
-                }
-                if (!berkeleyDBDirectory.canWrite()) {
-                    throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
-                }
-            } else if (!(berkeleyDBDirectory.mkdirs())) {
-                throw new IllegalStateException("Unable to create Berkeley database directory " + directoryPath);
-            }
-
-            // Open up the Berkeley Database
-            EnvironmentConfig myEnvConfig = new EnvironmentConfig();
-            StoreConfig storeConfig = new StoreConfig();
-
-            myEnvConfig.setAllowCreate(true);
-            storeConfig.setAllowCreate(true);
-            storeConfig.setTransactional(false);
-            // Open the environment and entity store
-            myEnv = new Environment(berkeleyDBDirectory, myEnvConfig);
-            store = new EntityStore(myEnv, "EntityStore", storeConfig);
-
-            PrimaryIndex<Long, BerkeleyMatch> primIDX = store.getPrimaryIndex(Long.class, BerkeleyMatch.class);
-//            SecondaryIndex<String, Long, BerkeleyMatch> secIDX = store.getSecondaryIndex(primIDX, String.class, "proteinMD5");
-
-
             // Connect to the Onion database.
             Class.forName("oracle.jdbc.OracleDriver");
             onionConn = DriverManager.getConnection(onionDBUrl, onionUsername, onionPassword);
-            PreparedStatement targetPs = null;
-            ResultSet targetRS = null;
+
+            // First, create the populate the temporary table before create the BerkeleyDB, to prevent timeouts.
+            Statement statement = null;
             try {
-                targetPs = onionConn.prepareStatement(SIGNAL_P_QUERY);
-                targetPs.setString(1, maxUPI);
-                targetRS = targetPs.executeQuery();
-                int sigPcount = 0;
-                while (targetRS.next()) {
-                    final BerkeleyLocation location = new BerkeleyLocation();
-                    location.setStart(1);
-                    location.setEnd(targetRS.getInt(3));
-                    if (targetRS.wasNull()) {
-                        continue;
-                    }
-                    final String signatureLibraryName = targetRS.getString(2);
-                    if (targetRS.wasNull() || signatureLibraryName == null || SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) {
-                        continue;
-                    }
-                    final BerkeleyMatch match = new BerkeleyMatch();
-                    match.addLocation(location);
-                    match.setSignatureLibraryName(signatureLibraryName);
-                    match.setSignatureLibraryRelease("3.0");
-                    match.setProteinMD5(targetRS.getString(1));
-                    match.setSignatureAccession("SignalPeptide");
-                    if (++sigPcount % 100000 == 0) {
-                        System.out.println("Stored " + sigPcount + " signal P matches.");
-                    }
-                    primIDX.put(match);
-                }
+                statement = onionConn.createStatement();
+                statement.execute(CREATE_TEMP_TABLE.replace("MAX_UPI", maxUPI));
             } finally {
-                if (targetRS != null) {
-                    targetRS.close();
-                }
-                if (targetPs != null) {
-                    targetPs.close();
+                if (statement != null) {
+                    statement.close();
                 }
             }
+
+            long now = System.currentTimeMillis();
+            System.out.println((now - startMillis) + " milliseconds to create the temporary table.");
+            startMillis = now;
+
+            // Then add the additional SignalP data
+            statement = null;
+            try {
+                statement = onionConn.createStatement();
+                statement.execute(ADD_SIGNAL_P_DATA.replace("MAX_UPI", maxUPI));
+            } finally {
+                if (statement != null) {
+                    statement.close();
+                }
+            }
+            now = System.currentTimeMillis();
+            System.out.println((now - startMillis) + " milliseconds to add the SignalP data.");
+            startMillis = now;
+
+            PrimaryIndex<Long, BerkeleyMatch> primIDX = null;
+
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
-                ps = onionConn.prepareStatement(MATCH_QUERY);
-                ps.setString(1, maxUPI);
+                ps = onionConn.prepareStatement(QUERY_TEMPORARY_TABLE);
                 rs = ps.executeQuery();
                 BerkeleyMatch match = null;
 
                 int locationCount = 0, matchCount = 0;
 
                 while (rs.next()) {
+                    // Open the BerkeleyDB at the VERY LAST MOMENT - prevent timeouts.
+                    if (primIDX == null) {
+                        // Now create the berkeley database directory is present and writable.
+                        File berkeleyDBDirectory = new File(directoryPath);
+                        if (berkeleyDBDirectory.exists()) {
+                            if (!berkeleyDBDirectory.isDirectory()) {
+                                throw new IllegalStateException("The path " + directoryPath + " already exists and is not a directory, as required for a Berkeley Database.");
+                            }
+                            File[] directoryContents = berkeleyDBDirectory.listFiles();
+                            if (directoryContents != null && directoryContents.length > 0) {
+                                throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromOnion.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
+                            }
+                            if (!berkeleyDBDirectory.canWrite()) {
+                                throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
+                            }
+                        } else if (!(berkeleyDBDirectory.mkdirs())) {
+                            throw new IllegalStateException("Unable to create Berkeley database directory " + directoryPath);
+                        }
+
+                        // Open up the Berkeley Database
+                        EnvironmentConfig myEnvConfig = new EnvironmentConfig();
+                        StoreConfig storeConfig = new StoreConfig();
+
+                        myEnvConfig.setAllowCreate(true);
+                        storeConfig.setAllowCreate(true);
+                        storeConfig.setTransactional(false);
+                        // Open the environment and entity store
+                        myEnv = new Environment(berkeleyDBDirectory, myEnvConfig);
+                        store = new EntityStore(myEnv, "EntityStore", storeConfig);
+
+                        primIDX = store.getPrimaryIndex(Long.class, BerkeleyMatch.class);
+
+                    }
                     // Only process if the SignatureLibraryName is recognised.
                     final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
                     if (rs.wasNull() || signatureLibraryName == null) continue;
@@ -227,7 +242,11 @@ public class CreateMatchDBFromOnion {
                         eValue = null;
                     } else {
                         // Stored in Onion as Log Base 10.  Convert back...
-                        eValue = PersistenceConversion.get(eValue);
+                        if (eValue == Double.NaN || eValue == Double.POSITIVE_INFINITY || eValue == Double.NEGATIVE_INFINITY) {
+                            eValue = 0d;
+                        } else {
+                            eValue = PersistenceConversion.get(eValue);
+                        }
                     }
 
 
@@ -279,7 +298,6 @@ public class CreateMatchDBFromOnion {
                         match.addLocation(location);
                     }
                 }
-
                 // Don't forget the last match!
                 if (match != null) {
                     primIDX.put(match);
@@ -288,6 +306,45 @@ public class CreateMatchDBFromOnion {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
             }
+            now = System.currentTimeMillis();
+            System.out.println((now - startMillis) + " milliseconds to query the temporary table and create the BerkeleyDB.");
+            startMillis = now;
+
+
+            // Truncate the temporary table
+            // Then add the additional SignalP data
+            statement = null;
+            try {
+                statement = onionConn.createStatement();
+                statement.execute(TRUNCATE_TEMPORARY_TABLE);
+            } finally {
+                if (statement != null) {
+                    statement.close();
+                }
+            }
+
+            now = System.currentTimeMillis();
+            System.out.println((now - startMillis) + " milliseconds to truncate the temporary table.");
+            startMillis = now;
+
+            // And drop the table
+            // Then add the additional SignalP data
+            statement = null;
+            try {
+                statement = onionConn.createStatement();
+                statement.execute(DROP_TEMPORARY_TABLE);
+            } finally {
+                if (statement != null) {
+                    statement.close();
+                }
+            }
+
+            now = System.currentTimeMillis();
+            System.out.println((now - startMillis) + " milliseconds to drop the temporary table.");
+
+            System.out.println("Finished building BerkeleyDB.");
+
+
         } catch (DatabaseException dbe) {
             throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
         } catch (ClassNotFoundException e) {
