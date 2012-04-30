@@ -279,6 +279,7 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv</entry.go.file.loc>
                 <!--Entry colours-->
                 <entry.colours.file.loc>file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties</entry.colours.file.loc>
+                <pathToImages>/interpro5/resources</pathToImages>
             </properties>
 
             <build>
@@ -372,6 +373,7 @@ cd ~/Projects/i5/interproscan/core/web; svn up; mvn -Plocalhost-tomcat clean tom
                 <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
                 <!--Entry colours-->
                 <entry.colours.file.loc>file:${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
+                <pathToImages>/interpro5/resources</pathToImages>
             </properties>
 
             <build>
