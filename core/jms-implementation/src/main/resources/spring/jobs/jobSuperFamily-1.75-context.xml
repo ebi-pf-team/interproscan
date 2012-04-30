@@ -85,7 +85,7 @@
         <property name="serialGroup" value="PARSE_SUPERFAMILY"/>
         <property name="retries" value="3"/>
         <property name="superFamilyBinaryOutputFileName" ref="superFamilyBinaryOutputFileTemplate-1.75"/>
-        <property name="rawMatchDAO">
+        <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAOImpl">
                 <constructor-arg value="1.75"/>
             </bean>
