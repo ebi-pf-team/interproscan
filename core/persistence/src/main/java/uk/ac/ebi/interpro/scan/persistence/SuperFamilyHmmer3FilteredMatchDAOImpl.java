@@ -8,16 +8,16 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
 
 /**
-* SuperFamily filtered match data access object.
-*
-* @author  Matthew Fraser
-* @version $Id$
-*/
+ * SuperFamily filtered match data access object.
+ *
+ * @author Matthew Fraser
+ * @version $Id$
+ */
 public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<SuperFamilyHmmer3RawMatch, SuperFamilyHmmer3Match> implements SuperFamilyHmmer3FilteredMatchDAO {
 
     private String superFamilyReleaseVersion;
@@ -47,48 +47,37 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
     @Transactional
     public void persist(Collection<RawProtein<SuperFamilyHmmer3RawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : filteredProteins) {
-            Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
+            final Map<UUID, SuperFamilyHmmer3Match> splitGroupToMatch = new HashMap<UUID, SuperFamilyHmmer3Match>();
+
+            final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
-            Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = null;
-            String currentModelId = null;
-            Double currentEvalue = null;
-            Signature currentSignature = null;
-            SuperFamilyHmmer3RawMatch lastRawMatch = null;
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
-                if (rawMatch == null) continue;
-
-                if (currentModelId == null || !currentModelId.equals(rawMatch.getModelId())) {
-                    if (currentModelId != null && currentEvalue != null) {
-                        // Not the first...
-                        protein.addMatch(new SuperFamilyHmmer3Match(currentSignature, currentEvalue, locations));
-                    }
-                    // Reset everything
-                    locations = new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
-                    currentModelId = rawMatch.getModelId();
-                    currentEvalue = rawMatch.getEvalue();
-                    currentSignature = modelIdToSignatureMap.get(currentModelId);
+                SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
+                if (match == null) {
+                    final Signature currentSignature = modelIdToSignatureMap.get(rawMatch.getModelId());
                     if (currentSignature == null) {
-                        throw new IllegalStateException("Cannot find model " + currentModelId + " in the database.");
+                        throw new IllegalStateException("Cannot find model " + rawMatch.getModelId() + " in the database.");
                     }
+                    match = new SuperFamilyHmmer3Match(
+                            currentSignature,
+                            rawMatch.getEvalue(),
+                            null);
+                    splitGroupToMatch.put(rawMatch.getSplitGroup(), match);
                 }
-                locations.add(
-                        new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
-                                rawMatch.getLocationStart(),
-                                rawMatch.getLocationEnd()
-                        )
-                );
-                lastRawMatch = rawMatch;
+                match.addLocation(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
+                        rawMatch.getLocationStart(),
+                        rawMatch.getLocationEnd()
+                ));
             }
-            // Don't forget the last one!
-            if (lastRawMatch != null) {
-                protein.addMatch(new SuperFamilyHmmer3Match(currentSignature, currentEvalue, locations));
+
+            for (SuperFamilyHmmer3Match match : splitGroupToMatch.values()) {
+                protein.addMatch(match);
             }
             entityManager.persist(protein);
             entityManager.flush();
         }
     }
-
 }

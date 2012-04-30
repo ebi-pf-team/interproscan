@@ -3,12 +3,9 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import java.util.UUID;
 
 /**
  * SuperFamily raw match
@@ -16,47 +13,32 @@ import javax.persistence.Transient;
  * @author Matthew Fraser
  * @version $Id$
  */
-@Entity
-@javax.persistence.Table(name = SuperFamilyHmmer3RawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = SuperFamilyHmmer3RawMatch.TABLE_NAME, indexes = {
-        @Index(name = "SUPERFAMILY_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "SUPERFAMILY_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "SUPERFAMILY_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "SUPERFAMILY_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "SUPERFAMILY_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
-})
 public class SuperFamilyHmmer3RawMatch extends RawMatch {
 
-    @Transient
-    public static final String TABLE_NAME = "SUPERFAMILY_HMMER3_RAW_MATCH";
-
-    @Column(nullable = false)
     private double evalue;
 
-    @Column(nullable = false)
     private int modelMatchStartPos;
 
-    @Column(nullable = false, length = 4000)
     private String aligmentToModel;
 
-    @Column(nullable = false)
     private double familyEvalue;
 
-    @Column(nullable = false)
     private int scopDomainId;
 
-    @Column(nullable = false)
     private int scopFamilyId;
+
+    private UUID splitGroup;
 
     protected SuperFamilyHmmer3RawMatch() {
     }
 
     public SuperFamilyHmmer3RawMatch(String sequenceIdentifier, String model,
-                                String signatureLibraryRelease,
-                                int locationStart, int locationEnd,
-                                double evalue, int modelMatchStartPos,
-                                String alignmentToModel, double familyEvalue,
-                                int scopDomainId, int scopFamilyId) {
+                                     String signatureLibraryRelease,
+                                     int locationStart, int locationEnd,
+                                     double evalue, int modelMatchStartPos,
+                                     String alignmentToModel, double familyEvalue,
+                                     int scopDomainId, int scopFamilyId,
+                                     UUID splitGroup) {
         super(sequenceIdentifier, model, SignatureLibrary.SUPERFAMILY, signatureLibraryRelease, locationStart, locationEnd);
         this.evalue = evalue;
         this.modelMatchStartPos = modelMatchStartPos;
@@ -64,6 +46,7 @@ public class SuperFamilyHmmer3RawMatch extends RawMatch {
         this.familyEvalue = familyEvalue;
         this.scopDomainId = scopDomainId;
         this.scopFamilyId = scopFamilyId;
+        this.splitGroup = splitGroup;
     }
 
     public double getEvalue() {
@@ -112,6 +95,10 @@ public class SuperFamilyHmmer3RawMatch extends RawMatch {
 
     public void setScopFamilyId(int scopFamilyId) {
         this.scopFamilyId = scopFamilyId;
+    }
+
+    public UUID getSplitGroup() {
+        return splitGroup;
     }
 
     @Override

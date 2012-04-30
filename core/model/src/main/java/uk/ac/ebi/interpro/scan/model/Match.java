@@ -61,7 +61,7 @@ public abstract class Match<T extends Location> implements Serializable {
     private Signature signature;
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Location.class, mappedBy = "match")
-    private Set<T> locations = new LinkedHashSet<T>();
+    protected Set<T> locations = new LinkedHashSet<T>();
 
     protected Match() {
     }
@@ -109,13 +109,18 @@ public abstract class Match<T extends Location> implements Serializable {
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
 
     protected void setLocations(final Set<T> locations) {
-        if (locations.isEmpty()) {
-            throw new IllegalArgumentException("There must be at least one location for the match");
+        if (locations != null) {
+            for (T location : locations) {
+                location.setMatch(this);
+                this.locations.add(location);
+            }
         }
-        for (T location : locations) {
-            location.setMatch(this);
-            this.locations.add(location);
-        }
+    }
+
+    @Transient
+    public void addLocation(T location) {
+        location.setMatch(this);
+        this.locations.add(location);
     }
 
     @Override

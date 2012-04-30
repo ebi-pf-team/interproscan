@@ -82,7 +82,6 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch</class>
 
         <properties>
             <property name="hibernate.show_sql" value="${mvn.hibernate.show_sql}"/>
