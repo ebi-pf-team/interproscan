@@ -33,22 +33,22 @@ public class MatchesController {
 
     private static final Logger LOGGER = Logger.getLogger(MatchesController.class.getName());
 
-    private MatchesService matchesService;
+    private MatchesService berkeleyMatchDBService;
 
     private Jaxb2Marshaller berkeleyJaxb2;
 
     @Autowired
-    public MatchesController(MatchesService matchesService, Jaxb2Marshaller berkeleyJaxb2) {
-        Assert.notNull(matchesService, "'matchesService' must not be null");
+    public MatchesController(MatchesService berkeleyMatchDBService, Jaxb2Marshaller berkeleyJaxb2) {
+        Assert.notNull(berkeleyMatchDBService, "'berkeleyMatchDBService' must not be null");
         Assert.notNull(berkeleyJaxb2, "'unmarshaller' must not be null");
-        this.matchesService = matchesService;
+        this.berkeleyMatchDBService = berkeleyMatchDBService;
         this.berkeleyJaxb2 = berkeleyJaxb2;
     }
 
     @RequestMapping
     public void getMatches(HttpServletResponse response,
                            @RequestParam(value = "md5", required = true) String[] md5Array) {
-        List<BerkeleyMatch> matches = matchesService.getMatches(Arrays.asList(md5Array));
+        List<BerkeleyMatch> matches = berkeleyMatchDBService.getMatches(Arrays.asList(md5Array));
         BerkeleyMatchXML matchXML = new BerkeleyMatchXML(matches);
         response.setContentType("application/xml");
         Writer out = null;

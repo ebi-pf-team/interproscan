@@ -27,20 +27,20 @@ import java.util.List;
 @RequestMapping("/isPrecalculated")
 public class NewProteinsController {
 
-    private MatchesService matchesService;
+    private MatchesService berkeleyMD5Service;
 
     private static final Logger LOGGER = Logger.getLogger(NewProteinsController.class.getName());
 
     @Autowired
-    public NewProteinsController(MatchesService matchesService) {
-        Assert.notNull(matchesService, "'matchesService' must not be null");
-        this.matchesService = matchesService;
+    public NewProteinsController(MatchesService berkeleyMD5Service) {
+        Assert.notNull(berkeleyMD5Service, "'berkeleyMD5Service' must not be null");
+        this.berkeleyMD5Service = berkeleyMD5Service;
     }
 
     @RequestMapping
     public void getProteinsToAnalyse(HttpServletResponse response,
                                      @RequestParam(value = "md5", required = true) String[] md5Array) {
-        List<String> precalculatedMD5s = matchesService.isPrecalculated(Arrays.asList(md5Array));
+        List<String> precalculatedMD5s = berkeleyMD5Service.isPrecalculated(Arrays.asList(md5Array));
         response.setContentType("text/tab-separated-values");
         Writer out = null;
         try {
