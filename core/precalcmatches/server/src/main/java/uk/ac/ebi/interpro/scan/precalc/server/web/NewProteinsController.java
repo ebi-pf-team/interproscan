@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.precalc.server.web;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.ac.ebi.interpro.scan.precalc.server.service.MatchesService;
@@ -27,20 +26,19 @@ import java.util.List;
 @RequestMapping("/isPrecalculated")
 public class NewProteinsController {
 
-    private MatchesService berkeleyMD5Service;
+    private MatchesService matchService;
 
     private static final Logger LOGGER = Logger.getLogger(NewProteinsController.class.getName());
 
     @Autowired
-    public NewProteinsController(MatchesService berkeleyMD5Service) {
-        Assert.notNull(berkeleyMD5Service, "'berkeleyMD5Service' must not be null");
-        this.berkeleyMD5Service = berkeleyMD5Service;
+    public void setMatchService(MatchesService matchService) {
+        this.matchService = matchService;
     }
 
     @RequestMapping
     public void getProteinsToAnalyse(HttpServletResponse response,
                                      @RequestParam(value = "md5", required = true) String[] md5Array) {
-        List<String> precalculatedMD5s = berkeleyMD5Service.isPrecalculated(Arrays.asList(md5Array));
+        List<String> precalculatedMD5s = matchService.isPrecalculated(Arrays.asList(md5Array));
         response.setContentType("text/tab-separated-values");
         Writer out = null;
         try {
