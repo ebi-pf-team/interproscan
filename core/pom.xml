@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>${i5.svn.revision}</version>
+    <version>i5-svn-revision-1559</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
