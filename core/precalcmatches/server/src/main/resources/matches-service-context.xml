@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="matchesService" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.MatchesServiceImpl"/>
+    <bean id="matchService" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.MatchesServiceImpl"/>
 
     <bean id="berkeleyMatchDBService"
           class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyMatchDBService">
