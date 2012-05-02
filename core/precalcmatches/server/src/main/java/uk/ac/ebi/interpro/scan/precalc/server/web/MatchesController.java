@@ -35,14 +35,14 @@ public class MatchesController {
 
     private MatchesService matchesService;
 
-    private Jaxb2Marshaller marshaller;
+    private Jaxb2Marshaller berkeleyJaxb2;
 
     @Autowired
-    public MatchesController(MatchesService matchesService, Jaxb2Marshaller marshaller) {
+    public MatchesController(MatchesService matchesService, Jaxb2Marshaller berkeleyJaxb2) {
         Assert.notNull(matchesService, "'matchesService' must not be null");
-        Assert.notNull(marshaller, "'unmarshaller' must not be null");
+        Assert.notNull(berkeleyJaxb2, "'unmarshaller' must not be null");
         this.matchesService = matchesService;
-        this.marshaller = marshaller;
+        this.berkeleyJaxb2 = berkeleyJaxb2;
     }
 
     @RequestMapping
@@ -54,7 +54,7 @@ public class MatchesController {
         Writer out = null;
         try {
             out = response.getWriter();
-            marshaller.marshal(matchXML, new StreamResult(out));
+            berkeleyJaxb2.marshal(matchXML, new StreamResult(out));
         } catch (IOException e) {
             LOGGER.error("IOException thrown when attempting to output 'BerkeleyMatchXML' in response to query: ");
         } finally {
