@@ -33,11 +33,17 @@ public class MatchesServiceImpl implements MatchesService {
      */
     private BerkeleyMD5DBService berkeleyMD5Service;
 
+    public MatchesServiceImpl() {
+
+    }
+
     @Autowired
-    public MatchesServiceImpl(BerkeleyMatchDBService berkeleyMatchDBService, BerkeleyMD5DBService berkeleyMD5Service) {
-        Assert.notNull(berkeleyMatchDBService, "'berkeleyMatchDBService' bean must not be null");
-        Assert.notNull(berkeleyMD5Service, "'berkeleyMD5Service' bean must not be null");
+    public void setBerkeleyMatchDBService(BerkeleyMatchDBService berkeleyMatchDBService) {
         this.berkeleyMatchDBService = berkeleyMatchDBService;
+    }
+
+    @Autowired
+    public void setBerkeleyMD5Service(BerkeleyMD5DBService berkeleyMD5Service) {
         this.berkeleyMD5Service = berkeleyMD5Service;
     }
 
@@ -49,6 +55,7 @@ public class MatchesServiceImpl implements MatchesService {
      * @return a List of matches for these proteins.
      */
     public List<BerkeleyMatch> getMatches(List<String> proteinMD5s) {
+        Assert.notNull(berkeleyMatchDBService.getMD5Index(), "The MD5 index must not be null.");
         List<BerkeleyMatch> matches = new ArrayList<BerkeleyMatch>();
 
         for (String md5 : proteinMD5s) {
@@ -81,6 +88,8 @@ public class MatchesServiceImpl implements MatchesService {
      * @return a List of MD5s for proteins that have been calculated previously.
      */
     public List<String> isPrecalculated(List<String> proteinMD5s) {
+        Assert.notNull(berkeleyMD5Service, "The berkeleyMD5Service field is null.");
+        Assert.notNull(berkeleyMD5Service.getPrimIDX(), "The berkeleyMD5Service.getPrimIDX() method is returning null.");
         List<String> md5ToCalculate = new ArrayList<String>();
         for (String md5 : proteinMD5s) {
             if (berkeleyMD5Service.getPrimIDX().get(md5) != null) {

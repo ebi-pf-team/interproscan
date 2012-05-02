@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
@@ -33,22 +32,24 @@ public class MatchesController {
 
     private static final Logger LOGGER = Logger.getLogger(MatchesController.class.getName());
 
-    private MatchesService berkeleyMatchDBService;
+    private MatchesService matchService;
 
     private Jaxb2Marshaller berkeleyJaxb2;
 
     @Autowired
-    public MatchesController(MatchesService berkeleyMatchDBService, Jaxb2Marshaller berkeleyJaxb2) {
-        Assert.notNull(berkeleyMatchDBService, "'berkeleyMatchDBService' must not be null");
-        Assert.notNull(berkeleyJaxb2, "'unmarshaller' must not be null");
-        this.berkeleyMatchDBService = berkeleyMatchDBService;
+    public void setMatchService(MatchesService matchService) {
+        this.matchService = matchService;
+    }
+
+    @Autowired
+    public void setBerkeleyJaxb2(Jaxb2Marshaller berkeleyJaxb2) {
         this.berkeleyJaxb2 = berkeleyJaxb2;
     }
 
     @RequestMapping
     public void getMatches(HttpServletResponse response,
                            @RequestParam(value = "md5", required = true) String[] md5Array) {
-        List<BerkeleyMatch> matches = berkeleyMatchDBService.getMatches(Arrays.asList(md5Array));
+        List<BerkeleyMatch> matches = matchService.getMatches(Arrays.asList(md5Array));
         BerkeleyMatchXML matchXML = new BerkeleyMatchXML(matches);
         response.setContentType("application/xml");
         Writer out = null;
