@@ -30,10 +30,10 @@ public class CreateMD5ListFromOnion {
     private static final int COL_IDX_MD5 = 1;
 
     private static final String MD5_QUERY =
-            "select p.md5 as protein_md5 " +
+            "select * from (select p.md5 as protein_md5 " +
                     "  from onion.uniparc_protein p " +
-                    "  where p.UPI <= ? " +
-                    "  order by p.md5";
+                    "  where p.UPI <= ?) " +
+                    "  order by protein_md5";
 
 
     public static void main(String[] args) {
