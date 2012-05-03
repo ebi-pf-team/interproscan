@@ -32,4 +32,14 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
+    <filter>
+        <filter-name>HealthFilter</filter-name>
+        <filter-class>uk.ac.ebi.interpro.scan.precalc.server.web.HealthFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>HealthFilter</filter-name>
+        <url-pattern>/jmxproxy/*</url-pattern>
+    </filter-mapping>
+
 </web-app>
