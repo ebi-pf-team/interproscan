@@ -75,7 +75,7 @@ public abstract class AbstractHierarchyElementBuilder {
     private StringBuilder children(EntryHierarchyData parent) throws IOException {
         StringBuilder children = new StringBuilder();
 
-        // Iterate over siblings
+        // Iterate over children
         for (final EntryHierarchyData child : parent.getImmediateChildren()) {
             children.append(siblings(child));
         }

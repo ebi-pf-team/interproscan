@@ -116,7 +116,7 @@ public final class SimpleProtein implements Serializable {
      */
     public Set<SimpleEntry> getFamilyEntries() {
         if (familyEntries == null) {
-            familyEntries = new HashSet<SimpleEntry>();
+            familyEntries = new TreeSet<SimpleEntry>();
             for (SimpleEntry entry : entries) {
                 if (entry.isIntegrated() && EntryType.FAMILY == entry.getType()) {
                     familyEntries.add(entry);
