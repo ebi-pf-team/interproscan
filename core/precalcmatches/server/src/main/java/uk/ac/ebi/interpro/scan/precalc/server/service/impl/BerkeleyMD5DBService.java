@@ -45,23 +45,7 @@ public class BerkeleyMD5DBService extends AbstractDBService {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-
-        if (store != null) {
-            try {
-                store.close();
-            } catch (DatabaseException dbe) {
-                LOGGER.error("Error closing store: " + dbe.toString());
-            }
-        }
-
-        if (myEnv != null) {
-            try {
-                // Finally, close environment.
-                myEnv.close();
-            } catch (DatabaseException dbe) {
-                LOGGER.error("Error closing MyDbEnv: " + dbe.toString());
-            }
-        }
+        shutdown();
     }
 
     public PrimaryIndex<String, BerkeleyConsideredProtein> getPrimIDX() {
@@ -83,5 +67,26 @@ public class BerkeleyMD5DBService extends AbstractDBService {
 
 
         primIDX = store.getPrimaryIndex(String.class, BerkeleyConsideredProtein.class);
+    }
+
+    public void shutdown() {
+        if (store != null) {
+            try {
+                store.close();
+                store = null;
+            } catch (DatabaseException dbe) {
+                LOGGER.error("Error closing store: " + dbe.toString());
+            }
+        }
+
+        if (myEnv != null) {
+            try {
+                // Finally, close environment.
+                myEnv.close();
+                myEnv = null;
+            } catch (DatabaseException dbe) {
+                LOGGER.error("Error closing MyDbEnv: " + dbe.toString());
+            }
+        }
     }
 }
