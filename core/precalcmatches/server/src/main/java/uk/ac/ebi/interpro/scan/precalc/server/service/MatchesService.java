@@ -34,4 +34,9 @@ public interface MatchesService {
      * @return a List of MD5s for proteins that have been calculated previously.
      */
     List<String> isPrecalculated(List<String> proteinMD5s);
+
+    /**
+     * Cleanly shuts down the Berkeley DB environment.
+     */
+    void shutdown();
 }

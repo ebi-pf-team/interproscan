@@ -98,4 +98,13 @@ public class MatchesServiceImpl implements MatchesService {
         }
         return md5ToCalculate;
     }
+
+    /**
+     * Cleanly shuts down the Berkeley DB environment.
+     */
+    @Override
+    public void shutdown() {
+        berkeleyMatchDBService.shutdown();
+        berkeleyMD5Service.shutdown();
+    }
 }
