@@ -53,7 +53,8 @@ public class ShutdownController {
         } else {
             writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
                     "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>FAILED to shut down BerkeleyDB</title></head>" +
-                    "<body><p>BerkeleyDB <b>NOT</b> shut down.  You must shut down directly from the server running this service, using wget or curl.</p></body></html>");
+                    "<body><p>BerkeleyDB <b>NOT</b> shut down.  You must shut down directly <b>from the server running this " +
+                    "service</b>, using wget or curl.</p></body></html>");
         }
     }
 
