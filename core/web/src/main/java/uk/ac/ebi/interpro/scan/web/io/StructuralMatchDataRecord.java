@@ -24,6 +24,7 @@ public class StructuralMatchDataRecord extends AbstractDataRecord {
      * class_id
      * pos_from
      * pos_to
+     * PROTEIN_FRAGMENT
      */
 
     private final String databaseName;

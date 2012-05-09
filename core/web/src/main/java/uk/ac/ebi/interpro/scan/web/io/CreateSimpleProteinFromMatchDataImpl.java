@@ -75,15 +75,35 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
         // Get match data
         SimpleProtein protein = this.matchAnalyser.parseMatchDataOutput(resourceLoader.getResource(matchesUrl));
 
-        // Add structural matches
         if (protein == null) {
-            LOGGER.warn("Protein match data was not found or could not be parsed");
-            return null;
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Protein match data was not found or could not be parsed from " + matchesUrl);
+            }
+            // else this protein had no match data, but continue to look for structural match data
         }
+
+        // Add structural matches
         Collection<SimpleStructuralDatabase> structuralDatabases =
                 structuralMatchAnalyser.parseStructuralMatchDataOutput(resourceLoader.getResource(structuralMatchesUrl));
         if (structuralDatabases != null) {
             for (SimpleStructuralDatabase db : structuralDatabases) {
+                if (protein == null) {
+                    // There were no matches above, but we do have structural matches here so now need to initialise the protein object
+                    // TODO Note that we do not have the taxonomy information, but the protein structure web pages do not display that information anyway
+                    StructuralMatchDataRecord data = structuralMatchAnalyser.getSampleStructuralMatch();
+                    protein = new SimpleProtein(
+                            data.getProteinAc(),
+                            data.getProteinId(),
+                            "Name not available",
+                            data.getProteinLength(),
+                            "N/A",
+                            data.getCrc64(),
+                            data.isProteinFragment());
+
+                    if (protein == null) {
+                        throw new IllegalStateException("Error constructing a SimpleProtein");
+                    }
+                }
                 protein.getStructuralDatabases().add(db);
             }
         }
