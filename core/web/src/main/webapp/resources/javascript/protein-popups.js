@@ -31,7 +31,7 @@ function preparePopup(spanId, numSuperMatchPopups) {
         show: {
             event: 'mouseenter',
             solo: false, // Show one tooltip at a time?
-            delay: 250 // Avoid a mass of popups when moving mouse across the screen!
+            delay: 150 // Avoid a mass of popups when moving mouse across the screen!
         },
         hide: {
             fixed: true, // If the user mouses out of the span to the popup then keep the popup open
