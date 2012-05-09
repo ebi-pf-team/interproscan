@@ -11,7 +11,7 @@
             </#if>
         </div>
     </div>
-<#if ! standalone>
+<#if ! standalone && protein.taxFullName?has_content>
     <div class="prot_gal_bloc">
         <div class="prot_gal_col"><h1>Species</h1></div>
         <div class="prot_gal_desc">${protein.taxFullName}</div>
