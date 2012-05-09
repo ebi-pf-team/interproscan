@@ -5,7 +5,7 @@
     <meta charset="utf-8">
 <#--Check if protein exists-->
     <title>
-    <#if protein??>
+    <#if protein?? && protein.structuralDatabases?has_content>
     ${protein.ac} - InterPro
         <#else>
             No data for this protein - InterPro
@@ -30,7 +30,7 @@
         </div>
 
         <div class="main-box">
-        <#if protein??>
+        <#if protein?? && protein.structuralDatabases?has_content>
             <h1>
                 <#if standalone>
                 ${protein.ac}
@@ -50,7 +50,12 @@
     $(document).ready(function() {
         $('span[id*="location-"]').each(
                 function(i) {
-                    preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
+                    <#if condensedView??>
+                        preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
+                    <#else>
+                        // No supermatches for this protein, but there are structural matches (e.g. B7ZMM2 as of InterPro release 37.0)
+                        preparePopup(this.id, 0);
+                    </#if>
                 }
         );
     });

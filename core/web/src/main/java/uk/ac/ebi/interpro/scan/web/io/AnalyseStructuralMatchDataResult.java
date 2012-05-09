@@ -24,6 +24,8 @@ public class AnalyseStructuralMatchDataResult {
 
     private final ResourceReader<StructuralMatchDataRecord> reader;
 
+    private StructuralMatchDataRecord sampleStructuralMatch;
+
     public AnalyseStructuralMatchDataResult(ResourceReader<StructuralMatchDataRecord> reader) {
         this.reader = reader;
     }
@@ -89,6 +91,11 @@ public class AnalyseStructuralMatchDataResult {
         for (StructuralMatchDataRecord record : records) {
             // Loop through query output one line at a time
 
+            if (sampleStructuralMatch == null) {
+                // Store an example of a structural match record for future use
+                sampleStructuralMatch = record;
+            }
+
             if (proteinAc == null) {
                 // First line of the query results, initialise the protein information
                 proteinAc = record.getProteinAc();
@@ -132,4 +139,7 @@ public class AnalyseStructuralMatchDataResult {
         return Collections.unmodifiableCollection(structuralMatchDatabases.values());
     }
 
+    public StructuralMatchDataRecord getSampleStructuralMatch() {
+        return sampleStructuralMatch;
+    }
 }

@@ -1,6 +1,6 @@
 <#--Returns main body of protein page for inclusion in DBML-->
 
-<#if protein??>
+<#if protein?? && protein.entries?has_content>
 
     <#include "protein-header.ftl"/>
 
@@ -67,6 +67,6 @@
 
     <#else>
     <div>
-        Sorry, no data found for this protein.
+        Sorry, no match data found for this protein.
     </div>
 </#if>
