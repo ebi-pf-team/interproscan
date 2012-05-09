@@ -19,7 +19,7 @@ public final class SimpleProtein implements Serializable {
     private final int length;
     private final String md5;
     private final String crc64;
-    private final int taxId;
+    private final Integer taxId;
     private final String taxScienceName;
     private final String taxFullName;
     private final boolean isProteinFragment;
@@ -39,6 +39,30 @@ public final class SimpleProtein implements Serializable {
         this.taxId = taxId;
         this.taxScienceName = taxScienceName;
         this.taxFullName = taxFullName;
+        this.isProteinFragment = isProteinFragment;
+    }
+
+    /**
+     * Construct a SimpleProtein without the taxonomy information.
+     * @param ac Protein accession
+     * @param id Protein identifier
+     * @param name Protein name
+     * @param length Protein length
+     * @param md5 MD5
+     * @param crc64 CRC64
+     * @param isProteinFragment True if this is a protein fragment or false if complete
+     */
+    public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
+                         boolean isProteinFragment) {
+        this.ac = ac;
+        this.id = id;
+        this.name = name;
+        this.length = length;
+        this.md5 = md5;
+        this.crc64 = crc64;
+        this.taxId = null;
+        this.taxScienceName = null;
+        this.taxFullName = null;
         this.isProteinFragment = isProteinFragment;
     }
 

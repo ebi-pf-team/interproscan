@@ -13,7 +13,7 @@
     <meta charset="utf-8" content="text/html">
 <#--Check if protein exists-->
     <title>
-    <#if protein??>
+    <#if protein?? && protein.entries?has_content>
     ${protein.ac} - InterPro
         <#else>
             No data for this protein - InterPro
@@ -41,7 +41,7 @@
 <body>
 <div class="contentsarea">
 
-<#if protein??>
+<#if protein?? && protein.entries?has_content>
     <div class="left-menu">
         <#include "protein-menu.ftl"/>
     </div>
@@ -53,7 +53,7 @@
         </div>
 
         <div class="main-box">
-        <#if protein??>
+        <#if protein?? && protein.entries?has_content>
             <h1>
                 <#if standalone>
                 ${protein.ac}
