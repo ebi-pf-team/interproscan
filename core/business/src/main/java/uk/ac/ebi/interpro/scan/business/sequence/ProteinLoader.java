@@ -97,13 +97,11 @@ public class ProteinLoader implements SequenceLoader {
      * The method attempts to store them in batches by calling the addProteinToBatch(Protein protein)
      * method.  This in turn calls persistBatch(), when the batch size has been reached.
      * <p/>
-     * TODO - Needs to be refactored - currently does NOT store anything other than the Xref accession.
-     * TODO - needs to be able to store the database name and the protein name too.
      *
      * @param sequence        being the protein sequence to store
      * @param crossReferences being a set of Cross references.
      */
-    public void store(String sequence, String... crossReferences) {
+    public void store(String sequence, String analysisJobNames, String... crossReferences) {
         if (sequence != null && sequence.length() > 0) {
             Protein protein = new Protein(sequence);
             if (crossReferences != null) {
@@ -122,15 +120,15 @@ public class ProteinLoader implements SequenceLoader {
             }
             proteinsAwaitingPrecalcLookup.add(protein);
             if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
-                lookupProteins();
+                lookupProteins(analysisJobNames);
             }
         }
     }
 
-    private void lookupProteins() {
+    private void lookupProteins(String analysisJobNames) {
         if (proteinsAwaitingPrecalcLookup.size() > 0) {
             Set<Protein> localPrecalculatedProteins = (proteinLookup != null)
-                    ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup)
+                    ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobNames)
                     : null;
             // Put precalculated proteins into a Map of MD5 to Protein;
             if (localPrecalculatedProteins != null) {
@@ -197,9 +195,9 @@ public class ProteinLoader implements SequenceLoader {
      *
      * @param sequenceLoadListener which handles the creation of StepInstances for the new proteins added.
      */
-    public void persist(SequenceLoadListener sequenceLoadListener) {
+    public void persist(SequenceLoadListener sequenceLoadListener, String analysisJobNames) {
         // Check any remaining proteins awaiting lookup
-        lookupProteins();
+        lookupProteins(analysisJobNames);
 
         // Persist any remaining proteins (that last batch)
         persistBatch();

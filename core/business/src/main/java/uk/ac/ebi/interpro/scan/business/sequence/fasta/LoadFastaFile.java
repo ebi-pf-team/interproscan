@@ -20,5 +20,5 @@ public interface LoadFastaFile extends Serializable {
     void setSequenceLoader(SequenceLoader sequenceLoader);
 
     @Transactional
-    void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoadListener);
+    void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoadListener, String analysisJobNames);
 }

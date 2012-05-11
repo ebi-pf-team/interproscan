@@ -68,13 +68,13 @@ public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
                 LOGGER.debug("Storing " + upi + " with sequence length " + sequence.length());
             }
         }
-        sequenceLoader.store(sequence, upi);
+        sequenceLoader.store(sequence, null, upi);
     }
 
     /**
      * Call persist on the underlying proteinLoader at the end of the transaction.
      */
     public void persist() {
-        sequenceLoader.persist(sequenceLoadListener);
+        sequenceLoader.persist(sequenceLoadListener, null);
     }
 }
