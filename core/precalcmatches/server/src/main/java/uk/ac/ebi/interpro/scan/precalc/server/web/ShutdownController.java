@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,11 +41,33 @@ public class ShutdownController {
      */
     @RequestMapping("/shutdown")
     public void shutdown(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final PrintWriter writer = response.getWriter();
-        final InetAddress localHost = InetAddress.getLocalHost();
-        final String localIP = localHost.getHostAddress();
+        boolean localRequest = false;
         final String remoteIP = request.getRemoteAddr();
-        if (localIP.equals(remoteIP) || "127.0.0.1".equals(remoteIP) || "0.0.0.0".equals(remoteIP)) {
+        if ("0:0:0:0:0:0:0:1".equals(remoteIP) || "127.0.0.1".equals(remoteIP) || "0.0.0.0".equals(remoteIP)) {
+            localRequest = true;
+        }
+        if (!localRequest) {
+            // Check just in case the external IP of the server has been passed back.
+            Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
+            // Check all network interfaces for the local IP address.
+            networkInterfaces:
+            while (e.hasMoreElements()) {
+                NetworkInterface ni = e.nextElement();
+                Enumeration<InetAddress> e2 = ni.getInetAddresses();
+                while (e2.hasMoreElements()) {
+                    InetAddress localHost = e2.nextElement();
+                    final String localIP = localHost.getHostAddress();
+                    if (localIP.equals(remoteIP)) {
+                        localRequest = true;
+                        break networkInterfaces;
+                    }
+                }
+            }
+        }
+
+
+        final PrintWriter writer = response.getWriter();
+        if (localRequest) {
             // Safe to proceed - called from the host machine.
             matchService.shutdown();
 
