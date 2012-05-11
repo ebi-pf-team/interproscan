@@ -38,7 +38,7 @@ public class NucleotideSequenceLoader implements SequenceLoader {
         this.nucleotideSequenceDAO = nucleotideSequenceDAO;
     }
 
-    public void store(String sequence, String... crossReferences) {
+    public void store(String sequence, String analysisJobNames, String... crossReferences) {
         if (sequence != null && sequence.length() > 0) {
             NucleotideSequence nucleotideSequence = new NucleotideSequence(sequence);
             if (crossReferences != null) {
@@ -82,7 +82,7 @@ public class NucleotideSequenceLoader implements SequenceLoader {
      *                             <p/>
      *                             (This implementation certainly does not need one.)
      */
-    public void persist(SequenceLoadListener sequenceLoadListener) {
+    public void persist(SequenceLoadListener sequenceLoadListener, String analysisJobNames) {
         persistBatch();
     }
 

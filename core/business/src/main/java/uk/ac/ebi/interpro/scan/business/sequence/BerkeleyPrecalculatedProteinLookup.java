@@ -62,7 +62,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * @return
      */
     @Override
-    public Protein getPrecalculated(Protein protein) {
+    public Protein getPrecalculated(Protein protein, String analysisJobNames) {
         // Check if the precalc service is configure and available.
         if (!preCalcMatchClient.isConfigured()) {
             return null;
@@ -75,7 +75,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
             if (!preCalcMatchClient.getMD5sOfProteinsAlreadyAnalysed(upperMD5).contains(upperMD5)) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Protein with MD5 " + upperMD5 + " has been analysed previously, so needs to be analysed.");
+                    LOGGER.debug("Protein with MD5 " + upperMD5 + " has not been analysed previously, so the analysis needs to be run.");
                 }
                 return null;  // Needs to be analysed.
             }
@@ -90,7 +90,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + time + "ns");
             }
             if (berkeleyMatchXML != null) {
-                berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches());
+                berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches(), analysisJobNames);
             }
             return protein;
         } catch (Exception e) {
@@ -100,7 +100,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     }
 
     @Override
-    public Set<Protein> getPrecalculated(Set<Protein> proteins) {
+    public Set<Protein> getPrecalculated(Set<Protein> proteins, String analysisJobNames) {
         // Check if the precalc service is configure and available.
         if (!preCalcMatchClient.isConfigured()) {
             return null;
@@ -145,7 +145,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + time + "ns");
             }
             if (berkeleyMatchXML != null) {
-                berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches());
+                berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobNames);
             }
             return precalculatedProteins;
         } catch (Exception e) {

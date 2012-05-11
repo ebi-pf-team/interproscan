@@ -35,7 +35,7 @@ public class LoadFastaFileImpl implements LoadFastaFile {
 
     @Override
     @Transactional
-    public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener) {
+    public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener, String analysisJobNames) {
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         BufferedReader reader = null;
         int sequencesParsed = 0;
@@ -65,7 +65,7 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                             }
                             final String seq = currentSequence.toString();
                             if (seq.trim().length() > 0) {
-                                sequenceLoader.store(seq.replaceAll("\\s+", ""), currentId);
+                                sequenceLoader.store(seq.replaceAll("\\s+", ""), analysisJobNames, currentId);
                             }
                             currentSequence.delete(0, currentSequence.length());
                         }
@@ -91,10 +91,10 @@ public class LoadFastaFileImpl implements LoadFastaFile {
             }
             // Store the final record (if there were any at all!)
             if (currentId != null) {
-                sequenceLoader.store(currentSequence.toString(), currentId);
+                sequenceLoader.store(currentSequence.toString(), analysisJobNames, currentId);
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
-            sequenceLoader.persist(sequenceLoaderListener);
+            sequenceLoader.persist(sequenceLoaderListener, analysisJobNames);
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
         } finally {

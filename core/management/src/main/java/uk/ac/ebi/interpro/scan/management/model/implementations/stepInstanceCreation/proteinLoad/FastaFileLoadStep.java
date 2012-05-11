@@ -123,7 +123,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                         new StepCreationSequenceLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
                 sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
-                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener);
+                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobNames);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Finished loading sequences and creating step instances.");
                 }

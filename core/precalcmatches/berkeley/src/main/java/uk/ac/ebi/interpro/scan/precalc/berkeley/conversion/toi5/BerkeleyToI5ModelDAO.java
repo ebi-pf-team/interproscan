@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public interface BerkeleyToI5ModelDAO {
 
-    void populateProteinMatches(Protein nonPersistedProtein, List<BerkeleyMatch> berkeleyMatches);
+    void populateProteinMatches(Protein nonPersistedProtein, List<BerkeleyMatch> berkeleyMatches, String analysisJobNames);
 
-    void populateProteinMatches(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> matches);
+    void populateProteinMatches(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> matches, String analysisJobNames);
 }
