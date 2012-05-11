@@ -13,8 +13,8 @@ import java.util.Set;
  */
 public interface PrecalculatedProteinLookup {
 
-    Protein getPrecalculated(Protein protein);
+    Protein getPrecalculated(Protein protein, String analysisJobNames);
 
-    Set<Protein> getPrecalculated(Set<Protein> proteins);
+    Set<Protein> getPrecalculated(Set<Protein> proteins, String analysisJobNames);
 
 }

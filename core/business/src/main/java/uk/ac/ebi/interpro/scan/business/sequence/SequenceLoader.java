@@ -12,8 +12,8 @@ import java.io.Serializable;
  */
 public interface SequenceLoader extends Serializable {
 
-    void store(String sequence, String... crossReferences);
+    void store(String sequence, String analysisJobNames, String... crossReferences);
 
-    void persist(SequenceLoadListener sequenceLoadListener);
+    void persist(SequenceLoadListener sequenceLoadListener, String analysisJobNames);
 
 }
