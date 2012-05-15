@@ -1,0 +1,24 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#  Version 3.2 - 6/24/95
+#     Alternative Ciliate Macronuclear renamed to Euplotid Macronuclear
+#
+# Differences from the Standard Code:
+# 	Code 10     Standard
+# UGA 	Cys  C        Ter  *
+# 
+# Systematic Range: 
+# Ciliata: Euplotidae (Hoffman et al. 1995). 
+
+Genetic Code [10]
+   
+Euplotid Nuclear
+    
+AAs  =   FFLLSSSSYY**CCCWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+Starts = -----------------------------------M----------------------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+  

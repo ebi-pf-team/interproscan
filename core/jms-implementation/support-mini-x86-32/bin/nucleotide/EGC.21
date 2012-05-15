@@ -1,0 +1,41 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#  Version 3.5
+#     Added code 21, Trematode Mitochondrial
+#       (as deduced from: Garey & Wolstenholme,1989; Ohama et al, 1990)
+#
+# Systematic Range:
+#
+# Trematoda: Ohama, T, S.  Osawa, K.  Watanabe, T.H.  Jukes, 1990.  J. 
+# Molec Evol.  30 Garey, J.R.  and D.R.  Wolstenholme, 1989.  J.  Molec. 
+# Evol.  28: 374-387 329-332. 
+# 
+# Other Alternative Initiation Codons
+#
+# GUG, UUG (and possibly CUG) in the Archaea (Noelling et al., unpublished) 
+#
+# AUA, GUG, UUG, and AUC or AAG may be used (at least in experimental
+# systems) by the yeasts Saccharomyces cerevisiae (Olsen, 1987, and references
+# therein). 
+#
+# ACG initiates translation of certain proteins in the adeno-associated virus
+# type 2 (Becerra et al., 1985), the phage T7 mutant CR17 (Anderson and
+# Buzash-Pollert, 1985), Sendai virus (Gupta and Patwardhan, 1988), and rice
+# chloroplast (Hiratsuka et al., 1989). Also, it is the most effective non-AUG
+# initiation codon in mammalin cells (Koepke and Leggatt, 1991). 
+#
+# CUG is the initiation codon for one of the two alternative products of the
+# human c-myc gene (Hann et al., 1987). 
+#
+
+Genetic Code [21]
+
+Trematode Mitochondrial
+
+AAs  =   FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNNKSSSSVVVVAAAADDEEGGGG
+Starts = -----------------------------------M---------------M------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG

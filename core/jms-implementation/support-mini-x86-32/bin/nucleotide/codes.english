@@ -1,0 +1,65 @@
+#
+# This is the EMBOSS coded prompts file. Any messages found here will
+# override those in the .acd file, and can be translated into other
+# languages. The file extension (default "english") is set by the
+# variable "emboss_language"
+#
+# Messages are referred to by .acd files as code: NAME
+#
+# DEFXXXX codes aer automatically searched for ACD type XXXX if there
+# is no information (or prompt) defined in the ACD file of as a
+# standard prompt for the ACD type.
+#
+# HELPXXXX codes are automatically searched for ACD type XXXX if there
+# is no help text in the ACD file.
+#
+
+# Default prompts: these are used where no prompt for a data type
+# has been provided.
+
+DEFALIGN     "Write output alignment to"
+DEFREPORT    "Write output report to"
+DEFINTEGER   "Enter a number"
+DEFFLOAT     "Enter a number"
+DEFBOOL      "Yes or No"
+DEFDIRECTORY "Which directory"
+DEFOUTFILE   "Write output to"
+DEFFEATOUT   "Write features  to"
+DEFSEQOUT    "Write sequence to"
+DEFSEQOUTSET "Write sequence set to"
+DEFSEQOUTALL "Write sequences to"
+DEFSEQUENCE  "Read sequence from"
+DEFSEQSET    "Read sequence set from"
+DEFSEQALL    "Read sequences from"
+DEFSTRING    "Enter text"
+DEFGRAPH     "Graph type"
+DEFXYGRAPH   "Graph type"
+DEFRANGE     "Range(s)"
+
+HELPDIRECTORY "Directory name"
+HELPOUTFILE   "Output file name"
+HELPALIGN     "Output alignment file name"
+HELPREPORT    "Output report file name"
+HELPFEATOUT   "Output features UFO"
+HELPSEQOUT    "Output sequence USA"
+HELPSEQOUTSET "Output sequence set USA"
+HELPSEQOUTALL "Output sequence(s) USA"
+HELPSEQUENCE  "Sequence USA"
+HELPSEQSET    "Sequence set USA"
+HELPSEQALL    "Sequence database USA"
+HELPGRAPH     "Graph type"
+HELPXYGRAPH   "Graph type"
+HELPCODON     "Codon usage table name"
+HELPOUTCODON  "Codon usage table name"
+
+
+# Gap penalties
+
+GAP          "What gap penalty"
+GAPEXT       "What gap extension penalty"
+
+fred "Sanger special"
+
+CIAO         "Hello from Bari"
+
+

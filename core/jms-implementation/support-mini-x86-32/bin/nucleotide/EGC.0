@@ -1,0 +1,22 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#   Version 3.1 - 1995
+#      Initial base data set from Andrzej Elzanowski (PIR/NCBI)
+#
+# Differs from Genetic Code [1] only in that the initiation sites have been
+# changed to only 'AUG'.
+#
+# This is intended to be the default genetic code where the use of
+# the rare initiation sites (CUG, UUG) is not intended.
+
+Genetic Code [0]
+
+Standard with AUG start only
+ 
+AAs  =   FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+Starts = -----------------------------------M----------------------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG

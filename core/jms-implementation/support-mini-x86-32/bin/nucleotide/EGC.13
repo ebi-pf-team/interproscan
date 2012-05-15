@@ -1,0 +1,43 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#   Version 3.1 - 1995
+#      Initial base data set from Andrzej Elzanowski (PIR/NCBI)
+#
+# Differences from the Standard Code: 
+# 
+#           Code 13     Standard
+# 
+#  AGA      Gly  G        Arg  R
+#  AGG      Gly  G        Arg  R
+#  AUA      Met  M        Ile  I
+#  UGA      Trp  W        Ter  *
+# 
+# 
+# Systematic Range and Comments: 
+# 
+# There is evidence from a phylogenetically diverse sample of tunicates
+# (Urochordata) that AGA and AGG code for glycine.  In other organisms,
+# AGA/AGG code for either arginine or serine and in vertebrate
+# mitochondria they code a STOP.  Evidence for glycine translation of
+# AGA/AGG has been found in Pyura stolonifera (Durrheim et al.  1993),
+# Halocynthia roretzi (Kondow et al.  1999, Yokobori et al., 1993,
+# Yokobori et al.  1999) and Ciona savignyi (Yokobori et al.  2003).  In
+# addition, the Halocynthia roretzi mitochondrial genome encodes an
+# additional tRNA gene with the anticodon U*CU that is thought to enable
+# the use of AGA or AGG codons for glycine and the gene has been shown to
+# be transcribed in vivo (Kondow et al.  1999, Yokobori et al.  1999). 
+
+
+Genetic Code [13]
+
+Ascidian Mitochondrial
+  
+AAs  =   FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSSGGVVVVAAAADDEEGGGG
+Starts = -----------------------------------M----------------------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+
