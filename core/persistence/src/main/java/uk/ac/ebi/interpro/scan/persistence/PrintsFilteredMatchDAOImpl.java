@@ -8,10 +8,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -57,7 +54,12 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
             String currentSignatureAc = null;
             Signature currentSignature = null;
             PrintsRawMatch lastRawMatch = null;
-            for (PrintsRawMatch rawMatch : rawProtein.getMatches()) {
+
+            // Need the matches sorted correctly so locations are grouped in the same match.
+            final TreeSet<PrintsRawMatch> sortedMatches = new TreeSet<PrintsRawMatch>(PRINTS_RAW_MATCH_COMPARATOR);
+            sortedMatches.addAll(rawProtein.getMatches());
+
+            for (PrintsRawMatch rawMatch : sortedMatches) {
                 if (rawMatch == null) continue;
 
                 if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
@@ -92,4 +94,51 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
             entityManager.flush();
         }
     }
+
+    public static final Comparator<PrintsRawMatch> PRINTS_RAW_MATCH_COMPARATOR = new Comparator<PrintsRawMatch>() {
+
+        /**
+         * This comparator is CRITICAL to the working of PRINTS post-processing, so it has been defined
+         * here rather than being the 'natural ordering' of PrintsRawMatch objects so it is not
+         * accidentally modified 'out of context'.
+         *
+         * Sorts the raw matches by:
+         *
+         * evalue (best first)
+         * model accession
+         * motif number (ascending)
+         * location start
+         * location end
+         *
+         * @param o1 the first PrintsRawMatch to be compared.
+         * @param o2 the second PrintsRawMatch to be compared.
+         * @return a negative integer, zero, or a positive integer as the
+         *         first PrintsRawMatch is less than, equal to, or greater than the
+         *         second PrintsRawMatch.
+         */
+        @Override
+        public int compare(PrintsRawMatch o1, PrintsRawMatch o2) {
+            int comparison = o1.getSequenceIdentifier().compareTo(o2.getSequenceIdentifier());
+            if (comparison == 0) {
+                if (o1.getEvalue() < o2.getEvalue()) comparison = -1;
+                else if (o1.getEvalue() > o2.getEvalue()) comparison = 1;
+            }
+            if (comparison == 0) {
+                comparison = o1.getModelId().compareTo(o2.getModelId());
+            }
+            if (comparison == 0) {
+                if (o1.getMotifNumber() < o2.getMotifNumber()) comparison = -1;
+                else if (o1.getMotifNumber() > o2.getMotifNumber()) comparison = 1;
+            }
+            if (comparison == 0) {
+                if (o1.getLocationStart() < o2.getLocationStart()) comparison = -1;
+                else if (o1.getLocationStart() > o2.getLocationStart()) comparison = 1;
+            }
+            if (comparison == 0) {
+                if (o1.getLocationEnd() < o2.getLocationEnd()) comparison = -1;
+                else if (o1.getLocationEnd() > o2.getLocationEnd()) comparison = 1;
+            }
+            return comparison;
+        }
+    };
 }
