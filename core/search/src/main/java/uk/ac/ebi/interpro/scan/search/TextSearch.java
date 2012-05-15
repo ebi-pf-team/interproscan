@@ -13,9 +13,7 @@ import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -45,6 +43,18 @@ public final class TextSearch {
         return client.getServiceEndPoint();
     }
 
+    public List<String> getFields() {
+        try {
+            return Arrays.asList(client.listFields(DOMAIN));
+        }
+        catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Page search(String query, int pageNumber, int resultsPerPage, boolean includeDescription) {
         try {
             //return client.listDomains();
@@ -54,6 +64,7 @@ public final class TextSearch {
                 List<String> f = new ArrayList<String>();
                 f.add("id");
                 f.add("name");
+                f.add("type");
                 if (includeDescription) {
                     f.add("description");
                 }
@@ -144,6 +155,12 @@ public final class TextSearch {
             throw new IllegalArgumentException("Please pass in a search term or sequence");
         }
 
+        // Get query
+        String endPointUrl = "";
+        if (args.length > 1) {
+            endPointUrl = args[1];
+        }
+
         // Is it a sequence?
         if (SequenceHelper.isProteinSequence(query)) {
 
@@ -173,7 +190,15 @@ public final class TextSearch {
             }
 
             // TODO: get resultsPerPage from args (default to 10)
-            TextSearch search = new TextSearch();
+            TextSearch search;
+            if (endPointUrl.isEmpty()) {
+                search = new TextSearch();
+            }
+            else {
+                search = new TextSearch(endPointUrl);
+            }
+
+            //System.out.println(search.getFields());
 
             // TODO: Add paging and get input from keyboard to show next page
             TextSearch.Page page = search.search(query, 1, 10, includeDescription);
