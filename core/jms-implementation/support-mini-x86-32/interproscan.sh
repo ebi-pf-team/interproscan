@@ -6,6 +6,10 @@
 
 cd $(dirname "$0")
 
+# set environment variables for getorf
+export EMBOSS_ACDROOT=bin/nucleotide
+export EMBOSS_DATA=bin/nucleotide
+
 JAVA=$(type -p java)
 
 if [[ "$JAVA" == "" ]]; then
