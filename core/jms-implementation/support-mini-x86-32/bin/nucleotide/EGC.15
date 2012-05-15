@@ -1,0 +1,29 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+# Version 3.2 - 6/24/95
+#    Blepharisma Macronuclear code added
+#
+# Differences from the Standard Code: 
+# 
+#           Code 10       Standard
+# 
+# UAG       Gln  Q        Ter  *
+# 
+# 
+# Systematic Range: 
+# 
+# Ciliata: Blepharisma (Liang and Heckman, 1993) 
+
+
+Genetic Code [15]
+  
+Blepharisma Nuclear
+  
+AAs  =   FFLLSSSSYY*QCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+Starts = -----------------------------------M----------------------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+     
