@@ -89,11 +89,27 @@ public class WriteOutputStep extends Step {
         final String filePathName = parameters.get(OUTPUT_FILE_PATH_KEY);
 
         for (FileOutputFormat outputFormat : outputFormats) {
-            File outputFile = new File(filePathName + '.' + outputFormat.getFileExtension());
-            if (outputFile.exists()) {
-                if (!outputFile.delete()) {
-                    throw new IllegalStateException("The output file already exists and cannot be overwritten.");
+            Integer counter = null;
+            boolean pathAvailable = false;
+            File outputFile = null;
+
+            // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
+            // but using an underscore rather than a space (pah!)
+            while (!pathAvailable) {
+                final StringBuilder candidateFileName = new StringBuilder(filePathName);
+                if (counter == null) {
+                    counter = 1;
+                } else {
+                    candidateFileName
+                            .append("_(")
+                            .append(counter++)
+                            .append(')');
                 }
+                candidateFileName
+                        .append('.')
+                        .append(outputFormat.getFileExtension());
+                outputFile = new File(candidateFileName.toString());
+                pathAvailable = !outputFile.exists();
             }
             try {
                 if (LOGGER.isInfoEnabled()) {
