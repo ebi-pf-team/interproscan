@@ -41,6 +41,7 @@ public class AnalyseStructuralMatchDataResult {
     public Collection<SimpleStructuralDatabase> parseStructuralMatchDataOutput(Resource resource) {
         String queryOutputText = "";
         String line = "";
+        sampleStructuralMatch = null;
 
         /*
          * Example output:
