@@ -364,6 +364,7 @@ cd ~/Projects/i5/interproscan/core/web; svn up; mvn -Plocalhost-tomcat clean tom
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
+                <resourceWebPath>/interpro5/resources</resourceWebPath>
                 <!--Model creation files-->
                 <!--Entry hierarchy data-->
                 <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
