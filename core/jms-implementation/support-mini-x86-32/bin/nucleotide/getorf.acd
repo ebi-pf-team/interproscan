@@ -1,0 +1,153 @@
+application: getorf [
+  documentation: "Finds and extracts open reading frames
+                  (ORFs)"
+  groups: "Nucleic:Gene finding"
+  relations: "/edam/topic/0000109 Gene finding"
+  relations: "/edam/operation/0000436 Coding region prediction"
+  relations: "/edam/operation/0000371 DNA translation"
+]
+
+section: input [
+  information: "Input section"
+  type: "page"
+]
+
+  seqall: sequence [
+    parameter: "Y"
+    type: "DNA"
+    relations: "/edam/data/0001215 Pure DNA sequence"
+    relations: "/edam/data/0000849 Sequence record" 
+    relations: "/edam/data/0002178 1 or more"
+  ]
+
+endsection: input
+
+section: additional [
+  information: "Additional section"
+  type: "page"
+]
+
+  list: table [
+    additional: "Y"
+    default: "0"
+    minimum: "1"
+    maximum: "1"
+    header: "Genetic codes"
+    values: "0:Standard; 1:Standard (with alternative initiation
+             codons); 2:Vertebrate Mitochondrial; 3:Yeast Mitochondrial;
+             4:Mold, Protozoan, Coelenterate Mitochondrial and
+             Mycoplasma/Spiroplasma; 5:Invertebrate Mitochondrial; 6:Ciliate
+             Macronuclear and Dasycladacean; 9:Echinoderm Mitochondrial;
+             10:Euplotid Nuclear; 11:Bacterial; 12:Alternative Yeast Nuclear;
+             13:Ascidian Mitochondrial; 14:Flatworm Mitochondrial;
+             15:Blepharisma Macronuclear; 16:Chlorophycean Mitochondrial;
+             21:Trematode Mitochondrial; 22:Scenedesmus obliquus;
+             23:Thraustochytrium Mitochondrial"
+    delimiter: ";"
+    codedelimiter: ":"
+    information: "Code to use"
+    relations: "/edam/data/0002128 Genetic code name"
+  ]
+
+  integer: minsize [
+    additional: "Y"
+    default: "30"
+    information: "Minimum nucleotide size of ORF to report"
+    relations: "/edam/data/0001249 Sequence length"
+  ]
+
+  integer: maxsize [
+    additional: "Y"
+    default: "1000000"
+    information: "Maximum nucleotide size of ORF to report"
+    relations: "/edam/data/0001249 Sequence length"
+  ]
+
+  list: find [
+    additional: "Y"
+    default: "0"
+    minimum: "1"
+    maximum: "1"
+    header: "Type of sequence to output"
+    values: "0:Translation of regions between STOP codons;
+             1:Translation of regions between START and STOP codons;
+             2:Nucleic sequences between STOP codons; 3:Nucleic sequences
+             between START and STOP codons; 4:Nucleotides flanking START
+             codons; 5:Nucleotides flanking initial STOP codons;
+             6:Nucleotides flanking ending STOP codons"
+    delimiter: ";"
+    codedelimiter: ":"
+    information: "Type of output"
+    help: "This is a small menu of possible output options. The first
+           four options are to select either the protein translation or the
+           original nucleic acid sequence of the open reading frame. There
+           are two possible definitions of an open reading frame: it can
+           either be a region that is free of STOP codons or a region that
+           begins with a START codon and ends with a STOP codon. The last
+           three options are probably only of interest to people who wish to
+           investigate the statistical properties of the regions around
+           potential START or STOP codons. The last option assumes that ORF
+           lengths are calculated between two STOP codons."
+    relations: "/edam/data/0002152 Rendering parameter"
+  ]
+
+endsection: additional
+
+section: advanced [
+  information: "Advanced section"
+  type: "page"
+]
+
+  boolean: methionine [
+    default: "Y"
+    information: "Change initial START codons to Methionine"
+    help: "START codons at the beginning of protein products will
+           usually code for Methionine, despite what the codon will code for
+           when it is internal to a protein. This qualifier sets all such
+           START codons to code for Methionine by default."
+    relations: "/edam/data/0002135 Toggle"                                     
+  ]
+
+  boolean: circular [
+    default: "N"
+    information: "Is the sequence circular"
+    relations: "/edam/data/0002135 Toggle"                                     
+  ]
+
+  boolean: reverse [
+    default: "Y"
+    information: "Find ORFs in the reverse sequence"
+    help: "Set this to be false if you do not wish to find ORFs in the
+           reverse complement of the sequence."
+    relations: "/edam/data/0002135 Toggle"                                     
+  ]
+
+  integer: flanking [
+    default: "100"
+    information: "Number of flanking nucleotides to report"
+    help: "If you have chosen one of the options of the type of
+           sequence to find that gives the flanking sequence around a STOP or
+           START codon, this allows you to set the number of nucleotides
+           either side of that codon to output. If the region of flanking
+           nucleotides crosses the start or end of the sequence, no output is
+           given for this codon."
+    relations: "/edam/data/0001249 Sequence length"
+  ]
+
+endsection: advanced
+
+section: output [
+  information: "Output section"
+  type: "page"
+]
+
+  seqoutall: outseq [
+    parameter: "Y"
+    extension: "orf"
+    type: "stopprotein"
+    relations: "/edam/data/0001208 Protein sequence"
+    relations: "/edam/data/0000849 Sequence record" 
+    relations: "/edam/data/0002178 1 or more"                             
+  ]
+
+endsection: output

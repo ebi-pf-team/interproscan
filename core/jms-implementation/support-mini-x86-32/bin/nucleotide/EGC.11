@@ -1,0 +1,47 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#  Version 3.1 - 1995
+#     Addition of Eubacterial by J.Ostell at NCBI
+#  Version 3.2 - 6/24/95
+#     Eubacterial renamed to Bacterial as most alternate starts
+#                 have been found in Archaea
+#
+# Differences from the Standard Code: 
+# 
+# None 
+# 
+# Alternative Initiation Codons: 
+# 
+# GUG, UUG, AUU, CUG 
+# 
+# Systematic Range and Comments: 
+# 
+# Table 11 is used for Bacteria, Archaea, prokaryotic viruses and
+# chloroplast proteins.  As in the standard code, initiation is most
+# efficient at AUG.  In addition, GUG and UUG starts are documented in
+# Archaea and Bacteria (Kozak 1983, Fotheringham et al.  1986, Golderer et
+# al.  1995, Nolling et al.  1995, Sazuka & Ohara 1996, Genser et al. 
+# 1998, Wang et al.  2003).  In E.  coli, UUG is estimated to serve as
+# initiator for about 3% of the bacterium's proteins (Blattner et al. 
+# 1997).  CUG is known to function as an initiator for one plasmid-encoded
+# protein (RepA) in Escherichia coli (Spiers and Bergquist, 1992).  In
+# addition to the NUG initiations, in rare cases Bacteria can initiate
+# translation from an AUU codon as e.g.  in the case of poly(A) polymerase
+# PcnB and the InfC gene that codes for translation initiation factor IF3
+# (Polard et al.  1991, Liveris et al.  1993, Sazuka & Ohara 1996, Binns &
+# Masters 2002).  The internal assignments are the same as in the standard
+# code though UGA codes at low efficiency for Trp in Bacillus subtilis
+# and, presumably, in Escherichia coli (Hatfiled and Diamond, 1993). 
+
+Genetic Code [11]
+
+Bacterial and Plant Plastid
+ 
+AAs  =   FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+Starts = ---M---------------M------------MMMM---------------M------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  =
+TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG

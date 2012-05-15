@@ -1,0 +1,42 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#  Version 3.6
+#     Added code 22 TAG-Leu, TCA-stop
+#        found in mitochondrial DNA of Scenedesmus obliquus
+#        submitted by Gertraude Berger, Ph.D.
+#        Organelle Genome Megasequencing Program, Univ Montreal
+#
+# Other Alternative Initiation Codons
+#
+# GUG, UUG (and possibly CUG) in the Archaea (Noelling et al., unpublished) 
+# AUA, GUG, UUG, and AUC or AAG may be used (at least in experimental
+# systems) by the yeasts Saccharomyces cerevisiae (Olsen, 1987, and references
+# therein). 
+#
+# ACG initiates translation of certain proteins in the adeno-associated virus
+# type 2 (Becerra et al., 1985), the phage T7 mutant CR17 (Anderson and
+# Buzash-Pollert, 1985), Sendai virus (Gupta and Patwardhan, 1988), and rice
+# chloroplast (Hiratsuka et al., 1989). Also, it is the most effective non-AUG
+# initiation codon in mammalin cells (Koepke and Leggatt, 1991). 
+#
+# CUG is the initiation codon for one of the two alternative products of the
+# human c-myc gene (Hann et al., 1987). 
+#
+# Systematic Range:
+#
+# Scenedesmus obliquus: Nedelcu A, Lee RW, Lemieux C, Gray MW and Burger G.
+# "The complete mitochondrial DNA sequence of Scenedesmus obliquus reflects an
+# intermediate stage in the evolution of the green algal mitochondrial genome."
+# Genome Research (in press). 
+
+Genetic Code [22]
+
+Scenedesmus obliquus Mitochondrial
+
+AAs  =   FFLLSS*SYY*LCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+Starts = -----------------------------------M----------------------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
