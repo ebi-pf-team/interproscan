@@ -50,8 +50,8 @@ public class XrefParser {
                 if (chunks.length == 3) {
                     String database = chunks[0];
                     String identifier = chunks[1];
-//                    String description = chunks[2];
-                    return new NucleotideSequenceXref(database, identifier);
+                    String description = chunks[2];
+                    return new NucleotideSequenceXref(database, identifier, description);
                 }
             }
             return new NucleotideSequenceXref(crossReference);
