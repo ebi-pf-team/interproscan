@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -126,7 +127,7 @@ public class PrintsPostProcessing implements Serializable {
     private RawProtein<PrintsRawMatch> processProtein(final RawProtein<PrintsRawMatch> rawProteinUnfiltered) {
 
         final RawProtein<PrintsRawMatch> filteredMatches = new RawProtein<PrintsRawMatch>(rawProteinUnfiltered.getProteinIdentifier());
-        final Set<PrintsRawMatch> sortedRawMatches = new TreeSet<PrintsRawMatch>(PRINTS_RAW_MATCH_COMPARATOR); // Gets the raw matches into the correct order for processing.
+        final Set<PrintsRawMatch> sortedRawMatches = new TreeSet<PrintsRawMatch>(PrintsFilteredMatchDAOImpl.PRINTS_RAW_MATCH_COMPARATOR); // Gets the raw matches into the correct order for processing.
         sortedRawMatches.addAll(rawProteinUnfiltered.getMatches());
         LOGGER.debug("New 'sortedRawMatches' set contains " + sortedRawMatches.size() + " matches.");
         String currentModelAccession = null;
@@ -233,50 +234,4 @@ public class PrintsPostProcessing implements Serializable {
     }
 
 
-    private static final Comparator<PrintsRawMatch> PRINTS_RAW_MATCH_COMPARATOR = new Comparator<PrintsRawMatch>() {
-
-        /**
-         * This comparator is CRITICAL to the working of PRINTS post-processing, so it has been defined
-         * here rather than being the 'natural ordering' of PrintsRawMatch objects so it is not
-         * accidentally modified 'out of context'.
-         *
-         * Sorts the raw matches by:
-         *
-         * evalue (best first)
-         * model accession
-         * motif number (ascending)
-         * location start
-         * location end
-         *
-         * @param o1 the first PrintsRawMatch to be compared.
-         * @param o2 the second PrintsRawMatch to be compared.
-         * @return a negative integer, zero, or a positive integer as the
-         *         first PrintsRawMatch is less than, equal to, or greater than the
-         *         second PrintsRawMatch.
-         */
-        @Override
-        public int compare(PrintsRawMatch o1, PrintsRawMatch o2) {
-            int comparison = o1.getSequenceIdentifier().compareTo(o2.getSequenceIdentifier());
-            if (comparison == 0) {
-                if (o1.getEvalue() < o2.getEvalue()) comparison = -1;
-                else if (o1.getEvalue() > o2.getEvalue()) comparison = 1;
-            }
-            if (comparison == 0) {
-                comparison = o1.getModelId().compareTo(o2.getModelId());
-            }
-            if (comparison == 0) {
-                if (o1.getMotifNumber() < o2.getMotifNumber()) comparison = -1;
-                else if (o1.getMotifNumber() > o2.getMotifNumber()) comparison = 1;
-            }
-            if (comparison == 0) {
-                if (o1.getLocationStart() < o2.getLocationStart()) comparison = -1;
-                else if (o1.getLocationStart() > o2.getLocationStart()) comparison = 1;
-            }
-            if (comparison == 0) {
-                if (o1.getLocationEnd() < o2.getLocationEnd()) comparison = -1;
-                else if (o1.getLocationEnd() > o2.getLocationEnd()) comparison = 1;
-            }
-            return comparison;
-        }
-    };
 }
