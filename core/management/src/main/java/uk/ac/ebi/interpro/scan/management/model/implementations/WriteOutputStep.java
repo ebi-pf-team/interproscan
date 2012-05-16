@@ -108,7 +108,11 @@ public class WriteOutputStep extends Step {
                 candidateFileName
                         .append('.')
                         .append(outputFormat.getFileExtension());
-                outputFile = new File(candidateFileName.toString());
+                if (outputFormat.getFileExtension().equals("html")) {
+                    outputFile = new File(buildTarArchiveName(candidateFileName.toString(), compressHtmlOutput));
+                } else {
+                    outputFile = new File(candidateFileName.toString());
+                }
                 pathAvailable = !outputFile.exists();
             }
             try {
@@ -214,11 +218,8 @@ public class WriteOutputStep extends Step {
             for (Protein protein : proteins) {
                 htmlResultWriter.write(protein);
             }
-            //Build and pack archive
-            String tarArchiveName = buildTarArchiveName(file.getName(), compressHtmlOutput);
-            File tarFile = new File(tarArchiveName);
             List<File> resultFiles = htmlResultWriter.getResultFiles();
-            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, tarFile, compressHtmlOutput);
+            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlOutput);
             tarArchiveBuilder.buildTarArchive();
             //Delete result files in the temp directory at the end
             for (File resultFile : resultFiles) {
