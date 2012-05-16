@@ -18,14 +18,13 @@ public interface Master extends Runnable {
     void setFastaFilePath(String fastaFilePath);
 
     /**
-     * @param outputFile if set, then the results will be output to this file in the format specified in
+     * @param outputBaseFilename if set, then the results will be output to this file in the format specified in
      *                   the field outputFormat (defaulting to XML).
      */
-    void setOutputFile(String outputFile);
+    void setOutputBaseFilename(String outputBaseFilename);
 
     /**
-     * Allows the output format to be changed from the default XML.  If no value is specified for outputFile, this
-     * value will be ignored.
+     * Allows the output formats to be changed from the default of all available formats for that sequence type.
      *
      * @param outputFormats The comma separated list of output formats.
      */
