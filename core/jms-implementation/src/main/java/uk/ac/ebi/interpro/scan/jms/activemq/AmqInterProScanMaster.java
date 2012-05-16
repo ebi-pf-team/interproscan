@@ -48,7 +48,7 @@ public class AmqInterProScanMaster implements Master {
 
     private String fastaFilePath;
 
-    private String outputFile;
+    private String outputBaseFilename;
 
     /* Default value, if no output format is specified */
     private String[] outputFormats;
@@ -262,7 +262,7 @@ public class AmqInterProScanMaster implements Master {
 
 
                     // TODO - should this be && ?
-                    if (outputFile == null || fastaFilePath == null) { // i.e. If running in production mode...
+                    if (outputBaseFilename == null || fastaFilePath == null) { // i.e. If running in production mode...
                         break;
                     }
 
@@ -348,25 +348,17 @@ public class AmqInterProScanMaster implements Master {
         processOutputFormats(params, this.outputFormats);
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
-        String outputFilePath = outputFile;
-        if (outputFilePath == null || outputFilePath.equals("")) {
-            // If no file path name provided just use the same name as the input fasta file (extension will be added later)
-            outputFilePath = fastaFilePath.replaceAll("\\.fasta", "");
-        } else if (outputFilePath.contains(".")) {
-            // User should not include file extension (.tsv, .html etc) on supplied outputFilePath, but if they did then remove it!
-            int outputFilePathLength = outputFilePath.length();
-            for (FileOutputFormat format : FileOutputFormat.values()) {
-                String extension = '.' + format.getFileExtension();
-                int extensionLength = extension.length();
-                if (outputFilePathLength >= extensionLength) {
-                    if (outputFilePath.substring(outputFilePathLength - extensionLength).equalsIgnoreCase(extension)) {
-                        outputFilePath = outputFilePath.substring(0, outputFilePathLength - extensionLength);
-                        break;
-                    }
-                }
-            }
+        String outputBaseName;
+        if (outputBaseFilename == null || outputBaseFilename.equals("")) {
+            // If no output base file name provided just use the same name as the input fasta file (extension will be added later)
+            outputBaseName = fastaFilePath;
         }
-        params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputFilePath);
+        else {
+            // Use the output base file name provided (extension will be added later)
+            outputBaseName = outputBaseFilename;
+        }
+        params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputBaseName);
+
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
@@ -529,12 +521,12 @@ public class AmqInterProScanMaster implements Master {
     }
 
     /**
-     * @param outputFile If set, then the results will be output to this file in the format specified in
+     * @param outputBaseFilename If set, then the results will be output to this file in the format specified in
      *                   the field outputFormats. The application will apply the appropriate file extension automatically.
      */
     @Override
-    public void setOutputFile(String outputFile) {
-        this.outputFile = outputFile;
+    public void setOutputBaseFilename(String outputBaseFilename) {
+        this.outputBaseFilename = outputBaseFilename;
     }
 
     /**

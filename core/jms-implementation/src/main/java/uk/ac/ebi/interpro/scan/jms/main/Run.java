@@ -82,20 +82,20 @@ public class Run {
      */
     private enum I5Option {
         MODE("mode", "m", false, "Optional, the mode in which InterProScan is being run, the default mode is " + Mode.STANDALONE.getRunnableBean() + ". Must be one of: " + Mode.getCommaSepModeList() + ".", "MODE-NAME", false, false),
-        FASTA("fasta", "i", false, "Optional path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false, true),
-        OUTPUT_FORMATS("format", "F", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences is all formats, or for nucleotide sequence scan GFF3 and XML.", "OUTPUT-FORMATS", true, true),
-        OUT_FILE("out-file", "o", false, "Optional output file path/name (the file extension for the output format will be added automatically).", "OUTPUT-FILE-PATH", false, true),
-        ANALYSES("analyses", "appl", false, "Optional comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true, true),
-        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept. (0 low -> 9 high)", "JMS-PRIORITY", false, false),
-        IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation", null, false, true),
-        GOTERMS("goterms", "goterms", false, "Switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false, true),
-        PATHWAY_LOOKUP("pathways", "pa", false, "Switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false, true),
+        FASTA("fasta", "i", false, "Optional, path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false, true),
+        OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences is all formats, or for nucleotide sequence scan GFF3 and XML.", "OUTPUT-FORMATS", true, true),
+        BASE_OUT_FILENAME("output-file-base", "b", false, "Optional, base output filename.  The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-FILE-BASE", false, true),
+        ANALYSES("applications", "appl", false, "Optional, comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true, true),
+        PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept (0 low -> 9 high).", "JMS-PRIORITY", false, false),
+        IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation.", null, false, true),
+        GOTERMS("goterms", "goterms", false, "Optional, switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false, true),
+        PATHWAY_LOOKUP("pathways", "pa", false, "Optional, switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false, true),
         MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false, false),
-        SEQUENCE_TYPE("seqtype", "t", false, "The type of the input sequences (dna/rna (n) or protein (p)).", "SEQUENCE-TYPE", false, true),
-        MIN_SIZE("minsize", "ms", false, "Minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
+        SEQUENCE_TYPE("seqtype", "t", false, "Optional, the type of the input sequences (dna/rna (n) or protein (p)).  The default sequence type is protein.", "SEQUENCE-TYPE", false, true),
+        MIN_SIZE("minsize", "ms", false, "Optional, minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
                 "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false, true),
-        TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false, false),
-        TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. Default is /temp", "TEMP-DIR", false, true);
+        TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Optional, used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false, false),
+        TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. The default location is /temp.", "TEMP-DIR", false, true);
 
         private String longOpt;
 
@@ -418,8 +418,8 @@ public class Run {
                     if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
                         master.setFastaFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()));
                     }
-                    if (parsedCommandLine.hasOption(I5Option.OUT_FILE.getLongOpt())) {
-                        master.setOutputFile(parsedCommandLine.getOptionValue(I5Option.OUT_FILE.getLongOpt()));
+                    if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
+                        master.setOutputBaseFilename(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()));
                     }
                     if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
                         master.setOutputFormats(parsedOutputFormats);
