@@ -47,23 +47,24 @@ public class CreateMatchDBFromOnion {
                     "on commit preserve rows " +
                     "as " +
                     "select p.md5 as protein_md5, " +
-                    "          analt.name as signature_library_name, " +
-                    "          m.relno_major || '.' || m.relno_minor as signature_library_release, " +
-                    "          m.method_ac as signature_accession, " +
-                    "          m.seqscore as sequence_score, " +
-                    "          m.evalue, " +
-                    "          m.seq_start, " +
-                    "          m.seq_end, " +
-                    "          m.hmm_start, " +
-                    "          m.hmm_end, " +
-                    "          m.hmm_bounds " +
-                    "     from onion.cv_analysis_type analt, " +
-                    "          onion.iprscan m, onion.uniparc_protein p " +
-                    "    where m.status = 'T' " +
-                    "          and analt.name in ('PANTHER', 'SMART', 'PRINTS', 'PROSITE_PF', 'PROSITE_PT', 'PIRSF', 'PRODOM', 'SSF', 'HAMAP', 'PFAM_HMMER3', 'COILS', 'GENE3D_HMMER3', 'TIGRFAM_HMMER3', 'SIGNALP_EUK', 'SIGNALP_GRAM+', 'SIGNALP_GRAM-') " +
-                    "          and m.UPI <= 'MAX_UPI' " +
-                    "          and analt.analysis_type_id = m.analysis_type_id " +
-                    "          and m.upi = p.upi ";
+                    "        dbv.name as signature_library_name, " +
+                    "        m.relno_major || '.' || m.relno_minor as signature_library_release, " +
+                    "        m.method_ac as signature_accession, " +
+                    "        m.seqscore as sequence_score, " +
+                    "        m.evalue, " +
+                    "        m.seq_start, " +
+                    "        m.seq_end, " +
+                    "        m.hmm_start, " +
+                    "        m.hmm_end, " +
+                    "        m.hmm_bounds " +
+                    "   from onion.berkeley_db_versions dbv, " +
+                    "        onion.iprscan m, onion.uniparc_protein p " +
+                    "  where m.status = 'T' " +
+                    "        and m.relno_major = dbv.relno_major  " +
+                    "        and m.relno_minor = dbv.relno_minor " +
+                    "        and m.UPI <= 'MAX_UPI' " +
+                    "        and dbv.analysis_type_id = m.analysis_type_id " +
+                    "        and m.upi = p.upi";
 
     private static final String ADD_SIGNAL_P_DATA =
             "insert into berkley_tmp_tab " +
