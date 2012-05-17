@@ -45,7 +45,7 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("gene-3d", SignatureLibrary.GENE3D);
         libraryNameToSignatureLibrary.put("gene 3d", SignatureLibrary.GENE3D);
         libraryNameToSignatureLibrary.put("gene_3d", SignatureLibrary.GENE3D);
-        libraryNameToSignatureLibrary.put("gene_3d_hmmer3", SignatureLibrary.GENE3D);
+        libraryNameToSignatureLibrary.put("gene3d_hmmer3", SignatureLibrary.GENE3D);
 
         libraryNameToSignatureLibrary.put("prosite_patterns", SignatureLibrary.PROSITE_PATTERNS);
         libraryNameToSignatureLibrary.put("prosite-patterns", SignatureLibrary.PROSITE_PATTERNS);
@@ -58,6 +58,7 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("prosite_pf", SignatureLibrary.PROSITE_PROFILES);
 
         libraryNameToSignatureLibrary.put("tigrfams", SignatureLibrary.TIGRFAM);
+        libraryNameToSignatureLibrary.put("tigrfam_hmmer3", SignatureLibrary.TIGRFAM);
         libraryNameToSignatureLibrary.put("tigr-fam", SignatureLibrary.TIGRFAM);
         libraryNameToSignatureLibrary.put("tigr-fams", SignatureLibrary.TIGRFAM);
         libraryNameToSignatureLibrary.put("tigr_fam", SignatureLibrary.TIGRFAM);
@@ -80,6 +81,8 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("super_family", SignatureLibrary.SUPERFAMILY);
 
         libraryNameToSignatureLibrary.put("smart", SignatureLibrary.SMART);
+
+        libraryNameToSignatureLibrary.put("prints", SignatureLibrary.PRINTS);
 
         libraryNameToSignatureLibrary.put("hamap", SignatureLibrary.HAMAP);
         libraryNameToSignatureLibrary.put("signalp_euk", SignatureLibrary.SIGNALP_EUK);

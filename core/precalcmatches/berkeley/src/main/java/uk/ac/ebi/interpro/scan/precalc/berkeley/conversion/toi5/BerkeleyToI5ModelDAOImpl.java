@@ -59,30 +59,41 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             md5ToProteinMap.put(protein.getMd5().toUpperCase(), protein);
         }
 
+        List<SignatureLibrary> librariesToAnalyse = null;
+
+        if (analysisJobNames != null) {
+            librariesToAnalyse = new ArrayList<SignatureLibrary>();
+            for (String analysisJob : analysisJobNames.split(",")) {
+                // Strip off "job" and version number
+                analysisJob = analysisJob.substring(3);
+                analysisJob = analysisJob.substring(0, analysisJob.lastIndexOf('-'));
+                final SignatureLibrary matchingLibrary = SignatureLibraryLookup.lookupSignatureLibrary(analysisJob);
+                if (matchingLibrary != null) {
+                    librariesToAnalyse.add(matchingLibrary);
+                }
+            }
+        }
         // Collection of BerkeleyMatches of different kinds.
-        // Iterate over them,
         for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
 
             final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
             // Check to see if the signature library is required for the analysis.
-            if (analysisJobNames == null || analysisJobNames.toLowerCase().contains(sigLib.getName().toLowerCase())) {
+            if (librariesToAnalyse == null || librariesToAnalyse.contains(sigLib)) {
                 // Retrieve Signature to match
-                Query sigQuery = entityManager.createQuery("select s from Signature s where s.accession = :sig_ac and s.signatureLibraryRelease.version = :sig_lib_version and s.signatureLibraryRelease.library = :library");
+                Query sigQuery = entityManager.createQuery("select distinct s from Signature s where s.accession = :sig_ac and s.signatureLibraryRelease.library = :library");
                 sigQuery.setParameter("sig_ac", berkeleyMatch.getSignatureAccession());
-                sigQuery.setParameter("sig_lib_version", berkeleyMatch.getSignatureLibraryRelease());
                 sigQuery.setParameter("library", sigLib);
 
                 @SuppressWarnings("unchecked") List<Signature> signatures = sigQuery.getResultList();
+                Signature signature = null;
                 if (signatures.size() == 0) {   // This Signature is not in I5, so cannot store this one.
-                    if (LOGGER.isInfoEnabled()) {
-                        LOGGER.info("Retrieved " + berkeleyMatch + ".  Unable to persist this BerkeleyMatch as the combination of" +
-                                "Signature accession / SignatureLibrary / SignatureLibraryRelease is not in the I5 database.");
-                    }
                     continue;
+                } else if (signatures.size() > 1) {
+                    throw new IllegalStateException("This distribution appears to contain more than one version of member database " + berkeleyMatch.getSignatureLibraryName());
+                } else {
+                    signature = signatures.get(0);
                 }
-                if (signatures.size() > 1) {     // Probably this check is overkill.
-                    throw new IllegalStateException("There should not be more than one Signature with the same accession for the same Signature Database Release.");
-                }
+
                 // determine the type or the match currently being observed
                 // Retrieve the appropriate converter to turn the BerkeleyMatch into an I5 match
                 // Type is based upon the member database type.
@@ -92,7 +103,7 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
                 }
                 BerkeleyMatchConverter matchConverter = signatureLibraryToMatchConverter.get(sigLib);
                 if (matchConverter != null) {
-                    Match i5Match = matchConverter.convertMatch(berkeleyMatch, signatures.get(0));
+                    Match i5Match = matchConverter.convertMatch(berkeleyMatch, signature);
                     if (i5Match != null) {
                         // Lookup up the right protein
                         final Protein prot = md5ToProteinMap.get(berkeleyMatch.getProteinMD5().toUpperCase());
