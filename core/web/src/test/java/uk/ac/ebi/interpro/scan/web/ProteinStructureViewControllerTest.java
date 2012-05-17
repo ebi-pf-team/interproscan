@@ -38,7 +38,7 @@ public class ProteinStructureViewControllerTest {
         ProteinStructureViewController c = new ProteinStructureViewController();
         c.setEntryHierarchy(entryHierarchy);
         c.setMatchData(matchData);
-        c.proteinFeatures("P38398");
+        c.proteinBody("P38398");
     }
 
     @Test

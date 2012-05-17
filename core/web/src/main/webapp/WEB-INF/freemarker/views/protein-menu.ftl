@@ -78,6 +78,56 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+// Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
+
+            // Retrieve existing cookies and set checkbox states accordingly
+            var checkBoxIDs = ["#check-2", "#check-3", "#check-4", "#check-5", "#check-6"];
+            for (i = 0; i < checkBoxIDs.length; i++) {
+                var checkBoxId = checkBoxIDs[i];
+                var cookieVal = $.cookie(checkBoxId);
+                if (cookieVal != null) {
+                    $(checkBoxId).prop("checked", cookieVal == "true");
+                }
+            }
+
+            // and the radio button group
+            var radioCookieVal = $.cookie("colour-by-domain");
+            if (radioCookieVal != null) {
+                if (radioCookieVal == "true") {
+                    $('#domainColour').prop("checked", true);
+                }
+                else {
+                    $('#databaseColour').prop("checked", true);
+                }
+            }
+
+            // Keep the filter menu in view
+            $("#menu").jScroll();
+            // CSS switching
+            configureStylesheets($('input[name="blobColour"]:checked').attr('id') == 'domainColour'); // initialise
+
+            $('input[name="blobColour"]').change(function() {
+                configureStylesheets($('input[name="blobColour"]:checked').attr('id') == 'domainColour');
+            });
+
+            // Change event for type checkboxes (Family, Domain etc.)
+            $(".type").change(function() {
+                displayType(this);
+            });
+
+            // Initialise types
+            $(".type").each(function() {
+                displayType(this);
+            });
+
+            // Change event for un-integrated sig matches checkbox
+            $("#check-6").change(function() {
+                displayUnintegrated(this);
+            });
+
+            // Initialise un-integrated.
+            displayUnintegrated($("#check-6"));
+
         // Make the menu visible - Javascript is enabled.
         $("#menu").css('display', 'block');
     });

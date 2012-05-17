@@ -22,43 +22,30 @@
     <script src="${js_resource_protein_popups}" type="text/javascript"></script>
 </head>
 <body>
-<div id="main" role="main" class="main-content">
-    <div class="contents" id="contents">
-    <#--NOTE: Can use import with absolute URLs, so could in theory include content from DBML to aid transition!-->
-        <div class="tab">
-            <div class="Protein_tab">Protein Structure</div>
-        </div>
+<div class="contentsarea">
 
-        <div class="main-box">
-        <#if protein?? && protein.structuralDatabases?has_content>
-            <h1>
-                <#if standalone>
-                ${protein.ac}
-                    <#else>
-                    ${protein.name} <span>(${protein.ac})</span>
-                </#if>
-            </h1>
-        </#if>
+<#if protein?? && protein.ac?has_content>
+<#-- This protein accession exists, now start to display the data  -->
+<div class="main-content">
+    <div class="tab">
+        <div class="Protein_tab">Protein</div>
+    </div>
+
+    <div class="main-box">
+
+        <#include "protein-header.ftl"/>
         <#include "protein-structure-body.ftl"/>
-        </div>
     </div>
 </div>
 
-<script type="text/javascript">
+    <#else>
+    <#-- We have no information for the specified protein accession at all - not found -->
+    <p>
+        Protein accession not found.
+    </p>
+</#if>
 
-    // Tie the extra popup DIV to it's match SPAN
-    $(document).ready(function() {
-        $('span[id*="location-"]').each(
-                function(i) {
-                    <#if condensedView??>
-                        preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
-                    <#else>
-                        // No supermatches for this protein, but there are structural matches (e.g. B7ZMM2 as of InterPro release 37.0)
-                        preparePopup(this.id, 0);
-                    </#if>
-                }
-        );
-    });
-</script>
+</div>
+
 </body>
 </html>
