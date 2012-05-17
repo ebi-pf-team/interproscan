@@ -67,17 +67,6 @@ public class ProteinStructureViewController {
         return new ModelAndView("protein-structure-body", buildModelMap(retrieve(id), false));
     }
 
-    /**
-     * Returns protein structural features for inclusion in DBML
-     *
-     * @param id Protein accession or MD5 checksum, for example "P38398"
-     * @return Protein structural features for inclusion in DBML
-     */
-    @RequestMapping(value = "/{id}/features")
-    public ModelAndView proteinFeatures(@PathVariable String id) {
-        return new ModelAndView("protein-structure-features", buildModelMap(retrieve(id), false));
-    }
-
     private Map<String, Object> buildModelMap(SimpleProtein p, boolean standalone) {
         Map<String, Object> m = new HashMap<String, Object>();
         m.put("standalone", standalone);

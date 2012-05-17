@@ -69,7 +69,7 @@ public class ProteinViewController {
      */
     @RequestMapping(value = "/{id}")
     public ModelAndView protein(@PathVariable String id) {
-        return new ModelAndView("standalone-protein-page", buildModelMap(retrieve(id), true));
+        return new ModelAndView("protein", buildModelMap(retrieve(id), true));
     }
 
     /**
@@ -81,17 +81,6 @@ public class ProteinViewController {
     @RequestMapping(value = "/{id}/body")
     public ModelAndView proteinBody(@PathVariable String id) {
         return new ModelAndView("protein-body", buildModelMap(retrieve(id), false));
-    }
-
-    /**
-     * Returns protein features for inclusion in DBML
-     *
-     * @param id Protein accession or MD5 checksum, for example "P38398"
-     * @return Protein features for inclusion in DBML
-     */
-    @RequestMapping(value = "/{id}/features")
-    public ModelAndView proteinFeatures(@PathVariable String id) {
-        return new ModelAndView("protein-features", buildModelMap(retrieve(id), false));
     }
 
     /**
@@ -125,20 +114,6 @@ public class ProteinViewController {
         }
         return new ModelAndView("render-warning");
     }
-
-//    private ModelAndView getMAVFormProteinMatchesHolder(final UrlResource url) {
-//        ProteinMatchesHolder proteinMatchesHolder = deserialise(url);
-//        if (proteinMatchesHolder != null) {
-//            Set<Protein> proteins = proteinMatchesHolder.getProteins();
-//            //At the moment the protein view only works for 1 protein
-//            //Thats why we build the protein view for the first element of the set, if the set contains more than 1 protein
-//            for (Protein protein : proteins) {
-//                return new ModelAndView("protein", buildModelMap(SimpleProtein.valueOf(protein, entryHierarchy)));
-//            }
-//        }
-//        return new ModelAndView("render-warning");
-//    }
-
 
     protected Protein deserialise(final UrlResource urlResource) {
         if (urlResource.isReadable()) {
