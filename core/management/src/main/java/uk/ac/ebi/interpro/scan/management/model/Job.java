@@ -40,6 +40,8 @@ public class Job implements Serializable, BeanNameAware {
 
     private Map<String, String> mandatoryParameters;
 
+    private List<String> nonEmptyPaths;
+
     /**
      * List of steps.  this is transient so they don't all get shoved
      * over the wire when each StepExecution is run.
@@ -104,6 +106,14 @@ public class Job implements Serializable, BeanNameAware {
 
     public void setMandatoryParameters(Map<String, String> mandatoryParameters) {
         this.mandatoryParameters = mandatoryParameters;
+    }
+
+    public List<String> getNonEmptyPaths() {
+        return nonEmptyPaths;
+    }
+
+    public void setNonEmptyPaths(List<String> nonEmptyPaths) {
+        this.nonEmptyPaths = nonEmptyPaths;
     }
 
     @Override
