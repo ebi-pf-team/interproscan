@@ -292,19 +292,18 @@ public class Run {
                 //Info about active and de-active jobs is shown in the manual instruction (help) as well
                 if (args.length == 0) {
                     printHelp();
-                    System.out.println("Available analyses in this installation:");    // LEAVE as System.out
+                    System.out.println("Available analyses:");    // LEAVE as System.out
                     for (Job job : jobs.getAnalysisJobs().getJobList()) {
                         // Print out available jobs
                         System.out.printf("    %25s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
                     }
                     if (deactivatedJobs.size() > 0) {
-                        System.out.println("\nCurrently deactivated analyses in this installation:");
+                        System.out.println("\nDeactivated analyses:");
                     }
                     for (Job deactivatedJob : deactivatedJobs.keySet()) {
                         JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
                         // Print out deactivated jobs
-                        System.out.printf("    %25s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning() +
-                                " Please open properties file 'interproscan.properties' and specify a valid path.");
+                        System.out.printf("    %25s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning());
                     }
                     System.exit(1);
                 }
@@ -387,12 +386,12 @@ public class Run {
                     System.out.print("\n\nThe specified sequence type " + sequenceType + " was not recognised, expected: ");
                     StringBuilder expectedSeqTypes = new StringBuilder();
                     for (String seqType : sequenceTypes) {
-                        if(expectedSeqTypes.length()>0){
+                        if (expectedSeqTypes.length() > 0) {
                             expectedSeqTypes.append(",");
                         }
                         expectedSeqTypes.append(seqType);
                     }
-                    System.out.println(expectedSeqTypes+"\n\n");
+                    System.out.println(expectedSeqTypes + "\n\n");
                     System.exit(1);
                 }
 
@@ -507,6 +506,7 @@ public class Run {
      * Tidy an array of options for a command line option that takes multiple values.
      * For example { "Pfam,", "Gene3d,SMART", ",", ",test" } becomes { "Pfam", "Gene3d", "SMART", "test" }.
      * The validity of the options are not checked here.
+     *
      * @param options Un-tidy array of options
      * @return Array of options after tidying.
      */
