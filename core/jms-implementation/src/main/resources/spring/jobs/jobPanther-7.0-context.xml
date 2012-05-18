@@ -13,6 +13,15 @@
                   value="The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a unique resource that classifies genes by their functions, using published scientific experimental evidence and evolutionary relationships to predict function even in the absence of direct experimental evidence."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePanther-7.0"/>
+        <property name="nonEmptyPaths">
+            <list value-type="java.lang.String">
+                <value>${panther.models.dir.7.0}</value>
+                <value>${panther.perl.library.dir}</value>
+                <value>${binary.panther.path}</value>
+                <value>${binary.blastall.2.2.6.path}</value>
+                <value>${binary.hmmer2.hmmsearch.path}</value>
+            </list>
+        </property>
     </bean>
 
     <bean id="abstractPantherStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
