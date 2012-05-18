@@ -22,7 +22,7 @@ public class JobStatusChecker {
                     if (missingParameters.length() > 0) {
                         missingParameters.append(", ");
                     }
-                    missingParameters.append(paramValue);
+                    missingParameters.append(paramKey);
                 }
             }
             if (missingParameters.length() > 0) {
