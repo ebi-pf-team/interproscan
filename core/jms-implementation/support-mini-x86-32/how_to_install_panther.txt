@@ -1,0 +1,25 @@
+How to Install Panther Data in InterProScan 5
+=============================================
+
+Panther binaries are provided with InterProScan 5. However, the Panther model files are very large and do not change
+with every InterProScan 5 release, therefore they are provided in a separate distribution.
+
+1. Before Installing Panther Data:
+----------------------------------
+
+First ensure you have:
+
+- Extracted the appropriate 32-bit or 64-bit distribution of InterProScan 5;
+- Downloaded the latest Panther data files from the FTP site, e.g. panther-data-7.0.tar.gz;
+
+2. Install Panther Data:
+------------------------
+
+Extract the Panther data files to the required location, e.g.
+
+- Extract the files, e.g. "tar -pxvzf panther-data-7.0.tar.gz" into the the InterProScan 5 "data" directory;
+- Ensure the data/panther/7.0/model and data/panther/7.0/perllib directories now exist;
+
+Now check your interproscan.properties configuration file is configured correctly, e.g.
+- panther.perl.library.dir=data/panther/7.0/perllib
+- panther.models.dir.7.0=data/panther/7.0/model
