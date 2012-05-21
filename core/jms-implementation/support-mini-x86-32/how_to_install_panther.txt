@@ -26,7 +26,7 @@ The path where this is extracted will be referred to below as [InterProScan5 hom
 
 cd [InterProScan5 home]/data/
 
-wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5RC1/data/panther-data-7.0.tar.gz;
+wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/panther-data-7.0.tar.gz;
 
 This is a very large file, (approximately 4.5 GB) so you should check the MD5
 checksum on the file after you have downloaded it:
