@@ -6,6 +6,10 @@
 
 cd $(dirname "$0")
 
+# set environment variables for getorf
+export EMBOSS_ACDROOT=bin/nucleotide
+export EMBOSS_DATA=bin/nucleotide
+
 JAVA=$(type -p java)
 
 if [[ "$JAVA" == "" ]]; then
@@ -31,4 +35,4 @@ fi
 
 "$JAVA" -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=localhost:5005,suspend=y -jar -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms512M -Xmx2048M interproscan-5.jar "$@"
 
-#end 
+#end
