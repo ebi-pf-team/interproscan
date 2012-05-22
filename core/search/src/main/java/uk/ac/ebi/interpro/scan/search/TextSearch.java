@@ -71,21 +71,24 @@ public final class TextSearch {
                 String[] fields = f.toArray(new String[f.size()]);
                 String[][] results = client.getResults(DOMAIN, query, fields, pageNumber - 1, resultsPerPage);
                 for (String[] a : results) {
-                    String id = null, name = null, description = null;
+                    String id = null, name = null, type = null, description = null;
                     int len = a.length;
                     if (len > 0) {
                         id = a[0];
                         if (len > 1) {
                             name = a[1];
                             if (len > 2) {
-                                description = a[2];
+                                type = a[2];
+                                if (len > 3) {
+                                    description = a[3];
+                                }
                             }
                         }
                     }
                     else {
                         throw new IllegalStateException("No results, yet result count reported as " + count);
                     }
-                    records.add(new Record(id, name, description));
+                    records.add(new Record(id, name, type, description));
                 }
             }
             return new Page(count, records);
@@ -122,11 +125,13 @@ public final class TextSearch {
 
         private final String id;
         private final String name;
+        private final String type;
         private final String description;
 
-        public Record(String id, String name, String description) {
+        public Record(String id, String name, String type, String description) {
             this.id          = id;
             this.name        = name;
+            this.type        = type;
             this.description = description;
         }
 
@@ -136,6 +141,10 @@ public final class TextSearch {
 
         public String getName() {
             return name;
+        }
+
+        public String getType() {
+            return type;
         }
 
         public String getDescription() {
@@ -185,8 +194,8 @@ public final class TextSearch {
             // It's not a sequence
 
             boolean includeDescription = false;
-            if (args.length > 1) {
-                includeDescription = Boolean.valueOf(args[1]);
+            if (args.length > 2) {
+                includeDescription = Boolean.valueOf(args[2]);
             }
 
             // TODO: get resultsPerPage from args (default to 10)
@@ -204,17 +213,17 @@ public final class TextSearch {
             TextSearch.Page page = search.search(query, 1, 10, includeDescription);
             List<TextSearch.Record> records = page.getRecords();
 
-            if (page.count > 0) {
-                System.out.println("Found " + page.count + " results for '" + query + "'.");
+            if (page.getCount() > 0) {
+                System.out.println("Found " + page.getCount() + " results for '" + query + "'.");
                 if (records.size() > 9) {
                     System.out.println("Showing results 1 to " + records.size() + ":");
                 }
                 System.out.println();
                 for (TextSearch.Record r : records) {
-                    System.out.println(r.name + " (" + r.id + ")");
-                    if (r.description != null) {
+                    System.out.println(r.getName() + " (" + r.getId() + ") [" + r.getType() + "]");
+                    if (r.getDescription() != null) {
                         // TODO: Show only 5 words either same of query? What if fuzzy query? Better if search index does this!
-                        System.out.println(r.description);
+                        System.out.println(r.getDescription());
                         System.out.println("-------------------------------------------------------------------------------");
                     }
                 }
