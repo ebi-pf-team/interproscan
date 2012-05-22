@@ -100,10 +100,10 @@ public class WriteOutputStep extends Step {
                 if (counter == null) {
                     counter = 1;
                 } else {
+                    // E.g. Output file name could become "test_proteins.fasta_1.tsv"
                     candidateFileName
-                            .append("_(")
-                            .append(counter++)
-                            .append(')');
+                            .append("_")
+                            .append(counter++);
                 }
                 candidateFileName
                         .append('.')
