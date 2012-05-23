@@ -41,6 +41,6 @@ in standalone mode only (the InterPro website code will supply this information 
     <#--<#if ! standalone>-->
         <div class="prot_gal_source">Source: <span>UniProtKB/Swiss-Prot</span></div>
     <#--</#if>-->
-    <hr/>
+   <br/> <hr/>
 </div>
 </#if>
