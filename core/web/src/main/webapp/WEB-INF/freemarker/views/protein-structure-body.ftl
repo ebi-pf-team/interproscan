@@ -15,10 +15,10 @@
         <div class="top-row">
             <div class="top-row-id">
                 <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-                    <h1>Summary view</h1>
+                    <h1>Sequence features summary</h1>
                 </#if>
             </div>
-            <div class="top-row-opt"><a href="#" title="Open sequence summary view in a new window"><span
+            <div class="top-row-opt"><a href="#" title="Open sequence features summary view in a new window"><span
                     class="opt1"></span></a></div>
         </div>
 
