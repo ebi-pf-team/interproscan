@@ -344,12 +344,12 @@ Add the following XML to your ~/.m2/settings.xml file, to provide the server cre
 
 2) OPTIONALLY, If you have changed any code that the web module is dependent upon (e.g. in model):
 
-cd ~/Projects/i5/interproscan/core; svn up; mvn clean install
+cd ~/Projects/i5/interproscan/core; mvn clean install
 
 
 3) Build and deploy the web application:
 
-cd ~/Projects/i5/interproscan/core/web; svn up; mvn -Plocalhost-tomcat clean tomcat:redeploy
+cd ~/Projects/i5/interproscan/core/web; mvn -Plocalhost-tomcat clean tomcat:redeploy
 
                  -->
             <properties>
