@@ -62,7 +62,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">proteins/${uniprot_ac}</stringProp>
+          <stringProp name="HTTPSampler.path">interpro5/proteins/${uniprot_ac}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -75,7 +75,7 @@
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Protein Overview OK" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="-1144872119">&lt;/body&gt;</stringProp>
-              <stringProp name="1590959080">((\&lt;span class\=\&quot;match)|(Sorry, no structural data found))</stringProp>
+              <stringProp name="90621381">((Sequence features summary)|(No match data found for this protein))</stringProp>
             </collectionProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
@@ -93,7 +93,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">protein-structures/${uniprot_ac}</stringProp>
+          <stringProp name="HTTPSampler.path">interpro5/protein-structures/${uniprot_ac}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -106,7 +106,7 @@
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Protein Structure OK" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="-1144872119">&lt;/body&gt;</stringProp>
-              <stringProp name="-1854426356">((\&lt;li class\=\&quot;structural-feature\&quot;\&gt;)|(\&lt;li class\=\&quot;structural-prediction\&quot;\&gt;)|(Sorry, no structural data found))</stringProp>
+              <stringProp name="-1598155216">((Sequence features summary)|(\&lt;li class\=\&quot;structural-prediction\&quot;\&gt;)|(No structural match data found for this protein))</stringProp>
             </collectionProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
             <boolProp name="Assertion.assume_success">false</boolProp>
