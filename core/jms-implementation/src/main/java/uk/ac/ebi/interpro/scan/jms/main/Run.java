@@ -96,7 +96,7 @@ public class Run {
                 "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false, true),
         TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Optional, used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false, false),
         TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. The default location is /temp.", "TEMP-DIR", false, true),
-        OUTPUT_FILE("outfile", "o", true, "Optional explicit output file name.  Note that this option and the --output-file-base (-b) option are mutually exclusive. If this option is given, you MUST specify a single output format using the -f option.  The output file name will not be modified. Note that specifying an output file name using this option OVERWRITES ANY EXISTING FILE.", "EXPLICIT_OUTPUT_FILENAME", false, false),;
+        OUTPUT_FILE("outfile", "o", false, "Optional explicit output file name.  Note that this option and the --output-file-base (-b) option are mutually exclusive. If this option is given, you MUST specify a single output format using the -f option.  The output file name will not be modified. Note that specifying an output file name using this option OVERWRITES ANY EXISTING FILE.", "EXPLICIT_OUTPUT_FILENAME", false, true),;
 
         private String longOpt;
 
@@ -430,7 +430,7 @@ public class Run {
                         }
 
                         if (haveSetBaseOutputFileName) {
-                            System.out.println("The -b (base output file name) and -o (explicit output file name) options are mutually exclusive.");
+                            System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
                             System.exit(3);
                         }
                         master.setExplicitOutputFilename(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()));
