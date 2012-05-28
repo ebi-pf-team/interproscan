@@ -19,7 +19,7 @@ public interface Master extends Runnable {
 
     /**
      * @param outputBaseFilename if set, then the results will be output to this file in the format specified in
-     *                   the field outputFormat (defaulting to XML).
+     *                           the field outputFormat (defaulting to XML).
      */
     void setOutputBaseFilename(String outputBaseFilename);
 
@@ -87,4 +87,13 @@ public interface Master extends Runnable {
      * @param temporaryDirectory Specified as a command-line option. Will overwrite the default ([I5-home]/temp) one.
      */
     void setTemporaryDirectory(String temporaryDirectory);
+
+    /**
+     * Allows an explicit (i.e. not modifiable) output file name to be specified.  If this is set,
+     * it is guaranteed that the user has specified a single output form (excluding HTML) and
+     * is responsible for giving the file a sensible name on a writable path.
+     *
+     * @param explicitFileName to be set.
+     */
+    void setExplicitOutputFilename(String explicitFileName);
 }

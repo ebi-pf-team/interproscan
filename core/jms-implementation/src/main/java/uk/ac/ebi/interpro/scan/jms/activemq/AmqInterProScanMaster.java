@@ -84,6 +84,8 @@ public class AmqInterProScanMaster implements Master {
 
     private String temporaryFileDirSuffix;
 
+    private String explicitFileName;
+
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
     }
@@ -262,7 +264,7 @@ public class AmqInterProScanMaster implements Master {
 
 
                     // TODO - should this be && ?
-                    if (outputBaseFilename == null || fastaFilePath == null) { // i.e. If running in production mode...
+                    if ((outputBaseFilename == null && explicitFileName == null) || fastaFilePath == null) { // i.e. If running in production mode...
                         break;
                     }
 
@@ -349,15 +351,18 @@ public class AmqInterProScanMaster implements Master {
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
 
         String outputBaseName;
-        if (outputBaseFilename == null || outputBaseFilename.equals("")) {
+        if (outputBaseFilename == null || outputBaseFilename.isEmpty()) {
             // If no output base file name provided just use the same name as the input fasta file (extension will be added later)
             outputBaseName = fastaFilePath;
-        }
-        else {
+        } else {
             // Use the output base file name provided (extension will be added later)
             outputBaseName = outputBaseFilename;
         }
-        params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputBaseName);
+        if (explicitFileName == null) {
+            params.put(WriteOutputStep.OUTPUT_FILE_PATH_KEY, outputBaseName);
+        } else {
+            params.put(WriteOutputStep.OUTPUT_EXPLICIT_FILE_PATH_KEY, explicitFileName);
+        }
 
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
@@ -520,9 +525,14 @@ public class AmqInterProScanMaster implements Master {
         this.baseDirectoryTemporaryFiles = temporaryDirectory;
     }
 
+    @Override
+    public void setExplicitOutputFilename(String explicitFileName) {
+        this.explicitFileName = explicitFileName;
+    }
+
     /**
      * @param outputBaseFilename If set, then the results will be output to this file in the format specified in
-     *                   the field outputFormats. The application will apply the appropriate file extension automatically.
+     *                           the field outputFormats. The application will apply the appropriate file extension automatically.
      */
     @Override
     public void setOutputBaseFilename(String outputBaseFilename) {
