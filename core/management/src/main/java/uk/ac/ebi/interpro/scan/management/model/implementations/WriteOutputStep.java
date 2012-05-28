@@ -46,6 +46,8 @@ public class WriteOutputStep extends Step {
 
     private boolean compressHtmlOutput;
 
+    public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
+
     @Required
     public void setCompressHtmlOutput(boolean compressHtmlOutput) {
         this.compressHtmlOutput = compressHtmlOutput;
@@ -86,34 +88,47 @@ public class WriteOutputStep extends Step {
         final Map<String, String> parameters = stepInstance.getParameters();
         final String outputFormatStr = parameters.get(OUTPUT_FILE_FORMATS);
         final Set<FileOutputFormat> outputFormats = FileOutputFormat.stringToFileOutputFormats(outputFormatStr);
-        final String filePathName = parameters.get(OUTPUT_FILE_PATH_KEY);
+        boolean explicitPath = parameters.containsKey(OUTPUT_EXPLICIT_FILE_PATH_KEY);
+        final String filePathName = (explicitPath)
+                ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
+                : parameters.get(OUTPUT_FILE_PATH_KEY);
 
         for (FileOutputFormat outputFormat : outputFormats) {
             Integer counter = null;
             boolean pathAvailable = false;
             File outputFile = null;
 
-            // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
-            // but using an underscore rather than a space (pah!)
-            while (!pathAvailable) {
-                final StringBuilder candidateFileName = new StringBuilder(filePathName);
-                if (counter == null) {
-                    counter = 1;
-                } else {
-                    // E.g. Output file name could become "test_proteins.fasta_1.tsv"
+            if (explicitPath) {
+                outputFile = new File(filePathName);
+                if (outputFile.exists()) {
+                    if (!outputFile.delete()) {
+                        System.out.println("Unable to overwrite file " + outputFile + ".  Please check file permissions.");
+                        System.exit(101);
+                    }
+                }
+            } else {
+                // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
+                // but using an underscore rather than a space (pah!)
+                while (!pathAvailable) {
+                    final StringBuilder candidateFileName = new StringBuilder(filePathName);
+                    if (counter == null) {
+                        counter = 1;
+                    } else {
+                        // E.g. Output file name could become "test_proteins.fasta_1.tsv"
+                        candidateFileName
+                                .append('_')
+                                .append(counter++);
+                    }
                     candidateFileName
-                            .append("_")
-                            .append(counter++);
+                            .append('.')
+                            .append(outputFormat.getFileExtension());
+                    if (outputFormat.getFileExtension().equals("html")) {
+                        outputFile = new File(buildTarArchiveName(candidateFileName.toString(), compressHtmlOutput));
+                    } else {
+                        outputFile = new File(candidateFileName.toString());
+                    }
+                    pathAvailable = !outputFile.exists();
                 }
-                candidateFileName
-                        .append('.')
-                        .append(outputFormat.getFileExtension());
-                if (outputFormat.getFileExtension().equals("html")) {
-                    outputFile = new File(buildTarArchiveName(candidateFileName.toString(), compressHtmlOutput));
-                } else {
-                    outputFile = new File(candidateFileName.toString());
-                }
-                pathAvailable = !outputFile.exists();
             }
             try {
                 if (LOGGER.isInfoEnabled()) {
