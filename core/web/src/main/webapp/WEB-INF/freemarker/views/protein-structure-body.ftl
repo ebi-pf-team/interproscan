@@ -54,106 +54,106 @@
 
         <#global locationId=0>
 
-        <#if (protein.structuralFeatures?size>0) >
 
+        <#if ((protein.structuralFeatures?size>0) || (protein.structuralPredictions?size>0))>
             <div class="prot_entries">
-                <h1>Sequence features</h1>
-                <ol class="entries">
-                    <li class="entry">
-                        <div class="top-row">
-                            <div class="top-row-id"> no IPR</div>
-                            <div class="top-row-name">Structural features</div>
-                        </div>
-                        <div class="bot-row">
-                            <div class="bot-row-line-top"></div>
-                            <ol class="signatures">
-                                <#list protein.structuralFeatures as feature>
-                                    <li>
+                <h1>Structural features and predictions</h1>
+                <#if (protein.structuralFeatures?size>0) >
+                    <ol class="entries">
+                        <li class="entry">
+                            <div class="top-row">
+                                <div class="top-row-id"> no IPR</div>
+                                <div class="top-row-name">Structural features</div>
+                            </div>
+                            <div class="bot-row">
+                                <div class="bot-row-line-top"></div>
+                                <ol class="signatures">
+                                    <#list protein.structuralFeatures as feature>
+                                        <li>
 
-                                        <!--
-                                            Structural match data structure:
+                                            <!--
+                                                Structural match data structure:
 
-                                            database (SimpleStructuralMatchDatabase)
-                                            -- databaseName (String)
-                                            -- structuralMatches (Map<SimpleLocation, SimpleStructuralMatchData>)
+                                                database (SimpleStructuralMatchDatabase)
+                                                -- databaseName (String)
+                                                -- structuralMatches (Map<SimpleLocation, SimpleStructuralMatchData>)
 
-                                            location (SimpleLocation)
-                                            -- start (int)
-                                            -- end (int)
+                                                location (SimpleLocation)
+                                                -- start (int)
+                                                -- end (int)
 
-                                            locationData (SimpleStructuralMatchData)
-                                            -- locationDataMap (Map<String, List<String>>)
-                                        -->
-                                        <div class="bot-row-signame">${feature.dataSource.sourceName}</div>
-                                        <div class="bot-row-line">
-                                            <div class="matches">
+                                                locationData (SimpleStructuralMatchData)
+                                                -- locationDataMap (Map<String, List<String>>)
+                                            -->
+                                            <div class="bot-row-signame">${feature.dataSource.sourceName}</div>
+                                            <div class="bot-row-line">
+                                                <div class="matches">
 
-                                                <#assign structuralMatchesMap = feature.structuralMatches>
+                                                    <#assign structuralMatchesMap = feature.structuralMatches>
                                 <#list structuralMatchesMap?keys as key>
-                                                <#assign location=key>
-                                                <#assign locationId=locationId?number?int + 1>
-                                            <@structuralLocationMacro.structuralLocation smid=locationId protein=protein location=location structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource />
-                                            </#list>
+                                                    <#assign location=key>
+                                                    <#assign locationId=locationId?number?int + 1>
+                                                <@structuralLocationMacro.structuralLocation smid=locationId protein=protein location=location structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource />
+                                                </#list>
 
+                                                </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                </#list>
-                            </ol>
-                            <div class="bot-row-line-bot"></div>
-                        </div>
-                    </li>
-                </ol>
-            </div>
-        </#if>
+                                        </li>
+                                    </#list>
+                                </ol>
+                                <div class="bot-row-line-bot"></div>
+                            </div>
+                        </li>
+                    </ol>
+                </#if>
 
-        <#if (protein.structuralPredictions?size>0)>
-            <div class="prot_entries" id="uni">
-                <ol class="entries">
-                    <li class="entry">
-                        <div class="top-row">
-                            <div class="top-row-id"> no IPR</div>
-                            <div class="top-row-name">Structural predictions</div>
-                        </div>
-                        <div class="bot-row">
-                            <div class="bot-row-line-top"></div>
-                            <ol class="signatures">
+                <#if (protein.structuralPredictions?size>0)>
+                    <ol class="entries">
+                        <li class="entry">
+                            <div class="top-row">
+                                <div class="top-row-id"> no IPR</div>
+                                <div class="top-row-name">Structural predictions</div>
+                            </div>
+                            <div class="bot-row">
+                                <div class="bot-row-line-top"></div>
+                                <ol class="signatures">
 
-                                <#list protein.structuralPredictions as feature>
-                                    <li>
-                                        <!--
-                                            Structural match data structure:
+                                    <#list protein.structuralPredictions as feature>
+                                        <li>
+                                            <!--
+                                                Structural match data structure:
 
-                                            database (SimpleStructuralMatchDatabase)
-                                            -- databaseName (String)
-                                            -- structuralMatches (Map<SimpleLocation, SimpleStructuralMatchData>)
+                                                database (SimpleStructuralMatchDatabase)
+                                                -- databaseName (String)
+                                                -- structuralMatches (Map<SimpleLocation, SimpleStructuralMatchData>)
 
-                                            location (SimpleLocation)
-                                            -- start (int)
-                                            -- end (int)
+                                                location (SimpleLocation)
+                                                -- start (int)
+                                                -- end (int)
 
-                                            locationData (SimpleStructuralMatchData)
-                                            -- locationDataMap (Map<String, List<String>>)
-                                        -->
+                                                locationData (SimpleStructuralMatchData)
+                                                -- locationDataMap (Map<String, List<String>>)
+                                            -->
 
-                                        <div class="bot-row-signame">${feature.dataSource.sourceName}</div>
-                                        <div class="bot-row-line">
-                                            <div class="matches">
+                                            <div class="bot-row-signame">${feature.dataSource.sourceName}</div>
+                                            <div class="bot-row-line">
+                                                <div class="matches">
 
-                                                <#assign structuralMatchesMap = feature.structuralMatches>
+                                                    <#assign structuralMatchesMap = feature.structuralMatches>
                             <#list structuralMatchesMap?keys as key>
-                                                <#assign location=key>
-                                                <#assign locationId=locationId?number?int + 1>
-                                            <@structuralLocationMacro.structuralLocation smid=locationId protein=protein location=key structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource/>
-                                            </#list>
+                                                    <#assign location=key>
+                                                    <#assign locationId=locationId?number?int + 1>
+                                                <@structuralLocationMacro.structuralLocation smid=locationId protein=protein location=key structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource/>
+                                                </#list>
 
 
-                                    </li>
-                                </#list>
-                            </ol>
-                            <div class="bot-row-line-bot"></div>
-                    </li>
-                </ol>
+                                        </li>
+                                    </#list>
+                                </ol>
+                                <div class="bot-row-line-bot"></div>
+                        </li>
+                    </ol>
+                </#if>
             </div>
         </#if>
 
