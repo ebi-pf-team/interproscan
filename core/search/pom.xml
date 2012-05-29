@@ -73,7 +73,6 @@
                         <configuration>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <!--TODO: Add profile so can use frontier.ebi.ac.uk instead-->
                                     <wsdl>http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
