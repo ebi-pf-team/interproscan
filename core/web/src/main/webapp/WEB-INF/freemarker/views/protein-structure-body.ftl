@@ -175,7 +175,7 @@
         </script>
         <#else>
         <#--Nothing to display!-->
-            <b>No structural data found for this protein.</b>
+            <b>No structural match data found for this protein.</b>
     </#if>
     <#else>
         <b>No structural match data found for this protein.</b>
