@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -25,8 +26,6 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
     protected static final Pattern SEQID_FIELD_PATTERN = Pattern.compile("[^a-zA-Z0-9.:^*$@!+_?\\-|]+");
 
     protected final static String MATCH_STRING_SEPARATOR = "$";
-
-    private final static String ESCAPED_MATCH_STRING_SEPARATOR = "\\" + MATCH_STRING_SEPARATOR;
 
     protected final static String MATCH_STRING = "match" + MATCH_STRING_SEPARATOR;
 
@@ -61,9 +60,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
     }
 
     protected void addFASTASeqToMap(String key, String value) {
-        if (identifierToSeqMap != null) {
-            identifierToSeqMap.put(key, value);
-        }
+        identifierToSeqMap.put(key, value);
     }
 
     public Map<String, String> getIdentifierToSeqMap() {
@@ -115,31 +112,52 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
         }
     }
 
+    /**
+     * Pattern matchers for match id.
+     * <p/>
+     * Group 1: signature code (not the signature accession)
+     * Group 2: start coordinate
+     * Group 3: end coordinate
+     */
+    private static final Pattern MATCH_ID_PATTERN = Pattern.compile("^match\\$(\\d+)_(\\d+)_(\\d+)$");
+
     public static class Gff3FastaSeqIdComparator implements Comparator<String>, Serializable {
 
+        /**
+         * Sorts on the following:
+         * <p/>
+         * 1. The integer used to uniquely identify the signature
+         * 2. earliest start position
+         * 3. earliest stop position
+         *
+         * @param s1
+         * @param s2
+         * @return
+         */
         public int compare(String s1, String s2) {
-            if (s1.startsWith(MATCH_STRING) && s2.startsWith(MATCH_STRING)) {
-                String[] chunksOfS1 = s1.split(ESCAPED_MATCH_STRING_SEPARATOR);
-                String[] chunksOfS2 = s2.split(ESCAPED_MATCH_STRING_SEPARATOR);
-                if (chunksOfS1.length == 2 && chunksOfS2.length == 2) {
-                    String[] numericalChunksS1 = chunksOfS1[1].split("_");
-                    String[] numericalChunksS2 = chunksOfS2[1].split("_");
-                    int numChunksS1Length = numericalChunksS1.length;
-                    int numChunksS2Length = numericalChunksS2.length;
-                    if (numChunksS1Length > 0 && numChunksS2Length > 0) {
-                        int matchIdS1 = Integer.parseInt(numericalChunksS1[0]);
-                        int matchIdS2 = Integer.parseInt(numericalChunksS2[0]);
-                        if ((numChunksS1Length == 3 && numChunksS2Length == 3)
-                                && (matchIdS1 == matchIdS2)) {
-                            int startIndexS1 = Integer.parseInt(numericalChunksS1[1]);
-                            int startIndexS2 = Integer.parseInt(numericalChunksS2[1]);
-                            return startIndexS1 - startIndexS2;
-                        } else {
-                            return matchIdS1 - matchIdS2;
-                        }
-                    }
+            final Matcher match1 = MATCH_ID_PATTERN.matcher(s1);
+            final Matcher match2 = MATCH_ID_PATTERN.matcher(s2);
+
+            if (match1.matches() && match2.matches()) {
+                // Attempt to sort on match (signature) id number
+                int signature1 = Integer.parseInt(match1.group(1));
+                int signature2 = Integer.parseInt(match2.group(1));
+                int comparison = (signature1 < signature2) ? -1 : (signature1 > signature2) ? 1 : 0;
+
+                if (comparison == 0) {
+                    // match (signature) id number equal - attempt to sort on start position
+                    int start1 = Integer.parseInt(match1.group(2));
+                    int start2 = Integer.parseInt(match2.group(2));
+                    comparison = (start1 < start2) ? -1 : (start1 > start2) ? 1 : 0;
                 }
-                return 0;
+
+                if (comparison == 0) {
+                    // Start positions are equal - attempt to sort on end position
+                    int end1 = Integer.parseInt(match1.group(3));
+                    int end2 = Integer.parseInt(match2.group(3));
+                    comparison = (end1 < end2) ? -1 : (end1 > end2) ? 1 : 0;
+                }
+                return comparison;
             } else {
                 int seqLength1 = s1.length(), n2 = s2.length();
                 //Compares character by character
@@ -164,22 +182,45 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
     }
 
     /**
+     * Pre-compiled regexes for the replacements in the following two methods.
+     */
+    private static final Pattern COMMA = Pattern.compile(",");
+    private static final Pattern EQUALS = Pattern.compile("=");
+    private static final Pattern SEMICOLON = Pattern.compile(";");
+    private static final Pattern SPACE = Pattern.compile(" ");
+
+    /**
      * There are a couple of restrictions for the first column (seqid) of a GFF file. This method makes sure that these rules are followed.
+     *
+     * @param gffId to be filtered
      */
     protected static String getValidGFF3SeqId(String gffId) {
-        return gffId
-                .replaceAll(" ", "_")
-                .replaceAll(SEQID_FIELD_PATTERN.pattern(), "");
+        if (gffId.indexOf(' ') != -1) {
+            gffId = SPACE.matcher(gffId).replaceAll("_");
+        }
+        return SEQID_FIELD_PATTERN.matcher(gffId).replaceAll("");
     }
+
 
     /**
      * URL escaping rules are used for tags or values containing the following characters: ",=;".
+     *
+     * @param attributeName to be filtered.
      */
     protected static String getValidGFF3AttributeName(String attributeName) {
-        return attributeName
-                .replaceAll(",", "%2C")
-                .replaceAll("=", "%3D")
-                .replaceAll(";", "%3B");
+        // Testing with indexOf before attempting the replaceAll, as it is much faster
+        // than running the regex engine
+
+        if (attributeName.indexOf(',') != -1) {
+            attributeName = COMMA.matcher(attributeName).replaceAll("%2C");
+        }
+        if (attributeName.indexOf('=') != -1) {
+            attributeName = EQUALS.matcher(attributeName).replaceAll("%3D");
+        }
+        if (attributeName.indexOf(';') != -1) {
+            attributeName = SEMICOLON.matcher(attributeName).replaceAll("%3B");
+        }
+        return attributeName;
     }
 
     protected GFF3Feature buildMatchFeature(String seqId, String analysis, int locStart, int locEnd, String score,
@@ -222,18 +263,27 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                         score = Double.toString(((HmmerLocation) location).getEvalue());
                     }
                     //Build match feature line
-                    int locStart = location.getStart();
+                    final int locStart = location.getStart();
                     int locEnd = location.getEnd();
-                    final StringBuilder matchIdLocation = new StringBuilder();
-                    if (locations.size() > 1) {
-                        matchIdLocation.append("_").append(locStart).append("_").append(locEnd);
-                    }
+                    final StringBuilder matchIdLocation = new StringBuilder(matchId);
+                    matchIdLocation
+                            .append('_')
+                            .append(locStart)
+                            .append('_')
+                            .append(locEnd);
+                    System.out.println(matchIdLocation.toString());
                     GFF3Feature matchFeature = buildMatchFeature(seqId, analysis, locStart, locEnd, score, description, status,
-                            date, matchId + matchIdLocation, targetId, signatureAc, signature.getEntry());
+                            date, matchIdLocation.toString(), targetId, signatureAc, signature.getEntry());
                     //Write match feature to file
                     gffWriter.write(matchFeature.getGFF3FeatureLine());
                     //Add match sequence to the map
-                    addFASTASeqToMap(matchId + matchIdLocation, protein.getSequence().substring(locStart, locEnd));
+
+                    // Sometimes the end location output by the search algorithm can be after the end of
+                    // the actual sequence - make sure we don't go off the end of the sequence.
+                    final int sequenceLength = protein.getSequence().length();
+                    final int endIndex = (locEnd > sequenceLength) ? sequenceLength : locEnd;
+
+                    addFASTASeqToMap(matchIdLocation.toString(), protein.getSequence().substring(locStart - 1, endIndex));
                 }
             }
         }
