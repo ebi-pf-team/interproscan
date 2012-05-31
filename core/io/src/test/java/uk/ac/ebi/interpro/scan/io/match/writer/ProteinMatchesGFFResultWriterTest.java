@@ -2,8 +2,11 @@ package uk.ac.ebi.interpro.scan.io.match.writer;
 
 import org.junit.Assert;
 import org.junit.Test;
+import uk.ac.ebi.interpro.scan.model.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Test for ProteinMatchesGFFResultWriter.
@@ -77,5 +80,60 @@ public class ProteinMatchesGFFResultWriterTest {
         //
         actual = "test ".replaceAll(GFFResultWriterForNucSeqs.SEQID_FIELD_PATTERN.pattern(), "");
         Assert.assertEquals(message, expected, actual);
+    }
+
+    /**
+     * This test is specifically looking for boundary errors
+     * on the generation of sequence fragments based upon
+     * feature coordinates, so ignores quite a lot of the implementation detail.
+     */
+    @Test
+    public void testProcessMatches() throws IOException {
+        ProteinMatchesGFFResultWriter writer = new ProteinMatchesGFFResultWriter(new File("./target/test.gff")) {
+            @Override
+            public int write(Protein protein) throws IOException {
+                // no implementation - this method is not being tested here.
+                return 0;
+            }
+        };
+        Signature signature = new Signature("PF00001", "PF00001", "Family", "Test signature", "Abstract",
+                new SignatureLibraryRelease(SignatureLibrary.PFAM, "1.1"), Collections.<Model>emptySet());
+        Protein protein = new Protein("ABCDEFGHIJKLMNOP"); // 16 AA long.
+
+        Set<Match> matches = new HashSet<Match>();
+        Set<Location> locations = new HashSet<Location>();
+        Match match = new Match(signature, locations) {
+        };
+        matches.add(match);
+
+        match.addLocation(new Location(1, 16) {
+        });
+        match.addLocation(new Location(1, 17) {
+        });
+        match.addLocation(new Location(1, 15) {
+        });
+        match.addLocation(new Location(14, 15) {
+        });
+        match.addLocation(new Location(14, 17) {
+        });
+        writer.processMatches(matches, "target", "12 May 2012", protein, "P00000");
+
+        Map<String, String> identifierToSequence = writer.getIdentifierToSeqMap();
+        Assert.assertEquals(5, identifierToSequence.size());
+        Map<String, String> unseenIdentifiers = new HashMap<String, String>();
+        unseenIdentifiers.put("match$1_1_16", "ABCDEFGHIJKLMNOP");
+        unseenIdentifiers.put("match$1_1_17", "ABCDEFGHIJKLMNOP");
+        unseenIdentifiers.put("match$1_1_15", "ABCDEFGHIJKLMNO");
+        unseenIdentifiers.put("match$1_14_15", "NO");
+        unseenIdentifiers.put("match$1_14_17", "NOP");
+
+        for (String identifier : identifierToSequence.keySet()) {
+            String expectedSequence = unseenIdentifiers.get(identifier);
+            Assert.assertNotNull(expectedSequence);
+            Assert.assertFalse(expectedSequence.isEmpty());
+            Assert.assertEquals(expectedSequence, identifierToSequence.get(identifier));
+            unseenIdentifiers.remove(identifier);
+        }
+        Assert.assertEquals("Not all of the expected matches have been seen.", 0, unseenIdentifiers.size());
     }
 }

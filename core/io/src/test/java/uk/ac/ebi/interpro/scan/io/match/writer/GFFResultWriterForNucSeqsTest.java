@@ -40,14 +40,11 @@ public class GFFResultWriterForNucSeqsTest {
         identifierToSeqMap.put("ABCCC", "2");
         identifierToSeqMap.put("ABBBB", "1");
         identifierToSeqMap.put("AAAAA", "0");
-        identifierToSeqMap.put("ZZZZZ", "16");
-        identifierToSeqMap.put("Z1ZZZ", "15");
-        identifierToSeqMap.put("Z10ZZ", "14");
+        identifierToSeqMap.put("ZZZZZ", "13");
+        identifierToSeqMap.put("Z1ZZZ", "12");
+        identifierToSeqMap.put("Z10ZZ", "11");
         //example matches with one location
         String matchString = ProteinMatchesGFFResultWriter.MATCH_STRING;
-        identifierToSeqMap.put(matchString + "120", "13");
-        identifierToSeqMap.put(matchString + "12", "12");
-        identifierToSeqMap.put(matchString + "11", "11");
         //example matches with multiple locations
         identifierToSeqMap.put(matchString + "8_100_110", "10");
         identifierToSeqMap.put(matchString + "8_35_50", "9");
@@ -55,7 +52,7 @@ public class GFFResultWriterForNucSeqsTest {
         identifierToSeqMap.put(matchString + "8_15_20", "7");
         identifierToSeqMap.put(matchString + "8_1_10", "6");
         //
-        Assert.assertEquals("Size of tree map should be 17!", 17, identifierToSeqMap.size());
+        Assert.assertEquals("Size of tree map incorrect", 14, identifierToSeqMap.size());
 
         //Copy values into a list and check if they are corrected indexed
         List<String> indexList = new ArrayList<String>();
