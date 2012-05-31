@@ -138,7 +138,15 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             final Matcher match1 = MATCH_ID_PATTERN.matcher(s1);
             final Matcher match2 = MATCH_ID_PATTERN.matcher(s2);
 
-            if (match1.matches() && match2.matches()) {
+            final boolean match1matches = match1.matches();
+            final boolean match2matches = match2.matches();
+
+            // Put full sequences above partial match sequences
+            if (match1matches ^ match2matches) {
+                return (match1matches) ? 1 : -1;
+            }
+            // Order match sequences
+            else if (match1matches && match2matches) {
                 // Attempt to sort on match (signature) id number
                 int signature1 = Integer.parseInt(match1.group(1));
                 int signature2 = Integer.parseInt(match2.group(1));
@@ -158,7 +166,9 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     comparison = (end1 < end2) ? -1 : (end1 > end2) ? 1 : 0;
                 }
                 return comparison;
-            } else {
+            }
+            // Order whole sequence matches.
+            else {
                 int seqLength1 = s1.length(), n2 = s2.length();
                 //Compares character by character
                 for (int i1 = 0, i2 = 0; i1 < seqLength1 && i2 < n2; i1++, i2++) {

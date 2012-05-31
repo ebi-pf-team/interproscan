@@ -40,17 +40,17 @@ public class GFFResultWriterForNucSeqsTest {
         identifierToSeqMap.put("ABCCC", "2");
         identifierToSeqMap.put("ABBBB", "1");
         identifierToSeqMap.put("AAAAA", "0");
-        identifierToSeqMap.put("ZZZZZ", "13");
-        identifierToSeqMap.put("Z1ZZZ", "12");
-        identifierToSeqMap.put("Z10ZZ", "11");
+        identifierToSeqMap.put("ZZZZZ", "8");
+        identifierToSeqMap.put("Z1ZZZ", "7");
+        identifierToSeqMap.put("Z10ZZ", "6");
         //example matches with one location
         String matchString = ProteinMatchesGFFResultWriter.MATCH_STRING;
         //example matches with multiple locations
-        identifierToSeqMap.put(matchString + "8_100_110", "10");
-        identifierToSeqMap.put(matchString + "8_35_50", "9");
-        identifierToSeqMap.put(matchString + "8_25_30", "8");
-        identifierToSeqMap.put(matchString + "8_15_20", "7");
-        identifierToSeqMap.put(matchString + "8_1_10", "6");
+        identifierToSeqMap.put(matchString + "8_100_110", "13");
+        identifierToSeqMap.put(matchString + "8_35_50", "12");
+        identifierToSeqMap.put(matchString + "8_25_30", "11");
+        identifierToSeqMap.put(matchString + "8_15_20", "10");
+        identifierToSeqMap.put(matchString + "8_1_10", "9");
         //
         Assert.assertEquals("Size of tree map incorrect", 14, identifierToSeqMap.size());
 
