@@ -204,9 +204,9 @@
             <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
                 <property name="sequenceLoader">
                     <bean class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
-                        <property name="proteinPrecalcLookupBatchSize" value="500"/>
+                        <property name="proteinPrecalcLookupBatchSize" value="50"/>
                         <!-- MUST NOT EXCEED 1000 -->
-                        <property name="proteinInsertBatchSize" value="500"/>
+                        <property name="proteinInsertBatchSize" value="50"/>
                         <property name="proteinDAO" ref="proteinDAO"/>
                         <property name="proteinLookup" ref="precalculatedLookup"/>
                         <property name="getOrfOutput" value="true"/>
@@ -352,7 +352,7 @@
     </bean>
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
-        <property name="proteinPrecalcLookupBatchSize" value="500"/>
+        <property name="proteinPrecalcLookupBatchSize" value="100"/>
         <!-- MUST NOT EXCEED 1000 -->
         <property name="proteinInsertBatchSize" value="500"/>
         <property name="proteinDAO" ref="proteinDAO"/>
