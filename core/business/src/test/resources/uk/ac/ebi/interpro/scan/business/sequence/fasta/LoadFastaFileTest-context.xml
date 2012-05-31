@@ -17,9 +17,9 @@
     </bean>
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
-        <property name="proteinInsertBatchSize" value="200"/>
+        <property name="proteinInsertBatchSize" value="50"/>
         <property name="proteinDAO" ref="proteinDAO"/>
-        <property name="proteinPrecalcLookupBatchSize" value="1"/>
+        <property name="proteinPrecalcLookupBatchSize" value="50"/>
         <property name="getOrfOutput" value="false"/>
         <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
     </bean>

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Phil Jones
@@ -33,6 +34,8 @@ public class LoadFastaFileImpl implements LoadFastaFile {
         this.sequenceLoader = sequenceLoader;
     }
 
+    private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
+
     @Override
     @Transactional
     public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener, String analysisJobNames) {
@@ -52,12 +55,12 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                         // Found ID line.
                         // Store previous record, if it exists.
                         if (currentId != null) {
-                            if (sequencesParsed++ % 50 == 0 && LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("About to call the ProteinLoader.store method (logging once every 50 sequences).");
-                                LOGGER.debug("Current id: " + currentId);
-                                LOGGER.debug("Current sequence: '" + currentSequence + "'");
-                            }
                             if (LOGGER.isDebugEnabled()) {
+                                if (++sequencesParsed % 500 == 0) {
+                                    LOGGER.debug("Stored " + sequencesParsed + " sequences.");
+                                    LOGGER.debug("Current id: " + currentId);
+                                    LOGGER.debug("Current sequence: '" + currentSequence + "'");
+                                }
                                 Matcher seqCheckMatcher = Protein.AMINO_ACID_PATTERN.matcher(currentSequence);
                                 if (!seqCheckMatcher.matches()) {
                                     LOGGER.warn("Strange sequence parsed from FASTA file, does not match the Protein AMINO_ACID_PATTERN regex:\n" + currentSequence);
@@ -65,7 +68,7 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                             }
                             final String seq = currentSequence.toString();
                             if (seq.trim().length() > 0) {
-                                sequenceLoader.store(seq.replaceAll("\\s+", ""), analysisJobNames, currentId);
+                                sequenceLoader.store(WHITE_SPACE_PATTERN.matcher(seq).replaceAll(""), analysisJobNames, currentId);
                             }
                             currentSequence.delete(0, currentSequence.length());
                         }
