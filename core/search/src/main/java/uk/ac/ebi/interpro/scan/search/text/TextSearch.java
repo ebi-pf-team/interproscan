@@ -1,20 +1,14 @@
-package uk.ac.ebi.interpro.scan.search;
+package uk.ac.ebi.interpro.scan.search.text;
 
-import uk.ac.ebi.interpro.scan.search.helper.SequenceHelper;
+import uk.ac.ebi.interpro.scan.search.sequence.helper.SequenceHelper;
+import uk.ac.ebi.interpro.scan.search.sequence.SequenceSearch;
+import uk.ac.ebi.interpro.scan.search.sequence.UrlLocator;
 import uk.ac.ebi.webservices.jaxws.EBeyeClient;
 
 import javax.xml.rpc.ServiceException;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.net.URLEncoder;
 import java.rmi.RemoteException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * EBI Search web service client.
@@ -56,6 +50,7 @@ public final class TextSearch {
     }
 
     public Page search(String query, int pageNumber, int resultsPerPage, boolean includeDescription) {
+        TextHighlighter highlighter = new TextHighlighter(query);
         try {
             //return client.listDomains();
             List<Record> records = new ArrayList<Record>();
@@ -88,16 +83,19 @@ public final class TextSearch {
                     else {
                         throw new IllegalStateException("No results, yet result count reported as " + count);
                     }
+                    // Highlight
+                    name = highlighter.highlightTitle(name);
+                    description = highlighter.highlightDescription(description);
                     records.add(new Record(id, name, type, description));
                 }
             }
             return new Page(count, records);
         }
         catch (RemoteException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         catch (ServiceException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -193,7 +191,7 @@ public final class TextSearch {
 
             // It's not a sequence
 
-            boolean includeDescription = false;
+            boolean includeDescription = true;
             if (args.length > 2) {
                 includeDescription = Boolean.valueOf(args[2]);
             }
