@@ -63,7 +63,7 @@ public final class TextHighlighter {
         if (description.equals("")) {
             return description;
         }
-        int len = Math.min(description.length(), SNIPPET_LEN);
+        int len = Math.min(description.length(), 140);
         return highlight(description, descriptionHighlighter, description.substring(0, len - 1) + SNIPPET_SEP);
     }
 
