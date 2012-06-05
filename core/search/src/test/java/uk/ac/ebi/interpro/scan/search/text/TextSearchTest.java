@@ -1,6 +1,7 @@
-package uk.ac.ebi.interpro.scan.search;
+package uk.ac.ebi.interpro.scan.search.text;
 
 import org.junit.Test;
+import uk.ac.ebi.interpro.scan.search.text.TextSearch;
 
 import static org.junit.Assert.assertEquals;
 

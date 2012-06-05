@@ -29,6 +29,18 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
@@ -97,7 +109,7 @@
                         <!--argument>
                         -Djava.util.logging.config.file=${env.CXF_HOME}/etc/logging.properties
                         </argument-->
-                        <argument>uk.ac.ebi.interpro.scan.search.TextSearch</argument>
+                        <argument>uk.ac.ebi.interpro.scan.search.text.TextSearch</argument>
                         <!-- Modify argument below for the item you wish to search for. -->
                         <argument>kinase</argument>
                     </arguments>
@@ -118,7 +130,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>uk.ac.ebi.interpro.scan.search.TextSearch</mainClass>
+                                    <mainClass>uk.ac.ebi.interpro.scan.search.text.TextSearch</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
