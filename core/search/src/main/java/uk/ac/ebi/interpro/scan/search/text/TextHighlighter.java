@@ -29,7 +29,7 @@ public final class TextHighlighter {
     private static final Formatter FORMATTER    = new SimpleHTMLFormatter("<strong>", "</strong>");
 
     private static final int SNIPPET_MAX    = 5;
-    private static final int SNIPPET_LEN    = 30;
+    private static final int SNIPPET_LEN    = 35;
     private static final String SNIPPET_SEP = "...";
 
     private final Highlighter titleHighlighter;
@@ -45,7 +45,7 @@ public final class TextHighlighter {
             throw new IllegalArgumentException("Could not parse " + query, e);
         }
 
-        QueryScorer scorer = new QueryScorer(q);
+        QueryScorer scorer = new QueryScorer(q, FIELD_CONTENTS, FIELD_CONTENTS);
 
         titleHighlighter = new Highlighter(FORMATTER, scorer);
         titleHighlighter.setTextFragmenter(new SimpleFragmenter(Integer.MAX_VALUE));
