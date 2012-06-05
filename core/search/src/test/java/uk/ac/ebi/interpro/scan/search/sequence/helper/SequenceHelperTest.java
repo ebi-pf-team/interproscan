@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.search.helper;
+package uk.ac.ebi.interpro.scan.search.sequence.helper;
 
 import org.junit.Test;
 

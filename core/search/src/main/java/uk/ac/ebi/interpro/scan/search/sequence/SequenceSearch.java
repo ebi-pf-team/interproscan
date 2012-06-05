@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.search;
+package uk.ac.ebi.interpro.scan.search.sequence;
 
 import java.io.*;
 import java.net.*;
