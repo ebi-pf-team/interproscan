@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.search.text;
 
+import uk.ac.ebi.ebinocle.webservice.ArrayOfDomainResult;
+import uk.ac.ebi.ebinocle.webservice.DomainResult;
 import uk.ac.ebi.interpro.scan.search.sequence.helper.SequenceHelper;
 import uk.ac.ebi.interpro.scan.search.sequence.SequenceSearch;
 import uk.ac.ebi.interpro.scan.search.sequence.UrlLocator;
@@ -49,6 +51,34 @@ public final class TextSearch {
         }
     }
 
+    // TODO: Add caching (very slow!!)
+    public List<RelatedResult> getRelatedResults(String query) {
+        try {
+            List<RelatedResult> relatedResults = new ArrayList<RelatedResult>();
+            DomainResult dr = client.getDetailledNumberOfResults("allebi", query, false);
+            ArrayOfDomainResult a = dr.getSubDomainsResults().getValue();
+            if (a != null) {
+                for (DomainResult sd : a.getDomainResult()) {
+                    String id = sd.getDomainId().getValue();
+                    int count = sd.getNumberOfResults();
+                    if (count > 0) {
+                        // TODO: use enum to exclude
+                        if (!id.equals("ebiweb") && !id.equals("proteinFamilies")) {
+                            relatedResults.add(new RelatedResult(id, sd.getNumberOfResults()));
+                        }
+                    }
+                }
+            }
+            return relatedResults;
+        }
+        catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Page search(String query, int pageNumber, int resultsPerPage, boolean includeDescription) {
         TextHighlighter highlighter = new TextHighlighter(query);
         try {
@@ -89,7 +119,7 @@ public final class TextSearch {
                     records.add(new Record(id, name, type, description));
                 }
             }
-            return new Page(count, records);
+            return new Page(count, records, getRelatedResults(query));
         }
         catch (RemoteException e) {
             throw new IllegalStateException(e);
@@ -103,10 +133,12 @@ public final class TextSearch {
 
         private final int count;
         private final List<Record> records;
+        private final List<RelatedResult> relatedResults;
 
-        public Page(int count, List<Record> records) {
-            this.count = count;
-            this.records = records;
+        public Page(int count, List<Record> records, List<RelatedResult> relatedResults) {
+            this.count          = count;
+            this.records        = records;
+            this.relatedResults = relatedResults;
         }
 
         public int getCount() {
@@ -115,6 +147,10 @@ public final class TextSearch {
 
         public List<Record> getRecords() {
             return records;
+        }
+
+        public List<RelatedResult> getRelatedResults() {
+            return relatedResults;
         }
 
     }
@@ -147,6 +183,50 @@ public final class TextSearch {
 
         public String getDescription() {
             return description;
+        }
+
+    }
+
+    public static final class RelatedResult {
+
+        private final String id;
+        private final String name;
+        private final int    count;
+
+        // TODO: better as enum
+        private static final Map<String, String> NAMES = new HashMap<String, String>();
+        static {
+            NAMES.put("genomes",                "Genomes");
+            NAMES.put("nucleotideSequences",    "Nucleotide Sequences");
+            NAMES.put("proteinSequences",       "Protein Sequences");
+            NAMES.put("macromolecularStructures", "Macromolecular Structures");
+            NAMES.put("smallMolecules",         "Small Molecules");
+            NAMES.put("geneExpression",         "Gene Expression");
+            NAMES.put("molecularInteractions",  "Molecular Interactions");
+            NAMES.put("reactionsPathways",      "Reactions, Pathways & Diseases");
+            NAMES.put("proteinFamilies",        "Protein Families");
+            NAMES.put("enzymes",                "Enzymes");
+            NAMES.put("literature",             "Literature");
+            NAMES.put("ontologies",             "Ontologies");
+            NAMES.put("ebiweb",                 "EBI Website");
+        }
+
+        public RelatedResult(String id, int count) {
+            this.id     = id;
+            this.name   = NAMES.containsKey(id) ? NAMES.get(id) : id;
+            this.count  = count;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getCount() {
+            return count;
         }
 
     }
@@ -229,6 +309,17 @@ public final class TextSearch {
             else {
                 System.out.println("No results for '" + query + "'.");
             }
+
+            if (page.getRelatedResults().isEmpty()) {
+                System.out.println("No related results");
+            }
+            else {
+                System.out.println("Related results:");
+                for (RelatedResult r : page.getRelatedResults()) {
+                    System.out.println(r.getName() + " (" + r.getCount() + ")");
+                }
+            }
+
         }
     }
 
