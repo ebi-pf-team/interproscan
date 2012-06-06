@@ -119,7 +119,7 @@ public final class TextSearch {
                     records.add(new Record(id, name, type, description));
                 }
             }
-            return new Page(count, records, getRelatedResults(query));
+            return new Page(query, count, records, getRelatedResults(query));
         }
         catch (RemoteException e) {
             throw new IllegalStateException(e);
@@ -131,11 +131,13 @@ public final class TextSearch {
 
     public static final class Page {
 
+        private final String query;
         private final int count;
         private final List<Record> records;
         private final List<RelatedResult> relatedResults;
 
-        public Page(int count, List<Record> records, List<RelatedResult> relatedResults) {
+        public Page(String query, int count, List<Record> records, List<RelatedResult> relatedResults) {
+            this.query          = query;
             this.count          = count;
             this.records        = records;
             this.relatedResults = relatedResults;
@@ -151,6 +153,10 @@ public final class TextSearch {
 
         public List<RelatedResult> getRelatedResults() {
             return relatedResults;
+        }
+
+        public String getQuery() {
+            return query;
         }
 
     }
