@@ -209,7 +209,7 @@ public final class TextSearch {
             NAMES.put("smallMolecules",         "Small Molecules");
             NAMES.put("geneExpression",         "Gene Expression");
             NAMES.put("molecularInteractions",  "Molecular Interactions");
-            NAMES.put("reactionsPathways",      "Reactions, Pathways & Diseases");
+            NAMES.put("reactionsPathways",      "Reactions & Pathways");
             NAMES.put("proteinFamilies",        "Protein Families");
             NAMES.put("enzymes",                "Enzymes");
             NAMES.put("literature",             "Literature");
