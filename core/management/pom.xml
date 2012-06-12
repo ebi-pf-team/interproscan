@@ -5,14 +5,14 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>i5-svn-revision-1559</version>
+        <version>i5-svn-revision-1994</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-management</artifactId>
-    <version>i5-svn-revision-1559</version>
+    <version>i5-svn-revision-1994</version>
 
     <packaging>jar</packaging>
 
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-web</artifactId>
-            <version>i5-svn-revision-1559</version>
+            <version>i5-svn-revision-1994</version>
         </dependency>
         <!--
         === All dependencies below here are TEST scope only. ===
