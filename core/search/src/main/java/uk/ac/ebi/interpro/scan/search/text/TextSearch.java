@@ -52,6 +52,13 @@ public final class TextSearch {
     }
 
     // TODO: Add caching (very slow!!)
+
+    /**
+     * Get related results for this query.
+     *
+     * @param query The search query to use
+     * @return The list of related results
+     */
     public List<RelatedResult> getRelatedResults(String query) {
         try {
             List<RelatedResult> relatedResults = new ArrayList<RelatedResult>();
@@ -63,7 +70,7 @@ public final class TextSearch {
                     int count = sd.getNumberOfResults();
                     if (count > 0) {
                         // TODO: use enum to exclude
-                        if (!id.equals("ebiweb") && !id.equals("proteinFamilies")) {
+                        if (!id.equals("ebiweb") && !id.equals("proteinFamilies") && !id.equals("ontologies")) {
                             relatedResults.add(new RelatedResult(id, sd.getNumberOfResults()));
                         }
                     }
@@ -119,7 +126,11 @@ public final class TextSearch {
                     records.add(new Record(id, name, type, description));
                 }
             }
-            return new Page(query, count, records, getRelatedResults(query));
+            return new Page(query,
+                    count,
+                    records,
+                    getRelatedResults(query),
+                    getLinks("search?q="+query+"&amp;page=${page}", pageNumber, count, resultsPerPage));
         }
         catch (RemoteException e) {
             throw new IllegalStateException(e);
@@ -129,18 +140,111 @@ public final class TextSearch {
         }
     }
 
+    /**
+     * Construct a list of pagination links for the search based on the current page and other parameters.
+     * This code is based on that provided by external services.
+     *
+     * @param urlPattern Link URL pattern
+     * @param currentPage Current page number
+     * @param count Total number of search results
+     * @param resultsPerPage The number of results to show per page
+     * @return List of link information objects
+     */
+    private List<LinkInfoBean> getLinks(final String urlPattern,
+                                        final int currentPage,
+                                        final int count,
+                                        final int resultsPerPage) {
+
+        // TODO
+        // Example search URLs where urlPattern is "search?q=kinase":
+        // http://frontier.ebi.ac.uk/interpro/search?q=kinase&start=0 // Query for "kinase" show page 1.
+        // http://frontier.ebi.ac.uk/interpro/search?q=kinase&start=20 // Query for "kinase", starting from the 21st
+        // result, but page number will depend on
+        // how many results per page the user is showing.
+
+        int numberOfPages = 0;
+        if (resultsPerPage > 0) {
+            numberOfPages = count / resultsPerPage;
+            if (count % resultsPerPage > 0) {
+                numberOfPages++;
+            }
+        }
+
+        final List<LinkInfoBean> links = new ArrayList<LinkInfoBean>();
+        if (numberOfPages <= 1) {
+            return links;
+        }
+        LinkInfoBean bean;
+        int startPage = 1;
+        int endPage = numberOfPages;
+        if (numberOfPages > 10) {
+            startPage = currentPage - 4;
+            if (startPage <= 0) {
+                startPage = 1;
+            }
+            endPage = startPage + 9;
+            if (endPage > numberOfPages) {
+                endPage = numberOfPages;
+            }
+        }
+        if (currentPage > 1) {
+            bean = new LinkInfoBean();
+            bean.setName("« First");
+            bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", "1"));
+            bean.setDescription("Go to the first page");
+            links.add(bean);
+
+            bean = new LinkInfoBean();
+            bean.setName("‹ Previous");
+            bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", Integer.toString(currentPage - 1)));
+            bean.setDescription("Go to the previous page");
+            links.add(bean);
+        }
+        for (int i = startPage; i <= endPage; i++) {
+            bean = new LinkInfoBean();
+            bean.setName("" + i);
+            if (i != currentPage) {
+                bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", Integer.toString(i)));
+            }
+            bean.setDescription("Go to page " + i);
+            links.add(bean);
+        }
+        if (currentPage < numberOfPages) {
+            bean = new LinkInfoBean();
+            bean.setName("Next ›");
+            bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", Integer.toString(currentPage + 1)));
+            bean.setDescription("Go to the next page");
+            links.add(bean);
+
+            bean = new LinkInfoBean();
+            bean.setName("Last »");
+            bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", Integer.toString(numberOfPages)));
+            bean.setDescription("Go to the last page");
+            links.add(bean);
+        }
+        return links;
+    }
+
+
     public static final class Page {
 
         private final String query;
         private final int count;
         private final List<Record> records;
         private final List<RelatedResult> relatedResults;
+        private final List<LinkInfoBean> paginationLinks;
 
-        public Page(String query, int count, List<Record> records, List<RelatedResult> relatedResults) {
-            this.query          = query;
-            this.count          = count;
-            this.records        = records;
-            this.relatedResults = relatedResults;
+        public Page(String query, int count, List<Record> records, List<RelatedResult> relatedResults,
+                    List<LinkInfoBean> paginationLinks) {
+            this.query           = query;
+            this.count           = count;
+            this.records         = records;
+            this.relatedResults  = relatedResults;
+            this.paginationLinks = paginationLinks;
+        }
+
+        public String getQuery() {
+            return query;
         }
 
         public int getCount() {
@@ -155,10 +259,9 @@ public final class TextSearch {
             return relatedResults;
         }
 
-        public String getQuery() {
-            return query;
+        public List<LinkInfoBean> getPaginationLinks() {
+            return paginationLinks;
         }
-
     }
 
     public static final class Record {
@@ -203,9 +306,9 @@ public final class TextSearch {
         private static final Map<String, String> NAMES = new HashMap<String, String>();
         static {
             NAMES.put("genomes",                "Genomes");
-            NAMES.put("nucleotideSequences",    "Nucleotide Sequences");
-            NAMES.put("proteinSequences",       "Protein Sequences");
-            NAMES.put("macromolecularStructures", "Macromolecular Structures");
+            NAMES.put("nucleotideSequences",    "DNA"); // Nucleotide Sequences
+            NAMES.put("proteinSequences",       "Proteins"); // Protein Sequences
+            NAMES.put("macromolecularStructures", "3D Structures"); // Macromolecular Structures
             NAMES.put("smallMolecules",         "Small Molecules");
             NAMES.put("geneExpression",         "Gene Expression");
             NAMES.put("molecularInteractions",  "Molecular Interactions");
@@ -237,6 +340,48 @@ public final class TextSearch {
 
     }
 
+    /**
+     * A Java bean to hold information about a link (search pagination) on the user interface.
+     *
+     * @author Matthew Fraser, EMBL-EBI, InterPro
+     * @version $Id$
+     * @since 1.0-SNAPSHOT
+     */
+    public static final class LinkInfoBean {
+        private String name; // The link text shown to the user
+        private String description; // Extra text description about the link (e.g. for use in title text)
+        private String link; // The URL pattern to link to
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getLink() {
+            return link;
+        }
+
+        public void setLink(String link) {
+            this.link = link;
+        }
+    }
+
+    /**
+     * This main method allows user testing of the search algorithms without the graphical (HTML) output.
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
 
         // Get query
@@ -303,6 +448,8 @@ public final class TextSearch {
                     System.out.println("Showing results 1 to " + records.size() + ":");
                 }
                 System.out.println();
+
+                // Show actual search result entries
                 for (TextSearch.Record r : records) {
                     System.out.println(r.getName() + " (" + r.getId() + ") [" + r.getType() + "]");
                     if (r.getDescription() != null) {
@@ -311,6 +458,12 @@ public final class TextSearch {
                         System.out.println("-------------------------------------------------------------------------------");
                     }
                 }
+
+                // Display pagination link text (not interactive for the user here though)
+                for (TextSearch.LinkInfoBean link : page.getPaginationLinks()) {
+                    System.out.println(link.getName() + " (" + link.getDescription() + ") -> " + link.getLink());
+                }
+                System.out.println();
             }
             else {
                 System.out.println("No results for '" + query + "'.");
