@@ -26,7 +26,8 @@ public final class TextHighlighter {
 
     private static final Analyzer ANALYZER      = new EnglishAnalyzer(LUCENE_VERSION);
     private static final QueryParser PARSER     = new QueryParser(LUCENE_VERSION, FIELD_CONTENTS, ANALYZER);
-    private static final Formatter FORMATTER    = new SimpleHTMLFormatter("<strong>", "</strong>");
+    private static final Formatter TITLE_FORMATTER    = new SimpleHTMLFormatter("<span class='entry_title_high'>", "</span>");
+    private static final Formatter DESCRIPTION_FORMATTER    = new SimpleHTMLFormatter("<span class='entry_sum_high'>", "</span>");
 
     private static final int SNIPPET_MAX    = 5;
     private static final int SNIPPET_LEN    = 35;
@@ -47,10 +48,10 @@ public final class TextHighlighter {
 
         QueryScorer scorer = new QueryScorer(q, FIELD_CONTENTS, FIELD_CONTENTS);
 
-        titleHighlighter = new Highlighter(FORMATTER, scorer);
+        titleHighlighter = new Highlighter(TITLE_FORMATTER, scorer);
         titleHighlighter.setTextFragmenter(new SimpleFragmenter(Integer.MAX_VALUE));
 
-        descriptionHighlighter = new Highlighter(FORMATTER, scorer);
+        descriptionHighlighter = new Highlighter(DESCRIPTION_FORMATTER, scorer);
         descriptionHighlighter.setTextFragmenter(new SimpleFragmenter(SNIPPET_LEN));
 
     }
