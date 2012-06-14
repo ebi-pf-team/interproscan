@@ -420,23 +420,6 @@ public class Entry implements Serializable {
      */
     @XmlElement(name = "go-xref")
     public Set<GoXref> getGoXRefs() {
-        // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
-        // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
-        /*
-         java.lang.UnsupportedOperationException
-            at java.util.Collections$UnmodifiableCollection.clear(Collections.java:1037)
-            at com.sun.xml.bind.v2.runtime.reflect.Lister$CollectionLister.startPacking(Lister.java:296)
-                ...
-            at javax.xml.bind.helpers.AbstractUnmarshallerImpl.unmarshal(AbstractUnmarshallerImpl.java:105)
-                ...
-            at uk.ac.ebi.interpro.scan.model.AbstractTest.unmarshal(AbstractTest.java:150)
-         */
-        //@XmlElement(name="xref")
-        // TODO: Example: Expected: Xref[protein=uk.ac.ebi.interpro.scan.model.Protein@1f49969]
-        // TODO: Example: Actual:   Xref[protein=<null>]
-        // TODO: Actually found that setCrossReferences() not called even if return modifiable set -- is this a bug in
-        // TODO: JAXB or do we have to use an XmlAdapter?
-//        return Collections.unmodifiableSet(goXRefs);
         return goXRefs;
     }
 
