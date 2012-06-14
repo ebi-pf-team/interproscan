@@ -106,7 +106,7 @@ public class Entry implements Serializable {
             name = "ENTRY_PATHWAY_XREF",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
             inverseJoinColumns = @JoinColumn(name = "PATHWAY_XREF_ID"))
-    private Set<PathwayXref> pathwayXRefs;
+    private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
 
     @OneToMany(mappedBy = "entry", fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
