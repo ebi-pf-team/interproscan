@@ -5,13 +5,13 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>i5-svn-revision-1994</version>
+        <version>i5-svn-revision-2049</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>precalcmatches</artifactId>
-    <version>i5-svn-revision-1994</version>
+    <version>i5-svn-revision-2049</version>
 
     <packaging>pom</packaging>
 
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-persistence</artifactId>
-            <version>i5-svn-revision-1994</version>
+            <version>i5-svn-revision-2049</version>
         </dependency>
 
         <dependency>
