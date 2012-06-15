@@ -30,14 +30,6 @@
                     <property name="releaseVersionNumber" value="1.01"/>
                     <property name="analysisJobId" value="jobPhobius"/>
                 </bean>
-                <!--Old version of PFAM commented out-->
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
-                <!--<property name="signatureLibrary" value="PFAM"/>-->
-                <!--<property name="releaseVersionNumber" value="24.0"/>-->
-                <!--<property name="modelFile" value="file:${Pfam-A.hmm.path.24.0}"/>-->
-                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                <!--<property name="analysisJobId" value="jobPfamA-24.0"/>-->
-                <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PFAM"/>
                     <property name="releaseVersionNumber" value="26.0"/>
@@ -64,15 +56,6 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobGene3d"/>
                 </bean>
-                <!--Old version of HAMAP commented out-->
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">-->
-                <!--<property name="signatureLibrary" value="HAMAP"/>-->
-                <!--<property name="releaseVersionNumber" value="180510"/>-->
-                <!--<property name="modelFile" value="file:${hamap.profile.models.path.180510}"/>-->
-                <!--<property name="prositeModelType" value="ALL"/>-->
-                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                <!--<property name="analysisJobId" value="jobHAMAP-180510"/>-->
-                <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="HAMAP"/>
                     <property name="releaseVersionNumber" value="140911"/>
@@ -81,21 +64,13 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobHAMAP-140911"/>
                 </bean>
-                <!--Old version of PIRSF commented out-->
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
-                <!--<property name="signatureLibrary" value="PIRSF"/>-->
-                <!--<property name="releaseVersionNumber" value="2.74"/>-->
-                <!--<property name="modelFile" value="file:${pirsf.hmm.path.2.74}"/>-->
-                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                <!--<property name="analysisJobId" value="jobPIRSF-2.74"/>-->
-                <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="2.79"/>
+                    <property name="releaseVersionNumber" value="2.80"/>
                     <!--Concatenation of 2 model files (super and subfamily model files). Concatenation of 'sf_hmm' and 'sf_hmm_subf'.-->
-                    <property name="modelFile" value="file:${pirsf.hmm.sf_subf.path.2.79}"/>
+                    <property name="modelFile" value="file:${pirsf.hmm.sf_subf.path.2.80}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF-2.79"/>
+                    <property name="analysisJobId" value="jobPIRSF-2.80"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prodom.model.ProDomModelParser">
                     <property name="signatureLibrary" value="PRODOM"/>
@@ -104,23 +79,6 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobProDom-2006.1"/>
                 </bean>
-                <!--Old versions of PROSITE_PATTERNS and PROSITE_PROFILES commented out-->
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">-->
-                <!--<property name="signatureLibrary" value="PROSITE_PATTERNS"/>-->
-                <!--<property name="releaseVersionNumber" value="20.66"/>-->
-                <!--<property name="modelFile" value="file:${prosite.models.path.20.66}"/>-->
-                <!--<property name="prositeModelType" value="PATTERNS"/>-->
-                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                <!--<property name="analysisJobId" value="jobPrositePatterns-20.66"/>-->
-                <!--</bean>-->
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">-->
-                <!--<property name="signatureLibrary" value="PROSITE_PROFILES"/>-->
-                <!--<property name="releaseVersionNumber" value="20.66"/>-->
-                <!--<property name="modelFile" value="file:${prosite.models.path.20.66}"/>-->
-                <!--<property name="prositeModelType" value="PROFILES"/>-->
-                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                <!--<property name="analysisJobId" value="jobPrositeProfiles-20.66"/>-->
-                <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
                     <property name="releaseVersionNumber" value="20.80"/>
@@ -145,14 +103,6 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="namesTabFile" value="names.tab"/>
                 </bean>
-                <!--Old versions of TIGRFAM commented out-->
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
-                <!--<property name="signatureLibrary" value="TIGRFAM"/>-->
-                <!--<property name="releaseVersionNumber" value="9.0"/>-->
-                <!--<property name="modelFile" value="file:${tigrfam.hmm.path.9.0}"/>-->
-                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                <!--<property name="analysisJobId" value="jobTIGRFAM-9.0"/>-->
-                <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="TIGRFAM"/>
                     <property name="releaseVersionNumber" value="10.1"/>
@@ -160,14 +110,6 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobTIGRFAM-10.1"/>
                 </bean>
-                <!--Old versions of SMART commented out-->
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
-                <!--<property name="signatureLibrary" value="SMART"/>-->
-                <!--<property name="releaseVersionNumber" value="6.1"/>-->
-                <!--<property name="modelFile" value="file:${smart.hmm.path.6.1}"/>-->
-                <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                <!--<property name="analysisJobId" value="jobSMART-6.1"/>-->
-                <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="SMART"/>
                     <property name="releaseVersionNumber" value="6.2"/>
@@ -210,12 +152,12 @@
     <!--
        HOW TO: Edit this file to add a new member database release.
 
-       1. Create a new bean for the release (below) by copying / pasting the previous releases bean.
+       1. Create a new bean for the release by copying / pasting the previous releases bean.
        (DO NOT DELETE THE PREVIOUS RELEASES BEAN.)
-       3. Edit the model files etc. for the new release, with the correct path information.
+       2. Edit the model files etc. for the new release, with the correct path information.
        (Use properties in the interproscan.properties file).
-       4. Edit the releaseVersionNumber property.
-       6. Commit your changes.
+       3. Edit the releaseVersionNumber property.
+       4. Commit your changes.
     -->
 </beans>
 
