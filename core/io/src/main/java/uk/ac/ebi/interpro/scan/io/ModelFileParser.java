@@ -21,9 +21,9 @@ public interface ModelFileParser extends Serializable {
     /**
      * Method to set the io.Resource that is the model file being loaded.
      *
-     * @param modelFile the io.Resource that is the model file being loaded.
+     * @param modelFiles
      */
-    public void setModelFile(Resource modelFile);
+    public void setModelFiles(Resource... modelFiles);
 
     /**
      * Method to set the release version number.
@@ -64,7 +64,8 @@ public interface ModelFileParser extends Serializable {
     public void setStoreAbstract(boolean storeAbstract);
 
     /**
-     * Method to parse a model file and return a SignatureLibraryRelease.
+     * Method to parse the model file(s) and return a SignatureLibraryRelease.
+     * If more than one model file was specified then the parser will assume that the files are in the same format.
      *
      * @return a complete SignatureLibraryRelease object
      */

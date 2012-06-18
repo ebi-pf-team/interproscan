@@ -13,7 +13,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
  */
 public abstract class AbstractModelFileParser implements ModelFileParser {
 
-    protected Resource modelFile;
+    protected Resource[] modelFiles;
     protected String releaseVersion;
     protected SignatureLibrary library;
     /**
@@ -25,10 +25,10 @@ public abstract class AbstractModelFileParser implements ModelFileParser {
     /**
      * Method to set the io.Resource that is the model file being loaded.
      *
-     * @param modelFile the io.Resource that is the model file being loaded.
+     * @param modelFiles the io.Resource that is the model file being loaded.
      */
-    public void setModelFile(Resource modelFile) {
-        this.modelFile = modelFile;
+    public void setModelFiles(Resource... modelFiles) {
+        this.modelFiles = modelFiles;
     }
 
     /**

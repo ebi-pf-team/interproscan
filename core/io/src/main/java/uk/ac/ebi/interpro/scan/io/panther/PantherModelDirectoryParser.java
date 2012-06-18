@@ -60,23 +60,26 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
     public SignatureLibraryRelease parse() throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
-        if (modelFile.exists() && modelFile.getFile() != null) {
-            Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames(modelFile);
 
-            File booksDir = new File(modelFile.getFile().getPath() + "/books");
-            if (booksDir.exists() && booksDir.getAbsoluteFile() != null) {
-                //TODO: Implement a file filter for a more save memory implementation
-                String[] children = booksDir.getAbsoluteFile().list();
-                if (children != null) {
-                    for (String signatureAcc : children) {
-                        String signatureName = familyIdFamilyNameMap.get(signatureAcc);
-                        //Create super family signatures
-                        release.addSignature(createSignature(signatureAcc, signatureName, release));
-                        //Create sub family signatures
-                        createSubFamilySignatures(signatureAcc, familyIdFamilyNameMap, release);
+        for (Resource modelFile : modelFiles) {
+            if (modelFile.exists() && modelFile.getFile() != null) {
+                Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames(modelFile);
+
+                File booksDir = new File(modelFile.getFile().getPath() + "/books");
+                if (booksDir.exists() && booksDir.getAbsoluteFile() != null) {
+                    //TODO: Implement a file filter for a more save memory implementation
+                    String[] children = booksDir.getAbsoluteFile().list();
+                    if (children != null) {
+                        for (String signatureAcc : children) {
+                            String signatureName = familyIdFamilyNameMap.get(signatureAcc);
+                            //Create super family signatures
+                            release.addSignature(createSignature(signatureAcc, signatureName, release));
+                            //Create sub family signatures
+                            createSubFamilySignatures(signatureAcc, familyIdFamilyNameMap, release);
+                        }
+                    } else {
+                        LOGGER.debug("Either dir does not exist or is not a directory.");
                     }
-                } else {
-                    LOGGER.debug("Either dir does not exist or is not a directory.");
                 }
             }
         }
@@ -90,19 +93,21 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
      */
     private void createSubFamilySignatures(String dirName, Map<String, String> familyIdFamilyNameMap,
                                            SignatureLibraryRelease release) throws IOException {
-        File subFamilyDir = new File(modelFile.getFile().getPath() + "/books/" + dirName);
-        if (subFamilyDir.exists() && subFamilyDir.getAbsoluteFile() != null) {
-            //TODO: Implement a file filter for a more memory save implementation
-            String[] children = subFamilyDir.getAbsoluteFile().list(new DirectoryFilenameFilter());
-            if (children != null) {
-                for (String signatureAcc : children) {
-                    signatureAcc = dirName + ":" + signatureAcc;
-                    String signatureName = familyIdFamilyNameMap.get(signatureAcc);
-                    //Create super family signatures
-                    release.addSignature(createSignature(signatureAcc, signatureName, release));
+        for (Resource modelFile : modelFiles) {
+            File subFamilyDir = new File(modelFile.getFile().getPath() + "/books/" + dirName);
+            if (subFamilyDir.exists() && subFamilyDir.getAbsoluteFile() != null) {
+                //TODO: Implement a file filter for a more memory save implementation
+                String[] children = subFamilyDir.getAbsoluteFile().list(new DirectoryFilenameFilter());
+                if (children != null) {
+                    for (String signatureAcc : children) {
+                        signatureAcc = dirName + ":" + signatureAcc;
+                        String signatureName = familyIdFamilyNameMap.get(signatureAcc);
+                        //Create super family signatures
+                        release.addSignature(createSignature(signatureAcc, signatureName, release));
+                    }
+                } else {
+                    LOGGER.debug("Either dir does not exist or is not a directory.");
                 }
-            } else {
-                LOGGER.debug("Either dir does not exist or is not a directory.");
             }
         }
     }

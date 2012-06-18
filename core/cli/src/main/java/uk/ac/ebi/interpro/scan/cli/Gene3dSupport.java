@@ -39,7 +39,7 @@ public final class Gene3dSupport {
             } else {
                 // Do it the easy way!
                 Model2SfReader reader = new Model2SfReader();
-                reader.setModelFile(model2Sf);
+                reader.setModelFiles(model2Sf);
                 map.putAll(reader.parseFileToMap());
             }
         }

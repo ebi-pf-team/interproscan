@@ -63,7 +63,7 @@ public class PrintsParserTest extends TestCase {
         pvalParser.setReleaseVersionNumber(TEST_RELEASE_VERSION);
         pvalParser.setKdatParser(kdatParser);
         Resource pvalResource = new ClassPathResource(pvalFileName);
-        pvalParser.setModelFile(pvalResource);
+        pvalParser.setModelFiles(pvalResource);
         SignatureLibraryRelease release = pvalParser.parse();
 
         assertNotNull(release);

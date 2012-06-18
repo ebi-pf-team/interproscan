@@ -35,7 +35,7 @@ public class Hmmer3ModelLoaderTest {
         HmmerModelParser parser = new HmmerModelParser();
         parser.setSignatureLibrary(TEST_LIBRARY);
         parser.setReleaseVersionNumber(TEST_RELEASE_VERSION);
-        parser.setModelFile(modelFileResource);
+        parser.setModelFiles(modelFileResource);
         SignatureLibraryRelease release = parser.parse();
         assertEquals(TEST_LIBRARY, release.getLibrary());
         assertEquals(TEST_RELEASE_VERSION, release.getVersion());
