@@ -97,11 +97,10 @@ public final class TextSearch {
         }
     }
 
-    public List<Facet> getFacets(String query, String queryWithoutFacets, int allCount) {
+    public List<Facet> getFacets(String query, String queryWithoutFacets) {
         String currentFacet = findFacetName(query);
         boolean isAllSelected = currentFacet.isEmpty();
         List<Facet> facets = new ArrayList<Facet>();
-        facets.add(new Facet("", "", "All results", allCount, isAllSelected));
         try {
             List<uk.ac.ebi.ebinocle.webservice.Facet> f = client.getFacets(DOMAIN, queryWithoutFacets);
             for (uk.ac.ebi.ebinocle.webservice.Facet facet : f) {
@@ -191,16 +190,17 @@ public final class TextSearch {
             String queryWithoutFacets = stripFacets(query);
             List<RelatedResult> relatedResults = new ArrayList<RelatedResult>();
             List<Facet> facets = new ArrayList<Facet>();
-            int allCount = 0;
+            int countWithoutFacets = 0;
             if (!queryWithoutFacets.isEmpty()) {
-                allCount = client.getNumberOfResults(DOMAIN, queryWithoutFacets);
+                countWithoutFacets = client.getNumberOfResults(DOMAIN, queryWithoutFacets);
                 relatedResults = getRelatedResults(queryWithoutFacets);
-                facets = getFacets(query, queryWithoutFacets, allCount);
+                facets = getFacets(query, queryWithoutFacets);
             }
             return new Page(
                     query,
                     queryWithoutFacets,
                     count,
+                    countWithoutFacets,
                     records,
                     relatedResults,
                     getLinks("search?q="+query+"&amp;page=${page}", pageNumber, count, resultsPerPage),
@@ -305,17 +305,20 @@ public final class TextSearch {
         private final String query;
         private final String queryWithoutFacets;
         private final int count;
+        private final int countWithoutFacets;
         private final List<Result> results;
         private final List<RelatedResult> relatedResults;
         private final List<LinkInfoBean> paginationLinks;
         private final List<Facet> facets;
 
-        public Page(String query, String queryWithoutFacets, int count,
+        public Page(String query, String queryWithoutFacets,
+                    int count, int countWithoutFacets,
                     List<Result> results, List<RelatedResult> relatedResults,
                     List<LinkInfoBean> paginationLinks, List<Facet> facets) {
             this.query           = query;
             this.queryWithoutFacets = queryWithoutFacets;
             this.count           = count;
+            this.countWithoutFacets = countWithoutFacets;
             this.results         = results;
             this.relatedResults  = relatedResults;
             this.paginationLinks = paginationLinks;
@@ -324,6 +327,10 @@ public final class TextSearch {
 
         public int getCount() {
             return count;
+        }
+
+        public int getCountWithoutFacets() {
+            return countWithoutFacets;
         }
 
         public List<Facet> getFacets() {
@@ -592,6 +599,7 @@ public final class TextSearch {
 
                 // Show facets
                 System.out.println("Facets:");
+                System.out.println("All results (" + page.getCountWithoutFacets() + ")");
                 for (Facet f : page.getFacets()) {
                     String s = "";
                     if (f.isSelected()) {
