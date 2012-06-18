@@ -102,9 +102,9 @@
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
-                    <property name="releaseVersionNumber" value="7.0"/>
+                    <property name="releaseVersionNumber" value="7.2"/>
                     <property name="analysisJobId" value="jobPanther"/>
-                    <property name="modelFiles" value="file:${panther.models.dir.7.0}"/>
+                    <property name="modelFiles" value="file:${panther.models.dir.7.2}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="namesTabFile" value="names.tab"/>
                 </bean>
