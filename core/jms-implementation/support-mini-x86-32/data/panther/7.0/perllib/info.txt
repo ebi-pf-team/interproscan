@@ -1,0 +1,4 @@
+Panther version 7.2 uses the same perl libraries as Panther version 7.0. Therefore the appropriate property in the interproscan.properties file could be configured as follows:
+
+panther.perl.library.dir=data/panther/7.0/perllib
+
