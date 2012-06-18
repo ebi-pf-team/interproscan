@@ -22,12 +22,13 @@ import java.io.StringReader;
 public final class TextHighlighter {
 
     private static final Version LUCENE_VERSION = Version.LUCENE_35;
-    private static final String FIELD_CONTENTS  = "contents";
+    private static final String  FIELD_CONTENTS = "contents";
 
-    private static final Analyzer ANALYZER      = new EnglishAnalyzer(LUCENE_VERSION);
+    private static final Analyzer    ANALYZER   = new EnglishAnalyzer(LUCENE_VERSION);
     private static final QueryParser PARSER     = new QueryParser(LUCENE_VERSION, FIELD_CONTENTS, ANALYZER);
-    private static final Formatter TITLE_FORMATTER    = new SimpleHTMLFormatter("<span class='entry_title_high'>", "</span>");
-    private static final Formatter DESCRIPTION_FORMATTER    = new SimpleHTMLFormatter("<span class='entry_sum_high'>", "</span>");
+
+    private static final Formatter   TITLE_FORMATTER       = new SimpleHTMLFormatter("<span class='entry_title_high'>", "</span>");
+    private static final Formatter   DESCRIPTION_FORMATTER = new SimpleHTMLFormatter("<span class='entry_sum_high'>", "</span>");
 
     private static final int SNIPPET_MAX    = 5;
     private static final int SNIPPET_LEN    = 35;

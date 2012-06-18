@@ -2,12 +2,14 @@ package uk.ac.ebi.interpro.scan.search.text;
 
 import uk.ac.ebi.ebinocle.webservice.ArrayOfDomainResult;
 import uk.ac.ebi.ebinocle.webservice.DomainResult;
+import uk.ac.ebi.ebinocle.webservice.FacetValue;
 import uk.ac.ebi.interpro.scan.search.sequence.helper.SequenceHelper;
 import uk.ac.ebi.interpro.scan.search.sequence.SequenceSearch;
 import uk.ac.ebi.interpro.scan.search.sequence.UrlLocator;
 import uk.ac.ebi.webservices.jaxws.EBeyeClient;
 
 import javax.xml.rpc.ServiceException;
+import javax.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -22,6 +24,8 @@ public final class TextSearch {
 
     // "Domain" in this sense means the name of the index in the EBI search engine
     private static String DOMAIN = "interpro";
+
+    private static final String FACET_TYPE = "type:";
 
     // Could configure in Spring
     private final EBeyeClient client;
@@ -44,10 +48,10 @@ public final class TextSearch {
             return Arrays.asList(client.listFields(DOMAIN));
         }
         catch (RemoteException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         catch (ServiceException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -62,8 +66,15 @@ public final class TextSearch {
     public List<RelatedResult> getRelatedResults(String query) {
         try {
             List<RelatedResult> relatedResults = new ArrayList<RelatedResult>();
-            DomainResult dr = client.getDetailledNumberOfResults("allebi", query, false);
-            ArrayOfDomainResult a = dr.getSubDomainsResults().getValue();
+            ArrayOfDomainResult a = null;
+            try {
+                DomainResult dr = client.getDetailledNumberOfResults("allebi", query, false);
+                a = dr.getSubDomainsResults().getValue();
+            }
+            catch (SOAPFaultException e) {
+                // TODO: Add logging
+                System.out.println("Could not get related results for " + query + ": " + e);
+            }
             if (a != null) {
                 for (DomainResult sd : a.getDomainResult()) {
                     String id = sd.getDomainId().getValue();
@@ -79,10 +90,61 @@ public final class TextSearch {
             return relatedResults;
         }
         catch (RemoteException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         catch (ServiceException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public List<Facet> getFacets(String query, String queryWithoutFacets, int allCount) {
+        String currentFacet = findFacetName(query);
+        boolean isAllSelected = currentFacet.isEmpty();
+        List<Facet> facets = new ArrayList<Facet>();
+        facets.add(new Facet("", "", "All results", allCount, isAllSelected));
+        try {
+            List<uk.ac.ebi.ebinocle.webservice.Facet> f = client.getFacets(DOMAIN, queryWithoutFacets);
+            for (uk.ac.ebi.ebinocle.webservice.Facet facet : f) {
+                String prefix = facet.getLabel().getValue().toLowerCase();
+                for (FacetValue v : facet.getFacetValues().getValue().getFacetValue()) {
+                    String label = v.getLabel();
+                    String id = label.replaceAll(" ", "_").toLowerCase();
+                    boolean selected = false;
+                    if (!isAllSelected) {
+                        selected = id.equals(currentFacet);
+                    }
+                    facets.add(new Facet(prefix + ":", id, label, v.getHitCount(), selected));
+                }
+            }
+        }
+        catch (RemoteException e) {
+            throw new IllegalStateException(e);
+        }
+        catch (ServiceException e) {
+            throw new IllegalStateException(e);
+        }
+        return facets;
+    }
+
+    public String stripFacets(String query) {
+        if (query.contains(FACET_TYPE)) {
+            String s = query.replaceAll(FACET_TYPE + "\\w+", "");
+            return s.trim();
+        }
+        else {
+            return query;
+        }
+    }
+
+    public String findFacetName(String query) {
+        if (query.contains(FACET_TYPE)) {
+            // Assumes the facet is the last part of the query, eg. "kinase type:domain"
+            // Would be better if worked no matter where facet is in query string
+            String[] s = query.split(FACET_TYPE);
+            return s[1].trim();
+        }
+        else {
+            return "";
         }
     }
 
@@ -90,7 +152,7 @@ public final class TextSearch {
         TextHighlighter highlighter = new TextHighlighter(query);
         try {
             //return client.listDomains();
-            List<Record> records = new ArrayList<Record>();
+            List<Result> records = new ArrayList<Result>();
             int count = client.getNumberOfResults(DOMAIN, query);
             if (count > 0) {
                 List<String> f = new ArrayList<String>();
@@ -123,14 +185,26 @@ public final class TextSearch {
                     // Highlight
                     name = highlighter.highlightTitle(name);
                     description = highlighter.highlightDescription(description);
-                    records.add(new Record(id, name, type, description));
+                    records.add(new Result(id, name, type, description));
                 }
             }
-            return new Page(query,
+            String queryWithoutFacets = stripFacets(query);
+            List<RelatedResult> relatedResults = new ArrayList<RelatedResult>();
+            List<Facet> facets = new ArrayList<Facet>();
+            int allCount = 0;
+            if (!queryWithoutFacets.isEmpty()) {
+                allCount = client.getNumberOfResults(DOMAIN, queryWithoutFacets);
+                relatedResults = getRelatedResults(queryWithoutFacets);
+                facets = getFacets(query, queryWithoutFacets, allCount);
+            }
+            return new Page(
+                    query,
+                    queryWithoutFacets,
                     count,
                     records,
-                    getRelatedResults(query),
-                    getLinks("search?q="+query+"&amp;page=${page}", pageNumber, count, resultsPerPage));
+                    relatedResults,
+                    getLinks("search?q="+query+"&amp;page=${page}", pageNumber, count, resultsPerPage),
+                    facets);
         }
         catch (RemoteException e) {
             throw new IllegalStateException(e);
@@ -229,30 +303,35 @@ public final class TextSearch {
     public static final class Page {
 
         private final String query;
+        private final String queryWithoutFacets;
         private final int count;
-        private final List<Record> records;
+        private final List<Result> results;
         private final List<RelatedResult> relatedResults;
         private final List<LinkInfoBean> paginationLinks;
+        private final List<Facet> facets;
 
-        public Page(String query, int count, List<Record> records, List<RelatedResult> relatedResults,
-                    List<LinkInfoBean> paginationLinks) {
+        public Page(String query, String queryWithoutFacets, int count,
+                    List<Result> results, List<RelatedResult> relatedResults,
+                    List<LinkInfoBean> paginationLinks, List<Facet> facets) {
             this.query           = query;
+            this.queryWithoutFacets = queryWithoutFacets;
             this.count           = count;
-            this.records         = records;
+            this.results         = results;
             this.relatedResults  = relatedResults;
             this.paginationLinks = paginationLinks;
-        }
-
-        public String getQuery() {
-            return query;
+            this.facets          = facets;
         }
 
         public int getCount() {
             return count;
         }
 
-        public List<Record> getRecords() {
-            return records;
+        public List<Facet> getFacets() {
+            return facets;
+        }
+
+        public List<Result> getResults() {
+            return results;
         }
 
         public List<RelatedResult> getRelatedResults() {
@@ -262,16 +341,25 @@ public final class TextSearch {
         public List<LinkInfoBean> getPaginationLinks() {
             return paginationLinks;
         }
+        
+        public String getQuery() {
+            return query;
+        }
+
+        public String getQueryWithoutFacets() {
+            return queryWithoutFacets;
+        }
+
     }
 
-    public static final class Record {
+    public static final class Result {
 
         private final String id;
         private final String name;
         private final String type;
         private final String description;
 
-        public Record(String id, String name, String type, String description) {
+        public Result(String id, String name, String type, String description) {
             this.id          = id;
             this.name        = name;
             this.type        = type;
@@ -340,6 +428,44 @@ public final class TextSearch {
 
     }
 
+    public static final class Facet {
+
+        private final String  prefix;
+        private final String  id;
+        private final String  label;
+        private final int     count;
+        private final boolean isSelected;
+
+        public Facet(String prefix, String id, String  label, int count, boolean isSelected) {
+            this.prefix     = prefix;
+            this.id         = id;
+            this.label      = label;
+            this.count      = count;
+            this.isSelected = isSelected;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public boolean isSelected() {
+            return isSelected;
+        }
+
+    }
+
     /**
      * A Java bean to hold information about a link (search pagination) on the user interface.
      *
@@ -395,7 +521,7 @@ public final class TextSearch {
 
         // Get query
         String endPointUrl = "";
-        if (args.length > 1) {
+        if (args.length > 1) {                              System.out.println();
             endPointUrl = args[1];
         }
 
@@ -438,22 +564,21 @@ public final class TextSearch {
 
             //System.out.println(search.getFields());
 
-            // TODO: Add paging and get input from keyboard to show next page
             TextSearch.Page page = search.search(query, 1, 10, includeDescription);
-            List<TextSearch.Record> records = page.getRecords();
+            List<Result> results = page.getResults();
 
             if (page.getCount() > 0) {
+
                 System.out.println("Found " + page.getCount() + " results for '" + query + "'.");
-                if (records.size() > 9) {
-                    System.out.println("Showing results 1 to " + records.size() + ":");
+                if (results.size() > 9) {
+                    System.out.println("Showing results 1 to " + results.size() + ":");
                 }
                 System.out.println();
 
-                // Show actual search result entries
-                for (TextSearch.Record r : records) {
+                // Show search results
+                for (Result r : results) {
                     System.out.println(r.getName() + " (" + r.getId() + ") [" + r.getType() + "]");
                     if (r.getDescription() != null) {
-                        // TODO: Show only 5 words either same of query? What if fuzzy query? Better if search index does this!
                         System.out.println(r.getDescription());
                         System.out.println("-------------------------------------------------------------------------------");
                     }
@@ -464,6 +589,18 @@ public final class TextSearch {
                     System.out.println(link.getName() + " (" + link.getDescription() + ") -> " + link.getLink());
                 }
                 System.out.println();
+
+                // Show facets
+                System.out.println("Facets:");
+                for (Facet f : page.getFacets()) {
+                    String s = "";
+                    if (f.isSelected()) {
+                        s = " -- selected";
+                    }
+                    System.out.println(f.getLabel() + " (" + f.getCount() + ") [" + f.getPrefix() + f.getId() + "]" + s);
+                }
+                System.out.println();
+
             }
             else {
                 System.out.println("No results for '" + query + "'.");

@@ -588,6 +588,26 @@ public class EBeyeClient {
     }
 
     /**
+     * Get the list of facets for the query.
+     *
+     * @param domain The domain to examine
+     * @param query  The query to perform
+     * @return An array of facets
+     * @throws java.rmi.RemoteException
+     * @throws javax.xml.rpc.ServiceException
+     */
+    public List<Facet> getFacets(String domain, String query)
+            throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+        printDebugMessage("getFacets", "Begin", 1);
+        List<Facet> retVal = null;
+        srvProxyConnect();
+        ArrayOfFacet result = this.srvProxy.getFacets(domain, query);
+        retVal = result.getFacet(); //.toArray(new Facet[0]);
+        printDebugMessage("getFacets", "End", 1);
+        return retVal;
+    }
+
+    /**
      * Get the selected fields for the entries matching a query
      *
      * @param domain The domain to search
