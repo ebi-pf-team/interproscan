@@ -32,7 +32,7 @@ public class PrositeDatFileParserTest extends TestCase {
     public void testWithHAMAP() throws IOException {
         PrositeDatFileParser parser = new PrositeDatFileParser();
         Resource testFile = new ClassPathResource(HAMAP_TEST_FILE);
-        parser.setModelFile(testFile);
+        parser.setModelFiles(testFile);
         parser.setSignatureLibrary(SignatureLibrary.HAMAP);
         parser.setReleaseVersionNumber(HAMAP_TEST_VERSION);
         parser.setPrositeModelType(PrositeDatFileParser.PrositeModelType.ALL);
@@ -71,7 +71,7 @@ public class PrositeDatFileParserTest extends TestCase {
     public void testPatternParsing() throws IOException {
         PrositeDatFileParser parser = new PrositeDatFileParser();
         Resource testFile = new ClassPathResource(PROSITE_TEST_FILE);
-        parser.setModelFile(testFile);
+        parser.setModelFiles(testFile);
         parser.setSignatureLibrary(SignatureLibrary.PROSITE_PATTERNS);
         parser.setReleaseVersionNumber(PROSITE_TEST_VERSION);
         parser.setPrositeModelType(PrositeDatFileParser.PrositeModelType.PATTERNS);
@@ -87,7 +87,7 @@ public class PrositeDatFileParserTest extends TestCase {
     public void testProfileParsing() throws IOException {
         PrositeDatFileParser parser = new PrositeDatFileParser();
         Resource testFile = new ClassPathResource(PROSITE_TEST_FILE);
-        parser.setModelFile(testFile);
+        parser.setModelFiles(testFile);
         parser.setSignatureLibrary(SignatureLibrary.PROSITE_PROFILES);
         parser.setReleaseVersionNumber(PROSITE_TEST_VERSION);
         parser.setPrositeModelType(PrositeDatFileParser.PrositeModelType.PROFILES);

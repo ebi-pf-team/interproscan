@@ -31,7 +31,7 @@ public class Model2SfReaderTest {
     @Ignore("This test needs re-writing to fit in with the change to the Model2SfReader class.")
     public void testRead() throws IOException {
         Model2SfReader reader = new Model2SfReader();
-        reader.setModelFile(file);
+        reader.setModelFiles(file);
         reader.setSignatureLibrary(SignatureLibrary.GENE3D);
         reader.setReleaseVersionNumber("3.3.0");
         final Map<String, String> expected = new HashMap<String, String>();

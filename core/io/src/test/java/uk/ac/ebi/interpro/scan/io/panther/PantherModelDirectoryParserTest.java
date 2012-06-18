@@ -39,7 +39,7 @@ public class PantherModelDirectoryParserTest {
     @Test
     public void testPantherModelParser() throws IOException {
         Resource testModelDir = new ClassPathResource(PANTHER_TEST_MODEL_DIR);
-        parser.setModelFile(testModelDir);
+        parser.setModelFiles(testModelDir);
         parser.setSignatureLibrary(SignatureLibrary.PANTHER);
         parser.setReleaseVersionNumber(PANTHER_TEST_VERSION);
         parser.setNamesTabFile(PANTHER_TEST_NAMES_TAB_FILE);
