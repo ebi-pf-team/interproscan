@@ -37,7 +37,7 @@ public class ProDomModelParserTest {
         ProDomModelParser parser = new ProDomModelParser();
         parser.setSignatureLibrary(TEST_LIBRARY);
         parser.setReleaseVersionNumber(TEST_RELEASE_VERSION);
-        parser.setModelFile(modelFileResource);
+        parser.setModelFiles(modelFileResource);
         SignatureLibraryRelease release = parser.parse();
 
         assertEquals(TEST_LIBRARY, release.getLibrary());

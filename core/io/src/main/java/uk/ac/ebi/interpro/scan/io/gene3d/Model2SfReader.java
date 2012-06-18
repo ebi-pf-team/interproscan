@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.gene3d;
 
+import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -60,18 +61,21 @@ public final class Model2SfReader extends AbstractModelFileParser {
 
     public Map<String, String> parseFileToMap() throws IOException {
         final Map<String, String> records = new HashMap<String, String>();
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] splitLine = line.split(",");
-                records.put(splitLine[0], prefix + splitLine[1]);  // model - signature
+
+        for (Resource modelFile : modelFiles) {
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] splitLine = line.split(",");
+                    records.put(splitLine[0], prefix + splitLine[1]);  // model - signature
+                }
             }
-        }
-        finally {
-            if (reader != null) {
-                reader.close();
+            finally {
+                if (reader != null) {
+                    reader.close();
+                }
             }
         }
         return records;

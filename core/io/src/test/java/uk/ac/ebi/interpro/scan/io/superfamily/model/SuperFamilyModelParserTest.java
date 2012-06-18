@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.io.superfamily.model;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -44,7 +43,7 @@ public class SuperFamilyModelParserTest extends TestCase {
         parser.setSignatureLibrary(TEST_LIBRARY);
         parser.setReleaseVersionNumber(TEST_RELEASE_VERSION);
         Resource modelFileResource = new ClassPathResource(TEST_MODEL_FILE);
-        parser.setModelFile(modelFileResource);
+        parser.setModelFiles(modelFileResource);
         SignatureLibraryRelease actualResult = parser.parse();
 
         // Compare actual result with expected result

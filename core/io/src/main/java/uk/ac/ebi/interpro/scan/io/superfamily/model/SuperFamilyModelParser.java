@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.superfamily.model;
 
 import org.apache.log4j.Logger;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
-import uk.ac.ebi.interpro.scan.io.model.HmmerModelParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
@@ -11,7 +11,6 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,73 +59,74 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
     public SignatureLibraryRelease parse() throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
-        BufferedReader reader = null;
 
-        try {
-            String accession = null, name = null, description = null;
+        for (Resource modelFile : modelFiles) {
+            BufferedReader reader = null;
+            try {
+                String accession = null, name = null, description = null;
 
-            reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
-            int lineNumber = 0;
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (LOGGER.isDebugEnabled() && lineNumber++ % 10000 == 0) {
-                    LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
-                    LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
-                }
-                line = line.trim();
+                reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
+                int lineNumber = 0;
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (LOGGER.isDebugEnabled() && lineNumber++ % 10000 == 0) {
+                        LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
+                        LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
+                    }
+                    line = line.trim();
 
-                // Speed things up a LOT - there are lots of lines we are not
-                // interested in parsing, so just check the first char of each line
-                if (line.length() > 0) {
-                    switch (line.charAt(0)) {
-                        case '/':
-                            // Looks like an end of record marker - just to check:
-                            if (END_OF_RECORD.equals(line)) {
-                                processRecord(release, accession, name, description);
-                                accession = null;
-                                name = null;
-                                description = null;
-                            }
-                            break;
-                        case 'A':
-                            if (accession == null) {
-                                accession = extractValue(ACCESSION_PATTERN, line, 1);
-                                if (accession != null && !accession.startsWith("SSF")) {
-                                    // In the SuperFamily HMM file, the accession is stored as "ACC   81321".
-                                    // Need to prefix the accession with "SSF" to make "SSF81321" as required by InterPro!
-                                    accession = "SSF" + accession;
+                    // Speed things up a LOT - there are lots of lines we are not
+                    // interested in parsing, so just check the first char of each line
+                    if (line.length() > 0) {
+                        switch (line.charAt(0)) {
+                            case '/':
+                                // Looks like an end of record marker - just to check:
+                                if (END_OF_RECORD.equals(line)) {
+                                    processRecord(release, accession, name, description);
+                                    accession = null;
+                                    name = null;
+                                    description = null;
                                 }
-                            }
-                            break;
-                        case 'D':
-                            if (description == null) {
-                                description = extractValue(DESC_LINE, line, 1);
-                            }
-                            break;
-                        case 'N':
-                            if (name == null) {
-                                name = extractValue(NAME_LINE, line, 1);
-                            }
-                            break;
+                                break;
+                            case 'A':
+                                if (accession == null) {
+                                    accession = extractValue(ACCESSION_PATTERN, line, 1);
+                                    if (accession != null && !accession.startsWith("SSF")) {
+                                        // In the SuperFamily HMM file, the accession is stored as "ACC   81321".
+                                        // Need to prefix the accession with "SSF" to make "SSF81321" as required by InterPro!
+                                        accession = "SSF" + accession;
+                                    }
+                                }
+                                break;
+                            case 'D':
+                                if (description == null) {
+                                    description = extractValue(DESC_LINE, line, 1);
+                                }
+                                break;
+                            case 'N':
+                                if (name == null) {
+                                    name = extractValue(NAME_LINE, line, 1);
+                                }
+                                break;
+                        }
                     }
                 }
+                // Dont forget the last one, just in case that final end of record
+                // marker is missing!
+                processRecord(release, accession, name, description);
+
             }
-            // Dont forget the last one, just in case that final end of record
-            // marker is missing!
-            processRecord(release, accession, name, description);
+            finally {
+                if (reader != null) {
+                    reader.close();
+                }
+            }
 
-        }
-        finally {
-            if (reader != null) {
-                reader.close();
+            // Now add the signatures to the release
+            for (Signature signature : signatures.values()) {
+                release.addSignature(signature);
             }
         }
-
-        // Now add the signatures to the release
-        for (Signature signature : signatures.values()) {
-            release.addSignature(signature);
-        }
-
 
         return release;
     }

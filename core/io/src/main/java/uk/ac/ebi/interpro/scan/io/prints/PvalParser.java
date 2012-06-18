@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.io.prints;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -48,46 +49,50 @@ public class PvalParser extends AbstractModelFileParser {
         }
         Map<String, String> kdatFileData = kdatParser.parse();
 
-        if (modelFile == null) {
+        if (modelFiles == null) {
             throw new NullPointerException("Resource is null");
         }
-        if (!modelFile.exists()) {
-            throw new IllegalStateException(modelFile.getFilename() + " does not exist");
-        }
-        if (!modelFile.isReadable()) {
-            throw new IllegalStateException(modelFile.getFilename() + " is not readable");
+        for (Resource modelFile: modelFiles) {
+            if (!modelFile.exists()) {
+                throw new IllegalStateException(modelFile.getFilename() + " does not exist");
+            }
+            if (!modelFile.isReadable()) {
+                throw new IllegalStateException(modelFile.getFilename() + " is not readable");
+            }
         }
 
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
 
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
-            String line, sigAcc = null, sigName = null, sigDescription = null;
-            while ((line = reader.readLine()) != null) {
-                if (LOGGER.isDebugEnabled()) {
-                    if (line.indexOf(';') > -1) {
-                        LOGGER.debug(line);
+        for (Resource modelFile : modelFiles) {
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
+                String line, sigAcc = null, sigName = null, sigDescription = null;
+                while ((line = reader.readLine()) != null) {
+                    if (LOGGER.isDebugEnabled()) {
+                        if (line.indexOf(';') > -1) {
+                            LOGGER.debug(line);
+                        }
+                    }
+                    if (line.startsWith(LINE_SIG_NAME)) {
+                        createSignature(release, kdatFileData, sigAcc, sigName, sigDescription);
+
+                        // Now clear / reset all local variables.
+                        sigName = extractLineContent(line);
+                        sigAcc = null;
+                        sigDescription = null;
+                    } else if (line.startsWith(LINE_SIG_ACCESSION)) {
+                        sigAcc = extractLineContent(line);
+                    } else if (line.startsWith(LINE_SIG_DESCRIPTION)) {
+                        sigDescription = extractLineContent(line);
                     }
                 }
-                if (line.startsWith(LINE_SIG_NAME)) {
-                    createSignature(release, kdatFileData, sigAcc, sigName, sigDescription);
-
-                    // Now clear / reset all local variables.
-                    sigName = extractLineContent(line);
-                    sigAcc = null;
-                    sigDescription = null;
-                } else if (line.startsWith(LINE_SIG_ACCESSION)) {
-                    sigAcc = extractLineContent(line);
-                } else if (line.startsWith(LINE_SIG_DESCRIPTION)) {
-                    sigDescription = extractLineContent(line);
-                }
+                createSignature(release, kdatFileData, sigAcc, sigName, sigDescription);
             }
-            createSignature(release, kdatFileData, sigAcc, sigName, sigDescription);
-        }
-        finally {
-            if (reader != null) {
-                reader.close();
+            finally {
+                if (reader != null) {
+                    reader.close();
+                }
             }
         }
         return release;

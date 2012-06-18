@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.io.prosite;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -65,56 +66,59 @@ public class PrositeDatFileParser extends AbstractModelFileParser {
     public SignatureLibraryRelease parse() throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
-        BufferedReader reader = null;
-        try {
-            String accession = null, id = null, description = null;
 
-            reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
-            int lineNumber = 0;
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (LOGGER.isDebugEnabled() && lineNumber++ % 10000 == 0) {
-                    LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
-                    LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
-                }
-                line = line.trim();
-                // Speed things up a LOT - there are lots of lines we are not
-                // interested in parsing, so just check the first char of each line
-                if (line.length() > 0) {
-                    switch (line.charAt(0)) {
-                        case '/':
-                            // Looks like an end of record marker - just to check:
-                            if (END_OF_RECORD.equals(line.trim())) {
-                                if (accession != null && id != null) {
-                                    release.addSignature(createSignature(accession, id, description, release));
+        for (Resource modelFile : modelFiles) {
+            BufferedReader reader = null;
+            try {
+                String accession = null, id = null, description = null;
+
+                reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
+                int lineNumber = 0;
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (LOGGER.isDebugEnabled() && lineNumber++ % 10000 == 0) {
+                        LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
+                        LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
+                    }
+                    line = line.trim();
+                    // Speed things up a LOT - there are lots of lines we are not
+                    // interested in parsing, so just check the first char of each line
+                    if (line.length() > 0) {
+                        switch (line.charAt(0)) {
+                            case '/':
+                                // Looks like an end of record marker - just to check:
+                                if (END_OF_RECORD.equals(line.trim())) {
+                                    if (accession != null && id != null) {
+                                        release.addSignature(createSignature(accession, id, description, release));
+                                    }
+                                    accession = null;
+                                    id = null;
+                                    description = null;
                                 }
-                                accession = null;
-                                id = null;
-                                description = null;
-                            }
-                            break;
-                        case 'I':
-                            if (id == null) {
-                                id = extractValue(prositeModelType.getIdLinePattern(), line, 1);
-                            }
-                            break;
-                        case 'A':
-                            if (accession == null) {
-                                accession = extractValue(ACCESSION_PATTERN, line, 1);
-                            }
-                            break;
-                        case 'D':
-                            if (description == null) {
-                                description = extractValue(DESC_LINE, line, 1);
-                            }
-                            break;
+                                break;
+                            case 'I':
+                                if (id == null) {
+                                    id = extractValue(prositeModelType.getIdLinePattern(), line, 1);
+                                }
+                                break;
+                            case 'A':
+                                if (accession == null) {
+                                    accession = extractValue(ACCESSION_PATTERN, line, 1);
+                                }
+                                break;
+                            case 'D':
+                                if (description == null) {
+                                    description = extractValue(DESC_LINE, line, 1);
+                                }
+                                break;
+                        }
                     }
                 }
             }
-        }
-        finally {
-            if (reader != null) {
-                reader.close();
+            finally {
+                if (reader != null) {
+                    reader.close();
+                }
             }
         }
         return release;
