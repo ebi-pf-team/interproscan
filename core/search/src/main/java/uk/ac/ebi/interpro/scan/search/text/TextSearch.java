@@ -148,6 +148,15 @@ public final class TextSearch {
     }
 
     public Page search(String query, int pageNumber, int resultsPerPage, boolean includeDescription) {
+        if (query.isEmpty()) {
+            return new Page(
+                    "", "",
+                    0, 0,
+                    Collections.<Result>emptyList(),
+                    Collections.<RelatedResult>emptyList(),
+                    Collections.<LinkInfoBean>emptyList(),
+                    Collections.<Facet>emptyList());
+        }
         TextHighlighter highlighter = new TextHighlighter(query);
         try {
             //return client.listDomains();
@@ -538,6 +547,9 @@ public final class TextSearch {
         String query = "";
         if (args.length > 0) {
             query = args[0];
+            if (query.equals("\"\"")) {
+                query = "";
+            }
         }
         else {
             throw new IllegalArgumentException("Please pass in a search term or sequence");
@@ -632,7 +644,7 @@ public final class TextSearch {
             }
 
             if (page.getRelatedResults().isEmpty()) {
-                System.out.println("No related results");
+                System.out.println("No related results for '" + page.getQueryWithoutFacets() + "'.");
             }
             else {
                 System.out.println("Related results:");

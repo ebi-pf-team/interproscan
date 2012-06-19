@@ -39,6 +39,10 @@ public final class TextHighlighter {
 
     public TextHighlighter(String query) {
 
+        if (query.isEmpty()) {
+            throw new IllegalArgumentException("Query must not be empty");
+        }
+
         Query q;
         try {
             q = PARSER.parse(query);
