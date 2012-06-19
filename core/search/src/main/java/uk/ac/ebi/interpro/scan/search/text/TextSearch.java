@@ -106,8 +106,8 @@ public final class TextSearch {
             for (uk.ac.ebi.ebinocle.webservice.Facet facet : f) {
                 String prefix = facet.getLabel().getValue().toLowerCase();
                 for (FacetValue v : facet.getFacetValues().getValue().getFacetValue()) {
-                    String label = v.getLabel();
-                    String id = label.replaceAll(" ", "_").toLowerCase();
+                    String label = Facet.convertLabel(v.getLabel());
+                    String id    = label.replaceAll(" ", "_").toLowerCase();
                     boolean selected = false;
                     if (!isAllSelected) {
                         selected = id.equals(currentFacet);
@@ -445,8 +445,8 @@ public final class TextSearch {
 
         public Facet(String prefix, String id, String  label, int count, boolean isSelected) {
             this.prefix     = prefix;
-            this.id         = id;
-            this.label      = label;
+            this.id         = convertId(id);
+            this.label      = convertLabel(label);
             this.count      = count;
             this.isSelected = isSelected;
         }
@@ -469,6 +469,23 @@ public final class TextSearch {
 
         public boolean isSelected() {
             return isSelected;
+        }
+
+        public static String convertId(String id) {
+            if (id.equals("post-translational_modifications")) {
+                return "ptm";
+            }
+            return id;
+        }
+
+        public static String convertLabel(String label) {
+            if (label.equals("Post-translational Modifications")) {
+                return "PTM";
+            }
+            if (label.endsWith("Site")) {
+                return label.replace("Site", "site");
+            }
+            return label;
         }
 
     }
