@@ -147,7 +147,16 @@ public final class TextSearch {
         }
     }
 
-    public Page search(String query, int pageNumber, int resultsPerPage, boolean includeDescription) {
+    /**
+     * Perform a text search.
+     *
+     * @param query The query
+     * @param resultIndex Retrieve results from this (zero indexed) search result number
+     * @param resultsPerPage The number of results to retrieve for a page
+     * @param includeDescription Include full search result description text
+     * @return A page object containing all necessary variables required to display a search results page
+     */
+    public Page search(String query, int resultIndex, int resultsPerPage, boolean includeDescription) {
         if (query.isEmpty()) {
             return new Page(
                     "", "",
@@ -171,7 +180,7 @@ public final class TextSearch {
                     f.add("description");
                 }
                 String[] fields = f.toArray(new String[f.size()]);
-                String[][] results = client.getResults(DOMAIN, query, fields, pageNumber - 1, resultsPerPage);
+                String[][] results = client.getResults(DOMAIN, query, fields, resultIndex, resultsPerPage);
                 for (String[] a : results) {
                     String id = null, name = null, type = null, description = null;
                     int len = a.length;
@@ -212,7 +221,7 @@ public final class TextSearch {
                     countWithoutFacets,
                     records,
                     relatedResults,
-                    getLinks("search?q="+query+"&amp;page=${page}", pageNumber, count, resultsPerPage),
+                    getLinks("search?q="+query+"&amp;start=${start}", resultIndex, count, resultsPerPage),
                     facets);
         }
         catch (RemoteException e) {
@@ -228,22 +237,17 @@ public final class TextSearch {
      * This code is based on that provided by external services.
      *
      * @param urlPattern Link URL pattern
-     * @param currentPage Current page number
+     * @param resultIndex First result to retrieve (zero indexed)
      * @param count Total number of search results
      * @param resultsPerPage The number of results to show per page
      * @return List of link information objects
      */
     private List<LinkInfoBean> getLinks(final String urlPattern,
-                                        final int currentPage,
+                                        final int resultIndex,
                                         final int count,
                                         final int resultsPerPage) {
 
-        // TODO
-        // Example search URLs where urlPattern is "search?q=kinase":
-        // http://frontier.ebi.ac.uk/interpro/search?q=kinase&start=0 // Query for "kinase" show page 1.
-        // http://frontier.ebi.ac.uk/interpro/search?q=kinase&start=20 // Query for "kinase", starting from the 21st
-        // result, but page number will depend on
-        // how many results per page the user is showing.
+        final int currentPage = (resultIndex / resultsPerPage) + 1;
 
         int numberOfPages = 0;
         if (resultsPerPage > 0) {
@@ -273,13 +277,13 @@ public final class TextSearch {
         if (currentPage > 1) {
             bean = new LinkInfoBean();
             bean.setName("« First");
-            bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", "1"));
+            bean.setLink(urlPattern.replaceAll("\\$\\{start\\}", "0"));
             bean.setDescription("Go to the first page");
             links.add(bean);
 
             bean = new LinkInfoBean();
             bean.setName("‹ Previous");
-            bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", Integer.toString(currentPage - 1)));
+            bean.setLink(urlPattern.replaceAll("\\$\\{start\\}", Integer.toString(pageNumToStartIndex(currentPage, resultsPerPage) - resultsPerPage)));
             bean.setDescription("Go to the previous page");
             links.add(bean);
         }
@@ -287,7 +291,7 @@ public final class TextSearch {
             bean = new LinkInfoBean();
             bean.setName("" + i);
             if (i != currentPage) {
-                bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", Integer.toString(i)));
+                bean.setLink(urlPattern.replaceAll("\\$\\{start\\}", Integer.toString(pageNumToStartIndex(i,resultsPerPage))));
             }
             bean.setDescription("Go to page " + i);
             links.add(bean);
@@ -295,17 +299,28 @@ public final class TextSearch {
         if (currentPage < numberOfPages) {
             bean = new LinkInfoBean();
             bean.setName("Next ›");
-            bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", Integer.toString(currentPage + 1)));
+            bean.setLink(urlPattern.replaceAll("\\$\\{start\\}", Integer.toString(pageNumToStartIndex(currentPage, resultsPerPage) + resultsPerPage)));
             bean.setDescription("Go to the next page");
             links.add(bean);
 
             bean = new LinkInfoBean();
             bean.setName("Last »");
-            bean.setLink(urlPattern.replaceAll("\\$\\{page\\}", Integer.toString(numberOfPages)));
+            bean.setLink(urlPattern.replaceAll("\\$\\{start\\}", Integer.toString(pageNumToStartIndex(numberOfPages, resultsPerPage))));
             bean.setDescription("Go to the last page");
             links.add(bean);
         }
         return links;
+    }
+
+    /**
+     * Use the supplied page number and the number of search results shown per page to calculate the start index of
+     * the result required.
+     * @param pageNum Page number
+     * @param resultsPerPage Number of results per page
+     * @return Equivalent search result index
+     */
+    private static int pageNumToStartIndex(final int pageNum, final int resultsPerPage) {
+        return (pageNum - 1) * resultsPerPage;
     }
 
 
@@ -334,10 +349,18 @@ public final class TextSearch {
             this.facets          = facets;
         }
 
+        /**
+         * Get the total number of results for this search (for selected facets only)
+         * @return The count
+         */
         public int getCount() {
             return count;
         }
 
+        /**
+         * Get the total number of results for this search (without taking facets into account)
+         * @return The count
+         */
         public int getCountWithoutFacets() {
             return countWithoutFacets;
         }
@@ -350,6 +373,18 @@ public final class TextSearch {
             return results;
         }
 
+        /**
+         * Get the number of results (number available for display on this page only)
+         * @return The count
+         */
+        public int getResultsCount() {
+            if (results == null) {
+                return 0;
+            }
+            return results.size();
+        }
+
+
         public List<RelatedResult> getRelatedResults() {
             return relatedResults;
         }
@@ -357,7 +392,7 @@ public final class TextSearch {
         public List<LinkInfoBean> getPaginationLinks() {
             return paginationLinks;
         }
-        
+
         public String getQuery() {
             return query;
         }
@@ -557,7 +592,8 @@ public final class TextSearch {
 
         // Get query
         String endPointUrl = "";
-        if (args.length > 1) {                              System.out.println();
+        if (args.length > 1) {
+            System.out.println();
             endPointUrl = args[1];
         }
 
@@ -600,7 +636,7 @@ public final class TextSearch {
 
             //System.out.println(search.getFields());
 
-            TextSearch.Page page = search.search(query, 1, 10, includeDescription);
+            TextSearch.Page page = search.search(query, 0, 10, includeDescription);
             List<Result> results = page.getResults();
 
             if (page.getCount() > 0) {
