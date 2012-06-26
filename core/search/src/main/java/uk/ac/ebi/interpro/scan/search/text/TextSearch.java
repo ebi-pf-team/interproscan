@@ -136,6 +136,12 @@ public final class TextSearch {
     }
 
     public String findFacetName(String query) {
+
+        // TODO Perhaps one day we will need to saerch for multiple facets and values, e.g.
+        // "kinase type:(domain OR ptm)" and other things in Lucene query syntax
+        // http://lucene.apache.org/core/old_versioned_docs/versions/3_0_0/queryparsersyntax.html
+        // But for now it's OK!
+
         if (query.contains(FACET_TYPE)) {
             // Assumes the facet is the last part of the query, eg. "kinase type:domain"
             // Would be better if worked no matter where facet is in query string
