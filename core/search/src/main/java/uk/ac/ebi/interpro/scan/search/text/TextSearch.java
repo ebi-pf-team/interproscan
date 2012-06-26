@@ -160,7 +160,7 @@ public final class TextSearch {
         if (query.isEmpty()) {
             return new Page(
                     "", "",
-                    0, 0,
+                    0, 0, 1,
                     Collections.<Result>emptyList(),
                     Collections.<RelatedResult>emptyList(),
                     Collections.<LinkInfoBean>emptyList(),
@@ -219,6 +219,7 @@ public final class TextSearch {
                     queryWithoutFacets,
                     count,
                     countWithoutFacets,
+                    getCurrentPage(resultIndex, resultsPerPage),
                     records,
                     relatedResults,
                     getLinks("search?q="+query+"&amp;start=${start}", resultIndex, count, resultsPerPage),
@@ -230,6 +231,10 @@ public final class TextSearch {
         catch (ServiceException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private int getCurrentPage(final int resultIndex, final int resultsPerPage) {
+        return (resultIndex / resultsPerPage) + 1;
     }
 
     /**
@@ -247,7 +252,7 @@ public final class TextSearch {
                                         final int count,
                                         final int resultsPerPage) {
 
-        final int currentPage = (resultIndex / resultsPerPage) + 1;
+        final int currentPage = getCurrentPage(resultIndex, resultsPerPage);
 
         int numberOfPages = 0;
         if (resultsPerPage > 0) {
@@ -330,19 +335,21 @@ public final class TextSearch {
         private final String queryWithoutFacets;
         private final int count;
         private final int countWithoutFacets;
+        private final int currentPage;
         private final List<Result> results;
         private final List<RelatedResult> relatedResults;
         private final List<LinkInfoBean> paginationLinks;
         private final List<Facet> facets;
 
         public Page(String query, String queryWithoutFacets,
-                    int count, int countWithoutFacets,
+                    int count, int countWithoutFacets, int currentPage,
                     List<Result> results, List<RelatedResult> relatedResults,
                     List<LinkInfoBean> paginationLinks, List<Facet> facets) {
             this.query           = query;
             this.queryWithoutFacets = queryWithoutFacets;
             this.count           = count;
             this.countWithoutFacets = countWithoutFacets;
+            this.currentPage     = currentPage;
             this.results         = results;
             this.relatedResults  = relatedResults;
             this.paginationLinks = paginationLinks;
@@ -363,6 +370,10 @@ public final class TextSearch {
          */
         public int getCountWithoutFacets() {
             return countWithoutFacets;
+        }
+
+        public int getCurrentPage() {
+            return currentPage;
         }
 
         public List<Facet> getFacets() {
@@ -641,10 +652,7 @@ public final class TextSearch {
 
             if (page.getCount() > 0) {
 
-                System.out.println("Found " + page.getCount() + " results for '" + query + "'.");
-                if (results.size() > 9) {
-                    System.out.println("Showing results 1 to " + results.size() + ":");
-                }
+                System.out.println("Page " + page.getCurrentPage() + " of " + page.getCount() + " results for '" + query + "':");
                 System.out.println();
 
                 // Show search results
