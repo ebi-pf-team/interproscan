@@ -56,7 +56,7 @@ public class LoadFastaFileTest {
                 LOGGER.debug("Loaded New:" + bottomPrecalculatedSequenceId + "-" + topPrecalculatedSequenceId);
 
             }
-        }, null);
+        }, null, false);
         LOGGER.debug("Proteins loaded: " + proteinDAO.count());
     }
 }

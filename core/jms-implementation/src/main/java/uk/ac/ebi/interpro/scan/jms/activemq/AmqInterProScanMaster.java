@@ -86,6 +86,8 @@ public class AmqInterProScanMaster implements Master {
 
     private String explicitFileName;
 
+    private boolean useMatchLookupService = true;
+
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
     }
@@ -366,6 +368,7 @@ public class AmqInterProScanMaster implements Master {
 
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
+        params.put(StepInstanceCreatingStep.USE_MATCH_LOOKUP_SERVICE, Boolean.toString(useMatchLookupService));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
@@ -528,6 +531,13 @@ public class AmqInterProScanMaster implements Master {
     @Override
     public void setExplicitOutputFilename(String explicitFileName) {
         this.explicitFileName = explicitFileName;
+    }
+
+    /**
+     * Called to turn off the use of the precalculated match lookup service on this run.
+     */
+    public void disablePrecalc() {
+        this.useMatchLookupService = false;
     }
 
     /**
