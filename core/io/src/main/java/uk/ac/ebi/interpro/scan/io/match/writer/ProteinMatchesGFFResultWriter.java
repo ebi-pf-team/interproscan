@@ -281,7 +281,6 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                             .append(locStart)
                             .append('_')
                             .append(locEnd);
-                    System.out.println(matchIdLocation.toString());
                     GFF3Feature matchFeature = buildMatchFeature(seqId, analysis, locStart, locEnd, score, description, status,
                             date, matchIdLocation.toString(), targetId, signatureAc, signature.getEntry());
                     //Write match feature to file

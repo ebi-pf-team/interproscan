@@ -38,8 +38,11 @@ public class LoadFastaFileImpl implements LoadFastaFile {
 
     @Override
     @Transactional
-    public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener, String analysisJobNames) {
-        LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
+    public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener, String analysisJobNames, boolean useMatchLookupService) {
+        sequenceLoader.setUseMatchLookupService(useMatchLookupService);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
+        }
         BufferedReader reader = null;
         int sequencesParsed = 0;
         try {
@@ -58,12 +61,16 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                             if (LOGGER.isDebugEnabled()) {
                                 if (++sequencesParsed % 500 == 0) {
                                     LOGGER.debug("Stored " + sequencesParsed + " sequences.");
-                                    LOGGER.debug("Current id: " + currentId);
-                                    LOGGER.debug("Current sequence: '" + currentSequence + "'");
+                                    if (LOGGER.isTraceEnabled()) {
+                                        LOGGER.trace("Current id: " + currentId);
+                                        LOGGER.trace("Current sequence: '" + currentSequence + "'");
+                                    }
                                 }
-                                Matcher seqCheckMatcher = Protein.AMINO_ACID_PATTERN.matcher(currentSequence);
-                                if (!seqCheckMatcher.matches()) {
-                                    LOGGER.warn("Strange sequence parsed from FASTA file, does not match the Protein AMINO_ACID_PATTERN regex:\n" + currentSequence);
+                                if (LOGGER.isTraceEnabled()) {
+                                    Matcher seqCheckMatcher = Protein.AMINO_ACID_PATTERN.matcher(currentSequence);
+                                    if (!seqCheckMatcher.matches()) {
+                                        LOGGER.warn("Strange sequence parsed from FASTA file, does not match the Protein AMINO_ACID_PATTERN regex:\n" + currentSequence);
+                                    }
                                 }
                             }
                             final String seq = currentSequence.toString();

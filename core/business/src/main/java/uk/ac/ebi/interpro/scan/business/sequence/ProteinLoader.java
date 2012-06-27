@@ -127,7 +127,15 @@ public class ProteinLoader implements SequenceLoader {
 
     private void lookupProteins(String analysisJobNames) {
         if (proteinsAwaitingPrecalcLookup.size() > 0) {
-            Set<Protein> localPrecalculatedProteins = (proteinLookup != null)
+            final boolean usingLookupService = proteinLookup != null;
+            if (LOGGER.isDebugEnabled()) {
+                if (usingLookupService) {
+                    LOGGER.debug("Using the pre-calculated match lookup service.");
+                } else {
+                    LOGGER.debug("NOT using the pre-calculated match lookup service");
+                }
+            }
+            Set<Protein> localPrecalculatedProteins = (usingLookupService)
                     ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobNames)
                     : null;
             // Put precalculated proteins into a Map of MD5 to Protein;
@@ -232,6 +240,17 @@ public class ProteinLoader implements SequenceLoader {
         sequenceLoadListener.sequencesLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
         // Prepare the ProteinLoader for another set of proteins.
         resetBounds();
+    }
+
+    public void setUseMatchLookupService(boolean useMatchLookupService) {
+        if (!useMatchLookupService) {
+            this.proteinLookup = null;
+        }
+        if (proteinLookup == null) {
+            System.out.println("Pre-calculated match lookup service DISABLED.  Please wait for match calculations to complete...");
+        } else {
+            System.out.println("Available matches will be retrieved from the pre-calculated match lookup service.");
+        }
     }
 
     /**

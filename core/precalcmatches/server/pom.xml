@@ -160,12 +160,15 @@
                 <description>
                     This isn't a property - just a convenient way of including a description...
 
-                    This profile is for deployment of the real server in Tomcat on tomcat-17.ebi.ac.uk.
+                    This profile is for deployment of the real server in Tomcat on ves-XX-9a and ves-XX-9b (where XX is
+                    hx, oy, pg)
                 </description>
                 <deployment.folder>/nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc/deploy
                 </deployment.folder>
-                <berkeleydb.path.md5>berkely.db.data/md5_db</berkeleydb.path.md5>
-                <berkeleydb.path.matches>berkely.db.data/match_db
+                <berkeleydb.path.md5>/nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc/deploy/data/md5_db
+                </berkeleydb.path.md5>
+                <berkeleydb.path.matches>
+                    /nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc/deploy/data/match_db
                 </berkeleydb.path.matches>
             </properties>
         </profile>

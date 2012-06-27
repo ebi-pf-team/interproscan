@@ -57,7 +57,11 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         EnvironmentConfig myEnvConfig = new EnvironmentConfig();
         StoreConfig storeConfig = new StoreConfig();
 
+        myEnvConfig.setReadOnly(true);
         myEnvConfig.setAllowCreate(false);
+        myEnvConfig.setLocking(false);
+
+        storeConfig.setReadOnly(true);
         storeConfig.setAllowCreate(false);
         storeConfig.setTransactional(false);
 

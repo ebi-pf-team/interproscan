@@ -51,7 +51,7 @@
         <dependency>
             <artifactId>je</artifactId>
             <groupId>com.sleepycat</groupId>
-            <version>4.0.103</version>
+            <version>5.0.55</version>
         </dependency>
 
         <dependency>

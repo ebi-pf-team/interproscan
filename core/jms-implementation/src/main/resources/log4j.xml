@@ -71,9 +71,13 @@
     <!--<level value="debug"/>-->
     <!--</logger>-->
 
-    <logger name="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">
-        <level value="debug"/>
-    </logger>
+    <!--<logger name="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
 
     <!-- Root Logger -->
     <root>

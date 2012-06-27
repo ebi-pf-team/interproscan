@@ -96,4 +96,9 @@ public interface Master extends Runnable {
      * @param explicitFileName to be set.
      */
     void setExplicitOutputFilename(String explicitFileName);
+
+    /**
+     * Called to turn off the use of the precalculated match lookup service on this run.
+     */
+    void disablePrecalc();
 }

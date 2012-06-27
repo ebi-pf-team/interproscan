@@ -16,4 +16,11 @@ public interface SequenceLoader extends Serializable {
 
     void persist(SequenceLoadListener sequenceLoadListener, String analysisJobNames);
 
+    /**
+     * If a match lookup service is available, set flag to determine if it is used.
+     *
+     * @param useMatchLookupService flag to indicate if an attempt should be made
+     *                              to use this service.
+     */
+    void setUseMatchLookupService(boolean useMatchLookupService);
 }
