@@ -86,4 +86,8 @@ public class NucleotideSequenceLoader implements SequenceLoader {
         persistBatch();
     }
 
+    public void setUseMatchLookupService(boolean useMatchLookupService) {
+        // Currently a no-op, as there is no lookup service for nucleotide sequence matches.
+    }
+
 }

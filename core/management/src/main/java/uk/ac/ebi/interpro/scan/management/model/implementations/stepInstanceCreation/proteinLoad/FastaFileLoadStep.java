@@ -79,6 +79,10 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
         }
         final String analysisJobNames = stepInstance.getParameters().get(ANALYSIS_JOB_NAMES_KEY);
         final String completionJobName = stepInstance.getParameters().get(COMPLETION_JOB_NAME_KEY);
+        boolean useMatchLookupService = true;
+        if (stepInstance.getParameters().containsKey(USE_MATCH_LOOKUP_SERVICE)) {
+            useMatchLookupService = Boolean.parseBoolean(stepInstance.getParameters().get(USE_MATCH_LOOKUP_SERVICE));
+        }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Fasta file path to be loaded: " + providedPath);
         }
@@ -123,7 +127,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                         new StepCreationSequenceLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
                 sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
-                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobNames);
+                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobNames, useMatchLookupService);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Finished loading sequences and creating step instances.");
                 }
