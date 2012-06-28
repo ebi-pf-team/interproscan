@@ -5,14 +5,14 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>i5-svn-revision-2049</version>
+        <version>5RC2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-persistence</artifactId>
-    <version>i5-svn-revision-2049</version>
+    <version>5RC2</version>
 
     <packaging>jar</packaging>
 
@@ -38,19 +38,19 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>i5-svn-revision-2049</version>
+            <version>5RC2</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>i5-svn-revision-2049</version>
+            <version>5RC2</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>i5-svn-revision-2049</version>
+            <version>5RC2</version>
         </dependency>
 
         <dependency>
