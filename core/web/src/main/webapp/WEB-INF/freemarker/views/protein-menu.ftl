@@ -126,7 +126,10 @@
             });
 
             // Initialise un-integrated.
-            displayUnintegrated($("#check-6"));
+            // TODO Work out how to do this without each! Only one thing with an ID of "check-6"!
+            $("#check-6").each(function() {
+                displayUnintegrated(this);
+            });
 
         // Make the menu visible - Javascript is enabled.
         $("#menu").css('display', 'block');
