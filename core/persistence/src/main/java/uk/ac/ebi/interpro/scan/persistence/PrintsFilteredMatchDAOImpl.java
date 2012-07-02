@@ -78,7 +78,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
                 locations.add(
                         new FingerPrintsMatch.FingerPrintsLocation(
                                 rawMatch.getLocationStart(),
-                                rawMatch.getLocationEnd(),
+                                boundedLocationEnd(protein, rawMatch),
                                 rawMatch.getPvalue(),
                                 rawMatch.getScore(),
                                 rawMatch.getMotifNumber()
