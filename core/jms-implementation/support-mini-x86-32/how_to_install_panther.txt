@@ -26,15 +26,16 @@ The path where this is extracted will be referred to below as [InterProScan5 hom
 
 cd [InterProScan5 home]/data/
 
-wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/panther-data-7.0.tar.gz;
+wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/panther-data-7.2.tar.gz;
+wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/panther-data-7.2.tar.gz.md5
 
-This is a very large file, (approximately 4.5 GB) so you should check the MD5
+The panther distribution is a very large file, (approximately 4.6 GB) so you should check the MD5
 checksum on the file after you have downloaded it:
 
-md5sum panther-data-7.0.tar.gz
+md5sum -c panther-data-7.2.tar.gz.md5
 
-This should return 16189848ee1a36ebc34d899d06404bd4
-
+This must return *panther-data-7.2.tar.gz: OK*
+If not - try downloading the file again as it may be a corrupted copy.
 
 2. Install Panther Data:
 ------------------------
@@ -43,17 +44,16 @@ Extract the Panther data files to the required location, e.g.
 
 cd [InterProScan5 home]/data
 
-tar -pxvzf panther-data-7.0.tar.gz
+tar -pxvzf panther-data-7.2.tar.gz
 
 
 3. OPTIONAL: Installing Panther in a different location
 -------------------------------------------------------
 
-You may wish to install the Panther data files in a different location on the
+You may wish to install the Panther model files in a different location on the
 file system.  If you do this, you will need to edit the
 [InterProScan5 home]/interproscan.properties file and set the following
 two properties to point to the correct location:
 
-panther.perl.library.dir=PATH_TO/panther/7.0/perllib
-panther.models.dir.7.0=PATH_TO/panther/7.0/model
+panther.models.dir.7.2=PATH_TO/panther/7.2/model
 

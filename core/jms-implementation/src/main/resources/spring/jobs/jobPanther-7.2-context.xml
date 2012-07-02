@@ -16,7 +16,7 @@
         <property name="nonEmptyPaths">
             <list value-type="java.lang.String">
                 <value>${panther.models.dir.7.2}</value>
-                <value>${panther.perl.library.dir}</value>
+                <value>${binary.panther.perl.lib.dir}</value>
                 <value>${binary.panther.path}</value>
                 <value>${binary.blastall.2.2.6.path}</value>
                 <value>${binary.hmmer2.hmmsearch.path}</value>
@@ -63,7 +63,7 @@
         <!--Add Perl command-->
         <property name="perlCommand" value="${perl.command}"/>
         <!--Path to a Perl library directory (in this case a Perl library provided by Panther which is necessary to run the script)-->
-        <property name="perlLibrary" value="${panther.perl.library.dir}"/>
+        <property name="perlLibrary" value="${binary.panther.perl.lib.dir}"/>
         <!--Panther Perl script-->
         <property name="scriptPath" value="${binary.panther.path}"/>
         <!--Add Panther models-->
