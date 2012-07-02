@@ -213,4 +213,18 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         }
         return proteinIdToProteinMap;
     }
+
+    /**
+     * Some algorithms may return an end coordinate that is off the end of the sequence. (PRINTS is one known case).
+     * This method returns the stop coordinate of the match or the coordinate of the last residue on the protein,
+     * whichever is smallest.
+     *
+     * @param protein  that the match is on
+     * @param rawMatch for which a sensible end location is required.
+     * @return the stop coordinate of the match or the coordinate of the last residue on the protein,
+     *         whichever is smallest.
+     */
+    protected int boundedLocationEnd(Protein protein, RawMatch rawMatch) {
+        return (rawMatch.getLocationEnd() > protein.getSequenceLength()) ? protein.getSequenceLength() : rawMatch.getLocationEnd();
+    }
 }
