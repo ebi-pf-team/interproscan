@@ -14,7 +14,7 @@
         <property name="libraryRelease" ref="signatureLibraryReleaseSignalp_EUK-4.0"/>
         <property name="mandatoryParameters">
             <map key-type="java.lang.String" value-type="java.lang.String">
-                <entry key="fullPathToSignalPBinary" value-ref="fullPathToSignalPBinary"/>
+                <entry key="binary.signalp.4.0.path" value-ref="fullPathToSignalPBinary"/>
             </map>
         </property>
     </bean>
