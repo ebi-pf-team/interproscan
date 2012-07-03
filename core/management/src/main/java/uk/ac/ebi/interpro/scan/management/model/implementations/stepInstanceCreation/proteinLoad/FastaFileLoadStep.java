@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 
 import java.io.*;
+import java.util.List;
 
 /**
  * Loads a Fasta file into the database, creating new protein instance
@@ -77,7 +78,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
         } else {
             providedPath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, overridingFastaFileName);
         }
-        final String analysisJobNames = stepInstance.getParameters().get(ANALYSIS_JOB_NAMES_KEY);
+        String analysisJobNames = stepInstance.getParameters().get(ANALYSIS_JOB_NAMES_KEY);
         final String completionJobName = stepInstance.getParameters().get(COMPLETION_JOB_NAME_KEY);
         boolean useMatchLookupService = true;
         if (stepInstance.getParameters().containsKey(USE_MATCH_LOOKUP_SERVICE)) {
@@ -118,6 +119,13 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 Jobs analysisJobs;
                 if (analysisJobNames == null) {
                     analysisJobs = jobs.getAnalysisJobs();
+                    List<String> analysisJobIdList = analysisJobs.getJobIdList();
+                    StringBuilder analysisJobNamesBuilder = new StringBuilder();
+                    for (String jobName : analysisJobIdList) {
+                        if (analysisJobNamesBuilder.length() > 0) analysisJobNamesBuilder.append(',');
+                        analysisJobNamesBuilder.append(jobName);
+                    }
+                    analysisJobNames = analysisJobNamesBuilder.toString();
                 } else {
                     analysisJobs = jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
                 }

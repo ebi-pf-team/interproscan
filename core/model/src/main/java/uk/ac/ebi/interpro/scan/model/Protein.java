@@ -108,6 +108,10 @@ public class Protein implements Serializable {
 //    @XmlElement(name = "orfs", required = true)
     private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 
+    @Transient
+    @XmlTransient
+    private int sequenceLength = 0;
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -143,15 +147,19 @@ public class Protein implements Serializable {
 
     /**
      * Get the length of the sequence.
+     * Lazy load for efficiency - may be called repeatedly.
      *
      * @return The length
      */
     public int getSequenceLength() {
-        String seq = getSequence();
-        if (seq == null) {
-            throw new IllegalStateException("Protein sequence was NULL");
+        if (sequenceLength == 0) {
+            final String seq = getSequence();
+            if (seq == null) {
+                throw new IllegalStateException("Protein sequence was NULL");
+            }
+            sequenceLength = seq.length();
         }
-        return seq.length();
+        return sequenceLength;
     }
 
     /**
