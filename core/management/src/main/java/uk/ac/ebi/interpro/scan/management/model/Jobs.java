@@ -176,7 +176,7 @@ public class Jobs {
      */
     public Jobs subset(String[] jobIds) {
         final List<Job> subsetResult = new ArrayList<Job>();
-        //Assume that existence check was already done in a very early stage
+        //Existence check was already done in a very early stage
         //So no need to check existence again
         for (String jobId : jobIds) {
             Job job = jobMap.get(jobId);

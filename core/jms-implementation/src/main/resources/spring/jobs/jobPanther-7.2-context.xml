@@ -20,8 +20,48 @@
                 <value>${binary.panther.path}</value>
                 <value>${binary.blastall.2.2.6.path}</value>
                 <value>${binary.hmmer2.hmmsearch.path}</value>
+                <value>${panther.temporary.file.directory}</value>
             </list>
         </property>
+        <property name="mandatoryParameters">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="perl.command" value-ref="perlCommand"/>
+                <entry key="binary.panther.perl.lib.dir" value-ref="perlLibrary"/>
+                <entry key="binary.panther.path" value-ref="scriptPath"/>
+                <entry key="panther.models.dir.7.2" value-ref="modelDirectory"/>
+                <entry key="binary.blastall.2.2.6.path" value-ref="blastPath"/>
+                <entry key="binary.hmmer2.hmmsearch.path" value-ref="hmmerPath"/>
+                <entry key="panther.temporary.file.directory" value-ref="perlScriptTempDir"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="perlCommand" class="java.lang.String">
+        <constructor-arg value="${perl.command}"/>
+    </bean>
+    <!--Path to a Perl library directory (in this case a Perl library provided by Panther which is necessary to run the script)-->
+    <bean id="perlLibrary" class="java.lang.String">
+        <constructor-arg value="${binary.panther.perl.lib.dir}"/>
+    </bean>
+    <!--Panther Perl script-->
+    <bean id="scriptPath" class="java.lang.String">
+        <constructor-arg value="${binary.panther.path}"/>
+    </bean>
+    <!--Add Panther models-->
+    <bean id="modelDirectory" class="java.lang.String">
+        <constructor-arg value="${panther.models.dir.7.2}"/>
+    </bean>
+    <!--Add path to (B)last binary-->
+    <bean id="blastPath" class="java.lang.String">
+        <constructor-arg value="${binary.blastall.2.2.6.path}"/>
+    </bean>
+    <!--Add path to (H)mmsearch binary-->
+    <bean id="hmmerPath" class="java.lang.String">
+        <constructor-arg value="${binary.hmmer2.hmmsearch.path}"/>
+    </bean>
+
+    <bean id="perlScriptTempDir" class="java.lang.String">
+        <constructor-arg value="${panther.temporary.file.directory}"/>
     </bean>
 
     <bean id="abstractPantherStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -61,21 +101,21 @@
         <property name="dependsUpon" ref="stepPantherWriteFastaFile"/>
         <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
         <!--Add Perl command-->
-        <property name="perlCommand" value="${perl.command}"/>
+        <property name="perlCommand" ref="perlCommand"/>
         <!--Path to a Perl library directory (in this case a Perl library provided by Panther which is necessary to run the script)-->
-        <property name="perlLibrary" value="${binary.panther.perl.lib.dir}"/>
+        <property name="perlLibrary" ref="perlLibrary"/>
         <!--Panther Perl script-->
-        <property name="scriptPath" value="${binary.panther.path}"/>
+        <property name="scriptPath" ref="scriptPath"/>
         <!--Add Panther models-->
-        <property name="modelDirectory" value="${panther.models.dir.7.2}"/>
+        <property name="modelDirectory" ref="modelDirectory"/>
         <!--Add path to (B)last binary-->
-        <property name="blastPath" value="${binary.blastall.2.2.6.path}"/>
+        <property name="blastPath" ref="blastPath"/>
         <!--Add path to (H)mmsearch binary-->
-        <property name="hmmerPath" value="${binary.hmmer2.hmmsearch.path}"/>
+        <property name="hmmerPath" ref="hmmerPath"/>
         <!--Add additional arguments/parameter-->
         <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
         <property name="binarySwitches" value="-D I -E 1e-3 -n"/>
-        <property name="perlScriptTempDir" value="${panther.temporary.file.directory}"/>
+        <property name="perlScriptTempDir" ref="perlScriptTempDir"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
