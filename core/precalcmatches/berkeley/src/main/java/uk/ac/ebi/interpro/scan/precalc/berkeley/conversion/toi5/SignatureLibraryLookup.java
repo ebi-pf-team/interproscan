@@ -79,6 +79,8 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("superfamily", SignatureLibrary.SUPERFAMILY);
         libraryNameToSignatureLibrary.put("super-family", SignatureLibrary.SUPERFAMILY);
         libraryNameToSignatureLibrary.put("super_family", SignatureLibrary.SUPERFAMILY);
+        libraryNameToSignatureLibrary.put("ssf_hmmer3", SignatureLibrary.SUPERFAMILY);
+        libraryNameToSignatureLibrary.put("ssf-hmmer3", SignatureLibrary.SUPERFAMILY);
 
         libraryNameToSignatureLibrary.put("smart", SignatureLibrary.SMART);
 
