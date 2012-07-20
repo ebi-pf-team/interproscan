@@ -162,13 +162,12 @@ public final class TextSearch {
      * @param includeDescription Include full search result description text
      * @return A page object containing all necessary variables required to display a search results page
      */
-    public Page search(String query, int resultIndex, int resultsPerPage, boolean includeDescription) {
+    public SearchPage search(final String query, int resultIndex, int resultsPerPage, boolean includeDescription) {
         if (query.isEmpty()) {
-            return new Page(
+            return new SearchPage(
                     "", "",
                     0, 0, 1,
                     Collections.<Result>emptyList(),
-                    Collections.<RelatedResult>emptyList(),
                     Collections.<LinkInfoBean>emptyList(),
                     Collections.<Facet>emptyList());
         }
@@ -212,22 +211,19 @@ public final class TextSearch {
                 }
             }
             String queryWithoutFacets = stripFacets(query);
-            List<RelatedResult> relatedResults = new ArrayList<RelatedResult>();
             List<Facet> facets = new ArrayList<Facet>();
             int countWithoutFacets = 0;
             if (!queryWithoutFacets.isEmpty()) {
                 countWithoutFacets = client.getNumberOfResults(DOMAIN, queryWithoutFacets);
-                relatedResults = getRelatedResults(queryWithoutFacets);
                 facets = getFacets(query, queryWithoutFacets);
             }
-            return new Page(
+            return new SearchPage(
                     query,
                     queryWithoutFacets,
                     count,
                     countWithoutFacets,
                     getCurrentPage(resultIndex, resultsPerPage),
                     records,
-                    relatedResults,
                     getLinks("search?q="+query+"&amp;start=${start}", resultIndex, count, resultsPerPage),
                     facets);
         }
@@ -237,6 +233,17 @@ public final class TextSearch {
         catch (ServiceException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * Retrieve data for related search results from other EBI resources (not from InterPro).
+     * @param query The search query.
+     * @return Data required to display related search results on a web page.
+     */
+    public RelatedResultsPage getRelatedResultsPage(final String query){
+        String queryWithoutFacets = stripFacets(query);
+        List<RelatedResult> relatedResults = getRelatedResults(queryWithoutFacets);
+        return new RelatedResultsPage(query, queryWithoutFacets, relatedResults);
     }
 
     private int getCurrentPage(final int resultIndex, final int resultsPerPage) {
@@ -335,7 +342,11 @@ public final class TextSearch {
     }
 
 
-    public static final class Page {
+    /**
+     * A page class to hold necessary data for displaying the InterPro search results only.
+     * Related results (non-InterPro) are not included, but can be retrieved separately.
+     */
+    public static final class SearchPage {
 
         private final String query;
         private final String queryWithoutFacets;
@@ -343,21 +354,19 @@ public final class TextSearch {
         private final int countWithoutFacets;
         private final int currentPage;
         private final List<Result> results;
-        private final List<RelatedResult> relatedResults;
         private final List<LinkInfoBean> paginationLinks;
         private final List<Facet> facets;
 
-        public Page(String query, String queryWithoutFacets,
-                    int count, int countWithoutFacets, int currentPage,
-                    List<Result> results, List<RelatedResult> relatedResults,
-                    List<LinkInfoBean> paginationLinks, List<Facet> facets) {
+        public SearchPage(String query, String queryWithoutFacets,
+                          int count, int countWithoutFacets, int currentPage,
+                          List<Result> results,
+                          List<LinkInfoBean> paginationLinks, List<Facet> facets) {
             this.query           = query;
             this.queryWithoutFacets = queryWithoutFacets;
             this.count           = count;
             this.countWithoutFacets = countWithoutFacets;
             this.currentPage     = currentPage;
             this.results         = results;
-            this.relatedResults  = relatedResults;
             this.paginationLinks = paginationLinks;
             this.facets          = facets;
         }
@@ -401,13 +410,53 @@ public final class TextSearch {
             return results.size();
         }
 
+        public List<LinkInfoBean> getPaginationLinks() {
+            return paginationLinks;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public String getQueryWithoutFacets() {
+            return queryWithoutFacets;
+        }
+
+    }
+
+    /**
+     * A page class to hold necessary data for displaying the related results only.
+     */
+    public static final class RelatedResultsPage {
+
+        private final String query;
+        private final String queryWithoutFacets;
+        private final List<RelatedResult> relatedResults;
+
+        public RelatedResultsPage(String query, String queryWithoutFacets,
+                                  List<RelatedResult> relatedResults) {
+            this.query              = query;
+            this.queryWithoutFacets = queryWithoutFacets;
+            this.relatedResults     = relatedResults;
+        }
 
         public List<RelatedResult> getRelatedResults() {
             return relatedResults;
         }
 
-        public List<LinkInfoBean> getPaginationLinks() {
-            return paginationLinks;
+        public boolean areRelatedResultsNotEmpty() {
+            return getResultsCount() > 0;
+        }
+
+        /**
+         * Get the number of results (number available for display on this page only)
+         * @return The count
+         */
+        public int getResultsCount() {
+            if (relatedResults == null) {
+                return 0;
+            }
+            return relatedResults.size();
         }
 
         public String getQuery() {
@@ -452,6 +501,9 @@ public final class TextSearch {
 
     }
 
+    /**
+     * A related search result (not from InterPro but from other EBI resources).
+     */
     public static final class RelatedResult {
 
         private final String id;
@@ -496,6 +548,9 @@ public final class TextSearch {
 
     }
 
+    /**
+     * A search facet.
+     */
     public static final class Facet {
 
         private final String  prefix;
@@ -653,12 +708,12 @@ public final class TextSearch {
 
             //System.out.println(search.getFields());
 
-            TextSearch.Page page = search.search(query, 0, 10, includeDescription);
-            List<Result> results = page.getResults();
+            SearchPage searchPage = search.search(query, 0, 10, includeDescription);
+            List<Result> results = searchPage.getResults();
 
-            if (page.getCount() > 0) {
+            if (searchPage.getCount() > 0) {
 
-                System.out.println("Page " + page.getCurrentPage() + " of " + page.getCount() + " results for '" + query + "':");
+                System.out.println("Page " + searchPage.getCurrentPage() + " of " + searchPage.getCount() + " results for '" + query + "':");
                 System.out.println();
 
                 // Show search results
@@ -671,15 +726,15 @@ public final class TextSearch {
                 }
 
                 // Display pagination link text (not interactive for the user here though)
-                for (TextSearch.LinkInfoBean link : page.getPaginationLinks()) {
+                for (TextSearch.LinkInfoBean link : searchPage.getPaginationLinks()) {
                     System.out.println(link.getName() + " (" + link.getDescription() + ") -> " + link.getLink());
                 }
                 System.out.println();
 
                 // Show facets
                 System.out.println("Facets:");
-                System.out.println("All results (" + page.getCountWithoutFacets() + ")");
-                for (Facet f : page.getFacets()) {
+                System.out.println("All results (" + searchPage.getCountWithoutFacets() + ")");
+                for (Facet f : searchPage.getFacets()) {
                     String s = "";
                     if (f.isSelected()) {
                         s = " -- selected";
@@ -692,17 +747,6 @@ public final class TextSearch {
             else {
                 System.out.println("No results for '" + query + "'.");
             }
-
-            if (page.getRelatedResults().isEmpty()) {
-                System.out.println("No related results for '" + page.getQueryWithoutFacets() + "'.");
-            }
-            else {
-                System.out.println("Related results:");
-                for (RelatedResult r : page.getRelatedResults()) {
-                    System.out.println(r.getName() + " (" + r.getCount() + ")");
-                }
-            }
-
         }
     }
 
