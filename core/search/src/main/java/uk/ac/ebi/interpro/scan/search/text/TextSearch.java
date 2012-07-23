@@ -25,7 +25,8 @@ public final class TextSearch {
     // "Domain" in this sense means the name of the index in the EBI search engine
     private static String DOMAIN = "interpro";
 
-    private static final String FACET_TYPE = "type:";
+    private static final String FACET_TYPE_NAME = "type";
+    private static final String FACET_TYPE = FACET_TYPE_NAME + ":";
 
     // Could configure in Spring
     private final EBeyeClient client;
@@ -36,7 +37,7 @@ public final class TextSearch {
 
     public TextSearch(String endPointUrl) {
         client = new EBeyeClient();
-        client.setServiceEndPoint(endPointUrl); //eg. "http://www.ebi.ac.uk/ebisearch/service.ebi"
+        client.setServiceEndPoint(endPointUrl); // E.g. "http://www.ebi.ac.uk/ebisearch/service.ebi"
     }
 
     public String getServiceEndPoint() {
@@ -60,20 +61,21 @@ public final class TextSearch {
     /**
      * Get related results for this query.
      *
-     * @param query The search query to use
+     * @param query The search query to use (as entered/viewed by the user, no escape characters required)
      * @return The list of related results
      */
-    public List<RelatedResult> getRelatedResults(String query) {
+    public List<RelatedResult> getRelatedResults(final String query) {
+        final String escapedQuery = escapeSpecialChars(query);
         try {
             List<RelatedResult> relatedResults = new ArrayList<RelatedResult>();
             ArrayOfDomainResult a = null;
             try {
-                DomainResult dr = client.getDetailledNumberOfResults("allebi", query, false);
+                DomainResult dr = client.getDetailledNumberOfResults("allebi", escapedQuery, false);
                 a = dr.getSubDomainsResults().getValue();
             }
             catch (SOAPFaultException e) {
                 // TODO: Add logging
-                System.out.println("Could not get related results for " + query + ": " + e);
+                System.out.println("Could not get related results for " + escapedQuery + ": " + e);
             }
             if (a != null) {
                 for (DomainResult sd : a.getDomainResult()) {
@@ -97,7 +99,13 @@ public final class TextSearch {
         }
     }
 
-    public List<Facet> getFacets(String query, String queryWithoutFacets) {
+    /**
+     * Get facets for the queries.
+     * @param query The query with facet selections taken into account (assumes escape characters have already been added)
+     * @param queryWithoutFacets The query ignoring any facet selections (assumes escape characters have already been added)
+     * @return The list of facets
+     */
+    private List<Facet> getFacets(final String query, final String queryWithoutFacets) {
         String currentFacet = findFacetName(query);
         boolean isAllSelected = currentFacet.isEmpty();
         List<Facet> facets = new ArrayList<Facet>();
@@ -125,7 +133,12 @@ public final class TextSearch {
         return facets;
     }
 
-    public String stripFacets(String query) {
+    /**
+     * Just remove any facet search filtering terms from the query text provided.
+     * @param query The query to remove facets from (if any).
+     * @return The query with facets removed
+     */
+    private String stripFacets(String query) {
         if (query.contains(FACET_TYPE)) {
             String s = query.replaceAll(FACET_TYPE + "\\w+", "");
             return s.trim();
@@ -135,18 +148,36 @@ public final class TextSearch {
         }
     }
 
-    public String findFacetName(String query) {
+    /**
+     * Take the query and add escape characters as appropriate.
+     * E.g. "infected cells: Cp-IAP type:domain" would become "infected cells\\: Cp-IAP type:domain", note that the escape
+     * character was added to the colon in the plain text, but not to the "type" facet.
+     * @param query The query without escape characters
+     * @return The same query with escape characters added
+     */
+    private String escapeSpecialChars(String query) {
+        final String regex = "(?<!" + FACET_TYPE_NAME + "):"; // Look for colons that are not preceded with the "type" facet
+        query = query.replaceAll(regex, "\\\\:");
+        return query;
+    }
 
-        // TODO Perhaps one day we will need to saerch for multiple facets and values, e.g.
+    /**
+     * Find the name of the facet, e.g. "type:domain" has a name of "domain".
+     * @param query The query to parse
+     * @return The facet name
+     */
+    private String findFacetName(final String query) {
+
+        // TODO Perhaps one day we will need to search for multiple facets and values, e.g.
         // "kinase type:(domain OR ptm)" and other things in Lucene query syntax
         // http://lucene.apache.org/core/old_versioned_docs/versions/3_0_0/queryparsersyntax.html
         // But for now it's OK!
 
         if (query.contains(FACET_TYPE)) {
-            // Assumes the facet is the last part of the query, eg. "kinase type:domain"
-            // Would be better if worked no matter where facet is in query string
+            // Return the facet name
+            // E.g. the query "infected cells: Cp-IAP type:domain from" should return "domain"
             String[] s = query.split(FACET_TYPE);
-            return s[1].trim();
+            return s[1].split("\\s+")[0].trim();
         }
         else {
             return "";
@@ -171,11 +202,13 @@ public final class TextSearch {
                     Collections.<LinkInfoBean>emptyList(),
                     Collections.<Facet>emptyList());
         }
-        TextHighlighter highlighter = new TextHighlighter(query);
+        final String escapedQuery = escapeSpecialChars(query); // Query with escape chars added, not to be displayed to the user!
+        TextHighlighter highlighter = new TextHighlighter(escapedQuery);
+
         try {
-            //return client.listDomains();
+            //String[] domains = client.listDomains(); // See what domains are available besides INTERPRO
             List<Result> records = new ArrayList<Result>();
-            int count = client.getNumberOfResults(DOMAIN, query);
+            int count = client.getNumberOfResults(DOMAIN, escapedQuery);
             if (count > 0) {
                 List<String> f = new ArrayList<String>();
                 f.add("id");
@@ -185,7 +218,7 @@ public final class TextSearch {
                     f.add("description");
                 }
                 String[] fields = f.toArray(new String[f.size()]);
-                String[][] results = client.getResults(DOMAIN, query, fields, resultIndex, resultsPerPage);
+                String[][] results = client.getResults(DOMAIN, escapedQuery, fields, resultIndex, resultsPerPage);
                 for (String[] a : results) {
                     String id = null, name = null, type = null, description = null;
                     int len = a.length;
@@ -210,12 +243,13 @@ public final class TextSearch {
                     records.add(new Result(id, name, type, description));
                 }
             }
-            String queryWithoutFacets = stripFacets(query);
+            final String queryWithoutFacets = stripFacets(query);
+            final String escapedQueryWithoutFacets = escapeSpecialChars(queryWithoutFacets);
             List<Facet> facets = new ArrayList<Facet>();
             int countWithoutFacets = 0;
-            if (!queryWithoutFacets.isEmpty()) {
-                countWithoutFacets = client.getNumberOfResults(DOMAIN, queryWithoutFacets);
-                facets = getFacets(query, queryWithoutFacets);
+            if (!escapedQueryWithoutFacets.isEmpty()) {
+                countWithoutFacets = client.getNumberOfResults(DOMAIN, escapedQueryWithoutFacets);
+                facets = getFacets(escapedQuery, escapedQueryWithoutFacets);
             }
             return new SearchPage(
                     query,
@@ -237,12 +271,13 @@ public final class TextSearch {
 
     /**
      * Retrieve data for related search results from other EBI resources (not from InterPro).
-     * @param query The search query.
+     * @param query The search query (without escape chars).
      * @return Data required to display related search results on a web page.
      */
     public RelatedResultsPage getRelatedResultsPage(final String query){
-        String queryWithoutFacets = stripFacets(query);
-        List<RelatedResult> relatedResults = getRelatedResults(queryWithoutFacets);
+        final String queryWithoutFacets = stripFacets(query);
+        final String escapedQueryWithoutFacets = escapeSpecialChars(queryWithoutFacets);
+        List<RelatedResult> relatedResults = getRelatedResults(escapedQueryWithoutFacets);
         return new RelatedResultsPage(query, queryWithoutFacets, relatedResults);
     }
 
@@ -343,32 +378,38 @@ public final class TextSearch {
 
 
     /**
-     * A page class to hold necessary data for displaying the InterPro search results only.
+     * A page class to hold necessary data for displaying an InterPro search results page.
      * Related results (non-InterPro) are not included, but can be retrieved separately.
      */
     public static final class SearchPage {
 
-        private final String query;
-        private final String queryWithoutFacets;
-        private final int count;
-        private final int countWithoutFacets;
-        private final int currentPage;
-        private final List<Result> results;
-        private final List<LinkInfoBean> paginationLinks;
-        private final List<Facet> facets;
+        private final String query; // The query as entered/read by the user (without escape chars added)
+        private final String queryWithoutFacets; // The same as query, but with facets removed (without escape chars added)
+        private final int count; // The number of results returned by the query, taking selected facets into account
+        private final int countWithoutFacets; // The total number of results returned by the query (so ignoring facets)
+        private final int currentPage; // The current page number in the search results (pagination)
+        private final List<Result> results; // Data for the search results (for the current page only)
+        private final List<LinkInfoBean> paginationLinks; // The pagination links to display for the current page
+        private final List<Facet> facets; // The facets available, to allow filtering of search results
 
-        public SearchPage(String query, String queryWithoutFacets,
-                          int count, int countWithoutFacets, int currentPage,
-                          List<Result> results,
-                          List<LinkInfoBean> paginationLinks, List<Facet> facets) {
-            this.query           = query;
+        public SearchPage(String query, String queryWithoutFacets, int count, int countWithoutFacets, int currentPage,
+                          List<Result> results, List<LinkInfoBean> paginationLinks, List<Facet> facets) {
+            this.query = query;
             this.queryWithoutFacets = queryWithoutFacets;
-            this.count           = count;
+            this.count = count;
             this.countWithoutFacets = countWithoutFacets;
-            this.currentPage     = currentPage;
-            this.results         = results;
+            this.currentPage = currentPage;
+            this.results = results;
             this.paginationLinks = paginationLinks;
-            this.facets          = facets;
+            this.facets = facets;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public String getQueryWithoutFacets() {
+            return queryWithoutFacets;
         }
 
         /**
@@ -414,14 +455,6 @@ public final class TextSearch {
             return paginationLinks;
         }
 
-        public String getQuery() {
-            return query;
-        }
-
-        public String getQueryWithoutFacets() {
-            return queryWithoutFacets;
-        }
-
     }
 
     /**
@@ -433,11 +466,18 @@ public final class TextSearch {
         private final String queryWithoutFacets;
         private final List<RelatedResult> relatedResults;
 
-        public RelatedResultsPage(String query, String queryWithoutFacets,
-                                  List<RelatedResult> relatedResults) {
+        public RelatedResultsPage(String query, String queryWithoutFacets, List<RelatedResult> relatedResults) {
             this.query              = query;
             this.queryWithoutFacets = queryWithoutFacets;
             this.relatedResults     = relatedResults;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public String getQueryWithoutFacets() {
+            return queryWithoutFacets;
         }
 
         public List<RelatedResult> getRelatedResults() {
@@ -457,14 +497,6 @@ public final class TextSearch {
                 return 0;
             }
             return relatedResults.size();
-        }
-
-        public String getQuery() {
-            return query;
-        }
-
-        public String getQueryWithoutFacets() {
-            return queryWithoutFacets;
         }
 
     }
@@ -502,7 +534,7 @@ public final class TextSearch {
     }
 
     /**
-     * A related search result (not from InterPro but from other EBI resources).
+     * A related search result (not from InterPro, but from other EBI resources).
      */
     public static final class RelatedResult {
 
