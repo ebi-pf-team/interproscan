@@ -775,9 +775,22 @@ public final class TextSearch {
                 }
                 System.out.println();
 
+
             }
             else {
                 System.out.println("No results for '" + query + "'.");
+            }
+
+            // Show related results
+            List<RelatedResult> relatedResults = search.getRelatedResults(query);
+            System.out.println("Related Results:");
+            if (relatedResults == null || relatedResults.size() < 1) {
+                System.out.println("None");
+            }
+            else {
+                for (RelatedResult rr : relatedResults) {
+                    System.out.println(rr.getName() + " (" + rr.getId() + ") [" + rr.getCount() + "]");
+                }
             }
         }
     }
