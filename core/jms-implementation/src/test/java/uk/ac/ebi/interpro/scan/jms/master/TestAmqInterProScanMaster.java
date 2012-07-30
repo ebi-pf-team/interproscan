@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.jms.activemq;
+package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
@@ -9,7 +9,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test for AmqInterProScanMaster.
+ * Test for DistributedBlackBoxMaster.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
@@ -17,12 +17,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestAmqInterProScanMaster {
 
-    private AmqInterProScanMaster master;
+    private BlackBoxMaster master;
 
     @Test
     public void processOutputFormatsForProteinsTest() {
         //Set up the master
-        master = new AmqInterProScanMaster();
+        master = new StandaloneBlackBoxMaster();
         master.setSequenceType("p");
         //Run the test
         Map<String, String> params = new HashMap<String, String>();
@@ -41,7 +41,7 @@ public class TestAmqInterProScanMaster {
     @Test
     public void processOutputFormatsForNucleicAcidsTest() {
         //Set up the master
-        master = new AmqInterProScanMaster();
+        master = new StandaloneBlackBoxMaster();
         master.setSequenceType("n");
         //Run the test
         Map<String, String> params = new HashMap<String, String>();

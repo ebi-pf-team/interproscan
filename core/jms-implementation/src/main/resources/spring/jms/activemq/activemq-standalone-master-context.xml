@@ -22,11 +22,9 @@
         </amq:transportConnectors>
     </amq:broker>
 
-    <bean id="standalone" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
+    <bean id="standalone" class="uk.ac.ebi.interpro.scan.jms.master.StandaloneBlackBoxMaster">
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
-        <property name="closeOnCompletion" value="true"/>
-        <property name="cleanDatabase" value="true"/>
         <property name="databaseCleaner" ref="databaseCleaner"/>
         <property name="messageSender" ref="masterMessageSender"/>
         <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
@@ -39,7 +37,7 @@
     <bean id="masterMessageSender" class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
-        <property name="jmsTemplateWrapper" ref="jmsTemplateWrapper"/>
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">

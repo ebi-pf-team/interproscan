@@ -186,6 +186,7 @@
                 <excludes>
                     <exclude>persistence.xml</exclude>
                     <exclude>interpro.h2.db</exclude>
+                    <exclude>interpro.zip</exclude>
                 </excludes>
                 <filtering>true</filtering>
             </testResource>
@@ -193,6 +194,7 @@
                 <directory>src/test/resources/</directory>
                 <includes>
                     <include>interpro.h2.db</include>
+                    <include>interpro.zip</include>
                 </includes>
                 <filtering>false</filtering>
             </testResource>
