@@ -5,6 +5,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <!-- Beans for managing loading of runtime properties from application-default.properties and interproscan.properties -->
+
     <bean id="placeholderProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties" ref="defaultProperties"/>
         <!--<property name="location" value="classpath:batch-${ENVIRONMENT}.properties"/>-->

@@ -1,10 +1,12 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.jms.master.BlackBoxMaster;
 
 import javax.annotation.Resource;
 
@@ -22,13 +24,13 @@ public class TestActiveMQ {
     private static final Logger LOGGER = Logger.getLogger(TestActiveMQ.class.getName());
 
     @Resource
-    private AmqInterProScanMaster amqstandalone;
+    private BlackBoxMaster amqstandalone;
 
 
     @Test
-//    @Ignore("Needs to be reconfigured.")
+    @Ignore("Needs to be reconfigured.")
     public void testEmbeddedSystem() {
-        LOGGER.debug("If this test fails, check that the test database located in /src/resources/interpro.h2.db is up-to-date with " +
+        LOGGER.debug("If this test fails, check that the test database located in /src/test/resources/interpro.h2.db is up-to-date with " +
                 "the current schema.  If not, the easiest way to create a new empty database is to use the installer " +
                 "with all member database loading tasks commented out in the installer-context.xml file.");
         amqstandalone.setFastaFilePath("5.fasta");

@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.jms.activemq;
+package uk.ac.ebi.interpro.scan.jms.agent;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.log4j.Logger;
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl;
 
 import javax.jms.Session;
 import java.util.ArrayList;
@@ -22,25 +23,17 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class DistributedWorkerController implements Runnable {
+public class WorkerImpl extends AbstractAgent implements Worker {
 
-    private static final Logger LOGGER = Logger.getLogger(DistributedWorkerController.class.getName());
-
-    private final long startUpTime = new Date().getTime();
+    private static final Logger LOGGER = Logger.getLogger(WorkerImpl.class.getName());
 
     private long lastMessageFinishedTime = new Date().getTime();
-
-    private long maximumIdleTimeMillis = Long.MAX_VALUE;
-
-    private long maximumLifeMillis = Long.MAX_VALUE;
 
     private final List<String> runningJobs = new ArrayList<String>();
 
     private final Object jobListLock = new Object();
 
     private DefaultMessageListenerContainer messageListenerContainer;
-
-    private JmsTemplateWrapper jmsTemplateWrapper;
 
     private int priority;
 
@@ -55,23 +48,11 @@ public class DistributedWorkerController implements Runnable {
      *
      * @param messageListenerContainer that must be set before anything else.
      */
-    public DistributedWorkerController(DefaultMessageListenerContainer messageListenerContainer) {
+    public WorkerImpl(DefaultMessageListenerContainer messageListenerContainer) {
         if (messageListenerContainer == null) {
-            throw new IllegalArgumentException("A DistributedWorkerController cannot be instantiated with a null DefaultMessageListenerContainer.");
+            throw new IllegalArgumentException("A Worker cannot be instantiated with a null DefaultMessageListenerContainer.");
         }
         this.messageListenerContainer = messageListenerContainer;
-    }
-
-    public void setMaximumIdleTimeSeconds(Long maximumIdleTime) {
-        this.maximumIdleTimeMillis = maximumIdleTime * 1000;
-    }
-
-    public void setMaximumLifeSeconds(Long maximumLife) {
-        this.maximumLifeMillis = maximumLife * 1000;
-    }
-
-    public void setJmsTemplateWrapper(JmsTemplateWrapper jmsTemplateWrapper) {
-        this.jmsTemplateWrapper = jmsTemplateWrapper;
     }
 
     @Required
@@ -86,10 +67,10 @@ public class DistributedWorkerController implements Runnable {
     }
 
     /**
-     * If a Master URI has been set on this DistributedWorkerController, this method will return it,
+     * If a Master URI has been set on this Worker, this method will return it,
      * otherwise will return null.
      *
-     * @return If a Master URI has been set on this DistributedWorkerController, this method will return it,
+     * @return If a Master URI has been set on this Worker, this method will return it,
      *         otherwise will return null.
      */
     public String getMasterUri() {
@@ -99,7 +80,7 @@ public class DistributedWorkerController implements Runnable {
     public void jobStarted(String jmsMessageId) {
         synchronized (jobListLock) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Job " + jmsMessageId + " added to DistributedWorkerController.runningJobs");
+                LOGGER.debug("Job " + jmsMessageId + " added to Worker.runningJobs");
             }
             runningJobs.add(jmsMessageId);
         }
@@ -108,10 +89,10 @@ public class DistributedWorkerController implements Runnable {
     public void jobFinished(String jmsMessageId) {
         synchronized (jobListLock) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Job " + jmsMessageId + " removed from DistributedWorkerController.runningJobs");
+                LOGGER.debug("Job " + jmsMessageId + " removed from Worker.runningJobs");
             }
             if (!runningJobs.remove(jmsMessageId)) {
-                LOGGER.error("DistributedWorkerController.jobFinished(jmsMessageId) has been called with a message ID that it does not recognise: " + jmsMessageId);
+                LOGGER.error("Worker.jobFinished(jmsMessageId) has been called with a message ID that it does not recognise: " + jmsMessageId);
             }
             lastMessageFinishedTime = new Date().getTime();
         }
@@ -159,7 +140,7 @@ public class DistributedWorkerController implements Runnable {
                 Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
-            LOGGER.error("InterruptedException thrown by DistributedWorkerController.  Stopping now.", e);
+            LOGGER.error("InterruptedException thrown by Worker.  Stopping now.", e);
         }
     }
 
@@ -257,7 +238,7 @@ public class DistributedWorkerController implements Runnable {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Master URI passed in to Controller: " + masterUri);
         }
-        if (jmsTemplateWrapper == null) {
+        if (jmsTemplate == null) {
             throw new IllegalStateException("This DistributeWorkerController does not have a reference to the JmsTemplateWrapper, needed to configure the connection.");
         }
 
@@ -275,7 +256,7 @@ public class DistributedWorkerController implements Runnable {
         final JmsTemplate template = new JmsTemplate(connectionFactory);
         template.setExplicitQosEnabled(true);
         template.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
-        jmsTemplateWrapper.setTemplate(template); // Give all other components access to the correctly configured JmsTemplate.
+        jmsTemplate = template; // Give all other components access to the correctly configured JmsTemplate.
 //        messageListenerContainer.initialize();
         messageListenerContainer.start();
         if (LOGGER.isDebugEnabled()) {

@@ -2,8 +2,12 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -70,6 +74,8 @@ public class CleanRunDatabase implements Runnable {
             cleanInstalledDatabase();
         } catch (SQLException sqle) {
             throw new IllegalStateException("SQLException thrown when attempting to close connection to the in memory database.", sqle);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("IOException thrown when attempting to load database backup file.", ioe);
         }
     }
 
@@ -77,17 +83,22 @@ public class CleanRunDatabase implements Runnable {
         this.parentProcessRunning = false;
     }
 
-    public void cleanInstalledDatabase() throws SQLException {
+    public void cleanInstalledDatabase() throws SQLException, IOException {
         // Filter the path for the database, if necessary.
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("original Database path = " + databaseBackupFile);
         }
-        File originalFile = new File(databaseBackupFile);
-
-        if (!originalFile.exists()) {
+        // First, try on the file system
+        Resource databaseBackupResource = new FileSystemResource(databaseBackupFile);
+        if (!databaseBackupResource.exists()) {
+            // Try again on the classpath
+            databaseBackupResource = new ClassPathResource(databaseBackupFile);
+        }
+        if (!databaseBackupResource.exists()) {
             LOGGER.fatal("Unable to find original database file: " + databaseBackupFile);
             throw new IllegalStateException("Unable to find original database file");
         }
+        File originalFile = databaseBackupResource.getFile();
         Connection conn = null;
         try {
             Class.forName(inMemoryDatabaseDriverClass);
@@ -99,7 +110,7 @@ public class CleanRunDatabase implements Runnable {
             conn = DriverManager.getConnection(inMemoryDatabaseURL, inMemoryDatabaseUsername, inMemoryDatabasePassword);
 
             // TODO - this statement is H2 specific.
-            conn.createStatement().execute("RUNSCRIPT from '" + databaseBackupFile + "' COMPRESSION ZIP");
+            conn.createStatement().execute("RUNSCRIPT from '" + originalFile.getAbsolutePath() + "' COMPRESSION ZIP");
             stillLoading = false;
             while (parentProcessRunning) {
                 // To ensure the in-memory database restored in this method is used by the

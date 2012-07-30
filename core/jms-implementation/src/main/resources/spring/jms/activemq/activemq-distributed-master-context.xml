@@ -44,16 +44,13 @@
         </amq:transportConnectors>
     </amq:broker>
 
-    <bean id="master" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
+    <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.ProductionMaster">
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
-        <property name="closeOnCompletion" value="false"/>
         <property name="messageSender" ref="masterMessageSender"/>
         <property name="workerRunner" ref="workerRunner"/>
         <property name="workerRunnerHighMemory" ref="workerRunnerHighMemory"/>
         <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
-        <property name="onlyFarmOutNonDatabaseProcesses" value="false"/>
-        <property name="hasInVmWorker" value="false"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
     </bean>
 
@@ -62,11 +59,7 @@
     <bean id="masterMessageSender" class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
-        <property name="jmsTemplateWrapper">
-            <bean class="uk.ac.ebi.interpro.scan.jms.activemq.JmsTemplateWrapper">
-                <property name="template" ref="inVmJmsTemplate"/>
-            </bean>
-        </property>
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
     </bean>
 
 
@@ -112,6 +105,7 @@
     <!-- Quartz job to load proteins from UniParc -->
     <bean id="proteinLoadQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="master"/>
+        <property name="targetClass" value="uk.ac.ebi.interpro.scan.jms.master.ProductionMaster"/>
         <property name="targetMethod" value="createProteinLoadJob"/>
     </bean>
 

@@ -41,27 +41,20 @@
         </amq:transportConnectors>
     </amq:broker>
 
-    <bean id="clDist" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanMaster">
+    <bean id="clDist" class="uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster">
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
-        <property name="closeOnCompletion" value="true"/>
-        <property name="cleanDatabase" value="true"/>
         <property name="databaseCleaner" ref="databaseCleaner"/>
         <property name="messageSender">
             <bean class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
                 <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
                 <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
-                <property name="jmsTemplateWrapper">
-                    <bean class="uk.ac.ebi.interpro.scan.jms.activemq.JmsTemplateWrapper">
-                        <property name="template" ref="inVmJmsTemplate"/>
-                    </bean>
-                </property>
+                <property name="jmsTemplate" ref="inVmJmsTemplate"/>
             </bean>
         </property>
         <property name="unrecoverableErrorStrategy">
             <bean class="uk.ac.ebi.interpro.scan.jms.activemq.NonZeroExitOnUnrecoverableError"/>
         </property>
-        <property name="onlyFarmOutNonDatabaseProcesses" value="true"/>
         <property name="workerRunner">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
                 <property name="submissionCommand" value="${worker.command}"/>
