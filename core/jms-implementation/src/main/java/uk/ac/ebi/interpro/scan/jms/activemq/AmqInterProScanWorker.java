@@ -2,7 +2,9 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import uk.ac.ebi.interpro.scan.jms.agent.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
@@ -19,7 +21,7 @@ public class AmqInterProScanWorker implements MessageListener {
 
     private static final Logger LOGGER = Logger.getLogger(AmqInterProScanWorker.class.getName());
 
-    private JmsTemplateWrapper jmsTemplateWrapper;
+    private JmsTemplate jmsTemplate;
 
     private Destination jobResponseQueue;
 
@@ -31,19 +33,18 @@ public class AmqInterProScanWorker implements MessageListener {
      * The distributed worker controller is in charge of calling 'stop' on the
      * Spring MonitorListenerContainer when the conditions are correct.
      *
-     * @see uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController
+     * @see uk.ac.ebi.interpro.scan.jms.agent.WorkerImpl
      */
-    private DistributedWorkerController controller;
+    private WorkerImpl controller;
 
     AmqInterProScanWorker() {
     }
 
-    @Required
-    public void setJmsTemplateWrapper(JmsTemplateWrapper jmsTemplateWrapper) {
-        this.jmsTemplateWrapper = jmsTemplateWrapper;
+    public void setJmsTemplate(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
     }
 
-    public void setController(DistributedWorkerController controller) {
+    public void setController(WorkerImpl controller) {
         this.controller = controller;
     }
 
@@ -92,6 +93,9 @@ public class AmqInterProScanWorker implements MessageListener {
             }
             LOGGER.debug("Message received of queue - attempting to executeInTransaction");
 
+
+            // TODO - Need to add a dead-letter queue, so if this worker never gets as far as
+            // acknoledging the message, the Master will know to re-run the StepInstance.
             try {
                 stepExecutor.executeInTransaction(stepExecution, message);
             } catch (Exception e) {
@@ -103,7 +107,7 @@ public class AmqInterProScanWorker implements MessageListener {
                 // that failed during the execution.
                 stepExecution.fail(e);
 
-                jmsTemplateWrapper.getTemplate().send(jobResponseQueue, new MessageCreator() {
+                jmsTemplate.send(jobResponseQueue, new MessageCreator() {
                     public Message createMessage(Session session) throws JMSException {
                         return session.createObjectMessage(stepExecution);
                     }

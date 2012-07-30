@@ -10,7 +10,9 @@ import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
-import uk.ac.ebi.interpro.scan.jms.activemq.DistributedWorkerController;
+import uk.ac.ebi.interpro.scan.jms.agent.WorkerImpl;
+import uk.ac.ebi.interpro.scan.jms.master.BlackBoxMaster;
+import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
@@ -169,7 +171,9 @@ public class Run {
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
         MONITOR("monitor", "spring/monitor/monitor-context.xml"),
-        INSTALLER("installer", "spring/installer/installer-context.xml");
+        INSTALLER("installer", "spring/installer/installer-context.xml"),
+        // Use this mode for creating the test database that lives in /jms-implementation/src/test/resources/
+        EMPTY_INSTALLER("installer", "spring/installer/empty-installer-context.xml");
         //
         private String contextXML;
 
@@ -229,7 +233,7 @@ public class Run {
                 }
             }
 
-            builder = OptionBuilder.withValueSeparator();
+            builder = builder.withValueSeparator();
 
             final Option option = (i5Option.getShortOpt() == null)
                     ? builder.create()
@@ -264,21 +268,12 @@ public class Run {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
                 LOGGER.info("Running as: " + mode);
             }
-//
-//            if (config == null) {
-//                LOGGER.info("No custom config used. Use java -Dconfig=config/my.properties");
-//            } else {
-//                LOGGER.info("Custom config: " + config);
-//            }
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
 
             // The command-line distributed mode selects a random port number for communications.
             // This block selects the random port number and sets it on the broker.
-            String tcpConnectionString = null;
-            if (mode == Mode.CL_MASTER) {
-                tcpConnectionString = configureTCPTransport(ctx);
-            }
+
 
             String[] parsedAnalyses = null;
             if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
@@ -287,7 +282,7 @@ public class Run {
             }
 
 
-            if (mode != Mode.INSTALLER) {
+            if (mode != Mode.INSTALLER && mode != Mode.EMPTY_INSTALLER) {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
@@ -411,104 +406,16 @@ public class Run {
             }
 
             if (mode.getRunnableBean() != null) {
-                Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
+                final Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
 
-                // Set command line parameters on Master.
-                if (runnable instanceof Master) {
-                    boolean haveSetBaseOutputFileName = false;
-                    Master master = (Master) runnable;
-                    if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
-                        master.setFastaFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()));
-                    }
-                    if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
-                        master.setOutputBaseFilename(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()));
-                        haveSetBaseOutputFileName = true;
-                    }
-                    if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
-                        if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0])) {
-                            System.out.println("\n\nYou must indicate a single output format excluding HTML, using the -f option if you wish to set an explicit output file name.");
-                            System.exit(2);
-                        }
+                checkIfMasterAndConfigure(runnable, parsedAnalyses, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
 
-                        if (haveSetBaseOutputFileName) {
-                            System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
-                            System.exit(3);
-                        }
-                        master.setExplicitOutputFilename(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()));
-                    }
-                    if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
-                        master.setOutputFormats(parsedOutputFormats);
-                    }
-                    if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
-                        master.setAnalyses(parsedAnalyses);
-                    }
-                    if (tcpConnectionString != null) {
-                        master.setTcpUri(tcpConnectionString);
-                    }
-                    if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
-                        master.setSequenceType(sequenceType);
-                    }
+                checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx);
 
-                    if (parsedCommandLine.hasOption(I5Option.MIN_SIZE.getLongOpt())) {
-                        master.setMinSize(parsedCommandLine.getOptionValue(I5Option.MIN_SIZE.getLongOpt()));
-                    }
-
-                    //process tmp dir parameter capital T
-                    if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
-                        master.setTemporaryDirectory(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()));
-                    }
-                    if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
-                        master.disablePrecalc();
-                    }
-
-                    // GO terms and/or pathways will also imply IPR lookup
-                    final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
-                    master.setMapToGOAnnotations(mapToGo);
-                    final boolean mapToPathway = parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt());
-                    master.setMapToPathway(mapToPathway);
-                    master.setMapToInterProEntries(mapToGo || mapToPathway || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
-                }
-
-                // Set command line parameters on distributed worker.
-                if (runnable instanceof DistributedWorkerController) {
-//                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt()) || parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
-                    final DistributedWorkerController workerController = (DistributedWorkerController) runnable;
-                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt())) {
-                        final int priority = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.PRIORITY.getLongOpt()));
-                        if (priority < 0 || priority > 9) {
-                            throw new IllegalStateException("The JMS priority value must be an integer between 0 and 9.  The value passed in is " + priority);
-                        }
-                        workerController.setMinimumJmsPriority(priority);
-                    }
-                    if (parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
-                        final String masterUri = parsedCommandLine.getOptionValue(I5Option.MASTER_URI.getLongOpt());
-                        workerController.setMasterUri(masterUri);
-                    }
-                    if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {
-                        final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
-                        if (LOGGER.isDebugEnabled())
-                            LOGGER.debug("Have a temporary directory name passed in: " + temporaryDirectoryName);
-                        // Attempt to modify the TemporaryDirectoryManager by retrieving it by name from the context.
-                        final TemporaryDirectoryManager tdm = (TemporaryDirectoryManager) ctx.getBean("tempDirectoryManager");
-                        // Check it is the right kind of directory manager, if it is, set the directory.
-                        if (LOGGER.isDebugEnabled())
-                            LOGGER.debug("Retrieved the TemporaryDirectoryManager - is it an ExternallySetLocationTemporaryDirectoryManager?");
-                        if (tdm != null && tdm instanceof ExternallySetLocationTemporaryDirectoryManager) {
-                            if (LOGGER.isDebugEnabled())
-                                LOGGER.debug("YES!  Calling setPassedInDirectoryName on the DirectoryManager.");
-                            ((ExternallySetLocationTemporaryDirectoryManager) tdm).setPassedInDirectoryName(temporaryDirectoryName);
-                        } else if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("NO!  So can't set the temporary directory manager.  Details of Directory Manager:" + tdm.toString());
-                        }
-                    }
-//                    }
-                }
-
-                // TODO Currently silently ignores command line parameters that are not appropriate for the mode.
                 System.out.println("Running InterProScan v5 in " + mode + " mode...");
+
                 runnable.run();
             }
-//            ctx.close();
             System.exit(0);
 
         } catch (ParseException exp) {
@@ -518,6 +425,128 @@ public class Run {
         } catch (IllegalArgumentException iae) {
             LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
             System.exit(1);
+        }
+    }
+
+    private static void checkIfMasterAndConfigure(final Runnable runnable,
+                                                  final String[] parsedAnalyses,
+                                                  final CommandLine parsedCommandLine,
+                                                  final String[] parsedOutputFormats,
+                                                  final AbstractApplicationContext ctx,
+                                                  final Mode mode,
+                                                  final String sequenceType) {
+        if (runnable instanceof Master) {
+            final Master master = (Master) runnable;
+            if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
+                master.setAnalyses(parsedAnalyses);
+            }
+            //process tmp dir parameter capital T
+            if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
+                master.setTemporaryDirectory(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()));
+            }
+
+            checkIfBlackBoxMasterAndConfigure(master, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
+        }
+    }
+
+    private static void checkIfBlackBoxMasterAndConfigure(
+            final Master master,
+            final CommandLine parsedCommandLine,
+            final String[] parsedOutputFormats,
+            final AbstractApplicationContext ctx,
+            final Mode mode,
+            final String sequenceType
+    ) {
+        if (master instanceof BlackBoxMaster) {
+            boolean haveSetBaseOutputFileName = false;
+
+            BlackBoxMaster bbMaster = (BlackBoxMaster) master;
+            if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
+                bbMaster.setFastaFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()));
+            }
+            if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
+                bbMaster.setOutputBaseFilename(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()));
+                haveSetBaseOutputFileName = true;
+            }
+            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+                if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0])) {
+                    System.out.println("\n\nYou must indicate a single output format excluding HTML, using the -f option if you wish to set an explicit output file name.");
+                    System.exit(2);
+                }
+
+                if (haveSetBaseOutputFileName) {
+                    System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
+                    System.exit(3);
+                }
+                bbMaster.setExplicitOutputFilename(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()));
+            }
+            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
+                bbMaster.setOutputFormats(parsedOutputFormats);
+            }
+            String tcpConnectionString = null;
+            if (mode == Mode.CL_MASTER) {
+                tcpConnectionString = configureTCPTransport(ctx);
+            }
+
+            if (bbMaster instanceof DistributedBlackBoxMaster && tcpConnectionString != null) {
+                ((DistributedBlackBoxMaster) bbMaster).setTcpUri(tcpConnectionString);
+            }
+            if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
+                bbMaster.setSequenceType(sequenceType);
+            }
+
+            if (parsedCommandLine.hasOption(I5Option.MIN_SIZE.getLongOpt())) {
+                bbMaster.setMinSize(parsedCommandLine.getOptionValue(I5Option.MIN_SIZE.getLongOpt()));
+            }
+
+
+            if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
+                bbMaster.disablePrecalc();
+            }
+
+            // GO terms and/or pathways will also imply IPR lookup
+            final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
+            bbMaster.setMapToGOAnnotations(mapToGo);
+            final boolean mapToPathway = parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt());
+            bbMaster.setMapToPathway(mapToPathway);
+            bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
+        }
+    }
+
+    private static void checkIfDistributedWorkerAndConfigure(final Runnable runnable,
+                                                             final CommandLine parsedCommandLine,
+                                                             final AbstractApplicationContext ctx) {
+        if (runnable instanceof WorkerImpl) {
+//                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt()) || parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
+            final WorkerImpl worker = (WorkerImpl) runnable;
+            if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt())) {
+                final int priority = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.PRIORITY.getLongOpt()));
+                if (priority < 0 || priority > 9) {
+                    throw new IllegalStateException("The JMS priority value must be an integer between 0 and 9.  The value passed in is " + priority);
+                }
+                worker.setMinimumJmsPriority(priority);
+            }
+            if (parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
+                final String masterUri = parsedCommandLine.getOptionValue(I5Option.MASTER_URI.getLongOpt());
+                worker.setMasterUri(masterUri);
+            }
+            if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {
+                final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Have a temporary directory name passed in: " + temporaryDirectoryName);
+                // Attempt to modify the TemporaryDirectoryManager by retrieving it by name from the context.
+                final TemporaryDirectoryManager tdm = (TemporaryDirectoryManager) ctx.getBean("tempDirectoryManager");
+                // Check it is the right kind of directory manager, if it is, set the directory.
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Retrieved the TemporaryDirectoryManager - is it an ExternallySetLocationTemporaryDirectoryManager?");
+                if (tdm != null && tdm instanceof ExternallySetLocationTemporaryDirectoryManager) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("YES!  Calling setPassedInDirectoryName on the DirectoryManager.");
+                    ((ExternallySetLocationTemporaryDirectoryManager) tdm).setPassedInDirectoryName(temporaryDirectoryName);
+                } else if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("NO!  So can't set the temporary directory manager.  Details of Directory Manager:" + tdm.toString());
+                }
+            }
         }
     }
 

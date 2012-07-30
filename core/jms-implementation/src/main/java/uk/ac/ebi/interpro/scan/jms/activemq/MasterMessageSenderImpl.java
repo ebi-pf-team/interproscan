@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
@@ -27,7 +28,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
 
     public static final String CAN_RUN_REMOTELY_PROPERTY = "remote";
 
-    private JmsTemplateWrapper jmsTemplateWrapper;
+    private JmsTemplate jmsTemplate;
 
     private final Object jmsTemplateLock = new Object();
 
@@ -37,8 +38,8 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
 
 
     @Required
-    public void setJmsTemplateWrapper(JmsTemplateWrapper jmsTemplateWrapper) {
-        this.jmsTemplateWrapper = jmsTemplateWrapper;
+    public void setJmsTemplate(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
     }
 
     @Required
@@ -65,13 +66,13 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
         stepExecutionDAO.insert(stepExecution);
         stepExecution.submit(stepExecutionDAO);
 
-        if (!jmsTemplateWrapper.getTemplate().isExplicitQosEnabled()) {
+        if (!jmsTemplate.isExplicitQosEnabled()) {
             throw new IllegalStateException("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
         }
 
         synchronized (jmsTemplateLock) {
-            jmsTemplateWrapper.getTemplate().setPriority(priority);
-            jmsTemplateWrapper.getTemplate().send(workerJobRequestQueue, new MessageCreator() {
+            jmsTemplate.setPriority(priority);
+            jmsTemplate.send(workerJobRequestQueue, new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     final ObjectMessage message = session.createObjectMessage(stepExecution);
                     message.setBooleanProperty(HIGH_MEMORY_PROPERTY, highMemory);

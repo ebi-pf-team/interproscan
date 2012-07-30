@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.jms.core.JmsTemplate;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 
 import javax.jms.Destination;
@@ -23,7 +24,7 @@ public class AmqInterProScanMonitorListener implements MessageListener {
 
     private AmqInterProScanWorker worker;
 
-    private JmsTemplateWrapper jmsTemplateWrapper;
+    private JmsTemplate jmsTemplate;
 
     private Jobs jobs;
 
@@ -37,8 +38,8 @@ public class AmqInterProScanMonitorListener implements MessageListener {
         this.workerManagerResponseQueue = workerManagerResponseQueue;
     }
 
-    public void setJmsTemplateWrapper(JmsTemplateWrapper jmsTemplate) {
-        this.jmsTemplateWrapper = jmsTemplate;
+    public void setJmsTemplate(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
     }
 
     @Required
