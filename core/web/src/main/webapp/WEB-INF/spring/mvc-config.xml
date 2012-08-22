@@ -30,8 +30,6 @@
                         <entry key="js_resource_protein" value="${resourceWebPath}/javascript/protein.js"/>
                         <entry key="js_resource_jquery_jscroll"
                                value="${resourceWebPath}/javascript/jquery/jquery.jscroll.min.js"/>
-                        <entry key="js_resource_jquery_qtip2"
-                               value="${resourceWebPath}/javascript/qtip2/jquery.qtip.min.js"/>
                         <entry key="js_resource_common" value="${resourceWebPath}/javascript/common.js"/>
                         <entry key="js_resource_protein_popups" value="${resourceWebPath}/javascript/protein-popups.js"/>
                         <entry key="js_resource_jquery_ui1817_custom" value="${resourceWebPath}/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js"/>
