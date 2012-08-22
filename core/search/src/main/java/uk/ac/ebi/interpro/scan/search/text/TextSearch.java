@@ -23,8 +23,9 @@ import java.util.*;
 public final class TextSearch {
 
     // "Domain" in this sense means the name of the index in the EBI search engine
-    private static String DOMAIN = "interpro";
+    private static final String DOMAIN = "interpro";
 
+    // TODO Remove these as part of supporting multiple facets...
     private static final String FACET_TYPE_NAME = "type";
     private static final String FACET_TYPE = FACET_TYPE_NAME + ":";
 
@@ -106,7 +107,7 @@ public final class TextSearch {
      * @return The list of facets
      */
     private List<Facet> getFacets(final String query, final String queryWithoutFacets) {
-        String currentFacet = findFacetName(query);
+        String currentFacet = findFacetValue(query);
         boolean isAllSelected = currentFacet.isEmpty();
         List<Facet> facets = new ArrayList<Facet>();
         try {
@@ -136,16 +137,20 @@ public final class TextSearch {
     /**
      * Just remove any facet search filtering terms from the query text provided.
      * @param query The query to remove facets from (if any).
+     * @param interproOnly Only remove InterPro specific facets?
      * @return The query with facets removed
      */
-    private String stripFacets(String query) {
-        if (query.contains(FACET_TYPE)) {
-            String s = query.replaceAll(FACET_TYPE + "\\w+", "");
-            return s.trim();
+    private String stripFacets(String query, boolean interproOnly) {
+        for (FacetName facetName : FacetName.values()) {
+            final String facet = facetName + ":";
+            if (query.contains(facet)) {
+                if (!interproOnly || facetName.isInterProSpecific()) {
+                    query = query.replaceAll(facet + "\\w+", "").trim();
+                }
+            }
         }
-        else {
-            return query;
-        }
+
+        return query;
     }
 
     /**
@@ -156,7 +161,15 @@ public final class TextSearch {
      * @return The same query with escape characters added
      */
     private String escapeSpecialChars(String query) {
-        final String regex = "(?<!" + FACET_TYPE_NAME + "):"; // Look for colons that are not preceded with the "type" facet
+        String regex = "(?<!";
+        FacetName[] facetNames = FacetName.values();
+        for (int i = 0; i < facetNames.length; i++) {
+            if (i > 0) {
+                regex += "|";
+            }
+            regex +=  facetNames[i].getName(); // Look for colons that are not preceded with a recognised facet name
+        }
+        regex += "):";
         query = query.replaceAll(regex, "\\\\:");
         return query;
     }
@@ -166,7 +179,12 @@ public final class TextSearch {
      * @param query The query to parse
      * @return The facet name
      */
-    private String findFacetName(final String query) {
+    private String findFacetValue(final String query) {
+
+        // TODO This method assumes we only have the TYPE facet. Will need changing to cope with others.
+
+        // Example query:
+        // "kinase domain_source:interpro type:domain"
 
         // TODO Perhaps one day we will need to search for multiple facets and values, e.g.
         // "kinase type:(domain OR ptm)" and other things in Lucene query syntax
@@ -194,21 +212,26 @@ public final class TextSearch {
      * @return A page object containing all necessary variables required to display a search results page
      */
     public SearchPage search(final String query, int resultIndex, int resultsPerPage, boolean includeDescription) {
-        if (query.isEmpty()) {
-            return new SearchPage(
-                    "", "",
-                    0, 0, 1,
-                    Collections.<Result>emptyList(),
-                    Collections.<LinkInfoBean>emptyList(),
-                    Collections.<Facet>emptyList());
+        String internalQuery = query; // An internal version of the query (as entered by the user, but changed behind
+        // the scenes to pass the the EBI search webservice).
+
+        // Always add on "domain_source:interpro" to every search page query, even though it's only really necessary
+        // when the user entered an empty query, or just a facet with no search terms!
+        final String DOMAIN_SOURCE = FacetName.DOMAIN_SOURCE.getName() + ":" + DOMAIN;
+        if (internalQuery.isEmpty()) {
+            internalQuery =  DOMAIN_SOURCE;
         }
-        final String escapedQuery = escapeSpecialChars(query); // Query with escape chars added, not to be displayed to the user!
-        TextHighlighter highlighter = new TextHighlighter(escapedQuery);
+        else if (!internalQuery.contains(DOMAIN_SOURCE)) {
+            internalQuery = DOMAIN_SOURCE + " " + internalQuery;
+        }
+
+        final String escapedInternalQuery = escapeSpecialChars(internalQuery); // Query with escape chars added, not to be displayed to the user!
+        TextHighlighter highlighter = new TextHighlighter(escapedInternalQuery);
 
         try {
-            //String[] domains = client.listDomains(); // See what domains are available besides INTERPRO
+            String[] domains = client.listDomains(); // See what domains are available besides INTERPRO
             List<Result> records = new ArrayList<Result>();
-            int count = client.getNumberOfResults(DOMAIN, escapedQuery);
+            int count = client.getNumberOfResults(DOMAIN, escapedInternalQuery);
             if (count > 0) {
                 List<String> f = new ArrayList<String>();
                 f.add("id");
@@ -218,7 +241,7 @@ public final class TextSearch {
                     f.add("description");
                 }
                 String[] fields = f.toArray(new String[f.size()]);
-                String[][] results = client.getResults(DOMAIN, escapedQuery, fields, resultIndex, resultsPerPage);
+                String[][] results = client.getResults(DOMAIN, escapedInternalQuery, fields, resultIndex, resultsPerPage);
                 for (String[] a : results) {
                     String id = null, name = null, type = null, description = null;
                     int len = a.length;
@@ -243,17 +266,19 @@ public final class TextSearch {
                     records.add(new Result(id, name, type, description));
                 }
             }
-            final String queryWithoutFacets = stripFacets(query);
-            final String escapedQueryWithoutFacets = escapeSpecialChars(queryWithoutFacets);
+            // Only strip InterPro specific facets (e.g. type:family, db:pfam), leave others (e.g. domain_source:interpro)
+            final String queryWithoutFacets  = stripFacets(internalQuery, false);
+            final String internalQueryWithoutInterProFacets = stripFacets(internalQuery, true);
+            final String escapedInternalQueryWithoutInterProFacets = escapeSpecialChars(internalQueryWithoutInterProFacets);
             List<Facet> facets = new ArrayList<Facet>();
             int countWithoutFacets = 0;
-            if (!escapedQueryWithoutFacets.isEmpty()) {
-                countWithoutFacets = client.getNumberOfResults(DOMAIN, escapedQueryWithoutFacets);
-                facets = getFacets(escapedQuery, escapedQueryWithoutFacets);
+            if (!escapedInternalQueryWithoutInterProFacets.isEmpty()) {
+                countWithoutFacets = client.getNumberOfResults(DOMAIN, escapedInternalQueryWithoutInterProFacets);
+                facets = getFacets(escapedInternalQuery, escapedInternalQueryWithoutInterProFacets);
             }
             return new SearchPage(
-                    query,
-                    queryWithoutFacets,
+                    query, // For display to the user, therefore use the query as entered by the user
+                    queryWithoutFacets, // As entered by the user, with all facets removed
                     count,
                     countWithoutFacets,
                     getCurrentPage(resultIndex, resultsPerPage),
@@ -274,11 +299,12 @@ public final class TextSearch {
      * @param query The search query (without escape chars).
      * @return Data required to display related search results on a web page.
      */
-    public RelatedResultsPage getRelatedResultsPage(final String query){
-        final String queryWithoutFacets = stripFacets(query);
-        final String escapedQueryWithoutFacets = escapeSpecialChars(queryWithoutFacets);
-        List<RelatedResult> relatedResults = getRelatedResults(escapedQueryWithoutFacets);
-        return new RelatedResultsPage(query, queryWithoutFacets, relatedResults);
+    public RelatedResultsPage getRelatedResultsPage(final String query) {
+        // Strip all facets (incl domain_source:interpro), not just the InterPro specific facets (e.g. type:family, db:pfam)
+        final String internalQueryWithoutAllFacets = stripFacets(query, false);
+        final String escapedInternalQueryWithoutAllFacets = escapeSpecialChars(internalQueryWithoutAllFacets);
+        List<RelatedResult> relatedResults = getRelatedResults(escapedInternalQueryWithoutAllFacets);
+        return new RelatedResultsPage(query, internalQueryWithoutAllFacets, relatedResults);
     }
 
     private int getCurrentPage(final int resultIndex, final int resultsPerPage) {
