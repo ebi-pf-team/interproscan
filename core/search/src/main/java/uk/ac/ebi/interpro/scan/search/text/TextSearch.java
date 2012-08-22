@@ -145,7 +145,8 @@ public final class TextSearch {
             final String facet = facetName + ":";
             if (query.contains(facet)) {
                 if (!interproOnly || facetName.isInterProSpecific()) {
-                    query = query.replaceAll(facet + "\\w+", "").trim();
+                    // Remove this facet text! E.g. remove "type:domain" or "type:(domain OR family)"
+                    query = query.replaceAll(facet + "(\\w+|\\(.{0,}\\))", "").trim();
                 }
             }
         }
