@@ -13,6 +13,8 @@ import javax.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * EBI Search web service client.
@@ -107,21 +109,33 @@ public final class TextSearch {
      * @return The list of facets
      */
     private List<Facet> getFacets(final String query, final String queryWithoutFacets) {
-        String currentFacet = findFacetValue(query);
-        boolean isAllSelected = currentFacet.isEmpty();
+
+        /*
+         * Example facet to currently selected values map:
+         * dbname -> [pfam, tigrfam]
+         * type -> [domain]
+         */
+        Map<String, Set<String>> facetToSelectedValuesMap = getFacetToValuesMap(query);
+        boolean isAllSelected = facetToSelectedValuesMap.isEmpty();
+
         List<Facet> facets = new ArrayList<Facet>();
         try {
             List<uk.ac.ebi.ebinocle.webservice.Facet> f = client.getFacets(DOMAIN, queryWithoutFacets);
             for (uk.ac.ebi.ebinocle.webservice.Facet facet : f) {
-                String prefix = facet.getLabel().getValue().toLowerCase();
+                String facetName = facet.getLabel().getValue().toLowerCase(); // E.g. "dbname" or "type"
                 for (FacetValue v : facet.getFacetValues().getValue().getFacetValue()) {
                     String label = Facet.convertLabel(v.getLabel());
-                    String id    = label.replaceAll(" ", "_").toLowerCase();
+                    String id    = label.replaceAll(" ", "_").toLowerCase(); // E.g. "domain"
                     boolean selected = false;
                     if (!isAllSelected) {
-                        selected = id.equals(currentFacet);
+                        // Is this ID in our set of known selected values (e.g. "[domain]") for this facet (e.g. "type")?
+                        final Set<String> selectedValues = facetToSelectedValuesMap.get(facetName);
+                        boolean isAllThisFacetSelected = selectedValues.isEmpty();
+                        if (!isAllThisFacetSelected) {
+                            selected = selectedValues.contains(id);
+                        }
                     }
-                    facets.add(new Facet(prefix + ":", id, label, v.getHitCount(), selected));
+                    facets.add(new Facet(facetName + ":", id, label, v.getHitCount(), selected));
                 }
             }
         }
@@ -135,6 +149,71 @@ public final class TextSearch {
     }
 
     /**
+     * Extract text relevant to InterPro facets from the supplied query.
+     *
+     * Example query:
+     * domain_source:interpro GO:0005524 kinase type:domain insulin dbname:(pfam OR tigrfam)
+     * Returns a map:
+     * dbname -> [pfam, tigrfam]
+     * type -> [domain]
+     *
+     * @param query
+     * @return
+     */
+    private Map<String, Set<String>> getFacetToValuesMap(final String query) {
+
+        String regex = "(";
+        boolean firstFacet = true;
+        for (FacetName facetName : FacetName.values()) {
+            if (facetName.isInterProSpecific()) {
+                if (!firstFacet) {
+                    regex += "|";
+                }
+                regex += facetName;
+                firstFacet = false;
+            }
+        }
+        regex += "):(\\w+|\\([^)]+\\))";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(query);
+
+        Map<String, Set<String>> facetToValuesMap = new HashMap<String, Set<String>>();
+        /*
+         * Example query:
+         * domain_source:interpro GO:0005524 kinase type:domain insulin dbname:(pfam OR tigrfam)
+         * Returns matches:
+         * - type:domain
+         * - dbname:(pfam OR tigrfam)
+         */
+        while (matcher.find()) {
+            // Example text to parse: "type:(family OR domain)"
+            String textToParse = matcher.group();
+            String[] s = textToParse.split(":\\(?");
+            final String facetName = s[0]; // E.g. "type"
+            textToParse = s[1]; // E.g. "family OR domain)"
+            if (textToParse.endsWith(")")) {
+                textToParse = textToParse.substring(0, textToParse.length()-1); // E.g. "family OR domain"
+            }
+            s = textToParse.split("\\sOR\\s"); // [family, domain]
+            Set<String> facetValues = new HashSet<String>();
+            for (int i = 0; i < s.length; i++) {
+                facetValues.add(s[i]);
+            }
+            if (facetToValuesMap.containsKey(facetName)) {
+                //TODO Throw an error here instead??
+                // Key already exists so add to it (values are unique in a set)
+                facetToValuesMap.get(facetName).addAll(facetValues);
+            }
+            else {
+                facetToValuesMap.put(facetName, facetValues);
+            }
+        }
+        return facetToValuesMap;
+    }
+
+
+    /**
      * Just remove any facet search filtering terms from the query text provided.
      * @param query The query to remove facets from (if any).
      * @param interproOnly Only remove InterPro specific facets?
@@ -146,7 +225,8 @@ public final class TextSearch {
             if (query.contains(facet)) {
                 if (!interproOnly || facetName.isInterProSpecific()) {
                     // Remove this facet text! E.g. remove "type:domain" or "type:(domain OR family)"
-                    query = query.replaceAll(facet + "(\\w+|\\(.{0,}\\))", "").trim();
+                    // TODO Won't work with "kinase (type:domain OR type:family)"
+                    query = query.replaceAll(facet + "(\\w+|\\([^)]+\\))", "").trim();
                 }
             }
         }
@@ -162,45 +242,18 @@ public final class TextSearch {
      * @return The same query with escape characters added
      */
     private String escapeSpecialChars(String query) {
-        String regex = "(?<!";
+        StringBuilder sb = new StringBuilder("(?<!");
         FacetName[] facetNames = FacetName.values();
         for (int i = 0; i < facetNames.length; i++) {
             if (i > 0) {
-                regex += "|";
+                sb.append("|");
             }
-            regex +=  facetNames[i].getName(); // Look for colons that are not preceded with a recognised facet name
+            sb.append(facetNames[i].getName()); // Look for colons that are not preceded with a recognised facet name
         }
-        regex += "):";
+        sb.append("):");
+        final String regex = sb.toString();
         query = query.replaceAll(regex, "\\\\:");
         return query;
-    }
-
-    /**
-     * Find the name of the facet, e.g. "type:domain" has a name of "domain".
-     * @param query The query to parse
-     * @return The facet name
-     */
-    private String findFacetValue(final String query) {
-
-        // TODO This method assumes we only have the TYPE facet. Will need changing to cope with others.
-
-        // Example query:
-        // "kinase domain_source:interpro type:domain"
-
-        // TODO Perhaps one day we will need to search for multiple facets and values, e.g.
-        // "kinase type:(domain OR ptm)" and other things in Lucene query syntax
-        // http://lucene.apache.org/core/old_versioned_docs/versions/3_0_0/queryparsersyntax.html
-        // But for now it's OK!
-
-        if (query.contains(FACET_TYPE)) {
-            // Return the facet name
-            // E.g. the query "infected cells: Cp-IAP type:domain from" should return "domain"
-            String[] s = query.split(FACET_TYPE);
-            return s[1].split("\\s+")[0].trim();
-        }
-        else {
-            return "";
-        }
     }
 
     /**
@@ -214,7 +267,7 @@ public final class TextSearch {
      */
     public SearchPage search(final String query, int resultIndex, int resultsPerPage, boolean includeDescription) {
         String internalQuery = query; // An internal version of the query (as entered by the user, but changed behind
-        // the scenes to pass the the EBI search webservice).
+                                      // the scenes to pass the the EBI search webservice).
 
         // Always add on "domain_source:interpro" to every search page query, even though it's only really necessary
         // when the user entered an empty query, or just a facet with no search terms!
@@ -230,7 +283,7 @@ public final class TextSearch {
         TextHighlighter highlighter = new TextHighlighter(escapedInternalQuery);
 
         try {
-            String[] domains = client.listDomains(); // See what domains are available besides INTERPRO
+            //String[] domains = client.listDomains(); // See what domains are available besides INTERPRO
             List<Result> records = new ArrayList<Result>();
             int count = client.getNumberOfResults(DOMAIN, escapedInternalQuery);
             if (count > 0) {
@@ -267,7 +320,7 @@ public final class TextSearch {
                     records.add(new Result(id, name, type, description));
                 }
             }
-            // Only strip InterPro specific facets (e.g. type:family, db:pfam), leave others (e.g. domain_source:interpro)
+            // Only strip InterPro specific facets (e.g. type:family, dbname:pfam), leave others (e.g. domain_source:interpro)
             final String queryWithoutFacets  = stripFacets(internalQuery, false);
             final String internalQueryWithoutInterProFacets = stripFacets(internalQuery, true);
             final String escapedInternalQueryWithoutInterProFacets = escapeSpecialChars(internalQueryWithoutInterProFacets);
@@ -301,7 +354,7 @@ public final class TextSearch {
      * @return Data required to display related search results on a web page.
      */
     public RelatedResultsPage getRelatedResultsPage(final String query) {
-        // Strip all facets (incl domain_source:interpro), not just the InterPro specific facets (e.g. type:family, db:pfam)
+        // Strip all facets (incl domain_source:interpro), not just the InterPro specific facets (e.g. type:family, dbname:pfam)
         final String internalQueryWithoutAllFacets = stripFacets(query, false);
         final String escapedInternalQueryWithoutAllFacets = escapeSpecialChars(internalQueryWithoutAllFacets);
         List<RelatedResult> relatedResults = getRelatedResults(escapedInternalQueryWithoutAllFacets);
