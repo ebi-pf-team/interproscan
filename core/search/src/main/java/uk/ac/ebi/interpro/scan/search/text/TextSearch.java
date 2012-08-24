@@ -27,10 +27,6 @@ public final class TextSearch {
     // "Domain" in this sense means the name of the index in the EBI search engine
     private static final String DOMAIN = "interpro";
 
-    // TODO Remove these as part of supporting multiple facets...
-    private static final String FACET_TYPE_NAME = "type";
-    private static final String FACET_TYPE = FACET_TYPE_NAME + ":";
-
     // Could configure in Spring
     private final EBeyeClient client;
 
@@ -252,7 +248,7 @@ public final class TextSearch {
         }
         sb.append("):");
         final String regex = sb.toString();
-        query = query.replaceAll(regex, "\\\\:");
+        query = query.replaceAll(regex, '\\'+":");
         return query;
     }
 
