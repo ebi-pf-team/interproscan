@@ -11,7 +11,7 @@ public enum FacetName {
 
     DOMAIN_SOURCE("domain_source", "EBI search domain source - e.g. INTERPRO for only searching within InterPro!", false),
     TYPE("type" , "Entry type", true),
-    DB("db", "Member database code", true);
+    DBNAME("dbname", "Member database code", true);
 
     private final String name; // As required by external services EBI search web service (indexing based on provided InterPro XML)
     private final String description;
