@@ -8,9 +8,9 @@
             <h1>Protein family membership:</h1>
         ${protein.familyHierarchy}
         </div>
-        <#else>
-            <div style="float: left;"><h1>Protein family membership:</h1></div>
-            <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+    <#else>
+        <div style="float: left;"><h1>Protein family membership:</h1></div>
+        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
     </#if>
 </div>
 
@@ -23,8 +23,8 @@
 
         <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
         <div class="prot_sum">
-            <#else>
-            <div class="prot_sum" style="background:none;">
+        <#else>
+        <div class="prot_sum" style="background:none;">
         </#if>
 
         <div class="top-row">
@@ -76,8 +76,8 @@
                     <#assign icon>
                         <#if entry.type?lower_case?starts_with("family") || entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("region") || entry.type?lower_case?starts_with("repeat")>
                         ${entry.type?lower_case}
-                            <#elseif entry.type?lower_case?starts_with("unknown")>uni
-                            <#else>site
+                        <#elseif entry.type?lower_case?starts_with("unknown")>uni
+                        <#else>site
                         </#if>
                     </#assign>
                     <#assign icon=icon?trim>
@@ -85,10 +85,10 @@
                     <#assign colourClass>
                         <#if entry.type?lower_case?starts_with("domain")>
                             c${entryColours[entry.ac]} ${entry.type}
-                            <#elseif entry.type?lower_case?starts_with("REPEAT")>
-                                c${entryColours[entry.ac]} ${entry.type}
-                            <#else>
-                            ${entry.type}
+                        <#elseif entry.type?lower_case?starts_with("repeat")>
+                            c${entryColours[entry.ac]} ${entry.type}
+                        <#else>
+                        ${entry.type}
                         </#if>
                     </#assign>
                     <#assign colourClass=colourClass?trim>
@@ -113,7 +113,7 @@
                                 <#list entry.signatures as signature>
 
                                     <li id="${containerId}" class="signature entry-signatures">
-                                    <@signatureMacro.signature protein=protein signature=signature entryTypeTitle=title colourClass=colourClass />
+                                        <@signatureMacro.signature protein=protein signature=signature entryTypeTitle=title colourClass=colourClass />
                                     </li>
                                 </#list>
                             </ol>
@@ -139,7 +139,7 @@
                 <ol class="signatures">
                     <#list protein.unintegratedSignatures as signature>
                         <li class="signature">
-                        <@signatureMacro.signature protein=protein signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
+                            <@signatureMacro.signature protein=protein signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
                         </li>
                     </#list>
                 </ol>
@@ -198,15 +198,15 @@
     </div>
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('span[id*="location-"]').each(
-                    function(i) {
+                    function (i) {
                         preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
                     }
             );
         });
     </script>
 
-    <#else>
-        <b>No match data found for this protein.</b>
+<#else>
+    <b>No match data found for this protein.</b>
 </#if>
