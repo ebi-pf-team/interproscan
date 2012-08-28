@@ -107,7 +107,8 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version> <!-- Override the default SLF4J version from the master pom for this web module -->
+            <version>1.6.1</version>
+            <!-- Override the default SLF4J version from the master pom for this web module -->
         </dependency>
 
     </dependencies>
@@ -260,7 +261,7 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
             <properties>
                 <default.log.level>warn</default.log.level>
                 <third.party.log.level>warn</third.party.log.level>
-                <deployment.folder>/nfs/production/seqdb2/production/interpro/web/i5/web/target</deployment.folder>
+                <deployment.folder>${project.build.directory}</deployment.folder>
                 <!-- In this production profile use a full path to the copies of the entry colours properties file
                 and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
                 NOTE: These should have been generated at the time of the last release, therefore will be consistent
@@ -273,12 +274,16 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 <!--Model creation files-->
                 <!--Entry hierarchy data-->
                 <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
-                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv
+                </entry.hierarchy.file.loc>
                 <!--Entry GO data-->
                 <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
-                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv</entry.go.file.loc>
+                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv
+                </entry.go.file.loc>
                 <!--Entry colours-->
-                <entry.colours.file.loc>file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties</entry.colours.file.loc>
+                <entry.colours.file.loc>
+                    file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
+                </entry.colours.file.loc>
                 <pathToImages>http://wwwdev.ebi.ac.uk/interpro5/resources</pathToImages>
             </properties>
 
@@ -310,9 +315,9 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                             <server>tc-test-3</server>
                             <!-- See note above for server credentials -->
                             <mode>both</mode>
-                            <contextFile>/nfs/production/seqdb2/production/interpro/web/i5/web/target/interpro5.xml
+                            <contextFile>${project.build.directory}/interpro5.xml
                             </contextFile>
-                            <warFile>/nfs/production/seqdb2/production/interpro/web/i5/web/target/interpro5.war
+                            <warFile>${project.build.directory}/interpro5.war
                             </warFile>
                             <path>/interpro5</path>
                         </configuration>
@@ -373,7 +378,8 @@ cd ~/Projects/i5/interproscan/core/web; mvn -Plocalhost-tomcat clean tomcat:rede
                 <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
                 <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
                 <!--Entry colours-->
-                <entry.colours.file.loc>file:${basedir}/src/main/resources/entry_colours.properties</entry.colours.file.loc>
+                <entry.colours.file.loc>file:${basedir}/src/main/resources/entry_colours.properties
+                </entry.colours.file.loc>
                 <pathToImages>/interpro5/resources</pathToImages>
             </properties>
 
