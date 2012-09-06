@@ -154,6 +154,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         return null;
     }
 
+    /**
+     * Utility method to confirm if this service is working.
+     *
+     * @return true if the service is working.
+     */
+    public boolean isConfigured() {
+        return preCalcMatchClient.isConfigured();
+    }
+
     private void exitOnMatchServiceError() {
         /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
         System.err.println("\n\n" +
