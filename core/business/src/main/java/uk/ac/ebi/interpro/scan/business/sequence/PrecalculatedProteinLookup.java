@@ -17,4 +17,6 @@ public interface PrecalculatedProteinLookup {
 
     Set<Protein> getPrecalculated(Set<Protein> proteins, String analysisJobNames);
 
+    boolean isConfigured();
+
 }

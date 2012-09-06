@@ -128,13 +128,6 @@ public class ProteinLoader implements SequenceLoader {
     private void lookupProteins(String analysisJobNames) {
         if (proteinsAwaitingPrecalcLookup.size() > 0) {
             final boolean usingLookupService = proteinLookup != null;
-            if (LOGGER.isDebugEnabled()) {
-                if (usingLookupService) {
-                    LOGGER.debug("Using the pre-calculated match lookup service.");
-                } else {
-                    LOGGER.debug("NOT using the pre-calculated match lookup service");
-                }
-            }
             Set<Protein> localPrecalculatedProteins = (usingLookupService)
                     ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobNames)
                     : null;
@@ -243,13 +236,12 @@ public class ProteinLoader implements SequenceLoader {
     }
 
     public void setUseMatchLookupService(boolean useMatchLookupService) {
-        if (!useMatchLookupService) {
+        if (!useMatchLookupService || proteinLookup == null || !proteinLookup.isConfigured()) {
             this.proteinLookup = null;
-        }
-        if (proteinLookup == null) {
             System.out.println("Pre-calculated match lookup service DISABLED.  Please wait for match calculations to complete...");
         } else {
-            System.out.println("Available matches will be retrieved from the pre-calculated match lookup service.");
+            System.out.println("Available matches will be retrieved from the pre-calculated match lookup service.\n\n" +
+                    "Matches for any sequences that are not represented in the lookup service will be calculated locally.");
         }
     }
 
