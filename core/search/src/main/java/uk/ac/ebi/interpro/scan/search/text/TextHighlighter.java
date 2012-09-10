@@ -104,11 +104,11 @@ public final class TextHighlighter {
         fragments = fragments.trim();
         if(MID_SENTANCE_PATTERN.matcher(fragments).matches()) {
             // Not at the start of a sentence so manually add the "..."
-            fragments = "..." + fragments;
+            fragments = "... " + fragments;
         }
         if (!fragments.endsWith(".")) {
             // Not the end of a sentence so manually add the "..."
-            fragments = fragments + "...";
+            fragments = fragments + " ...";
         }
         return fragments;
     }
