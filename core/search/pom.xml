@@ -85,7 +85,7 @@
                         <configuration>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>http://wwwdev.ebi.ac.uk/ebisearch/service.ebi?wsdl</wsdl>
+                                    <wsdl>http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
