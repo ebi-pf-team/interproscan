@@ -119,7 +119,7 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
-                    <exclude>interpro5.xml</exclude>
+                    <exclude>interpro-protein-page.xml</exclude>
                 </excludes>
             </resource>
             <resource>
@@ -127,7 +127,7 @@
                 <filtering>true</filtering>
                 <targetPath>${project.build.directory}/</targetPath>
                 <includes>
-                    <include>interpro5.xml</include>
+                    <include>interpro-protein-page.xml</include>
                 </includes>
             </resource>
             <resource>
@@ -203,7 +203,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <configuration>
-                            <warName>interpro5</warName>
+                            <warName>interpro-protein-page</warName>
                             <webResources>
                                 <resource>
                                     <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
@@ -220,7 +220,7 @@
                         <!--Set version explicitly if get errors on Windows:-->
                         <version>7.5.1.v20110908</version>
                         <configuration>
-                            <webApp>${project.build.directory}/interpro5.war</webApp>
+                            <webApp>${project.build.directory}/interpro-protein-page.war</webApp>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -252,7 +252,7 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
-                <resourceWebPath>/interpro5/resources</resourceWebPath>
+                <resourceWebPath>/interpro-protein-page/resources</resourceWebPath>
                 <!--Model creation files-->
                 <!--Entry hierarchy data-->
                 <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
@@ -266,11 +266,11 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
                 <entry.colours.file.loc>
                     file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
                 </entry.colours.file.loc>
-                <pathToImages>http://wwwdev.ebi.ac.uk/interpro5/resources</pathToImages>
+                <pathToImages>http://wwwdev.ebi.ac.uk/interpro-protein-page/resources</pathToImages>
             </properties>
 
             <build>
-                <finalName>interpro-mvc-protein-page</finalName>
+                <finalName>interpro-protein-page</finalName>
                 <plugins>
                     <plugin>
                         <groupId>com.keyboardsamurais.maven</groupId>
@@ -351,7 +351,7 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
-                <resourceWebPath>/interpro5/resources</resourceWebPath>
+                <resourceWebPath>/interpro-protein-page/resources</resourceWebPath>
                 <!--Model creation files-->
                 <!--Entry hierarchy data-->
                 <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
@@ -365,18 +365,18 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                 <entry.colours.file.loc>
                     file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
                 </entry.colours.file.loc>
-                <pathToImages>http://wwwdev.ebi.ac.uk/interpro5/resources</pathToImages>
+                <pathToImages>http://wwwdev.ebi.ac.uk/interpro-protein-page/resources</pathToImages>
             </properties>
 
             <build>
-                <finalName>interpro5</finalName>
+                <finalName>interpro-protein-page</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.1-alpha-1</version>
                         <configuration>
-                            <warName>interpro5</warName>
+                            <warName>interpro-protein-page</warName>
                             <webResources>
                                 <resource>
                                     <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
@@ -396,11 +396,11 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                             <server>tc-test-3</server>
                             <!-- See note above for server credentials -->
                             <mode>both</mode>
-                            <contextFile>${project.build.directory}/interpro5.xml
+                            <contextFile>${project.build.directory}/interpro-protein-page.xml
                             </contextFile>
-                            <warFile>${project.build.directory}/interpro5.war
+                            <warFile>${project.build.directory}/interpro-protein-page.war
                             </warFile>
-                            <path>/interpro5</path>
+                            <path>/interpro-protein-page</path>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -450,7 +450,7 @@ cd ~/Projects/i5/interproscan/core/web; mvn -Plocalhost-tomcat clean tomcat:rede
                 </match.data.webservice.url>
                 <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
                 </structural.match.data.webservice.url>
-                <resourceWebPath>/interpro5/resources</resourceWebPath>
+                <resourceWebPath>/interpro-protein-page/resources</resourceWebPath>
                 <!--Model creation files-->
                 <!--Entry hierarchy data-->
                 <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
@@ -461,18 +461,18 @@ cd ~/Projects/i5/interproscan/core/web; mvn -Plocalhost-tomcat clean tomcat:rede
                 <!--Entry colours-->
                 <entry.colours.file.loc>file:${basedir}/src/main/resources/entry_colours.properties
                 </entry.colours.file.loc>
-                <pathToImages>/interpro5/resources</pathToImages>
+                <pathToImages>/interpro-protein-page/resources</pathToImages>
             </properties>
 
             <build>
-                <finalName>interpro5</finalName>
+                <finalName>interpro-protein-page</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.1-alpha-1</version>
                         <configuration>
-                            <warName>interpro5</warName>
+                            <warName>interpro-protein-page</warName>
                             <webResources>
                                 <resource>
                                     <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
@@ -492,11 +492,11 @@ cd ~/Projects/i5/interproscan/core/web; mvn -Plocalhost-tomcat clean tomcat:rede
                             <server>localhost</server>
                             <!-- See note above for server credentials -->
                             <mode>both</mode>
-                            <contextFile>${project.build.directory}/interpro5.xml
+                            <contextFile>${project.build.directory}/interpro-protein-page.xml
                             </contextFile>
-                            <warFile>${project.build.directory}/interpro5.war
+                            <warFile>${project.build.directory}/interpro-protein-page.war
                             </warFile>
-                            <path>/interpro5</path>
+                            <path>/interpro-protein-page</path>
                         </configuration>
                     </plugin>
                 </plugins>
