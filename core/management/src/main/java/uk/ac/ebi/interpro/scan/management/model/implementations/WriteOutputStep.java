@@ -93,6 +93,8 @@ public class WriteOutputStep extends Step {
                 ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
 
+        final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+
         for (FileOutputFormat outputFormat : outputFormats) {
             Integer counter = null;
             boolean pathAvailable = false;
@@ -137,20 +139,20 @@ public class WriteOutputStep extends Step {
                 final String sequenceType = parameters.get(SEQUENCE_TYPE);
                 switch (outputFormat) {
                     case TSV:
-                        outputToTSV(outputFile, stepInstance);
+                        outputToTSV(outputFile, stepInstance, proteins);
                         break;
                     case XML:
-                        outputToXML(outputFile, stepInstance, sequenceType);
+                        outputToXML(outputFile, sequenceType, proteins);
                         break;
                     case GFF3:
-                        outputToGFF(outputFile, stepInstance, sequenceType);
+                        outputToGFF(outputFile, stepInstance, sequenceType, proteins);
                         break;
                     case HTML:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
                             htmlResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
-                        outputToHTML(outputFile, stepInstance);
+                        outputToHTML(outputFile, proteins);
                         break;
                     default:
                         LOGGER.warn("Unrecognised output format " + outputFormat + " - cannot write the output file.");
@@ -181,8 +183,7 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToXML(File outputFile, StepInstance stepInstance, String sequenceType) throws IOException {
-        final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+    private void outputToXML(File outputFile, String sequenceType, List<Protein> proteins) throws IOException {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder();
@@ -193,11 +194,11 @@ public class WriteOutputStep extends Step {
         xmlWriter.writeMatches(outputFile, matchesHolder);
     }
 
-    private void outputToTSV(File file, StepInstance stepInstance) throws IOException {
+    private void outputToTSV(File file, StepInstance stepInstance, List<Protein> proteins) throws IOException {
         ProteinMatchesTSVResultWriter writer = null;
         try {
             writer = new ProteinMatchesTSVResultWriter(file);
-            writeProteinMatches(writer, stepInstance);
+            writeProteinMatches(writer, stepInstance, proteins);
         } finally {
             if (writer != null) {
                 writer.close();
@@ -205,7 +206,7 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToGFF(File file, StepInstance stepInstance, String sequenceType) throws IOException {
+    private void outputToGFF(File file, StepInstance stepInstance, String sequenceType, List<Protein> proteins) throws IOException {
         ProteinMatchesGFFResultWriter writer = null;
         try {
             if (sequenceType.equalsIgnoreCase("n")) {
@@ -216,7 +217,7 @@ public class WriteOutputStep extends Step {
             }
 
             //This step writes features (protein matches) into the GFF file
-            writeProteinMatches(writer, stepInstance);
+            writeProteinMatches(writer, stepInstance, proteins);
             //This step writes FASTA sequence at the end of the GFF file
             writeFASTASequences(writer);
         } finally {
@@ -226,9 +227,7 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToHTML(File file, StepInstance stepInstance) throws IOException {
-        //TODO: Think about how to add cross-references to protein object!
-        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+    private void outputToHTML(File file, List<Protein> proteins) throws IOException {
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
                 htmlResultWriter.write(protein);
@@ -283,12 +282,11 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void writeProteinMatches(ProteinMatchesResultWriter writer, StepInstance stepInstance) throws IOException {
+    private void writeProteinMatches(ProteinMatchesResultWriter writer, StepInstance stepInstance, List<Protein> proteins) throws IOException {
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
         final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
         final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
-        final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
         writer.setMapToInterProEntries(mapToInterProEntries);
         writer.setMapToGo(mapToGO);
         writer.setMapToPathway(mapToPathway);
