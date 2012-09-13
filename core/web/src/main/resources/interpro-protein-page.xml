@@ -1,0 +1,5 @@
+<Context
+        docBase="${deployment.folder}/interpro-protein-page.war"
+        path="/interpro-protein-page"
+        distributable="false">
+</Context>
