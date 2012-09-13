@@ -243,7 +243,7 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
             <properties>
                 <default.log.level>warn</default.log.level>
                 <third.party.log.level>warn</third.party.log.level>
-                <deployment.folder>${project.build.directory}/..</deployment.folder>
+                <deployment.folder>${project.basedir}</deployment.folder>
                 <!-- In this production profile use a full path to the copies of the entry colours properties file
                 and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
                 NOTE: These should have been generated at the time of the last release, therefore will be consistent
