@@ -227,6 +227,87 @@
             </build>
         </profile>
         <profile>
+            <id>production</id>
+            <!--
+
+1) Update the full InterProScan 5 project to pick up all commits and build:
+
+cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core; svn up; mvn clean install
+
+
+2) Now package the web application:
+
+cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Pproduction clean package
+
+                 -->
+            <properties>
+                <default.log.level>warn</default.log.level>
+                <third.party.log.level>warn</third.party.log.level>
+                <deployment.folder>${project.build.directory}</deployment.folder>
+                <!-- In this production profile use a full path to the copies of the entry colours properties file
+                and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
+                NOTE: These should have been generated at the time of the last release, therefore will be consistent
+                with the current public database -->
+                <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
+                </match.data.webservice.url>
+                <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
+                </structural.match.data.webservice.url>
+                <resourceWebPath>/interpro5/resources</resourceWebPath>
+                <!--Model creation files-->
+                <!--Entry hierarchy data-->
+                <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
+                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv
+                </entry.hierarchy.file.loc>
+                <!--Entry GO data-->
+                <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
+                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv
+                </entry.go.file.loc>
+                <!--Entry colours-->
+                <entry.colours.file.loc>
+                    file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
+                </entry.colours.file.loc>
+                <pathToImages>http://wwwdev.ebi.ac.uk/interpro5/resources</pathToImages>
+            </properties>
+
+            <build>
+                <finalName>interpro-mvc-protein-page</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>com.keyboardsamurais.maven</groupId>
+                        <artifactId>maven-timestamp-plugin</artifactId>
+                        <version>1.0</version>
+                        <configuration>
+                            <propertyName>timestamp</propertyName>
+                            <!-- timestampPattern using SimpleDateFormat format. -->
+                            <timestampPattern>yyyyMMdd-HHmm</timestampPattern>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                   <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.1-alpha-1</version>
+                        <configuration>
+                            <warName>interpro-mvc-protein-page-${timestamp}</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>WEB-INF/spring</targetPath>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>tc-test</id>
             <!--
 
