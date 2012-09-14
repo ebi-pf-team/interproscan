@@ -56,7 +56,7 @@
                 </div>
 
                 <#if ! standalone>
-                    <div style=" float:right;margin-bottom: 0px;"><a href="http://wwwdev.ebi.ac.uk/interpro/user_manual.html#25"
+                    <div style=" float:right;margin-bottom: 0px;"><a href="http://www.ebi.ac.uk/interpro/user_manual.html#faqs_06"
                                                                  target="_blank">help</a></div>
                 </#if>
             </div>

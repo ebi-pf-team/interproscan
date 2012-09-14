@@ -44,7 +44,7 @@ public abstract class AbstractHierarchyElementBuilder {
     protected void appendEntry(SimpleEntry entry, StringBuilder sb) {
         if (entry == null) return;
         sb.append("<li>");
-        sb.append("<a href=\"http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=");
+        sb.append("<a href=\"http://www.ebi.ac.uk/interpro/IEntry?ac=");
         sb.append(entry.getAc());
         sb.append("\" class=\"neutral\">");
         sb.append(entry.getName());
