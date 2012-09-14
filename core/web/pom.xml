@@ -266,7 +266,7 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
                 <entry.colours.file.loc>
                     file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
                 </entry.colours.file.loc>
-                <pathToImages>http://tomcat-7.ebi.ac.uk:9750/interpro-beta</pathToImages>
+                <pathToImages>http://www.ebi.ac.uk/interpro</pathToImages>
             </properties>
 
             <build>
