@@ -59,7 +59,7 @@
      java -jar target/interpro-search-client-1.0-SNAPSHOT.jar cxxc
      java -jar target/interpro-search-client-1.0-SNAPSHOT.jar "tyrosine kinase"
      java -jar target/interpro-search-client-1.0-SNAPSHOT.jar "tyrosine -kinase"
-     java -jar target/interpro-search-client-1.0-SNAPSHOT.jar cxxc http://wwwdev.ebi.ac.uk/ebisearch/service.ebi
+     java -jar target/interpro-search-client-1.0-SNAPSHOT.jar cxxc http://www.ebi.ac.uk/ebisearch/service.ebi
 
     -->
 
