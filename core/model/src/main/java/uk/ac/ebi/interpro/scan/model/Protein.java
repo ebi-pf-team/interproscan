@@ -476,8 +476,6 @@ public class Protein implements Serializable {
         return new EqualsBuilder()
                 .append(sequence, p.sequence)
                 .append(md5.toLowerCase(), p.md5.toLowerCase())
-                .append(matches, p.matches)
-                .append(crossReferences, p.crossReferences)
                 .isEquals();
     }
 
@@ -486,8 +484,6 @@ public class Protein implements Serializable {
         return new HashCodeBuilder(19, 47)
                 .append(sequence)
                 .append(md5)
-                .append(matches)
-                .append(crossReferences)
                 .toHashCode();
     }
 

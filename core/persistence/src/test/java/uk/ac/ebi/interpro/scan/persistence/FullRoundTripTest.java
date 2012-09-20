@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.oxm.Marshaller;
@@ -13,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xml.sax.SAXException;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
-import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 
 import javax.annotation.Resource;
@@ -119,29 +117,6 @@ public class FullRoundTripTest {
                 retriever,
                 signatureMarshaller,
                 signatureUnmarshaller);
-    }
-
-    /**
-     * Test of <protein/> xml round trip.
-     * TODO Get this working and turn it back on. (The test is OK, the code being tested is broken).
-     */
-    @Test
-    @Ignore
-    public void newProteinRoundTrip() {
-        ObjectRetriever<Protein, ProteinDAO> retriever = new ObjectRetriever<Protein, ProteinDAO>() {
-            public Protein getObjectByPrimaryKey(ProteinDAO dao, Long primaryKey) {
-                return dao.getProteinAndMatchesById(primaryKey);
-            }
-
-            public Long getPrimaryKey(Protein persistable) {
-                return persistable.getId();
-            }
-        };
-        roundTrip(proteinXmls,
-                proteinDAO,
-                retriever,
-                proteinMarshaller,
-                proteinUnmarshaller);
     }
 
     /**

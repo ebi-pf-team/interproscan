@@ -44,6 +44,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
     @Override
     @Transactional
     protected void persist(Collection<RawProtein<PrintsRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+
         for (RawProtein<PrintsRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -58,14 +59,21 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
             // Need the matches sorted correctly so locations are grouped in the same match.
             final TreeSet<PrintsRawMatch> sortedMatches = new TreeSet<PrintsRawMatch>(PRINTS_RAW_MATCH_COMPARATOR);
             sortedMatches.addAll(rawProtein.getMatches());
-
+            FingerPrintsMatch match = null;
             for (PrintsRawMatch rawMatch : sortedMatches) {
-                if (rawMatch == null) continue;
+                if (rawMatch == null) {
+                    continue;
+                }
 
                 if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
                     if (currentSignatureAc != null) {
-                        // Not the first...
-                        protein.addMatch(new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations));
+
+                        // Not the first (because the currentSignatureAc is not null)
+                        if (match != null) {
+                            entityManager.persist(match); // Persist the previous one...
+                        }
+                        match = new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations);
+                        protein.addMatch(match);   // Sets the protein on the match.
                     }
                     // Reset everything
                     locations = new HashSet<FingerPrintsMatch.FingerPrintsLocation>();
@@ -88,10 +96,10 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
-                protein.addMatch(new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations));
+                match = new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations);
+                protein.addMatch(match);   // Sets the protein on the match.
+                entityManager.persist(match);
             }
-            entityManager.persist(protein);
-            entityManager.flush();
         }
     }
 

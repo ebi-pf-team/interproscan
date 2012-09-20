@@ -75,9 +75,8 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
 
             for (SuperFamilyHmmer3Match match : splitGroupToMatch.values()) {
                 protein.addMatch(match);
+                entityManager.persist(match);
             }
-            entityManager.persist(protein);
-            entityManager.flush();
         }
     }
 }

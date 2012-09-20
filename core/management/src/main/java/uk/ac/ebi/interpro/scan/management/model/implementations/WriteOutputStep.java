@@ -28,8 +28,9 @@ import java.util.Set;
  * <p/>
  * Should be run once analysis is complete.
  *
- * @author ?
+ * @author David Binns
  * @author Maxim Scheremetjew
+ * @author Phil Jones
  */
 
 public class WriteOutputStep extends Step {
@@ -75,6 +76,8 @@ public class WriteOutputStep extends Step {
     public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
     public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
 
+    private static final int MAX_OUTPUT_ATTEMPTS = 3;
+
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
@@ -93,7 +96,7 @@ public class WriteOutputStep extends Step {
                 ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
 
-        final List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
         for (FileOutputFormat outputFormat : outputFormats) {
             Integer counter = null;

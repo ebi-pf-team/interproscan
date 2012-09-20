@@ -51,10 +51,10 @@ public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> 
             Set<CoilsMatch.CoilsLocation> locations = Collections.singleton(
                     new CoilsMatch.CoilsLocation(parseCoilsMatch.getStartCoordinate(), parseCoilsMatch.getEndCoordinate())
             );
-            persistentProtein.addMatch(new CoilsMatch(coilsSignature, locations));
-            entityManager.persist(persistentProtein);
+            CoilsMatch match = new CoilsMatch(coilsSignature, locations);
+            persistentProtein.addMatch(match);
+            entityManager.persist(match);
         }
-        entityManager.flush();
     }
 
     /**
