@@ -8,19 +8,12 @@ import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
- * User: pjones
- * Date: 11/04/12
- * Time: 14:48
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Phil Jones
  */
 public class DummyProteinDAOImpl implements uk.ac.ebi.interpro.scan.persistence.ProteinDAO {
     @Override
     public Protein getProteinAndCrossReferencesByProteinId(Long id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Protein getProteinAndMatchesById(Long id) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

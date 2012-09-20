@@ -40,9 +40,6 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
      */
     @Transactional
     protected void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Persisting Hmmer3 filtered matches.");
-        }
         // Add matches to protein
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());
@@ -66,28 +63,11 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                         }
                     }
                     );
-            // Add matches to protein
-            int locationCount = 0;
-            int count = 0;
-            for (Hmmer3Match m : filteredMatches) {
-                locationCount += (m.getLocations() == null) ? 0 : m.getLocations().size();
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Adding filtered match to protein object");
-                    count++;
-                }
-                protein.addMatch(m);
+
+            for (Hmmer3Match match : filteredMatches) {
+                protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
+                entityManager.persist(match);
             }
-            if (LOGGER.isDebugEnabled()) {
-                if (count == 0) {
-                    LOGGER.debug("Hmmer3FilteredMatchDAO: No filtered matches to persist to the database.");
-                } else {
-                    LOGGER.debug("Persisting protein following addition of filtered matches.");
-                }
-            }
-            LOGGER.info(locationCount + " match locations stored.");
-            // Store
-            entityManager.persist(protein);
-            entityManager.flush();
         }
     }
 }

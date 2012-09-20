@@ -2,11 +2,17 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.model.raw.SignalPRawMatch;
+import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.SignalPMatch;
+import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
+import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.SignalPRawMatch;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * DAO implementation for SignalP filtered matches.
@@ -39,7 +45,7 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
      * This is the method that should be implemented by specific FilteredMatchDAOImpl's to
      * persist filtered matches.
      *
-     * @param rawProteins      being the Collection of filtered RawProtein objects to persist
+     * @param rawProteins           being the Collection of filtered RawProtein objects to persist
      * @param modelIdToSignatureMap a Map of model IDs to Signature objects.
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
@@ -78,13 +84,10 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
                                 rawMatch.getdScore()
                         )
                 );
-
-                protein.addMatch(new SignalPMatch(signature, organismType,  locations));
-
+                SignalPMatch match = new SignalPMatch(signature, organismType, locations);
+                protein.addMatch(match);
+                entityManager.persist(match);
             }
-
-            entityManager.persist(protein);
-            entityManager.flush();
         }
     }
 

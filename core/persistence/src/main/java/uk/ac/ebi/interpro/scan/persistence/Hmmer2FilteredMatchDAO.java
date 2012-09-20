@@ -51,11 +51,9 @@ abstract class Hmmer2FilteredMatchDAO<T extends Hmmer2RawMatch>
                     );
             // Add matches to protein
             for (Hmmer2Match m : filteredMatches) {
-                protein.addMatch(m);
+                protein.addMatch(m);  // Adds protein to match (yes, I know it doesn't look that way!)
+                entityManager.persist(m);
             }
-            // Store
-            entityManager.persist(protein);
-            entityManager.flush();
         }
     }
 }

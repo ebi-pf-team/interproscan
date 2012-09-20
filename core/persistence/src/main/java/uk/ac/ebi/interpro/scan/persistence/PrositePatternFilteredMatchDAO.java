@@ -36,13 +36,14 @@ public class PrositePatternFilteredMatchDAO
     protected void persist(Collection<RawProtein<ProSitePatternRawMatch>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<ProSitePatternRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
-            for (ProSitePatternRawMatch match : rawProtein.getMatches()) {
-                Signature signature = modelAccessionToSignatureMap.get(match.getModelId());
-                protein.addMatch(buildMatch(signature, match));
+            for (ProSitePatternRawMatch rawMatch : rawProtein.getMatches()) {
+
+                Signature signature = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                PatternScanMatch match = buildMatch(signature, rawMatch);
+                protein.addMatch(match);
+                entityManager.persist(match);
             }
-            entityManager.persist(protein);
         }
-        entityManager.flush();
     }
 
     private PatternScanMatch buildMatch(Signature signature, ProSitePatternRawMatch rawMatch) {

@@ -42,10 +42,9 @@ public class TMHMMFilteredMatchDAOImpl extends GenericDAOImpl<TMHMMMatch, Long> 
                 final Signature signature = sigAccToDbSignatureMap.get(match.getSignature().getAccession());
                 TMHMMMatch newMatch = new TMHMMMatch(signature, match.getLocations());
                 persistentProtein.addMatch(newMatch);
+                entityManager.persist(newMatch);
             }
-            entityManager.persist(persistentProtein);
         }
-        entityManager.flush();
     }
 
     /**

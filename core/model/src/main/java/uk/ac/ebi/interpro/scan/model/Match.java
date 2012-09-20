@@ -52,11 +52,11 @@ public abstract class Match<T extends Location> implements Serializable {
     @TableGenerator(name = "MATCH_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "match", initialValue = 0, allocationSize = 50)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
+    @ManyToOne(optional = false)
     @ForeignKey(name = "fk_protein")
     private Protein protein;
 
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(optional = false)
     @ForeignKey(name = "fk_signature")
     private Signature signature;
 

@@ -47,16 +47,6 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
     public Protein getProteinAndCrossReferencesByProteinId(Long id);
 
     /**
-     * Retrieves a Protein object by primary key and also retrieves any associated matches.
-     *
-     * @param id being the primary key of the required Protein.
-     * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
-     *         primary key is not present in the database.
-     */
-    @Transactional(readOnly = true)
-    public Protein getProteinAndMatchesById(Long id);
-
-    /**
      * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
      * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
      *
