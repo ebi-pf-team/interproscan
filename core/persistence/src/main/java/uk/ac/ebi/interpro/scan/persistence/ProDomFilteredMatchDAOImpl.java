@@ -1,11 +1,16 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
+import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * ProDom CRUD database operations.
@@ -52,13 +57,22 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
             String currentModelId = null;
             Signature currentSignature = null;
             ProDomRawMatch lastRawMatch = null;
+            BlastProDomMatch match = null;
             for (ProDomRawMatch rawMatch : rawProtein.getMatches()) {
-                if (rawMatch == null) continue;
+                if (rawMatch == null) {
+                    continue;
+                }
 
                 if (currentModelId == null || !currentModelId.equals(rawMatch.getModelId())) {
                     if (currentModelId != null) {
+
+                        // Not the first (because the currentSignatureAc is not null)
+                        if (match != null) {
+                            entityManager.persist(match); // Persist the previous one...
+                        }
+                        match = new BlastProDomMatch(currentSignature, locations);
                         // Not the first...
-                        protein.addMatch(new BlastProDomMatch(currentSignature, locations));
+                        protein.addMatch(match);
                     }
                     // Reset everything
                     locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
@@ -80,10 +94,10 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
-                protein.addMatch(new BlastProDomMatch(currentSignature, locations));
+                match = new BlastProDomMatch(currentSignature, locations);
+                protein.addMatch(match);
+                entityManager.persist(match);
             }
-            entityManager.persist(protein);
-            entityManager.flush();
         }
     }
 }

@@ -18,7 +18,7 @@ import java.util.Set;
  * @since 1.0
  */
 
-public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRawMatch, PantherMatch> implements PantherFilteredMatchDAO{
+public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRawMatch, PantherMatch> implements PantherFilteredMatchDAO {
 
     /**
      * Sets the class of the model that the DOA instance handles.
@@ -53,15 +53,26 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             String currentSignatureAc = null;
             Signature currentSignature = null;
             PantherRawMatch lastRawMatch = null;
+            PantherMatch match = null;
             for (PantherRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) {
                     continue;
                 }
+                // If the first raw match, or moved to a different match...
                 if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
                     if (currentSignatureAc != null) {
                         // Not the first...
-                        protein.addMatch(new PantherMatch(currentSignature, locations, lastRawMatch.getEvalue(),
-                                lastRawMatch.getFamilyName(), lastRawMatch.getScore()));
+                        if (match != null) {
+                            entityManager.persist(match);  // Persist the previous one.
+                        }
+                        match = new PantherMatch(
+                                currentSignature,
+                                locations,
+                                lastRawMatch.getEvalue(),
+                                lastRawMatch.getFamilyName(),
+                                lastRawMatch.getScore()
+                        );
+                        protein.addMatch(match);
                     }
                     // Reset everything
                     locations = new HashSet<PantherMatch.PantherLocation>();
@@ -76,11 +87,16 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
-                protein.addMatch(new PantherMatch(currentSignature, locations, lastRawMatch.getEvalue(),
-                        lastRawMatch.getFamilyName(), lastRawMatch.getScore()));
+                match = new PantherMatch(
+                        currentSignature,
+                        locations,
+                        lastRawMatch.getEvalue(),
+                        lastRawMatch.getFamilyName(),
+                        lastRawMatch.getScore()
+                );
+                protein.addMatch(match);
+                entityManager.persist(match);       // Persist the last one
             }
-            entityManager.persist(protein);
-            entityManager.flush();
         }
     }
 }

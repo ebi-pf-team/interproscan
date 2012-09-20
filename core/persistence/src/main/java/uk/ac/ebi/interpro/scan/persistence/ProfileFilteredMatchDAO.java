@@ -38,13 +38,13 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
     protected void persist(Collection<RawProtein<T>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<T> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
-            for (T match : rawProtein.getMatches()) {
-                Signature signature = modelAccessionToSignatureMap.get(match.getModelId());
-                protein.addMatch(buildMatch(signature, match));
+            for (T rawMatch : rawProtein.getMatches()) {
+                Signature signature = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                ProfileScanMatch match = buildMatch(signature, rawMatch);
+                protein.addMatch(match);
+                entityManager.persist(match);
             }
-            entityManager.persist(protein);
         }
-        entityManager.flush();
     }
 
     private ProfileScanMatch buildMatch(Signature signature, T rawMatch) {

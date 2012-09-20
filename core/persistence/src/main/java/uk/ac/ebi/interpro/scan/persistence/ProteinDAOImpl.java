@@ -17,12 +17,15 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
+import org.reflections.Reflections;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
+import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import javax.persistence.Query;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -37,6 +40,23 @@ import java.util.*;
 public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements ProteinDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinDAOImpl.class.getName());
+
+    /**
+     * For the method  getProteinsAndMatchesAndCrossReferencesBetweenIds below,
+     * this List contains the unqualified (simple) class names of all the concrete
+     * sub-classes of the Match class, allowing them to be queried in turn.
+     */
+    private static final List<String> CONCRETE_MATCH_CLASSES = new ArrayList<String>();
+
+    static {
+        final Reflections reflections = new Reflections("uk.ac.ebi.interpro.scan.model");
+        final Set<Class<? extends Match>> allClasses = reflections.getSubTypesOf(Match.class);
+        for (Class clazz : allClasses) {
+            if (!Modifier.isAbstract(clazz.getModifiers())) {  // Concrete only.
+                CONCRETE_MATCH_CLASSES.add(clazz.getSimpleName());
+            }
+        }
+    }
 
     /**
      * Calls the GenericDAOImpl constructor passing in Protein.class as
@@ -56,20 +76,6 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     @Transactional(readOnly = true)
     public Protein getProteinAndCrossReferencesByProteinId(Long id) {
         Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.crossReferences where p.id = :id");
-        query.setParameter("id", id);
-        return (Protein) query.getSingleResult();
-    }
-
-    /**
-     * Retrieves a Protein object by primary key and also retrieves any associated matches.
-     *
-     * @param id being the primary key of the required Protein.
-     * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
-     *         primary key is not present in the database.
-     */
-    @Transactional(readOnly = true)
-    public Protein getProteinAndMatchesById(Long id) {
-        Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.matches where p.id = :id");
         query.setParameter("id", id);
         return (Protein) query.getSingleResult();
     }
