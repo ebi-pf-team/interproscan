@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.io.FamilyHierachyElementBuilder;
+import uk.ac.ebi.interpro.scan.web.io.svg.FamilyHierachySvgElementBuilder;
 
 import java.io.Serializable;
 import java.util.*;
@@ -367,6 +368,10 @@ public final class SimpleProtein implements Serializable {
 
     public String getFamilyHierarchy() {
         return new FamilyHierachyElementBuilder(this).build().toString();
+    }
+
+    public String getFamilyHierarchyForSvg() {
+        return new FamilyHierachySvgElementBuilder(this).build().toString();
     }
 
 }
