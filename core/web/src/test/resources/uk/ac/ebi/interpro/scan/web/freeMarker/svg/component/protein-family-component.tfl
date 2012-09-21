@@ -1,71 +1,12 @@
-<!--Protein family membership component-->
+<#--Protein family membership component-->
 <svg id="proteinFamilyTree" x="40px" y="210px" width="1200" height="100" viewBox="0 0 1200 100">
     <text y="13px"
           style="fill:#393939;font-family:Verdana,Helvetica,sans-serif;font-size:13px;font-weight:bold">
-        Protein family membership
+        Protein family membership:
     </text>
-    <svg x="14px" y="24px">
-        <image x="1px" y="1px" width="22px" height="14px"
-               xlink:href="resources/icons/ico_tree_family.png"/>
-        <a xlink:href="http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=IPR001057" target="_top">
-            <text x="29px" y="12px" text-decoration="underline" style="fill:#0072FE">
-                <tspan style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#0072FE;">
-                    Glutamate/acetylglutamate kinase
-                </tspan>
-                <tspan style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#393939;">
-                    (IPR001057)
-                </tspan>
-            </text>
-        </a>
-    </svg>
-    <svg x="42px" y="42px">
-        <image x="1px" y="1px" width="22px" height="14px"
-               xlink:href="resources/icons/ico_tree_family.png"/>
-        <a xlink:href="http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=IPR005715" target="_top">
-            <text x="29px" y="12px" text-decoration="underline" style="fill:#0072FE">
-                <tspan style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#0072FE;">
-                    Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase
-                </tspan>
-                <tspan style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#393939;">
-                    (IPR005715)
-                </tspan>
-            </text>
-        </a>
-    </svg>
-    <svg x="70px" y="60px">
-        <image x="1px" y="1px" width="22px" height="14px"
-               xlink:href="resources/icons/ico_tree_family.png"/>
-        <a xlink:href="http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=IPR011529" target="_top">
-            <text x="29px" y="12px" text-decoration="underline" style="fill:#0072FE">
-                <tspan style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#0072FE;">
-                    Glutamate 5-kinase
-                </tspan>
-                <tspan style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#393939;">
-                    (IPR011529)
-                </tspan>
-            </text>
-        </a>
-    </svg>
-    <svg x="42px" y="78px">
-        <image x="1px" y="1px" width="22px" height="14px"
-               xlink:href="resources/icons/ico_tree_family.png"/>
-        <a xlink:href="http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=IPR011529" target="_top">
-            <text x="29px" y="12px" text-decoration="underline" style="fill:#0072FE">
-                <tspan style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#0072FE;">
-                    Glutamate 5-kinase/delta-2-pyrroline-5-carboxylate synthase
-                </tspan>
-                <tspan style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#393939;">
-                    (IPR011529)
-                </tspan>
-            </text>
-        </a>
-    </svg>
+<#if (protein.familyEntries?has_content)>
+${protein.familyHierarchyForSvg}
+    <#else>
+        <text x="180px" y="13px" style="fill:#838383">none</text>
+</#if>
 </svg>
