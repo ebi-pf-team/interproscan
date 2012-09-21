@@ -1,5 +1,5 @@
-<!--Protein info component-->
-<svg x="30px" y="30px">
+<#--Protein info component-->
+<svg id="proteinInfo" x="30px" y="30px">
     <text x="10px" y="25px">
         <tspan x="10px" dy="10px" font-size="22" fill="#284ADB" font-family="Verdana, Helvetica, sans-serif"
                font-weight="normal">
@@ -12,7 +12,7 @@
         </tspan>
         <a xlink:href="http://www.uniprot.org/uniprot/${protein.ac}" target="_top">
             <tspan x="10px" dx="100px" fill="#0072FE" text-decoration="underline"
-                   onmouseover="ShowTooltip(evt, 'Malto-oligosyltrehalose trehalohydrolase (${protein.ac})', 140, 77)"
+                   onmouseover="ShowTooltip(evt, '${protein.ac}', 140, 77)"
                    onmouseout="HideTooltip(evt)">${protein.ac}</tspan>
         </a>
         <tspan font-weight="bold" x="10px" dy="30px">
@@ -25,7 +25,7 @@
     <#--Work out if protein sequence is a fragment or not-->
     <#assign isProteinFragment=protein.proteinFragment />
         <tspan x="10px" dx="100px" fill="#838383">${protein.length} amino acids
-        <#if isProteinFragment>(fragment)</#if>
+        <#if isProteinFragment>(fragment)<#else>(complete)</#if>
         </tspan>
     </text>
     <text x="1084px" y="145px" font-size="10">
