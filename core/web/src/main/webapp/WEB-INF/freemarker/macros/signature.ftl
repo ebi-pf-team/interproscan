@@ -18,15 +18,12 @@
     </#if>
 
 <#-- Now display the signature accession -->
-<#--TODO: What happens if signature.ac == signature.name -->
     <#if signature.ac != signature.name>
     <#--Link text may be abbreviated therefore need to display the full text in the link title-->
-    <#--TODO: ?? Both anchors are completely the same-->
-    <a href="${signature.dataSource.linkUrl?replace("$0",signature.ac)}" title="${signature.ac} (${signature.name})"
+    <a href="${signature.dataSource.getLinkUrl(signature.ac)}" title="${signature.ac} (${signature.name})"
        class="neutral">
         <#else>
-        <#--TODO: ?? Both anchors are completely the same-->
-        <a href="${signature.dataSource.linkUrl?replace("$0",signature.ac)}" title="${signature.ac} (${signature.name})"
+        <a href="${signature.dataSource.getLinkUrl(signature.ac)}" title="${signature.ac}"
            class="neutral">
     </#if>
     <#if ((acLength?number) > (maxAcLength?number))>
