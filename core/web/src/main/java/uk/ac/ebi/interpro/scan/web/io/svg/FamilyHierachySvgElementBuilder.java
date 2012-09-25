@@ -121,11 +121,11 @@ public class FamilyHierachySvgElementBuilder {
         sb.append("<a xlink:href=\"http://www.ebi.ac.uk/interpro/IEntry?ac=");
         sb.append(entry.getAc());
         sb.append("\" target=\"_top\">");
-        sb.append("<text x=\"29px\" y=\"12px\" text-decoration=\"underline\" style=\"fill:#0072FE\">");
-        sb.append("<tspan style=\"font-family:Verdana,Helvetica,sans-serif;font-size:13px;stroke:none;fill:#0072FE;\">");
+        sb.append("<text x=\"29px\" y=\"12px\" text-decoration=\"underline\">");
+        sb.append("<tspan style=\"font-family:Verdana,Helvetica,sans-serif;font-size:13px;stroke:none;fill:#393939;\">");
         sb.append(entry.getName());
         sb.append("</tspan>");
-        sb.append("<tspan style=\"font-family:Verdana,Helvetica,sans-serif;font-size:13px;stroke:none;fill:#393939;\">");
+        sb.append("<tspan style=\"font-family:Verdana,Helvetica,sans-serif;font-size:13px;stroke:none;fill:#0072FE;\">");
         sb.append("(" + entry.getAc() + ")");
         sb.append("</tspan>");
         sb.append("</text>");
