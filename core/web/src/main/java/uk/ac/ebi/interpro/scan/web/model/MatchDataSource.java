@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import java.util.regex.Pattern;
+
 /**
  * TODO: Add description
  *
@@ -140,6 +142,8 @@ public enum MatchDataSource {
     // Other
     UNKNOWN;
 
+    private static final Pattern ACCESSION_PATTERN = Pattern.compile("\\$0");
+
     private final String name;
     private final String description;
     private final String homeUrl;
@@ -183,12 +187,23 @@ public enum MatchDataSource {
         return linkUrl;
     }
 
+    public String getLinkUrl(String accession) {
+        if (accession == null || linkUrl == null) {
+            return null;
+        }
+        if (accession.length() > 6 && accession.startsWith("G3DSA:")) {
+            accession = accession.substring(6);
+        }
+        return ACCESSION_PATTERN.matcher(linkUrl).replaceAll(accession);
+    }
+
     public String getSourceName() {
         return name;
     }
 
     /**
      * Lookup the member database enum from a text string that represents it
+     *
      * @param name The text to parse
      * @return The member database enum value, or UNKNOWN if not found
      */
@@ -198,8 +213,7 @@ public enum MatchDataSource {
                 if (name.equals(m.toString())) {
                     // E.g. "SMART"
                     return m;
-                }
-                else {
+                } else {
                     // E.g. Match "PROSITE profiles" from InterPro database with "ProSiteProfiles" from I5
                     name = name.toLowerCase().replaceAll("\\s+", "");
                     String mName = m.toString().toLowerCase().replaceAll("\\s+", "");
