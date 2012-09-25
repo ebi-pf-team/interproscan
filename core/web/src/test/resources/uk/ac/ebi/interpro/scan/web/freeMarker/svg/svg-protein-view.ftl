@@ -8,8 +8,8 @@
      xmlns="http://www.w3.org/2000/svg"
      id="svgProteinView"
      width="1280px"
-     height="1024px"
-     viewBox="0 0 1280 1024"
+     height="2524px"
+     viewBox="0 0 1280 2524"
      onload="init(evt)"
      version="1.1"
      baseProfile="tiny">
@@ -43,161 +43,21 @@
     </text>
 <#--Main box around the protein view-->
     <rect id="mainBoxBorder"
-          x="30px" y="30px" width="1233px" height="700px"
+          x="30px" y="30px" width="2533px" height="700px"
           style="fill:white; stroke:#E4E4E4; stroke-width:1"/>
 
 <#--protein info component-->
 <#include "component/protein-info-component.ftl"/>
 
 <#--Protein family membership component-->
-<#include "component/protein-family-component.tfl"/>
+<#include "component/protein-family-component.ftl"/>
 
 <#--Protein summary view component-->
 <#include "component/protein-summary-view-component.ftl"/>
 
-    <!--Sequence features component-->
-    <svg id="sequenceFeatures" x="40px" y="400px">
-        <text y="13px"
-              style="fill:#393939;font-family:Verdana,Helvetica,sans-serif;font-size:13px;font-weight:bold">
-            Sequence features
-        </text>
-        <!--First sequence feature component-->
-        <svg y="30px" width="1200" height="100" viewBox="0 0 1200 100">
-            <svg>
-                <rect x="1px" y="1px" width="110px" height="18px"
-                      style="stroke:#D8D8D8;fill:transparent;stroke-width:0.5"/>
-                <image x="3px" y="4px" width="13px" height="13px"
-                       xlink:href="resources/icons/ico_type_domain_small.png"/>
-                <a xlink:href="http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=IPR014756" target="_top">
-                    <text x="25px" y="15px" text-decoration="underline" style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:11px;stroke:none;fill:#0072FE;">IPR014756
-                    </text>
-                </a>
-            </svg>
-            <a xlink:href="http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=IPR014756" target="_top">
-                <text x="123px" y="14px" text-decoration="underline"
-                      style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#525252;">Immunoglobulin E-set
-                </text>
-            </a>
-            <use x="123px" y="19px" xlink:href="#greyBoxTwoBlobLines"/>
-            <!--Arrow component-->
-            <svg x="1058px"
-                 y="20px">
-                <use xlink:href="#blackArrowComponent"/>
-                <a xlink:href="http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/scop.cgi?ipid=SSF53633" target="_top">
-                    <text x="15px" y="10.5px" text-decoration="underline"
-                          style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:75%;stroke:none;fill:#525252;">SSF53633 (Aa_kinase)
-                    </text>
-                </a>
-            </svg>
-            <svg x="1058px"
-                 y="37px">
-                <use xlink:href="#blackArrowComponent"/>
-                <a xlink:href="http://www.cathdb.info/cathnode/G3DSA:3.40.1160.10" target="_top">
-                    <text x="15px" y="10.5px" text-decoration="underline"
-                          style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:75%;stroke:none;fill:#525252;">G3DSA:3.40.11... (A...)
-                    </text>
-                </a>
-            </svg>
-            <svg x="122.5px" y="23px">
-                <rect id="sequenceFeatureBlob_1"
-                      width="640px"
-                      height="7px"
-                      x="1px"
-                      y="1px"
-                      rx="3.984848"
-                      ry="5.6705141"
-                      style="fill:#E6C4A8;stroke:black;stroke-width:0.5"/>
-                <rect id="sequenceFeatureBlob_2"
-                      width="440px"
-                      height="7px"
-                      x="25.5px"
-                      y="18px"
-                      rx="3.984848"
-                      ry="5.6705141"
-                      style="fill:#E6C4A8;stroke:black;stroke-width:0.5"/>
-            </svg>
-        </svg>
-        <!--Second sequence feature component-->
-        <svg y="107px" width="1200" height="100" viewBox="0 0 1200 100">
-            <svg>
-                <rect x="1px" y="1px" width="110px" height="18px"
-                      style="stroke:#D8D8D8;fill:transparent;stroke-width:0.5"/>
-                <image x="3px" y="4px" width="13px" height="13px"
-                       xlink:href="resources/icons/ico_type_domain_small.png"/>
-                <a xlink:href="http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=IPR004193" target="_top">
-                    <text x="25px" y="15px" text-decoration="underline" style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:11px;stroke:none;fill:#0072FE;">IPR004193
-                    </text>
-                </a>
-            </svg>
-            <a xlink:href="http://wwwdev.ebi.ac.uk/interpro/IEntry?ac=IPR004193" target="_top">
-                <text x="123px" y="14px" text-decoration="underline"
-                      style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:13px;stroke:none;fill:#525252;">Glycoside hydrolase, family 13, N-terminal
-                </text>
-            </a>
-            <use x="123px" y="19px" xlink:href="#greyBoxThreeBlobLines"/>
-            <!--Arrow component-->
-            <svg x="1058px"
-                 y="20px">
-                <use xlink:href="#blackArrowComponent"/>
-                <a xlink:href="http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/scop.cgi?ipid=SSF53633" target="_top">
-                    <text x="15px" y="10.5px" text-decoration="underline"
-                          style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:75%;stroke:none;fill:#525252;">SSF53633 (Aa_kinase)
-                    </text>
-                </a>
-            </svg>
-            <svg x="1058px"
-                 y="37px">
-                <use xlink:href="#blackArrowComponent"/>
-                <a xlink:href="http://www.cathdb.info/cathnode/G3DSA:3.40.1160.10" target="_top">
-                    <text x="15px" y="10.5px" text-decoration="underline"
-                          style="font-family:Verdana,Helvetica,sans-serif;
-                             font-size:75%;stroke:none;fill:#525252;">G3DSA:3.40.11... (A...)
-                    </text>
-                </a>
-            </svg>
-            <svg x="1058px"
-                 y="54px">
-                <use xlink:href="#blackArrowComponent"/>
-                <a xlink:href="http://www.cathdb.info/cathnode/G3DSA:3.40.1160.10" target="_top">
-                    <text x="15px" y="10.5px" text-decoration="underline"
-                          style="font-family:Verdana,Helvetica,sans-serif;
-                                 font-size:75%;stroke:none;fill:#525252;">G3DSA:3.40.11... (B...)
-                    </text>
-                </a>
-            </svg>
-            <svg x="122.5px">
-                <rect width="40px"
-                      height="7px"
-                      x="700px"
-                      y="25px"
-                      rx="3.984848"
-                      ry="5.6705141"
-                      style="fill:yellow;stroke:black;stroke-width:0.5"/>
-                <rect width="123px"
-                      height="7px"
-                      x="740px"
-                      y="42px"
-                      rx="3.984848"
-                      ry="5.6705141"
-                      style="fill:yellow;stroke:black;stroke-width:0.5"/>
-                <rect width="20px"
-                      height="7px"
-                      x="863px"
-                      y="59px"
-                      rx="3.984848"
-                      ry="5.6705141"
-                      style="fill:yellow;stroke:black;stroke-width:0.5"/>
-            </svg>
-        </svg>
-    </svg>
+<#--Protein features component-->
+<#--<#include "component/protein-features-component.ftl"/>-->
 
 <#--Protein GO terms component-->
-<#include "component/protein-xref-component.tfl"/>
+<#--<#include "component/protein-xref-component.ftl"/>-->
 </svg>
