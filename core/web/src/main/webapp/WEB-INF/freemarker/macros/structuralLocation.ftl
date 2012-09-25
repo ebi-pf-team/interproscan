@@ -8,11 +8,12 @@
     <#assign links="">
     <#assign locationDataMap=structuralMatchData.locationDataMap>
 <#--Link on classId-->
+<#--TODO: This code needs refactoring as we introduced a new parametrized getLinkUrl(accession) method-->
     <#if databaseName?starts_with("CATH") || databaseName?starts_with("SCOP") || databaseName?starts_with("MODBASE")>
 
         <#list locationDataMap?keys as dataEntry>
             <#assign link=dataEntry?replace("MB_", '')> <#--MODBASE MB_P38398 converted to P38398-->
-            <#assign linkHref=databaseMetadata.linkUrl?replace("$0", link)>
+            <#assign linkHref=databaseMetadata.getLinkUrl(link)>
             <#assign linkItemValue=dataEntry>
             <#assign links="<a class='ext' href='"+linkHref+"'>"+linkItemValue+"</a><br/>">
         <#--<a href="${links}" class="ext">${linkValue}</a><br/>-->
@@ -24,7 +25,7 @@
             <#list locationDataMap?keys as dataEntry>
                 <#list locationDataMap[dataEntry] as domainId>
                     <#assign link=dataEntry?replace("SW_", '')> <#--SWISS-MODEL SW_P38398 converted to P38398-->
-                    <#assign linkHref=databaseMetadata.linkUrl?replace("$0", link)>
+                    <#assign linkHref=databaseMetadata.getLinkUrl(link)>
                     <#assign linkItemValue=domainId>
                     <#assign links=links+"<a class='ext' href='"+linkHref+"'>"+linkItemValue+"</a><br/>">
                 </#list>
@@ -45,7 +46,7 @@
                     <#assign strains=strains+domainId?replace(dataEntry, '')>
                 </#list>
                 <#assign strains=strains+")">
-                <#assign linkHref=databaseMetadata.linkUrl?replace("$0", dataEntry)>
+                <#assign linkHref=databaseMetadata.getLinkUrl(dataEntry)>
                 <#assign linkItemValue=dataEntry>
                 <#assign links=links+"<a class='ext' href='"+linkHref+"'>"+linkItemValue+"</a> "+strains+"<br/>">
             </#list>
