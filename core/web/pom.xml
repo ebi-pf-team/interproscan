@@ -228,7 +228,7 @@
         </profile>
         <profile>
             <id>production</id>
-            <!--
+            <!-- Profile for deploying on production tomcats:
 
 1) Update the full InterProScan 5 project to pick up all commits and build:
 
@@ -239,6 +239,7 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core; svn up; mvn c
 
 cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Pproduction clean package
 
+3) Deploy with Tomcat manager application
                  -->
             <properties>
                 <default.log.level>warn</default.log.level>
@@ -309,36 +310,7 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
         </profile>
         <profile>
             <id>tc-test</id>
-            <!--
-
-1. Profile to deploy to tc-test-3.ebi.ac.uk:9750
-
-(Once-only)
-
-Add the following XML to your ~/.m2/settings.xml file, to provide the server credentials:
-
-                        <settings>
-                            <servers>
-                                <server>
-                                    <id>tc-test-3</id>
-                                    <username>tomcat</username>
-                                    <password>THE REAL PASSWORD</password>
-                                </server>
-                            </servers>
-                        </settings>
-
-2) Commit your (tested) changes to subversion, wherever you may be building them.
-
-2) OPTIONALLY, If you have changed any code that the web module is dependent upon (e.g. in model):
-
-cd /nfs/seqdb/production/interpro/web/i5; svn up; mvn clean install
-
-
-3) Build and deploy the web application:
-
-cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat:redeploy
-
-                 -->
+            <!-- Profile to deploy to tc-test-3.ebi.ac.uk -->
             <properties>
                 <default.log.level>warn</default.log.level>
                 <third.party.log.level>warn</third.party.log.level>
@@ -384,23 +356,6 @@ cd /nfs/seqdb/production/interpro/web/i5/web; svn up; mvn -Ptc-test clean tomcat
                                     <targetPath>WEB-INF/spring</targetPath>
                                 </resource>
                             </webResources>
-                        </configuration>
-                    </plugin>
-
-                    <!-- Plugin to automatically deploy the war file to Tomcat. -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>tomcat-maven-plugin</artifactId>
-                        <configuration>
-                            <url>http://tc-test-3.ebi.ac.uk:9750/manager</url>
-                            <server>tc-test-3</server>
-                            <!-- See note above for server credentials -->
-                            <mode>both</mode>
-                            <contextFile>${project.build.directory}/interpro-protein-page.xml
-                            </contextFile>
-                            <warFile>${project.build.directory}/interpro-protein-page.war
-                            </warFile>
-                            <path>/interpro-protein-page</path>
                         </configuration>
                     </plugin>
                 </plugins>
