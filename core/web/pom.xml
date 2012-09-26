@@ -290,7 +290,7 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
                             </execution>
                         </executions>
                     </plugin>
-                   <plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.1-alpha-1</version>
@@ -344,11 +344,28 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
                 <finalName>interpro-protein-page</finalName>
                 <plugins>
                     <plugin>
+                        <groupId>com.keyboardsamurais.maven</groupId>
+                        <artifactId>maven-timestamp-plugin</artifactId>
+                        <version>1.0</version>
+                        <configuration>
+                            <propertyName>timestamp</propertyName>
+                            <!-- timestampPattern using SimpleDateFormat format. -->
+                            <timestampPattern>yyyyMMdd-HHmm</timestampPattern>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.1-alpha-1</version>
                         <configuration>
-                            <warName>interpro-protein-page</warName>
+                            <warName>interpro-protein-page-${timestamp}</warName>
                             <webResources>
                                 <resource>
                                     <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
