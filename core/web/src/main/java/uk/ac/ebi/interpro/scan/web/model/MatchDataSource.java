@@ -15,12 +15,7 @@ public enum MatchDataSource {
     GENE3D(0,
             "Gene3D HMMs extended predictions of CATH protein structures.",
             "http://gene3d.biochem.ucl.ac.uk/Gene3D/",
-            "http://www.cathdb.info/cathnode/$0"),
-    // TODO Watch out for this!
-    //    <database name="UCL" home='http://gene3d.biochem.ucl.ac.uk/Gene3D/'>
-    //        <link match="G3DSA:(.*)" is="http://www.cathdb.info/cathnode/$1"/>
-    //        <link match=".*" is="http://www.cathdb.info/cathnode/$0"/>
-    //    </database>
+            "http://www.cathdb.info/superfamily/$0"),
 
     HAMAP(0,
             "Members of HAMAP families are identified using PROSITE profile collections. " +
@@ -113,7 +108,7 @@ public enum MatchDataSource {
     CATH(0,
             "CATH is a manually curated classification of protein domain structures.",
             "http://www.cathdb.info/",
-            "http://www.cathdb.info/cathnode/$0"),
+            "http://www.cathdb.info/superfamily/$0"),
 
     SCOP(0,
             "The Structural Classification of Proteins (SCOP) database is a largely manual classification of protein " +
@@ -191,8 +186,13 @@ public enum MatchDataSource {
         if (accession == null || linkUrl == null) {
             return null;
         }
-        if (accession.length() > 6 && accession.startsWith("G3DSA:")) {
+        final boolean longerThanThree = accession.length() > 3;
+        if (this == GENE3D && accession.length() > 6 && accession.startsWith("G3DSA:")) {
             accession = accession.substring(6);
+        } else if ((this == CATH || this == SCOP || this == MODBASE) && longerThanThree && accession.startsWith("MB_")) {
+            accession = accession.substring(3);
+        } else if (this == SWISSMODEL && longerThanThree && accession.startsWith("SW_")) {
+            accession = accession.substring(3);
         }
         return ACCESSION_PATTERN.matcher(linkUrl).replaceAll(accession);
     }

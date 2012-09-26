@@ -8,53 +8,31 @@
     <#assign links="">
     <#assign locationDataMap=structuralMatchData.locationDataMap>
 <#--Link on classId-->
-<#--TODO: This code needs refactoring as we introduced a new parametrized getLinkUrl(accession) method-->
-    <#if databaseName?starts_with("CATH") || databaseName?starts_with("SCOP") || databaseName?starts_with("MODBASE")>
-
+    <#if databaseName?starts_with("PDB")>
+    <#--Link title shows domain Ids "2r0iA, 2r0iB". Link on class Id with strains shown in brackets "2r0i (A, B)" -->
         <#list locationDataMap?keys as dataEntry>
-            <#assign link=dataEntry?replace("MB_", '')> <#--MODBASE MB_P38398 converted to P38398-->
-            <#assign linkHref=databaseMetadata.getLinkUrl(link)>
+            <#assign title="">
+            <#assign strains="(">
+            <#list locationDataMap[dataEntry] as domainId>
+                <#if (domainId_index>0)>
+                    <#assign title=title+",">
+                    <#assign strains=strains+", ">
+                </#if>
+                <#assign title=title+domainId>
+                <#assign strains=strains+domainId?replace(dataEntry, '')>
+            </#list>
+            <#assign strains=strains+")">
+            <#assign linkHref=databaseMetadata.getLinkUrl(dataEntry)>
             <#assign linkItemValue=dataEntry>
-            <#assign links="<a class='ext' href='"+linkHref+"'>"+linkItemValue+"</a><br/>">
-        <#--<a href="${links}" class="ext">${linkValue}</a><br/>-->
+            <#assign links=links+"<a class='ext' href='"+linkHref+"'>"+linkItemValue+"</a> "+strains+"<br/>">
         </#list>
-
-    <#--Link on domainId-->
-        <#elseif databaseName?starts_with("SWISS-MODEL")>
-
-            <#list locationDataMap?keys as dataEntry>
-                <#list locationDataMap[dataEntry] as domainId>
-                    <#assign link=dataEntry?replace("SW_", '')> <#--SWISS-MODEL SW_P38398 converted to P38398-->
-                    <#assign linkHref=databaseMetadata.getLinkUrl(link)>
-                    <#assign linkItemValue=domainId>
-                    <#assign links=links+"<a class='ext' href='"+linkHref+"'>"+linkItemValue+"</a><br/>">
-                </#list>
-            </#list>
-
-        <#elseif databaseName?starts_with("PDB")>
-
-        <#--Link title shows domain Ids "2r0iA, 2r0iB". Link on class Id with strains shown in brackets "2r0i (A, B)" -->
-            <#list locationDataMap?keys as dataEntry>
-                <#assign title="">
-                <#assign strains="(">
-                <#list locationDataMap[dataEntry] as domainId>
-                    <#if (domainId_index>0)>
-                        <#assign title=title+",">
-                        <#assign strains=strains+", ">
-                    </#if>
-                    <#assign title=title+domainId>
-                    <#assign strains=strains+domainId?replace(dataEntry, '')>
-                </#list>
-                <#assign strains=strains+")">
-                <#assign linkHref=databaseMetadata.getLinkUrl(dataEntry)>
-                <#assign linkItemValue=dataEntry>
-                <#assign links=links+"<a class='ext' href='"+linkHref+"'>"+linkItemValue+"</a> "+strains+"<br/>">
-            </#list>
-        <#else>
-        Unknown database: ${databaseName}.
+    <#else>
+        <#list locationDataMap?keys as dataEntry>
+            <#assign linkHref=databaseMetadata.getLinkUrl(dataEntry)>
+            <#assign links="<a class='ext' href='"+linkHref+"'>"+dataEntry+"</a><br/>">
+        </#list>
     </#if>
-
-<@locationMacro.location smid="match-location-"+smid protein=protein titlePrefix=title location=location colourClass=databaseName/>
+    <@locationMacro.location smid="match-location-"+smid protein=protein titlePrefix=title location=location colourClass=databaseName/>
 
 <div id="match-popup-${smid}" style="display: none;">
 

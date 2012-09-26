@@ -169,6 +169,16 @@
         </plugins>
     </build>
 
+
+    <!--
+    NOTE:
+
+    All of the following profiles expect a file webapp/WEB-INF/spring/users.properties.
+
+    Copy the file example-users.properties and uncomment the final line to get this working (in test).
+    -->
+
+
     <profiles>
         <profile>
             <id>jetty</id>
