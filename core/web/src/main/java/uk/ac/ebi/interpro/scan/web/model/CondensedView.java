@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.web.io.svg.ScaleMarkerUtil;
 
 import java.io.Serializable;
 import java.util.*;
@@ -134,5 +135,89 @@ public class CondensedView implements Serializable {
 
     public int getNumSuperMatchBlobs() {
         return numSuperMatchBlobs;
+    }
+
+    private StringBuilder build(final int proteinLength, final Map<String, Integer> entryColourMap, final String scale) {
+        final float rectangleWidth = 930;
+        final float scaleFactor = rectangleWidth / (float) proteinLength;
+        int lineHeight = 17;
+        int svgTagYDimension = 19;
+        int annotationYDimension = 20;
+        String[] scaleMarkers = scale.split(",");
+        StringBuilder result = new StringBuilder();
+        if (lines != null) {
+            int lineCounter = 0;
+            for (CondensedLine line : lines) {
+                lineCounter++;
+                EntryType entryType = line.getType();
+                result.append("<svg x=\"123px\" y=\"" + svgTagYDimension + "px\">");
+                result.append("<rect width=\"" + rectangleWidth + "px\" height=\"" + lineHeight + "px\" style=\"fill:#EFEFEF\"/>");
+                if (lineCounter != lines.size()) {
+                    ScaleMarkerUtil.appendScaleMarkers(result, scaleMarkers, scaleFactor, lineHeight);
+                } else {//last line
+                    ScaleMarkerUtil.appendScaleMarkers(result, scaleMarkers, scaleFactor, lineHeight, true);
+                }
+                Set<SimpleSuperMatch> superMatches = line.getSuperMatchList();
+                if (superMatches != null) {
+                    for (SimpleSuperMatch superMatch : superMatches) {
+                        int locStart = superMatch.getLocation().getStart();
+                        int locEnd = superMatch.getLocation().getEnd();
+                        int scaledLocationStart = Math.round(((float) locStart - 1) * scaleFactor);
+                        int scaledRectangleWidth = Math.round(((float) locEnd - locStart) * scaleFactor);
+                        SimpleEntry firstSimpleEntry = superMatch.getFirstEntry();
+                        String entryAccession = "";
+                        if (firstSimpleEntry != null) {
+                            entryAccession = firstSimpleEntry.getAc();
+                        }
+                        result.append("<rect");
+                        result.append(" ");
+                        appendColourClass(result, entryType.toString(), entryColourMap, entryAccession);
+                        result.append("x=\"" + scaledLocationStart + "px\" y=\"" + 5 + "px\" width=\"" + scaledRectangleWidth + "px\" height=\"" + 7 + "px\"");
+                        result.append(" ");
+                        result.append("rx=\"3.984848\" ry=\"5.6705141\"");
+                        result.append(" ");
+                        result.append("style=\"stroke:black;stroke-width:0.3\"");
+                        result.append(" ");
+                        result.append("onmouseover=\"ShowTooltip(evt, '" + locStart + " - " + locEnd + "', 760, 345)\"");
+                        result.append(" ");
+                        result.append("onmouseout=\"HideTooltip(evt)\">");
+                        result.append("<title>" + locStart + " - " + locEnd + "</title>");
+                        result.append("</rect>");
+                    }
+                }
+                result.append("</svg>");
+                result.append("<svg id=\"domainLink\" x=\"1058px\" y=\"" + annotationYDimension + "px\">");
+                result.append("<use xlink:href=\"#blackArrowComponent\"/>");
+                result.append("<text x=\"15px\" y=\"10.5px\"");
+                result.append(" ");
+                result.append("style=\"font-family:Verdana,Helvetica,sans-serif;font-size:11px;stroke:none;fill:#525252;\">");
+                if (entryType.equals(EntryType.DOMAIN)) {
+                    result.append(EntryType.DOMAIN.toString());
+                } else {
+                    result.append(EntryType.REPEAT.toString());
+                }
+                result.append("</text>");
+                result.append("</svg>");
+                svgTagYDimension += lineHeight;
+                annotationYDimension += lineHeight;
+            }
+        }
+
+        return result;
+    }
+
+    private void appendColourClass(final StringBuilder result, final String entryType,
+                                   final Map<String, Integer> entryColourMap,
+                                   final String entryAccession) {
+        final Integer colourCode = entryColourMap.get(entryAccession);
+        if (entryType != null && colourCode != null) {
+            result.append("class=\"");
+            result.append("c" + colourCode + " " + entryType);
+            result.append("\" ");
+        }
+    }
+
+    public String getCondensedViewForSvg(final Map<String, Integer> entryColourMap, final String scale) {
+        return build(protein.getLength(), entryColourMap, scale).toString();
     }
 }

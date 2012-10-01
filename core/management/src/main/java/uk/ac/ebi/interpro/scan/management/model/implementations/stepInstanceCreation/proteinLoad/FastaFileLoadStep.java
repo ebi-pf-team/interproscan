@@ -94,6 +94,14 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 File file = new File(providedPath);
                 if (file.exists()) {
                     if (file.canRead()) {
+                        //
+                        if (file.length() == 0) {
+                            //GetORF result file
+                            if (file.getName().contains("orfs")) {
+                                throw new IllegalArgumentException("The ORF predication tool EMBOSS: getorf produced an empty result file (" + providedPath + ").");
+                            }
+                            throw new IllegalArgumentException("The FASTA input file " + providedPath + " is readable but empty. Please provide a valid (not empty) FASTA input file.");
+                        }
                         try {
                             fastaFileInputStream = new FileInputStream(file);
                         } catch (FileNotFoundException e) {

@@ -1,37 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="resources/css/mouse_over_tooltip.css"?>
+<?xml-stylesheet type="text/css" href="resources/css/type_colours_svg.css"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
-<!--All widths and heights are specified in pixel -->
-<!--Copied style colours for rectangle, blobs and borders from the InterProWeb Beta site-->
 <svg xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns="http://www.w3.org/2000/svg"
      id="svgProteinView"
-     width="1280px"
-     height="2524px"
+     width="1280"
+     height="2524"
      viewBox="0 0 1280 2524"
      onload="init(evt)"
      version="1.1"
      baseProfile="tiny">
+<#--Protein Accession title-->
+    <title>${protein.ac}</title>
 
-    <!--JavaScript references-->
+<#--JavaScript references-->
     <script xlink:href="resources/js/mouse_over_tooltip.js" type="text/ecmascript"/>
 
-    <desc>SVG mock up for the new protein view. The goal is to auto-generate SVG files in InterProScan 5.</desc>
+    <desc>Auto-generate SVG file produced by InterProScan 5.</desc>
     <defs id="defs3220">
-        <!--Defines a grey box for a single domain or a single sequence feature-->
-        <rect id="greyBoxOneBlobLine"
-              width="930px"
-              height="17px"
-              style="fill:#EFEFEF"/>
-        <rect id="greyBoxTwoBlobLines"
-              width="930px"
-              height="34px"
-              style="fill:#EFEFEF"/>
-        <rect id="greyBoxThreeBlobLines"
-              width="930px"
-              height="51px"
-              style="fill:#EFEFEF"/>
         <polygon id="blackArrowComponent" points="0,2  8,6  0,10"
                  style="stroke:#660000; fill:black;"/>
         <rect id="blackSquare" x="1px" y="7px" height="6px" width="6px" style="fill:393939"/>
@@ -56,8 +44,16 @@
 <#include "component/protein-summary-view-component.ftl"/>
 
 <#--Protein features component-->
-<#--<#include "component/protein-features-component.ftl"/>-->
+<#include "component/protein-features-component.ftl"/>
 
 <#--Protein GO terms component-->
-<#--<#include "component/protein-xref-component.ftl"/>-->
+<#include "component/protein-xref-component.ftl"/>
+
+    <!--Simple tooltip -->
+    <#--<svg id="tooltip_component" baseProfile="tiny" visibility="hidden">-->
+<#--<polygon class="tooltip_bg" id="tooltip_bg" points="0,0"/>-->
+<#--<text class="tooltip" id="tooltip" font-size="18" font-family="arial" fill="#000">SVG-->
+<#--Javascript Tooltip-->
+<#--</text>-->
+<#--</svg>-->
 </svg>
