@@ -1,9 +1,12 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
+import uk.ac.ebi.interpro.scan.web.io.svg.MatchLocationSvgElementBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TODO: Add description
@@ -57,4 +60,8 @@ public final class SimpleSignature implements Comparable<SimpleSignature>, Seria
         return comparison;
     }
 
+    public String getMatchLocationsViewSvg(final int proteinLength, final Map<String, Integer> entryColourMap,
+                                           final String entryType, final String entryAccession, final String scale) {
+        return new MatchLocationSvgElementBuilder(this).build(proteinLength, entryColourMap, entryType, entryAccession, scale).toString();
+    }
 }

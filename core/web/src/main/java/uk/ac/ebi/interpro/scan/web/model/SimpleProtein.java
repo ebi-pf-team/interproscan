@@ -45,12 +45,13 @@ public final class SimpleProtein implements Serializable {
 
     /**
      * Construct a SimpleProtein without the taxonomy information.
-     * @param ac Protein accession
-     * @param id Protein identifier
-     * @param name Protein name
-     * @param length Protein length
-     * @param md5 MD5
-     * @param crc64 CRC64
+     *
+     * @param ac                Protein accession
+     * @param id                Protein identifier
+     * @param name              Protein name
+     * @param length            Protein length
+     * @param md5               MD5
+     * @param crc64             CRC64
      * @param isProteinFragment True if this is a protein fragment or false if complete
      */
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
@@ -374,4 +375,19 @@ public final class SimpleProtein implements Serializable {
         return new FamilyHierachySvgElementBuilder(this).build().toString();
     }
 
+    public int getYFeatureComponent() {
+        return 0;
+    }
+
+    public int getYSummaryViewComponent() {
+        return 0;
+    }
+
+    public int getYXrefComponent() {
+        return 0;
+    }
+
+    public int getGlobalHeight() {
+        return 2524;
+    }
 }
