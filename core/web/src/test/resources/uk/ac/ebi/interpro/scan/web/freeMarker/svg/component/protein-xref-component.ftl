@@ -2,7 +2,7 @@
 <g id="goSection">
 <#assign tspanDyValue="20px"/>
     <!-- GO terms section title heading -->
-    <svg x="40px" y="600px" width="1200" height="200" viewBox="0 0 1200 200">
+    <svg x="40px" y="1400px" width="1200" height="200" viewBox="0 0 1200 200">
         <text font-size="13px" y="13px" fill="#393939" font-family="Verdana, Helvetica, sans-serif"
               font-weight="bold">
             GO Term prediction

@@ -34,13 +34,4 @@
     </text>
 
     <line x1="10px" y1="150px" x2="1220px" y2="150px" stroke="#CDCDCD" stroke-width="1"/>
-
-    <!--Simple tooltip -->
-    <svg id="tooltip_component" baseProfile="tiny" visibility="hidden">
-        <polygon class="tooltip_bg" id="tooltip_bg" points="0,0"/>
-        <text class="tooltip" id="tooltip" font-size="18" font-family="arial" fill="#000">SVG
-            Javascript Tooltip
-        </text>
-    </svg>
-
 </svg>
