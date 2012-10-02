@@ -5,7 +5,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import javax.jms.Message;
 
 /**
- * This class performs the execution in a transaction.  This has been factored out of the AmqInterProScanWorker class
+ * This class performs the execution in a transaction.  This has been factored out of the WorkerListener class
  * to ensure that the transaction semantics work...
  *
  * @author Phil Jones

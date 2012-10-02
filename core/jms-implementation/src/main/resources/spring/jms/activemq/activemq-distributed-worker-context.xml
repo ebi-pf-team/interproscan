@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <import resource="activemq-tcp-connection-config-context.xml"/>
+    <import resource="activemq-connection-config-context.xml"/>
     <import resource="activemq-queue-config-context.xml"/>
     <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
@@ -12,13 +12,13 @@
     <bean id="distributedWorkerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="remoteJmsFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
-        <property name="messageListener" ref="worker"/>
+        <property name="messageListener" ref="workerListener"/>
         <property name="sessionTransacted" value="false"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
         <property name="receiveTimeout" value="-1"/>
     </bean>
 
-    <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
+    <bean id="workerListener" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="jmsTemplate" ref="remoteJmsTemplateWrapper"/>
         <property name="controller" ref="distributedWorkerController"/>
@@ -32,7 +32,7 @@
         <property name="directoryManager" ref="tempDirectoryManager"/>
     </bean>
 
-    <bean id="distributedWorkerController" class="uk.ac.ebi.interpro.scan.jms.agent.WorkerImpl">
+    <bean id="distributedWorkerController" class="uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl">
         <constructor-arg ref="distributedWorkerJmsContainer"/>
         <property name="maximumIdleTimeSeconds" value="${jvm.maximum.idle.time.seconds}"/>
         <property name="maximumLifeSeconds" value="${jvm.maximum.life.seconds}"/>

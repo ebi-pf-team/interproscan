@@ -6,24 +6,33 @@
 
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
     <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
-    <import resource="activemq-inVm-connection-config-context.xml"/>
 
-    <bean id="amqEmbeddedWorkerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+    <!--Configuration for the local job queue listener-->
+    <bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="localJmsFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
-        <property name="messageListener" ref="amqEmbeddedWorker"/>
+        <property name="concurrentConsumers" value="1"/>
+        <property name="messageListener" ref="localJobQueueListener"/>
         <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentConsumers" value="${number.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
-        <property name="autoStartup" value="true"/>
     </bean>
 
     <bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
-        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="jmsTemplate" ref="localJmsFactory"/>
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
     </bean>
+
+    <!--Listens to the local job queue and performs jobs-->
+    <bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.worker.LocalJobQueueListener">
+        <property name="stepExecutor" ref="stepExecutor"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="controller" ref="distributedWorkerController"/>
+    </bean>
+
 
 
     <bean id="embeddedStepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">

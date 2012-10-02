@@ -31,4 +31,14 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
     </bean>
 
+    <!-- Spring JMS Topic Template -->
+    <bean id="inVmJmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <constructor-arg ref="inVmJmsFactory"/>
+            </bean>
+        </property>
+        <property name="pubSubDomain" value="true"/>
+    </bean>
+
 </beans>
