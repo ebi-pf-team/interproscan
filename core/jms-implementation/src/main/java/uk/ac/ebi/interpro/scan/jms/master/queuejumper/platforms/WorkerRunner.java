@@ -26,6 +26,16 @@ public interface WorkerRunner {
     public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory);
 
     /**
+     * See {@link #startupNewWorker(int, String, String)} }
+     * The masterWorker boolean flag indicates if a worker was created by the master itself. TRUE if created by the master, otherwise FALSE.
+     * @param priority
+     * @param tcpUri
+     * @param temporaryDirectory
+     * @param masterWorker
+     */
+    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, boolean masterWorker);
+
+    /**
      * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
      * Assumes that the jar being executed has a main class define in the MANIFEST.
      * Sets the worker to only accept jobs above the priority passed in as argument.

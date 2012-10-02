@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.main;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.commons.cli.*;
@@ -10,10 +11,11 @@ import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
-import uk.ac.ebi.interpro.scan.jms.agent.WorkerImpl;
 import uk.ac.ebi.interpro.scan.jms.master.BlackBoxMaster;
 import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster;
+import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMasterCopy;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
+import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
@@ -99,7 +101,9 @@ public class Run {
                 "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false, true),
         TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Optional, used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false, false),
         TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. The default location is /temp.", "TEMP-DIR", false, true),
-        DISABLE_PRECALC("disable-precalc", "dp", false, "Optional.  Disables use of the precalculated match lookup service.  All match calculations will be run locally.", null, false, true);
+        DISABLE_PRECALC("disable-precalc", "dp", false, "Optional.  Disables use of the precalculated match lookup service.  All match calculations will be run locally.", null, false, true),
+        HIGH_MEM("highmem", "hm", false, "Optional, switch on the creation of a high memory worker. Please note normal and high mem workers share the same Spring configuration file.", null, false, false),
+        TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", null, false, false);
 
         private String longOpt;
 
@@ -163,10 +167,16 @@ public class Run {
     }
 
     private enum Mode {
+        //Mode for InterPro production
         MASTER("master", "spring/jms/activemq/activemq-distributed-master-context.xml"),
+        //?
         WORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
+        DISTRIBUTED_WORKER("distributedWorkerController", "spring/jms/worker/distributed-worker-context.xml"),
         HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-highmem-context.xml"),
+        //Default mode. Mode to run the I5 black box version
         STANDALONE("standalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
+        //This mode allows spawning of distributed workers on demand using the new i5jms architecture
+        DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
@@ -410,7 +420,7 @@ public class Run {
 
                 checkIfMasterAndConfigure(runnable, parsedAnalyses, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
 
-                checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx);
+                checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
 
                 System.out.println("Running InterProScan v5 in " + mode + " mode...");
 
@@ -484,13 +494,19 @@ public class Run {
                 bbMaster.setOutputFormats(parsedOutputFormats);
             }
             String tcpConnectionString = null;
-            if (mode == Mode.CL_MASTER) {
+            if (mode == Mode.CL_MASTER || mode==Mode.DISTRIBUTED_MASTER) {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 
             if (bbMaster instanceof DistributedBlackBoxMaster && tcpConnectionString != null) {
                 ((DistributedBlackBoxMaster) bbMaster).setTcpUri(tcpConnectionString);
             }
+            //TODO: The copy of the distributed master will retire someday (if distributed computing works fine)
+            if (bbMaster instanceof DistributedBlackBoxMasterCopy && tcpConnectionString != null) {
+                ((DistributedBlackBoxMasterCopy) bbMaster).setTcpUri(tcpConnectionString);
+            }
+
+
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                 bbMaster.setSequenceType(sequenceType);
             }
@@ -515,7 +531,8 @@ public class Run {
 
     private static void checkIfDistributedWorkerAndConfigure(final Runnable runnable,
                                                              final CommandLine parsedCommandLine,
-                                                             final AbstractApplicationContext ctx) {
+                                                             final AbstractApplicationContext ctx,
+                                                             final Mode mode) {
         if (runnable instanceof WorkerImpl) {
 //                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt()) || parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
             final WorkerImpl worker = (WorkerImpl) runnable;
@@ -526,10 +543,30 @@ public class Run {
                 }
                 worker.setMinimumJmsPriority(priority);
             }
+
+            //start the local activemq broker
+            String tcpConnectionString=null;
+            if (mode == Mode.DISTRIBUTED_WORKER) {
+                tcpConnectionString = configureTCPTransport(ctx);
+            }
+            //set the tcpUri for the worker
+            if ( tcpConnectionString != null) {
+                worker.setTcpUri(tcpConnectionString);
+            }
+            //set high memory option
+            worker.setHighMemory(parsedCommandLine.hasOption(I5Option.HIGH_MEM.getLongOpt()));
+
+            //set master worker
+            worker.setMasterWorker(parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt()));
+
+            //set the master uri
+            //Please note: Make sure you set the master worker flag and the high memory flag before you set the master URI
             if (parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
                 final String masterUri = parsedCommandLine.getOptionValue(I5Option.MASTER_URI.getLongOpt());
-                worker.setMasterUri(masterUri);
+                ActiveMQConnectionFactory activeMQConnectionFactory = worker.setMasterUri(masterUri);
+                //want to change the remoteFactory
             }
+
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {
                 final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
                 if (LOGGER.isDebugEnabled())
@@ -547,6 +584,7 @@ public class Run {
                     LOGGER.debug("NO!  So can't set the temporary directory manager.  Details of Directory Manager:" + tdm.toString());
                 }
             }
+
         }
     }
 
@@ -747,12 +785,15 @@ public class Run {
                 // Test the port is available on this machine.
                 portAssigned = available(port);
             }
+            //Set a random broker name, otherwise you get RMI protocol exception when workers running on the same machine
+            //broker.setBrokerName(Utilities.createUniqueJobName(8));
 
+            //Setting transport connector
             final String uriString = new StringBuilder("tcp://").append(hostname).append(':').append(port).toString();
-
             final TransportConnector tc = new TransportConnector();
             tc.setUri(new URI(uriString));
             broker.addConnector(tc);
+            //
             broker.start();
             System.out.println("uriString = " + uriString);
             return uriString;
