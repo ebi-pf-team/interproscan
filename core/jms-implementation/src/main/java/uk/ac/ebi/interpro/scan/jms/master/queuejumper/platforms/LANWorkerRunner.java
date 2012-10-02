@@ -118,4 +118,19 @@ public class LANWorkerRunner implements WorkerRunner {
     public void startupNewWorker(int priority) {
         startupNewWorker();
     }
+
+    /**
+     * See {@link #startupNewWorker(int, String, String)} }
+     * The masterWorker boolean flag indicates if a worker was created by the master itself. TRUE if created by the master, otherwise FALSE.
+     *
+     * TODO: test it in this LAN mode
+     * @param priority
+     * @param tcpUri
+     * @param temporaryDirectory
+     * @param masterWorker
+     */
+    @Override
+    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, boolean masterWorker) {
+        startupNewWorker();
+    }
 }

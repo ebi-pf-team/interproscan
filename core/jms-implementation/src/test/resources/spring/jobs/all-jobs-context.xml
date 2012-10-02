@@ -7,7 +7,7 @@
     <!-- Import common beans -->
     <!--<import resource="job-load-from-fasta-spring.xml"/>-->
     <import resource="../persistence/persistence-config-context.xml"/>
-
+    <!--<import resource="jobDistributedMaster-context.xml"  />-->
     <!--<import resource="../uapro-db-access-context.xml"/>-->
 
     <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
@@ -15,6 +15,7 @@
             <list>
                 <ref bean="jobLoadFromFasta"/>
                 <ref bean="jobTest"/>
+                <!--<ref bean="jobDistributedMaster"/>-->
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
@@ -40,6 +41,7 @@
         <property name="fastaFileLoader" ref="fastaFileLoader"/>
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromFasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

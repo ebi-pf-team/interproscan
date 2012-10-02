@@ -20,6 +20,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private boolean highMemory;
 
+    private boolean masterWorker;
+
     private static long submissionTimeMillis = 0;
 
     private WorkerStartupStrategy workerStartupStrategy;
@@ -49,16 +51,26 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         startupNewWorker(priority);
     }
 
+    /**
+     * The masterWorker boolean flag indicates if a worker was created by the master itself. TRUE if created by the master, otherwise FALSE.
+     */
+    public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory, boolean masterWorker) {
+        this.masterWorker=masterWorker;
+        startupNewWorker(priority,tcpUri,temporaryDirectory);
+    }
+
 
     @Override
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
         if (workerStartupStrategy.startUpWorker(priority)) {
             StringBuilder command = new StringBuilder(submissionCommand);
+            LOGGER.debug("command : "+submissionCommand);
             if (tcpUri == null) {
                 command.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
             } else {
-                command.append(highMemory ? " --mode=cl_highmem_worker" : " --mode=cl_worker");
-
+//                command.append(highMemory ? " --mode=cl_highmem_worker" : " --mode=cl_worker");
+//                command.append(highMemory ? " --mode=distributed_worker --highmem" : " --mode=distributed_worker");
+                command.append(highMemory ? " --mode=distributed_worker --highmem" : " --mode=distributed_worker");
             }
             if (priority > 0) {
                 command.append(" --priority=")
@@ -73,6 +85,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
             if (temporaryDirectory != null) {
                 command.append(" --tempdirname=")
                         .append(temporaryDirectory);
+            }
+
+            if(this.masterWorker){
+                command.append(" --tier1");
             }
 
             if (LOGGER.isDebugEnabled()) {

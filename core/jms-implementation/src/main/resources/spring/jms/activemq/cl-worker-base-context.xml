@@ -20,7 +20,7 @@
         </property>
     </bean>
 
-    <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.activemq.AmqInterProScanWorker">
+    <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="jmsTemplate" ref="jmsTemplateWrapper"/>
         <property name="controller" ref="distributedWorkerController"/>

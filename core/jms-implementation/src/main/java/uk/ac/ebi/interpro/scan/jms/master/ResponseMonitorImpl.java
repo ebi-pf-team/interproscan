@@ -29,6 +29,7 @@ public class ResponseMonitorImpl implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
+        LOGGER.info("Master: received a message on the  responseQueue");
         try {
             boolean canHandle = false;
             if (message instanceof ObjectMessage) {

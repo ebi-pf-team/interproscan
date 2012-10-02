@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
+import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
@@ -18,15 +20,26 @@ import javax.jms.JMSException;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster {
+public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
+
+    private static final Logger LOGGER = Logger.getLogger(DistributedBlackBoxMasterCopy.class.getName());
 
     private String tcpUri;
 
-    private static final Logger LOGGER = Logger.getLogger(DistributedBlackBoxMaster.class.getName());
+    private StatsUtil statsUtil;
 
     /**
-     * Run the Master Application.
+     * completion time target for worker creation by the Master
+     * should be  less than worker max lifetime  =  7*24*60*60*1000;
      */
+
+    private int completionTimeTarget = 2 * 60 * 60 * 1000;
+    private static final int LOW_PRIORITY = 4;
+    private static final int HIGH_PRIORITY = 8;
+
+    /**
+    * Run the Master Application.
+    */
     public void run() {
         super.run();
         try {
@@ -34,13 +47,23 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster {
 
             int stepInstancesCreatedByLoadStep = createStepInstances();
 
+            //create two workers : one high memory and one non high memory
+            String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
+
+            LOGGER.debug("Starting a high memory worker.");
+            //high memory do have a higher priority compared to low memory workers
+            workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
+            LOGGER.debug("Starting a normal worker.");
+            temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
+            workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
 
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             while (!shutdownCalled) {
                 boolean completed = true;
-
+                int countRegulator = 0;
                 for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
                     }
@@ -58,8 +81,10 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster {
                         }
                         final Step step = stepInstance.getStep(jobs);
                         final boolean canRunRemotely = !step.isRequiresDatabaseAccess();
+
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
                         final boolean highMemory = resubmission && workerRunnerHighMemory != null && canRunRemotely;
+
                         if (highMemory) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " will be re-run in a high-memory worker.");
                         }
@@ -67,23 +92,24 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster {
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                         // as they are very abundant.
                         final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep
-                                ? 4
-                                : 8;
+                                ? LOW_PRIORITY
+                                : HIGH_PRIORITY;
 
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
 
-                        final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
-                        // Start up workers appropriately.
-                        if (highMemory) {
-                            // This execution has failed before so use the high-memory worker runner
-                            LOGGER.warn("Starting a high memory worker.");
-                            workerRunnerHighMemory.startupNewWorker(priority, tcpUri, temporaryDirectoryName);
-                        } else if (canRunRemotely && workerRunner != null) { // Not mandatory (e.g. in single-jvm implementation)
-                            workerRunner.startupNewWorker(priority, tcpUri, temporaryDirectoryName);
+                        //TODO:  creating workers depending on the result from the statistics broker
+                        //every 20 iterations check if new worker required
+                        LOGGER.debug("Create Workers as required ");
+                        if((countRegulator % 20) == 0){
+                            startNewWorker();
                         }
+                        countRegulator++;
                     }
                 }
+
+                //start new worker if necessary
+                startNewWorker();
                 // Close down (break out of loop) if the analyses are all complete.
                 if (completed && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
                     // This next 'if' ensures that StepInstances created as a result of loading proteins are
@@ -107,12 +133,28 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster {
                         }
                     }
                 }
-                Thread.sleep(50);
+                //check what is not completed
+                LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
+                LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                Thread.sleep(50);   //   Thread.sleep(30*1000);
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by DistributedBlackBoxMaster: ", e);
         } catch (Exception e) {
             LOGGER.error("Exception thrown by DistributedBlackBoxMaster: ", e);
+        }
+        //send a shutdown message before exiting
+        messageSender.sendShutDownMessage();
+        try {
+            LOGGER.debug("Distributed Master:  sent shutdown message to workers");
+            //statsUtil.pollStatsBrokerTopic();
+            //final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
+            //LOGGER.debug("Topic stats: " +statsMessageListener.getStats());
+            Thread.sleep(60*1000);
+            //LOGGER.debug("Topic stats 2: " +statsMessageListener.getStats());
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
@@ -133,5 +175,49 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     public String getTcpUri() {
         return tcpUri;
+    }
+
+    public void setStatsUtil(StatsUtil statsUtil) {
+        this.statsUtil = statsUtil;
+    }
+
+    /**
+     * Mechanism to start a new worker
+     *
+     */
+    private void startNewWorker(){
+        //statsUtil.sendMessage();
+        //statsUtil.sendhighMemMessage();
+        LOGGER.debug("Poll High Memory Job Request queue");
+        final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
+        String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
+        final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
+        if(highMemStatsAvailable){
+            final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
+            if((statsMessageListener.getConsumers() < 1 && statsMessageListener.getQueueSize() > 0)||
+                    (highMemWorkerRequired && statsMessageListener.getConsumers() < 10)){
+                LOGGER.debug("Starting a high memory worker.");
+                temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
+                workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
+            }
+        }
+        LOGGER.debug("Poll Job Request Queue queue");
+        final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
+        if(statsAvailable){
+            final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
+            if((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0)||
+                    (workerRequired && statsMessageListener.getConsumers() < 10)){
+                LOGGER.debug("Starting a normal worker.");
+                temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
+                workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+            }
+        }
+        LOGGER.debug("Poll the Job Response queue ");
+        final boolean responseQueueStatsAvailable = statsUtil.pollStatsBrokerResponseQueue();
+        if(!responseQueueStatsAvailable){
+            LOGGER.debug("The Job Response queue is not initialise");
+        }else{
+            LOGGER.debug("JobResponseQueue:  "+statsMessageListener.getStats().toString());
+        }
     }
 }

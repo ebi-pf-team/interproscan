@@ -1,47 +1,42 @@
-package uk.ac.ebi.interpro.scan.jms.activemq;
+package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import uk.ac.ebi.interpro.scan.jms.agent.WorkerImpl;
+import uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransaction;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
-import java.util.UUID;
 
 /**
- * ActiveMQ worker.
+ * This implementation receives responses on the destinationResponseQueue
+ * and then propagates them to the super worker or master.
  *
- * @author Phil Jones
- * @version $Id$
- * @since 1.0-SNAPSHOT
+ * @author nuka, scheremetjew
+ * @version $Id: ResponseMonitorImpl.java,v 1.1.1.1 2009/10/07 13:37:52 pjones Exp $
+ * @since 1.0
  */
-public class AmqInterProScanWorker implements MessageListener {
+public class LocalJobQueueListener implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(AmqInterProScanWorker.class.getName());
-
-    private JmsTemplate jmsTemplate;
+    private static final Logger LOGGER = Logger.getLogger(LocalJobQueueListener.class.getName());
+    private JmsTemplate localJmsTemplate;
 
     private Destination jobResponseQueue;
 
     private StepExecutionTransaction stepExecutor;
 
-    private final UUID uniqueWorkerIdentification = UUID.randomUUID();
-
     /**
      * The distributed worker controller is in charge of calling 'stop' on the
      * Spring MonitorListenerContainer when the conditions are correct.
      *
-     * @see uk.ac.ebi.interpro.scan.jms.agent.WorkerImpl
+     * @see uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl
      */
     private WorkerImpl controller;
 
-    AmqInterProScanWorker() {
-    }
 
-    public void setJmsTemplate(JmsTemplate jmsTemplate) {
-        this.jmsTemplate = jmsTemplate;
+    public void setLocalJmsTemplate(JmsTemplate localJmsTemplate) {
+        this.localJmsTemplate = localJmsTemplate;
     }
 
     public void setController(WorkerImpl controller) {
@@ -64,9 +59,8 @@ public class AmqInterProScanWorker implements MessageListener {
     }
 
     @Override
-    public void onMessage(Message message) {
+    public void onMessage(final Message message) {
         final String messageId;
-
         try {
             messageId = message.getJMSMessageID();
         } catch (JMSException e) {
@@ -78,8 +72,8 @@ public class AmqInterProScanWorker implements MessageListener {
             if (controller != null) {
                 controller.jobStarted(messageId);
             }
-
             LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+            LOGGER.info("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
 
             if (!(message instanceof ObjectMessage)) {
                 LOGGER.error("Received a message of an unknown type (non-ObjectMessage)");
@@ -107,7 +101,7 @@ public class AmqInterProScanWorker implements MessageListener {
                 // that failed during the execution.
                 stepExecution.fail(e);
 
-                jmsTemplate.send(jobResponseQueue, new MessageCreator() {
+                localJmsTemplate.send(jobResponseQueue, new MessageCreator() {
                     public Message createMessage(Session session) throws JMSException {
                         return session.createObjectMessage(stepExecution);
                     }
@@ -124,9 +118,5 @@ public class AmqInterProScanWorker implements MessageListener {
                 controller.jobFinished(messageId);
             }
         }
-    }
-
-    public UUID getUniqueWorkerIdentification() {
-        return uniqueWorkerIdentification;
     }
 }

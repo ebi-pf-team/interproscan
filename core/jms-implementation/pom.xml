@@ -34,14 +34,16 @@
 
     <properties>
         <mvn.worker.job.request.queue>worker_job_request_queue</mvn.worker.job.request.queue>
+        <mvn.worker.highmem.job.request.queue>worker_highmem_job_request_queue</mvn.worker.highmem.job.request.queue>
         <mvn.worker.job.response.queue>worker_job_response_queue</mvn.worker.job.response.queue>
+        <mvn.stats.queue>stats_queue</mvn.stats.queue>
         <mvn.worker.manager.topic>worker_manager_topic</mvn.worker.manager.topic>
         <mvn.worker.manager.response.queue>worker_manager_response_queue</mvn.worker.manager.response.queue>
         <mvn.ebi.interproscan5.support>support-mini-x86-32</mvn.ebi.interproscan5.support>
 
         <!-- 5.3.1 is the version we have been using stably for development.
         The latest version is 5.5.0 -->
-        <apache.activemq.version>5.5.0</apache.activemq.version>
+        <apache.activemq.version>5.6.0</apache.activemq.version>
     </properties>
 
     <dependencies>

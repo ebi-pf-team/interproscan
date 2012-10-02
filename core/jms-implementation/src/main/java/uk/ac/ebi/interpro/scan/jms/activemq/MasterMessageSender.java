@@ -23,4 +23,6 @@ public interface MasterMessageSender {
      */
     @Transactional
     void sendMessage(StepInstance stepInstance, final boolean highMemory, final int priority, final boolean canRunRemotely) throws JMSException;
+
+    void sendShutDownMessage();
 }

@@ -20,6 +20,11 @@
         <level value="debug"/>
     </logger>
 
+
+    <logger name="uk.ac.ebi.interpro.scan.jms">
+        <level value="debug"/>
+    </logger>
+
     <!-- Root Logger -->
     <root>
         <priority value="warn"/>
