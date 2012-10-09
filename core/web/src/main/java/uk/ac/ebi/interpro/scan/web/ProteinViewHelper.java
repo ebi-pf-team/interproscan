@@ -1,5 +1,9 @@
 package uk.ac.ebi.interpro.scan.web;
 
+import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
+import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
+
 /**
  * Common code shared by classes that perform protein related calculation tasks.
  *
@@ -11,6 +15,7 @@ public class ProteinViewHelper {
 
     /**
      * Generate a string of comma-separated numbers that will be used to mark the scale of the match diagram.
+     *
      * @param maxNumScaleMarkers Maximum number of scale markers (should be 2 or more)!
      * @return Comma-separated list of marker positions
      */
@@ -25,7 +30,7 @@ public class ProteinViewHelper {
         int numRemaining = proteinLength;
         while (index <= proteinLength) {
             index += scale;
-            numRemaining-= scale;
+            numRemaining -= scale;
             sb.append(",");
             if ((numRemaining > 0) && (numRemaining < scale)) {
                 // This will be the penultimate marker, unless...
@@ -41,8 +46,7 @@ public class ProteinViewHelper {
             if (index >= proteinLength) {
                 // The last scale marker (at protein length position)!
                 sb.append(proteinLength);
-            }
-            else {
+            } else {
                 // Append and continue
                 sb.append(index);
             }
@@ -61,14 +65,52 @@ public class ProteinViewHelper {
         while (true) {
             if (proteinLength / (scale) <= maxNumScaleMarkers) {
                 return scale;
-            }
-            else if (proteinLength / (scale*2) <= maxNumScaleMarkers) {
-                return scale*2;
-            }
-            else if (proteinLength / (scale*5) <= maxNumScaleMarkers) {
-                return scale*5;
+            } else if (proteinLength / (scale * 2) <= maxNumScaleMarkers) {
+                return scale * 2;
+            } else if (proteinLength / (scale * 5) <= maxNumScaleMarkers) {
+                return scale * 5;
             }
             scale *= 10;
         }
+    }
+
+    /**
+     * Pre-calculates the global SVG document height for the SVG template.
+     * @param protein
+     * @param svgHeaderHeight
+     * @param proteinInfoComponentHeight
+     * @param entryInfoHeight
+     * @param greyBoxYDimension
+     * @param svgFooterHeight
+     * @return
+     */
+    public static int calculateSVGDocumentHeight(final SimpleProtein protein, final int svgHeaderHeight,
+                                                 final int proteinInfoComponentHeight, final int entryInfoHeight,
+                                                 final int greyBoxYDimension, final int svgFooterHeight) {
+        final int familyComponentHeight = protein.getFamilyComponentHeight(14, 50);
+        final CondensedView condensedView = new CondensedView(protein);
+        final int summaryViewComponentHeight = condensedView.getCondensedViewComponentHeightForSVG(17, 70);
+        final int proteinFeaturesComponentHeight = getProteinFeaturesComponentHeight(protein, 30, entryInfoHeight, greyBoxYDimension);
+        final int proteinXrefComponentHeight = protein.getProteinXrefComponentHeightForSVG(20, 70);
+
+        return svgHeaderHeight +
+                proteinInfoComponentHeight
+                + familyComponentHeight +
+                summaryViewComponentHeight +
+                proteinFeaturesComponentHeight +
+                proteinXrefComponentHeight +
+                svgFooterHeight;
+    }
+
+    private static int getProteinFeaturesComponentHeight(final SimpleProtein protein, int startHeight,
+                                                         int entryInfoHeight, int greyBoxYDimension) {
+        int totalHeight = 0;
+        totalHeight += startHeight;
+        for (SimpleEntry entry : protein.getEntries()) {
+            int entryComponentHeight = entryInfoHeight + greyBoxYDimension + entry.getEntryComponentHeightForSVG(17, 20);
+            totalHeight += entryComponentHeight;
+        }
+        totalHeight += entryInfoHeight + greyBoxYDimension + protein.getUnintegratedSignaturesComponentHeightForSVG(17, 20);
+        return totalHeight;
     }
 }

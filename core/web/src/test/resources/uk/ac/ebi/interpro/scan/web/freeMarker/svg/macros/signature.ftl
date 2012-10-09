@@ -9,29 +9,30 @@
     <#-- Accession was too long therefore should actually subtract maxAcLength instead of acLength -->
         <#assign maxNameLength=maxOverallLength?number - maxAcLength?number>
     </#if>
-<svg x="123px" y="${greyBoxYDimension}px" width="1210" height="200" viewBox="0 0 1210 200">
+<#--<svg x="123px" y="${greyBoxYDimension}px" width="1210" height="50" viewBox="0 0 1210 50">-->
+<svg x="123px" y="${greyBoxYDimension}px">
 ${signature.getMatchLocationsViewSvg(protein.length,entryColours,entryType,entryAccession,scale)}
 </svg>
 
 <#--Signature link-->
 <#--Link text may be abbreviated therefore need to display the full text in the link title-->
-<svg id="signatureLink" x="1058px" y="${signatureLinkYDimension}px">
+<svg x="1058px" y="${signatureLinkYDimension}px">
     <use xlink:href="#blackArrowComponent"/>
     <text x="15px" y="10.5px" style="font-family:Verdana,Helvetica,sans-serif;stroke:none;">
-        <#if signature.ac != signature.name>
-        <a xlink:href="${signature.dataSource.getLinkUrl(signature.ac)}"
-           target="_top" title="${signature.ac} (${signature.name})">
-            <#else>
-            <a xlink:href="${signature.dataSource.getLinkUrl(signature.ac)}"
-               target="_top" title="${signature.ac}">
-        </#if>
         <tspan style="text-decoration:underline;fill:#525252;font-size: 11px">
-        <#--Accession is too long, need to truncate it-->
-            <#if ((acLength?number) > (maxAcLength?number))>
-            ${signature.ac?substring(0,maxAcLength?number - 3)}...
-                <#else>${signature.ac}</#if>
+            <a xlink:href="${signature.dataSource.getLinkUrl(signature.ac)}"
+               target="_top">
+                <#if signature.ac != signature.name>
+                    <title>${signature.ac} (${signature.name})</title>
+                    <#else>
+                        <title>${signature.ac}</title>
+                </#if>
+            <#--Accession is too long, need to truncate it-->
+                <#if ((acLength?number) > (maxAcLength?number))>
+                ${signature.ac?substring(0,maxAcLength?number - 3)}...
+                    <#else>${signature.ac}</#if>
+            </a>
         </tspan>
-    </a>
         <#if signature.ac != signature.name>
             <tspan style="fill:#525252;font-size: 9px">
             <#--Name is too long, need to truncate it-->

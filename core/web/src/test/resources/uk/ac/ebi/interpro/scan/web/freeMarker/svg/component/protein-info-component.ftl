@@ -1,25 +1,23 @@
 <#--Protein info component-->
-<svg id="proteinInfo" x="30px" y="30px">
+<svg id="proteinInfo" x="30" y="${yPosition}" width="1280" height="${proteinInfoComponentHeight}"
+     viewBox="0 0 1280 ${proteinInfoComponentHeight}" xmlns="http://www.w3.org/2000/svg" version="1.1">
     <text x="10px" y="25px">
         <tspan x="10px" dy="10px" font-size="22" fill="#284ADB" font-family="Verdana, Helvetica, sans-serif"
                font-weight="normal">
         ${protein.ac}
         </tspan>
     </text>
-    <text y="75px" font-size="13" fill="#393939" font-family="Verdana, Helvetica, sans-serif">
-        <tspan font-weight="bold" x="10px">
+    <text y="75px" font-size="13" font-family="Verdana, Helvetica, sans-serif">
+        <tspan font-weight="bold" x="10px" style="fill: #393939">
             Accession
         </tspan>
-        <a xlink:href="http://www.uniprot.org/uniprot/${protein.ac}" target="_top">
-            <tspan x="10px" dx="100px" fill="#0072FE" text-decoration="underline"
-                   onmouseover="ShowTooltip(evt, '${protein.ac}', 140, 77)"
-                   onmouseout="HideTooltip(evt)">${protein.ac}</tspan>
-        </a>
-        <tspan font-weight="bold" x="10px" dy="30px">
+        <tspan x="10px" dx="100px" style="text-decoration: underline;fill: #0072FE"><a
+                xlink:href="http://www.uniprot.org/uniprot/${protein.ac}" target="_top">${protein.ac}</a></tspan>
+        <tspan font-weight="bold" x="10px" dy="30px" style="fill: #393939">
             Species
         </tspan>
         <tspan x="10px" dx="100px" fill="#838383">${protein.taxFullName}</tspan>
-        <tspan font-weight="bold" x="10px" dy="30px">
+        <tspan font-weight="bold" x="10px" dy="30px" style="fill: #393939">
             Length
         </tspan>
     <#--Work out if protein sequence is a fragment or not-->
@@ -28,10 +26,10 @@
         <#if isProteinFragment>(fragment)<#else>(complete)</#if>
         </tspan>
     </text>
-    <text x="1084px" y="145px" font-size="10">
+    <text x="1065" y="145" font-size="10">
         <tspan fill="#525252" font-family="Verdana, Helvetica, sans-serif">Source:</tspan>
         <tspan fill="#838383" font-family="Verdana, Helvetica, sans-serif">UniProtKB/Swiss-Prot</tspan>
     </text>
 
-    <line x1="10px" y1="150px" x2="1220px" y2="150px" stroke="#CDCDCD" stroke-width="1"/>
+    <line x1="10" y1="150" x2="${(globalDocumentWidth - 80)?string("0")}" y2="150" stroke="#CDCDCD" stroke-width="1"/>
 </svg>
