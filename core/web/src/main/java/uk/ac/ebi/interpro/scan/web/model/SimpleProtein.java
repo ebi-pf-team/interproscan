@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.web.model;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.io.FamilyHierachyElementBuilder;
 import uk.ac.ebi.interpro.scan.web.io.svg.FamilyHierachySvgElementBuilder;
@@ -202,6 +203,29 @@ public final class SimpleProtein implements Serializable {
     }
 
     /**
+     * Returns the height in pixel for the GO annotation section within the SVG template.
+     * @param heightPerXrefLine
+     * @param globalHeight
+     * @return
+     */
+    public int getProteinXrefComponentHeightForSVG(int heightPerXrefLine, int globalHeight) {
+        int maxNumberOfXrefs = 0;
+        int functionSize = getFunctionGoTerms().size();
+        int componentSize = getComponentGoTerms().size();
+        int processSize = getProcessGoTerms().size();
+        if (functionSize > maxNumberOfXrefs) {
+            maxNumberOfXrefs = functionSize;
+        }
+        if (componentSize > maxNumberOfXrefs) {
+            maxNumberOfXrefs = componentSize;
+        }
+        if (processSize > maxNumberOfXrefs) {
+            maxNumberOfXrefs = processSize;
+        }
+        return maxNumberOfXrefs * heightPerXrefLine + globalHeight;
+    }
+
+    /**
      * USED BY FREEMARKER - DON'T DELETE
      *
      * @return
@@ -215,6 +239,21 @@ public final class SimpleProtein implements Serializable {
         }
         Collections.sort(signatures);
         return signatures;
+    }
+
+    /**
+     * Returns the height in pixel for the un-integrated signatures section within the SVG template.
+     * @param heightPerSignatureLine
+     * @param globalHeight
+     * @return
+     */
+    public int getUnintegratedSignaturesComponentHeightForSVG(int heightPerSignatureLine, int globalHeight) {
+        //default
+        int resultValue = 0;
+        if (getUnintegratedSignatures() != null) {
+            resultValue = (getUnintegratedSignatures().size() - 1) * heightPerSignatureLine + globalHeight;
+        }
+        return resultValue;
     }
 
     /**
@@ -375,19 +414,15 @@ public final class SimpleProtein implements Serializable {
         return new FamilyHierachySvgElementBuilder(this).build().toString();
     }
 
-    public int getYFeatureComponent() {
-        return 0;
-    }
-
-    public int getYSummaryViewComponent() {
-        return 0;
-    }
-
-    public int getYXrefComponent() {
-        return 0;
-    }
-
-    public int getGlobalHeight() {
-        return 2524;
+    /**
+     * Returns the height in pixel for family hierarchy section within the SVG template.
+     * @param heightPerHierarchyLevel
+     * @param globalHeight
+     * @return
+     */
+    public int getFamilyComponentHeight(int heightPerHierarchyLevel, int globalHeight) {
+        FamilyHierachySvgElementBuilder instance = new FamilyHierachySvgElementBuilder(this);
+        instance.build();
+        return instance.getRowCounter() * heightPerHierarchyLevel + globalHeight;
     }
 }

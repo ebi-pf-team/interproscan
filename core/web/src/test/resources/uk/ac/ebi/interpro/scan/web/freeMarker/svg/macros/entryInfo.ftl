@@ -1,6 +1,6 @@
-<#macro entryInfo entryType resource title entryAccession entryName filling textDecoration>
+<#macro entryInfo entryType resource title entryAccession entryName filling textDecoration height>
 <svg>
-    <rect x="1px" y="1px" width="110px" height="18px"
+    <rect x="1px" y="1px" width="110px" height="${height}"
           style="stroke:#D8D8D8;fill:transparent;stroke-width:0.5"/>
     <image x="3px" y="4px" width="13px" height="13px"
            xlink:href="${resource}"><title>${title}</title>
