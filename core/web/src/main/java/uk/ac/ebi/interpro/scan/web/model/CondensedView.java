@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.web.io.svg.FamilyHierachySvgElementBuilder;
 import uk.ac.ebi.interpro.scan.web.io.svg.ScaleMarkerUtil;
 
 import java.io.Serializable;
@@ -176,7 +177,7 @@ public class CondensedView implements Serializable {
                         result.append(" ");
                         result.append("rx=\"3.984848\" ry=\"5.6705141\"");
                         result.append(" ");
-                        result.append("style=\"stroke:black;stroke-width:0.3\"");
+                        result.append("style=\"stroke:black;stroke-width:1.0\"");
                         result.append(" ");
                         result.append("onmouseover=\"ShowTooltip(evt, '" + locStart + " - " + locEnd + "', 760, 345)\"");
                         result.append(" ");
@@ -186,7 +187,7 @@ public class CondensedView implements Serializable {
                     }
                 }
                 result.append("</svg>");
-                result.append("<svg id=\"domainLink\" x=\"1058px\" y=\"" + annotationYDimension + "px\">");
+                result.append("<svg id=\"domainLink" + lineCounter + "\" x=\"1058px\" y=\"" + annotationYDimension + "px\">");
                 result.append("<use xlink:href=\"#blackArrowComponent\"/>");
                 result.append("<text x=\"15px\" y=\"10.5px\"");
                 result.append(" ");
@@ -206,6 +207,13 @@ public class CondensedView implements Serializable {
         return result;
     }
 
+    /**
+     * Appends the colour class for the different entry types.
+     * @param result
+     * @param entryType
+     * @param entryColourMap
+     * @param entryAccession
+     */
     private void appendColourClass(final StringBuilder result, final String entryType,
                                    final Map<String, Integer> entryColourMap,
                                    final String entryAccession) {
@@ -217,7 +225,27 @@ public class CondensedView implements Serializable {
         }
     }
 
-    public String getCondensedViewForSvg(final Map<String, Integer> entryColourMap, final String scale) {
+    /**
+     * Builds condensed view for the SVG template.
+     * @param entryColourMap
+     * @param scale
+     * @return
+     */
+    public String getCondensedViewForSVG(final Map<String, Integer> entryColourMap, final String scale) {
         return build(protein.getLength(), entryColourMap, scale).toString();
+    }
+
+    /**
+     * Returns the exact height in pixel a for the summary view (condensed view).
+     * @param heightPerSummaryLine
+     * @param globalHeight
+     * @return
+     */
+    public int getCondensedViewComponentHeightForSVG(int heightPerSummaryLine, int globalHeight) {
+        int result = globalHeight;
+        if (lines != null) {
+            result += lines.size() * heightPerSummaryLine;
+        }
+        return result;
     }
 }

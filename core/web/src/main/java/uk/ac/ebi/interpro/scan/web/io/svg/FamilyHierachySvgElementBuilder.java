@@ -133,4 +133,8 @@ public class FamilyHierachySvgElementBuilder {
         sb.append("</svg>");
         rowCounter++;
     }
+
+    public int getRowCounter() {
+        return rowCounter;
+    }
 }

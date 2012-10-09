@@ -172,4 +172,20 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
         }
         return terms;
     }
+
+    /**
+     * Returns the height in pixel for the entry component within the SVG template.
+     * @param heightPerSignatureLine
+     * @param globalHeight
+     * @return
+     */
+    public int getEntryComponentHeightForSVG(int heightPerSignatureLine, int globalHeight) {
+        //default
+        int resultValue = 0;
+        Collection<SimpleSignature> signatures = this.getSignatures();
+        if (signatures != null) {
+            resultValue = (signatures.size() - 1) * heightPerSignatureLine + globalHeight;
+        }
+        return resultValue;
+    }
 }

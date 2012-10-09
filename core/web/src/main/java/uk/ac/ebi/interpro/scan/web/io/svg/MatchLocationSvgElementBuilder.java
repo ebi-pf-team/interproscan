@@ -49,7 +49,7 @@ public class MatchLocationSvgElementBuilder {
                 result.append(" ");
                 result.append("rx=\"3.984848\" ry=\"5.6705141\"");
                 result.append(" ");
-                result.append("style=\"stroke:black;stroke-width:0.3\">");
+                result.append("style=\"stroke:black;stroke-width:1.0\">");
                 result.append("<title>" + locStart + " - " + locEnd + "</title>");
                 result.append("</rect>");
             }
