@@ -53,16 +53,16 @@ public class SVGFreeMarkerTest {
         variables.put("css_resource_jquery_ui1817_custom", "resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css");
         cfg.setAllSharedVariables(new SimpleHash(variables, new DefaultObjectWrapper()));
         //Good protein test examples: Q97R95, A2T929, A0JM20 (none), P15385, A2ARV4, P01308
-        String proteinAccession = "A2ARV4";
+        String proteinAccession = "Q97R95";
         SimpleProtein simpleProtein = matchData.queryByAccession(proteinAccession);
         SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
         //
         String templateFile = "svg-protein-view.ftl";
         Template template = cfg.getTemplate(templateFile);
-        writeResultToFile(model, template, proteinAccession);
-//        String result = writeResultToString(model, template);
-//        assertNotNull(result);
-//        assertTrue(result.contains("Q97R95"));
+//        writeResultToFile(model, template, proteinAccession);
+        String result = writeResultToString(model, template);
+        assertNotNull(result);
+        assertTrue(result.contains("Q97R95"));
     }
 
     private String writeResultToString(SimpleHash model, Template template) throws IOException, TemplateException {
