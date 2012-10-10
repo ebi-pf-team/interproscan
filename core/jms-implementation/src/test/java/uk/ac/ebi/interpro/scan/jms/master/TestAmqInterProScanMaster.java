@@ -3,9 +3,11 @@ package uk.ac.ebi.interpro.scan.jms.master;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -27,15 +29,26 @@ public class TestAmqInterProScanMaster {
         //Run the test
         Map<String, String> params = new HashMap<String, String>();
         String[] outputFormats = new String[]{"tsv", "html", "gff3"};
+        String[] expectedOutputFormats = outputFormats;
         master.processOutputFormats(params, outputFormats);
-        assertEquals("tsv,html,gff3", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
+        String[] actualOutputFormats = params.get(WriteOutputStep.OUTPUT_FILE_FORMATS).split(",");
+        Arrays.sort(expectedOutputFormats);
+        Arrays.sort(actualOutputFormats);
+        assertArrayEquals(expectedOutputFormats,actualOutputFormats);
         //Run the test for an empty parameter
         outputFormats = null;
         master.processOutputFormats(params, outputFormats);
-        assertEquals("tsv,xml,gff3,html", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
+        actualOutputFormats = params.get(WriteOutputStep.OUTPUT_FILE_FORMATS).split(",");
+        expectedOutputFormats = new String[]{"tsv", "xml", "gff3"};
+        Arrays.sort(expectedOutputFormats);
+        Arrays.sort(actualOutputFormats);
+        assertArrayEquals(expectedOutputFormats, actualOutputFormats);
         outputFormats = new String[]{};
         master.processOutputFormats(params, outputFormats);
-        assertEquals("tsv,xml,gff3,html", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
+        Arrays.sort(expectedOutputFormats);
+        Arrays.sort(actualOutputFormats);
+        assertArrayEquals(expectedOutputFormats, actualOutputFormats);
+
     }
 
     @Test
