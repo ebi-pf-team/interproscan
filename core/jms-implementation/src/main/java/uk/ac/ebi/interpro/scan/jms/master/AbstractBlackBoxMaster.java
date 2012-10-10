@@ -163,6 +163,11 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             }
             for (FileOutputFormat outputFormat : FileOutputFormat.values()) {
                 String extension = outputFormat.getFileExtension();
+                //specify default output formats: include TSV, XML but remove SVG, and HTML
+                if (extension.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension()) || extension.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
+                    // SVG and HTML formats are not part of the default formats
+                    continue;
+                }
                 if ("n".equalsIgnoreCase(this.sequenceType)) {
                     if (extension.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension()) || extension.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                         // For nucleotide sequences TSV and HTML formats are not allowed

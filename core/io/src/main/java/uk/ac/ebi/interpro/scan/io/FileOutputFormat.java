@@ -13,7 +13,7 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public enum FileOutputFormat {
-    TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html");
+    XML("xml"), TSV("tsv"), SVG("svg"), HTML("html"), GFF3("gff3");
 
     private static final Logger LOGGER = Logger.getLogger(FileOutputFormat.class.getName());
 
