@@ -1,8 +1,8 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.web.io.svg.FamilyHierachySvgElementBuilder;
 import uk.ac.ebi.interpro.scan.web.io.svg.ScaleMarkerUtil;
+import uk.ac.ebi.interpro.scan.web.io.svg.ScaledLocationUtil;
 
 import java.io.Serializable;
 import java.util.*;
@@ -163,8 +163,8 @@ public class CondensedView implements Serializable {
                     for (SimpleSuperMatch superMatch : superMatches) {
                         int locStart = superMatch.getLocation().getStart();
                         int locEnd = superMatch.getLocation().getEnd();
-                        int scaledLocationStart = Math.round(((float) locStart - 1) * scaleFactor);
-                        int scaledRectangleWidth = Math.round(((float) locEnd - locStart) * scaleFactor);
+                        int scaledLocationStart = ScaledLocationUtil.getScaledLocationStart(scaleFactor, locStart);
+                        int scaledRectangleWidth = ScaledLocationUtil.getScaledLocationLength(scaleFactor, locStart, locEnd, proteinLength);
                         SimpleEntry firstSimpleEntry = superMatch.getFirstEntry();
                         String entryAccession = "";
                         if (firstSimpleEntry != null) {
@@ -209,6 +209,7 @@ public class CondensedView implements Serializable {
 
     /**
      * Appends the colour class for the different entry types.
+     *
      * @param result
      * @param entryType
      * @param entryColourMap
@@ -227,6 +228,7 @@ public class CondensedView implements Serializable {
 
     /**
      * Builds condensed view for the SVG template.
+     *
      * @param entryColourMap
      * @param scale
      * @return
@@ -237,6 +239,7 @@ public class CondensedView implements Serializable {
 
     /**
      * Returns the exact height in pixel a for the summary view (condensed view).
+     *
      * @param heightPerSummaryLine
      * @param globalHeight
      * @return
