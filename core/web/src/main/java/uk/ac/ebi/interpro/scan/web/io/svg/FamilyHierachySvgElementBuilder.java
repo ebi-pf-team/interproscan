@@ -115,7 +115,6 @@ public class FamilyHierachySvgElementBuilder {
 
     protected void appendEntry(SimpleEntry entry, StringBuilder sb) {
         final Point coordinate = getNewCoordinate(startCoordinate, entry.getHierarchyLevel(), rowCounter, rightShift, downShift);
-//<svg x="14px" y="24px"><image x="1px" y="1px" width="22px" height="14px" xlink:href="resources/icons/ico_tree_family.png"/><a xlink:href="http://www.ebi.ac.uk/interpro/IEntry?ac=IPR001057" target="_top"><text x="29px" y="12px" text-decoration="underline" style="fill:#0072FE"><tspan style="font-family:Verdana,Helvetica,sans-serif;font-size:13px;stroke:none;fill:#0072FE;">Glutamate/acetylglutamate kinase</tspan><tspan style="font-family:Verdana,Helvetica,sans-serif;font-size:13px;stroke:none;fill:#393939;">(IPR001057)</tspan></text></a></svg>
         sb.append("<svg x=\"" + coordinate.x + "px\" y=\"" + coordinate.y + "px\">");
         sb.append("<image x=\"1px\" y=\"1px\" width=\"22px\" height=\"14px\" xlink:href=\"resources/icons/ico_tree_family.png\"/>");
         sb.append("<a xlink:href=\"http://www.ebi.ac.uk/interpro/IEntry?ac=");

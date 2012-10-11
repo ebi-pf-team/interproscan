@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.io.svg;
 
 /**
- * TODO: Description
+ * Utility to render the scale markers for SVG.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
@@ -20,11 +20,12 @@ public class ScaleMarkerUtil {
             int scaleMarkerInt = Integer.parseInt(scaleMarker);
             int marker;
             //If it is the first scale marker
-            if (scaleMarkerInt == 0) {
-                marker = Math.round(((float) scaleMarkerInt) * scaleFactor);
-            } else {
-                marker = Math.round(((float) scaleMarkerInt - 1) * scaleFactor);
-            }
+            marker = Math.round(((float) scaleMarkerInt) * scaleFactor);
+//            if (scaleMarkerInt == 0) {
+//                marker = Math.round(((float) scaleMarkerInt) * scaleFactor);
+//            } else {
+//                marker = Math.round(((float) scaleMarkerInt - 1) * scaleFactor);
+//            }
             result.append("<line x1=\"" + marker + "px\" y1=\"0px\" x2=\"" + marker + "px\" y2=\"" + (isLastLineCondensedView ? (lineHeight + 5) : lineHeight) + "px\" style=\"stroke:#B8B8B8;stroke-width:1;stroke-dasharray:3.0\"/>");
             if (isLastLineCondensedView) {
                 int leftShift = getLeftShift(scaleMarker);

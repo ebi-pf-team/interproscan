@@ -149,6 +149,17 @@
                     <exclude>WEB-INF/web.xml</exclude>
                 </excludes>
             </resource>
+            <!--Copies SVG templates and dependencies into the target directory-->
+            <!--These files are then part of the I5 assembly process (see jms-implementation module: assembly.xml)-->
+            <resource>
+                <directory>src/test/resources/uk/ac/ebi/interpro/scan/web/freeMarker/svg</directory>
+                <filtering>false</filtering>
+                <targetPath>${project.build.directory}/classes/resources/freeMarker/svg</targetPath>
+                <excludes>
+                    <exclude>SVGFreeMarkerTest-context.xml</exclude>
+                    <exclude>data/**</exclude>
+                </excludes>
+            </resource>
         </resources>
 
         <!--Plugin allows to create the WAR file at the same time as the JAR file by running simply mvn clean install goal-->

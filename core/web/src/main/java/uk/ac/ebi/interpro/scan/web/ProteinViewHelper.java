@@ -76,41 +76,44 @@ public class ProteinViewHelper {
 
     /**
      * Pre-calculates the global SVG document height for the SVG template.
+     *
      * @param protein
      * @param svgHeaderHeight
      * @param proteinInfoComponentHeight
      * @param entryInfoHeight
-     * @param greyBoxYDimension
+     * @param outerSpaceHeight
      * @param svgFooterHeight
      * @return
      */
-    public static int calculateSVGDocumentHeight(final SimpleProtein protein, final int svgHeaderHeight,
-                                                 final int proteinInfoComponentHeight, final int entryInfoHeight,
-                                                 final int greyBoxYDimension, final int svgFooterHeight) {
+    public static int calculateSVGDocumentHeight(final SimpleProtein protein, final CondensedView condensedView,
+                                                 final int svgHeaderHeight, final int proteinInfoComponentHeight,
+                                                 final int entryInfoHeight, final int outerSpaceHeight,
+                                                 final int svgFooterHeight) {
         final int familyComponentHeight = protein.getFamilyComponentHeight(14, 50);
-        final CondensedView condensedView = new CondensedView(protein);
         final int summaryViewComponentHeight = condensedView.getCondensedViewComponentHeightForSVG(17, 70);
-        final int proteinFeaturesComponentHeight = getProteinFeaturesComponentHeight(protein, 30, entryInfoHeight, greyBoxYDimension);
+        final int proteinFeaturesComponentHeight = getProteinFeaturesComponentHeight(protein, 30, entryInfoHeight, outerSpaceHeight);
         final int proteinXrefComponentHeight = protein.getProteinXrefComponentHeightForSVG(20, 70);
 
-        return svgHeaderHeight +
-                proteinInfoComponentHeight
-                + familyComponentHeight +
-                summaryViewComponentHeight +
-                proteinFeaturesComponentHeight +
-                proteinXrefComponentHeight +
-                svgFooterHeight;
+        return svgHeaderHeight
+                + proteinInfoComponentHeight
+                + familyComponentHeight
+                + summaryViewComponentHeight
+                + proteinFeaturesComponentHeight
+                + proteinXrefComponentHeight
+                + svgFooterHeight;
     }
 
     private static int getProteinFeaturesComponentHeight(final SimpleProtein protein, int startHeight,
-                                                         int entryInfoHeight, int greyBoxYDimension) {
+                                                         int entryInfoHeight, int outerSpaceHeight) {
         int totalHeight = 0;
         totalHeight += startHeight;
+        //Iterating over the entries is not very efficient, but you have to, because entry component height is
+        // depended on the number of signatures
         for (SimpleEntry entry : protein.getEntries()) {
-            int entryComponentHeight = entryInfoHeight + greyBoxYDimension + entry.getEntryComponentHeightForSVG(17, 20);
+            int entryComponentHeight = entryInfoHeight + outerSpaceHeight + entry.getEntryComponentHeightForSVG(17, 20);
             totalHeight += entryComponentHeight;
         }
-        totalHeight += entryInfoHeight + greyBoxYDimension + protein.getUnintegratedSignaturesComponentHeightForSVG(17, 20);
+        totalHeight += entryInfoHeight + outerSpaceHeight + protein.getUnintegratedSignaturesComponentHeightForSVG(17, 20);
         return totalHeight;
     }
 }
