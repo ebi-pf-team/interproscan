@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.io.match.writer.*;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter;
+import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
 import uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder;
@@ -45,6 +46,8 @@ public class WriteOutputStep extends Step {
 
     private ProteinMatchesHTMLResultWriter htmlResultWriter;
 
+    private ProteinMatchesSVGResultWriter svgResultWriter;
+
     private boolean compressHtmlOutput;
 
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
@@ -57,6 +60,11 @@ public class WriteOutputStep extends Step {
     @Required
     public void setHtmlResultWriter(ProteinMatchesHTMLResultWriter htmlResultWriter) {
         this.htmlResultWriter = htmlResultWriter;
+    }
+
+    @Required
+    public void setSvgResultWriter(ProteinMatchesSVGResultWriter svgResultWriter) {
+        this.svgResultWriter = svgResultWriter;
     }
 
     @Required
@@ -127,7 +135,8 @@ public class WriteOutputStep extends Step {
                     candidateFileName
                             .append('.')
                             .append(outputFormat.getFileExtension());
-                    if (outputFormat.getFileExtension().equals("html")) {
+                    //Extend file name by tar (tar.gz) extension if HTML or SVG
+                    if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
                         outputFile = new File(buildTarArchiveName(candidateFileName.toString(), compressHtmlOutput));
                     } else {
                         outputFile = new File(candidateFileName.toString());
@@ -156,6 +165,13 @@ public class WriteOutputStep extends Step {
                             htmlResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
                         outputToHTML(outputFile, proteins);
+                        break;
+                    case SVG:
+                        //Replace the default temp dir with the user specified one
+                        if (temporaryFileDirectory != null) {
+                            svgResultWriter.setTempDirectory(temporaryFileDirectory);
+                        }
+                        outputToSVG(outputFile, proteins);
                         break;
                     default:
                         LOGGER.warn("Unrecognised output format " + outputFormat + " - cannot write the output file.");
@@ -253,6 +269,29 @@ public class WriteOutputStep extends Step {
         }
     }
 
+    private void outputToSVG(final File file, final List<Protein> proteins) throws IOException {
+        if (proteins != null && proteins.size() > 0) {
+            for (Protein protein : proteins) {
+                svgResultWriter.write(protein);
+            }
+            List<File> resultFiles = svgResultWriter.getResultFiles();
+            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlOutput);
+            tarArchiveBuilder.buildTarArchive();
+            //Delete result files in the temp directory at the end
+            for (File resultFile : resultFiles) {
+                //Only delete HTML files, but not the resource directory which is also part of the result files list
+                if (resultFile.isFile()) {
+                    boolean isDeleted = resultFile.delete();
+                    if (LOGGER.isEnabledFor(Level.WARN)) {
+                        if (!isDeleted) {
+                            LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Builds a sensible tarball file name.<br>
      * e.g. for a compressed file it would be: file-name.tar.gz
@@ -265,9 +304,9 @@ public class WriteOutputStep extends Step {
      */
     private String buildTarArchiveName(String fileName, boolean compressHtmlOutput) {
         if (fileName == null) {
-            throw new IllegalStateException("HTML output file name was NULL");
+            throw new IllegalStateException("HTML/SVG output file name was NULL");
         } else if (fileName.length() == 0) {
-            throw new IllegalStateException("HTML output file name was empty");
+            throw new IllegalStateException("HTML/SVG output file name was empty");
         }
         String fileExtension = (compressHtmlOutput ? ".tar.gz" : ".tar");
         if (fileName.endsWith(fileExtension)) {

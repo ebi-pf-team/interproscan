@@ -1,12 +1,11 @@
 package uk.ac.ebi.interpro.scan.web.io.svg;
 
-import uk.ac.ebi.interpro.scan.web.model.*;
+import uk.ac.ebi.interpro.scan.web.model.EntryType;
+import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
+import uk.ac.ebi.interpro.scan.web.model.SimpleSignature;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * TODO: Description
@@ -39,8 +38,8 @@ public class MatchLocationSvgElementBuilder {
             for (SimpleLocation simpleLocation : simpleLocations) {
                 int locStart = simpleLocation.getStart();
                 int locEnd = simpleLocation.getEnd();
-                int scaledLocationStart = Math.round(((float) locStart-1) * scaleFactor);
-                int scaledRectangleWidth = Math.round(((float) locEnd - locStart) * scaleFactor);
+                int scaledLocationStart = ScaledLocationUtil.getScaledLocationStart(scaleFactor, locStart);
+                int scaledRectangleWidth = ScaledLocationUtil.getScaledLocationLength(scaleFactor, locStart, locEnd, proteinLength);
 
                 result.append("<rect");
                 result.append(" ");
@@ -78,18 +77,4 @@ public class MatchLocationSvgElementBuilder {
             result.append("\" ");
         }
     }
-
-//    public static void main(String[] args) {
-//        float scaleFactor = (float) 930 / (float) 639;
-//        System.out.println(scaleFactor);
-//        double scaleFactor2 = (double) 930 / (double) 639;
-//        System.out.println(scaleFactor2);
-//
-//        float scaledLocationStartFloat = ((float) 25) * scaleFactor;
-//        System.out.println(scaledLocationStartFloat);
-//
-//        int scaledLocationStartInt = (int) (((float) 25) * scaleFactor);
-//        System.out.println(scaledLocationStartInt);
-//
-//    }
 }

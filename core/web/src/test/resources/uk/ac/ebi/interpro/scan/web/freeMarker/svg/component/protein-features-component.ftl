@@ -6,13 +6,15 @@
           style="fill:#393939;font-family:Verdana,Helvetica,sans-serif;font-size:13px;font-weight:bold">
         Sequence features
     </text>
-<#assign entryComponentYPosition=30/>
+<#assign startHeight=30/>
+<#assign outerSpaceHeight=19/>
+<#assign entryComponentYPosition= startHeight/>
 <#assign entryInfoHeight=18/>
 <#list protein.entries as entry>
 <#--Icon and title definition-->
     <#include "protein-features-component-icon-def.ftl"/>
     <#assign greyBoxYDimension=19/>
-    <#assign entryComponentHeight=entryInfoHeight+greyBoxYDimension+entry.getEntryComponentHeightForSVG(17,20)/>
+    <#assign entryComponentHeight=entryInfoHeight+entry.getEntryComponentHeightForSVG(17,20)+outerSpaceHeight/>
     <svg y="${entryComponentYPosition}" width="1210" height="${entryComponentHeight}"
          viewBox="0 0 1210 ${entryComponentHeight}">
     <#--<svg id="entryComponent" y="${entryComponentYDimension}px">-->
@@ -28,10 +30,11 @@
     </svg>
     <#assign entryComponentYPosition=entryComponentYPosition+entryComponentHeight/>
 </#list>
-<#assign entryComponentHeight=entryInfoHeight+greyBoxYDimension+protein.getUnintegratedSignaturesComponentHeightForSVG(17,20)/>
+<#assign unintegratedSignaturesComponentHeight=entryInfoHeight+protein.getUnintegratedSignaturesComponentHeightForSVG(17,20)+outerSpaceHeight/>
 <#if protein?? && protein.unintegratedSignatures?has_content>
-    <svg id="unintegratedSignatures" y="${entryComponentYPosition}" width="1210" height="${entryComponentHeight}"
-         viewBox="0 0 1210 ${entryComponentHeight}">
+    <svg id="unintegratedSignatures" y="${entryComponentYPosition}" width="1210"
+         height="${unintegratedSignaturesComponentHeight}"
+         viewBox="0 0 1210 ${unintegratedSignaturesComponentHeight}">
     <#--<svg id="unintegratedSignatures" y="${entryComponentYDimension}px">-->
     <@entryInfoMacro.entryInfo entryType="Unknown" resource="resources/icons/ico_type_uni_small.png"
     title="Unintegrated signatures" entryAccession="no IPR" entryName="Unintegrated signatures" filling="#525252"
@@ -45,5 +48,5 @@
     </#list>
     </svg>
 </#if>
-<#assign proteinFeaturesComponentHeight=entryComponentYPosition+entryComponentHeight/>
+<#assign proteinFeaturesComponentHeight=entryComponentYPosition+unintegratedSignaturesComponentHeight/>
 </svg>

@@ -13,7 +13,7 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public enum FileOutputFormat {
-    XML("xml"), TSV("tsv"), SVG("svg"), HTML("html"), GFF3("gff3");
+    TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html"), SVG("svg");
 
     private static final Logger LOGGER = Logger.getLogger(FileOutputFormat.class.getName());
 
@@ -32,11 +32,12 @@ public enum FileOutputFormat {
 
     /**
      * Is the provided file extension string present in the file output format enum?
+     *
      * @param extension The file extension string to check
      * @return True if present, otherwise false
      */
     public static boolean isExtensionValid(String extension) {
-        for ( FileOutputFormat format : FileOutputFormat.values()) {
+        for (FileOutputFormat format : FileOutputFormat.values()) {
             if (extension.equalsIgnoreCase(format.getFileExtension())) {
                 return true;
             }
@@ -47,6 +48,7 @@ public enum FileOutputFormat {
 
     /**
      * Given the file extension as a string lookup the appropriate FileOutputFormat
+     *
      * @param outputFormat File extension
      * @return File output format
      */
@@ -57,6 +59,8 @@ public enum FileOutputFormat {
             return GFF3;
         } else if (outputFormat.equalsIgnoreCase(HTML.getFileExtension())) {
             return HTML;
+        } else if (outputFormat.equalsIgnoreCase(SVG.getFileExtension())) {
+            return SVG;
         } else {
             return TSV;
         }
@@ -64,19 +68,22 @@ public enum FileOutputFormat {
 
     /**
      * Given a comma separated string of file extensions produce a set of FileOutputFormats
+     *
      * @param outputFormats File extensions
      * @return File output formats
      */
     public static Set<FileOutputFormat> stringToFileOutputFormats(String outputFormats) {
         Set<FileOutputFormat> fileOutputFormats = new HashSet<FileOutputFormat>();
         String[] formats = outputFormats.split(",\\s*");
-        for (String format : formats){
+        for (String format : formats) {
             if (format.equalsIgnoreCase(XML.getFileExtension())) {
                 fileOutputFormats.add(XML);
             } else if (format.equalsIgnoreCase(GFF3.getFileExtension()) || format.equalsIgnoreCase("gff")) {
                 fileOutputFormats.add(GFF3);
             } else if (format.equalsIgnoreCase(HTML.getFileExtension())) {
                 fileOutputFormats.add(HTML);
+            } else if (format.equalsIgnoreCase(SVG.getFileExtension())) {
+                fileOutputFormats.add(SVG);
             } else if (format.equalsIgnoreCase(TSV.getFileExtension())) {
                 fileOutputFormats.add(TSV);
             } else {

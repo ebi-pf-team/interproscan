@@ -28,11 +28,6 @@
                  style="stroke:#660000; fill:black;"/>
         <rect id="blackSquare" x="1px" y="7px" height="6px" width="6px" style="fill:393939"/>
     </defs>
-    <image x="30px" y="4px" width="22px" height="22px"
-           xlink:href="resources/icons/ico_type_protein.png"/>
-    <text x="55px" y="20px" style="fill:#1897E9;font-family:Verdana,Helvetica,sans-serif;
-                             font-size:20">Protein
-    </text>
 <#--Main box around the protein view-->
     <rect id="background" x="0" y="0" width="${globalDocumentWidthFormatted}" height="${globalDocumentHeightFormatted}"
           style="fill: white;"></rect>
@@ -40,6 +35,11 @@
           x="30px" y="30px" width="${(globalDocumentWidth-60)?string("0")}"
           height="${(globalDocumentHeight - 35)?string("0")}"
           style="fill: white; stroke: lightGrey; stroke-width: 1;"></rect>
+    <image x="30px" y="4px" width="22px" height="22px"
+           xlink:href="resources/icons/ico_type_protein.png"/>
+    <text x="55px" y="20px" style="fill:#1897E9;font-family:Verdana,Helvetica,sans-serif;
+                             font-size:20">Protein
+    </text>
 
 <#--protein info component-->
 <#global proteinInfoComponentHeight=180/>
