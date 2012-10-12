@@ -4,7 +4,7 @@
      viewBox="0 0 1200 ${summaryViewComponentHeight}">
     <text y="13px" style="font-family:Verdana,Helvetica,sans-serif;font-size:13px">
         <tspan style="fill:#393939;font-weight:bold">Sequence features summary</tspan>
-    <#if (!condensedView??)>
+    <#if (condensedView?? && !condensedView.lines?has_content)>
         <tspan dx="15" style="fill:#838383;font-size:13px">none</tspan>
     </#if>
     </text>
