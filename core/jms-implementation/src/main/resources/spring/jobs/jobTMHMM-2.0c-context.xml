@@ -127,7 +127,7 @@
     <!-- ######################## Dependencies ############################  -->
     <bean id="signatureLibraryRelease" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="TMHMM"/>
-        <constructor-arg type="java.lang.String" value="${tmhmm.model.version}"/>
+        <constructor-arg type="java.lang.String" value="2.0"/>
     </bean>
 
     <bean id="tmhmmParser" class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMRawResultParser">
