@@ -48,11 +48,8 @@ public class SVGFreeMarkerTest {
         FileTemplateLoader loader = new FileTemplateLoader(resource.getFile());
         cfg.setTemplateLoader(loader);
         Map<String, Object> variables = new HashMap<String, Object>();
-        variables.put("js_resource_jquery_jscroll", "resources/javascript/jquery/jquery.jscroll.min.js");
-        variables.put("img_resource_path", "resources");
-        variables.put("css_resource_jquery_ui1817_custom", "resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css");
         cfg.setAllSharedVariables(new SimpleHash(variables, new DefaultObjectWrapper()));
-        //Good protein test examples: Q97R95, A2T929, A0JM20 (none), P15385, A2ARV4, P01308
+        //Good protein test examples: Q97R95, A2T929, A0JM20 (none), P15385, A2ARV4, P01308, P22298, A2VDN9, A2YIW7
         String proteinAccession = "Q97R95";
         SimpleProtein simpleProtein = matchData.queryByAccession(proteinAccession);
         SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
@@ -77,7 +74,7 @@ public class SVGFreeMarkerTest {
      * Writes FreeMarkers result into a file. Please note: This method is not part of the test. Use this method to see the result file.
      */
     protected void writeResultToFile(SimpleHash model, Template template, String fileName) throws IOException, TemplateException {
-        final String resultFilePath = "${home.dir}/projects/interproscan_svg/test/" + fileName + ".svg";
+        final String resultFilePath = "${home.dir}/{test.dir}" + fileName + ".svg";
         Writer out = new PrintWriter(new FileWriter(resultFilePath));
         template.process(model, out);
         out.flush();
@@ -88,11 +85,11 @@ public class SVGFreeMarkerTest {
         SimpleHash model = new SimpleHash();
         if (p != null) {
             model.put("protein", p);
-            model.put("condensedView", new CondensedView(p));
+            final CondensedView condensedView = new CondensedView(p);
+            model.put("condensedView", condensedView);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
-            model.put("standalone", true);
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, 30, 180, 18, 19, 30));
+            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, 30, 180, 18, 19, 30));
         } // Else no match data was found for the protein therefore nothing to display
         return model;
     }
