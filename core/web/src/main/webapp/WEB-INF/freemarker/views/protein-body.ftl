@@ -1,6 +1,6 @@
 <#--Returns main body of protein page for inclusion in DBML-->
 
-<#if protein?? && protein.entries?has_content>
+<#if protein??>
 
 <div class="prot_tree">
     <#if (protein.familyEntries?has_content)>
@@ -8,9 +8,9 @@
             <h1>Protein family membership:</h1>
         ${protein.familyHierarchy}
         </div>
-    <#else>
-        <div style="float: left;"><h1>Protein family membership:</h1></div>
-        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+        <#else>
+            <div style="float: left;"><h1>Protein family membership:</h1></div>
+            <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
     </#if>
 </div>
 
@@ -19,19 +19,12 @@
     <#if ! standalone>
         <#include "web_menu_javascript.ftl"/>
     </#if>
-    <#if protein?? && protein.entries?has_content>
 
-        <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-        <div class="prot_sum">
-        <#else>
-        <div class="prot_sum" style="background:none;">
-        </#if>
-
+    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
+    <div class="prot_sum">
         <div class="top-row">
             <div class="top-row-id">
-                <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-                    <h1>Sequence features summary</h1>
-                </#if>
+                <h1>Sequence features summary:</h1>
             </div>
             <div class="top-row-opt"><a href="#" title="Open sequence features summary view in a new window"><span
                     class="opt1"></span></a></div>
@@ -66,9 +59,17 @@
             </div>
         </div>
     </div>
+        <#else>
+        <div class="prot_sum" style="overflow: auto;">
+            <div style="float: left;"><h1>Sequence features summary:</h1></div>
+            <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+        </div>
+    </#if>
 
-        <div class="prot_entries">
-            <h1>Sequence features</h1>
+    <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
+    <div class="prot_entries" style="overflow: auto;">
+        <h1>Sequence features</h1>
+        <#if protein.entries?has_content>
             <ol class="entries">
                 <#list protein.entries as entry>
                     <!-- Prepare required variables for this entry -->
@@ -76,8 +77,8 @@
                     <#assign icon>
                         <#if entry.type?lower_case?starts_with("family") || entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("region") || entry.type?lower_case?starts_with("repeat")>
                         ${entry.type?lower_case}
-                        <#elseif entry.type?lower_case?starts_with("unknown")>uni
-                        <#else>site
+                            <#elseif entry.type?lower_case?starts_with("unknown")>uni
+                            <#else>site
                         </#if>
                     </#assign>
                     <#assign icon=icon?trim>
@@ -86,10 +87,10 @@
                     <#--TODO: Check domain and repeat in the same if clause-->
                         <#if entry.type?lower_case?starts_with("domain")>
                             c${entryColours[entry.ac]} ${entry.type}
-                        <#elseif entry.type?lower_case?starts_with("repeat")>
-                            c${entryColours[entry.ac]} ${entry.type}
-                        <#else>               `
-                        ${entry.type}
+                            <#elseif entry.type?lower_case?starts_with("repeat")>
+                                c${entryColours[entry.ac]} ${entry.type}
+                            <#else>               `
+                            ${entry.type}
                         </#if>
                     </#assign>
                     <#assign colourClass=colourClass?trim>
@@ -114,7 +115,7 @@
                                 <#list entry.signatures as signature>
 
                                     <li id="${containerId}" class="signature entry-signatures">
-                                        <@signatureMacro.signature protein=protein signature=signature entryTypeTitle=title colourClass=colourClass />
+                                    <@signatureMacro.signature protein=protein signature=signature entryTypeTitle=title colourClass=colourClass />
                                     </li>
                                 </#list>
                             </ol>
@@ -123,10 +124,10 @@
                     </li>
                 </#list>
             </ol>
-        </div>
-    </#if>
+        </#if>
+    </div>
 
-    <#if protein?? && protein.unintegratedSignatures?has_content>
+        <#if protein.unintegratedSignatures?has_content>
 
         <div class="prot_entries" id="uni">
             <div class="top-row">
@@ -140,74 +141,80 @@
                 <ol class="signatures">
                     <#list protein.unintegratedSignatures as signature>
                         <li class="signature">
-                            <@signatureMacro.signature protein=protein signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
+                        <@signatureMacro.signature protein=protein signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
                         </li>
                     </#list>
                 </ol>
                 <div class="bot-row-line-bot"></div>
             </div>
         </div>
+        </#if>
+        <#else>
+        <div class="prot_entries" style="overflow: auto;">
+            <div style="float: left;"><h1>Sequence features:</h1></div>
+            <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+        </div>
     </#if>
 
 
-    <div class="prot_go">
-        <h1>GO Term prediction</h1>
+<div class="prot_go">
+    <h1>GO Term prediction</h1>
 
-        <div class="go_terms">
+    <div class="go_terms">
 
-            <div class="go_terms_box">
-                <h2>Biological Process</h2>
-                <#assign hasGo=false/>
-                <#list protein.processGoTerms as goTerm>
-                    <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
-                       class="ext">${goTerm.accession}</a> ${goTerm.termName}
-                    <#assign hasGo=true/>
-                    <br/>
-                </#list>
-                <#if !hasGo>
-                    No biological process GO terms.
-                </#if>
-            </div>
+        <div class="go_terms_box">
+            <h2>Biological Process</h2>
+            <#assign hasGo=false/>
+            <#list protein.processGoTerms as goTerm>
+                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                   class="ext">${goTerm.accession}</a> ${goTerm.termName}
+                <#assign hasGo=true/>
+                <br/>
+            </#list>
+            <#if !hasGo>
+                No biological process GO terms.
+            </#if>
+        </div>
 
-            <div class="go_terms_box">
-                <h2>Molecular Function</h2>
-                <#assign hasGo=false/>
-                <#list protein.functionGoTerms as goTerm>
-                    <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
-                       class="ext">${goTerm.accession}</a> ${goTerm.termName}
-                    <#assign hasGo=true/>
-                    <br/>
-                </#list>
-                <#if !hasGo>
-                    No molecular function GO terms.
-                </#if>
-            </div>
-            <div class="go_terms_box">
-                <h2>Cellular Component</h2>
-                <#assign hasGo=false/>
-                <#list protein.componentGoTerms as goTerm>
-                    <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
-                       class="ext">${goTerm.accession}</a> ${goTerm.termName}
-                    <#assign hasGo=true/>
-                    <br/>
-                </#list>
-                <#if !hasGo>
-                    No cellular component GO terms.
-                </#if>
-            </div>
+        <div class="go_terms_box">
+            <h2>Molecular Function</h2>
+            <#assign hasGo=false/>
+            <#list protein.functionGoTerms as goTerm>
+                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                   class="ext">${goTerm.accession}</a> ${goTerm.termName}
+                <#assign hasGo=true/>
+                <br/>
+            </#list>
+            <#if !hasGo>
+                No molecular function GO terms.
+            </#if>
+        </div>
+        <div class="go_terms_box">
+            <h2>Cellular Component</h2>
+            <#assign hasGo=false/>
+            <#list protein.componentGoTerms as goTerm>
+                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                   class="ext">${goTerm.accession}</a> ${goTerm.termName}
+                <#assign hasGo=true/>
+                <br/>
+            </#list>
+            <#if !hasGo>
+                No cellular component GO terms.
+            </#if>
         </div>
     </div>
+</div>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('span[id*="location-"]').each(
-                    function (i) {
-                        preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
-                    }
-            );
-        });
-    </script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('span[id*="location-"]').each(
+                function (i) {
+                    preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
+                }
+        );
+    });
+</script>
 
-<#else>
+    <#else>
     <b>No match data found for this protein.</b>
 </#if>
