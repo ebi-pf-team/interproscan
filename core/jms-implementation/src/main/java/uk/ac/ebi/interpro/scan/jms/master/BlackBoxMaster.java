@@ -73,4 +73,6 @@ public interface BlackBoxMaster extends Master {
     void setOutputBaseFilename(String outputBaseFilename);
 
     void processOutputFormats(final Map<String, String> params, final String[] outputFormats);
+
+    void setProjectId(String projectId);
 }

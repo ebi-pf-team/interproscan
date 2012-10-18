@@ -67,6 +67,7 @@ public class StatsMessageListener implements MessageListener {
         //consumer counter is gresater than 1 (invmconsumer)
         return stats.getConsumerCount() > 1;
     }
+
     public int  getConsumers(){
         if (stats == null){
             return 0;
@@ -74,6 +75,7 @@ public class StatsMessageListener implements MessageListener {
         //consumer counter is gresater than 1 (invmconsumer)
         return stats.getConsumerCount();
     }
+
     public  int getQueueSize(){
         if (stats == null){
             return 0;

@@ -5,16 +5,16 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 
-import javax.jms.*;
-import java.lang.IllegalStateException;
+import javax.jms.Destination;
+import javax.jms.Session;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +46,7 @@ public class WorkerImpl implements Worker {
     private StatsMessageListener statsMessageListener;
     private ResponseQueueMessageListener responseQueueMessageListener;
     private ManagerTopicMessageListener managerTopicMessageListener;
+
 
     private boolean shutdown = false;
 
@@ -87,8 +88,9 @@ public class WorkerImpl implements Worker {
     protected final String STATS_BROKER = "ActiveMQ.Statistics.Destination.";
 
     private WorkerRunner workerRunner;
-    protected WorkerRunner workerRunnerHighMemory;
+    private WorkerRunner workerRunnerHighMemory;
 
+    private String projectId;
 
 
     private TemporaryDirectoryManager temporaryDirectoryManager;
@@ -109,16 +111,26 @@ public class WorkerImpl implements Worker {
         }
         this.statsListenerContainer = statsListenerContainer;
         if (managerTopicMessageListenerJmsContainer == null) {
-            throw new IllegalArgumentException("A Worker cannot be instantiated with a null managerTopic DefaultMessageListenerContainer.");
+            throw new IllegalArgumentException("A Worker cannot be instantiated with a null managerTopic DefaultMessageListenerContainer .");
         }
         this.managerTopicMessageListenerJmsContainer = managerTopicMessageListenerJmsContainer;
+
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+        if (this.workerRunner instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner) this.workerRunner).setProjectId(projectId);
+        }
+        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setProjectId(projectId);
+        }
     }
 
     @Required
     public void setStatsMessageListener(StatsMessageListener statsMessageListener) {
         this.statsMessageListener = statsMessageListener;
     }
-
 
     public StatsMessageListener getStatsMessageListener() {
         return statsMessageListener;
@@ -310,7 +322,6 @@ public class WorkerImpl implements Worker {
                         LOGGER.info("Stopping worker as idle for longer than max idle time");
                     }
                 }
-
                 remoteQueueJmsContainer.stop();
                 return true;
             }
@@ -338,15 +349,14 @@ public class WorkerImpl implements Worker {
         try {
             while (!stopIfAppropriate()) {
                 if (LOGGER.isTraceEnabled()) LOGGER.trace("State while running:");
+
+//                LOGGER.debug("Listening on: "+ remoteQueueJmsContainer.getDestinationName() +" or " + statsUtil.getQueueName(remoteQueueJmsContainer.getDestination()));
                 //populate the statistics broker values
-                if (highMemory) {
-                    //should we poll the remote high memory
-//                    statsUtil.pollStatsBrokerHighMemJobQueue();
-                }
                 statsUtil.pollStatsBrokerResponseQueue();
-                LOGGER.info("Response Stats: " + statsMessageListener.toString());
+                LOGGER.debug("Response Stats: " + statsUtil.getStatsMessageListener().getStats());
 
                 statsUtil.pollStatsBrokerJobQueue();
+                LOGGER.debug("requestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
 
                 //create worker is necessary
                 if (isNewWorkersRequired()) {
@@ -354,16 +364,10 @@ public class WorkerImpl implements Worker {
                 }
                 logMessageListenerContainerState();
                 if (managerTopicMessageListener.isShutdown()) {
-                    LOGGER.debug("Worker: received shutdown message.  Send message to child workers.");
-                    localJmsTemplate.send(workerManagerTopic, new MessageCreator() {
-                        public Message createMessage(Session session) throws JMSException {
-                            return session.createObjectMessage();
-                        }
-                    });
+                    LOGGER.debug("Worker: Received shutdown message.  message already sent to child workers.");
                     break;
                 }
                 Thread.sleep(5000);
-
             }
             statsUtil.pollStatsBrokerResponseQueue();
             LOGGER.info("Response Stats: " + statsMessageListener.toString());
@@ -388,12 +392,13 @@ public class WorkerImpl implements Worker {
      * Create a worker depending on the conditions specified
      */
     private void createWorker() {
+        LOGGER.debug("Creating a worker.");
         final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
         if (highMemory) {
-            LOGGER.warn("Starting a high memory worker.");
+            LOGGER.debug("Starting a high memory worker.");
             workerRunnerHighMemory.startupNewWorker(priority, tcpUri, temporaryDirectoryName);
         } else {
-            LOGGER.warn("Starting a  worker.");
+            LOGGER.debug("Starting a  worker.");
             workerRunner.startupNewWorker(priority, tcpUri, temporaryDirectoryName);
         }
     }
@@ -415,19 +420,6 @@ public class WorkerImpl implements Worker {
                 (statsMessageListener.getConsumers() < statsMessageListener.getQueueSize() / queueConsumerRatio);
     }
 
-    private String getQueueName(Destination queue) {
-        try {
-            if (queue != null) {
-                return ((Queue) queue).getQueueName();
-            }
-        } catch (JMSException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            if (LOGGER.isDebugEnabled() && queue != null) {
-                LOGGER.debug("There is a problem with the queue name " + queue.toString());
-            }
-        }
-        return "*";
-    }
 
     public void setMinimumJmsPriority(int priority) {
         this.priority = priority;
@@ -528,7 +520,7 @@ public class WorkerImpl implements Worker {
      *
      * @param masterUri
      */
-    public ActiveMQConnectionFactory setMasterUri(String masterUri) {
+    public void setMasterUri(String masterUri) {
         this.masterUri = masterUri;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Master URI passed in to Controller: " + masterUri);
@@ -548,6 +540,7 @@ public class WorkerImpl implements Worker {
         remoteQueueJmsContainer.setConnectionFactory(connectionFactory);
         managerTopicMessageListenerJmsContainer.setConnectionFactory(connectionFactory);
 
+        LOGGER.debug("Set remoteJMS template " );
         final JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
         jmsTemplate.setExplicitQosEnabled(true);
         jmsTemplate.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
@@ -556,11 +549,14 @@ public class WorkerImpl implements Worker {
         setRemoteJmsTemplate(jmsTemplate); // may not be necessary
         //set the remoteJmsTemplates for the responseQueue
         responseQueueMessageListener.setRemoteJmsTemplate(jmsTemplate);
+        //((WorkerMessageSenderImpl) responseQueueMessageListener.getWorkerMessageSender()).setRemoteJmsTemplate(jmsTemplate);
+        //set the remoteJmsTemplate for the workerMessageSender
 //        remoteQueueJmsContainer.initialize();
         if (highMemory && masterWorker) {
+            LOGGER.debug("High Memory Remote Worker setup ***");
             if (highMemJobRequestQueue != null) {
                 remoteQueueJmsContainer.setDestination(highMemJobRequestQueue);
-                LOGGER.debug("Worker: masterworker - this worker is a child of the master");
+                LOGGER.debug("Worker: masterworker - this worker is a child of the master and queue set to highMemJobRequestQueue");
             } else {
                 throw new IllegalStateException("The highMemJobRequestQueue can not be null .");
             }
@@ -572,9 +568,6 @@ public class WorkerImpl implements Worker {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("MessageListenerContainer started, connected to: " + masterUri);
         }
-        System.out.println("MessageListenerContainer started, connected to: " + masterUri);
-
-        return activeMQConnectionFactory;
     }
 }
 

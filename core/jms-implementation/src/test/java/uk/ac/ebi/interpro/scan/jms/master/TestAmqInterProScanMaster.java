@@ -32,6 +32,7 @@ public class TestAmqInterProScanMaster {
         String[] expectedOutputFormats = outputFormats;
         master.processOutputFormats(params, outputFormats);
         String[] actualOutputFormats = params.get(WriteOutputStep.OUTPUT_FILE_FORMATS).split(",");
+        //We sort the list so we shouldn't care about the order of the formats in the list
         Arrays.sort(expectedOutputFormats);
         Arrays.sort(actualOutputFormats);
         assertArrayEquals(expectedOutputFormats,actualOutputFormats);

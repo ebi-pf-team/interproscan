@@ -8,6 +8,8 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Master Controller for InterProScan 5.
@@ -47,15 +49,9 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
 
             int stepInstancesCreatedByLoadStep = createStepInstances();
 
-            //create two workers : one high memory and one non high memory
-            String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
 
-            LOGGER.debug("Starting a high memory worker.");
-            //high memory do have a higher priority compared to low memory workers
-            workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
-            LOGGER.debug("Starting a normal worker.");
-            temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
-            workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+            //this will start a new thread to create new workers
+            startNewWorker();
 
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
@@ -68,6 +64,8 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
                     }
                     if (stepInstance.hasFailedPermanently(jobs)) {
+                        //shutdown the workers then exit the system
+                        messageSender.sendShutDownMessage();
                         unrecoverableErrorStrategy.failed(stepInstance, jobs);
                     }
                     completed &= stepInstance.haveFinished(jobs);
@@ -82,7 +80,10 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                         final Step step = stepInstance.getStep(jobs);
                         final boolean canRunRemotely = !step.isRequiresDatabaseAccess();
 
+                        boolean debugSubmission = true;
+                        //resubmission = debugSubmission;
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
+                        //final boolean highMemory = resubmission && workerRunnerHighMemory != null && canRunRemotely;
                         final boolean highMemory = resubmission && workerRunnerHighMemory != null && canRunRemotely;
 
                         if (highMemory) {
@@ -97,19 +98,10 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
 
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
-
-                        //TODO:  creating workers depending on the result from the statistics broker
-                        //every 20 iterations check if new worker required
-                        LOGGER.debug("Create Workers as required ");
-                        if((countRegulator % 20) == 0){
-                            startNewWorker();
-                        }
                         countRegulator++;
                     }
                 }
 
-                //start new worker if necessary
-                startNewWorker();
                 // Close down (break out of loop) if the analyses are all complete.
                 if (completed && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
                     // This next 'if' ensures that StepInstances created as a result of loading proteins are
@@ -144,6 +136,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         } catch (Exception e) {
             LOGGER.error("Exception thrown by DistributedBlackBoxMaster: ", e);
         }
+
         //send a shutdown message before exiting
         messageSender.sendShutDownMessage();
         try {
@@ -151,7 +144,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
             //statsUtil.pollStatsBrokerTopic();
             //final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
             //LOGGER.debug("Topic stats: " +statsMessageListener.getStats());
-            Thread.sleep(60*1000);
+            Thread.sleep(20*1000);
             //LOGGER.debug("Topic stats 2: " +statsMessageListener.getStats());
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -181,43 +174,68 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         this.statsUtil = statsUtil;
     }
 
+
+
     /**
      * Mechanism to start a new worker
      *
      */
     private void startNewWorker(){
-        //statsUtil.sendMessage();
-        //statsUtil.sendhighMemMessage();
-        LOGGER.debug("Poll High Memory Job Request queue");
-        final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
-        String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
-        final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
-        if(highMemStatsAvailable){
-            final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-            if((statsMessageListener.getConsumers() < 1 && statsMessageListener.getQueueSize() > 0)||
-                    (highMemWorkerRequired && statsMessageListener.getConsumers() < 10)){
-                LOGGER.debug("Starting a high memory worker.");
-                temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
-                workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
+        //we want an efficient way of creating workers
+        //create two workers : one high memory and one non high memory
+        final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
+
+        LOGGER.debug("Starting the first high memory worker...");
+//        high memory do have a higher priority compared to low memory workers
+        workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
+        LOGGER.debug("Starting the first  normal worker.");
+        workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            public void run() {
+                    //start new workers
+                while (!shutdownCalled) {
+                    //statsUtil.sendMessage();
+                    //statsUtil.sendhighMemMessage();
+                    LOGGER.debug("Poll High Memory Job Request queue");
+                    final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
+                    final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
+                    final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
+                    if (highMemStatsAvailable) {
+                        final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
+                        if ((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0) ||
+                                (highMemWorkerRequired && statsMessageListener.getConsumers() < 10)) {
+                            LOGGER.debug("Starting a high memory worker.");
+                            workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);
+                        }
+                    }
+                    LOGGER.debug("Poll Job Request Queue queue");
+                    final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
+                    if (statsAvailable) {
+                        final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
+                        if ((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0) ||
+                                (workerRequired && statsMessageListener.getConsumers() < 10)) {
+                            LOGGER.debug("Starting a normal worker.");
+                            workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+                        }
+                    }
+                    LOGGER.debug("Poll the Job Response queue ");
+                    final boolean responseQueueStatsAvailable = statsUtil.pollStatsBrokerResponseQueue();
+                    if (!responseQueueStatsAvailable) {
+                        LOGGER.debug("The Job Response queue is not initialised");
+                    } else {
+                        LOGGER.debug("JobResponseQueue:  " + statsMessageListener.getStats().toString());
+                    }
+
+                    try {
+                        Thread.sleep(1 * 10 * 1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+
             }
-        }
-        LOGGER.debug("Poll Job Request Queue queue");
-        final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
-        if(statsAvailable){
-            final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-            if((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0)||
-                    (workerRequired && statsMessageListener.getConsumers() < 10)){
-                LOGGER.debug("Starting a normal worker.");
-                temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
-                workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
-            }
-        }
-        LOGGER.debug("Poll the Job Response queue ");
-        final boolean responseQueueStatsAvailable = statsUtil.pollStatsBrokerResponseQueue();
-        if(!responseQueueStatsAvailable){
-            LOGGER.debug("The Job Response queue is not initialise");
-        }else{
-            LOGGER.debug("JobResponseQueue:  "+statsMessageListener.getStats().toString());
-        }
+        });
     }
 }
