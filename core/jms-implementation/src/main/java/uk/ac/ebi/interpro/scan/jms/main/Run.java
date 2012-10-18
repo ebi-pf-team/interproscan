@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.jms.main;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.commons.cli.*;
@@ -103,7 +102,8 @@ public class Run {
         TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. The default location is /temp.", "TEMP-DIR", false, true),
         DISABLE_PRECALC("disable-precalc", "dp", false, "Optional.  Disables use of the precalculated match lookup service.  All match calculations will be run locally.", null, false, true),
         HIGH_MEM("highmem", "hm", false, "Optional, switch on the creation of a high memory worker. Please note normal and high mem workers share the same Spring configuration file.", null, false, false),
-        TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", null, false, false);
+        TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", "TIER", false, false),
+        PROJECT_ID("projectid", "pid", false, "Optional, switch to specify the Project name for this i5 run.", "PROJECT-ID", false, false);
 
         private String longOpt;
 
@@ -500,10 +500,27 @@ public class Run {
 
             if (bbMaster instanceof DistributedBlackBoxMaster && tcpConnectionString != null) {
                 ((DistributedBlackBoxMaster) bbMaster).setTcpUri(tcpConnectionString);
+                if (parsedCommandLine.hasOption(I5Option.PROJECT_ID.getLongOpt())) {
+                    final String projectId = parsedCommandLine.getOptionValue(I5Option.PROJECT_ID.getLongOpt());
+                    bbMaster.setProjectId(projectId);
+                    ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
+                }
             }
             //TODO: The copy of the distributed master will retire someday (if distributed computing works fine)
             if (bbMaster instanceof DistributedBlackBoxMasterCopy && tcpConnectionString != null) {
                 ((DistributedBlackBoxMasterCopy) bbMaster).setTcpUri(tcpConnectionString);
+                //if (parsedCommandLine.hasOption(I5Option.PROJECT_ID.getLongOpt())) {
+//                    final String projectId = parsedCommandLine.getOptionValue(I5Option.PROJECT_ID.getLongOpt());
+               // }
+                if (parsedCommandLine.hasOption(I5Option.PROJECT_ID.getLongOpt())) {
+                    LOGGER.debug("We have a project ID.");
+                    final String projectId = parsedCommandLine.getOptionValue(I5Option.PROJECT_ID.getLongOpt());
+                    System.out.println("The project ID for this run is: "+projectId);
+                    bbMaster.setProjectId(projectId);
+                    ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
+                }else{
+                    throw new IllegalStateException("The Distributed master need a project ID to continue, " );
+                }
             }
 
 
@@ -515,10 +532,11 @@ public class Run {
                 bbMaster.setMinSize(parsedCommandLine.getOptionValue(I5Option.MIN_SIZE.getLongOpt()));
             }
 
-
             if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
                 bbMaster.disablePrecalc();
             }
+
+
 
             // GO terms and/or pathways will also imply IPR lookup
             final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
@@ -536,6 +554,7 @@ public class Run {
         if (runnable instanceof WorkerImpl) {
 //                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt()) || parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
             final WorkerImpl worker = (WorkerImpl) runnable;
+            LOGGER.debug("--- runnable is WorkerImpl --- " );
             if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt())) {
                 final int priority = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.PRIORITY.getLongOpt()));
                 if (priority < 0 || priority > 9) {
@@ -552,21 +571,35 @@ public class Run {
             //set the tcpUri for the worker
             if ( tcpConnectionString != null) {
                 worker.setTcpUri(tcpConnectionString);
+                LOGGER.debug("Remote worker has tcpConnectionString: " + tcpConnectionString);
             }
             //set high memory option
             worker.setHighMemory(parsedCommandLine.hasOption(I5Option.HIGH_MEM.getLongOpt()));
 
             //set master worker
-            worker.setMasterWorker(parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt()));
+            boolean highmemDebug = true;
+            if (parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt())) {
+                worker.setMasterWorker(parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt()));
+                final String tier = parsedCommandLine.getOptionValue(I5Option.TIER1.getLongOpt());
+                LOGGER.debug("Worker tier:  "+tier);
+                highmemDebug = true;
+            }
 
             //set the master uri
             //Please note: Make sure you set the master worker flag and the high memory flag before you set the master URI
             if (parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
+                LOGGER.debug("commandline has option Master_ URI ");
                 final String masterUri = parsedCommandLine.getOptionValue(I5Option.MASTER_URI.getLongOpt());
-                ActiveMQConnectionFactory activeMQConnectionFactory = worker.setMasterUri(masterUri);
+                worker.setMasterUri(masterUri);
                 //want to change the remoteFactory
             }
 
+            //set the jms template for the messagesender
+//            final WorkerMessageSenderImpl workerMessageSender = (WorkerMessageSenderImpl) ctx.getBean("workerMessageSender");
+//            workerMessageSender.setRemoteJmsTemplate(worker.getRemoteJmsTemplate());
+            LOGGER.debug("parsedCommandLine 1: " + parsedCommandLine.toString());
+            LOGGER.debug("I5Option.TEMP_DIRECTORY_NAME: "+I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
+            System.out.println("temp dir name: ");
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {
                 final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
                 if (LOGGER.isDebugEnabled())
@@ -584,6 +617,12 @@ public class Run {
                     LOGGER.debug("NO!  So can't set the temporary directory manager.  Details of Directory Manager:" + tdm.toString());
                 }
             }
+            //set the project name for this i5 run
+            if (parsedCommandLine.hasOption(I5Option.PROJECT_ID.getLongOpt())) {
+                worker.setProjectId(parsedCommandLine.getOptionValue(I5Option.PROJECT_ID.getLongOpt()));
+
+            }
+            LOGGER.debug("parsedCommandLine: " + parsedCommandLine.toString());
 
         }
     }
@@ -785,7 +824,7 @@ public class Run {
                 // Test the port is available on this machine.
                 portAssigned = available(port);
             }
-            //Set a random broker name, otherwise you get RMI protocol exception when workers running on the same machine
+            //if this is not a production master, set a random broker name, otherwise you get RMI protocol exception when workers running on the same machine
             //broker.setBrokerName(Utilities.createUniqueJobName(8));
 
             //Setting transport connector

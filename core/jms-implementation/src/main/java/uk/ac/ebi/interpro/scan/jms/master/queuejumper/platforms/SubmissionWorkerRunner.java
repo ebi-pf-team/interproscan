@@ -18,6 +18,12 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private String submissionCommand;
 
+    private String gridCommand;
+
+    private String projectId;
+
+    private String i5Command;
+
     private boolean highMemory;
 
     private boolean masterWorker;
@@ -29,6 +35,21 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Required
     public void setSubmissionCommand(String submissionCommand) {
         this.submissionCommand = submissionCommand;
+    }
+
+    @Required
+    public void setGridCommand(String gridCommand) {
+        this.gridCommand = gridCommand;
+    }
+
+    @Required
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    @Required
+    public void setI5Command(String i5Command) {
+        this.i5Command = i5Command;
     }
 
     @Required
@@ -63,8 +84,15 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Override
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
         if (workerStartupStrategy.startUpWorker(priority)) {
-            StringBuilder command = new StringBuilder(submissionCommand);
-            LOGGER.debug("command : "+submissionCommand);
+            StringBuilder command = new StringBuilder(gridCommand);
+
+            if (!projectId.equals(null)) {
+                command.append(" -P "+ projectId);
+            }
+
+            command.append(" " + i5Command);
+
+            LOGGER.debug("command without arguments : "+command);
             if (tcpUri == null) {
                 command.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
             } else {
@@ -88,7 +116,12 @@ public class SubmissionWorkerRunner implements WorkerRunner {
             }
 
             if(this.masterWorker){
-                command.append(" --tier1");
+                command.append(" --tier1=")
+                        .append("1");
+            }
+            if(this.projectId!= null){
+                command.append(" --projectid=")
+                        .append(projectId);
             }
 
             if (LOGGER.isDebugEnabled()) {

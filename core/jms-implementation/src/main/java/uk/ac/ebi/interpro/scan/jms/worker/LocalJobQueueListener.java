@@ -81,6 +81,9 @@ public class LocalJobQueueListener implements MessageListener {
             }
             final ObjectMessage stepExecutionMessage = (ObjectMessage) message;
             final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
+
+
+
             if (stepExecution == null) {
                 LOGGER.error("An ObjectMessage was received but had no contents.");
                 return;

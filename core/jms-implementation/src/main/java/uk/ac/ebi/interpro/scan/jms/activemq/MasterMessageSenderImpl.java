@@ -94,7 +94,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
      */
     @Transactional
     public void sendMessage(StepInstance stepInstance, final boolean highMemory, final int priority, final boolean canRunRemotely) throws JMSException {
-            LOGGER.debug("Attempting to send message to queue - high memory: "+highMemory+ "  priority: "+priority+" can run remotely: "+canRunRemotely);
+        LOGGER.debug("Attempting to send message to queue - high memory: "+highMemory+ "  priority: "+priority+" can run remotely: "+canRunRemotely);
         final StepExecution stepExecution = stepInstance.createStepExecution();
         stepExecutionDAO.insert(stepExecution);
         stepExecution.submit(stepExecutionDAO);

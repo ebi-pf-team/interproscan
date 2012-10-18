@@ -70,6 +70,16 @@
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
     </bean>
 
+    <!-- Local Spring JMSTopicTemplate -->
+    <bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <constructor-arg ref="localJmsFactory"/>
+            </bean>
+        </property>
+        <property name="pubSubDomain" value="true"/>
+    </bean>
+
     <!-- Remote (e.g. TCP) JMS ConnectionFactory -->
     <amq:connectionFactory
             id="remoteJmsFactory"
@@ -115,7 +125,10 @@
         <property name="queueConsumerRatio" value="20"  />
         <property name="workerRunner">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-                <property name="submissionCommand" value="${worker.bsub.command} ${worker.command}"/>
+                <property name="submissionCommand" value="${grid.lsf.worker.command} ${worker.command}"/>
+                <property name="gridCommand" value="${grid.lsf.worker.command}"/>
+                <property name="projectId" value="${user.digest}"/>
+                <property name="i5Command" value="${worker.command}"/>
                 <property name="highMemory" value="false"/>
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
@@ -125,7 +138,10 @@
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="workerRunnerHighMemory">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-                <property name="submissionCommand" value="${worker.bsub.command} ${worker.high.memory.command}"/>
+                <property name="submissionCommand" value="${grid.lsf.worker.command} ${worker.high.memory.command}"/>
+                <property name="gridCommand" value="${grid.lsf.worker.high.memory.command}"/>
+                <property name="projectId" value="${user.digest}"/>
+                <property name="i5Command" value="${worker.high.memory.command}"/>
                 <property name="highMemory" value="true"/>
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
@@ -156,8 +172,10 @@
 
     <!--Listens to the local response queue and propagates to the remote one-->
     <bean id="responseQueueMessageListener" class="uk.ac.ebi.interpro.scan.jms.worker.ResponseQueueMessageListener">
-    <property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>
-    <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <!--<property name="workerMessageSender" ref="workerMessageSender"/>-->
+
     </bean>
 
     <!--Configuration for the local job queue listener-->
@@ -172,13 +190,14 @@
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
         <property name="receiveTimeout" value="-1"/>
         <property name="messageListener" ref="remoteJobQueueListener"/>
-
     </bean>
 
     <!--Listens to the remote request queue and propagates to the local one-->
     <bean id="remoteJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.worker.RemoteJobQueueListener">
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>
+        <property name="workerMessageSender" ref="workerMessageSender"/>
+
     </bean>
 
     <bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
@@ -228,11 +247,24 @@
         <property name="connectionFactory" ref="remoteJmsFactory"/>
         <property name="destination" ref="workerManagerTopic"/>
         <property name="messageListener" ref="managerTopicMessageListener"/>
+        <property name="pubSubDomain" value="true" />
     </bean>
 
 
     <bean id="managerTopicMessageListener" class="uk.ac.ebi.interpro.scan.jms.worker.ManagerTopicMessageListener">
+        <property name="workerMessageSender" ref="workerMessageSender"/>
     </bean>
+
+    <!-- The worker Sender Implementation used by listeners-->
+    <bean id="workerMessageSender" class="uk.ac.ebi.interpro.scan.jms.worker.WorkerMessageSenderImpl">
+        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="jmsTopicTemplate" ref="jmsTopicTemplate"/>
+        <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
+        <property name="workerManagerTopic" ref="workerManagerTopic"/>
+        <property name="highmemWorkerJobRequestQueue" ref="highMemJobRequestQueue"/>
+    </bean>
+
 
 
     <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">

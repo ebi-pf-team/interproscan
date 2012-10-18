@@ -23,6 +23,8 @@ public class ResponseQueueMessageListener implements MessageListener {
 
     private Destination jobResponseQueue;
 
+    private WorkerMessageSender workerMessageSender;
+
     @Required
     public void setRemoteJmsTemplate(JmsTemplate remoteJmsTemplate) {
         this.remoteJmsTemplate = remoteJmsTemplate;
@@ -33,10 +35,27 @@ public class ResponseQueueMessageListener implements MessageListener {
         this.jobResponseQueue = jobResponseQueue;
     }
 
+
+    public void setWorkerMessageSender(WorkerMessageSender workerMessageSender) {
+        this.workerMessageSender = workerMessageSender;
+    }
+
+    public WorkerMessageSender getWorkerMessageSender() {
+        return workerMessageSender;
+    }
+
     @Override
     public void onMessage(final Message message) {
-       remoteJmsTemplate.send(jobResponseQueue, new MessageCreator() {
-                        public Message createMessage(Session session) throws JMSException {
+
+        //forward message to the remote responseQueue  should be a transaction!!
+//        try {
+//            workerMessageSender.sendMessage(jobResponseQueue,message,false);
+//        } catch (JMSException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            LOGGER.warn("Worker: received message but failed to send it to the master/manager jobResponseQueue");
+//        }
+        remoteJmsTemplate.send(jobResponseQueue, new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
                 return message;
             }
         });
