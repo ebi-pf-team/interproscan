@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.jms.activemq.CleanRunDatabase;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep;
@@ -14,10 +15,8 @@ import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
- * User: pjones
+ * @author: Phil Jones, Gift Nuka
  * Date: 26/07/12
- * Time: 11:39
- * To change this template use File | Settings | File Templates.
  */
 public abstract class AbstractBlackBoxMaster extends AbstractMaster implements BlackBoxMaster {
 
@@ -52,9 +51,21 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected boolean hasInVmWorker;
 
+    private String projectId;
+
     @Required
     public void setHasInVmWorker(boolean hasInVmWorker) {
         this.hasInVmWorker = hasInVmWorker;
+    }
+
+    public void setSubmissionWorkerRunnerProjectId(String projectId){
+        //set this as soon as the
+        if (this.workerRunner instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner) this.workerRunner).setProjectId(projectId);
+        }
+        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setProjectId(projectId);
+        }
     }
 
     protected void loadInMemoryDatabase() throws InterruptedException {
@@ -269,4 +280,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         this.databaseCleaner = databaseCleaner;
     }
 
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 }

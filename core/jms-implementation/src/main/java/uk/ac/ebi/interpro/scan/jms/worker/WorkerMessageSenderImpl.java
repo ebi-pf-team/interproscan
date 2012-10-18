@@ -117,5 +117,6 @@ public class WorkerMessageSenderImpl implements WorkerMessageSender {
                 });
             }
         }
+        //return true
     }
 }

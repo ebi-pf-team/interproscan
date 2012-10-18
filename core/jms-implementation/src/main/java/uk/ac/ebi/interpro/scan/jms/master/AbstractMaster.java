@@ -28,7 +28,7 @@ public abstract class AbstractMaster implements Master {
     protected Jobs jobs;
     protected StepInstanceDAO stepInstanceDAO;
     protected MasterMessageSender messageSender;
-    protected boolean shutdownCalled = false;
+    protected volatile boolean shutdownCalled = false;
     protected String[] analyses;
     protected WorkerRunner workerRunner;
     protected WorkerRunner workerRunnerHighMemory;
@@ -39,6 +39,14 @@ public abstract class AbstractMaster implements Master {
 
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
+    }
+
+    public WorkerRunner getWorkerRunner() {
+        return workerRunner;
+    }
+
+    public WorkerRunner getWorkerRunnerHighMemory() {
+        return workerRunnerHighMemory;
     }
 
     public void setWorkerRunnerHighMemory(WorkerRunner workerRunnerHighMemory) {
