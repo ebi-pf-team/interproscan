@@ -28,6 +28,9 @@ public class ResponseQueueMessageListener implements MessageListener {
     @Required
     public void setRemoteJmsTemplate(JmsTemplate remoteJmsTemplate) {
         this.remoteJmsTemplate = remoteJmsTemplate;
+        if(workerMessageSender != null){
+            workerMessageSender.setRemoteJmsTemplate(remoteJmsTemplate);
+        }
     }
 
     @Required

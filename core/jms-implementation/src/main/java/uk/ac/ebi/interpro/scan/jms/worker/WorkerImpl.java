@@ -16,7 +16,6 @@ import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import javax.jms.Destination;
 import javax.jms.Session;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +32,7 @@ public class WorkerImpl implements Worker {
 
     private static final Logger LOGGER = Logger.getLogger(WorkerImpl.class.getName());
 
-    private long lastMessageFinishedTime = new Date().getTime();
+    private long lastMessageFinishedTime = System.currentTimeMillis(); //new Date().getTime();
 
     private final List<String> runningJobs = new ArrayList<String>();
 
@@ -300,7 +299,8 @@ public class WorkerImpl implements Worker {
             if (!runningJobs.remove(jmsMessageId)) {
                 LOGGER.error("Worker.jobFinished(jmsMessageId) has been called with a message ID that it does not recognise: " + jmsMessageId);
             }
-            lastMessageFinishedTime = new Date().getTime();
+            lastMessageFinishedTime = System.currentTimeMillis(); //new Date().getTime();
+
         }
     }
 
@@ -311,8 +311,9 @@ public class WorkerImpl implements Worker {
     public boolean stopIfAppropriate() {
         synchronized (jobListLock) {
             final long now = System.currentTimeMillis();
-            final boolean exceededLifespan = now - startUpTime > maximumLifeMillis;
-            final boolean exceededIdleTime = now - lastMessageFinishedTime > maximumIdleTimeMillis;
+            final boolean exceededLifespan = (now - startUpTime) > maximumLifeMillis;
+            final boolean exceededIdleTime = (now - lastMessageFinishedTime) > maximumIdleTimeMillis;
+            LOGGER.debug("Now: "+ now+ " idleTime: " +lastMessageFinishedTime);
             if (runningJobs.size() == 0 && (exceededLifespan || exceededIdleTime)) {
 
                 if (LOGGER.isInfoEnabled()) {
@@ -342,8 +343,9 @@ public class WorkerImpl implements Worker {
      */
     @Override
     public void run() {
-        startStatsMessageListener();
+        System.out.println("Running InterProScan worker - run() ...");
         LOGGER.info("Running InterProScan worker ...");
+        startStatsMessageListener();
         statsUtil.pollStatsBrokerJobQueue();
 
         try {
@@ -370,7 +372,7 @@ public class WorkerImpl implements Worker {
                 Thread.sleep(5000);
             }
             statsUtil.pollStatsBrokerResponseQueue();
-            LOGGER.info("Response Stats: " + statsMessageListener.toString());
+            LOGGER.info("Response Stats: " + statsMessageListener.getStats());
             //stop the message listener
             remoteQueueJmsContainer.stop();
             long waitingTime=20 * 1000;
@@ -530,6 +532,7 @@ public class WorkerImpl implements Worker {
         }
 
         final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory(masterUri);
+
         activeMQConnectionFactory.setOptimizeAcknowledge(true);
         activeMQConnectionFactory.setUseCompression(true);
         activeMQConnectionFactory.setAlwaysSessionAsync(false);
@@ -563,7 +566,9 @@ public class WorkerImpl implements Worker {
         }
         //start the listeners
         remoteQueueJmsContainer.start();
+
         managerTopicMessageListenerJmsContainer.start();
+
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("MessageListenerContainer started, connected to: " + masterUri);

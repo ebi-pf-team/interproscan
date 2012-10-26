@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
+import uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor;
 
 import java.io.IOException;
 
@@ -24,6 +25,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private String i5Command;
 
+    private int gridJobsLimit = 1000;
+
     private boolean highMemory;
 
     private boolean masterWorker;
@@ -31,6 +34,18 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     private static long submissionTimeMillis = 0;
 
     private WorkerStartupStrategy workerStartupStrategy;
+
+    private LSFMonitor lsfMonitor;
+
+    @Required
+    public void setGridJobsLimit(int gridJobsLimit) {
+        this.gridJobsLimit = gridJobsLimit;
+    }
+
+    @Required
+    public void setLsfMonitor(LSFMonitor lsfMonitor) {
+        this.lsfMonitor = lsfMonitor;
+    }
 
     @Required
     public void setSubmissionCommand(String submissionCommand) {
@@ -76,20 +91,27 @@ public class SubmissionWorkerRunner implements WorkerRunner {
      * The masterWorker boolean flag indicates if a worker was created by the master itself. TRUE if created by the master, otherwise FALSE.
      */
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory, boolean masterWorker) {
-        this.masterWorker=masterWorker;
+        this.masterWorker = masterWorker;
         startupNewWorker(priority,tcpUri,temporaryDirectory);
+        //reset the masterworker variable
+        this.masterWorker = false;
     }
 
 
     @Override
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
+        int activeJobs = lsfMonitor.activeJobs(projectId);
+        if(activeJobs > gridJobsLimit){
+            LOGGER.warn("Grid Job Limit has been reached,  active Jobs: "+activeJobs);
+            return;
+        }
+        LOGGER.debug("GridJobs -   active Jobs on the cluster: "+activeJobs);
         if (workerStartupStrategy.startUpWorker(priority)) {
             StringBuilder command = new StringBuilder(gridCommand);
 
             if (!projectId.equals(null)) {
                 command.append(" -P "+ projectId);
             }
-
             command.append(" " + i5Command);
 
             LOGGER.debug("command without arguments : "+command);
