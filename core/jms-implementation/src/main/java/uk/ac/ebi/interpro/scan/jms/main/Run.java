@@ -597,7 +597,7 @@ public class Run {
             //set the jms template for the messagesender
 //            final WorkerMessageSenderImpl workerMessageSender = (WorkerMessageSenderImpl) ctx.getBean("workerMessageSender");
 //            workerMessageSender.setRemoteJmsTemplate(worker.getRemoteJmsTemplate());
-            LOGGER.debug("parsedCommandLine 1: " + parsedCommandLine.toString());
+//            LOGGER.debug("parsedCommandLine 1: " + parsedCommandLine.toString());
             LOGGER.debug("I5Option.TEMP_DIRECTORY_NAME: "+I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
             System.out.println("temp dir name: ");
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {

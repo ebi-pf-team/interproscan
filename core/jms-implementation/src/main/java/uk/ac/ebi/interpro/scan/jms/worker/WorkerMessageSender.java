@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jms.Destination;
@@ -29,4 +30,25 @@ public interface WorkerMessageSender {
      * send a shutdown message to the other worker nodes
      */
     void sendShutDownMessage();
+
+    /**
+     * set the remote JMS template
+     *
+     * @param remoteJmsTemplate
+     */
+    void setRemoteJmsTemplate(JmsTemplate remoteJmsTemplate);
+
+    /**
+     * set the local JMS template
+     *
+     * @param localJmsTemplate
+     */
+    void setLocalJmsTemplate(JmsTemplate localJmsTemplate);
+
+    /**
+     * set the JMS topic template
+     *
+     * @param jmsTopicTemplate
+     */
+    void setJmsTopicTemplate(JmsTemplate jmsTopicTemplate);
 }
