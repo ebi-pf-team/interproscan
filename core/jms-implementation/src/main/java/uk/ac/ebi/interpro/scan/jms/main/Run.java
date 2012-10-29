@@ -103,7 +103,7 @@ public class Run {
         DISABLE_PRECALC("disable-precalc", "dp", false, "Optional.  Disables use of the precalculated match lookup service.  All match calculations will be run locally.", null, false, true),
         HIGH_MEM("highmem", "hm", false, "Optional, switch on the creation of a high memory worker. Please note normal and high mem workers share the same Spring configuration file.", null, false, false),
         TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", "TIER", false, false),
-        PROJECT_ID("projectid", "pid", false, "Optional, switch to specify the Project name for this i5 run.", "PROJECT-ID", false, false);
+        CLUSTER_RUN_ID("clusterrunid", "crid", false, "Optional, switch to specify the Project name for this i5 run.", "CLUSTER-RUN-ID", false, false);
 
         private String longOpt;
 
@@ -500,8 +500,8 @@ public class Run {
 
             if (bbMaster instanceof DistributedBlackBoxMaster && tcpConnectionString != null) {
                 ((DistributedBlackBoxMaster) bbMaster).setTcpUri(tcpConnectionString);
-                if (parsedCommandLine.hasOption(I5Option.PROJECT_ID.getLongOpt())) {
-                    final String projectId = parsedCommandLine.getOptionValue(I5Option.PROJECT_ID.getLongOpt());
+                if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
+                    final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     bbMaster.setProjectId(projectId);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                 }
@@ -509,17 +509,18 @@ public class Run {
             //TODO: The copy of the distributed master will retire someday (if distributed computing works fine)
             if (bbMaster instanceof DistributedBlackBoxMasterCopy && tcpConnectionString != null) {
                 ((DistributedBlackBoxMasterCopy) bbMaster).setTcpUri(tcpConnectionString);
-                //if (parsedCommandLine.hasOption(I5Option.PROJECT_ID.getLongOpt())) {
-//                    final String projectId = parsedCommandLine.getOptionValue(I5Option.PROJECT_ID.getLongOpt());
+                //if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
+//                    final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                // }
-                if (parsedCommandLine.hasOption(I5Option.PROJECT_ID.getLongOpt())) {
-                    LOGGER.debug("We have a project ID.");
-                    final String projectId = parsedCommandLine.getOptionValue(I5Option.PROJECT_ID.getLongOpt());
-                    System.out.println("The project ID for this run is: "+projectId);
+                if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
+                    LOGGER.debug("We have a project/Cluster Run ID.");
+                    final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
+                    System.out.println("The project/Cluster Run ID for this run is: "+projectId);
                     bbMaster.setProjectId(projectId);
                     ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                 }else{
-                    throw new IllegalStateException("The Distributed master need a project ID to continue, " );
+                    LOGGER.fatal("The Distributed master need a Cluster Run ID to continue, " );
+                    System.exit(1);
                 }
             }
 
@@ -618,8 +619,8 @@ public class Run {
                 }
             }
             //set the project name for this i5 run
-            if (parsedCommandLine.hasOption(I5Option.PROJECT_ID.getLongOpt())) {
-                worker.setProjectId(parsedCommandLine.getOptionValue(I5Option.PROJECT_ID.getLongOpt()));
+            if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
+                worker.setProjectId(parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt()));
 
             }
             LOGGER.debug("parsedCommandLine: " + parsedCommandLine.toString());
