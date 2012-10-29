@@ -64,7 +64,7 @@ public class StatsMessageListener implements MessageListener {
         if (stats == null){
            return false;
         }
-        //consumer counter is gresater than 1 (invmconsumer)
+        //consumer counter is greater than 1 (invmconsumer)
         return stats.getConsumerCount() > 1;
     }
 
@@ -81,6 +81,27 @@ public class StatsMessageListener implements MessageListener {
             return 0;
         }
         return stats.getEnqueueCount() - stats.getDispatchCount();
+    }
+
+    public int getEnqueueCount(){
+        if (stats == null){
+            return 0;
+        }
+        return stats.getEnqueueCount();
+    }
+
+    public int getDequeueCount(){
+        if (stats == null){
+            return 0;
+        }
+        return stats.getDequeueCount();
+    }
+
+    public int getDispatchCount(){
+        if (stats == null){
+            return 0;
+        }
+        return stats.getDispatchCount();
     }
 
     public void setStats(BrokerStatistics stats) {
