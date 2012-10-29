@@ -142,7 +142,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                         .append("1");
             }
             if(this.projectId!= null){
-                command.append(" --projectid=")
+                command.append(" --clusterrunid=")
                         .append(projectId);
             }
 

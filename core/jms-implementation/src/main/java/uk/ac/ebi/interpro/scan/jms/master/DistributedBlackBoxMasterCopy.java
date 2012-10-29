@@ -144,7 +144,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
             //statsUtil.pollStatsBrokerTopic();
             //final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
             //LOGGER.debug("Topic stats: " +statsMessageListener.getStats());
-            Thread.sleep(60*1000);
+            Thread.sleep(15*1000);
             messageSender.sendShutDownMessage();
             //LOGGER.debug("Topic stats 2: " +statsMessageListener.getStats());
         } catch (InterruptedException e) {
@@ -215,8 +215,8 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                     final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                     if (statsAvailable) {
                         final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                        if ((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0) ||
-                                (workerRequired && statsMessageListener.getConsumers() < 10)) {
+                        if ((statsUtil.getStatsMessageListener().getConsumers() < 30 && statsUtil.getStatsMessageListener().getQueueSize() > 5) ||
+                                (workerRequired && statsUtil.getStatsMessageListener().getConsumers() < 30)) {
                             LOGGER.debug("Starting a normal worker.");
                             workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
                         }

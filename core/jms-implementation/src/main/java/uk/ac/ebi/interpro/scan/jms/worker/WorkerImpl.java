@@ -373,6 +373,11 @@ public class WorkerImpl implements Worker {
             }
             statsUtil.pollStatsBrokerResponseQueue();
             LOGGER.info("Response Stats: " + statsMessageListener.getStats());
+            boolean  isResponseQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() > 0;
+            int responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
+            statsUtil.pollStatsBrokerJobQueue();
+            boolean  islocalQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() > 0;
+            int requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
             //stop the message listener
             remoteQueueJmsContainer.stop();
             long waitingTime=20 * 1000;
@@ -380,9 +385,17 @@ public class WorkerImpl implements Worker {
             if (shutdown) {
                 waitingTime=1000;
             }
-            while (statsMessageListener.hasConsumers()) {
+            while (statsMessageListener.hasConsumers() || (requestEnqueueCount > responseDequeueCount) || ((!islocalQueueEmpty) || (!isResponseQueueEmpty))) {
+                LOGGER.debug("inShutdown mode: requestEnqueueCount: " + requestEnqueueCount+ " responseDequeueCount: "+responseDequeueCount);
                 Thread.sleep(waitingTime);
+                statsUtil.pollStatsBrokerResponseQueue();
+                LOGGER.debug("Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+                isResponseQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() == 0;
+                responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
                 statsUtil.pollStatsBrokerJobQueue();
+                LOGGER.debug("RequestQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
+                islocalQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() == 0;
+                requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
             }
             LOGGER.info("Worker: completed tasks.  Stopping now.");
         } catch (InterruptedException e) {
@@ -566,7 +579,6 @@ public class WorkerImpl implements Worker {
         }
         //start the listeners
         remoteQueueJmsContainer.start();
-
         managerTopicMessageListenerJmsContainer.start();
 
 
