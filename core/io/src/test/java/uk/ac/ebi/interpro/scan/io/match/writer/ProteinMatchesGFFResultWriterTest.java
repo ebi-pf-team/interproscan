@@ -103,18 +103,36 @@ public class ProteinMatchesGFFResultWriterTest {
         Set<Match> matches = new HashSet<Match>();
         Set<Location> locations = new HashSet<Location>();
         Match match = new Match(signature, locations) {
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
         };
         matches.add(match);
 
         match.addLocation(new Location(1, 16) {
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
         });
         match.addLocation(new Location(1, 17) {
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
         });
         match.addLocation(new Location(1, 15) {
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
         });
         match.addLocation(new Location(14, 15) {
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
         });
         match.addLocation(new Location(14, 17) {
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
         });
         writer.processMatches(matches, "target", "12 May 2012", protein, "P00000");
 
