@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -65,6 +66,14 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<Hmmer3Location> clonedLocations = new HashSet<Hmmer3Location>(this.getLocations().size());
+        for (Hmmer3Location location : this.getLocations()) {
+            clonedLocations.add((Hmmer3Location) location.clone());
+        }
+        return new Hmmer3Match(this.getSignature(), this.getScore(), this.getEvalue(), clonedLocations);
     }
 
     /**
@@ -148,6 +157,12 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         @Override
         public String toString() {
             return ToStringBuilder.reflectionToString(this);
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd());
+            clone.setHmmLength(this.getHmmLength());
+            return clone;
         }
 
     }

@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -91,6 +92,14 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
                 .appendSuper(super.hashCode())
                 .append(evalue)
                 .toHashCode();
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<FingerPrintsLocation> clonedLocations = new HashSet<FingerPrintsLocation>(this.getLocations().size());
+        for (FingerPrintsLocation location : this.getLocations()) {
+            clonedLocations.add((FingerPrintsLocation) location.clone());
+        }
+        return new FingerPrintsMatch(this.getSignature(), this.getEvalue(), this.getGraphscan(), clonedLocations);
     }
 
     /**
@@ -175,6 +184,10 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
                     .append(score)
                     .append(motifNumber)
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new FingerPrintsLocation(this.getStart(), this.getEnd(), this.getPvalue(), this.getScore(), this.getMotifNumber());
         }
 
     }

@@ -22,6 +22,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -60,6 +61,15 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         return new HashCodeBuilder(39, 49)
                 .appendSuper(super.hashCode())
                 .toHashCode();
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<Hmmer2Location> clonedLocations = new HashSet<Hmmer2Location>(this.getLocations().size());
+        for (Hmmer2Location location : this.getLocations()) {
+            clonedLocations.add((Hmmer2Location) location.clone());
+        }
+        return new Hmmer2Match(this.getSignature(),
+                this.getScore(), this.getEvalue(), clonedLocations);
     }
 
     /**
@@ -106,6 +116,12 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
             return new HashCodeBuilder(39, 53)
                     .appendSuper(super.hashCode())
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            final Hmmer2Location clone = new Hmmer2Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds());
+            clone.setHmmLength(this.getHmmLength());
+            return clone;
         }
     }
 }
