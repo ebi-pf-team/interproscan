@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -45,6 +46,14 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
 
     public ProfileScanMatch(Signature signature, Set<ProfileScanLocation> locations) {
         super(signature, locations);
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<ProfileScanLocation> clonedLocations = new HashSet<ProfileScanLocation>(this.getLocations().size());
+        for (ProfileScanLocation location : this.getLocations()) {
+            clonedLocations.add((ProfileScanLocation) location.clone());
+        }
+        return new ProfileScanMatch(this.getSignature(), clonedLocations);
     }
 
     /**
@@ -134,6 +143,10 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
                     .append(score)
                     .append(cigarAlignment)
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new ProfileScanLocation(this.getStart(), this.getEnd(), this.getScore(), this.getCigarAlignment());
         }
 
     }

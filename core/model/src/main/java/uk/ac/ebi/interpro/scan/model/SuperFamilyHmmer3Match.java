@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -31,6 +32,14 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
     public SuperFamilyHmmer3Match(Signature signature, double evalue, Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations) {
         super(signature, locations);
         setEvalue(evalue);
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<SuperFamilyHmmer3Location> clonedLocations = new HashSet<SuperFamilyHmmer3Location>(this.getLocations().size());
+        for (SuperFamilyHmmer3Location location : this.getLocations()) {
+            clonedLocations.add((SuperFamilyHmmer3Location) location.clone());
+        }
+        return new SuperFamilyHmmer3Match(this.getSignature(), this.getEvalue(), clonedLocations);
     }
 
     @XmlAttribute(required = true)
@@ -99,6 +108,10 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
             return new HashCodeBuilder(29, 53)
                     .appendSuper(super.hashCode())
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new SuperFamilyHmmer3Location(this.getStart(), this.getEnd());
         }
     }
 

@@ -19,38 +19,49 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * BlastProDom filtered match.
  *
- * @author  Antony Quinn
+ * @author Antony Quinn
  * @version $Id$
- * @since   1.0
+ * @since 1.0
  */
 @Entity
-@Table(name="blast_prodom_match")
-@XmlType(name="BlastProDomMatchType")
+@Table(name = "blast_prodom_match")
+@XmlType(name = "BlastProDomMatchType")
 public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation> {
 
-    protected BlastProDomMatch() {}
+    protected BlastProDomMatch() {
+    }
 
     public BlastProDomMatch(Signature signature, Set<BlastProDomLocation> locations) {
         super(signature, locations);
     }
 
+    public Object clone() throws CloneNotSupportedException {
+        final Set<BlastProDomLocation> clonedLocations = new HashSet<BlastProDomLocation>(this.getLocations().size());
+        for (BlastProDomLocation location : this.getLocations()) {
+            clonedLocations.add((BlastProDomLocation) location.clone());
+        }
+        return new BlastProDomMatch(this.getSignature(), clonedLocations);
+    }
+
     /**
      * Location(s) of match on protein sequence
      *
-     * @author  Antony Quinn
+     * @author Antony Quinn
      */
     @Entity
-    @Table(name="blast_prodom_location")
-    @XmlType(name="BlastProDomLocationType")
+    @Table(name = "blast_prodom_location")
+    @XmlType(name = "BlastProDomLocationType")
     public static class BlastProDomLocation extends Location {
 
         @Column(nullable = false)
@@ -62,7 +73,8 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
-        protected BlastProDomLocation() {}
+        protected BlastProDomLocation() {
+        }
 
         public BlastProDomLocation(int start, int end, double score, double evalue) {
             super(start, end);
@@ -70,7 +82,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
             setEvalue(evalue);
         }
 
-        @XmlAttribute(required=true)
+        @XmlAttribute(required = true)
         public double getScore() {
             return score;
         }
@@ -79,7 +91,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
             this.score = score;
         }
 
-        @XmlAttribute(required=true)
+        @XmlAttribute(required = true)
         public double getEvalue() {
             return evalue;
         }
@@ -89,7 +101,8 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         }
 
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (!(o instanceof BlastProDomLocation))
@@ -102,7 +115,8 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
                     .isEquals();
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return new HashCodeBuilder(19, 21)
                     .appendSuper(super.hashCode())
                     .append(score)
@@ -110,6 +124,8 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
                     .toHashCode();
         }
 
+        public Object clone() throws CloneNotSupportedException {
+            return new BlastProDomLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue());
+        }
     }
-
 }

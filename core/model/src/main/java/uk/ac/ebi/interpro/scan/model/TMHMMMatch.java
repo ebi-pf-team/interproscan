@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,6 +30,14 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
         if (!TMHMMSignature.isValidSignature(signature)) {
             throw new IllegalArgumentException("The Signature object being used for this TMHMM does not appear to be a valid TMHMM signature.");
         }
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<TMHMMLocation> clonedLocations = new HashSet<TMHMMLocation>(this.getLocations().size());
+        for (TMHMMLocation location : this.getLocations()) {
+            clonedLocations.add((TMHMMLocation) location.clone());
+        }
+        return new TMHMMMatch(this.getSignature(), clonedLocations);
     }
 
     @Override
@@ -163,6 +172,10 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
             return new HashCodeBuilder(19, 61)
                     .appendSuper(super.hashCode())
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new TMHMMLocation(this.getStart(), this.getEnd(), this.getPrediction(), this.getScore());
         }
     }
 }

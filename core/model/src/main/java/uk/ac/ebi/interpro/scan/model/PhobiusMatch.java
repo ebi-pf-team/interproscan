@@ -6,6 +6,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -30,6 +31,14 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
         if (!PhobiusFeatureType.isValidSignature(signature)) {
             throw new IllegalArgumentException("The Signature object being used for this PhobiusMatch does not appear to be a valid Phobius signature.");
         }
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<PhobiusLocation> clonedLocations = new HashSet<PhobiusLocation>(this.getLocations().size());
+        for (PhobiusLocation location : this.getLocations()) {
+            clonedLocations.add((PhobiusLocation) location.clone());
+        }
+        return new PhobiusMatch(this.getSignature(), clonedLocations);
     }
 
     @Override
@@ -84,6 +93,10 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
             return new HashCodeBuilder(29, 53)
                     .appendSuper(super.hashCode())
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new PhobiusLocation(this.getStart(), this.getEnd());
         }
     }
 
