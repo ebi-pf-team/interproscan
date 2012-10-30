@@ -6,6 +6,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -45,6 +46,14 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
                 .toHashCode();
     }
 
+    public Object clone() throws CloneNotSupportedException {
+        final Set<CoilsLocation> clonedLocations = new HashSet<CoilsLocation>(this.getLocations().size());
+        for (CoilsLocation location : this.getLocations()) {
+            clonedLocations.add((CoilsLocation) location.clone());
+        }
+        return new CoilsMatch(this.getSignature(), clonedLocations);
+    }
+
     /**
      * Location of Coils match on a protein sequence
      *
@@ -79,6 +88,10 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
             return new HashCodeBuilder(29, 53)
                     .appendSuper(super.hashCode())
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new CoilsLocation(this.getStart(), this.getEnd());
         }
     }
 

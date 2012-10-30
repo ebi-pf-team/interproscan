@@ -6,6 +6,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,6 +30,14 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
         // Only ever 1 Signal Peptide location
         super(signature, locations);
         this.orgType = orgType;
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<SignalPLocation> clonedLocations = new HashSet<SignalPLocation>(this.getLocations().size());
+        for (SignalPLocation location : this.getLocations()) {
+            clonedLocations.add((SignalPLocation) location.clone());
+        }
+        return new SignalPMatch(this.getSignature(), this.getOrgType(), clonedLocations);
     }
 
     @Enumerated(EnumType.ORDINAL)   // Using ordinal to keep the database size down.
@@ -95,6 +104,10 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
                     .appendSuper(super.hashCode())
                     .append(score)
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new SignalPLocation(this.getStart(), this.getEnd(), this.getScore());
         }
 
     }

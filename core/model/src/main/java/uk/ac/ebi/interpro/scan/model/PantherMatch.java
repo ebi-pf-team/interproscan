@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -54,6 +55,14 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         setEvalue(evalue);
         this.familyName = familyName;
         this.score = score;
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<PantherLocation> clonedLocations = new HashSet<PantherLocation>(this.getLocations().size());
+        for (PantherLocation location : this.getLocations()) {
+            clonedLocations.add((PantherLocation) location.clone());
+        }
+        return new PantherMatch(this.getSignature(), clonedLocations, this.getEvalue(), this.getFamilyName(), this.getScore());
     }
 
     @XmlAttribute(required = true)
@@ -146,6 +155,10 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
             return new HashCodeBuilder(19, 61)
                     .appendSuper(super.hashCode())
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new PantherLocation(this.getStart(), this.getEnd());
         }
     }
 }

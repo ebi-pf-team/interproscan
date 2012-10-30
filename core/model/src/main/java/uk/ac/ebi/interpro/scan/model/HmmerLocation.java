@@ -127,7 +127,7 @@ public abstract class HmmerLocation extends Location {
         return hmmLength;
     }
 
-    private void setHmmLength(int hmmLength) {
+    protected void setHmmLength(int hmmLength) {
         this.hmmLength = hmmLength;
     }
 

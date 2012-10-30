@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,6 +48,14 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
 
     public PatternScanMatch(Signature signature, Set<PatternScanLocation> locations) {
         super(signature, locations);
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final Set<PatternScanLocation> clonedLocations = new HashSet<PatternScanLocation>(this.getLocations().size());
+        for (PatternScanLocation location : this.getLocations()) {
+            clonedLocations.add((PatternScanLocation) location.clone());
+        }
+        return new PatternScanMatch(this.getSignature(), clonedLocations);
     }
 
     /**
@@ -190,6 +199,10 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
                     .append(level)
                     .append(cigarAlignment)
                     .toHashCode();
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return new PatternScanLocation(this.getStart(), this.getEnd(), this.getLevel(), this.getCigarAlignment());
         }
 
     }
