@@ -385,8 +385,11 @@ public class WorkerImpl implements Worker {
             if (shutdown) {
                 waitingTime=1000;
             }
-            while (statsMessageListener.hasConsumers() || (requestEnqueueCount > responseDequeueCount) || ((!islocalQueueEmpty) || (!isResponseQueueEmpty))) {
-                LOGGER.debug("inShutdown mode: requestEnqueueCount: " + requestEnqueueCount+ " responseDequeueCount: "+responseDequeueCount);
+            //statsUtil.getStatsMessageListener().hasConsumers()
+
+            while ((requestEnqueueCount > responseDequeueCount) || ((!islocalQueueEmpty) || (!isResponseQueueEmpty))) {
+                LOGGER.debug("inShutdown mode: # of consumers: "+ statsUtil.getStatsMessageListener().getConsumers()+ " requestEnqueueCount: " + requestEnqueueCount+ " responseDequeueCount: "+responseDequeueCount);
+                LOGGER.debug("islocalQueueEmpty: "+ islocalQueueEmpty+ " isResponseQueueEmpty: " + isResponseQueueEmpty);
                 Thread.sleep(waitingTime);
                 statsUtil.pollStatsBrokerResponseQueue();
                 LOGGER.debug("Response Stats: " + statsUtil.getStatsMessageListener().getStats());
@@ -397,7 +400,11 @@ public class WorkerImpl implements Worker {
                 islocalQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() == 0;
                 requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
             }
-            LOGGER.info("Worker: completed tasks.  Stopping now.");
+            //send shutdown message
+            managerTopicMessageListener.getWorkerMessageSender().sendShutDownMessage();
+            //sleep for 4 seconds and then exit
+            Thread.sleep(4*1000);
+            LOGGER.info("Worker: completed tasks. Shutdown message sent. Stopping now.");
         } catch (InterruptedException e) {
             LOGGER.error("InterruptedException thrown by Worker.  Stopping now.", e);
         }
