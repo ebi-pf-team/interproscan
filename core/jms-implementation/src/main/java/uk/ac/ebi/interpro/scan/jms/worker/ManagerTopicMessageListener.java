@@ -28,6 +28,10 @@ public class ManagerTopicMessageListener implements MessageListener {
         this.workerMessageSender = workerMessageSender;
     }
 
+    public WorkerMessageSender getWorkerMessageSender() {
+        return workerMessageSender;
+    }
+
     public boolean isShutdown() {
         return shutdown;
     }
