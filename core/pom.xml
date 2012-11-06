@@ -112,6 +112,7 @@
         <module>jms-implementation</module>
         <module>cli</module>
         <module>precalcmatches</module>
+        <module>condensed-view</module>
         <!--<module>master-tools</module>-->
     </modules>
 
@@ -185,8 +186,6 @@
             <version>2.2.2</version>
             <scope>test</scope>
         </dependency>
-
-
 
 
         <!-- Spring test integration -->

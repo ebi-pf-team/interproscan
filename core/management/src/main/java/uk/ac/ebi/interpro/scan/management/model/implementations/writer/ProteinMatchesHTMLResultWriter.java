@@ -30,6 +30,8 @@ import java.util.List;
  */
 public class ProteinMatchesHTMLResultWriter {
 
+    private static final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
+
     private static final Logger LOGGER = Logger.getLogger(ProteinMatchesHTMLResultWriter.class.getName());
 
     private Configuration freeMarkerConfig;
@@ -85,6 +87,36 @@ public class ProteinMatchesHTMLResultWriter {
     }
 
     /**
+     * Returns the protein view for a given SimpleProtein object as a String.
+     *
+     * @param simpleProtein for which to return a view
+     * @return the view as a String
+     * @throws IOException
+     * @throws TemplateException
+     */
+    public String write(final SimpleProtein simpleProtein) throws IOException, TemplateException {
+        checkEntryHierarchy();
+        if (simpleProtein != null) {
+            //Build model for FreeMarker
+            final SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
+            Writer writer = null;
+            try {
+                StringWriter stringWriter = new StringWriter();
+                writer = new BufferedWriter(stringWriter);
+                final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
+                temp.process(model, writer);
+                writer.flush();
+                return stringWriter.toString();
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Writes out protein view to an zipped and compressed HTML file.
      *
      * @param protein containing matches to be written out
@@ -92,15 +124,7 @@ public class ProteinMatchesHTMLResultWriter {
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
     public int write(final Protein protein) throws IOException {
-        if (entryHierarchy == null) {
-            if (appContext != null && entryHierarchyBeanId != null) {
-                this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
-            } else {
-                if (LOGGER.isEnabledFor(Level.WARN)) {
-                    LOGGER.warn("Application context or entry hierarchy bean aren't initialised successfully!");
-                }
-            }
-        }
+        checkEntryHierarchy();
         if (entryHierarchy != null) {
             for (ProteinXref xref : protein.getCrossReferences()) {
                 final SimpleProtein simpleProtein = SimpleProtein.valueOf(protein, xref, entryHierarchy);
@@ -135,6 +159,18 @@ public class ProteinMatchesHTMLResultWriter {
         return 0;
     }
 
+    private void checkEntryHierarchy() {
+        if (entryHierarchy == null) {
+            if (appContext != null && entryHierarchyBeanId != null) {
+                this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
+            } else {
+                if (LOGGER.isEnabledFor(Level.WARN)) {
+                    LOGGER.warn("Application context or entry hierarchy bean aren't initialised successfully!");
+                }
+            }
+        }
+    }
+
     private void checkTempDirectory(String tempDirectory) throws IOException {
         File tempFileDirectory = new File(tempDirectory);
         if (!tempFileDirectory.exists()) {
@@ -143,14 +179,13 @@ public class ProteinMatchesHTMLResultWriter {
                 LOGGER.warn("Couldn't create temp directory " + tempDirectory);
             }
 
-        } else {
+        } else if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Temp directory already exists, no need to create one.");
         }
     }
 
     private SimpleHash buildModelMap(SimpleProtein p, EntryHierarchy entryHierarchy) {
-        final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
-        SimpleHash model = new SimpleHash();
+        final SimpleHash model = new SimpleHash();
         if (p != null) {
             model.put("protein", p);
             model.put("condensedView", new CondensedView(p));
