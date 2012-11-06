@@ -519,7 +519,7 @@ public class Run {
                     bbMaster.setProjectId(projectId);
                     ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                 }else{
-                    LOGGER.fatal("The Distributed master need a Cluster Run ID to continue, " );
+                    LOGGER.fatal("The Distributed master need a Cluster Run ID to continue, please specify the -clusterrunid (-crid) option." );
                     System.exit(1);
                 }
             }
