@@ -28,19 +28,17 @@ public class AnalyseMatchDataResult {
         this.entryHierarchy = entryHierarchy;
     }
 
+    public AnalyseMatchDataResult(EntryHierarchy entryHierarchy) {
+        this(null, entryHierarchy);
+    }
+
     /**
-     * Convert a collection of {@link MatchDataRecord} objects
-     * into a {@link SimpleProtein} object using necessary
-     * business logic.
+     * Load and parse a Resource, returning a populated SimpleProtein object.
      *
      * @param resource Resource to parse
      * @return The simple protein, or NULL if nothing found
      */
     public SimpleProtein parseMatchDataOutput(Resource resource) {
-        SimpleProtein protein = null;
-        String queryOutputText = "";
-        String line = "";
-
         /*
          * Example output:
          *
@@ -72,6 +70,22 @@ public class AnalyseMatchDataResult {
             return null;
         }
 
+        return createSimpleProtein(records);
+    }
+
+    /**
+     * Convert a collection of {@link MatchDataRecord} objects
+     * into a {@link SimpleProtein} object using necessary
+     * business logic.
+     *
+     * @param records a Collection of MatchDataRecord objects
+     * @return The simple protein, or NULL if nothing found
+     */
+    public SimpleProtein createSimpleProtein(Collection<MatchDataRecord> records) {
+        if (records == null || records.isEmpty()) {
+            return null;
+        }
+        SimpleProtein protein = null;
         for (MatchDataRecord record : records) {
             // Loop through query output one line at a time
 
@@ -90,28 +104,20 @@ public class AnalyseMatchDataResult {
                         record.isProteinFragment());
             }
 
-            String methodAc = record.getMethodAc();
-            String methodName = record.getMethodName();
-            String methodDatabase = record.getMethodDatabase();
-            Integer posFrom = record.getPosFrom();
-            Integer posTo = record.getPosTo();
-            //Double score = record.getScore();
-            String entryAc = record.getEntryAc();
-            String entryShortName = record.getEntryShortName();
-            String entryName = record.getEntryName();
-            String entryTypeString = record.getEntryType();
-            EntryType entryType = EntryType.parseName(entryTypeString);
+            final String methodAc = record.getMethodAc();
+            final String methodName = record.getMethodName();
+            final String methodDatabase = record.getMethodDatabase();
+            final String entryAc = record.getEntryAc();
+            final String entryShortName = record.getEntryShortName();
+            final String entryName = record.getEntryName();
+            final String entryTypeString = record.getEntryType();
+            final EntryType entryType = EntryType.parseName(entryTypeString);
             if (entryType == null) {
                 throw new IllegalStateException("Cannot convert entry type String " + entryTypeString + " to an EntryType object.");
             }
 
-            // Check if unreleased entry
-            if (!entryAc.equals("") && entryTypeString.equals("")) {
-                entryTypeString = EntryType.UNKNOWN.toString();
-            }
-
             // Need to eventually associate this match location with the existing SimpleProtein object
-            SimpleLocation location = new SimpleLocation(posFrom, posTo);
+            SimpleLocation location = new SimpleLocation(record.getPosFrom(), record.getPosTo());
 
             // Has this entry already been added to the protein?
             List<SimpleEntry> entries = protein.getAllEntries();
@@ -143,12 +149,6 @@ public class AnalyseMatchDataResult {
                 entry.getSignaturesMap().put(methodAc, signature);
                 entries.add(entry);
             }
-
-            queryOutputText += line + '\n';
-
-        }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Query returned:\n" + queryOutputText);
         }
 
         if (protein == null) {
@@ -170,8 +170,8 @@ public class AnalyseMatchDataResult {
             }
             entry.setLocations(locations);
         }
-
         return protein;
     }
+
 
 }
