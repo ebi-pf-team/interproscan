@@ -5,7 +5,7 @@
     <parent>
         <artifactId>condensed-view</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5RC3</version>
+        <version>5RC4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -36,7 +36,7 @@
         <dependency>
             <artifactId>condensed-berkeley</artifactId>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
-            <version>5RC3</version>
+            <version>5RC4</version>
         </dependency>
 
         <dependency>
