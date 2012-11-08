@@ -53,7 +53,7 @@
          cannot be handled, the sequence will not be written out to the fasta file.-->
         <property name="fastaFileWriter">
             <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter">
-                <property name="validAlphabet" value="ARNDCEQGHILKMFPSTWYV"/>
+                <property name="validAlphabet" value="ARNDCEQGHILKMFPSTWYVX"/>
                 <property name="residueSubstitutions">
                     <map>
                         <entry key="O" value="K"/>
