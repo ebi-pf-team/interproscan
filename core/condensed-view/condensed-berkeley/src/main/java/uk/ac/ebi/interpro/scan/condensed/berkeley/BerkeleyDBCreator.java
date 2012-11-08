@@ -37,7 +37,6 @@ public class BerkeleyDBCreator {
 
     private static final String MAX_UPI_FOR_TRACE_LOGGING = "UPI0000001000";
 
-
     private static final String CREATE_TEMP_TABLE =
             "create global temporary table condensed_tmp_tab " +
                     "on commit preserve rows " +
@@ -60,14 +59,16 @@ public class BerkeleyDBCreator {
                     "      INNER JOIN interpro.protein p  on p.crc64 = up.crc64 " +
                     // If logging at trace level, the next line will be added to reduce massively the number of proteins included.
                     ((BerkeleyDBCreator.LOGGER.isTraceEnabled()) ? "and up.upi < '" + MAX_UPI_FOR_TRACE_LOGGING + "'" : "") +
-                    "      INNER JOIN uniparc.xref x on p.protein_ac = x.ac and x.upi = up.upi and x.deleted='N'" +
+                    "      INNER JOIN uniparc.xref x on p.protein_ac = x.ac and x.upi = up.upi " +
                     "      INNER JOIN interpro.match p_m ON p.protein_ac = p_m.protein_ac " +
                     "      INNER JOIN interpro.method m ON p_m.method_ac = m.method_ac " +
                     "      INNER JOIN interpro.cv_database m_db ON m.dbcode = m_db.dbcode " +
                     "      INNER JOIN interpro.entry2method e_m on m.method_ac = e_m.method_ac " +
-                    // TODO - Get rid of restriction to less than IPR026662
-                    "      INNER JOIN interpro.entry e ON e_m.entry_ac = e.entry_ac and e.checked = 'Y' and e.entry_type in ('D','R') and e.entry_ac <= 'IPR026662'" +
-                    "      INNER JOIN interpro.cv_entry_type cv_et ON e.entry_type = cv_et.code";
+                    "      INNER JOIN interpro.entry e ON e_m.entry_ac = e.entry_ac " +
+                    "      INNER JOIN interpro.cv_entry_type cv_et ON e.entry_type = cv_et.code " +
+                    "WHERE x.deleted = 'N' " +
+                    "AND e.entry_type in ('D','R') " +
+                    "AND e.checked = 'Y'";
 
 
     private static final String QUERY_TEMP_TABLE =
@@ -271,7 +272,8 @@ public class BerkeleyDBCreator {
             PreparedStatement ps = interproConn.prepareStatement(QUERY_TEMP_TABLE);
             rs = ps.executeQuery();
 
-            int proteinCount = 0;
+            int matchCount = 0;
+            int uniqueSequenceCount = 0;
 
             BerkeleyCondensedMarkup current = null;
             Collection<MatchDataRecord> records = null;
@@ -287,8 +289,10 @@ public class BerkeleyDBCreator {
                     records = new HashSet<MatchDataRecord>();
                     current.setMd5(md5);
                     current.setUniprotAcs(md5ToAccession.get(md5));
-                    if (proteinCount++ % 10000 == 0) {
-                        System.out.println("Stored " + proteinCount + " proteins with HTML snippet.");
+                    if (LOGGER.isDebugEnabled()) {
+                        if (uniqueSequenceCount++ % 100000 == 0) {
+                            LOGGER.debug(uniqueSequenceCount + " Unique sequences.");
+                        }
                     }
                 }
                 // Add the necessary data to the records collection
@@ -312,9 +316,10 @@ public class BerkeleyDBCreator {
                         "",
                         false
                 ));
-                proteinCount++;
-                if (proteinCount % 100000 == 0) {
-                    System.out.println("Stored markup for " + proteinCount + " proteins.");
+                if (LOGGER.isDebugEnabled()) {
+                    if (matchCount++ % 200000 == 0) {
+                        LOGGER.debug(matchCount + " matches.");
+                    }
                 }
             }
             if (current != null) {
