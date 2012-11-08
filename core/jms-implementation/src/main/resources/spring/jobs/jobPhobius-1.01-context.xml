@@ -48,7 +48,7 @@
          If any other characters appear that cannot be handled, the sequence will not be written out to the fasta file.-->
         <property name="fastaFileWriter">
             <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter">
-                <property name="validAlphabet" value="ARNDCEQGHILKMFPSTWYVU"/>
+                <property name="validAlphabet" value="ARNDCEQGHILKMFPSTWYVUX"/>
                 <property name="residueSubstitutions">
                     <map>
                         <entry key="O" value="K"/>
