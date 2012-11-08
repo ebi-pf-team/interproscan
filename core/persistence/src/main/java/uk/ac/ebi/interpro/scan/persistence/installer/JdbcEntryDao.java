@@ -17,4 +17,11 @@ public interface JdbcEntryDao {
      * Returns the latest InterPro database version.
      */
     String getLatestDatabaseReleaseVersion();
+
+    /**
+     * Just used to test the connection to the database.
+     *
+     * @return true if OK.
+     */
+    boolean testConnection();
 }

@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAO;
 import uk.ac.ebi.interpro.scan.persistence.installer.JdbcEntryDao;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -82,6 +83,20 @@ public class Installer implements Runnable {
             LOGGER.info("No signatures or entries will be loaded (empty database).");
             return;
         }
+        if (mode.equals(Installer.InstallerMode.LOAD_ALL) || mode.equals(Installer.InstallerMode.LOAD_ENTRIES)) {
+            LOGGER.info("Testing JDBC Connection");
+            try {
+                if (!testJDBC()) {
+                    throw new SQLException("No connection available.");
+                }
+            } catch (SQLException e) {
+                LOGGER.info("Unable to connect!!");
+                e.printStackTrace();
+                System.exit(1);
+            }
+            LOGGER.info("OK");
+        }
+
         if (mode.equals(Installer.InstallerMode.LOAD_ALL) || mode.equals(Installer.InstallerMode.LOAD_MODELS)) {
             LOGGER.info("Loading signatures");
             loadModels();
@@ -93,6 +108,10 @@ public class Installer implements Runnable {
             LOGGER.info("Loaded entries and related info");
         }
 
+    }
+
+    private boolean testJDBC() throws SQLException {
+        return jdbcEntryDAO.testConnection();
     }
 
     private void loadEntries() {
