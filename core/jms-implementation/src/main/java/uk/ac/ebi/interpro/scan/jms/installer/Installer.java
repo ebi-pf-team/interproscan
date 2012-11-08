@@ -107,7 +107,6 @@ public class Installer implements Runnable {
             loadEntries();
             LOGGER.info("Loaded entries and related info");
         }
-
     }
 
     private boolean testJDBC() throws SQLException {
