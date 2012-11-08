@@ -481,7 +481,7 @@ public class Entry implements Serializable {
         return pathwayXRefs;
     }
 
-    public void setPathwayXRefs(Set<PathwayXref> xrefs) {
+    public void setPathwayXRefs(Collection<PathwayXref> xrefs) {
         for (PathwayXref xref : xrefs) {
             addPathwayXRef(xref);
         }

@@ -21,4 +21,8 @@ public class NoOpEntryDaoImpl implements JdbcEntryDao {
     public String getLatestDatabaseReleaseVersion() {
         return null;  // No-op
     }
+
+    public boolean testConnection() {
+        return true;
+    }
 }

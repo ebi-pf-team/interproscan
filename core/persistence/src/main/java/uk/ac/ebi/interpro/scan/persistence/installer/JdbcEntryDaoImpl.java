@@ -56,4 +56,8 @@ public class JdbcEntryDaoImpl implements JdbcEntryDao {
         }
         return null;
     }
+
+    public boolean testConnection() {
+        return jdbcTemplate != null && 1 == jdbcTemplate.queryForObject("select 1 from dual", Integer.class);
+    }
 }

@@ -272,7 +272,7 @@ public class Run {
                     ? Mode.valueOf(modeArgument.toUpperCase())
                     : DEFAULT_MODE;
 
-            System.out.println("Welcome to InterProScan v5.");
+            System.out.println("Welcome to InterProScan 5RC4");
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
@@ -494,7 +494,7 @@ public class Run {
                 bbMaster.setOutputFormats(parsedOutputFormats);
             }
             String tcpConnectionString = null;
-            if (mode == Mode.CL_MASTER || mode==Mode.DISTRIBUTED_MASTER) {
+            if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER) {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 
@@ -511,15 +511,15 @@ public class Run {
                 ((DistributedBlackBoxMasterCopy) bbMaster).setTcpUri(tcpConnectionString);
                 //if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
 //                    final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
-               // }
+                // }
                 if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
                     LOGGER.debug("We have a project/Cluster Run ID.");
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
-                    System.out.println("The project/Cluster Run ID for this run is: "+projectId);
+                    System.out.println("The project/Cluster Run ID for this run is: " + projectId);
                     bbMaster.setProjectId(projectId);
                     ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
-                }else{
-                    LOGGER.fatal("The Distributed master need a Cluster Run ID to continue, please specify the -clusterrunid (-crid) option." );
+                } else {
+                    LOGGER.fatal("The Distributed master need a Cluster Run ID to continue, please specify the -clusterrunid (-crid) option.");
                     System.exit(1);
                 }
             }
@@ -538,7 +538,6 @@ public class Run {
             }
 
 
-
             // GO terms and/or pathways will also imply IPR lookup
             final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
             bbMaster.setMapToGOAnnotations(mapToGo);
@@ -555,7 +554,7 @@ public class Run {
         if (runnable instanceof WorkerImpl) {
 //                    if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt()) || parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
             final WorkerImpl worker = (WorkerImpl) runnable;
-            LOGGER.debug("--- runnable is WorkerImpl --- " );
+            LOGGER.debug("--- runnable is WorkerImpl --- ");
             if (parsedCommandLine.hasOption(I5Option.PRIORITY.getLongOpt())) {
                 final int priority = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.PRIORITY.getLongOpt()));
                 if (priority < 0 || priority > 9) {
@@ -565,12 +564,12 @@ public class Run {
             }
 
             //start the local activemq broker
-            String tcpConnectionString=null;
+            String tcpConnectionString = null;
             if (mode == Mode.DISTRIBUTED_WORKER) {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
             //set the tcpUri for the worker
-            if ( tcpConnectionString != null) {
+            if (tcpConnectionString != null) {
                 worker.setTcpUri(tcpConnectionString);
                 LOGGER.debug("Remote worker has tcpConnectionString: " + tcpConnectionString);
             }
@@ -582,7 +581,7 @@ public class Run {
             if (parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt())) {
                 worker.setMasterWorker(parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt()));
                 final String tier = parsedCommandLine.getOptionValue(I5Option.TIER1.getLongOpt());
-                LOGGER.debug("Worker tier:  "+tier);
+                LOGGER.debug("Worker tier:  " + tier);
                 highmemDebug = true;
             }
 
@@ -599,7 +598,7 @@ public class Run {
 //            final WorkerMessageSenderImpl workerMessageSender = (WorkerMessageSenderImpl) ctx.getBean("workerMessageSender");
 //            workerMessageSender.setRemoteJmsTemplate(worker.getRemoteJmsTemplate());
 //            LOGGER.debug("parsedCommandLine 1: " + parsedCommandLine.toString());
-            LOGGER.debug("I5Option.TEMP_DIRECTORY_NAME: "+I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
+            LOGGER.debug("I5Option.TEMP_DIRECTORY_NAME: " + I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
             System.out.println("temp dir name: ");
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {
                 final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
