@@ -83,7 +83,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependency versions -->
-        <spring.version>3.1.0.RELEASE</spring.version>
+        <spring.version>3.1.2.RELEASE</spring.version>
         <!--<spring.oxm.version>1.5.7</spring.oxm.version>-->
         <spring.oxm.version>1.5.9</spring.oxm.version>
         <hibernate.entity.manager.version>3.6.0.Final</hibernate.entity.manager.version>
