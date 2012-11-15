@@ -15,6 +15,8 @@ import java.sql.SQLException;
 /**
  * Restores the in-memory database from a backup file.
  * <p/>
+ * Run as a Singleton in a single thread - this implementation is NOT thread safe.
+ * <p/>
  * Only works in its current form with H2.
  *
  * @author Phil Jones

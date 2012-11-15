@@ -37,7 +37,7 @@ public class MatchHttpClient {
 
     private String url;
 
-    private Jaxb2Marshaller unmarshaller;
+    private final Jaxb2Marshaller unmarshaller;
 
     public static final String MATCH_SERVICE_PATH = "/matches";
 
@@ -49,6 +49,8 @@ public class MatchHttpClient {
 
     /**
      * The URL parameter may be injected or set directly.
+     * <p/>
+     * TODO (Phil): It's only like this to allow the test to work.  This could be moved to Constructor injection along with the Marshaller.
      *
      * @param url
      */

@@ -52,7 +52,7 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
     private static final Pattern ACCESSION_PATTERN = Pattern.compile("^ACC\\s+([A-Z0-9]+)\\.?.*$");
     private static final String END_OF_RECORD = "//";
 
-    private Map<String, Signature> signatures = new HashMap<String, Signature>();
+    private final Map<String, Signature> signatures = new HashMap<String, Signature>();
 
 
     @Transactional
@@ -115,8 +115,7 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
                 // marker is missing!
                 processRecord(release, accession, name, description);
 
-            }
-            finally {
+            } finally {
                 if (reader != null) {
                     reader.close();
                 }
@@ -135,9 +134,9 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
      * Add record details to the signatures object. Could involve adding a new signature and model to the existing
      * signatures object, or just adding a new model to an existing signature.
      *
-     * @param release Signature library release details
-     * @param accession Signature accession, if NULL then this method does nothing
-     * @param name Model Id
+     * @param release     Signature library release details
+     * @param accession   Signature accession, if NULL then this method does nothing
+     * @param name        Model Id
      * @param description Signature and model names
      */
     private void processRecord(SignatureLibraryRelease release, String accession, String name, String description) {
@@ -146,8 +145,7 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
             if (signatures.containsKey(accession)) {
                 Signature signature = signatures.get(accession);
                 signature.addModel(model);
-            }
-            else {
+            } else {
                 Signature signature = new Signature(accession, description, null, null, null, release, new HashSet<Model>());
                 signature.addModel(model);
                 signatures.put(accession, signature);

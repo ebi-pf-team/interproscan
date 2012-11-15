@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.business.sequence.uniparcdb;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
@@ -21,13 +20,9 @@ import java.sql.SQLException;
  */
 public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(UniParcDBRowCallbackHandler.class.getName());
-
     private SequenceLoader sequenceLoader;
 
     private SequenceLoadListener sequenceLoadListener;
-
-    private int counter = 0;
 
     /**
      * Helper class that performs common protein
@@ -62,11 +57,6 @@ public class UniParcDBRowCallbackHandler implements RowCallbackHandler {
         }
         if (sequence == null) {
             throw new IllegalArgumentException("Ugh - found a UPI with no associated sequence!");
-        }
-        if (LOGGER.isDebugEnabled()) {
-            if (counter++ % 2000 == 0) {
-                LOGGER.debug("Storing " + upi + " with sequence length " + sequence.length());
-            }
         }
         sequenceLoader.store(sequence, null, upi);
     }

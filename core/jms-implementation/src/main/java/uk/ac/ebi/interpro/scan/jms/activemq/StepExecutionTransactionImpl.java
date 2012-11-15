@@ -33,7 +33,7 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
 
     private List<String> validatedDirectories = new ArrayList<String>();
 
-    private final Object validDirectoryLock = new Object();
+    private static final Object validDirectoryLock = new Object();
 
     private Jobs jobs;
 

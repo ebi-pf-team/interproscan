@@ -38,10 +38,6 @@ public class ParsePrintsOutputStep extends Step {
         this.printsOutputFileNameTemplate = printsOutputFileNameTemplate;
     }
 
-    public String getPrintsOutputFileNameTemplate() {
-        return printsOutputFileNameTemplate;
-    }
-
     @Required
     public void setPrintsRawMatchDAO(PrintsRawMatchDAO printsMatchDAO) {
         this.printsMatchDAO = printsMatchDAO;
@@ -52,10 +48,7 @@ public class ParsePrintsOutputStep extends Step {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    public String getSignatureLibraryRelease() {
-        return signatureLibraryRelease;
-    }
-
+    @Required
     public void setParser(PrintsMatchParser parser) {
         this.parser = parser;
     }
@@ -78,11 +71,9 @@ public class ParsePrintsOutputStep extends Step {
         try {
             final String printsOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, printsOutputFileNameTemplate);
             inputStreamParser = new FileInputStream(printsOutputFilePath);
-            final PrintsMatchParser parser = this.parser;
-            Set<RawProtein<PrintsRawMatch>> parsedResults = parser.parse(inputStreamParser, printsOutputFilePath, signatureLibraryRelease);
+            final Set<RawProtein<PrintsRawMatch>> parsedResults = parser.parse(inputStreamParser, printsOutputFilePath, signatureLibraryRelease);
             printsMatchDAO.insertProteinMatches(parsedResults);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse Prints file " + printsOutputFileNameTemplate, e);
         } finally {
             if (inputStreamParser != null) {

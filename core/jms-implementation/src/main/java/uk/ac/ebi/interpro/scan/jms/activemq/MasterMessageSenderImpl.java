@@ -14,7 +14,7 @@ import java.lang.IllegalStateException;
 import java.util.Enumeration;
 
 /**
- * TODO: Description
+ * Sends messages to the work queue on behalf of the master.
  *
  * @author Phil Jones
  * @version $Id$
@@ -31,7 +31,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
     private JmsTemplate jmsTemplate;
     private JmsTemplate jmsTopicTemplate;
 
-    private final Object jmsTemplateLock = new Object();
+    private static final Object JMS_TEMPLATE_LOCK = new Object();
 
     private StepExecutionDAO stepExecutionDAO;
 
@@ -76,7 +76,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
     /**
      * Sends shut down message to connected workers.
      */
-    public void sendShutDownMessage(){
+    public void sendShutDownMessage() {
         LOGGER.debug("Sending a shutdown message to the workerManagerTopicQueue ");
         jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
@@ -94,7 +94,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
      */
     @Transactional
     public void sendMessage(StepInstance stepInstance, final boolean highMemory, final int priority, final boolean canRunRemotely) throws JMSException {
-        LOGGER.debug("Attempting to send message to queue - high memory: "+highMemory+ "  priority: "+priority+" can run remotely: "+canRunRemotely);
+        LOGGER.debug("Attempting to send message to queue - high memory: " + highMemory + "  priority: " + priority + " can run remotely: " + canRunRemotely);
         final StepExecution stepExecution = stepInstance.createStepExecution();
         stepExecutionDAO.insert(stepExecution);
         stepExecution.submit(stepExecutionDAO);
@@ -104,16 +104,15 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
         }
 
         //change the destination to cater for high memory job request queue
-        if(highMemory && canRunRemotely){
-            if(highmemWorkerJobRequestQueue!=null){
+        if (highMemory && canRunRemotely) {
+            if (highmemWorkerJobRequestQueue != null) {
                 setWorkerJobRequestQueue(highmemWorkerJobRequestQueue);
                 LOGGER.info("Sending a high memory job on the request queue ");
-            }
-            else {
+            } else {
                 LOGGER.warn("High memory job request queue (destination) isn't set up properly!");
             }
         }
-        synchronized (jmsTemplateLock) {
+        synchronized (JMS_TEMPLATE_LOCK) {
             jmsTemplate.setPriority(priority);
             jmsTemplate.send(workerJobRequestQueue, new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
@@ -124,7 +123,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
 
                     // Some detailed logging of messages that can be run remotely.
                     if (LOGGER.isDebugEnabled() && canRunRemotely) {
-                        LOGGER.debug("Adding to queue Message with ID:"+ message.getJMSMessageID()+ " type: "+message.getJMSType() +" " + (highMemory ? "highmem" : "normal memory") + " StepExecution with priority " + priority + " that can run remotely: " + stepExecution.toString());
+                        LOGGER.debug("Adding to queue Message with ID:" + message.getJMSMessageID() + " type: " + message.getJMSType() + " " + (highMemory ? "highmem" : "normal memory") + " StepExecution with priority " + priority + " that can run remotely: " + stepExecution.toString());
                         final StringBuilder buf = new StringBuilder("Message properties:\n\n");
                         final Enumeration propNames = message.getPropertyNames();
                         while (propNames.hasMoreElements()) {
@@ -137,7 +136,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
                         }
                         LOGGER.debug(buf);
                     }
-                    LOGGER.debug("Adding to queue Message with ID:"+ message.getJMSMessageID()+ " type: "+message.getJMSType() +" " + (highMemory ? "highmem" : "normal memory") + " StepExecution with priority " + priority + " that can run remotely: " + stepExecution.toString());
+                    LOGGER.debug("Adding to queue Message with ID:" + message.getJMSMessageID() + " type: " + message.getJMSType() + " " + (highMemory ? "highmem" : "normal memory") + " StepExecution with priority " + priority + " that can run remotely: " + stepExecution.toString());
 
 
                     return message;
