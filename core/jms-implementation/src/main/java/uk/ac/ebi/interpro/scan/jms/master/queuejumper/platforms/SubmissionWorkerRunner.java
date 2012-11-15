@@ -11,6 +11,8 @@ import java.io.IOException;
 
 /**
  * Creates a new worker by executing a command.
+ * <p/>
+ * Note that this class is NOT thread safe and is expected to be used in a single controlling thread.
  */
 
 public class SubmissionWorkerRunner implements WorkerRunner {
@@ -92,7 +94,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
      */
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory, boolean masterWorker) {
         this.masterWorker = masterWorker;
-        startupNewWorker(priority,tcpUri,temporaryDirectory);
+        startupNewWorker(priority, tcpUri, temporaryDirectory);
         //reset the masterworker variable
         this.masterWorker = false;
     }
@@ -101,20 +103,20 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Override
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
         int activeJobs = lsfMonitor.activeJobs(projectId);
-        if(activeJobs > gridJobsLimit){
-            LOGGER.warn("Grid Job Limit has been reached,  active Jobs: "+activeJobs);
+        if (activeJobs > gridJobsLimit) {
+            LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs);
             return;
         }
-        LOGGER.debug("GridJobs -   active Jobs on the cluster: "+activeJobs);
+        LOGGER.debug("GridJobs -   active Jobs on the cluster: " + activeJobs);
         if (workerStartupStrategy.startUpWorker(priority)) {
             StringBuilder command = new StringBuilder(gridCommand);
 
             if (!projectId.equals(null)) {
-                command.append(" -P "+ projectId);
+                command.append(" -P " + projectId);
             }
             command.append(" " + i5Command);
 
-            LOGGER.debug("command without arguments : "+command);
+            LOGGER.debug("command without arguments : " + command);
             if (tcpUri == null) {
                 command.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
             } else {
@@ -137,11 +139,11 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                         .append(temporaryDirectory);
             }
 
-            if(this.masterWorker){
+            if (this.masterWorker) {
                 command.append(" --tier1=")
                         .append("1");
             }
-            if(this.projectId!= null){
+            if (this.projectId != null) {
                 command.append(" --clusterrunid=")
                         .append(projectId);
             }

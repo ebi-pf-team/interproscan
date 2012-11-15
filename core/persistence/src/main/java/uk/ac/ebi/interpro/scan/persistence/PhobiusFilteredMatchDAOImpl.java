@@ -25,7 +25,7 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch, Lo
     /**
      * The version number of Phobius being run.
      */
-    private String phobiusVersion;
+    private final String phobiusVersion;
 
 
     /**

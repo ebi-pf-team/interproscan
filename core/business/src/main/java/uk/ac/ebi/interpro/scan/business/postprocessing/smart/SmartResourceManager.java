@@ -10,6 +10,8 @@ import org.springframework.core.io.Resource;
  * <p/>
  * This class holds references to the optional SMART resources and is able to determine
  * if they are present.
+ * <p/>
+ * Purely a singleton populated by injection, so thread safe in the context of i5.
  */
 public class SmartResourceManager {
 

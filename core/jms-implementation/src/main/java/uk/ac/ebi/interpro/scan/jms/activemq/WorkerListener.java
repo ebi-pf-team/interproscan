@@ -8,7 +8,6 @@ import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
-import java.util.UUID;
 
 /**
  * ActiveMQ worker.
@@ -27,8 +26,6 @@ public class WorkerListener implements MessageListener {
 
     private StepExecutionTransaction stepExecutor;
 
-    private final UUID uniqueWorkerIdentification = UUID.randomUUID();
-
     /**
      * The distributed worker controller is in charge of calling 'stop' on the
      * Spring MonitorListenerContainer when the conditions are correct.
@@ -36,8 +33,6 @@ public class WorkerListener implements MessageListener {
      * @see uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl
      */
     private WorkerImpl controller;
-
-    protected int  count =0;
 
     WorkerListener() {
     }
@@ -66,9 +61,8 @@ public class WorkerListener implements MessageListener {
     }
 
     @Override
-    public void onMessage(Message message) {
+    public void onMessage(final Message message) {
         final String messageId;
-
 
         try {
             messageId = message.getJMSMessageID();
@@ -82,20 +76,24 @@ public class WorkerListener implements MessageListener {
                 controller.jobStarted(messageId);
             }
 
-            LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
-            LOGGER.info("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+            }
 
             if (!(message instanceof ObjectMessage)) {
                 LOGGER.error("Received a message of an unknown type (non-ObjectMessage)");
                 return;
             }
+
             final ObjectMessage stepExecutionMessage = (ObjectMessage) message;
             final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
             if (stepExecution == null) {
                 LOGGER.error("An ObjectMessage was received but had no contents.");
                 return;
             }
-            LOGGER.debug("Message received of queue - attempting to executeInTransaction");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Message received of queue - attempting to executeInTransaction");
+            }
 
 
             // TODO - Need to add a dead-letter queue, so if this worker never gets as far as
@@ -118,7 +116,9 @@ public class WorkerListener implements MessageListener {
                 });
                 message.acknowledge(); // Acknowledge message following failure.
 
-                LOGGER.debug("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
+                }
             }
 
         } catch (JMSException e) {
@@ -128,13 +128,5 @@ public class WorkerListener implements MessageListener {
                 controller.jobFinished(messageId);
             }
         }
-    }
-
-    public UUID getUniqueWorkerIdentification() {
-        return uniqueWorkerIdentification;
-    }
-
-    public int getCount() {
-        return count;
     }
 }

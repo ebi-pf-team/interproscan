@@ -21,7 +21,7 @@ import java.util.Set;
  */
 public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMatch, BlastProDomMatch> implements ProDomFilteredMatchDAO {
 
-    private String proDomReleaseVersion;
+    private final String proDomReleaseVersion;
 
     /**
      * Sets the class of the model that the DAO instance handles.

@@ -27,7 +27,7 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
 
     private List<String> createdDirectories = new ArrayList<String>();
 
-    private final Object lock = new Object();
+    private static final Object LOCK = new Object();
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
 
@@ -47,7 +47,7 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
         LOGGER.debug("About to filter: " + inputURI);
         if (inputURI.contains(TemporaryDirectoryManager.DIRECTORY_TEMPLATE)) {
 
-            synchronized (lock) {
+            synchronized (LOCK) {
 
                 initialiseDirectory();
 
@@ -91,7 +91,7 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
      */
     @Override
     public String getReplacement() {
-        synchronized (lock) {
+        synchronized (LOCK) {
             initialiseDirectory();
         }
         return temporaryDirectoryName;

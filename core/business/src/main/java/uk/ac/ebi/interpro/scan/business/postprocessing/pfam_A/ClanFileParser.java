@@ -102,6 +102,8 @@ public class ClanFileParser implements Serializable {
 
     private PfamClanData clanData;
 
+    private static final Object CLAN_LOCK = new Object();
+
     @Required
     public void setPfamASeedFile(String pfamASeedFile) {
         this.pfamASeedFile = pfamASeedFile;
@@ -125,7 +127,11 @@ public class ClanFileParser implements Serializable {
      */
     public PfamClanData getClanData() throws IOException {
         if (clanData == null) {
-            buildClanAndModelModel();
+            synchronized (CLAN_LOCK) {
+                if (clanData == null) {
+                    buildClanAndModelModel();
+                }
+            }
         }
         return clanData;
     }

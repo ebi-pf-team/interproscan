@@ -45,6 +45,7 @@ public class WriteFastaFileStep extends Step {
      * If you need a custom fasta file writer, you can inject it here (e.g. for Phobius and TMHMM which
      * have picky requirements for amino acid alphabet).  Normally you can safely ignore this parameter
      * and the Step will use a default FastaFileWriter.
+     *
      * @param fastaFileWriter a custom fasta file writer
      */
     public void setFastaFileWriter(FastaFileWriter fastaFileWriter) {
@@ -59,10 +60,14 @@ public class WriteFastaFileStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        LOGGER.info("Starting step with Id " + this.getId());
-        String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
-        List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        LOGGER.info("Writing " + proteins.size() + " proteins to FASTA file...");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Starting step with Id " + this.getId());
+        }
+        final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
+        final List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Writing " + proteins.size() + " proteins to FASTA file...");
+        }
         try {
             fastaFileWriter.writeFastaFile(proteins, fastaFilePathName);
         } catch (IOException e) {
@@ -70,7 +75,9 @@ public class WriteFastaFileStep extends Step {
         } catch (FastaFileWriter.FastaFileWritingException e) {
             throw new IllegalStateException("FastaFileWriter.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
         }
-        LOGGER.info("Step with Id " + this.getId() + " finished.");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Step with Id " + this.getId() + " finished.");
+        }
     }
 }
 
