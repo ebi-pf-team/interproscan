@@ -46,7 +46,7 @@ public class PrintsPostProcessing implements Serializable {
 
     private List<String> allPrintsModelIDs;
 
-    private final Object hierchDbLock = new Object();
+    private static final Object HIERCH_DB_LOCK = new Object();
 
     @Required
     public void setHierarchyDBParser(FingerPRINTSHierarchyDBParser hierarchyDBParser) {
@@ -66,7 +66,7 @@ public class PrintsPostProcessing implements Serializable {
      */
     public Map<String, RawProtein<PrintsRawMatch>> process(Map<String, RawProtein<PrintsRawMatch>> proteinIdToRawMatchMap) throws IOException {
         if (printsModelData == null) {
-            synchronized (hierchDbLock) {
+            synchronized (HIERCH_DB_LOCK) {
                 if (printsModelData == null) {
                     if (hierarchyDBParser == null || fingerPRINTSHierarchyDB == null) {
                         throw new IllegalStateException("The PrintsPostProcessing class requires the injection of a FingerPRINTSHierarchyDBParser and a fingerPRINTSHierarchyDB resource.");

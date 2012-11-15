@@ -29,7 +29,7 @@ public class SignalPMatchParser implements Serializable {
 
     public static final String SIGNATURE_LIBRARY_RELEASE = "4.0";
 
-    private SignalPOrganismType type = null;
+    private final SignalPOrganismType type;
 
     public static final String FILE_START_LINE1 = "# SignalP-4.0 "; // Start of the first line of the file
     public static final String FILE_START_LINE2 = " predictions"; // End of the first line of the file
@@ -77,14 +77,12 @@ public class SignalPMatchParser implements Serializable {
                     if (type == null) {
                         LOGGER.error("SignalP organsim type not set in job XML, or not a valid value");
                         throw new IllegalStateException("SignalP organsim type not set in job XML");
-                    }
-                    else if (!type.equals(SignalPOrganismType.getSignalPOrganismTypeByShortName(typeString))) {
+                    } else if (!type.equals(SignalPOrganismType.getSignalPOrganismTypeByShortName(typeString))) {
                         LOGGER.error("SignalP organsim type in file:" + typeString + " does not match that supplied in job XML: " + type.getTypeShortName());
                         throw new IllegalStateException("SignalP organsim type in file:" + typeString + " does not match that supplied in job XML: " + type.getTypeShortName());
                     }
                     continue;
-                }
-                else if (line.equals(RECORD_START_LINE)) {
+                } else if (line.equals(RECORD_START_LINE)) {
                     // Start of a new result record, reset the values
                     // E.g. "# Measure  Position  Value  Cutoff  signal peptide?"
                     sequenceIdentifier = null;
@@ -121,16 +119,14 @@ public class SignalPMatchParser implements Serializable {
                             sequenceIdentifier = lineArray[0]; // E.g. "Name=2"
                             if (sequenceIdentifier.startsWith("Name=")) {
                                 sequenceIdentifier = sequenceIdentifier.substring(5); // E.g. "2"
-                            }
-                            else {
+                            } else {
                                 LOGGER.warn("This line in the binary output file is in an unexpected format - ignoring: " + line);
                                 continue;
                             }
                             model = lineArray[lineArray.length - 1]; // E.g. "Networks=SignalP-TM"
                             if (model.startsWith("Networks=")) {
                                 model = model.substring(9); // E.g. "SignalP-TM"
-                            }
-                            else {
+                            } else {
                                 LOGGER.warn("This line in the binary output file is in an unexpected format - ignoring: " + line);
                                 continue;
                             }
@@ -147,20 +143,17 @@ public class SignalPMatchParser implements Serializable {
                                 // Each protein will have one result - either Signal Peptide YES or NO!
                                 // So the key should not already exist!
                                 throw new IllegalStateException("Somehow protein " + sequenceIdentifier + " has already been processed!");
-                            }
-                            else {
+                            } else {
                                 RawProtein<SignalPRawMatch> rawProtein = new RawProtein<SignalPRawMatch>(sequenceIdentifier);
                                 rawProtein.addMatch(rawMatch);
                                 data.put(sequenceIdentifier, rawProtein);
                             }
 
-                        }
-                        else {
+                        } else {
                             // Problem with the previous line, can't add this result
                             LOGGER.warn("Line " + lineCount + " not parsed as previous line was not parsed");
                         }
-                    }
-                    else {
+                    } else {
                         // No signal peptide found, don't need this result - carry on!
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("No signal peptide on line " + lineCount + ": " + line);

@@ -56,6 +56,8 @@ public class GaValuesRetriever implements Serializable {
 
     private final String modelFileAbsolutePath;
 
+    private static final Object LOCK = new Object();
+
     /**
      * Constructs a new Map of names to accessions based upon the model file passed in
      * as an argument.
@@ -67,44 +69,52 @@ public class GaValuesRetriever implements Serializable {
      */
     public GaValuesRetriever(String modelFileAbsolutePath) throws IOException {
         this.modelFileAbsolutePath = modelFileAbsolutePath;
+    }
 
+    public double getSequenceGAForAccession(String modelAccession) throws IOException {
+        lazyInitialise();
+        return ACC_TO_SEQUENCE_GA.get(modelAccession);
+    }
+
+    public double getDomainGAForAccession(String modelAccession) throws IOException {
+        lazyInitialise();
+        return ACC_TO_DOMAIN_GA.get(modelAccession);
     }
 
     private File createMapFileObject(String modelFileAbsolutePath) throws IOException {
         return new File(modelFileAbsolutePath + MAP_FILE_EXTENSION);
     }
 
-    /**
-     * Save the parsed mapping to a Properties file so they can be accessed more quickly on
-     * subsequent runs.
-     * <p/>
-     * This method uses java.nio.channels to lock the mapping file / check for locks
-     * on partially written mapping files.
-     * <p/>
-     * These locks only work cross-process, not cross-thread, so the method is also
-     * synchronized.
-     *
-     * @param modelFileAbsolutePath the absolute path to the Model file.
-     * @throws java.io.IOException thrown when writing / locking / closing streams.
-     */
-    private synchronized void storeMappingToPropertiesFile(String modelFileAbsolutePath) throws IOException {
-        File mapFile = createMapFileObject(modelFileAbsolutePath);
-        if (mapFile.exists()) {
-            return; // A different process has started creating the map file since this process loaded the mappings, so don't try to create it again.
-        }
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mapFile);
-            // Lock the file while it is being written to.
-            FileLock lock = fos.getChannel().lock();
-            accessionToGAProps.store(fos, "Mapping of model accessions to GA values.");
-            lock.release();
-        } catch (Exception ioe) {
-            // Something went wrong while attempting to write out the file - delete it as it may be partial.
-            mapFile.delete();
-        } finally {
-            if (fos != null) {
-                fos.close();
+    private void lazyInitialise() throws IOException {
+        if (!initialised) {
+            synchronized (LOCK) {
+                if (!initialised) {
+                    // Check to see if the mapping has been dumped to a map file - if it has, load it from there for speed.
+                    File mapFile = createMapFileObject(modelFileAbsolutePath);
+                    if (mapFile.exists()) {
+                        loadMappingFromPropertiesFile(mapFile);
+                    } else {
+                        // Parse the PfamModel file and store the mapping to a map file.
+                        parseModelFile(modelFileAbsolutePath);
+                        storeMappingToPropertiesFile(modelFileAbsolutePath);
+                    }
+                    // Finally stick the double values into the appropriate maps.
+                    for (Object accessionObject : accessionToGAProps.keySet()) {
+                        String accession = (String) accessionObject;
+                        String gaString = (String) accessionToGAProps.get(accessionObject);
+                        gaString = gaString.trim();
+                        if (gaString.endsWith(";")) {
+                            gaString = gaString.substring(0, gaString.length() - 1);
+                        }
+                        String values[] = gaString.split("\\s");
+                        if (values.length < 2) {
+                            throw new ParseException("The GA line format is not as expected (was expecting at least two floating point numbers separated by a space).", "NOT_A_FILE", gaString, 1);
+                        }
+                        ACC_TO_SEQUENCE_GA.put(accession, new Double(values[0]));
+                        ACC_TO_DOMAIN_GA.put(accession, new Double(values[1]));
+                    }
+                    initialised = true;
+                }
             }
         }
     }
@@ -139,7 +149,7 @@ public class GaValuesRetriever implements Serializable {
         }
     }
 
-    public void parseModelFile(String modelFileAbsolutePath) throws IOException {
+    private void parseModelFile(String modelFileAbsolutePath) throws IOException {
         BufferedReader reader = null;
         accessionToGAProps = new Properties();
         try {
@@ -197,43 +207,38 @@ public class GaValuesRetriever implements Serializable {
         }
     }
 
-    public double getSequenceGAForAccession(String modelAccession) throws IOException {
-        lazyInitialise();
-        return ACC_TO_SEQUENCE_GA.get(modelAccession);
-    }
-
-    public double getDomainGAForAccession(String modelAccession) throws IOException {
-        lazyInitialise();
-        return ACC_TO_DOMAIN_GA.get(modelAccession);
-    }
-
-    private void lazyInitialise() throws IOException {
-        if (!initialised) {
-            // Check to see if the mapping has been dumped to a map file - if it has, load it from there for speed.
-            File mapFile = createMapFileObject(modelFileAbsolutePath);
-            if (mapFile.exists()) {
-                loadMappingFromPropertiesFile(mapFile);
-            } else {
-                // Parse the PfamModel file and store the mapping to a map file.
-                parseModelFile(modelFileAbsolutePath);
-                storeMappingToPropertiesFile(modelFileAbsolutePath);
+    /**
+     * Save the parsed mapping to a Properties file so they can be accessed more quickly on
+     * subsequent runs.
+     * <p/>
+     * This method uses java.nio.channels to lock the mapping file / check for locks
+     * on partially written mapping files.
+     * <p/>
+     * These locks only work cross-process, not cross-thread, so the method is also
+     * synchronized.
+     *
+     * @param modelFileAbsolutePath the absolute path to the Model file.
+     * @throws java.io.IOException thrown when writing / locking / closing streams.
+     */
+    private synchronized void storeMappingToPropertiesFile(String modelFileAbsolutePath) throws IOException {
+        File mapFile = createMapFileObject(modelFileAbsolutePath);
+        if (mapFile.exists()) {
+            return; // A different process has started creating the map file since this process loaded the mappings, so don't try to create it again.
+        }
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mapFile);
+            // Lock the file while it is being written to.
+            FileLock lock = fos.getChannel().lock();
+            accessionToGAProps.store(fos, "Mapping of model accessions to GA values.");
+            lock.release();
+        } catch (Exception ioe) {
+            // Something went wrong while attempting to write out the file - delete it as it may be partial.
+            mapFile.delete();
+        } finally {
+            if (fos != null) {
+                fos.close();
             }
-            // Finally stick the double values into the appropriate maps.
-            for (Object accessionObject : accessionToGAProps.keySet()) {
-                String accession = (String) accessionObject;
-                String gaString = (String) accessionToGAProps.get(accessionObject);
-                gaString = gaString.trim();
-                if (gaString.endsWith(";")) {
-                    gaString = gaString.substring(0, gaString.length() - 1);
-                }
-                String values[] = gaString.split("\\s");
-                if (values.length < 2) {
-                    throw new ParseException("The GA line format is not as expected (was expecting at least two floating point numbers separated by a space).", "NOT_A_FILE", gaString, 1);
-                }
-                ACC_TO_SEQUENCE_GA.put(accession, new Double(values[0]));
-                ACC_TO_DOMAIN_GA.put(accession, new Double(values[1]));
-            }
-            initialised = true;
         }
     }
 }

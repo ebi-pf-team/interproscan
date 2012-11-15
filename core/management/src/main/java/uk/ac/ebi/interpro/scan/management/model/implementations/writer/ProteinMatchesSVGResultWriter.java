@@ -40,6 +40,8 @@ public class ProteinMatchesSVGResultWriter {
 
     private EntryHierarchy entryHierarchy;
 
+    private static final Object EH_LOCK = new Object();
+
     private String entryHierarchyBeanId;
 
     private List<File> resultFiles = new ArrayList<File>();
@@ -93,14 +95,20 @@ public class ProteinMatchesSVGResultWriter {
      */
     public int write(final Protein protein) throws IOException {
         if (entryHierarchy == null) {
-            if (appContext != null && entryHierarchyBeanId != null) {
-                this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
-            } else {
-                if (LOGGER.isEnabledFor(Level.WARN)) {
-                    LOGGER.warn("Application context or entry hierarchy bean aren't initialised successfully!");
+            synchronized (EH_LOCK) {
+                if (entryHierarchy == null) {
+                    if (appContext != null && entryHierarchyBeanId != null) {
+                        this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
+                    } else {
+                        if (LOGGER.isEnabledFor(Level.WARN)) {
+                            LOGGER.warn("Application context or entry hierarchy bean aren't initialised successfully!");
+                        }
+                    }
                 }
             }
         }
+
+
         if (entryHierarchy != null) {
             for (ProteinXref xref : protein.getCrossReferences()) {
                 final SimpleProtein simpleProtein = SimpleProtein.valueOf(protein, xref, entryHierarchy);

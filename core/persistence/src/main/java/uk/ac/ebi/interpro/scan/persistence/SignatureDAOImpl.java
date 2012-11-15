@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO: Add class description
+ * DAO For the Signature model class.
  *
  * @author Phil Jones, EMBL-EBI
  * @version $Id$

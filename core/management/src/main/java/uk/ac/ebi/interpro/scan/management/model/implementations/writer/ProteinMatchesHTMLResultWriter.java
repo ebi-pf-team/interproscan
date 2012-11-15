@@ -42,9 +42,11 @@ public class ProteinMatchesHTMLResultWriter {
 
     private EntryHierarchy entryHierarchy;
 
+    private static final Object EH_LOCK = new Object();
+
     private String entryHierarchyBeanId;
 
-    private List<File> resultFiles = new ArrayList<File>();
+    private final List<File> resultFiles = new ArrayList<File>();
 
     private String tempDirectory;
 
@@ -161,11 +163,15 @@ public class ProteinMatchesHTMLResultWriter {
 
     private void checkEntryHierarchy() {
         if (entryHierarchy == null) {
-            if (appContext != null && entryHierarchyBeanId != null) {
-                this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
-            } else {
-                if (LOGGER.isEnabledFor(Level.WARN)) {
-                    LOGGER.warn("Application context or entry hierarchy bean aren't initialised successfully!");
+            synchronized (EH_LOCK) {
+                if (entryHierarchy == null) {
+                    if (appContext != null && entryHierarchyBeanId != null) {
+                        this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
+                    } else {
+                        if (LOGGER.isEnabledFor(Level.WARN)) {
+                            LOGGER.warn("Application context or entry hierarchy bean aren't initialised successfully!");
+                        }
+                    }
                 }
             }
         }

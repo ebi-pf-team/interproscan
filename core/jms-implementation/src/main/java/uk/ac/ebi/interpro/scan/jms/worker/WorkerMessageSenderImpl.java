@@ -70,7 +70,7 @@ public class WorkerMessageSenderImpl implements WorkerMessageSender {
     /**
      * Sends shut down message to connected workers.
      */
-    public void sendShutDownMessage(){
+    public void sendShutDownMessage() {
         LOGGER.debug("Sending a shutdown message to the workerManagerTopicQueue ");
         jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
@@ -84,15 +84,17 @@ public class WorkerMessageSenderImpl implements WorkerMessageSender {
      * Does all of this in a transaction,
      *
      * @param destination
-     * @param message to send
+     * @param message     to send
      * @param local
      * @throws javax.jms.JMSException in the event of a failure sending the message to the JMS Broker.
      */
     @Transactional
-    public void  sendMessage(Destination destination, final Message message, boolean local) throws JMSException{
-        LOGGER.debug("Attempting to send message to queue: " + destination);
+    public void sendMessage(Destination destination, final Message message, boolean local) throws JMSException {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Attempting to send message to queue: " + destination);
+        }
 
-        if(local){
+        if (local) {
             if (!localJmsTemplate.isExplicitQosEnabled()) {
                 throw new IllegalStateException("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
             }
@@ -104,7 +106,7 @@ public class WorkerMessageSenderImpl implements WorkerMessageSender {
                     }
                 });
             }
-        }else{
+        } else {
             if (!remoteJmsTemplate.isExplicitQosEnabled()) {
                 throw new IllegalStateException("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
             }

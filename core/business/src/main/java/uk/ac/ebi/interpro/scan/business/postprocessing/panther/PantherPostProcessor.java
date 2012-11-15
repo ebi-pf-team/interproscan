@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.panther;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -20,7 +19,7 @@ public class PantherPostProcessor implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(PantherPostProcessor.class.getName());
 
-    private double eValueCutoff;
+    private final double eValueCutoff;
 
     public PantherPostProcessor(double eValue) {
         this.eValueCutoff = eValue;

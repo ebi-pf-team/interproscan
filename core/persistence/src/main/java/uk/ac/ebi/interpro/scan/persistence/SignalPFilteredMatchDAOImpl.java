@@ -25,7 +25,7 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
 
     private static final Logger LOGGER = Logger.getLogger(SignalPFilteredMatchDAOImpl.class.getName());
 
-    private String signalPReleaseVersion;
+    private final String signalPReleaseVersion;
 
     /**
      * Sets the class of the model that the DAO instance handles.

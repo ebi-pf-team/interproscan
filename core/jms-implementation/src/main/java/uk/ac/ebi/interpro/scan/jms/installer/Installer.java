@@ -67,6 +67,11 @@ public class Installer implements Runnable {
         this.releaseDAO = releaseDAO;
     }
 
+    /**
+     * Set only from Spring, so lack of thread safety not a problem.
+     *
+     * @param mode
+     */
     public void setMode(InstallerMode mode) {
         this.mode = mode;
     }
