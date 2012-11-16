@@ -17,6 +17,8 @@ import java.util.Set;
 
 /**
  * Represents the whole entry loading process for the I5 installer (uk.ac.ebi.interpro.scan.jms.installer.Installer).
+ * <p/>
+ * Please note: This class might be not thread save!
  *
  * @author Matthew Fraser, EMBL-EBI, InterPro
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
