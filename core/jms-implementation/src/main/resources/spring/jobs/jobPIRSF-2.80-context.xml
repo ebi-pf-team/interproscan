@@ -88,8 +88,7 @@
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.80"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
-                <property name="pirsfDatFileParser" ref="pirsfDatFileParser-2.80"/>
-                <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.80}"/>
+                <property name="pirsfDatFileInfoHolder" ref="pirsfDatFileInfoHolder-2.80"/>
             </bean>
         </property>
         <property name="proteinDAO" ref="proteinDAO"/>
@@ -158,9 +157,8 @@
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.80"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.SubfamilyPostProcessor">
-                <property name="pirsfDatFileParser" ref="pirsfDatFileParser-2.80"/>
-                <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.80}"/>
                 <property name="subfamilyFileParser" ref="pirsfSubfamFileParser-2.80"/>
+                <property name="pirsfDatFileInfoHolder" ref="pirsfDatFileInfoHolder-2.80"/>
             </bean>
         </property>
         <property name="subFamilyMatchesFileName" ref="subfamMatchesFileName-2.80"/>
@@ -273,7 +271,9 @@
     <!--Parses PIRSF file with .tb extension-->
     <bean id="pirsfSfTbFileParser-2.80" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
     <!--Parses PIRSF file with .dat extension-->
-    <bean id="pirsfDatFileParser-2.80" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
+    <bean id="pirsfDatFileInfoHolder-2.80" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileInfoHolder">
+        <constructor-arg type="org.springframework.core.io.Resource" value="file:${pirsf.dat.path.2.80}"/>
+    </bean>
 
     <bean id="pirsfSubfamPersistenceProcessor-2.80"
           class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.SubfamilyPersistenceProcessor">

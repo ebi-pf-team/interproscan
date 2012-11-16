@@ -3,10 +3,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
-import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
-import uk.ac.ebi.interpro.scan.io.pirsf.PirsfFileUtil;
-import uk.ac.ebi.interpro.scan.io.pirsf.PirsfSubfamilyFileParser;
+import uk.ac.ebi.interpro.scan.io.pirsf.*;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -60,27 +57,18 @@ public class SubfamilyPostProcessor implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(SubfamilyPostProcessor.class.getName());
 
     //    File parser
-    private PirsfDatFileParser pirsfDatFileParser;
-
-    //    Resources
-    private Resource pirsfDatFileResource;
-
-    //    File parser
     private PirsfSubfamilyFileParser subfamilyFileParser;
 
-    @Required
-    public void setPirsfDatFileParser(PirsfDatFileParser pirsfDatFileParser) {
-        this.pirsfDatFileParser = pirsfDatFileParser;
-    }
-
-    @Required
-    public void setPirsfDatFileResource(Resource pirsfDatFileResource) {
-        this.pirsfDatFileResource = pirsfDatFileResource;
-    }
+    private PirsfDatFileInfoHolder pirsfDatFileInfoHolder;
 
     @Required
     public void setSubfamilyFileParser(PirsfSubfamilyFileParser subfamilyFileParser) {
         this.subfamilyFileParser = subfamilyFileParser;
+    }
+
+    @Required
+    public void setPirsfDatFileInfoHolder(PirsfDatFileInfoHolder pirsfDatFileInfoHolder) {
+        this.pirsfDatFileInfoHolder = pirsfDatFileInfoHolder;
     }
 
     /**
@@ -96,7 +84,7 @@ public class SubfamilyPostProcessor implements Serializable {
                         final String subFamilyMapFilePath,
                         final Resource subFamilyMapFileResource) throws IOException {
         //Maps superfamily model accessions to PIRSF data record objects
-        final Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileParser.parse(pirsfDatFileResource);
+        final Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileInfoHolder.getData();
 
         //Maps subfamilies to super families model accessions
         final Map<String, String> subfamToSuperFamMap = subfamilyFileParser.parse(subFamilyMapFileResource);
