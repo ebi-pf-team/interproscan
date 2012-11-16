@@ -5,10 +5,12 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import javax.jms.*;
+import java.sql.Timestamp;
 
 /**
- * Created with IntelliJ IDEA.
- * User: nuka
+ * This util has several functions useful for the monitoring of the queues.
+ * Its not thread safe, but should only be used in one thread
+ *
  */
 public class StatsUtil {
 
@@ -66,7 +68,8 @@ public class StatsUtil {
 
     private boolean  pollStatsBroker(Destination queue){
        statsMessageListener.setDestination(queue);
-        LOGGER.info("Setting the destination to "+getQueueName(queue));
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        LOGGER.info("Setting the destination to "+getQueueName(queue) +" at " +timestamp);
         jmsTemplate.execute(STATS_BROKER_DESTINATION +  getQueueName(queue), new ProducerCallbackImpl(statsQueue));
         //wait for a second to receive the message
         try {

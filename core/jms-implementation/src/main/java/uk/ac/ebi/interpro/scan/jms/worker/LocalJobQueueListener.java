@@ -34,6 +34,15 @@ public class LocalJobQueueListener implements MessageListener {
      */
     private WorkerImpl controller;
 
+    private  int  jobCount = 0;
+
+    public int getJobCount() {
+        return jobCount;
+    }
+
+    public void setJobCount(int jobCount) {
+        this.jobCount = jobCount;
+    }
 
     public void setLocalJmsTemplate(JmsTemplate localJmsTemplate) {
         this.localJmsTemplate = localJmsTemplate;
@@ -60,7 +69,10 @@ public class LocalJobQueueListener implements MessageListener {
 
     @Override
     public void onMessage(final Message message) {
+        jobCount++;
+        LOGGER.debug("Processing JobCount #: " + jobCount);
         final String messageId;
+
         try {
             messageId = message.getJMSMessageID();
         } catch (JMSException e) {
@@ -121,5 +133,7 @@ public class LocalJobQueueListener implements MessageListener {
                 controller.jobFinished(messageId);
             }
         }
+
+        LOGGER.debug("Finished Processing JobCount #: " + jobCount);
     }
 }
