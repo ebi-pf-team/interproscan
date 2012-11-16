@@ -25,6 +25,10 @@ public class PirsfDatRecord implements Serializable {
     private boolean blastRequired = false; // Default to Blast not required for this model
     private Set<String> subFamilies = new HashSet<String>();
 
+    public PirsfDatRecord(String modelAccession) {
+        this.modelAccession = modelAccession;
+    }
+
     public PirsfDatRecord(String modelAccession, String modelName, String[] values, boolean blastRequired) {
         this(modelAccession, modelName, values, blastRequired, new HashSet<String>());
     }
@@ -32,13 +36,17 @@ public class PirsfDatRecord implements Serializable {
     public PirsfDatRecord(String modelAccession, String modelName, String[] values, boolean blastRequired, Set<String> subFamilies) {
         this.modelAccession = modelAccession;
         this.modelName = modelName;
+        setValues(values);
+        this.blastRequired = blastRequired;
+        addSubFamilies(subFamilies);
+    }
+
+    public void setValues(String[] values) {
         this.meanSeqLen = Double.parseDouble(values[INDEX_MEAN_SEQ_LEN].trim());
         this.stdDevSeqLen = Double.parseDouble(values[INDEX_STD_DEV_SEQ_LEN].trim());
         this.minScore = Double.parseDouble(values[INDEX_MIN_SCORE].trim());
         this.meanScore = Double.parseDouble(values[INDEX_MEAN_SCORE].trim());
         this.stdDevScore = Double.parseDouble(values[INDEX_STD_DEV_SCORE].trim());
-        this.blastRequired = blastRequired;
-        addSubFamilies(subFamilies);
     }
 
     public String getModelAccession() {

@@ -66,12 +66,11 @@ public class PirsfDatFileParserTest extends TestCase {
         expectedResult.put(MODEL_ACC_4, pirsfDat4);
 
         // Run test method
-        PirsfDatFileParser parser = new PirsfDatFileParser();
         Resource testFile = new ClassPathResource(TEST_FILE_NAME);
 
         Map<String, PirsfDatRecord> actualResult = null;
         try {
-            actualResult = parser.parse(testFile);
+            actualResult = PirsfDatFileParser.parse(testFile);
         } catch (IOException e) {
             assertTrue("IO exception occurred during parsing of pirsf.dat file!", false);
             e.printStackTrace();

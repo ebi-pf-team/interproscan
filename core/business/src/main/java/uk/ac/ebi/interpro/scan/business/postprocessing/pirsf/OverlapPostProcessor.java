@@ -2,8 +2,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
+import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileInfoHolder;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfFileUtil;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
@@ -59,21 +58,11 @@ public class OverlapPostProcessor implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(OverlapPostProcessor.class.getName());
 
-    //    File parser
-    private PirsfDatFileParser pirsfDatFileParser;
-
-    //    Resources
-    private Resource pirsfDatFileResource;
-
+    private PirsfDatFileInfoHolder pirsfDatFileInfoHolder;
 
     @Required
-    public void setPirsfDatFileParser(PirsfDatFileParser pirsfDatFileParser) {
-        this.pirsfDatFileParser = pirsfDatFileParser;
-    }
-
-    @Required
-    public void setPirsfDatFileResource(Resource pirsfDatFileResource) {
-        this.pirsfDatFileResource = pirsfDatFileResource;
+    public void setPirsfDatFileInfoHolder(PirsfDatFileInfoHolder pirsfDatFileInfoHolder) {
+        this.pirsfDatFileInfoHolder = pirsfDatFileInfoHolder;
     }
 
     /**
@@ -93,8 +82,7 @@ public class OverlapPostProcessor implements Serializable {
                         final String blastMatchesFilePath,
                         final String subFamiliesFilePath,
                         final double signatureLibraryReleaseValue) throws IOException {
-
-        Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileParser.parse(pirsfDatFileResource);
+        final Map<String, PirsfDatRecord> pirsfDatRecordMap = pirsfDatFileInfoHolder.getData();
 
         // A Map between protein IDs and the best match (smallest e-value)
         Map<String, PIRSFHmmer2RawMatch> proteinIdBestMatchMap = new HashMap<String, PIRSFHmmer2RawMatch>(); // Blast not required
