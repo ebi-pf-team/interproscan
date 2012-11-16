@@ -25,17 +25,17 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-    <repositories>
-        <repository>
-            <id>google-code-interproscan</id>
-            <name>google-code-interproscan</name>
-            <layout>default</layout>
-            <url>http://interproscan.googlecode.com/svn/repository/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+    <!--<repository>-->
+    <!--<id>google-code-interproscan</id>-->
+    <!--<name>google-code-interproscan</name>-->
+    <!--<layout>default</layout>-->
+    <!--<url>http://interproscan.googlecode.com/svn/repository/</url>-->
+    <!--<snapshots>-->
+    <!--<enabled>false</enabled>-->
+    <!--</snapshots>-->
+    <!--</repository>-->
+    <!--</repositories>-->
 
     <properties>
         <spring.version>2.5.6</spring.version>
