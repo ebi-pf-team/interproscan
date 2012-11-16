@@ -61,4 +61,23 @@ public class PirsfDatRecordTest {
 
         assertEquals("Instances should have the same hash code!", instance1, testInstance);
     }
+
+    @Test
+    public void testSetValues() {
+        PirsfDatRecord instance = new PirsfDatRecord("PIRSF000077");
+        //
+        assertEquals("Unexpected result value!", 0.0d, instance.getMeanSeqLen(), 0.0d);
+        assertEquals("Unexpected result value!", 0.0d, instance.getStdDevSeqLen(), 0.0d);
+        assertEquals("Unexpected result value!", 0.0d, instance.getMinScore(), 0.0d);
+        assertEquals("Unexpected result value!", 0.0d, instance.getMeanScore(), 0.0d);
+        assertEquals("Unexpected result value!", 0.0d, instance.getStdDevScore(), 0.0d);
+        String[] values = new String[]{"110.136452241715", "9.11541109440914", "20.3", "167.482261208577", "57.6586203540026"};
+        instance.setValues(values);
+        //
+        assertEquals("Unexpected result value!", 110.136452241715d, instance.getMeanSeqLen(), 0.0d);
+        assertEquals("Unexpected result value!", 9.11541109440914d, instance.getStdDevSeqLen(), 0.0d);
+        assertEquals("Unexpected result value!", 20.3d, instance.getMinScore(), 0.0d);
+        assertEquals("Unexpected result value!", 167.482261208577d, instance.getMeanScore(), 0.0d);
+        assertEquals("Unexpected result value!", 57.6586203540026d, instance.getStdDevScore(), 0.0d);
+    }
 }

@@ -97,10 +97,7 @@
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.74"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
-                <property name="pirsfDatFileParser">
-                    <bean class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
-                </property>
-                <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.74}"/>
+                <property name="pirsfDatFileInfoHolder" ref="pirsfDatFileInfoHolder-2.74"/>
             </bean>
         </property>
         <property name="proteinDAO" ref="proteinDAO"/>
@@ -229,6 +226,10 @@
     <bean id="signatureLibraryReleasePirsf-2.74" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSF"/>
         <constructor-arg type="java.lang.String" value="2.74"/>
+    </bean>
+
+    <bean id="pirsfDatFileInfoHolder-2.74" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileInfoHolder">
+        <constructor-arg type="org.springframework.core.io.Resource" value="file:${pirsf.dat.path.2.74}"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

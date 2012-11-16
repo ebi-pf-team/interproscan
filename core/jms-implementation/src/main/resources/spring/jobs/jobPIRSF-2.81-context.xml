@@ -88,8 +88,7 @@
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.81"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
-                <property name="pirsfDatFileParser" ref="pirsfDatFileParser-2.81"/>
-                <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.81}"/>
+                <property name="pirsfDatFileInfoHolder" ref="pirsfDatFileInfoHolder-2.81"/>
             </bean>
         </property>
         <property name="proteinDAO" ref="proteinDAO"/>
@@ -158,9 +157,8 @@
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.81"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.SubfamilyPostProcessor">
-                <property name="pirsfDatFileParser" ref="pirsfDatFileParser-2.81"/>
-                <property name="pirsfDatFileResource" value="file:${pirsf.dat.path.2.81}"/>
                 <property name="subfamilyFileParser" ref="pirsfSubfamFileParser-2.81"/>
+                <property name="pirsfDatFileInfoHolder" ref="pirsfDatFileInfoHolder-2.81"/>
             </bean>
         </property>
         <property name="subFamilyMatchesFileName" ref="subfamMatchesFileName-2.81"/>
@@ -272,8 +270,11 @@
     <bean id="pirsfSubfamFileParser-2.81" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfSubfamilyFileParser"/>
     <!--Parses PIRSF file with .tb extension-->
     <bean id="pirsfSfTbFileParser-2.81" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
-    <!--Parses PIRSF file with .dat extension-->
-    <bean id="pirsfDatFileParser-2.81" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser"/>
+
+    <!--Keeps information from the PIRSF file with .dat extension-->
+    <bean id="pirsfDatFileInfoHolder-2.81" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileInfoHolder">
+        <constructor-arg type="org.springframework.core.io.Resource" value="file:${pirsf.dat.path.2.81}"/>
+    </bean>
 
     <bean id="pirsfSubfamPersistenceProcessor-2.81"
           class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.SubfamilyPersistenceProcessor">

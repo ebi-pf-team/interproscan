@@ -31,15 +31,15 @@
 
     <repositories>
 
-        <repository>
-            <id>google-code-interproscan</id>
-            <name>google-code-interproscan</name>
-            <layout>default</layout>
-            <url>http://interproscan.googlecode.com/svn/repository/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
+        <!--<repository>-->
+            <!--<id>google-code-interproscan</id>-->
+            <!--<name>google-code-interproscan</name>-->
+            <!--<layout>default</layout>-->
+            <!--<url>http://interproscan.googlecode.com/svn/repository/</url>-->
+            <!--<snapshots>-->
+                <!--<enabled>false</enabled>-->
+            <!--</snapshots>-->
+        <!--</repository>-->
 
         <repository>
             <id>apache-maven-snapshots</id>
