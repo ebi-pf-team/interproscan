@@ -5,6 +5,10 @@ import org.apache.log4j.Logger;
 import javax.jms.*;
 
 /**
+ * This is the main AMQ statistics broker listener
+ * On receiving a message for statistics for a specified queue, the listener populates the BrokerStatistics object
+ * with the necessary values including the consumer count and number of messages on the queue
+ *
  * @author Gift Nuka, Phil Jones
  * Time: 10:27
  * To change this template use File | Settings | File Templates.

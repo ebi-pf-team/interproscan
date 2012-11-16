@@ -30,6 +30,8 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
 
     private StatsUtil statsUtil;
 
+    private int maxMessagesOnQueuePerConsumer = 4;
+
     /**
      * completion time target for worker creation by the Master
      * should be  less than worker max lifetime  =  7*24*60*60*1000;
@@ -152,6 +154,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         }
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
+        System.exit(0);
     }
 
 
@@ -189,8 +192,10 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         LOGGER.debug("Starting the first high memory worker...");
 //        high memory do have a higher priority compared to low memory workers
         workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
-        LOGGER.debug("Starting the first  normal worker.");
-        workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+        LOGGER.debug("Starting the first FOUR normal worker.");
+        for (int i=0;i<4;i++){
+            workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+        }
 
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
@@ -215,7 +220,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                     final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                     if (statsAvailable) {
                         final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                        if ((statsUtil.getStatsMessageListener().getConsumers() < 30 && statsUtil.getStatsMessageListener().getQueueSize() > 5) ||
+                        if ((statsUtil.getStatsMessageListener().getConsumers() < 30 && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer) ||
                                 (workerRequired && statsUtil.getStatsMessageListener().getConsumers() < 30)) {
                             LOGGER.debug("Starting a normal worker.");
                             workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);

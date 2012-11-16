@@ -68,6 +68,7 @@
                 <property name="i5Command" value="${worker.command}"/>
                 <property name="gridJobsLimit" value="${grid.jobs.limit}"/>
                 <property name="lsfMonitor" ref="lsfMonitor"/>
+                <property name="gridName" value="${grid.name}"/>
                 <property name="highMemory" value="false"/>
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
@@ -82,6 +83,7 @@
                 <property name="projectId" value="${user.digest}"/>
                 <property name="i5Command" value="${worker.high.memory.command}"/>
                 <property name="highMemory" value="true"/>
+                <property name="gridName" value="${grid.name}"/>
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
                 </property>

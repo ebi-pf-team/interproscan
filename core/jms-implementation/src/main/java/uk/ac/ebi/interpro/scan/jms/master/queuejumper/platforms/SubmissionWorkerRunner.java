@@ -39,6 +39,14 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private LSFMonitor lsfMonitor;
 
+    private String agent_id;
+
+    private int workerCount = 0;
+
+    private String gridName = "lsf";
+
+    private boolean gridArray = false;
+
     @Required
     public void setGridJobsLimit(int gridJobsLimit) {
         this.gridJobsLimit = gridJobsLimit;
@@ -70,6 +78,11 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     }
 
     @Required
+    public void setGridName(String gridName) {
+        this.gridName = gridName;
+    }
+
+    @Required
     public void setHighMemory(boolean highMemory) {
         this.highMemory = highMemory;
     }
@@ -79,6 +92,27 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.workerStartupStrategy = workerStartupStrategy;
     }
 
+    /**
+     * create an id for the new worker given a project id
+     *
+     * @param tcpUri
+     */
+    public void setAgent_id(String tcpUri) {
+        if (projectId != null) {
+            this.agent_id = projectId+"_"+tcpUri.hashCode()+"_"+getWorkerCountString();
+        }else if(tcpUri != null ){
+            this.agent_id = "worker"+"_"+tcpUri.hashCode()+"_"+getWorkerCountString();
+        }else{
+            this.agent_id = "worker_unid"+"_"+getWorkerCountString();
+        }
+    }
+
+    public String getWorkerCountString() {
+        if(workerCount < 10){
+            return "0"+Integer.toString(workerCount);
+        }
+        return Integer.toString(workerCount);
+    }
     /**
      * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
      * Assumes that the jar being executed has a main class define in the MANIFEST.
@@ -109,11 +143,20 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         }
         LOGGER.debug("GridJobs -   active Jobs on the cluster: " + activeJobs);
         if (workerStartupStrategy.startUpWorker(priority)) {
+            workerCount++;
             StringBuilder command = new StringBuilder(gridCommand);
 
-            if (!projectId.equals(null)) {
-                command.append(" -P " + projectId);
+            setAgent_id(tcpUri);
+
+            if(agent_id != null){
+                command.append(" -o logs/"+ agent_id+".out");
+                command.append(" -e logs/"+ agent_id+".err");
+                command.append(" -J "+ agent_id);
             }
+            if(gridName.equals("lsf") && (projectId != null)) {
+                command.append(" -P "+ projectId);
+            }
+
             command.append(" " + i5Command);
 
             LOGGER.debug("command without arguments : " + command);

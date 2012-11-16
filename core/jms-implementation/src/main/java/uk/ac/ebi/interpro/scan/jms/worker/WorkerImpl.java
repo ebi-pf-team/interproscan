@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.RedeliveryPolicy;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.connection.CachingConnectionFactory;
@@ -42,7 +43,6 @@ public class WorkerImpl implements Worker {
     private DefaultMessageListenerContainer statsListenerContainer;
     private DefaultMessageListenerContainer managerTopicMessageListenerJmsContainer;
 
-    private StatsMessageListener statsMessageListener;
     private ResponseQueueMessageListener responseQueueMessageListener;
     private ManagerTopicMessageListener managerTopicMessageListener;
 
@@ -126,14 +126,6 @@ public class WorkerImpl implements Worker {
         }
     }
 
-    @Required
-    public void setStatsMessageListener(StatsMessageListener statsMessageListener) {
-        this.statsMessageListener = statsMessageListener;
-    }
-
-    public StatsMessageListener getStatsMessageListener() {
-        return statsMessageListener;
-    }
 
     @Required
     public void setResponseQueueMessageListener(ResponseQueueMessageListener responseQueueMessageListener) {
@@ -372,11 +364,11 @@ public class WorkerImpl implements Worker {
                 Thread.sleep(5000);
             }
             statsUtil.pollStatsBrokerResponseQueue();
-            LOGGER.info("Response Stats: " + statsMessageListener.getStats());
-            boolean  isResponseQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() > 0;
+            LOGGER.info("Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+            boolean  isResponseQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
             int responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
             statsUtil.pollStatsBrokerJobQueue();
-            boolean  islocalQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() > 0;
+            boolean  islocalQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
             int requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
             //stop the message listener
             remoteQueueJmsContainer.stop();
@@ -393,11 +385,11 @@ public class WorkerImpl implements Worker {
                 Thread.sleep(waitingTime);
                 statsUtil.pollStatsBrokerResponseQueue();
                 LOGGER.debug("Response Stats: " + statsUtil.getStatsMessageListener().getStats());
-                isResponseQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() == 0;
+                isResponseQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
                 responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
                 statsUtil.pollStatsBrokerJobQueue();
                 LOGGER.debug("RequestQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
-                islocalQueueEmpty =  statsUtil.getStatsMessageListener().getQueueSize() == 0;
+                islocalQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
                 requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
             }
             //send shutdown message
@@ -434,9 +426,10 @@ public class WorkerImpl implements Worker {
      * check if number of remoteConsumers < maxConsumerSize
      * check if number of consumers <  getQueueSize()/queueConsumerRatio
      *
-     * @return
+     * @return   newWorkersRequired
      */
     private boolean isNewWorkersRequired() {
+        final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
         return statsMessageListener.newWorkersRequired((int) (lifeRemaining() / completionFactor)) &&
                 (statsMessageListener.getConsumers() < maxConsumerSize) &&
                 (statsMessageListener.getConsumers() < statsMessageListener.getQueueSize() / queueConsumerRatio);
@@ -557,6 +550,15 @@ public class WorkerImpl implements Worker {
         activeMQConnectionFactory.setUseCompression(true);
         activeMQConnectionFactory.setAlwaysSessionAsync(false);
         activeMQConnectionFactory.getPrefetchPolicy().setQueuePrefetch(0);
+
+        //set the RedeliveryPolicy
+        RedeliveryPolicy queuePolicy =  activeMQConnectionFactory.getRedeliveryPolicy();
+        queuePolicy.setInitialRedeliveryDelay(0);
+        queuePolicy.setRedeliveryDelay(1*1000);
+        queuePolicy.setUseExponentialBackOff(false);
+        queuePolicy.setMaximumRedeliveries(4);
+
+        activeMQConnectionFactory.setRedeliveryPolicy(queuePolicy);
 
         final CachingConnectionFactory connectionFactory = new CachingConnectionFactory(activeMQConnectionFactory);
         connectionFactory.setSessionCacheSize(100);
