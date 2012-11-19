@@ -30,38 +30,6 @@
     <!-- Configures Spring MVC -->
     <import resource="mvc-config.xml"/>
 
-    <!-- Entry hierarchy properties files (locations set in Maven properties for profile)-->
-    <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init"
-          scope="singleton" lazy-init="false">
-        <property name="entryColourPropertiesFile">
-            <util:properties location="${entry.colours.file.loc}"/>
-        </property>
-        <property name="entryHierarchyDataResource" ref="${entryHierarchyDataResourceId}"/>
-        <property name="entryHierarchyDataResourceReader">
-            <bean class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
-        </property>
-        <property name="entryToGoDataResourceReader">
-            <bean class="uk.ac.ebi.interpro.scan.web.io.EntryToGoDataResourceReader"/>
-        </property>
-        <property name="entryToGoDataResource" ref="${entryToGoDataResourceId}"/>
-    </bean>
-
-
-    <!-- AnalyseMatchDataResult -->
-    <bean id="matchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult">
-        <constructor-arg>
-            <bean class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
-        </constructor-arg>
-        <constructor-arg ref="entryHierarchy"/>
-    </bean>
-
-    <!-- AnalyseStructuralMatchDataResult -->
-    <bean id="structuralMatchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseStructuralMatchDataResult">
-        <constructor-arg>
-            <bean class="uk.ac.ebi.interpro.scan.web.io.StructuralMatchDataResourceReader"/>
-        </constructor-arg>
-    </bean>
-
     <!-- CreateSimpleProteinFromMatchData -->
     <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchDataImpl">
         <constructor-arg ref="matchAnalyser"/>
@@ -95,20 +63,4 @@
         </property>
     </bean>
 
-    <!-- ######################## Dependencies ############################  -->
-    <bean id="entryHierarchyDataURLResourceId" class="org.springframework.core.io.UrlResource">
-        <constructor-arg value="file:${entry.hierarchy.file.loc}"/>
-    </bean>
-
-    <bean id="entryHierarchyDataClassPathResourceId" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="entry_hierarchy.csv"/>
-    </bean>
-
-    <bean id="entryToGoDataURLResourceId" class="org.springframework.core.io.UrlResource">
-        <constructor-arg value="file:${entry.go.file.loc}"/>
-    </bean>
-
-    <bean id="entryToGoDataClassPathResourceId" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="entry_to_go.psv"/>
-    </bean>
 </beans>
