@@ -1,8 +1,9 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
+
+import java.util.List;
 
 /**
  * DAO Interface for data access to the Xref table
@@ -10,6 +11,7 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
  *
  * @author Phil Jones
  * @author David Binns
+ * @author Maxim Scheremetjew
  * @version $Id$
  * @since 1.0
  */
@@ -21,7 +23,13 @@ public interface ProteinXrefDAO extends GenericDAO<ProteinXref, Long> {
      *
      * @return the maximum UPI in the Xref table.  Returns null if no UPI xref is present.
      */
-    @Transactional(readOnly = true)
     public String getMaxUniparcId();
+
+    /**
+     * Returns a List of Xrefs that are not unique.
+     *
+     * @return a List of Xrefs that are not unique.
+     */
+    public List<String> getNonUniqueXrefs();
 
 }
