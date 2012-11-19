@@ -104,6 +104,9 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
             for (Protein protein : matchingProteins) {
                 LOGGER.trace("Protein ID: " + protein.getId() + " MD5: " + protein.getMd5());
                 LOGGER.trace("Has " + protein.getMatches().size() + " matches");
+                for (ProteinXref xref : protein.getCrossReferences()) {
+                    LOGGER.trace("Xref: " + xref.getIdentifier());
+                }
             }
         }
         return matchingProteins;
@@ -146,7 +149,6 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         Collection<Protein> proteinList = insert(Collections.singleton(newInstance));
         assert proteinList != null;
         assert proteinList.size() == 1;
-        entityManager.flush();
         return proteinList.iterator().next();
     }
 
@@ -163,9 +165,8 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     @Transactional
     public Collection<Protein> insert(Collection<Protein> newInstances) {
         final PersistedProteins persistedProteins = insertNewProteins(newInstances);
-        Collection<Protein> allProteins = new ArrayList<Protein>(persistedProteins.getNewProteins());
+        final Collection<Protein> allProteins = new ArrayList<Protein>(persistedProteins.getNewProteins());
         allProteins.addAll(persistedProteins.getPreExistingProteins());
-        entityManager.flush();
         return allProteins;
     }
 
@@ -216,9 +217,18 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
                     Protein existingProtein = md5ToExistingProtein.get(candidate.getMd5());
                     boolean updateRequired = false;
                     if (candidate.getCrossReferences() != null) {
+                        if (LOGGER.isTraceEnabled()) {
+                            LOGGER.trace("Protein TO BE STORED has xrefs:");
+                        }
                         for (ProteinXref xref : candidate.getCrossReferences()) {
+                            if (LOGGER.isTraceEnabled()) {
+                                LOGGER.trace(xref.getIdentifier());
+                            }
                             // Add any NEW cross references.
                             if (!existingProtein.getCrossReferences().contains(xref)) {
+                                if (LOGGER.isTraceEnabled()) {
+                                    LOGGER.trace("Adding " + xref.getIdentifier() + " and setting updateRequired = true");
+                                }
                                 existingProtein.addCrossReference(xref);
                                 updateRequired = true;
                             }
@@ -226,8 +236,8 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
                     }
                     if (updateRequired) {
                         // PROTEIN is NOT new, but CHANGED (new Xrefs)
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Merging protein with new Xrefs: " + existingProtein);
+                        if (LOGGER.isTraceEnabled()) {
+                            LOGGER.trace("Merging protein with new Xrefs: " + existingProtein.getMd5());
                         }
                         entityManager.merge(existingProtein);
                     }
@@ -235,8 +245,8 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
                 }
                 // PROTEIN IS NEW - save it.
                 else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Saving new protein: " + candidate);
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("Saving new protein: " + candidate.getMd5());
                     }
                     entityManager.persist(candidate);
                     persistentProteins.addNewProtein(candidate);
