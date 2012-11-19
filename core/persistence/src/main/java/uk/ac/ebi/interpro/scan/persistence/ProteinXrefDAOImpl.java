@@ -61,7 +61,7 @@ public class ProteinXrefDAOImpl extends GenericDAOImpl<ProteinXref, Long> implem
     @Transactional(readOnly = true)
     public List<String> getNonUniqueXrefs() {
         Query query = entityManager.createQuery(
-                "select distinct a.identifier from ProteinXref a inner join ProteinXref b where a.id <> b.id and a.identifier = b.identifier"
+                "select distinct a.identifier from ProteinXref a, ProteinXref b where a.id <> b.id and a.identifier = b.identifier"
         );
         return query.getResultList();
     }

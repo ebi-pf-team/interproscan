@@ -13,7 +13,13 @@
             <div class="matches">
                 <#list line.superMatchList as superMatch>
                     <#global superMatchId=superMatchId + 1>
+                    <#--TODO: Is the next check the right thing to do???  Might not be...-->
+                    <#--This check ensures that the entry is in the colour mapping file.  If not, uses a default class.-->
+                    <#if entryColours[superMatch.firstEntry.ac]??>
                     <@supermatchLocationMacro.supermatchLocation smid=superMatchId protein=protein supermatch=superMatch colourClass="c"+entryColours[superMatch.firstEntry.ac]+" "+type />
+                <#else>
+                    <@supermatchLocationMacro.supermatchLocation smid=superMatchId protein=protein supermatch=superMatch colourClass="c1 "+type />
+                </#if>
                 </#list>
             </div>
         </div>
