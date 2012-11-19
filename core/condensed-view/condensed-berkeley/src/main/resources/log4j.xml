@@ -23,14 +23,10 @@
         </layout>
     </appender>
 
-    <logger name="uk.ac.ebi.interpro.scan.condensed.berkeley.BerkeleyDBCreator">
-        <level value="debug"/>
-    </logger>
-
 
     <!-- Root Logger -->
     <root>
-        <priority value="debug"/>
+        <priority value="warn"/>
         <appender-ref ref="consoleappender"/>
     </root>
 

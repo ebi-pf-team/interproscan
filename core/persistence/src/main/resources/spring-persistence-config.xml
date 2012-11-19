@@ -25,6 +25,9 @@
     <bean id="proteinDAO"
           class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
 
+    <bean id="proteinXrefDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAOImpl"/>
+
     <bean id="signatureDAO"
           class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">
     </bean>
