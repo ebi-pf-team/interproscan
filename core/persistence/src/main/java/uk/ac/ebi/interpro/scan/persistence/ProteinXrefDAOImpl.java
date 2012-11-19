@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  * Implementation of DAO Interface for data access to the Xref table
@@ -27,7 +28,6 @@ public class ProteinXrefDAOImpl extends GenericDAOImpl<ProteinXref, Long> implem
      * <p/>
      * Model class specific sub-classes should define a no-argument constructor
      * that calls this constructor with the appropriate class.
-     *
      */
     public ProteinXrefDAOImpl() {
         super(ProteinXref.class);
@@ -36,20 +36,33 @@ public class ProteinXrefDAOImpl extends GenericDAOImpl<ProteinXref, Long> implem
     /**
      * Method to return the maximum UPI stored in the database.
      * Unlikely to be used outside the scope of the EBI.
-     *
+     * <p/>
      * TODO - When database name is added to the Xref entity, use instead of the like clause.
      *
      * @return the maximum UPI in the Xref table.  Returns UPI0000000000 if no UPI xref is present.
      */
-    @Transactional (readOnly = true)
+    @Transactional(readOnly = true)
     public String getMaxUniparcId() {
         Query query = entityManager.createQuery(
                 "select max(x.identifier) from ProteinXref x where x.identifier like ('UPI__________') "
         );
         final String upi = (String) query.getSingleResult();
-        if (upi == null || upi.length() == 0){
+        if (upi == null || upi.length() == 0) {
             return UPI_ZERO;
         }
         return upi;
+    }
+
+    /**
+     * Returns a List of Xrefs that are not unique.
+     *
+     * @return a List of Xrefs that are not unique.
+     */
+    @Transactional(readOnly = true)
+    public List<String> getNonUniqueXrefs() {
+        Query query = entityManager.createQuery(
+                "select distinct a.identifier from ProteinXref a inner join ProteinXref b where a.id <> b.id and a.identifier = b.identifier"
+        );
+        return query.getResultList();
     }
 }
