@@ -1,7 +1,5 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
-import uk.ac.ebi.interpro.scan.model.Protein;
-
 import java.io.Serializable;
 import java.util.Set;
 
@@ -12,8 +10,10 @@ import java.util.Set;
  * <p/>
  * Common interface for classes the manage the loading of sequences (Protein or Nucleotide)
  * into the database.
+ * <p/>
+ * T is "Protein" or "NucleotideSequence"
  */
-public interface SequenceLoader extends Serializable {
+public interface SequenceLoader<T> extends Serializable {
 
     void store(String sequence, String analysisJobNames, String... crossReferences);
 
@@ -34,5 +34,5 @@ public interface SequenceLoader extends Serializable {
      * @param parsedProteins   being a Collection of non-redundant Proteins and Xrefs.
      * @param analysisJobNames to be included in analysis.
      */
-    void storeAll(Set<Protein> parsedProteins, String analysisJobNames);
+    void storeAll(Set<T> parsedProteins, String analysisJobNames);
 }

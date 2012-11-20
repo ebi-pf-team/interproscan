@@ -24,7 +24,7 @@ import java.util.*;
  *         Date: 14-Nov-2009
  *         Time: 14:04:59
  */
-public class ProteinLoader implements SequenceLoader {
+public class ProteinLoader implements SequenceLoader<Protein> {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinLoader.class.getName());
 

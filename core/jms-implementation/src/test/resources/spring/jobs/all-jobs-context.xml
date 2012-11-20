@@ -56,7 +56,7 @@
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobTest !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <bean id="fastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
+    <bean id="fastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
         <property name="sequenceLoader" ref="proteinLoader"/>
 
     </bean>
