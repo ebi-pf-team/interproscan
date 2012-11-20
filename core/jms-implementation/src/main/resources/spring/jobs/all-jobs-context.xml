@@ -152,7 +152,7 @@
         <property name="retries" value="2"/>
         <property name="serialGroup" value="LOAD_NUCLEIC_ACID"/>
         <property name="fastaFileLoader">
-            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
+            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadNucleotideFastaFile">
                 <property name="sequenceLoader">
                     <bean class="uk.ac.ebi.interpro.scan.business.sequence.NucleotideSequenceLoader">
                         <property name="sequenceInsertBatchSize" value="500"/>
@@ -203,7 +203,7 @@
         </property>
         <!--More specific parameter-->
         <property name="fastaFileLoader">
-            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
+            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
                 <property name="sequenceLoader">
                     <bean class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
                         <property name="proteinPrecalcLookupBatchSize" value="50"/>
@@ -259,7 +259,7 @@
     <bean id="getOrfDescriptionLineParser"
           class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
 
-    <bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">
+    <bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
         <property name="sequenceLoader" ref="proteinLoader"/>
     </bean>
 

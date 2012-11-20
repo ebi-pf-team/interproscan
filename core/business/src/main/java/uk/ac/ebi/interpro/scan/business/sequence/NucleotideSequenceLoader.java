@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
-import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 
 import java.util.HashSet;
@@ -18,7 +17,7 @@ import java.util.Set;
  *         <p/>
  *         Manages loading of nucleotide sequences.
  */
-public class NucleotideSequenceLoader implements SequenceLoader {
+public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequence> {
 
     private static final Logger LOGGER = Logger.getLogger(NucleotideSequenceLoader.class.getName());
 
@@ -95,11 +94,16 @@ public class NucleotideSequenceLoader implements SequenceLoader {
      * Persists proteins that have been collapsed and annotated with ProteinXrefs
      * by a separate process, e.g. the fasta file loader.
      *
-     * @param parsedProteins   being a Collection of non-redundant Proteins and Xrefs.
-     * @param analysisJobNames to be included in analysis.
+     * @param parsedNucleotideSequences being a Collection of non-redundant Nucleotide Sequences and Xrefs.
+     * @param analysisJobNames          to be included in analysis.
      */
-    public void storeAll(Set<Protein> parsedProteins, String analysisJobNames) {
-        throw new IllegalStateException("This method has not been implemented in the NucleotideSequenceLoader.");
+    public void storeAll(Set<NucleotideSequence> parsedNucleotideSequences, String analysisJobNames) {
+        for (NucleotideSequence nucleotideSequence : parsedNucleotideSequences) {
+            sequencesAwaitingInsertion.add(nucleotideSequence);
+            if (sequencesAwaitingInsertion.size() > sequenceInsertBatchSize) {
+                persistBatch();
+            }
+        }
     }
 
 }
