@@ -149,6 +149,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         Collection<Protein> proteinList = insert(Collections.singleton(newInstance));
         assert proteinList != null;
         assert proteinList.size() == 1;
+        entityManager.flush();
         return proteinList.iterator().next();
     }
 
@@ -167,6 +168,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         final PersistedProteins persistedProteins = insertNewProteins(newInstances);
         final Collection<Protein> allProteins = new ArrayList<Protein>(persistedProteins.getNewProteins());
         allProteins.addAll(persistedProteins.getPreExistingProteins());
+        entityManager.flush();
         return allProteins;
     }
 
