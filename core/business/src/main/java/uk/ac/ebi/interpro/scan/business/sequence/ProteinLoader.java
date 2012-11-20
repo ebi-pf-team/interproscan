@@ -246,6 +246,22 @@ public class ProteinLoader implements SequenceLoader {
     }
 
     /**
+     * Persists proteins that have been collapsed and annotated with ProteinXrefs
+     * by a separate process, e.g. the fasta file loader.
+     *
+     * @param parsedProteins   being a Collection of non-redundant Proteins and Xrefs.
+     * @param analysisJobNames to be included in analysis.
+     */
+    public void storeAll(Set<Protein> parsedProteins, String analysisJobNames) {
+        for (Protein protein : parsedProteins) {
+            proteinsAwaitingPrecalcLookup.add(protein);
+            if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
+                lookupProteins(analysisJobNames);
+            }
+        }
+    }
+
+    /**
      * Helper method that sets the upper and lower bounds to null.
      */
     private void resetBounds() {
