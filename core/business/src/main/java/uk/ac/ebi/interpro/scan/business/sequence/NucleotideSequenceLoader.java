@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
+import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 
 import java.util.HashSet;
@@ -88,6 +89,17 @@ public class NucleotideSequenceLoader implements SequenceLoader {
 
     public void setUseMatchLookupService(boolean useMatchLookupService) {
         // Currently a no-op, as there is no lookup service for nucleotide sequence matches.
+    }
+
+    /**
+     * Persists proteins that have been collapsed and annotated with ProteinXrefs
+     * by a separate process, e.g. the fasta file loader.
+     *
+     * @param parsedProteins   being a Collection of non-redundant Proteins and Xrefs.
+     * @param analysisJobNames to be included in analysis.
+     */
+    public void storeAll(Set<Protein> parsedProteins, String analysisJobNames) {
+        throw new IllegalStateException("This method has not been implemented in the NucleotideSequenceLoader.");
     }
 
 }

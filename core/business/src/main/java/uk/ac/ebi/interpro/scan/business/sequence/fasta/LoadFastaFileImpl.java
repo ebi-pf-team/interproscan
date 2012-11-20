@@ -6,11 +6,14 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +54,9 @@ public class LoadFastaFileImpl implements LoadFastaFile {
             final StringBuffer currentSequence = new StringBuffer();
             int lineNumber = 0;
             String line;
+
+            final Set<Protein> parsedProteins = new HashSet<Protein>();
+
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.length() > 0) {
@@ -75,7 +81,7 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                             }
                             final String seq = currentSequence.toString();
                             if (seq.trim().length() > 0) {
-                                sequenceLoader.store(WHITE_SPACE_PATTERN.matcher(seq).replaceAll(""), analysisJobNames, currentId);
+                                addToProteinCollection(seq, currentId, parsedProteins);
                             }
                             currentSequence.delete(0, currentSequence.length());
                         }
@@ -101,9 +107,11 @@ public class LoadFastaFileImpl implements LoadFastaFile {
             }
             // Store the final record (if there were any at all!)
             if (currentId != null) {
-                sequenceLoader.store(currentSequence.toString(), analysisJobNames, currentId);
+                addToProteinCollection(currentSequence.toString(), currentId, parsedProteins);
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
+            // Now iterate over Proteins and store using Sequence Loader.
+            sequenceLoader.storeAll(parsedProteins, analysisJobNames);
             sequenceLoader.persist(sequenceLoaderListener, analysisJobNames);
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
@@ -116,5 +124,26 @@ public class LoadFastaFileImpl implements LoadFastaFile {
                 }
             }
         }
+    }
+
+    private void addToProteinCollection(String sequence, final String currentId, final Set<Protein> parsedProteins) {
+        sequence = WHITE_SPACE_PATTERN.matcher(sequence).replaceAll("");
+        Protein thisProtein = new Protein(sequence);
+        // Check if this sequence is already in the Set.  If it is, retrieve it.
+        boolean alreadyExists = false;
+        for (Protein existing : parsedProteins) {
+            if (existing.getMd5().equals(thisProtein.getMd5())) {
+                thisProtein = existing;
+                alreadyExists = true;
+                break;
+            }
+        }
+        // New sequence - add it to the collection.
+        if (!alreadyExists) {
+            parsedProteins.add(thisProtein);
+        }
+
+        // Add the identifier to the Protein object. (Being added to a Set, so no risk of duplicates)
+        thisProtein.addCrossReference(new ProteinXref(currentId));
     }
 }

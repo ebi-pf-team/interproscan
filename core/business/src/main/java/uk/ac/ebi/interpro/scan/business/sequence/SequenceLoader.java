@@ -1,6 +1,9 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
+import uk.ac.ebi.interpro.scan.model.Protein;
+
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,4 +26,13 @@ public interface SequenceLoader extends Serializable {
      *                              to use this service.
      */
     void setUseMatchLookupService(boolean useMatchLookupService);
+
+    /**
+     * Persists proteins that have been collapsed and annotated with ProteinXrefs
+     * by a separate process, e.g. the fasta file loader.
+     *
+     * @param parsedProteins   being a Collection of non-redundant Proteins and Xrefs.
+     * @param analysisJobNames to be included in analysis.
+     */
+    void storeAll(Set<Protein> parsedProteins, String analysisJobNames);
 }
