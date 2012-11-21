@@ -407,7 +407,7 @@ public class Run {
                     if (parsedOutputFormats != null) {
                         for (String outputFormat : parsedOutputFormats) {
                             if (outputFormat.equalsIgnoreCase("tsv") || outputFormat.equalsIgnoreCase("html")) {
-                                System.out.println("\n\nTSV and HTML formats are not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 and XML.");
+                                System.out.println("\n\nTSV, HTML and SVG formats are not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 and XML.");
                                 System.exit(1);
                             }
                         }

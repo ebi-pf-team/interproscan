@@ -19,6 +19,8 @@ public class GFF3Feature {
 
     final static String MD5_ATTR = "md5";
 
+    final static String TARGET_ATTR = "Target";
+
     private final String UNDEFINIED_FIELD = ".";
 
     //Not nullable
