@@ -23,9 +23,20 @@
         </layout>
     </appender>
 
-    <logger name="uk.ac.ebi.interpro.scan.jms">
-        <level value="debug"/>
-    </logger>
+    <!--<logger name="uk.ac.ebi.interpro.scan.jms">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+    <!--<logger name="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl">-->
+    <!--<level value="trace"/>-->
+    <!--</logger>-->
+
+    <!--<logger name="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">-->
+    <!--<level value="debug" />-->
+    <!--</logger>-->
+    <!--<logger name="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">-->
+    <!--<level value="debug"/>-->
+    <!--</logger>-->
+
 
     <!-- Root Logger -->
     <root>
