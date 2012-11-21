@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
 import uk.ac.ebi.interpro.scan.model.*;
 
@@ -22,6 +23,8 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
+
+    private static final Logger LOGGER = Logger.getLogger(GFFResultWriterForNucSeqs.class.getName());
     private String nucleotideId;
 
     /**
@@ -126,9 +129,17 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
     }
 
     private String getIdentifierSuffix(OpenReadingFrame orf) {
+        if (orf == null) {
+            LOGGER.warn("Called GFFResultWriterForNucSeqs.getIdentifierSuffix() with a null ORF???");
+            return "";
+        }
         StringBuilder sb = new StringBuilder(getNucleotideId());
-        sb.append("_").append(orf.getStart()).append("_").append(orf.getEnd())
-                .append((orf.getStrand().equals(NucleotideSequenceStrand.ANTISENSE) ? "_r" : ""));
+        sb
+                .append("_")
+                .append(orf.getStart())
+                .append("_")
+                .append(orf.getEnd())
+                .append((NucleotideSequenceStrand.ANTISENSE.equals(orf.getStrand()) ? "_r" : ""));
         return sb.toString();
     }
 
