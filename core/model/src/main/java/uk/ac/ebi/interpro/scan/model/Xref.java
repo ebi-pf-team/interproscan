@@ -85,7 +85,8 @@ abstract class Xref implements Serializable {
         return identifier;
     }
 
-    private void setIdentifier(String identifier) {
+    //TODO: Set visibility to public, check if the code still works
+    public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
 

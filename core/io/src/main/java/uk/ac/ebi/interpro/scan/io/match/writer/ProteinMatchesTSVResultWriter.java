@@ -38,7 +38,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
     public int write(Protein protein) throws IOException {
         int locationCount = 0;
         String proteinAc = getProteinAccession(protein);
-        int length = protein.getSequence().length();
+        int length = protein.getSequenceLength();
         String md5 = protein.getMd5();
         String date = dmyFormat.format(new Date());
 

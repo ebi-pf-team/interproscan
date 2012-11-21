@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -50,5 +51,33 @@ public class ProteinXrefDAOTest {
         Assert.assertEquals(1, nonUniqueXrefs.size());
         String nonUnique = nonUniqueXrefs.get(0);
         Assert.assertEquals(identifier1, nonUnique);
+    }
+
+    @Test
+    public void testGetXrefAndProteinByProteinXrefIdentifier() {
+        final String identifier1 = "Q12345";
+        final String identifier2 = "P99999";
+
+        Protein protein1 = new Protein("ASDDFQWERZXCZ");
+        Protein protein2 = new Protein("YFCSTCSFDCSDTCRFT");
+        Protein protein3 = new Protein("YFCS");
+
+
+        protein1.addCrossReferences(identifier1, identifier2);
+        protein2.addCrossReferences(identifier1);
+        protein3.addCrossReferences(identifier1);
+
+        // Store the proteins
+        proteinDAO.insert(protein1);
+        proteinDAO.insert(protein2);
+        proteinDAO.insert(protein3);
+
+        List<ProteinXref> proteinXrefs = proteinXrefDAO.getXrefAndProteinByProteinXrefIdentifier("Q12345");
+        Assert.assertEquals(3, proteinXrefs.size());
+        Long proteinId1 = proteinXrefs.get(0).getProtein().getId();
+        Long proteinId2 = proteinXrefs.get(1).getProtein().getId();
+        Long proteinId3 = proteinXrefs.get(2).getProtein().getId();
+        Assert.assertEquals("", 1, proteinId3.compareTo(proteinId2));
+        Assert.assertEquals("", 1, proteinId2.compareTo(proteinId1));
     }
 }

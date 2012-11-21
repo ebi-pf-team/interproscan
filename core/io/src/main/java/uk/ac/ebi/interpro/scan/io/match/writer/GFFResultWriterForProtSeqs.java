@@ -34,24 +34,21 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
     public int write(Protein protein) throws IOException {
+        String proteinIdsForGFF = getProteinAccession(protein);
         int sequenceLength = protein.getSequenceLength();
+        String md5 = protein.getMd5();
         String date = dmyFormat.format(new Date());
         Set<Match> matches = protein.getMatches();
         //Write sequence region information
         if (matches.size() > 0) {
-            for (ProteinXref proteinXref : protein.getCrossReferences()) {
-                //Get protein identifier and check if it is GFF3 valid
-                String proteinIdForGFF = proteinXref.getIdentifier();
-                proteinIdForGFF = super.getValidGFF3SeqId(proteinIdForGFF);
-                //Get protein name
-                String proteinName = proteinXref.getName();
-                //Write sequence-region
-                super.gffWriter.write("##sequence-region " + proteinIdForGFF + " 1 " + sequenceLength);
-                writeReferenceLine(proteinIdForGFF, proteinName, sequenceLength);
-                addFASTASeqToMap(proteinIdForGFF, protein.getSequence());
+            //Check if protein accessions are GFF3 valid
+            proteinIdsForGFF = ProteinMatchesGFFResultWriter.getValidGFF3SeqId(proteinIdsForGFF);
+            //Write sequence-region
+            super.gffWriter.write("##sequence-region " + proteinIdsForGFF + " 1 " + sequenceLength);
+            writeReferenceLine(proteinIdsForGFF, sequenceLength, md5);
+            addFASTASeqToMap(proteinIdsForGFF, protein.getSequence());
 
-                processMatches(matches, proteinIdForGFF, date, protein, proteinIdForGFF);
-            }//end protein xrefs loop
+            processMatches(matches, proteinIdsForGFF, date, protein, proteinIdsForGFF);
         }//end match size check
         return 0;
     }
@@ -59,10 +56,12 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
     /**
      * Writes information about the target protein sequence (or reference sequence).
      */
-    private void writeReferenceLine(final String seqId, final String proteinName, int end) throws IOException {
+    private void writeReferenceLine(final String seqId, final int end, final String md5)
+            throws IOException {
         GFF3Feature polypeptideFeature = new GFF3Feature(seqId, ".", "polypeptide", 1, end, "+");
-        polypeptideFeature.addAttribute("ID", seqId);
-        polypeptideFeature.addAttribute("Name", proteinName);
+        polypeptideFeature.addAttribute(GFF3Feature.ID_ATTR, seqId);
+//        polypeptideFeature.addAttribute(GFF3Feature.NAME_ATTR, proteinName);
+        polypeptideFeature.addAttribute(GFF3Feature.MD5_ATTR, md5);
         this.gffWriter.write(polypeptideFeature.getGFF3FeatureLine());
     }
 }

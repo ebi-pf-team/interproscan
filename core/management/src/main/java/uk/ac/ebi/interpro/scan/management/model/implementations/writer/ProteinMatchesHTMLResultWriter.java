@@ -23,6 +23,9 @@ import java.util.List;
 
 /**
  * Write matches as output for InterProScan user.
+ * <p/>
+ * Please note: This class might be not thread-safe because of the resultFiles list array, but as I5 runs this instance
+ * only once for all proteins at the end this OK.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
@@ -46,6 +49,7 @@ public class ProteinMatchesHTMLResultWriter {
 
     private String entryHierarchyBeanId;
 
+    /* Please read the class comment if you are concerned about thread-safety.*/
     private final List<File> resultFiles = new ArrayList<File>();
 
     private String tempDirectory;
