@@ -34,7 +34,7 @@ in standalone mode only (the InterPro website code will supply this information 
     <div class="prot_gal_bloc">
         <div class="prot_gal_col"><h1>Length</h1></div>
         <div class="prot_gal_desc">${protein.length} amino acids
-            <#if isProteinFragment>(fragment)</#if>
+            <#if isProteinFragment>(fragment)<#else>(complete)</#if>
         </div>
     </div>
 

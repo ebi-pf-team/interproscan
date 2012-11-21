@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import javax.persistence.Query;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -64,5 +65,19 @@ public class ProteinXrefDAOImpl extends GenericDAOImpl<ProteinXref, Long> implem
                 "select distinct a.identifier from ProteinXref a, ProteinXref b where a.id <> b.id and a.identifier = b.identifier"
         );
         return query.getResultList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProteinXref> getXrefAndProteinByProteinXrefIdentifier(String identifier) {
+        Query query = entityManager.createQuery("select x from ProteinXref x left outer join fetch x.protein p where x.identifier = :identifier order by p.id asc");
+        query.setParameter("identifier", identifier);
+        return query.getResultList();
+    }
+
+    @Transactional
+    public void updateAll(Collection<ProteinXref> proteinXrefs) {
+        for (ProteinXref proteinXref : proteinXrefs) {
+            entityManager.merge(proteinXref);
+        }
     }
 }

@@ -29,6 +29,7 @@
         <property name="htmlResultWriter" ref="htmlWriter"/>
         <property name="compressHtmlOutput" value="true"/>
         <property name="svgResultWriter" ref="svgWriter"/>
+        <property name="xrefDao" ref="xrefDAO"/>
     </bean>
 
 </beans>
