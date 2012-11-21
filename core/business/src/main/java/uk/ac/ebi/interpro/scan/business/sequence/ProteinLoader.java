@@ -108,14 +108,6 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 for (String crossReference : crossReferences) {
                     ProteinXref xref = XrefParser.getProteinXref(crossReference);
                     protein.addCrossReference(xref);
-
-                    // TODO - At this point, if this is the output of GetOrf being parsed, need to
-                    // parse out the start and end coordinates relative to the nucleic acid,
-                    // retrieve the correct nucleic acid and create an OpenReadingFrame object
-                    // to relate the Protein to the NucleicAcid.
-//                    if (isGetOrfOutput) {
-//                    TODO: Moved this part to a different method called createAndPersistNewORFs()
-//                    }
                 }
             }
             proteinsAwaitingPrecalcLookup.add(protein);
