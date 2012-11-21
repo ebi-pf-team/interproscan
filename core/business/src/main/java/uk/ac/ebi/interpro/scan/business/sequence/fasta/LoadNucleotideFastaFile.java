@@ -9,6 +9,8 @@ import java.util.Set;
  * Created with IntelliJ IDEA.
  *
  * @author Phil Jones
+ *         <p/>
+ *         Subclasses the Fasta file loader, specailising for nucleotide sequence.
  */
 public class LoadNucleotideFastaFile extends LoadFastaFileImpl<NucleotideSequence> {
 

@@ -9,6 +9,8 @@ import java.util.Set;
  * Created with IntelliJ IDEA.
  *
  * @author Phil Jones
+ *         <p/>
+ *         Subclasses the Fasta File Loader, specialising for protein sequence.
  */
 public class LoadProteinFastaFile extends LoadFastaFileImpl<Protein> {
 
