@@ -16,8 +16,6 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
@@ -64,41 +62,6 @@ public class NucleotideSequenceXref extends Xref implements Serializable {
 
     void setNucleotideSequence(NucleotideSequence sequence) {
         this.sequence = sequence;
-    }
-
-    /**
-     * This equals method must not change - do NOT add the database id
-     * to this equals method - otherwise the protein loader code will break.
-     * <p/>
-     * Only considers the natural key of the Xref object (as it should!)
-     *
-     * @param o ProteinXref to compare with.
-     * @return true if the two ProteinXrefs have the same natural key.
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof NucleotideSequenceXref))
-            return false;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .isEquals();
-    }
-
-    /**
-     * This hashCode method must not change - do NOT add the database id
-     * to this hashCode method - otherwise the protein loader code will break.
-     * <p/>
-     * Only considers the natural key of the Xref object (as it should!)
-     *
-     * @return hashcode for this Xref.
-     */
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(15, 51)
-                .appendSuper(super.hashCode())
-                .toHashCode();
     }
 
     @Override
