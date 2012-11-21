@@ -39,6 +39,7 @@
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
                 </property>
+
             </bean>
         </property>
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
@@ -102,6 +103,7 @@
     <bean id="remoteJobQueueListener" depends-on="localJmsTemplate" class="uk.ac.ebi.interpro.scan.jms.worker.RemoteJobQueueListener">
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>
+        <property name="workerMessageSender" ref="wor"
     </bean>
 
     <!--&lt;!&ndash;Configuration for the local job queue listener&ndash;&gt;-->

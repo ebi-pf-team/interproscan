@@ -25,6 +25,8 @@ public class ResponseQueueMessageListener implements MessageListener {
 
     private WorkerMessageSender workerMessageSender;
 
+    private WorkerImpl controller;
+
     @Required
     public void setRemoteJmsTemplate(JmsTemplate remoteJmsTemplate) {
         this.remoteJmsTemplate = remoteJmsTemplate;
@@ -47,6 +49,10 @@ public class ResponseQueueMessageListener implements MessageListener {
         return workerMessageSender;
     }
 
+    public void setController(WorkerImpl controller) {
+        this.controller = controller;
+    }
+
     @Override
     public void onMessage(final Message message) {
 
@@ -57,11 +63,18 @@ public class ResponseQueueMessageListener implements MessageListener {
 //            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //            LOGGER.warn("Worker: received message but failed to send it to the master/manager jobResponseQueue");
 //        }
+        if (controller != null) {
+            controller.jobResponseReceived();
+        }
         remoteJmsTemplate.send(jobResponseQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 return message;
             }
         });
         LOGGER.debug("Worker: received and sent a message on the jobResponseQueue");
+        //send a message that the response has been sent to the master
+        if (controller != null) {
+            controller.jobResponseProcessed();
+        }
     }
 }

@@ -37,6 +37,8 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
 
     private Destination workerJobRequestQueue;
 
+    private Destination normalWorkerJobRequestQueue;
+
     private Destination workerManagerTopic;
 
     private Destination highmemWorkerJobRequestQueue;
@@ -62,6 +64,11 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
     @Required
     public void setWorkerJobRequestQueue(Destination workerJobRequestQueue) {
         this.workerJobRequestQueue = workerJobRequestQueue;
+    }
+
+    @Required
+    public void setNormalWorkerJobRequestQueue(Destination normalWorkerJobRequestQueue) {
+        this.normalWorkerJobRequestQueue = normalWorkerJobRequestQueue;
     }
 
     @Required
@@ -103,7 +110,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
             throw new IllegalStateException("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
         }
 
-        //change the destination to cater for high memory job request queue
+        //change the destination to cater for high memory job request queue, remember to set it back to the normal worker queue thereafter
         if (highMemory && canRunRemotely) {
             if (highmemWorkerJobRequestQueue != null) {
                 setWorkerJobRequestQueue(highmemWorkerJobRequestQueue);
@@ -112,6 +119,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
                 LOGGER.warn("High memory job request queue (destination) isn't set up properly!");
             }
         }
+        LOGGER.debug("Using queue: " +  ((Queue)workerJobRequestQueue).getQueueName());
         synchronized (JMS_TEMPLATE_LOCK) {
             jmsTemplate.setPriority(priority);
             jmsTemplate.send(workerJobRequestQueue, new MessageCreator() {
@@ -136,12 +144,20 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
                         }
                         LOGGER.debug(buf);
                     }
-                    LOGGER.debug("Adding to queue Message with ID:" + message.getJMSMessageID() + " type: " + message.getJMSType() + " " + (highMemory ? "highmem" : "normal memory") + " StepExecution with priority " + priority + " that can run remotely: " + stepExecution.toString());
-
+                    LOGGER.debug("Adding to queue Message with ID:"+ message.getJMSMessageID()+
+                            " highmem: "+message.getBooleanProperty(HIGH_MEMORY_PROPERTY) +" " + (highMemory ? "highmemWorker" : "normalMemoryWorker") +
+                            " StepExecution with priority " + priority +
+                            " that can run remotely: " + stepExecution.toString()  +
+                            " on the queuue: "+ ((Queue)workerJobRequestQueue).getQueueName()
+                    );
 
                     return message;
                 }
             });
+        }
+        //set the queue back to normal job request queue
+        if(highMemory && canRunRemotely){
+            setWorkerJobRequestQueue(normalWorkerJobRequestQueue);
         }
     }
 }

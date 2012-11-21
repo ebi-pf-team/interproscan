@@ -42,6 +42,32 @@ public class LSFMonitor {
         return count;
     }
 
+    /**
+     *
+     * @param projectId
+     * @return   number of active bsub PENDING jobs for a project
+     */
+    public int pendingJobs(String projectId) {
+        LOGGER.info("Monitoring jobs with project name " + projectId);
+        //Build bjobs command
+        LSFBjobsCommand monitorCmd = buildBjobsCommand(projectId);
+        LSFJobInfoParser parser = LSFJobInfoParser.getInstance();
+        InputStream bjobsOutput = runBjobs(monitorCmd);
+        Map<String, Set<LSFJobInformation>> jobInformationMap = parser.parse(bjobsOutput);
+        Collection<Set<LSFJobInformation>> s = jobInformationMap.values();
+        Collection<Set<LSFJobInformation>> jobInformations = jobInformationMap.values();
+        int count = 0;
+        for (Set<LSFJobInformation> jobInformationSet: jobInformations) {
+            for (LSFJobInformation jobInformation: jobInformationSet) {
+                LSFJobStatus jobStatus = jobInformation.getStatus();
+                if(jobStatus.equals(LSFJobStatus.PEND) || jobStatus.equals(LSFJobStatus.WAIT)){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
 
     private Set<LSFJobStatus> getJobStatuses(Set<LSFJobInformation> jobInformations) {
         Set<LSFJobStatus> jobStatuses = new HashSet<LSFJobStatus>();

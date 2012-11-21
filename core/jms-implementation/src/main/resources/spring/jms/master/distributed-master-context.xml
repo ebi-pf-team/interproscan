@@ -51,7 +51,7 @@
                 <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
                 <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
                 <property name="jmsTemplate" ref="inVmJmsTemplate"/>
-
+                <property name="normalWorkerJobRequestQueue" ref="jobRequestQueue"/>
                 <property name="highmemWorkerJobRequestQueue" ref="highMemJobRequestQueue"/>
                 <property name="workerManagerTopic" ref="workerManagerTopic"/>
                 <property name="jmsTopicTemplate" ref="inVmJmsTopicTemplate"/>

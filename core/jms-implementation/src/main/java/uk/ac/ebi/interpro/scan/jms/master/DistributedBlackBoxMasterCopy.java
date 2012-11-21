@@ -189,13 +189,14 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         //create two workers : one high memory and one non high memory
         final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
 
-        LOGGER.debug("Starting the first high memory worker...");
-//        high memory do have a higher priority compared to low memory workers
-        workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
         LOGGER.debug("Starting the first FOUR normal worker.");
-        for (int i=0;i<4;i++){
+        for (int i=0;i<3;i++){
             workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
         }
+        LOGGER.debug("Starting the first high memory worker...");
+        // high memory do have a higher priority compared to low memory workers
+        workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
+
 
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
@@ -203,19 +204,9 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                     //start new workers
                 while (!shutdownCalled) {
                     //statsUtil.sendMessage();
-                    //statsUtil.sendhighMemMessage();
-                    LOGGER.debug("Poll High Memory Job Request queue");
-                    final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
                     final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
                     final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
-                    if (highMemStatsAvailable) {
-                        final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                        if ((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0) ||
-                                (highMemWorkerRequired && statsMessageListener.getConsumers() < 10)) {
-                            LOGGER.debug("Starting a high memory worker.");
-                            workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);
-                        }
-                    }
+
                     LOGGER.debug("Poll Job Request Queue queue");
                     final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                     if (statsAvailable) {
@@ -226,6 +217,18 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                             workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
                         }
                     }
+                    //statsUtil.sendhighMemMessage();
+                    LOGGER.debug("Poll High Memory Job Request queue");
+                    final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
+                    if (highMemStatsAvailable) {
+                        final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
+                        if ((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0) ||
+                                (highMemWorkerRequired && statsMessageListener.getConsumers() < 10)) {
+                            LOGGER.debug("Starting a high memory worker.");
+                            workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);
+                        }
+                    }
+
                     LOGGER.debug("Poll the Job Response queue ");
                     final boolean responseQueueStatsAvailable = statsUtil.pollStatsBrokerResponseQueue();
                     if (!responseQueueStatsAvailable) {
