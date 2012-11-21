@@ -254,20 +254,14 @@ public class NucleotideSequence implements Serializable {
             return false;
         final NucleotideSequence s = (NucleotideSequence) o;
         return new EqualsBuilder()
-                .append(sequence, s.sequence)
                 .append(md5.toLowerCase(), s.md5.toLowerCase())
-//                .append(orfs, s.orfs)
-                .append(xrefs, s.xrefs)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(39, 47)
-                .append(sequence)
                 .append(md5)
-//                .append(orfs)
-                .append(xrefs)
                 .toHashCode();
     }
 
