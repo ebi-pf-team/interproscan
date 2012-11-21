@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -32,4 +33,14 @@ public interface ProteinXrefDAO extends GenericDAO<ProteinXref, Long> {
      */
     public List<String> getNonUniqueXrefs();
 
+
+    /**
+     * Returns a List of protein xrefs and their attached protein ordered by protein Id.
+     *
+     * @param identifier
+     * @return
+     */
+    public List<ProteinXref> getXrefAndProteinByProteinXrefIdentifier(String identifier);
+
+    public void updateAll(Collection<ProteinXref> proteinXrefs);
 }

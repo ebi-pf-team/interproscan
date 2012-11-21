@@ -13,6 +13,12 @@ import java.util.Map;
  */
 public class GFF3Feature {
 
+    final static String NAME_ATTR = "Name";
+
+    final static String ID_ATTR = "ID";
+
+    final static String MD5_ATTR = "md5";
+
     private final String UNDEFINIED_FIELD = ".";
 
     //Not nullable
@@ -104,9 +110,9 @@ public class GFF3Feature {
         StringBuilder sb = new StringBuilder();
         for (String key : attributes.keySet()) {
             String value = attributes.get(key);
-            if (key.equals("ID")) {
+            if (key.equals(ID_ATTR)) {
                 value = ProteinMatchesGFFResultWriter.getValidGFF3SeqId(value);
-            } else if (key.equals("Name")) {
+            } else if (key.equals(NAME_ATTR)) {
                 value = ProteinMatchesGFFResultWriter.getValidGFF3AttributeName(value);
             }
             if (sb.length() > 0) {

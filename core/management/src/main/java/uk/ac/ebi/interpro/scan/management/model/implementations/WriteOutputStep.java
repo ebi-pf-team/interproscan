@@ -11,17 +11,13 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
-import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
-import uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.ProteinMatchesHolder;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -38,19 +34,33 @@ public class WriteOutputStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(WriteOutputStep.class.getName());
 
+    //DAOs
     private ProteinDAO proteinDAO;
 
-    private boolean deleteWorkingDirectoryOnCompletion;
+    private ProteinXrefDAO proteinXrefDAO;
 
+    //Output writer
     private XmlWriter xmlWriter;
 
     private ProteinMatchesHTMLResultWriter htmlResultWriter;
 
     private ProteinMatchesSVGResultWriter svgResultWriter;
 
+    //Misc
+    private boolean deleteWorkingDirectoryOnCompletion;
+
     private boolean compressHtmlOutput;
 
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
+
+    public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
+    public static final String OUTPUT_FILE_FORMATS = "OUTPUT_FORMATS";
+    public static final String MAP_TO_INTERPRO_ENTRIES = "MAP_TO_INTERPRO_ENTRIES";
+    public static final String MAP_TO_GO = "MAP_TO_GO";
+    public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
+    public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
+
+    private static final int MAX_OUTPUT_ATTEMPTS = 3;
 
     @Required
     public void setCompressHtmlOutput(boolean compressHtmlOutput) {
@@ -77,19 +87,39 @@ public class WriteOutputStep extends Step {
         this.deleteWorkingDirectoryOnCompletion = "true".equalsIgnoreCase(deleteWorkingDirectoryOnCompletion);
     }
 
-    public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
-    public static final String OUTPUT_FILE_FORMATS = "OUTPUT_FORMATS";
-    public static final String MAP_TO_INTERPRO_ENTRIES = "MAP_TO_INTERPRO_ENTRIES";
-    public static final String MAP_TO_GO = "MAP_TO_GO";
-    public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
-    public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
-
-    private static final int MAX_OUTPUT_ATTEMPTS = 3;
-
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
     }
+
+    @Required
+    public void setXrefDao(ProteinXrefDAO proteinXrefDAO) {
+        this.proteinXrefDAO = proteinXrefDAO;
+    }
+
+    /**
+     * Sets/persists new unique protein xref identifiers in cases where they are non unique (same ID, different sequences).
+     */
+    private void setUniqueXrefs() {
+        if (proteinXrefDAO == null) {
+            throw new IllegalStateException("Protein Xref database accession object is NULL. Unexpected state. Cannot go on.");
+        }
+        Collection<ProteinXref> updates = new HashSet<ProteinXref>();
+        for (String identifier : proteinXrefDAO.getNonUniqueXrefs()) {
+            List<ProteinXref> proteinXrefs = proteinXrefDAO.getXrefAndProteinByProteinXrefIdentifier(identifier);
+            if (proteinXrefs.size() < 2) {
+                LOGGER.warn("Unexpected databases query result. The size of the result set should be > 1.");
+            }
+            int counter = 0;
+            for (ProteinXref xref : proteinXrefs) {
+                counter++;
+                xref.setIdentifier(xref.getIdentifier() + "_" + counter);
+                updates.add(xref);
+            }
+        }
+        proteinXrefDAO.updateAll(updates);
+    }
+
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
@@ -105,6 +135,7 @@ public class WriteOutputStep extends Step {
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
 
         List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        setUniqueXrefs();
 
         for (FileOutputFormat outputFormat : outputFormats) {
             Integer counter = null;
