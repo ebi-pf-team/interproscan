@@ -98,12 +98,14 @@ public class SubmissionWorkerRunner implements WorkerRunner {
      * @param tcpUri
      */
     public void setAgent_id(String tcpUri) {
+        //label log file if high memory worker (hw) or normal worker (nw)
+        String workerType = highMemory ? "hm" : "nw";
         if (projectId != null) {
-            this.agent_id = projectId+"_"+tcpUri.hashCode()+"_"+getWorkerCountString();
+            this.agent_id = projectId+"_"+tcpUri.hashCode()+"_"+workerType+"_"+getWorkerCountString();
         }else if(tcpUri != null ){
-            this.agent_id = "worker"+"_"+tcpUri.hashCode()+"_"+getWorkerCountString();
+            this.agent_id = "worker"+"_"+tcpUri.hashCode()+"_"+workerType+"_"+getWorkerCountString();
         }else{
-            this.agent_id = "worker_unid"+"_"+getWorkerCountString();
+            this.agent_id = "worker_unid"+"_"+workerType+"_"+getWorkerCountString();
         }
     }
 
@@ -137,8 +139,9 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Override
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
         int activeJobs = lsfMonitor.activeJobs(projectId);
-        if (activeJobs > gridJobsLimit) {
-            LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs);
+        int pendingJobs = lsfMonitor.pendingJobs(projectId);
+        if (activeJobs > gridJobsLimit || (pendingJobs*5 > activeJobs && activeJobs > 5)) {
+            LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs + " pending Jpbs : " + pendingJobs);
             return;
         }
         LOGGER.debug("GridJobs -   active Jobs on the cluster: " + activeJobs);

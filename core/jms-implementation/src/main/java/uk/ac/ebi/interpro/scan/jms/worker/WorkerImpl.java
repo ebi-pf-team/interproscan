@@ -36,6 +36,7 @@ public class WorkerImpl implements Worker {
     private long lastMessageFinishedTime = System.currentTimeMillis(); //new Date().getTime();
 
     private final List<String> runningJobs = new ArrayList<String>();
+    private boolean responseQueueListenerBusy = false;
 
     private final Object jobListLock = new Object();
 
@@ -263,6 +264,7 @@ public class WorkerImpl implements Worker {
         this.shutdown = shutdown;
     }
 
+
     /**
      * If a Master URI has been set on this Worker, this method will return it,
      * otherwise will return null.
@@ -296,6 +298,21 @@ public class WorkerImpl implements Worker {
         }
     }
 
+    /**
+     *  record that a job has been received on the response Monitor
+     *
+     */
+    public void jobResponseReceived(){
+          responseQueueListenerBusy = true;
+    }
+
+    /**
+     * record that a response has been sent to the master
+     */
+    public void jobResponseProcessed(){
+         responseQueueListenerBusy = false;
+    }
+
     private Long lifeRemaining() {
         return System.currentTimeMillis() - startUpTime;
     }
@@ -305,8 +322,9 @@ public class WorkerImpl implements Worker {
             final long now = System.currentTimeMillis();
             final boolean exceededLifespan = (now - startUpTime) > maximumLifeMillis;
             final boolean exceededIdleTime = (now - lastMessageFinishedTime) > maximumIdleTimeMillis;
-            LOGGER.debug("Now: "+ now+ " idleTime: " +lastMessageFinishedTime);
-            if (runningJobs.size() == 0 && (exceededLifespan || exceededIdleTime)) {
+            LOGGER.debug("Now: "+ now+ " lastMessageFinished: " +lastMessageFinishedTime +" IdleTime: " +(now - lastMessageFinishedTime) + " maxIdleTime: "+maximumIdleTimeMillis);
+            //if exceededIdleTime check if workers have running jobs
+            if (runningJobs.size() == 0 && (exceededLifespan || (exceededIdleTime && workersHaveRunningJobs()))) {
 
                 if (LOGGER.isInfoEnabled()) {
                     if (exceededLifespan) {
@@ -337,7 +355,7 @@ public class WorkerImpl implements Worker {
     public void run() {
         System.out.println("Running InterProScan worker - run() ...");
         LOGGER.info("Running InterProScan worker ...");
-        startStatsMessageListener();
+        //startStatsMessageListener();
         statsUtil.pollStatsBrokerJobQueue();
 
         try {
@@ -361,41 +379,25 @@ public class WorkerImpl implements Worker {
                     LOGGER.debug("Worker: Received shutdown message.  message already sent to child workers.");
                     break;
                 }
-                Thread.sleep(5000);
+                Thread.sleep(5*1000);
             }
-            statsUtil.pollStatsBrokerResponseQueue();
-            LOGGER.info("Response Stats: " + statsUtil.getStatsMessageListener().getStats());
-            boolean  isResponseQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
-            int responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
-            statsUtil.pollStatsBrokerJobQueue();
-            boolean  islocalQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
-            int requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
-            //stop the message listener
+           //stop the message listener
             remoteQueueJmsContainer.stop();
-            long waitingTime=20 * 1000;
+            long waitingTime=10 * 1000;
             //if shutdown is activated reduce waiting time
             if (shutdown) {
                 waitingTime=1000;
             }
             //statsUtil.getStatsMessageListener().hasConsumers()
-
-            while ((requestEnqueueCount > responseDequeueCount) || ((!islocalQueueEmpty) || (!isResponseQueueEmpty))) {
-                LOGGER.debug("inShutdown mode: # of consumers: "+ statsUtil.getStatsMessageListener().getConsumers()+ " requestEnqueueCount: " + requestEnqueueCount+ " responseDequeueCount: "+responseDequeueCount);
-                LOGGER.debug("islocalQueueEmpty: "+ islocalQueueEmpty+ " isResponseQueueEmpty: " + isResponseQueueEmpty);
+            LOGGER.debug("Worker: in Shutdown mode.");
+            //dont exit until the workers have completed all the tasks and the responseMonitor has completed sending response messages to the master
+            while (workersHaveRunningJobs() || responseQueueListenerBusy) {
                 Thread.sleep(waitingTime);
-                statsUtil.pollStatsBrokerResponseQueue();
-                LOGGER.debug("Response Stats: " + statsUtil.getStatsMessageListener().getStats());
-                isResponseQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
-                responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
-                statsUtil.pollStatsBrokerJobQueue();
-                LOGGER.debug("RequestQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
-                islocalQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
-                requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
             }
             //send shutdown message
             managerTopicMessageListener.getWorkerMessageSender().sendShutDownMessage();
             //sleep for 4 seconds and then exit
-            Thread.sleep(4*1000);
+            Thread.sleep(10*1000);
             LOGGER.info("Worker: completed tasks. Shutdown message sent. Stopping now.");
         } catch (InterruptedException e) {
             LOGGER.error("InterruptedException thrown by Worker.  Stopping now.", e);
@@ -422,6 +424,30 @@ public class WorkerImpl implements Worker {
     }
 
     /**
+     *   check if child workers have running jobs
+     *
+     *   @return workersHaveRunningJobs
+     */
+    private boolean  workersHaveRunningJobs(){
+        statsUtil.pollStatsBrokerResponseQueue();
+        LOGGER.debug("workersHaveRunningJobs Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+        boolean  isResponseQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
+        int responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
+        if(!highMemory) {
+            statsUtil.pollStatsBrokerJobQueue();
+            LOGGER.debug("workersHaveRunningJobs RequestQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
+        }else{
+            statsUtil.pollStatsBrokerHighMemJobQueue();
+            LOGGER.debug("workersHaveRunningJobs High Memory RequestQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
+        }
+
+        boolean  islocalQueueEmpty =  (statsUtil.getStatsMessageListener().getQueueSize() == 0);
+        int requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
+
+        return (requestEnqueueCount > responseDequeueCount  || ((!islocalQueueEmpty) || (!isResponseQueueEmpty)));
+    }
+
+    /**
      * statsMessageListener.newWorkersRequired = expectedCompletionTime() > Liferemaining/completionTargetFactor
      * check if number of remoteConsumers < maxConsumerSize
      * check if number of consumers <  getQueueSize()/queueConsumerRatio
@@ -429,10 +455,18 @@ public class WorkerImpl implements Worker {
      * @return   newWorkersRequired
      */
     private boolean isNewWorkersRequired() {
+        statsUtil.pollStatsBrokerJobQueue();
         final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
-        return statsMessageListener.newWorkersRequired((int) (lifeRemaining() / completionFactor)) &&
+        LOGGER.debug("New worker Required - RequestQueue Stats: " + statsMessageListener.getStats());
+        boolean quickSpawnMode = false;
+        if(statsMessageListener.getConsumers() > 0){
+            quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
+        }
+        LOGGER.debug("New worker Required  quickSpawnMode: " + quickSpawnMode);
+        return (statsMessageListener.newWorkersRequired((int) (lifeRemaining() / completionFactor)) &&
                 (statsMessageListener.getConsumers() < maxConsumerSize) &&
-                (statsMessageListener.getConsumers() < statsMessageListener.getQueueSize() / queueConsumerRatio);
+                (statsMessageListener.getConsumers() < statsMessageListener.getQueueSize() / queueConsumerRatio))
+                || (quickSpawnMode);
     }
 
 

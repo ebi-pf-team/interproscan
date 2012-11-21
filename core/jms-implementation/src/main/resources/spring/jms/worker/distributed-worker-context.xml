@@ -132,6 +132,7 @@
                 <property name="gridJobsLimit" value="${grid.jobs.limit}"/>
                 <property name="lsfMonitor" ref="lsfMonitor"/>
                 <property name="highMemory" value="false"/>
+                <property name="gridName" value="${grid.name}"/>
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
                 </property>
@@ -180,6 +181,7 @@
     <bean id="responseQueueMessageListener" class="uk.ac.ebi.interpro.scan.jms.worker.ResponseQueueMessageListener">
         <property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="controller" ref="distributedWorkerController"/>
         <!--<property name="workerMessageSender" ref="workerMessageSender"/>-->
 
     </bean>
@@ -211,8 +213,8 @@
         <property name="connectionFactory" ref="localJmsFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="localJobQueueListener"/>
-        <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
-        <property name="maxConcurrentConsumers" value="${number.of.embedded.workers}"/>
+        <property name="concurrentConsumers" value="${worker.number.of.embedded.workers}"/>
+        <property name="maxConcurrentConsumers" value="${worker.maxnumber.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
     </bean>
@@ -224,6 +226,7 @@
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="controller" ref="distributedWorkerController"/>
     </bean>
 
     <!--<bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->
