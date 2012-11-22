@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static junit.framework.Assert.*;
-import static junit.framework.Assert.assertEquals;
 
 /**
  * Tests {@link uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser}.
@@ -52,8 +51,7 @@ public class GetOrfDescriptionLineParserTest {
     public void testParseGetOrfDescLine() throws IOException {
         final Set<String> descriptions = read(getOrfTestFile);
         for (String description : descriptions) {
-            String[] chunks = parser.parseGetOrfDescriptionLine(description);
-            OpenReadingFrame orf = parser.createORFFromParsingResult(chunks);
+            OpenReadingFrame orf = parser.createORFFromParsingResult(description);
             assertNotNull("ORF result shouldn't be NULL!", orf);
             assertTrue("ORF (" + orf.getStrand() + ") " + orf.getStart() + ":" + orf.getEnd() + " should be an item of the result set!", orfs.contains(orf));
         }
@@ -74,23 +72,23 @@ public class GetOrfDescriptionLineParserTest {
         assertEquals("test", actual);
         //
         String expected = "test";
-        actual = parser.getIdentifier("test_1 [230 - 10] (REVERSE SENSE)");
+        actual = parser.getIdentifier("test_1");
         assertNotNull("Actual shouldn't be NULL!", actual);
 //        assertEquals("Strings should have the same length!", expected.length(), actual.length());
         assertEquals(expected, actual);
         //
         expected = "reverse translation of P22298";
         //getorf result: reverse_1 [2 - 76] translation of P22298
-        actual = parser.getIdentifier("reverse_1 [2 - 76] translation of P22298");
+        actual = parser.getIdentifier("reverse_1");
         assertEquals(expected, actual);
         //
         expected = "reverse translation of P22298";
-        actual = parser.getIdentifier("reverse_7 [394 - 224] (REVERSE SENSE) translation of P22298");
+        actual = parser.getIdentifier("reverse_7");
         assertEquals(expected, actual);
         //
         expected = "seq1";
         //getorf result: seq1_1 [2 - 76]
-        actual = parser.getIdentifier("seq1_1 [2 - 76]");
+        actual = parser.getIdentifier("seq1_1");
         assertEquals(expected, actual);
     }
 

@@ -88,20 +88,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                             }
                             currentSequence.delete(0, currentSequence.length());
                         }
-                        if (line.length() > 1) {
-                            currentId = line.substring(1).trim();
-                        }
-
-                        if (currentId == null || currentId.isEmpty()) {
-                            LOGGER.error("Found an empty ID line in the FASTA file on line " + lineNumber);
-                            currentId = null;
-                        } else if (currentId.length() > 255) {
-                            // ID line is too long to fit in the database column, so trim it!
-                            // TODO Really this line should be parsed properly!
-                            currentId = currentId.substring(0, 255);
-                        }
-
-
+                        currentId = parseId(line, lineNumber);
                     } else {
                         // must be a sequence line.
                         currentSequence.append(line.trim());
@@ -127,6 +114,30 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                 }
             }
         }
+    }
+
+    /**
+     * Parses out an ID line, replaces white space with underscores in IDs
+     *
+     * @param line
+     * @param lineNumber
+     * @return
+     */
+    private String parseId(String line, int lineNumber) {
+        String currentId = null;
+        if (line.length() > 1) {
+            currentId = line.substring(1).trim();
+        }
+
+        if (currentId == null || currentId.isEmpty()) {
+            LOGGER.error("Found an empty ID line in the FASTA file on line " + lineNumber);
+            throw new IllegalStateException("Found an empty ID line in the FASTA file on line " + lineNumber);
+        } else if (currentId.length() > 255) {
+            // ID line is too long to fit in the database column, so trim it!
+            // TODO Really this line should be parsed properly!
+            currentId = currentId.substring(0, 255);
+        }
+        return currentId;
     }
 
     protected abstract void addToMoleculeCollection(String sequence, final String currentId, final Set<T> parsedMolecules);
