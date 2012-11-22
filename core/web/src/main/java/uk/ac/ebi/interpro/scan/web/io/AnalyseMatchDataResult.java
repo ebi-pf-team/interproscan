@@ -77,6 +77,8 @@ public class AnalyseMatchDataResult {
      * Convert a collection of {@link MatchDataRecord} objects
      * into a {@link SimpleProtein} object using necessary
      * business logic.
+     * Note that the {@link SimpleProtein} is incomplete as in there is no structural match data attached, that can
+     * be done afterwards.
      *
      * @param records a Collection of MatchDataRecord objects
      * @return The simple protein, or NULL if nothing found

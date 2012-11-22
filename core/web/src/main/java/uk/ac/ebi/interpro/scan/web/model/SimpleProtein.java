@@ -27,7 +27,7 @@ public final class SimpleProtein implements Serializable {
     private final boolean isProteinFragment;
     private final List<SimpleEntry> entries = new ArrayList<SimpleEntry>();
     private Set<SimpleEntry> familyEntries = null;
-    private final List<SimpleStructuralDatabase> structuralDatabases = new ArrayList<SimpleStructuralDatabase>();
+    private List<SimpleStructuralDatabase> structuralDatabases = new ArrayList<SimpleStructuralDatabase>();
 
 
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
@@ -115,6 +115,10 @@ public final class SimpleProtein implements Serializable {
 
     public List<SimpleStructuralDatabase> getStructuralDatabases() {
         return structuralDatabases;
+    }
+
+    public void setStructuralDatabases(List<SimpleStructuralDatabase> structuralDatabases) {
+        this.structuralDatabases = structuralDatabases;
     }
 
     /* Convenience filter methods for JSPs: */
