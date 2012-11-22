@@ -18,7 +18,7 @@ public class GetOrfDescriptionLineParser {
 
     private static final Logger LOGGER = Logger.getLogger(GetOrfDescriptionLineParser.class.getName());
 
-    private static final Pattern DESCRIPTION_PATTERN = Pattern.compile("^\\[(\\d+)\\s+\\-\\s+(\\d+)]\\s*(\\(REVERSE SENSE\\))?\\s*(.*)$");
+    private static final Pattern DESCRIPTION_PATTERN = Pattern.compile("\\[(\\d+)\\s+\\-\\s+(\\d+)]\\s*(\\(REVERSE SENSE\\))?\\s*(.*)$");
 
     private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^(.+)\\_(.+)");
 
