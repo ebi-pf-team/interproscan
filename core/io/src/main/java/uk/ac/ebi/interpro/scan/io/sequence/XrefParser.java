@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.sequence;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
@@ -15,6 +16,8 @@ import java.util.regex.Pattern;
  * @since 1.0-SNAPSHOT
  */
 public class XrefParser {
+
+    private static final Logger LOGGER = Logger.getLogger(XrefParser.class.getName());
 
     private static final Pattern PIPE_REGEX = Pattern.compile("\\|");
 
@@ -113,9 +116,12 @@ public class XrefParser {
                 }
             } else {
                 final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);
-                if (matcher.matches()) {
+                if (LOGGER.isDebugEnabled()) LOGGER.debug("Checking for match to GETORF regex, crossRef: " + crossReference);
+                if (matcher.find()) {
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug("MATCHES");
                     return new ProteinXref(null, matcher.group(1), null, matcher.group(2));
                 } else {
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug("No Match.");
                     return new ProteinXref(stripWhiteSpaceAndTrim(crossReference));
                 }
             }
