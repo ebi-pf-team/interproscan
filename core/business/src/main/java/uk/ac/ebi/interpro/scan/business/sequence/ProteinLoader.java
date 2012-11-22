@@ -297,7 +297,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                         LOGGER.warn("Couldn't find nucleotide sequence by the following identifier: " + nucleotideId);
                     }
                 } else {
-                    LOGGER.warn("Couldn't create any ORF object by the specified chunks: " + Arrays.toString(chunks) + "!");
+                    LOGGER.warn("Couldn't create any ORF object by the specified description: " + xref.getDescription() + "!");
                 }
             }
         }
