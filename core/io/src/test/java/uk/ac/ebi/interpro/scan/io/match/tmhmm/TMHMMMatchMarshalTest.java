@@ -2,21 +2,21 @@ package uk.ac.ebi.interpro.scan.io.match.tmhmm;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import uk.ac.ebi.interpro.scan.model.PhobiusMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.TMHMMMatch;
 
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a marshal test for TMHMM matches.
@@ -43,14 +43,14 @@ public class TMHMMMatchMarshalTest extends TestCase {
     @Test
     public void testMarshalTMHMMMatch() {
         init();
-        Set<TMHMMMatch.TMHMMLocation> locations = new HashSet<TMHMMMatch.TMHMMLocation>();
+        final Set<TMHMMMatch.TMHMMLocation> locations = new HashSet<TMHMMMatch.TMHMMLocation>();
         locations.add(new TMHMMMatch.TMHMMLocation(1, 2, "TMHelix", 1.0f));
         final Signature signature = new Signature.Builder("TMhelix").build();
-        TMHMMMatch match = new TMHMMMatch(signature, locations);
-        Protein protein = new Protein("aaa");
+        final TMHMMMatch match = new TMHMMMatch(signature, locations);
+        final Protein protein = new Protein("aaa");
         protein.addMatch(match);
         try {
-            String result = marshal(marshaller, protein);
+            final String result = marshal(marshaller, protein);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(result);
             String resultFileStr = "XML result file:\n " + result;
@@ -59,7 +59,9 @@ public class TMHMMMatchMarshalTest extends TestCase {
             assertTrue("Missed <tmhmm-match> tag! " + resultFileStr, result.contains("<tmhmm-match>"));
             assertTrue("Missed <signature> tag or tag values are wrong! " + resultFileStr, result.contains("<signature ac=\"TMhelix\"/>"));
             assertTrue("Missed <locations> tag! " + resultFileStr, result.contains("<locations>"));
-            assertTrue("Missed <tmhmm-location> tag or tag values are wrong! " + resultFileStr, result.contains("<tmhmm-location end=\"2\" start=\"1\"/>"));
+            assertTrue("Missed <tmhmm-location> tag or tag values are wrong! " + resultFileStr, result.contains("<tmhmm-location"));
+            assertTrue("Missed <tmhmm-location> tag or tag values are wrong! " + resultFileStr, result.contains("end=\"2\""));
+            assertTrue("Missed <tmhmm-location> tag or tag values are wrong! " + resultFileStr, result.contains("start=\"1\""));
         } catch (IOException e) {
             LOGGER.warn("Couldn't marshal protein object!", e);
         }

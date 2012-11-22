@@ -2,14 +2,12 @@ package uk.ac.ebi.interpro.scan.io.match.phobius;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.PhobiusMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.TMHMMMatch;
 
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
@@ -45,22 +43,27 @@ public class PhobiusMatchMarshalTest extends TestCase {
     @Test
     public void testMarshalPhobiusMatch() {
         init();
-        Set<PhobiusMatch.PhobiusLocation> locations = new HashSet<PhobiusMatch.PhobiusLocation>();
+        final Set<PhobiusMatch.PhobiusLocation> locations = new HashSet<PhobiusMatch.PhobiusLocation>();
         locations.add(new PhobiusMatch.PhobiusLocation(1, 2));
         final Signature signature = new Signature.Builder("SIGNAL_PEPTIDE").name("Signal Peptide").build();
-        PhobiusMatch match = new PhobiusMatch(signature, locations);
-        Protein protein = new Protein("aaa");
+        final PhobiusMatch match = new PhobiusMatch(signature, locations);
+        final Protein protein = new Protein("aaa");
         protein.addMatch(match);
         try {
-            String result = marshal(marshaller, protein);
-            if (LOGGER.isDebugEnabled())
+            final String result = marshal(marshaller, protein);
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(result);
+            }
             assertNotNull("XML result shouldn't be null!", result);
             assertTrue(result.contains("<matches>"));
             assertTrue(result.contains("<phobius-match>"));
-            assertTrue(result.contains("<signature name=\"Signal Peptide\" ac=\"SIGNAL_PEPTIDE\"/>"));
+            assertTrue(result.contains("<signature"));
+            assertTrue(result.contains("name=\"Signal Peptide\""));
+            assertTrue(result.contains("ac=\"SIGNAL_PEPTIDE\""));
             assertTrue(result.contains("<locations>"));
-            assertTrue(result.contains("<phobius-location end=\"2\" start=\"1\"/>"));
+            assertTrue(result.contains("<phobius-location"));
+            assertTrue(result.contains("end=\"2\""));
+            assertTrue(result.contains("start=\"1\""));
         } catch (IOException e) {
             LOGGER.warn("Couldn't marshal protein object!", e);
         }
