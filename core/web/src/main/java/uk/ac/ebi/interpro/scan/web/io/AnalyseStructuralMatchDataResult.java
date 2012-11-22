@@ -26,6 +26,10 @@ public class AnalyseStructuralMatchDataResult {
 
     private StructuralMatchDataRecord sampleStructuralMatch;
 
+    public AnalyseStructuralMatchDataResult() {
+        this(null);
+    }
+
     public AnalyseStructuralMatchDataResult(ResourceReader<StructuralMatchDataRecord> reader) {
         this.reader = reader;
     }
@@ -39,9 +43,6 @@ public class AnalyseStructuralMatchDataResult {
      * @return The list of simple structural matches, or NULL if nothing found
      */
     public Collection<SimpleStructuralDatabase> parseStructuralMatchDataOutput(Resource resource) {
-        String queryOutputText = "";
-        String line = "";
-        sampleStructuralMatch = null;
 
         /*
          * Example output:
@@ -64,12 +65,6 @@ public class AnalyseStructuralMatchDataResult {
          * Q9ZFM2	XYNB_GEOSE	504	59518E75200A18B1	SCOP	d1w91a1	b.71.1.2	449	503	N
          * ...
          */
-
-        String proteinAc = null;
-        //String proteinId;
-        //int proteinLength;
-        //String md5;
-        //String crc64;
         Collection<StructuralMatchDataRecord> records;
 
         try {
@@ -87,6 +82,21 @@ public class AnalyseStructuralMatchDataResult {
             LOGGER.info("No matches found in resource: " + resource.getDescription());
             return null;
         }
+
+        return createStructuralMatchData(records);
+    }
+
+    /**
+     * Convert a collection of {@link StructuralMatchDataRecord} objects into a collection of
+     * {@link SimpleStructuralDatabase} objects.
+     * @param records the structural match raw data
+     * @return resulting collection that associates each member database with it's structural matches
+     */
+    public Collection<SimpleStructuralDatabase> createStructuralMatchData(Collection<StructuralMatchDataRecord> records) {
+        String queryOutputText = "";
+        String line = "";
+        sampleStructuralMatch = null;
+        String proteinAc = null;
 
         Map<String, SimpleStructuralDatabase> structuralMatchDatabases = new HashMap<String, SimpleStructuralDatabase>();
         for (StructuralMatchDataRecord record : records) {
