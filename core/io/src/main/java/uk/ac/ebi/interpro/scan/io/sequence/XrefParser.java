@@ -3,6 +3,9 @@ package uk.ac.ebi.interpro.scan.io.sequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Simple utility class, which parses all XRef attribute out of a single cross reference (FASTA header).
  * TODO: A more generic version using type Xref is on holder until Xref is public available
@@ -13,17 +16,19 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
  */
 public class XrefParser {
 
-    private static final String SEPARATOR = "|";
+    private static final Pattern PIPE_REGEX = Pattern.compile("\\|");
 
-    private static final String REGEX = "\\|";
+    private static final Pattern GETORF_HEADER_PATTERN = Pattern.compile("^(.+)\\s+(\\[\\d+\\s+\\-\\s+\\d+].*)$");
 
-    private static final String ENA_DB_NAME = "ENA";
+    private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
 
-    private static final String SWISSPROT_DB_NAME = "sp";
+    private static final String ENA_DB_NAME = "ENA|";
 
-    private static final String TREMBL_DB_NAME = "tr";
+    private static final String SWISSPROT_DB_NAME = "sp|";
 
-    private static final String GENERAL_IDENTIFIER = "gi";
+    private static final String TREMBL_DB_NAME = "tr|";
+
+    private static final String GENERAL_IDENTIFIER = "gi|";
 //    private static final String GENEBANK_DB_NAME = "gb";
 //    private static final String REFSEQ_DB_NAME = "ref";
 //    private static final String EMBL_DB_NAME = "emb";
@@ -45,16 +50,16 @@ public class XrefParser {
      */
     public static NucleotideSequenceXref getNucleotideSequenceXref(String crossReference) {
         if (crossReference != null) {
-            if (crossReference.startsWith(ENA_DB_NAME + SEPARATOR)) {
-                String[] chunks = crossReference.split(REGEX);
+            if (crossReference.startsWith(ENA_DB_NAME)) {
+                String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length == 3) {
                     String database = chunks[0];
-                    String identifier = chunks[1];
+                    String identifier = stripWhiteSpaceAndTrim(chunks[1]);
                     String description = chunks[2];
                     return new NucleotideSequenceXref(database, identifier, description);
                 }
             }
-            return new NucleotideSequenceXref(crossReference);
+            return new NucleotideSequenceXref(stripWhiteSpaceAndTrim(crossReference));
         }
         return null;
     }
@@ -88,28 +93,42 @@ public class XrefParser {
      */
     public static ProteinXref getProteinXref(String crossReference) {
         if (crossReference != null) {
-            if (crossReference.startsWith(SWISSPROT_DB_NAME + SEPARATOR) || crossReference.startsWith(TREMBL_DB_NAME + SEPARATOR)) {
-                String[] chunks = crossReference.split(REGEX);
+            if (crossReference.startsWith(SWISSPROT_DB_NAME) || crossReference.startsWith(TREMBL_DB_NAME)) {
+                String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length == 3) {
                     String database = chunks[0];
-                    String identifier = chunks[1];
+                    String identifier = stripWhiteSpaceAndTrim(chunks[1]);
                     String description = chunks[2];
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description);
                 }
-            } else if (crossReference.startsWith(GENERAL_IDENTIFIER + SEPARATOR)) {
-                String[] chunks = crossReference.split(REGEX);
+            } else if (crossReference.startsWith(GENERAL_IDENTIFIER)) {
+                String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length == 5) {
                     String database = chunks[2];
-                    String identifier = chunks[3];
+                    String identifier = stripWhiteSpaceAndTrim(chunks[3]);
                     String description = chunks[4];
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description.trim());
                 }
+            } else {
+                final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);
+                if (matcher.matches()) {
+                    return new ProteinXref(null, matcher.group(1), null, matcher.group(2));
+                } else {
+                    return new ProteinXref(stripWhiteSpaceAndTrim(crossReference));
+                }
             }
-            return new ProteinXref(crossReference);
         }
         return null;
+    }
+
+    private static String stripWhiteSpaceAndTrim(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalStateException("Found an identifier in a fasta file which is null or empty???");
+        } else {
+            return WHITE_SPACE_PATTERN.matcher(id.trim()).replaceAll("_");
+        }
     }
 
     private static String getProteinName(String description) {

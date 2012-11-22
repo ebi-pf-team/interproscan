@@ -278,8 +278,8 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             for (ProteinXref xref : xrefs) {
                 //
                 String identifier = xref.getIdentifier();
-                String[] chunks = descriptionLineParser.parseGetOrfDescriptionLine(identifier);
-                OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(chunks);
+                String description = xref.getDescription();
+                OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
                 if (newOrf != null) {
                     String nucleotideId = descriptionLineParser.getIdentifier(identifier);
                     NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
