@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.GFFWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
@@ -23,11 +24,15 @@ import java.util.regex.Pattern;
  */
 public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResultWriter {
 
-    protected static final Pattern SEQID_FIELD_PATTERN = Pattern.compile("[^a-zA-Z0-9.:^*$@!+_?\\-|]+");
+    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesGFFResultWriter.class.getName());
 
-    protected final static String MATCH_STRING_SEPARATOR = "$";
+    /**
+     * This matcher matches any character that is NOT allowed in a sequence ID in GFF 3 format.
+     * It is used to allow replacement of any disallowed char with an empty String (see below).
+     */
+    protected static final Pattern SEQID_DISALLOWED_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9.:^*$@!+_?\\-|]+");
 
-    protected final static String MATCH_STRING = "match" + MATCH_STRING_SEPARATOR;
+    protected final static String MATCH_STRING = "match$";
 
     protected final String VALUE_SEPARATOR_GFF3 = ",";
 
@@ -200,15 +205,21 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
     private static final Pattern SPACE = Pattern.compile(" ");
 
     /**
-     * There are a couple of restrictions for the first column (seqid) of a GFF file. This method makes sure that these rules are followed.
+     * There are a couple of restrictions for the first column (seqid) of a GFF file.
+     * This method makes sure that these rules are followed.
      *
      * @param gffId to be filtered
      */
     protected static String getValidGFF3SeqId(String gffId) {
+        gffId = gffId.trim();
         if (gffId.indexOf(' ') != -1) {
             gffId = SPACE.matcher(gffId).replaceAll("_");
         }
-        return SEQID_FIELD_PATTERN.matcher(gffId).replaceAll("");
+        gffId = SEQID_DISALLOWED_CHAR_PATTERN.matcher(gffId).replaceAll("");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("gffId = " + gffId);
+        }
+        return gffId;
     }
 
 
