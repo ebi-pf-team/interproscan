@@ -25,6 +25,11 @@ public class XrefParser {
 
     private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
 
+    /**
+     * Everything before the first whitespace will be recognised as the identifier and everything afterwards will be kind of description.
+     */
+    private static final Pattern DEFLINE_ID_PATTERN = Pattern.compile("^(.+)\\s+^(.*)");
+
     private static final String ENA_DB_NAME = "ENA|";
 
     private static final String SWISSPROT_DB_NAME = "sp|";
@@ -36,6 +41,7 @@ public class XrefParser {
 //    private static final String REFSEQ_DB_NAME = "ref";
 //    private static final String EMBL_DB_NAME = "emb";
 //    private static final String DDBJ_DB_NAME = "dbj";
+
 
     /**
      * This parser only supports FASTA headers from ENA at the moment. All other FASTA headers are returned un-parsed.
@@ -62,7 +68,7 @@ public class XrefParser {
                     return new NucleotideSequenceXref(database, identifier, description);
                 }
             }
-            return new NucleotideSequenceXref(stripWhiteSpaceAndTrim(crossReference));
+            return stripUniqueIdentifierAndTrim(crossReference);
         }
         return null;
     }
@@ -116,7 +122,8 @@ public class XrefParser {
                 }
             } else {
                 final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);
-                if (LOGGER.isDebugEnabled()) LOGGER.debug("Checking for match to GETORF regex, crossRef: " + crossReference);
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Checking for match to GETORF regex, crossRef: " + crossReference);
                 if (matcher.find()) {
                     if (LOGGER.isDebugEnabled()) LOGGER.debug("MATCHES");
                     return new ProteinXref(null, matcher.group(1), null, matcher.group(2));
@@ -129,11 +136,25 @@ public class XrefParser {
         return null;
     }
 
+    private static NucleotideSequenceXref stripUniqueIdentifierAndTrim(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalStateException("Found an identifier in a fasta file which is null or empty???");
+        } else {
+            Matcher matcher = DEFLINE_ID_PATTERN.matcher(id.trim());
+            if (matcher.find()) {
+                return new NucleotideSequenceXref(null, matcher.group(1), matcher.group(2));
+            } else {
+                return new NucleotideSequenceXref(stripWhiteSpaceAndTrim(id));
+            }
+        }
+    }
+
+
     private static String stripWhiteSpaceAndTrim(String id) {
         if (id == null || id.isEmpty()) {
             throw new IllegalStateException("Found an identifier in a fasta file which is null or empty???");
         } else {
-            return WHITE_SPACE_PATTERN.matcher(id.trim()).replaceAll("_");
+            return WHITE_SPACE_PATTERN.matcher(id.trim()).toString();
         }
     }
 
