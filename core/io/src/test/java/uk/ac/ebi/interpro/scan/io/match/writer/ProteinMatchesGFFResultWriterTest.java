@@ -60,25 +60,25 @@ public class ProteinMatchesGFFResultWriterTest {
         String message = "'seqId' should only have characters which ARE IN the set [a-zA-Z0-9.:^*$@!+_?-|]";
         String expected = "test";
         //
-        String actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_FIELD_PATTERN.pattern(), "");
+        String actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
         Assert.assertEquals(message, expected, actual);
         //
         expected = "test12121test";
-        actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_FIELD_PATTERN.pattern(), "");
+        actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
         Assert.assertEquals(message, expected, actual);
         //
         expected = "test12121.:^*$@!+_?-|";
-        actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_FIELD_PATTERN.pattern(), "");
+        actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
         Assert.assertEquals(message, expected, actual);
         //Not allowed characters check
         expected = "test";
-        actual = "test%".replaceAll(GFFResultWriterForNucSeqs.SEQID_FIELD_PATTERN.pattern(), "");
+        actual = "test%".replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
         Assert.assertEquals(message, expected, actual);
         //
-        actual = "test[]".replaceAll(GFFResultWriterForNucSeqs.SEQID_FIELD_PATTERN.pattern(), "");
+        actual = "test[]".replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
         Assert.assertEquals(message, expected, actual);
         //
-        actual = "test ".replaceAll(GFFResultWriterForNucSeqs.SEQID_FIELD_PATTERN.pattern(), "");
+        actual = "test ".replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
         Assert.assertEquals(message, expected, actual);
     }
 

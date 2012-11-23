@@ -12,7 +12,10 @@ import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class knows how to store protein sequences and cross references
@@ -277,11 +280,10 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             }
             for (ProteinXref xref : xrefs) {
                 //
-                String identifier = xref.getIdentifier();
+                String nucleotideId = xref.getIdentifier();
                 String description = xref.getDescription();
                 OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
                 if (newOrf != null) {
-                    String nucleotideId = descriptionLineParser.getIdentifier(identifier);
                     NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
                     //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                     //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name

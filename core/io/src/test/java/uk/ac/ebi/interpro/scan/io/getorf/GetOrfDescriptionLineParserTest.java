@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.getorf;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,7 +16,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Tests {@link uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser}.
@@ -57,43 +57,6 @@ public class GetOrfDescriptionLineParserTest {
             assertTrue("ORF (" + orf.getStrand() + ") " + orf.getStart() + ":" + orf.getEnd() + " should be an item of the result set!", orfs.contains(orf));
         }
     }
-
-    @Test
-    @Ignore ("This entire test needs to be re-written, as it does not reflect the behaviour of the refactored code at all.")
-    public void testGetIdentifier() {
-        String actual = parser.getIdentifier("");
-        assertNull("Return value should be NULL!", actual);
-        //
-        actual = parser.getIdentifier(null);
-        assertNull("Return value should be NULL!", actual);
-        //
-        actual = parser.getIdentifier("test");
-        assertEquals("test", actual);
-        //
-        actual = parser.getIdentifier("test_test");
-        assertEquals("test", actual);
-        //
-        String expected = "test";
-        actual = parser.getIdentifier("test_1");
-        assertNotNull("Actual shouldn't be NULL!", actual);
-//        assertEquals("Strings should have the same length!", expected.length(), actual.length());
-        assertEquals(expected, actual);
-        //
-        expected = "reverse translation of P22298";
-        //getorf result: reverse_1 [2 - 76] translation of P22298
-        actual = parser.getIdentifier("reverse_1");
-        assertEquals(expected, actual);
-        //
-        expected = "reverse translation of P22298";
-        actual = parser.getIdentifier("reverse_7");
-        assertEquals(expected, actual);
-        //
-        expected = "seq1";
-        //getorf result: seq1_1 [2 - 76]
-        actual = parser.getIdentifier("seq1_1");
-        assertEquals(expected, actual);
-    }
-
 
     private Set<String> read(org.springframework.core.io.Resource resource) throws IOException {
         final Set<String> descriptions = new HashSet<String>();
