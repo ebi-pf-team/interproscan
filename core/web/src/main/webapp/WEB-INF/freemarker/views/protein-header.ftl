@@ -1,12 +1,7 @@
 <#-- The protein-header page is used by both the protein and protein-structure freemarker pages when runnning I5
-in standalone mode only (the InterPro website code will supply this information when not in standalone mode - for now).
+in standalone mode. Also the protein-header is used as a dependency in InterPro web 6.
  -->
-<#-- TODO Remove this "if standalone" constraint once suitable code has been moved from the InterProWeb_5.2 project into the I5 codebase -->
-<#if standalone && protein??>
-<h1>
-    ${protein.ac}
-</h1>
-
+<#if protein??>
 <div class="prot_gal">
 
     <div class="prot_gal_bloc">
@@ -14,9 +9,9 @@ in standalone mode only (the InterPro website code will supply this information 
         <div class="prot_gal_desc">
             <#if standalone>
                 ${protein.ac}
-            <#--<#else>-->
-                <#--<a href="http://www.uniprot.org/uniprot/${protein.ac}" class="ext"-->
-                                          <#--title="${protein.name} (${protein.ac})">${protein.ac}</a> (${protein.id})-->
+            <#else>
+                <a href="http://www.uniprot.org/uniprot/${protein.ac}" class="ext"
+                                          title="${protein.name} (${protein.ac})">${protein.ac}</a> (${protein.id})
             </#if>
         </div>
     </div>
@@ -38,9 +33,8 @@ in standalone mode only (the InterPro website code will supply this information 
         </div>
     </div>
 
-    <#--<#if ! standalone>-->
-        <div class="prot_gal_source">Source: <span>UniProtKB/Swiss-Prot</span></div>
-    <#--</#if>-->
-   <br/> <hr/>
+    <div class="prot_gal_source">Source: <span>UniProtKB/Swiss-Prot</span></div>
+    <br/>
+    <hr/>
 </div>
 </#if>

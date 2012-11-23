@@ -33,7 +33,14 @@
 
     <div class="main-box">
 
-        <#include "protein-header.ftl"/>
+        <#-- TODO Remove this "if standalone" constraint once suitable code has been moved from the InterProWeb_5.2 project into the I5 codebase -->
+        <#if standalone && protein??>
+            <h1>
+                ${protein.ac}
+            </h1>
+            <#include "protein-header.ftl"/>
+        </#if>
+
         <#include "protein-structure-body.ftl"/>
     </div>
 </div>
