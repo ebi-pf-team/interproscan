@@ -97,9 +97,14 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                         //
                         if (file.length() == 0) {
                             //GetORF result file
+                            // If getorf predicted nothing, there is nothing more to do.
+                            // TODO Consider if there is a better way of dealing with this than throwing an Exception
+                            // Should skip all subsequent steps, BUT should not "fail" - should elegantly report no proteins with zero exit status
+                            // Need to output empty files of the types expected, so external pipeline is not broken.
                             if (file.getName().contains("orfs")) {
                                 throw new IllegalArgumentException("The ORF predication tool EMBOSS: getorf produced an empty result file (" + providedPath + ").");
                             }
+                            // TODO - Should this also behave elegantly and output empty files?
                             throw new IllegalArgumentException("The FASTA input file " + providedPath + " is readable but empty. Please provide a valid (not empty) FASTA input file.");
                         }
                         try {

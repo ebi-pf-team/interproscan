@@ -23,12 +23,10 @@ public class XrefParser {
 
     private static final Pattern GETORF_HEADER_PATTERN = Pattern.compile("^(.+)\\s+(\\[\\d+\\s+\\-\\s+\\d+].*)$");
 
-    private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
-
     /**
      * Everything before the first whitespace will be recognised as the identifier and everything afterwards will be kind of description.
      */
-    private static final Pattern DEFLINE_ID_PATTERN = Pattern.compile("^(.+)\\s+^(.*)");
+    private static final Pattern DEFLINE_ID_PATTERN = Pattern.compile("(\\S+)\\s+(.*)");
 
     private static final String ENA_DB_NAME = "ENA|";
 
@@ -63,12 +61,12 @@ public class XrefParser {
                 String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length == 3) {
                     String database = chunks[0];
-                    String identifier = stripWhiteSpaceAndTrim(chunks[1]);
+                    String identifier = chunks[1].trim();
                     String description = chunks[2];
                     return new NucleotideSequenceXref(database, identifier, description);
                 }
             }
-            return stripUniqueIdentifierAndTrim(crossReference);
+            return stripUniqueIdentifierAndTrimForNucleotideSeq(crossReference);
         }
         return null;
     }
@@ -106,7 +104,7 @@ public class XrefParser {
                 String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length == 3) {
                     String database = chunks[0];
-                    String identifier = stripWhiteSpaceAndTrim(chunks[1]);
+                    String identifier = chunks[1].trim();
                     String description = chunks[2];
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description);
@@ -115,7 +113,7 @@ public class XrefParser {
                 String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length == 5) {
                     String database = chunks[2];
-                    String identifier = stripWhiteSpaceAndTrim(chunks[3]);
+                    String identifier = chunks[3].trim();
                     String description = chunks[4];
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description.trim());
@@ -129,32 +127,38 @@ public class XrefParser {
                     return new ProteinXref(null, matcher.group(1), null, matcher.group(2));
                 } else {
                     if (LOGGER.isDebugEnabled()) LOGGER.debug("No Match.");
-                    return new ProteinXref(stripWhiteSpaceAndTrim(crossReference));
+                    return stripUniqueIdentifierAndTrimForProteinSeq(crossReference);
                 }
             }
         }
         return null;
     }
 
-    private static NucleotideSequenceXref stripUniqueIdentifierAndTrim(String id) {
+    private static NucleotideSequenceXref stripUniqueIdentifierAndTrimForNucleotideSeq(String id) {
         if (id == null || id.isEmpty()) {
             throw new IllegalStateException("Found an identifier in a fasta file which is null or empty???");
         } else {
-            Matcher matcher = DEFLINE_ID_PATTERN.matcher(id.trim());
+            id = id.trim();
+            Matcher matcher = DEFLINE_ID_PATTERN.matcher(id);
             if (matcher.find()) {
                 return new NucleotideSequenceXref(null, matcher.group(1), matcher.group(2));
             } else {
-                return new NucleotideSequenceXref(stripWhiteSpaceAndTrim(id));
+                return new NucleotideSequenceXref(id);
             }
         }
     }
 
-
-    private static String stripWhiteSpaceAndTrim(String id) {
+    private static ProteinXref stripUniqueIdentifierAndTrimForProteinSeq(String id) {
         if (id == null || id.isEmpty()) {
             throw new IllegalStateException("Found an identifier in a fasta file which is null or empty???");
         } else {
-            return WHITE_SPACE_PATTERN.matcher(id.trim()).toString();
+            id = id.trim();
+            Matcher matcher = DEFLINE_ID_PATTERN.matcher(id);
+            if (matcher.find()) {
+                return new ProteinXref(null, matcher.group(1), matcher.group(2));
+            } else {
+                return new ProteinXref(id);
+            }
         }
     }
 
@@ -169,4 +173,40 @@ public class XrefParser {
         }
         return null;
     }
+
+    /**
+     * Strips identifiers from
+     * ABC.1_1 to ABC.1
+     * OR
+     * Blob_1 to Blob.
+     *
+     * @param identifier
+     * @return
+     */
+    public static String stripOfFinalUnderScore(final String identifier) {
+        final int finalUndescorePos = identifier.lastIndexOf('_');
+        if (finalUndescorePos < 1) {
+            throw new IllegalStateException("Appear to have a protein accession without _N appended to it!: " + identifier);
+        }
+        return identifier.substring(0, finalUndescorePos);
+    }
+
+    /**
+     * Strips identifiers from
+     * ABC.1 to ABC
+     * OR
+     * Blob.2 to Blob.
+     *
+     * @param identifier
+     * @return
+     */
+    public static String stripOfVersionNumberIfExists(final String identifier) {
+        int finalDotPos = identifier.lastIndexOf('.');
+        if (finalDotPos > 0) {
+            return identifier.substring(0, finalDotPos);
+        }
+        return identifier;
+    }
+
+
 }

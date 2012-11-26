@@ -39,12 +39,13 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
      *
      * @return
      */
+    @Transactional(readOnly = true)
     public NucleotideSequence retrieveByXrefIdentifier(String identifier) {
         final Query query =
                 entityManager.createQuery(
                         "SELECT s FROM NucleotideSequence s INNER JOIN s.xrefs x " +
-                                "WHERE x.identifier like :identifier");
-        query.setParameter("identifier", '%' + identifier + '%');
+                                "WHERE x.identifier = :identifier");
+        query.setParameter("identifier", identifier);
         @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             return list.get(0);
@@ -60,6 +61,7 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
      *
      * @return
      */
+    @Transactional(readOnly = true)
     public NucleotideSequence retrieveByXrefName(String name) {
         final Query query =
                 entityManager.createQuery(

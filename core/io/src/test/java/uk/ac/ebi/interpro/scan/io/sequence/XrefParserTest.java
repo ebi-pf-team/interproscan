@@ -19,6 +19,16 @@ public class XrefParserTest extends TestCase {
         NucleotideSequenceXref nucleotideSequenceXref = XrefParser.getNucleotideSequenceXref("ENA|AACH01000026|AACH01000026.1 Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence.");
         Assert.assertEquals("ENA", nucleotideSequenceXref.getDatabaseName());
         Assert.assertEquals("AACH01000026", nucleotideSequenceXref.getIdentifier());
+        //
+        nucleotideSequenceXref = XrefParser.getNucleotideSequenceXref("Wilf");
+        Assert.assertNull(nucleotideSequenceXref.getDatabaseName());
+        Assert.assertNull(nucleotideSequenceXref.getName());
+        Assert.assertEquals("Wilf", nucleotideSequenceXref.getIdentifier());
+        //
+        nucleotideSequenceXref = XrefParser.getNucleotideSequenceXref("reverse translation of P22298");
+        Assert.assertNull(nucleotideSequenceXref.getDatabaseName());
+        Assert.assertEquals("reverse", nucleotideSequenceXref.getIdentifier());
+        Assert.assertEquals("translation of P22298", nucleotideSequenceXref.getName());
     }
 
     @Test
@@ -53,5 +63,15 @@ public class XrefParserTest extends TestCase {
         Assert.assertEquals("EHB09908.1", proteinXref.getIdentifier());
         Assert.assertEquals("Protein fosB", proteinXref.getName());
         Assert.assertEquals("Protein fosB [Heterocephalus glaber]", proteinXref.getDescription());
+        //
+        proteinXref = XrefParser.getProteinXref("Wilf");
+        Assert.assertNull(proteinXref.getDatabaseName());
+        Assert.assertNull(proteinXref.getName());
+        Assert.assertEquals("Wilf", proteinXref.getIdentifier());
+        //
+        proteinXref = XrefParser.getProteinXref("reverse translation of P22298");
+        Assert.assertNull(proteinXref.getDatabaseName());
+        Assert.assertEquals("reverse", proteinXref.getIdentifier());
+        Assert.assertEquals("translation of P22298", proteinXref.getName());
     }
 }

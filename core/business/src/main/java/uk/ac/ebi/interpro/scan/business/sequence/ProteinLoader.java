@@ -279,28 +279,23 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 LOGGER.debug("Protein with ID " + newProtein.getId() + " has " + xrefs.size() + " cross references.");
             }
             for (ProteinXref xref : xrefs) {
-                //
                 String nucleotideId = xref.getIdentifier();
                 String description = xref.getDescription();
                 OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
-                if (newOrf != null) {
-                    NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
-                    //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
-                    //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
-                    if (nucleotide == null) {
-                        nucleotide = nucleotideSequenceDAO.retrieveByXrefName(nucleotideId);
-                    }
-                    if (nucleotide != null) {
-                        newOrf.setNucleotideSequence(nucleotide);
-                        newOrf.setProtein(newProtein);
-                        newProtein.addOpenReadingFrame(newOrf);
-                        orfsAwaitingPersistence.add(newOrf);
-                    } else {
-                        LOGGER.warn("Couldn't find nucleotide sequence by the following identifier: " + nucleotideId);
-                    }
-                } else {
-                    LOGGER.warn("Couldn't create any ORF object by the specified description: " + xref.getDescription() + "!");
+                //Get rid of the underscore
+                nucleotideId = XrefParser.stripOfFinalUnderScore(nucleotideId);
+                //Get rid of those pesky version numbers too
+                nucleotideId = XrefParser.stripOfVersionNumberIfExists(nucleotideId);
+                NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
+                //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
+                //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
+                if (nucleotide == null) {
+                    throw new IllegalStateException("Couldn't find nucleotide sequence by the following cross reference: " + nucleotideId);
                 }
+                newOrf.setNucleotideSequence(nucleotide);
+                newOrf.setProtein(newProtein);
+                newProtein.addOpenReadingFrame(newOrf);
+                orfsAwaitingPersistence.add(newOrf);
             }
         }
         //Finally persist open reading frames
