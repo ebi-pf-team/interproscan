@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.File;
@@ -90,18 +91,10 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                 // Iterate over protein xrefs
                 for (ProteinXref proteinXref : protein.getCrossReferences()) {
                     // Getorf appends '_N' where N is an integer to the protein accession. We need to compare this to the nucleotide sequence ID, that does not have _N on the end, so first of all strip this off for the comparison.
-                    String strippedProteinId = proteinXref.getIdentifier();
-                    int finalUndescorePos = strippedProteinId.lastIndexOf('_');
-                    if (finalUndescorePos < 1) {
-                        throw new IllegalStateException("Appear to have a protein accession without _N appended to it!: " + strippedProteinId);
-                    }
-                    strippedProteinId = strippedProteinId.substring(0, finalUndescorePos);
+                    //TODO: Don't forget to replace that bit of code by a method call
+                    String strippedProteinId = XrefParser.stripOfFinalUnderScore(proteinXref.getIdentifier());
                     // Get rid of those pesky version numbers too.
-                    int finalDotPos = strippedProteinId.lastIndexOf('.');
-                    if (finalDotPos > 0) {
-                        strippedProteinId = strippedProteinId.substring(0, finalDotPos);
-                    }
-
+                    strippedProteinId = XrefParser.stripOfVersionNumberIfExists(strippedProteinId);
                     if ((nucleotideSequenceXref.getIdentifier().equals(strippedProteinId))) {
                         //Write nucleic acid
                         setNucleotideId(nucleotideSequenceXref.getIdentifier());

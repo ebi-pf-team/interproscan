@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 
@@ -20,7 +19,6 @@ public interface NucleotideSequenceDAO extends GenericDAO<NucleotideSequence, Lo
      *
      * @return
      */
-    @Transactional(readOnly = true)
     public NucleotideSequence retrieveByXrefIdentifier(String identifier);
 
     /**
@@ -28,7 +26,6 @@ public interface NucleotideSequenceDAO extends GenericDAO<NucleotideSequence, Lo
      *
      * @return
      */
-    @Transactional(readOnly = true)
     public NucleotideSequence retrieveByXrefName(String name);
 
     /**
@@ -43,7 +40,6 @@ public interface NucleotideSequenceDAO extends GenericDAO<NucleotideSequence, Lo
      * @return a new List<NucleotideSequence> containing all of the inserted / updated NucleotideSequence objects.
      *         (Allows the caller to retrieve the primary keys for the NucleotideSequences).
      */
-    @Transactional
     public PersistedNucleotideSequences insertNewNucleotideSequences(Collection<NucleotideSequence> newSequences);
 
     /**
