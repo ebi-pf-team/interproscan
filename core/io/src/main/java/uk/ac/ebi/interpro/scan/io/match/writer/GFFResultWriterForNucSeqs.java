@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(GFFResultWriterForNucSeqsBackup.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GFFResultWriterForNucSeqs.class.getName());
     private String nucleotideId;
 
     /**
@@ -62,11 +62,8 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         String proteinIdForGFF = null;
         if (matches.size() > 0) {
             proteinIdFromGetorf = super.getValidGFF3SeqId(proteinIdFromGetorf);
-            //Write nucleotide sequences and ORFs
-            //Write nucleic acid and returns ORF of interest
             writeSequenceRegionPart(protein, sequenceLength, md5, proteinIdForGFF, proteinIdFromGetorf);
             processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
-
         }
         return 0;
     }
