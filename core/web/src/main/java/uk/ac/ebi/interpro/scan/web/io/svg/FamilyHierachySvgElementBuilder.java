@@ -116,14 +116,17 @@ public class FamilyHierachySvgElementBuilder {
     protected void appendEntry(SimpleEntry entry, StringBuilder sb) {
         final Point coordinate = getNewCoordinate(startCoordinate, entry.getHierarchyLevel(), rowCounter, rightShift, downShift);
         sb.append("<svg x=\"" + coordinate.x + "px\" y=\"" + coordinate.y + "px\">");
-        sb.append("<image x=\"1px\" y=\"1px\" width=\"22px\" height=\"14px\" xlink:href=\"resources/icons/ico_tree_family.png\"/>");
+        sb.append("<path stroke=\"black\" stroke-width=\"1\" stroke-dasharray=\"1\" d=\"M1,5 V10\" />");
+        sb.append("<path stroke=\"black\" stroke-width=\"1\" stroke-dasharray=\"1\" d=\"M0.5,9.5 H6\" />");
+        sb.append("<use x=\"8\" y=\"2\" xlink:href=\"#ico_type_family_small\"/>");
         sb.append("<a xlink:href=\"http://www.ebi.ac.uk/interpro/IEntry?ac=");
         sb.append(entry.getAc());
         sb.append("\" target=\"_top\">");
-        sb.append("<text x=\"29px\" y=\"12px\" text-decoration=\"underline\">");
+        sb.append("<text x=\"24px\" y=\"12px\" text-decoration=\"underline\">");
         sb.append("<tspan style=\"font-family:Verdana,Helvetica,sans-serif;font-size:13px;stroke:none;fill:#393939;\">");
         sb.append(entry.getName());
         sb.append("</tspan>");
+        sb.append(" ");
         sb.append("<tspan style=\"font-family:Verdana,Helvetica,sans-serif;font-size:13px;stroke:none;fill:#0072FE;\">");
         sb.append("(" + entry.getAc() + ")");
         sb.append("</tspan>");

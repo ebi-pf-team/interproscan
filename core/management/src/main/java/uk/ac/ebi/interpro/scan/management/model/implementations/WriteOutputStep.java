@@ -49,7 +49,11 @@ public class WriteOutputStep extends Step {
     //Misc
     private boolean deleteWorkingDirectoryOnCompletion;
 
-    private boolean compressHtmlOutput;
+    /* Boolean flag for the HTML and SVG output generation. If TRUE, the generated tar archives will be compress (gzipped) as well */
+    private boolean compressHtmlAndSVGOutput;
+
+    /* Not required. If TRUE (default), it will archive all SVG output files into a single archives.*/
+    private boolean archiveMode = true;
 
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
@@ -62,9 +66,14 @@ public class WriteOutputStep extends Step {
 
     private static final int MAX_OUTPUT_ATTEMPTS = 3;
 
+
+    public void setArchiveMode(boolean archiveMode) {
+        this.archiveMode = archiveMode;
+    }
+
     @Required
-    public void setCompressHtmlOutput(boolean compressHtmlOutput) {
-        this.compressHtmlOutput = compressHtmlOutput;
+    public void setCompressHtmlAndSVGOutput(boolean compressHtmlAndSVGOutput) {
+        this.compressHtmlAndSVGOutput = compressHtmlAndSVGOutput;
     }
 
     @Required
@@ -105,7 +114,16 @@ public class WriteOutputStep extends Step {
             throw new IllegalStateException("Protein Xref database accession object is NULL. Unexpected state. Cannot go on.");
         }
         Collection<ProteinXref> updates = new HashSet<ProteinXref>();
-        for (String identifier : proteinXrefDAO.getNonUniqueXrefs()) {
+        Collection<String> nonUniqueIdentifiers = proteinXrefDAO.getNonUniqueXrefs();
+        if (nonUniqueIdentifiers != null && nonUniqueIdentifiers.size() > 0) {
+            System.out.println("Found " + nonUniqueIdentifiers.size() + " non unique identifier(s). These identifiers do have different sequences, within the FASTA protein sequence input file.");
+            System.out.println("InterProScan will make them unique by adding '_sequential number' in the order of their appearance (e.g. P11111 will be P11111_1 for the first protein sequence).");
+            System.out.println("Please find below a list of detected identifiers:");
+            for (String nonUniqueIdentifier : nonUniqueIdentifiers) {
+                System.out.println(nonUniqueIdentifier);
+            }
+        }
+        for (String identifier : nonUniqueIdentifiers) {
             List<ProteinXref> proteinXrefs = proteinXrefDAO.getXrefAndProteinByProteinXrefIdentifier(identifier);
             if (proteinXrefs.size() < 2) {
                 LOGGER.warn("Unexpected databases query result. The size of the result set should be > 1.");
@@ -135,7 +153,12 @@ public class WriteOutputStep extends Step {
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
 
         List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        setUniqueXrefs();
+
+        final String sequenceType = parameters.get(SEQUENCE_TYPE);
+        if (sequenceType.equalsIgnoreCase("p")) {
+            LOGGER.debug("Setting unique protein cross references (Please note this function is only performed if the input sequences are proteins)...");
+            setUniqueXrefs();
+        }
 
         for (FileOutputFormat outputFormat : outputFormats) {
             Integer counter = null;
@@ -168,7 +191,7 @@ public class WriteOutputStep extends Step {
                             .append(outputFormat.getFileExtension());
                     //Extend file name by tar (tar.gz) extension if HTML or SVG
                     if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
-                        outputFile = new File(buildTarArchiveName(candidateFileName.toString(), compressHtmlOutput));
+                        outputFile = new File(buildTarArchiveName(candidateFileName.toString(), compressHtmlAndSVGOutput));
                     } else {
                         outputFile = new File(candidateFileName.toString());
                     }
@@ -179,7 +202,6 @@ public class WriteOutputStep extends Step {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Writing out " + outputFormat + " file");
                 }
-                final String sequenceType = parameters.get(SEQUENCE_TYPE);
                 switch (outputFormat) {
                     case TSV:
                         outputToTSV(outputFile, stepInstance, proteins);
@@ -283,7 +305,7 @@ public class WriteOutputStep extends Step {
                 htmlResultWriter.write(protein);
             }
             List<File> resultFiles = htmlResultWriter.getResultFiles();
-            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlOutput);
+            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlAndSVGOutput);
             tarArchiveBuilder.buildTarArchive();
             //Delete result files in the temp directory at the end
             for (File resultFile : resultFiles) {
@@ -305,17 +327,19 @@ public class WriteOutputStep extends Step {
             for (Protein protein : proteins) {
                 svgResultWriter.write(protein);
             }
-            List<File> resultFiles = svgResultWriter.getResultFiles();
-            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlOutput);
-            tarArchiveBuilder.buildTarArchive();
-            //Delete result files in the temp directory at the end
-            for (File resultFile : resultFiles) {
-                //Only delete HTML files, but not the resource directory which is also part of the result files list
-                if (resultFile.isFile()) {
-                    boolean isDeleted = resultFile.delete();
-                    if (LOGGER.isEnabledFor(Level.WARN)) {
-                        if (!isDeleted) {
-                            LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
+            if (this.archiveMode) {
+                List<File> resultFiles = svgResultWriter.getResultFiles();
+                TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlAndSVGOutput);
+                tarArchiveBuilder.buildTarArchive();
+                //Delete result files in the temp directory at the end
+                for (File resultFile : resultFiles) {
+                    //Only delete HTML files, but not the resource directory which is also part of the result files list
+                    if (resultFile.isFile()) {
+                        boolean isDeleted = resultFile.delete();
+                        if (LOGGER.isEnabledFor(Level.WARN)) {
+                            if (!isDeleted) {
+                                LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
+                            }
                         }
                     }
                 }
