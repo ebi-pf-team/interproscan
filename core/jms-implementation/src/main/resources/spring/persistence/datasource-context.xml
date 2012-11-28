@@ -55,6 +55,9 @@
     <bean id="nucleotideSequenceDAO"
           class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAOImpl"/>
 
+    <bean id="nucleotideSequenceXrefDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAOImpl"/>
+
     <bean id="entryDAO" class="uk.ac.ebi.interpro.scan.persistence.EntryDAOImpl"/>
 
     <bean id="releaseDAO" class="uk.ac.ebi.interpro.scan.persistence.ReleaseDAOImpl"/>

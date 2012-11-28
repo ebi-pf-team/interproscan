@@ -27,9 +27,10 @@
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
         <property name="xmlWriter" ref="xmlWriter"/>
         <property name="htmlResultWriter" ref="htmlWriter"/>
-        <property name="compressHtmlOutput" value="true"/>
+        <property name="compressHtmlAndSVGOutput" value="true"/>
         <property name="svgResultWriter" ref="svgWriter"/>
         <property name="xrefDao" ref="xrefDAO"/>
+        <property name="archiveMode" value="true"/>
     </bean>
 
 </beans>

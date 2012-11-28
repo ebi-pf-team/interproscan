@@ -12,7 +12,6 @@
         <!--<property name="file" value=""/>-->
         <property name="freeMarkerTemplate" value="svg-protein-view.ftl"/>
         <property name="entryHierarchyBeanId" value="entryHierarchy"/>
-        <property name="svgResourcesDir" value="data/freemarker/resources/freeMarker/svg/resources"/>
         <property name="tempDirectory" value="temp/"/>
     </bean>
 

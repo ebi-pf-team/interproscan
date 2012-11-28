@@ -18,7 +18,7 @@
     <svg y="${entryComponentYPosition}" width="1210" height="${entryComponentHeight}"
          viewBox="0 0 1210 ${entryComponentHeight}">
     <#--<svg id="entryComponent" y="${entryComponentYDimension}px">-->
-    <@entryInfoMacro.entryInfo entryType=entry.type resource="resources/icons/ico_type_${icon}_small.png"
+    <@entryInfoMacro.entryInfo entryType=entry.type reference="ico_type_${icon}_small"
     title=title entryAccession=entry.ac entryName=entry.name filling="#0072FE" textDecoration="underline" height=entryInfoHeight/>
         <#--<#assign greyBoxYDimension=19/>-->
         <#assign signatureLinkYDimension=20/>
@@ -36,7 +36,7 @@
          height="${unintegratedSignaturesComponentHeight}"
          viewBox="0 0 1210 ${unintegratedSignaturesComponentHeight}">
     <#--<svg id="unintegratedSignatures" y="${entryComponentYDimension}px">-->
-    <@entryInfoMacro.entryInfo entryType="Unknown" resource="resources/icons/ico_type_uni_small.png"
+    <@entryInfoMacro.entryInfo entryType="Unknown" reference="ico_type_uni_small"
     title="Unintegrated signatures" entryAccession="no IPR" entryName="Unintegrated signatures" filling="#525252"
     textDecoration="none" height=entryInfoHeight/>
         <#assign greyBoxYDimension=19/>

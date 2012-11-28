@@ -28,6 +28,12 @@
     <bean id="proteinXrefDAO"
           class="uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAOImpl"/>
 
+    <bean id="nucleotideSequenceXrefDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAOImpl"/>
+
+    <bean id="nucleotideSequenceDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAOImpl"/>
+
     <bean id="signatureDAO"
           class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">
     </bean>

@@ -11,8 +11,7 @@
         <tspan font-weight="bold" x="10px" style="fill: #393939">
             Accession
         </tspan>
-        <tspan x="10px" dx="100px" style="text-decoration: underline;fill: #0072FE"><a
-                xlink:href="http://www.uniprot.org/uniprot/${protein.ac}" target="_top">${protein.ac}</a></tspan>
+        <tspan x="10px" dx="100px" fill="#838383">${protein.ac}</tspan>
         <tspan font-weight="bold" x="10px" dy="30px" style="fill: #393939">
             Species
         </tspan>

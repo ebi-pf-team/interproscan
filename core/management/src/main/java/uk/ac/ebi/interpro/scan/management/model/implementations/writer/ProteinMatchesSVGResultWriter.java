@@ -71,13 +71,6 @@ public class ProteinMatchesSVGResultWriter {
     }
 
     @Required
-    public void setSvgResourcesDir(String path) {
-        if (path != null && path.length() > 0) {
-            resultFiles.add(new File(path));
-        }
-    }
-
-    @Required
     public void setTempDirectory(String tempDirectory) {
         this.tempDirectory = tempDirectory;
     }

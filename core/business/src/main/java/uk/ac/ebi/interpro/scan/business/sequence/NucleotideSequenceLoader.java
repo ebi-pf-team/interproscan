@@ -6,7 +6,9 @@ import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
+import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAO;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +27,8 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
 
+    private NucleotideSequenceXrefDAO nucleotideSequenceXrefDAO;
+
     private int sequenceInsertBatchSize;
 
     @Required
@@ -36,6 +40,15 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
     @Required
     public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
         this.nucleotideSequenceDAO = nucleotideSequenceDAO;
+    }
+
+    @Required
+    public NucleotideSequenceXrefDAO getNucleotideSequenceXrefDAO() {
+        return nucleotideSequenceXrefDAO;
+    }
+
+    public void setNucleotideSequenceXrefDAO(NucleotideSequenceXrefDAO nucleotideSequenceXrefDAO) {
+        this.nucleotideSequenceXrefDAO = nucleotideSequenceXrefDAO;
     }
 
     public void store(String sequence, String analysisJobNames, String... crossReferences) {
@@ -84,6 +97,17 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
      */
     public void persist(SequenceLoadListener sequenceLoadListener, String analysisJobNames) {
         persistBatch();
+        Collection<String> nonUniqueIdentifiers = nucleotideSequenceXrefDAO.getNonUniqueXrefs();
+        if (nonUniqueIdentifiers != null && nonUniqueIdentifiers.size() > 0) {
+            System.out.println("Found " + nonUniqueIdentifiers.size() + " non unique identifier(s). These identifiers do have different sequences, within the FASTA nucleotide sequence input file.");
+            System.out.println("Please find below a list of detected identifiers:");
+            for (String nonUniqueIdentifier : nonUniqueIdentifiers) {
+                System.out.println(nonUniqueIdentifier);
+            }
+            System.out.println("InterProScan will shutdown, because there is no way to map nucleic sequences and predicted proteins.");
+            System.exit(0);
+        }
+
     }
 
     public void setUseMatchLookupService(boolean useMatchLookupService) {
