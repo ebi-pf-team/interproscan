@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(GFFResultWriterForNucSeqs.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GFFResultWriterForNucSeqsBackup.class.getName());
     private String nucleotideId;
 
     /**
@@ -64,8 +64,66 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
             proteinIdFromGetorf = super.getValidGFF3SeqId(proteinIdFromGetorf);
             //Write nucleotide sequences and ORFs
             //Write nucleic acid and returns ORF of interest
-            final OpenReadingFrame orf = writeNucleicAcidLine(protein);
-            if (orf != null) {
+            writeSequenceRegionPart(protein, sequenceLength, md5, proteinIdForGFF, proteinIdFromGetorf);
+            processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
+
+        }
+        return 0;
+    }
+
+    /**
+     * 1. Handles nucleic acid with multiple cross references (same sequence, different identifiers).
+     * Example
+     * ##sequence-region Wilf|A2YIW7 1 366
+     * Wilf|A2YIW7	provided_by_user	nucleic_acid	1	366	.	+	.	Name=Wilf|A2YIW7;md5=e9b174d63adc63bab79c90fdbc8d1670;ID=Wilf|A2YIW7
+     * Wilf|A2YIW7	getorf	ORF	1	366	.	+	.	Name=Wilf_5|A2YIW7_5;Target=pep_Wilf|A2YIW7_1_366 1 122;md5=e9b174d63adc63bab79c90fdbc8d1670;ID=orf_Wilf|A2YIW7_1_366
+     * Wilf|A2YIW7	getorf	polypeptide	1	122	.	+	.	md5=f927b0d241297dcc9a1c5990b58bf3c4;ID=pep_Wilf|A2YIW7_1_366
+     * <p/>
+     * 2. And relations between different nucleic sequences sharing the same orf/protein
+     * <p/>
+     * I.   Iterate over all protein ORFs
+     * II.  Get nucleic acids
+     * III. Iterate over all nucleic acids xrefs
+     * IV.  Iterate over all protein xrefs
+     * V.   Compare protein xrefs with nucleic acid xrefs
+     * VI.  If they match build a concatenation of nucleic acids separated by pipes
+     * VII. If you finished iteration over all nucleic acids xrefs write sequence region to output
+     *
+     * @param protein
+     * @throws IOException
+     */
+    private void writeSequenceRegionPart(final Protein protein, final int sequenceLength, final String md5,
+                                         String proteinIdForGFF, final String proteinIdFromGetorf) throws IOException {
+        // I.
+        for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
+            // II.
+            final NucleotideSequence nucleotideSequence = orf.getNucleotideSequence();
+            final StringBuilder concatenatedNucSeqIdentifiers = new StringBuilder();
+            // III.
+            for (final NucleotideSequenceXref nucleotideSequenceXref : nucleotideSequence.getCrossReferences()) {
+                String nucleotideSequenceXrefId = nucleotideSequenceXref.getIdentifier();
+                // IV.
+                for (ProteinXref proteinXref : protein.getCrossReferences()) {
+                    // Getorf appends '_N' where N is an integer to the protein accession. We need to compare this to the nucleotide sequence ID, that does not have _N on the end, so first of all strip this off for the comparison.
+                    String strippedProteinId = XrefParser.stripOfFinalUnderScore(proteinXref.getIdentifier());
+                    // Get rid of those pesky version numbers too.
+                    strippedProteinId = XrefParser.stripOfVersionNumberIfExists(strippedProteinId);
+                    // V.
+                    if ((nucleotideSequenceXrefId.equals(strippedProteinId))) {
+                        // VI.
+                        if (concatenatedNucSeqIdentifiers.length() > 0) {
+                            concatenatedNucSeqIdentifiers.append(VALUE_SEPARATOR);
+                        }
+                        concatenatedNucSeqIdentifiers.append(nucleotideSequenceXrefId);
+                    }
+                }
+            }
+            // VII.
+            String concatenatedNucSeqIdentifiersStr = concatenatedNucSeqIdentifiers.toString();
+            if (concatenatedNucSeqIdentifiersStr.length() > 0) {
+                setNucleotideId(concatenatedNucSeqIdentifiersStr);
+                super.gffWriter.write("##sequence-region " + concatenatedNucSeqIdentifiersStr + " 1 " + nucleotideSequence.getSequence().length());
+                super.gffWriter.write(getNucleicAcidLine(nucleotideSequence));
                 //Build protein identifier for GFF3
                 proteinIdForGFF = buildProteinIdentifier(orf);
                 proteinIdForGFF = super.getValidGFF3SeqId(proteinIdForGFF);
@@ -76,35 +134,10 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                 super.gffWriter.write(getORFLine(orf, proteinIdFromGetorf, proteinIdForGFF, sequenceLength));
                 //Write polypeptide
                 super.gffWriter.write(getPolypeptideLine(sequenceLength, proteinIdForGFF, md5));
-            }
-            processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
-
-        }
-        return 0;
-    }
-
-    private OpenReadingFrame writeNucleicAcidLine(Protein protein) throws IOException {
-        for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
-//            String fastaProteinId = GetOrfDescriptionLineParser.getIdentifier(proteinId);
-            final NucleotideSequence nucleotideSequence = orf.getNucleotideSequence();
-            for (final NucleotideSequenceXref nucleotideSequenceXref : nucleotideSequence.getCrossReferences()) {
-                // Iterate over protein xrefs
-                for (ProteinXref proteinXref : protein.getCrossReferences()) {
-                    // Getorf appends '_N' where N is an integer to the protein accession. We need to compare this to the nucleotide sequence ID, that does not have _N on the end, so first of all strip this off for the comparison.
-                    //TODO: Don't forget to replace that bit of code by a method call
-                    String strippedProteinId = XrefParser.stripOfFinalUnderScore(proteinXref.getIdentifier());
-                    // Get rid of those pesky version numbers too.
-                    strippedProteinId = XrefParser.stripOfVersionNumberIfExists(strippedProteinId);
-                    if ((nucleotideSequenceXref.getIdentifier().equals(strippedProteinId))) {
-                        //Write nucleic acid
-                        setNucleotideId(nucleotideSequenceXref.getIdentifier());
-                        super.gffWriter.write(getNucleicAcidLine(nucleotideSequence));
-                        return orf;
-                    }
-                }
+            } else {
+                throw new IllegalStateException("Cannot find the ORF object that maps to protein with PK / MD5: " + protein.getId() + " / " + protein.getMd5());
             }
         }
-        throw new IllegalStateException("Cannot find the ORF object that maps to protein with PK / MD5: " + protein.getId() + " / " + protein.getMd5());
     }
 
     private List<String> getORFLine(OpenReadingFrame orf, String proteinIdFromGetorf, String proteinIdForGFF, int proteinLength) {

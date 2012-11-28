@@ -1,9 +1,6 @@
-/**
- * Colours for entries of type domain and repeat.
- * @author  Antony Quinn
- * @version $Id: type_colours.css,v 1.1 2012/02/21 14:33:10 pesseat Exp $
- */
-
+<style type="text/css">
+<![CDATA[
+/*Colours for entries of type domain and repeat.*/
 /*  TYPE Family , site, unintegrated */
 
 .Family {
@@ -18,7 +15,7 @@
     fill: #a5a5a5;
 }
 
-/*  TYPE domain & repeat */
+    /*  TYPE domain & repeat */
 rect.c1 {
     fill: #b852d4;
 }
@@ -262,3 +259,6 @@ rect.c60 {
 rect.c61 {
     fill: #ffddb2;
 }
+
+]]>
+</style>

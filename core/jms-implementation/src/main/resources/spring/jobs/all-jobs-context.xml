@@ -157,6 +157,7 @@
                     <bean class="uk.ac.ebi.interpro.scan.business.sequence.NucleotideSequenceLoader">
                         <property name="sequenceInsertBatchSize" value="500"/>
                         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+                        <property name="nucleotideSequenceXrefDAO" ref="nucleotideSequenceXrefDAO"/>
                     </bean>
                 </property>
             </bean>
