@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.web.model;
 import java.util.*;
 
 /**
- * TODO: Add description
+ * InterPro entry type.
  *
  * @author Antony Quinn
  * @version $Id$
@@ -14,7 +14,6 @@ public enum EntryType {
     // Note: protein page orders matches according to order of enums here!
     FAMILY("Family"),
     DOMAIN("Domain"),
-    REGION("Region"),
     REPEAT("Repeat"),
     SITE("Active_site", "Binding_site", "Conserved_site", "PTM"),
     UNKNOWN("Unknown");
@@ -63,9 +62,6 @@ public enum EntryType {
 
             case FAMILY:
                 return FAMILY;
-
-            case REGION:
-                return REGION;
 
             case REPEAT:
                 return REPEAT;

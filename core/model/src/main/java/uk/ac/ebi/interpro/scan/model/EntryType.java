@@ -75,11 +75,6 @@ public enum EntryType implements Serializable {
             "Group of evolutionarily related proteins that may share one or more features in common, " +
             "which in InterPro are defined by a member database signature with no adjacent signatures."),
 
-    /** Region */
-    REGION('G',
-            "Region",
-            "Used for methods which are to determined manually, or where the status is undetermined."),
-
     /** Post-translational modification */
     PTM('P',
             "PTM",
