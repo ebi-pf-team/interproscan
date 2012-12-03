@@ -14,8 +14,8 @@
 
             <fieldset>
                 <div ${protein.disabledStyleIfNoMatches("FAMILY")}>
-                    <input type="checkbox" class="type" id="check-2"
-                           value="Family-row" ${protein.disableIfNoMatches("FAMILY")}/>
+                    <input type="checkbox" class="type" id="check-2" value="Family-row"
+                           checked="checked" ${protein.disableIfNoMatches("FAMILY")}/>
                     <label for="check-2" class="family">Family</label>
                 </div>
                 <div ${protein.disabledStyleIfNoMatches("DOMAIN")}>
@@ -42,8 +42,8 @@
 
             <fieldset>
                 <div ${protein.disabledStyleIfNoMatches("UNKNOWN")}>
-                    <input type="checkbox" name="type" id="check-6"
-                           value="unintegrated" ${protein.disableIfNoMatches("UNKNOWN")}/>
+                    <input type="checkbox" name="type" id="check-6" value="unintegrated"
+                           checked="checked" ${protein.disableIfNoMatches("UNKNOWN")}/>
                     <label for="check-6" class="uni">Unintegrated</label>
                 </div>
             </fieldset>
@@ -55,9 +55,10 @@
                     Colour by
                 </div>
 
-                <#if ! standalone>
-                    <div style=" float:right;margin-bottom: 0px;"><a href="http://www.ebi.ac.uk/interpro/user_manual.html#faqs_06"
-                                                                 target="_blank">help</a></div>
+                <#if !standalone>
+                    <div style="float:right;margin-bottom: 0px;">
+                        <a href="http://www.ebi.ac.uk/interpro/user_manual.html#faqs_06" target="_blank">help</a>
+                    </div>
                 </#if>
             </div>
             <fieldset>
