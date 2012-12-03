@@ -27,7 +27,7 @@
     </text>
     <text x="1065" y="145" font-size="10">
         <tspan fill="#525252" font-family="Verdana, Helvetica, sans-serif">Source:</tspan>
-        <tspan fill="#838383" font-family="Verdana, Helvetica, sans-serif">UniProtKB/Swiss-Prot</tspan>
+        <tspan fill="#838383" font-family="Verdana, Helvetica, sans-serif">UniProtKB</tspan>
     </text>
 
     <line x1="10" y1="150" x2="${(globalDocumentWidth - 80)?string("0")}" y2="150" stroke="#CDCDCD" stroke-width="1"/>

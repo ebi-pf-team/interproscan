@@ -8,9 +8,9 @@
             <h1>Protein family membership:</h1>
         ${protein.familyHierarchy}
         </div>
-        <#else>
-            <div style="float: left;"><h1>Protein family membership:</h1></div>
-            <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+    <#else>
+        <div style="float: left;"><h1>Protein family membership:</h1></div>
+        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
     </#if>
 </div>
 
@@ -24,7 +24,7 @@
     <div class="prot_sum">
         <div class="top-row">
             <div class="top-row-id">
-                <h1>Sequence features summary:</h1>
+                <h1>Domains and repeats:</h1>
             </div>
             <div class="top-row-opt"><a href="#" title="Open sequence features summary view in a new window"><span
                     class="opt1"></span></a></div>
@@ -48,10 +48,17 @@
                         <!-- Position marker lines -->
                         <#list scale?split(",") as scaleMarker>
                             <!-- to build an exception for 0 -->
-                            <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
-                                  title="${scaleMarker}"></span>
-                            <span class="scale_numb"
-                                  style="left:${(scaleMarker?number / protein.length) * 100}%;">${scaleMarker}</span>
+                            <#if scaleMarker?number == 0>
+                                <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
+                                      title="1"></span>
+                                <span class="scale_numb"
+                                      style="left:${(scaleMarker?number / protein.length) * 100}%;">1</span>
+                            <#else>
+                                <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
+                                      title="${scaleMarker}"></span>
+                                <span class="scale_numb"
+                                      style="left:${(scaleMarker?number / protein.length) * 100}%;">${scaleMarker}</span>
+                            </#if>
                         </#list>
                     </div>
                 </div>
@@ -59,16 +66,16 @@
             </div>
         </div>
     </div>
-        <#else>
-        <div class="prot_sum" style="overflow: auto;">
-            <div style="float: left;"><h1>Sequence features summary:</h1></div>
-            <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
-        </div>
+    <#else>
+    <div class="prot_sum" style="overflow: auto;">
+        <div style="float: left;"><h1>Sequence features summary:</h1></div>
+        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+    </div>
     </#if>
 
     <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
     <div class="prot_entries" style="overflow: auto;">
-        <h1>Sequence features</h1>
+        <h1>Detailed signature matches</h1>
         <#if protein.entries?has_content>
             <ol class="entries">
                 <#list protein.entries as entry>
@@ -77,8 +84,8 @@
                     <#assign icon>
                         <#if entry.type?lower_case?starts_with("family") || entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("region") || entry.type?lower_case?starts_with("repeat")>
                         ${entry.type?lower_case}
-                            <#elseif entry.type?lower_case?starts_with("unknown")>uni
-                            <#else>site
+                        <#elseif entry.type?lower_case?starts_with("unknown")>uni
+                        <#else>site
                         </#if>
                     </#assign>
                     <#assign icon=icon?trim>
@@ -87,10 +94,10 @@
                     <#--TODO: Check domain and repeat in the same if clause-->
                         <#if entry.type?lower_case?starts_with("domain")>
                             c${entryColours[entry.ac]} ${entry.type}
-                            <#elseif entry.type?lower_case?starts_with("repeat")>
-                                c${entryColours[entry.ac]} ${entry.type}
-                            <#else>               `
-                            ${entry.type}
+                        <#elseif entry.type?lower_case?starts_with("repeat")>
+                            c${entryColours[entry.ac]} ${entry.type}
+                        <#else>               `
+                        ${entry.type}
                         </#if>
                     </#assign>
                     <#assign colourClass=colourClass?trim>
@@ -115,7 +122,7 @@
                                 <#list entry.signatures as signature>
 
                                     <li id="${containerId}" class="signature entry-signatures">
-                                    <@signatureMacro.signature protein=protein signature=signature entryTypeTitle=title colourClass=colourClass />
+                                        <@signatureMacro.signature protein=protein signature=signature entryTypeTitle=title colourClass=colourClass />
                                     </li>
                                 </#list>
                             </ol>
@@ -141,7 +148,7 @@
                 <ol class="signatures">
                     <#list protein.unintegratedSignatures as signature>
                         <li class="signature">
-                        <@signatureMacro.signature protein=protein signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
+                            <@signatureMacro.signature protein=protein signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
                         </li>
                     </#list>
                 </ol>
@@ -149,11 +156,11 @@
             </div>
         </div>
         </#if>
-        <#else>
-        <div class="prot_entries" style="overflow: auto;">
-            <div style="float: left;"><h1>Sequence features:</h1></div>
-            <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
-        </div>
+    <#else>
+    <div class="prot_entries" style="overflow: auto;">
+        <div style="float: left;"><h1>Sequence features:</h1></div>
+        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+    </div>
     </#if>
 
 
@@ -172,7 +179,7 @@
                 <br/>
             </#list>
             <#if !hasGo>
-                No biological process GO terms.
+                None predicted.
             </#if>
         </div>
 
@@ -186,7 +193,7 @@
                 <br/>
             </#list>
             <#if !hasGo>
-                No molecular function GO terms.
+                None predicted.
             </#if>
         </div>
         <div class="go_terms_box">
@@ -199,7 +206,7 @@
                 <br/>
             </#list>
             <#if !hasGo>
-                No cellular component GO terms.
+                None predicted.
             </#if>
         </div>
     </div>
@@ -215,6 +222,6 @@
     });
 </script>
 
-    <#else>
-    <b>No match data found for this protein.</b>
+<#else>
+<b>No match data found for this protein.</b>
 </#if>

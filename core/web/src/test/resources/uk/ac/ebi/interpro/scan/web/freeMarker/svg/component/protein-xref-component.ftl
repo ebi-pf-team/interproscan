@@ -28,7 +28,7 @@
                 </#list>
                 <#if !hasGo>
                     <tspan x="10px" dy="${tspanDyValue}" style="fill:#525252;stroke:none;">
-                        No biological process GO terms.
+                        None predicted.
                     </tspan>
                 </#if>
                 </text>
@@ -49,7 +49,7 @@
                 </#list>
                 <#if !hasGo>
                     <tspan x="436px" dy="${tspanDyValue}" style="fill:#525252;stroke:none;">
-                        No molecular function GO terms.
+                        None predicted.
                     </tspan>
                 </#if>
                 </text>
@@ -70,7 +70,7 @@
                 </#list>
                 <#if !hasGo>
                     <tspan x="862px" dy="${tspanDyValue}" style="fill:#525252;stroke:none;">
-                        No cellular component GO terms.
+                        None predicted.
                     </tspan>
                 </#if>
                 </text>
