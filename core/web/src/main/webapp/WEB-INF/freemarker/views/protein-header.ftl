@@ -33,7 +33,7 @@ in standalone mode. Also the protein-header is used as a dependency in InterPro 
         </div>
     </div>
 
-    <div class="prot_gal_source">Source: <span>UniProtKB/Swiss-Prot</span></div>
+    <div class="prot_gal_source">Source: <span>UniProtKB</span></div>
     <br/>
     <hr/>
 </div>
