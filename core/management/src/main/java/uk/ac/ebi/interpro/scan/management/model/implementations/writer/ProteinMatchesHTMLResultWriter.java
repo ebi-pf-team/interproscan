@@ -93,7 +93,7 @@ public class ProteinMatchesHTMLResultWriter {
     }
 
     /**
-     * Returns the protein view for a given SimpleProtein object as a String.
+     * Returns the protein view for a given SimpleProtein object as a String (standalone mode by default).
      *
      * @param simpleProtein for which to return a view
      * @return the view as a String
@@ -101,10 +101,23 @@ public class ProteinMatchesHTMLResultWriter {
      * @throws TemplateException
      */
     public String write(final SimpleProtein simpleProtein) throws IOException, TemplateException {
+        return write(simpleProtein, true);
+    }
+
+    /**
+     * Returns the protein view for a given SimpleProtein object as a String.
+     *
+     * @param simpleProtein for which to return a view
+     * @param standalone InterProScan standalone mode output?
+     * @return the view as a String
+     * @throws IOException
+     * @throws TemplateException
+     */
+    public String write(final SimpleProtein simpleProtein, final boolean standalone) throws IOException, TemplateException {
         checkEntryHierarchy();
         if (simpleProtein != null) {
             //Build model for FreeMarker
-            final SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
+            final SimpleHash model = buildModelMap(simpleProtein, entryHierarchy, standalone);
             Writer writer = null;
             try {
                 StringWriter stringWriter = new StringWriter();
@@ -123,20 +136,32 @@ public class ProteinMatchesHTMLResultWriter {
     }
 
     /**
-     * Writes out protein view to an zipped and compressed HTML file.
+     * Writes out protein view to an zipped and compressed HTML file (standalone mode by default).
      *
      * @param protein containing matches to be written out
      * @return the number of rows printed (i.e. the number of Locations on Matches).
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
     public int write(final Protein protein) throws IOException {
+        return write(protein, true);
+    }
+
+    /**
+     * Writes out protein view to an zipped and compressed HTML file.
+     *
+     * @param protein containing matches to be written out
+     * @param standalone InterProScan standalone mode output?
+     * @return the number of rows printed (i.e. the number of Locations on Matches).
+     * @throws java.io.IOException in the event of I/O problem writing out the file.
+     */
+    public int write(final Protein protein, final boolean standalone) throws IOException {
         checkEntryHierarchy();
         if (entryHierarchy != null) {
             for (ProteinXref xref : protein.getCrossReferences()) {
                 final SimpleProtein simpleProtein = SimpleProtein.valueOf(protein, xref, entryHierarchy);
                 if (simpleProtein != null) {
                     //Build model for FreeMarker
-                    final SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
+                    final SimpleHash model = buildModelMap(simpleProtein, entryHierarchy, standalone);
                     //Render template and write result to a file
                     Writer writer = null;
                     try {
@@ -194,13 +219,13 @@ public class ProteinMatchesHTMLResultWriter {
         }
     }
 
-    private SimpleHash buildModelMap(SimpleProtein p, EntryHierarchy entryHierarchy) {
+    private SimpleHash buildModelMap(final SimpleProtein p, final EntryHierarchy entryHierarchy, final boolean standalone) {
         final SimpleHash model = new SimpleHash();
         if (p != null) {
             model.put("protein", p);
             model.put("condensedView", new CondensedView(p));
             model.put("entryColours", entryHierarchy.getEntryColourMap());
-            model.put("standalone", true);
+            model.put("standalone", standalone);
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
         }
         return model;
