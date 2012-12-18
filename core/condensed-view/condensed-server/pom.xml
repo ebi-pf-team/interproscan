@@ -83,7 +83,8 @@
 
             <properties>
                 <deployment.folder>not applicable - jetty does not use this.</deployment.folder>
-                <berkeleydb.path.html>${basedir}/src/test/resources/berk_db</berkeleydb.path.html>
+                <!--<berkeleydb.path.html>${basedir}/src/test/resources/berk_db</berkeleydb.path.html>-->
+                <berkeleydb.path.html>/nfs/nobackup/interpro/pjones/condensed/output</berkeleydb.path.html>
             </properties>
 
             <build>
@@ -153,10 +154,13 @@
                 <description>
                     This isn't a property - just a convenient way of including a description...
 
-                    This profile is for deployment of a test server in Tomcat on tomcat-17.ebi.ac.uk.
+                    This profile is for deployment of a test server in Tomcat on ves-hx-9d.
                 </description>
-                <deployment.folder>/ebi/www/jtest/deploy/tc-interpro-das</deployment.folder>
-                <berkeleydb.path.html>/nfs/nobackup/interpro/condensed-lookup</berkeleydb.path.html>
+                <deployment.folder>/nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-web_test/deploy/
+                </deployment.folder>
+                <berkeleydb.path.html>
+                    /nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-web_test/deploy/condensed-data
+                </berkeleydb.path.html>
             </properties>
         </profile>
 
@@ -205,7 +209,7 @@
                         <configuration>
                             <!-- Currently need to comment out the warName element below
                       for the jetty:run-war target to work. -->
-                            <warName>${project.name}-${timestamp}</warName>
+                            <warName>condensed-lookup-${timestamp}</warName>
                             <!-- NOTE that the webResources filtering as exemplified
                           below does NOT work recursively - only the contents of the explicit directory
                           listed are filtered-->

@@ -34,7 +34,7 @@ public class CondensedServiceImpl extends AbstractDBService implements Condensed
     public CondensedServiceImpl(String databasePath) {
         Assert.notNull(databasePath, "The databasePath bean cannot be null.");
         this.databasePath = setPath(databasePath);
-        System.out.println("Initializing BerkeleyDB MD5 Database (creating indexes): Please wait...");
+        System.out.println("Initializing BerkeleyDB Condensed HTML Database (creating indexes): Please wait...");
         initializeIndex();
     }
 

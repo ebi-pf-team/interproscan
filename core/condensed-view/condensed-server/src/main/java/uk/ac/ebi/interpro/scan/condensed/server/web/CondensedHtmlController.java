@@ -8,7 +8,6 @@ import uk.ac.ebi.interpro.scan.condensed.server.web.service.CondensedService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,8 +22,7 @@ public class CondensedHtmlController {
 
     @RequestMapping("/html/{id}")
     public void getHtml(final HttpServletResponse response, @PathVariable final String id) throws IOException {
-        final PrintWriter out = response.getWriter();
-        out.write(condensedService.getCondensedHtml(id));
+        response.getWriter().write(condensedService.getCondensedHtml(id));
     }
 
 }

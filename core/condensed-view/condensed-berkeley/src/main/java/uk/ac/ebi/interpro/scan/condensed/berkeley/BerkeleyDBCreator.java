@@ -58,7 +58,7 @@ public class BerkeleyDBCreator {
                     "      uniparc.protein up  " +
                     "      INNER JOIN interpro.protein p  on p.crc64 = up.crc64 " +
                     // If logging at trace level, the next line will be added to reduce massively the number of proteins included.
-                    ((BerkeleyDBCreator.LOGGER.isTraceEnabled()) ? "and up.upi < '" + MAX_UPI_FOR_TRACE_LOGGING + "'" : "") +
+
                     "      INNER JOIN uniparc.xref x on p.protein_ac = x.ac and x.upi = up.upi " +
                     "      INNER JOIN interpro.match p_m ON p.protein_ac = p_m.protein_ac " +
                     "      INNER JOIN interpro.method m ON p_m.method_ac = m.method_ac " +
@@ -68,8 +68,8 @@ public class BerkeleyDBCreator {
                     "      INNER JOIN interpro.cv_entry_type cv_et ON e.entry_type = cv_et.code " +
                     "WHERE x.deleted = 'N' " +
                     "AND e.entry_type in ('D','R') " +
-                    "AND e.checked = 'Y'";
-
+                    "AND e.checked = 'Y'" +
+                    ((BerkeleyDBCreator.LOGGER.isTraceEnabled()) ? " and e_m.entry_ac in ('IPR018957','IPR001849')" : "");
 
     private static final String QUERY_TEMP_TABLE =
             "select " +
@@ -112,7 +112,16 @@ public class BerkeleyDBCreator {
                     "      interpro.protein p " +
                     "      INNER JOIN uniparc.xref x on p.protein_ac = x.ac and x.deleted='N'" +
                     "      INNER JOIN uniparc.protein up on p.crc64 = up.crc64 and x.upi = up.upi " +
-                    ((BerkeleyDBCreator.LOGGER.isTraceEnabled()) ? " and up.upi < '" + MAX_UPI_FOR_TRACE_LOGGING + "'" : "") +
+
+
+                    ((BerkeleyDBCreator.LOGGER.isTraceEnabled()) ?
+                            " WHERE x.ac in (" +
+                                    "select p_m.protein_ac from interpro.match p_m  " +
+                                    "      INNER JOIN interpro.method m ON p_m.method_ac = m.method_ac " +
+                                    "      INNER JOIN interpro.entry2method e_m on m.method_ac = e_m.method_ac" +
+                                    "  WHERE e_m.entry_ac in ('IPR018957','IPR001849'))" : "") +
+
+
                     "      order by up.md5";
 
     // If logging at trace level, the next line will be added to reduce massively the number of proteins included.
@@ -296,6 +305,9 @@ public class BerkeleyDBCreator {
                     }
                 }
                 // Add the necessary data to the records collection
+
+                // Note that fields that are not useful for creating the condensed view are set
+                // to default or null as appropriate.
                 records.add(new MatchDataRecord(
                         md5,
                         md5,
