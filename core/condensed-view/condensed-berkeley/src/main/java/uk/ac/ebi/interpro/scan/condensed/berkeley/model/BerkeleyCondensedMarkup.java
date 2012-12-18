@@ -12,11 +12,18 @@ import java.util.zip.DataFormatException;
  * Created with IntelliJ IDEA.
  *
  * @author Phil Jones
+ *         <p/>
+ *         <p/>
+ *         For the condensed view BerkeleyDB, creates a single set of rows for the matches to each
+ *         unique sequence (keyed on MD5)
+ *         <p/>
+ *         Note: The @Entity annotation is a sleepcat (Berkeley) annotation which unfortunately looks
+ *         like a Hibernate annotation :-)
  */
 @Entity
 public class BerkeleyCondensedMarkup {
 
-    @PrimaryKey
+    @PrimaryKey  // Primary index in the BerkeleyDB
     private String md5;
 
     @SecondaryKey(relate = Relationship.ONE_TO_MANY, name = "uniprot_ac")
