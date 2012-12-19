@@ -29,7 +29,7 @@
    and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
    NOTE: These should have been generated at the time of the last release, therefore will be consistent
    with the current public database -->
-        <resourceWebPath>/interpro-protein-page/resources</resourceWebPath>
+        <!--<resourceWebPath>/interpro-protein-page/resources</resourceWebPath>-->
         <!--Model creation files-->
         <!--Entry hierarchy data-->
         <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
@@ -42,7 +42,7 @@
         <entry.colours.file.loc>
             file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
         </entry.colours.file.loc>
-        <pathToImages>http://tc-test-3.ebi.ac.uk:9750/interpro-protein-page/resources</pathToImages>
+        <!--<pathToImages>http://tc-test-3.ebi.ac.uk:9750/interpro-protein-page/resources</pathToImages>-->
     </properties>
 
     <build>
