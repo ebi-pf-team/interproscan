@@ -1,5 +1,0 @@
-<Context
-        docBase="${deployment.folder}/condensed-lookup-${timestamp}.war"
-        path="/interpro/condensed-lookup"
-        distributable="false">
-</Context>
