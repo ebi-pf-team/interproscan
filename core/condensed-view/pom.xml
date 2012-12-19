@@ -15,7 +15,6 @@
 
     <modules>
         <module>condensed-berkeley</module>
-        <module>condensed-server</module>
     </modules>
 
     <name>InterProScan Precalculated Matches</name>
