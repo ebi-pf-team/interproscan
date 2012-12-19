@@ -23,6 +23,10 @@
         </layout>
     </appender>
 
+    <logger name="uk.ac.ebi.interpro.scan.condensed.berkeley.BerkeleyDBCreator">
+        <level value="trace"/>
+    </logger>
+
 
     <!-- Root Logger -->
     <root>
