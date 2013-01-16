@@ -26,7 +26,7 @@
             <div class="top-row-id">
                 <h1>Domains and repeats:</h1>
             </div>
-            <div class="top-row-opt"><a href="#" title="Open sequence features summary view in a new window"><span
+            <div class="top-row-opt"><a href="#" title="Open domains and repeats view in a new window"><span
                     class="opt1"></span></a></div>
         </div>
 
@@ -68,7 +68,7 @@
     </div>
     <#else>
     <div class="prot_sum" style="overflow: auto;">
-        <div style="float: left;"><h1>Sequence features summary:</h1></div>
+        <div style="float: left;"><h1>Domains and repeats:</h1></div>
         <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
     </div>
     </#if>
