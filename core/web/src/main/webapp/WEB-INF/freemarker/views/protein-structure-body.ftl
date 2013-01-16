@@ -75,15 +75,16 @@
                                                 Structural match data structure:
 
                                                 database (SimpleStructuralMatchDatabase)
-                                                -- databaseName (String)
-                                                -- structuralMatches (Map<SimpleLocation, SimpleStructuralMatchData>)
+                                                    databaseName (String)
+                                                    structuralMatches (Map of SimpleLocation to SimpleStructuralMatchData)
 
                                                 location (SimpleLocation)
-                                                -- start (int)
-                                                -- end (int)
+                                                    start (int)
+                                                    end (int)
 
                                                 locationData (SimpleStructuralMatchData)
-                                                -- locationDataMap (Map<String, List<String>>)
+                                                    locationDataMap (Map of String to  List of Strings)
+
                                             -->
                                             <div class="bot-row-signame">${feature.dataSource.sourceName}</div>
                                             <div class="bot-row-line">
@@ -124,15 +125,16 @@
                                                 Structural match data structure:
 
                                                 database (SimpleStructuralMatchDatabase)
-                                                -- databaseName (String)
-                                                -- structuralMatches (Map<SimpleLocation, SimpleStructuralMatchData>)
+                                                    databaseName (String)
+                                                    structuralMatches (Map of SimpleLocation to SimpleStructuralMatchData)
 
                                                 location (SimpleLocation)
-                                                -- start (int)
-                                                -- end (int)
+                                                    start (int)
+                                                    end (int)
 
                                                 locationData (SimpleStructuralMatchData)
-                                                -- locationDataMap (Map<String, List<String>>)
+                                                    locationDataMap (Map of String to a List of Strings)
+
                                             -->
 
                                             <div class="bot-row-signame">${feature.dataSource.sourceName}</div>
