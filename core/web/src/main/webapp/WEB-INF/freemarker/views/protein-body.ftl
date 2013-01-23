@@ -1,4 +1,4 @@
-<#--Returns main body of protein page for inclusion in DBML-->
+<#--Returns main body of protein page for inclusion in the InterProScan 5 HTML output, or elsewhere -->
 
 <#if protein??>
 
@@ -10,12 +10,11 @@
         </div>
     <#else>
         <div style="float: left;"><h1>Protein family membership:</h1></div>
-        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">None predicted.</span>
     </#if>
 </div>
 
     <#import "../macros/signature.ftl" as signatureMacro>
-<#--Returns protein features for inclusion in DBML-->
     <#if ! standalone>
         <#include "web_menu_javascript.ftl"/>
     </#if>
@@ -69,7 +68,7 @@
     <#else>
     <div class="prot_sum" style="overflow: auto;">
         <div style="float: left;"><h1>Domains and repeats:</h1></div>
-        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
+        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">None predicted.</span>
     </div>
     </#if>
 
@@ -157,10 +156,7 @@
         </div>
         </#if>
     <#else>
-    <div class="prot_entries" style="overflow: auto;">
-        <div style="float: left;"><h1>Sequence features:</h1></div>
-        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">none</span>
-    </div>
+        <!-- No matches so the detailed matches section is omitted. -->
     </#if>
 
 

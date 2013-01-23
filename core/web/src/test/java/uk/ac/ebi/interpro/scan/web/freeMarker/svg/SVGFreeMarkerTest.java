@@ -90,7 +90,7 @@ public class SVGFreeMarkerTest {
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
             model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, 30, 180, 18, 19, 30));
-        } // Else no match data was found for the protein therefore nothing to display
+        } // Else no protein data was found therefore nothing to display
         return model;
     }
 }
