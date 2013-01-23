@@ -5,10 +5,10 @@
     <meta charset="utf-8">
 <#--Check if protein exists-->
     <title>
-    <#if protein?? && protein.structuralDatabases?has_content>
+    <#if protein?? && protein.ac?has_content>
     ${protein.ac} - InterPro
         <#else>
-            No data for this protein - InterPro
+            Unknown protein - InterPro
     </#if>
     </title>
     <meta name="description" content="Protein matches">

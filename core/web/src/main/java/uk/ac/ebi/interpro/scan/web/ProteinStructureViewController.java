@@ -75,7 +75,7 @@ public class ProteinStructureViewController {
             m.put("condensedView", new CondensedView(p));
             m.put("entryColours", entryHierarchy.getEntryColourMap());
             m.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-        } // Else no match data was found for the protein therefore nothing to display
+        } // Else no protein data was found therefore nothing to display
         if (pageResources != null) {
             Map<String, String> pageResourcesMap = pageResources.getResourcesMap();
             for (String key : pageResourcesMap.keySet()) {

@@ -82,7 +82,7 @@ public class FreemarkerTest {
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("standalone", true);
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-        } // Else no match data was found for the protein therefore nothing to display
+        } // Else no protein data was found therefore nothing to display
         return model;
     }
 

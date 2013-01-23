@@ -10,10 +10,10 @@
     <meta charset="utf-8" content="text/html">
 <#--Check if protein exists-->
     <title>
-    <#if protein?? && protein.entries?has_content>
+    <#if protein?? && protein.ac?has_content>
     ${protein.ac} - InterPro
         <#else>
-            No data for this protein - InterPro
+            Unknown protein - InterPro
     </#if>
     </title>
     <meta name="description" content="InterProScan result page: Protein matches and sequence features">
