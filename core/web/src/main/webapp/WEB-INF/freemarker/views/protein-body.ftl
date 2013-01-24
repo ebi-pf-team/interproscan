@@ -19,11 +19,17 @@
         <#include "web_menu_javascript.ftl"/>
     </#if>
 
-    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-    <div class="prot_sum">
+    <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
+        <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
+        <div class="prot_sum">
+        <#else>
+        <div class="prot_sum" style="background:none;">
+        </#if>
         <div class="top-row">
             <div class="top-row-id">
-                <h1>Domains and repeats:</h1>
+                <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
+                    <h1>Domains and repeats:</h1>
+                </#if>
             </div>
             <div class="top-row-opt"><a href="#" title="Open domains and repeats view in a new window"><span
                     class="opt1"></span></a></div>
@@ -65,14 +71,7 @@
             </div>
         </div>
     </div>
-    <#else>
-    <div class="prot_sum" style="overflow: auto;">
-        <div style="float: left;"><h1>Domains and repeats:</h1></div>
-        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">None predicted.</span>
-    </div>
-    </#if>
 
-    <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
     <div class="prot_entries" style="overflow: auto;">
         <h1>Detailed signature matches</h1>
         <#if protein.entries?has_content>
@@ -133,7 +132,7 @@
         </#if>
     </div>
 
-        <#if protein.unintegratedSignatures?has_content>
+    <#if protein.unintegratedSignatures?has_content>
 
         <div class="prot_entries" id="uni">
             <div class="top-row">
@@ -154,19 +153,19 @@
                 <div class="bot-row-line-bot"></div>
             </div>
         </div>
-        </#if>
-    <#else>
-        <!-- No matches so the detailed matches section is omitted. -->
     </#if>
+<#else>
+    <!-- No matches so the detailed matches section is omitted. -->
+</#if>
 
 
-<div class="prot_go">
-    <h1>GO Term prediction</h1>
+    <div class="prot_go">
+        <h1>GO Term prediction</h1>
 
-    <div class="go_terms">
+        <div class="go_terms">
 
-        <div class="go_terms_box">
-            <h2>Biological Process</h2>
+            <div class="go_terms_box">
+                <h2>Biological Process</h2>
             <#assign hasGo=false/>
             <#list protein.processGoTerms as goTerm>
                 <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
@@ -177,10 +176,10 @@
             <#if !hasGo>
                 None predicted.
             </#if>
-        </div>
+            </div>
 
-        <div class="go_terms_box">
-            <h2>Molecular Function</h2>
+            <div class="go_terms_box">
+                <h2>Molecular Function</h2>
             <#assign hasGo=false/>
             <#list protein.functionGoTerms as goTerm>
                 <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
@@ -191,9 +190,9 @@
             <#if !hasGo>
                 None predicted.
             </#if>
-        </div>
-        <div class="go_terms_box">
-            <h2>Cellular Component</h2>
+            </div>
+            <div class="go_terms_box">
+                <h2>Cellular Component</h2>
             <#assign hasGo=false/>
             <#list protein.componentGoTerms as goTerm>
                 <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
@@ -204,20 +203,20 @@
             <#if !hasGo>
                 None predicted.
             </#if>
+            </div>
         </div>
     </div>
-</div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('span[id*="location-"]').each(
-                function (i) {
-                    preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
-                }
-        );
-    });
-</script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('span[id*="location-"]').each(
+                    function (i) {
+                        preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
+                    }
+            );
+        });
+    </script>
 
 <#else>
-<b>No match data found for this protein.</b>
+    <b>No match data found for this protein.</b>
 </#if>
