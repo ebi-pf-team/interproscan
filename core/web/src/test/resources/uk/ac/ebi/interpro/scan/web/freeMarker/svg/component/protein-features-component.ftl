@@ -4,7 +4,7 @@
 <svg id="sequenceFeatures" x="40" y="${yPosition}">
     <text y="13px"
           style="fill:#393939;font-family:Verdana,Helvetica,sans-serif;font-size:13px;font-weight:bold">
-        Sequence features
+        Detailed signature matches
     </text>
 <#assign startHeight=30/>
 <#assign outerSpaceHeight=19/>
