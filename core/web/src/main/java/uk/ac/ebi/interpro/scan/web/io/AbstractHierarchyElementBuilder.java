@@ -21,10 +21,25 @@ public abstract class AbstractHierarchyElementBuilder {
      * @throws java.io.IOException
      */
     protected StringBuilder siblings(EntryHierarchyData sibling) throws IOException {
+        return siblings(sibling, false);
+    }
+
+    /**
+     * Processes a "sibling", i.e. a single Entry.  If this entry is matched,
+     * renders the entry.  The method then recurses into the children of the
+     * entry to consider them in turn.
+     *
+     * @param sibling being an EntryHierarchyData object to consider
+     * @param isPopup true if we are building this specifically for a popup
+     * @return a StringBuilder (possibly empty) containing the details of this entry
+     * @throws java.io.IOException
+     *
+     */
+    protected StringBuilder siblings(EntryHierarchyData sibling, boolean isPopup) throws IOException {
         StringBuilder siblings = new StringBuilder();
         final SimpleEntry includedEntry = entryDataMatched(sibling);
         if (includedEntry != null) {
-            appendEntry(includedEntry, siblings);
+            appendEntry(includedEntry, siblings, isPopup);
         }
         siblings.append(children(sibling));
         if (includedEntry != null) {
@@ -42,8 +57,26 @@ public abstract class AbstractHierarchyElementBuilder {
      * @param sb    the StringBuilder to append this list item to.
      */
     protected void appendEntry(SimpleEntry entry, StringBuilder sb) {
+        appendEntry(entry, sb, false);
+    }
+
+    /**
+     * Utility method to create the list item for an entry.
+     * NOTE: Does NOT append the closing &lt;/li&gt; element as there may
+     * children of this entry to squeeze in.
+     *
+     * @param entry to be rendered
+     * @param sb    the StringBuilder to append this list item to.
+     */
+    protected void appendEntry(SimpleEntry entry, StringBuilder sb, boolean isPopup) {
         if (entry == null) return;
-        sb.append("<li>");
+        sb.append("<li");
+        if (isPopup) {
+            sb.append(" class=\"");
+            sb.append(entry.getType().toString());
+            sb.append("\" ");
+        }
+        sb.append(">");
         sb.append("<a href=\"http://www.ebi.ac.uk/interpro/IEntry?ac=");
         sb.append(entry.getAc());
         sb.append("\" class=\"neutral\">");

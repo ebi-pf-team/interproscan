@@ -245,4 +245,8 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
     public String getEntryHierachy() {
         return new SupermatchHierachyElementBuilder(this).build().toString();
     }
+
+    public String getEntryHierarchyForPopup() {
+        return new SupermatchHierachyElementBuilder(this).buildPopup().toString();
+    }
 }
