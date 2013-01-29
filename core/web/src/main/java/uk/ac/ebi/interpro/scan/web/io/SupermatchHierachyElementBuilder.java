@@ -25,13 +25,17 @@ public class SupermatchHierachyElementBuilder extends AbstractHierarchyElementBu
     }
 
     public StringBuilder build() {
+       return build(false);
+    }
+
+    public StringBuilder build(boolean isPopup) {
         StringBuilder result = new StringBuilder();
         try {
             EntryHierarchyData entryHierarchyData = superMatch.getRootEntryData();
             if (entryHierarchyData != null) {
-                StringBuilder list = siblings(entryHierarchyData);
+                StringBuilder list = siblings(entryHierarchyData, isPopup);
 
-                if (list.indexOf("<li>") == 0) {
+                if (list.indexOf("<li") == 0) {
                     result.append("<ul>");
                     result.append(list);
                     result.append("</ul>");
@@ -42,13 +46,17 @@ public class SupermatchHierachyElementBuilder extends AbstractHierarchyElementBu
             } else {
                 // This entry is not in any hierarchy - just spit it out flat.
                 result.append("<ul>");
-                appendEntry(superMatch.getFirstEntry(), result);
+                appendEntry(superMatch.getFirstEntry(), result, isPopup);
                 result.append("</li></ul>");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public StringBuilder buildPopup() {
+        return build(true);
     }
 
     @Override
@@ -60,5 +68,7 @@ public class SupermatchHierachyElementBuilder extends AbstractHierarchyElementBu
         }
         return null;
     }
+
+
 
 }
