@@ -54,6 +54,7 @@ public class AnalyseMatchDataResultTest {
         List<MatchDataRecord> records = new ArrayList<MatchDataRecord>();
         records.add(new MatchDataRecord("A2AP18",
                 "PLCH2_MOUSE",
+                "1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase eta-2",
                 1501,
                 "6C2CA0E2864B327B",
                 "PTHR10336:SF21",
@@ -72,6 +73,7 @@ public class AnalyseMatchDataResultTest {
                 false));
         records.add(new MatchDataRecord("A2AP18",
                 "PLCH2_MOUSE",
+                "1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase eta-2",
                 1501,
                 "6C2CA0E2864B327B",
                 "PTHR10336",

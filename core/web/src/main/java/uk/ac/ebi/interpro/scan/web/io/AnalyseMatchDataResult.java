@@ -96,7 +96,7 @@ public class AnalyseMatchDataResult {
                 protein = new SimpleProtein(
                         record.getProteinAc(),
                         record.getProteinId(),
-                        "Name not available",
+                        record.getProteinDescription(),
                         record.getProteinLength(),
                         "N/A",
                         record.getCrc64(),

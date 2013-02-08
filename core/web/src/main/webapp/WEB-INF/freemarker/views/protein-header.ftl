@@ -11,13 +11,14 @@ in standalone mode. Also the protein-header is used as a dependency in InterPro 
                 ${protein.ac}
             <#else>
                 <a href="http://www.uniprot.org/uniprot/${protein.ac}" class="ext"
-                                          title="${protein.name} (${protein.ac})">${protein.ac}</a> (${protein.id})
+                                          title="View this protein in UniProtKB">${protein.ac}</a> (${protein.id})
             </#if>
         </div>
     </div>
 
-    <#if protein.taxFullName?has_content>
-        <#--Taxonomy is known on the protein page, but not on the protein-structure page-->
+    <#if protein.taxFullName?has_content && protein.taxFullName != "Unknown">
+        <#--Taxonomy is known on the InterPro web 6 protein page, but not in InterProScan standalone mode, nor on the
+        protein-structure page -->
         <div class="prot_gal_bloc">
             <div class="prot_gal_col"><h1>Species</h1></div>
             <div class="prot_gal_desc">${protein.taxFullName}</div>
