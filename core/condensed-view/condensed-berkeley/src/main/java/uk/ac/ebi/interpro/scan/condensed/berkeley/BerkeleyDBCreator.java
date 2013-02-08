@@ -311,6 +311,7 @@ public class BerkeleyDBCreator {
                 records.add(new MatchDataRecord(
                         md5,
                         md5,
+                        md5,
                         rs.getInt(LEN),
                         null,
                         rs.getString(METHOD_ACCESSION),
