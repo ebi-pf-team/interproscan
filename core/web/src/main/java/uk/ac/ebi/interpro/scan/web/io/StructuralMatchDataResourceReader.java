@@ -40,6 +40,7 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
 
         String proteinAc;
         String proteinId;
+        String proteinDescription = "Name not available"; // Default when field not present
         int proteinLength;
         String crc64;
         String databaseName;
@@ -66,7 +67,7 @@ public class StructuralMatchDataResourceReader extends AbstractResourceReader<St
             isProteinFragment = true;
         }
 
-        return new StructuralMatchDataRecord(proteinAc, proteinId, proteinLength, crc64,
+        return new StructuralMatchDataRecord(proteinAc, proteinId, proteinDescription, proteinLength, crc64,
                 databaseName, domainId, classId,
                 posFrom, posTo, isProteinFragment);
     }

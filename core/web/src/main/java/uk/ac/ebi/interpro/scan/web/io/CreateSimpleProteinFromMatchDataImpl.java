@@ -94,7 +94,7 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
                     protein = new SimpleProtein(
                             data.getProteinAc(),
                             data.getProteinId(),
-                            "Name not available",
+                            data.getProteinDescription(),
                             data.getProteinLength(),
                             "N/A",
                             data.getCrc64(),

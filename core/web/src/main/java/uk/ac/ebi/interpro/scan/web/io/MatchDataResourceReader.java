@@ -44,6 +44,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
 
         String proteinAc;
         String proteinId;
+        String proteinDescription = "Name not available"; // Default when field not present
         int proteinLength;
         String crc64;
         String methodAc;
@@ -108,7 +109,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
             isProteinFragment = true;
         }
 
-        return new MatchDataRecord(proteinAc, proteinId, proteinLength, crc64,
+        return new MatchDataRecord(proteinAc, proteinId, proteinDescription, proteinLength, crc64,
                 methodAc, methodName, methodDatabase,
                 posFrom, posTo, score,
                 entryAc, entryShortName, entryName, entryType,

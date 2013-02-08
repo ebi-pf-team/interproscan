@@ -48,12 +48,12 @@ public final class MatchDataRecord extends AbstractDataRecord {
     private final String taxScienceName;
     private final String taxFullName;
 
-    public MatchDataRecord(String proteinAc, String proteinId, int proteinLength, String crc64,
-                           String methodAc, String methodName, String methodDatabase,
+    public MatchDataRecord(String proteinAc, String proteinId, String proteinDescription, int proteinLength,
+                           String crc64, String methodAc, String methodName, String methodDatabase,
                            int posFrom, int posTo, Double score,
                            String entryAc, String entryShortName, String entryName, String entryType,
                            int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
-        super(proteinAc, proteinId, proteinLength, crc64, posFrom, posTo, isProteinFragment);
+        super(proteinAc, proteinId, proteinDescription, proteinLength, crc64, posFrom, posTo, isProteinFragment);
         this.methodAc = methodAc;
         this.methodName = methodName;
         this.methodDatabase = methodDatabase;
@@ -122,6 +122,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
         return new EqualsBuilder()
                 .append(getProteinAc(), r.getProteinAc())
                 .append(getProteinId(), r.getProteinId())
+                .append(getProteinDescription(), r.getProteinDescription())
                 .append(getProteinLength(), r.getProteinLength())
                 .append(getCrc64(), r.getCrc64())
                 .append(methodAc, r.methodAc)
@@ -146,6 +147,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
         return new HashCodeBuilder(23, 15)
                 .append(getProteinAc())
                 .append(getProteinId())
+                .append(getProteinDescription())
                 .append(getProteinLength())
                 .append(getCrc64())
                 .append(methodAc)
