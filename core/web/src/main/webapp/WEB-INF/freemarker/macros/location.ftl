@@ -2,7 +2,7 @@
 <#macro location smid protein titlePrefix location colourClass>
 <span id="${smid}"
       class="match ${colourClass}"
-      style="left:  ${(location.start / protein.length) * 100}%;
+      style="left:  ${((location.start - 1) / protein.length) * 100}%;
               width: ${((location.end - location.start + 1) / protein.length) * 100}%;"
       title="${titlePrefix} ${location.start} - ${location.end}">
 </span>
