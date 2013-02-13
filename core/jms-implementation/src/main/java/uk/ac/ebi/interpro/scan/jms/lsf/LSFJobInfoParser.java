@@ -18,6 +18,7 @@ public class LSFJobInfoParser {
 
     private final String HEADER_LINE = "JOBID   USER    STAT  QUEUE      FROM_HOST   EXEC_HOST   JOB_NAME   SUBMIT_TIME";
     private final int JOB_INFORMATION_LINE_LENGTH = 10;
+    private final int JOB_INFORMATION_LINE_LENGTH_RELEVANT = 3;
     private final int JOBID_POS = 0;
     private final int USER_POS = 1;
     private final int STATUS_POS = 2;
@@ -54,17 +55,20 @@ public class LSFJobInfoParser {
                     }
                 } else {
                     String[] splitLine = line.split("\\s+");
-                    if (!(splitLine.length == JOB_INFORMATION_LINE_LENGTH)) {
+                    if (!(splitLine.length >= JOB_INFORMATION_LINE_LENGTH_RELEVANT)) {
                         throw new ParseException("The job information line does not have the expected number of fields", line);
                     }
                     String jobId = splitLine[JOBID_POS];
                     String user = splitLine[USER_POS];
                     String status = splitLine[STATUS_POS];
-                    String queueName = splitLine[QUEUE_POS];
-                    String fromHost = splitLine[FROM_HOST_POS];
-                    String execHost = splitLine[EXEC_HOST_POS];
-                    String jobName = splitLine[JOB_NAME_POS];
-                    Date date = getDate(splitLine);
+
+                    // the following fields are not used in this module
+                    String queueName = ""; //splitLine[QUEUE_POS];
+                    String fromHost = ""; //splitLine[FROM_HOST_POS];
+                    String execHost = ""; // splitLine[EXEC_HOST_POS];
+                    String jobName = ""; //splitLine[JOB_NAME_POS];
+                    Date date = new Date();  //getDate(splitLine);
+
                     LSFJobInformation jobInformation = new LSFJobInformation(jobId, user, status, queueName,
                             fromHost, execHost, jobName, date);
                     if (jobInformations.containsKey(jobName)) {
