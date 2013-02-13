@@ -90,9 +90,11 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
         if (providedPath != null) {
             // Try resolving the fasta file as an absolute file path
             InputStream fastaFileInputStream = null;
+            String  fastaFileInputStatusMessage ="";
             try {
                 File file = new File(providedPath);
                 if (file.exists()) {
+                    fastaFileInputStatusMessage = " - fasta file exists";
                     if (file.canRead()) {
                         //
                         if (file.length() == 0) {
@@ -117,13 +119,14 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                     }
                 } else {
                     // Absolute file path did not resolve, so try using the class loader.
+                    fastaFileInputStatusMessage = " - fasta file does not exist and absolute file path did not resolve,. ";
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("The file " + providedPath + " does not exist.  Attempting to access this file using the ClassLoader.");
                     }
                     fastaFileInputStream = FastaFileLoadStep.class.getClassLoader().getResourceAsStream(providedPath);
                 }
                 if (fastaFileInputStream == null) {
-                    throw new IllegalArgumentException("Cannot find the fasta file located at " + providedPath);
+                    throw new IllegalArgumentException("Cannot find the fasta file located at " + providedPath + fastaFileInputStatusMessage);
                 }
 
                 if (LOGGER.isDebugEnabled()) {
