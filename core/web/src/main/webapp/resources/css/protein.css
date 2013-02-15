@@ -727,74 +727,28 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
 /*END protein page*/
 
 /* Tooltip overwrite jquery.qtip.css */
-.ui-tooltip, .qtip {
-    font-family: Verdana, Helvetica, sans-serif;
-    font-size: 90%;
-    line-height: 120%;
-    max-width: 400px; min-width: 200px; /* solve a  popup size bug for IE7 */ 
-}
-
-.ui-tooltip-light .ui-tooltip-titlebar {
-    background-color: #fff;
-}
-
-.ui-tooltip-light .ui-tooltip-titlebar, .ui-tooltip-light .ui-tooltip-content {
-    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 4px 2px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 4px 4px rgba(0, 0, 0, 0.1);
-    border-color: #c0c0c0;
-    color: #393939;
-}
-.ui-tooltip-light .ui-tooltip-titlebar {border-radius: 6px 6px 0 0;-moz-border-radius: 6px 6px 0 0;-webkit-border-radius: 6px 6px 0 0;}
+.ui-tooltip, .qtip {font-family: Verdana, Helvetica, sans-serif; font-size: 90%;  line-height: 120%; max-width: 400px; min-width: 200px; /* solve a  popup size bug for IE7 */}
+.ui-tooltip-light .ui-tooltip-titlebar {background-color: #fff; border-radius: 6px 6px 0 0;-moz-border-radius: 6px 6px 0 0;-webkit-border-radius: 6px 6px 0 0;}
+.ui-tooltip-light .ui-tooltip-titlebar, .ui-tooltip-light .ui-tooltip-content {box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);-webkit-box-shadow: 4px 2px rgba(0, 0, 0, 0.1);-moz-box-shadow: 4px 4px rgba(0, 0, 0, 0.1); border-color: #c0c0c0; color: #393939;}
 .ui-tooltip-light .ui-tooltip-content {border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;}
+.ui-tooltip-content {padding: 0 6px 12px 6px;}
+.ui-tooltip-shadow  {webkit-box-shadow: none;-moz-box-shadow: none;	box-shadow:none; }
 
-.ui-tooltip-content {border:1px solid red; padding: 0 6px 12px 6px;}
+.ui-tooltip-content ul li a.neutral, .ui-tooltip-content ul li a.neutral:link{text-decoration: none; color:#393939; /*font-weight:bold;*/}
+.ui-tooltip-content  ul li a.neutral:hover,  .ui-tooltip-content ul li a.neutral:active, .ui-tooltip-content ul li a.neutral:focus {text-decoration: underline;}
+.ui-tooltip-content  ul li a.neutral span {color: #0072FE;font-weight:normal;}
 
-.ui-tooltip-shadow {
-    webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-}
+.ui-tooltip-content ul  ul li a.neutral, .ui-tooltip-content ul   ul li a.neutral:link{font-weight:normal;}
+.ui-tooltip-content  ul   ul li a.neutral span {font-weight:normal;}
 
-.ui-tooltip-content ul li a.neutral, .ui-tooltip-content ul li a.neutral:link {
-    text-decoration: none;
-    color: #393939; /*font-weight:bold;*/
-}
+.ui-tooltip-content ul {margin:0; padding:0; list-style:none;}
+.ui-tooltip-content ul li {list-style-type: none; padding-left: 26px; padding-bottom: 2px;/*add space to make the shadow of the tree icon appear correctly*/}
+.ui-tooltip-content ul li {background: url(../images/ico_tree_d.png) no-repeat 0 0;} /*temp fix as Domain is added randomly to list element - code needs to be checked*/
+.ui-tooltip-content ul li.Repeat {background: url(../images/ico_tree_repeat.png) no-repeat 0 0;}
 
-.ui-tooltip-content  ul li a.neutral:hover, .ui-tooltip-content ul li a.neutral:active, .ui-tooltip-content ul li a.neutral:focus {
-    text-decoration: underline;
-}
-
-.ui-tooltip-content  ul li a.neutral span {
-    color: #0072FE;
-    font-weight: normal;
-}
-
-.ui-tooltip-content ul  ul li a.neutral, .ui-tooltip-content ul   ul li a.neutral:link {
-    font-weight: normal;
-}
-
-.ui-tooltip-content  ul   ul li a.neutral span {
-    font-weight: normal;
-}
-
-.ui-tooltip-content ul {margin: 0; padding: 0; list-style: none;}
-.ui-tooltip-content ul li {margin-top: 3px; list-style-type: none; padding-left: 26px; background: url(../images/ico_tree_d.png) no-repeat 0 0;}
-
-.ui-tooltip .popup_topl {
-    padding-bottom: 4px;
-    font-weight: bold;
-    font-size: 90%;
-}
-
-.ui-tooltip .popup_topl .caption_puce {
-    width: 6px;
-    height: 6px;
-    border: 1px solid #393939;
-    float: left;
-    margin: 2px 4px 0 0;
-    zoom: 1; /* for IE7 and IE6 to visualise the span and background without content*/
-}
+.ui-tooltip .popup_topl {padding-bottom:4px; font-weight:bold;font-size:90%;}
+.ui-tooltip .popup_topl .caption_puce {width:6px; height:6px; border:1px solid #393939; float:left; margin: 2px 4px 0 0;zoom:1; /* for IE7 and IE6 to visualise the span and background without content*/}
+/* /Tooltip overwrite jquery.qtip.css */
 
 .prot_tree ul li {
     list-style-type: none;
@@ -803,7 +757,6 @@ ol.entries li, ol.signatures li, ol.structural-features li, ol.structural-predic
 }
 
 .prot_tree ul li ul li {
-    /*temp should be ul li ul li*/
     margin-left: 14px;
     list-style-type: none;
     padding-left: 26px;
