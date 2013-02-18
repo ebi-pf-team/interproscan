@@ -272,7 +272,7 @@ public class Run {
                     ? Mode.valueOf(modeArgument.toUpperCase())
                     : DEFAULT_MODE;
 
-            System.out.println("Welcome to InterProScan 5RC4");
+            System.out.println("Welcome to InterProScan 5RC5");
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
