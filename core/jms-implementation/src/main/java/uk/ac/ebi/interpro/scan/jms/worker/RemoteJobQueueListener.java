@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
+import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 
 import javax.jms.*;
 
@@ -24,6 +25,19 @@ public class RemoteJobQueueListener implements MessageListener {
 
     private Destination jobRequestQueue;
 
+    private StatsUtil statsUtil;
+
+    private boolean gridThrottle = true;
+
+    private int jobCount = 0;
+
+    private int maxUnfinishedJobs;
+
+    @Required
+    public void setGridThrottle(boolean gridThrottle) {
+        this.gridThrottle = gridThrottle;
+    }
+
     @Required
     public void setLocalJmsTemplate(JmsTemplate localJmsTemplate) {
         this.localJmsTemplate = localJmsTemplate;
@@ -39,9 +53,22 @@ public class RemoteJobQueueListener implements MessageListener {
         this.workerMessageSender = workerMessageSender;
     }
 
+    @Required
+    public void setStatsUtil(StatsUtil statsUtil) {
+        this.statsUtil = statsUtil;
+    }
+
+    @Required
+    public void setMaxUnfinishedJobs(int maxUnfinishedJobs) {
+        this.maxUnfinishedJobs = maxUnfinishedJobs;
+    }
 
     @Override
     public void onMessage(final Message message) {
+        if(jobCount == 0){
+            LOGGER.debug("onMessage: FirstJobReceived  ");
+        }
+        jobCount ++;
         if (!(message instanceof ObjectMessage)) {
             LOGGER.error("RemoteQueue Message Listener: Received a message of an unknown type (non-ObjectMessage)");
             try {
@@ -65,6 +92,63 @@ public class RemoteJobQueueListener implements MessageListener {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
             e.printStackTrace();
         }
+        //check the size of the queue
+        if(gridThrottle){
+            checkQueueState();
+        }
+
         LOGGER.debug("Worker: received a message from the remote request queue and forwarded it onto the local jobRequestQueue");
+    }
+
+    /**
+     * check if the message quota for this worker has been reached and then block for a few seconds
+     *
+     */
+    public void checkQueueState(){
+        LOGGER.debug("checkQueueState - Check the state of the local queue depending on the tier we are in ");
+        int unfinishedJobs = statsUtil.getUnfinishedJobs();
+        LOGGER.debug("checkQueueState - unfinishedJobs: " + unfinishedJobs);
+        if(statsUtil.isStopRemoteQueueJmsContainer()){
+            return;
+        }else{
+            boolean stopRemoteQueue = false;
+            switch(statsUtil.getTier()){
+                case 1:
+                    if(unfinishedJobs > maxUnfinishedJobs){
+                        stopRemoteQueue = true;
+                    }
+                    break;
+                case 2:
+                    if(unfinishedJobs > maxUnfinishedJobs / 2){
+                        stopRemoteQueue = true;
+                    }
+                    break;
+                case 3:
+                    if(unfinishedJobs > maxUnfinishedJobs / 4){
+                        stopRemoteQueue = true;
+                    }
+                    break;
+                case 4:
+                    if(unfinishedJobs > maxUnfinishedJobs / 16){
+                        stopRemoteQueue = true;
+                    }
+                    break;
+                default:
+                    if(unfinishedJobs > maxUnfinishedJobs / 32){
+                        stopRemoteQueue = true;
+                    }
+            }
+            //stop the remoteQueueListener
+            if (stopRemoteQueue){
+                LOGGER.debug("checkQueueState - Disable remote listener ");
+                statsUtil.setStopRemoteQueueJmsContainer(true);
+                //wait for some seconds before exiting onMessage
+                try {
+                    Thread.sleep(15*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        }
     }
 }

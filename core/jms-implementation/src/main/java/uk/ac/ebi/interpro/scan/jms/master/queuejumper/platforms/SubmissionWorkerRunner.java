@@ -27,6 +27,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private String i5Command;
 
+    private int tier = 1;
+
     private int gridJobsLimit = 1000;
 
     private boolean highMemory;
@@ -46,6 +48,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     private String gridName = "lsf";
 
     private boolean gridArray = false;
+
+
 
     @Required
     public void setGridJobsLimit(int gridJobsLimit) {
@@ -90,6 +94,18 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Required
     public void setWorkerStartupStrategy(WorkerStartupStrategy workerStartupStrategy) {
         this.workerStartupStrategy = workerStartupStrategy;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public int getWorkerCount() {
+        return workerCount;
+    }
+
+    public void setWorkerCount(int workerCount) {
+        this.workerCount = workerCount;
     }
 
     /**
@@ -144,8 +160,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
             LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs + " pending Jpbs : " + pendingJobs);
             return;
         }
-        LOGGER.debug("GridJobs -   active Jobs on the cluster: " + activeJobs);
+        LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + activeJobs);
+
         if (workerStartupStrategy.startUpWorker(priority)) {
+            LOGGER.debug("startupNewWorker(): " );
             workerCount++;
             StringBuilder command = new StringBuilder(gridCommand);
 
@@ -185,9 +203,9 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                         .append(temporaryDirectory);
             }
 
-            if (this.masterWorker) {
+            if (tier > 0) {
                 command.append(" --tier1=")
-                        .append("1");
+                        .append(tier);
             }
             if (this.projectId != null) {
                 command.append(" --clusterrunid=")
