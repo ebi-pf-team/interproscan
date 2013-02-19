@@ -6,6 +6,7 @@ import org.springframework.jms.core.MessageCreator;
 
 import javax.jms.*;
 import java.sql.Timestamp;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This util has several functions useful for the monitoring of the queues.
@@ -27,6 +28,36 @@ public class StatsUtil {
     private Destination statsQueue;
 
     private StatsMessageListener statsMessageListener;
+
+    private static Long totalJobs;
+
+    private static int unfinishedJobs;
+
+    private static boolean stopRemoteQueueJmsContainer = false;
+
+    private AtomicBoolean RemoteQueueContainerStopped = new AtomicBoolean(false);
+
+    private static int tier;
+
+    public StatsUtil() {
+
+    }
+
+    public synchronized int getTier() {
+        return tier;
+    }
+
+    public synchronized  void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public synchronized boolean isStopRemoteQueueJmsContainer() {
+        return stopRemoteQueueJmsContainer;
+    }
+
+    public synchronized void setStopRemoteQueueJmsContainer(boolean stopRemoteQueueJmsContainer) {
+        this.stopRemoteQueueJmsContainer = stopRemoteQueueJmsContainer;
+    }
 
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
@@ -60,6 +91,22 @@ public class StatsUtil {
         return statsMessageListener;
     }
 
+    public synchronized  Long getTotalJobs() {
+        return totalJobs;
+    }
+
+    public synchronized void setTotalJobs(Long totalJobs) {
+        this.totalJobs = totalJobs;
+    }
+
+    public synchronized int getUnfinishedJobs() {
+        return unfinishedJobs;
+    }
+
+    public synchronized void setUnfinishedJobs(int unfinishedJobs) {
+        this.unfinishedJobs = unfinishedJobs;
+    }
+
     /**
      * poll  the statistics broker plugin
      * @param queue
@@ -67,9 +114,9 @@ public class StatsUtil {
      */
 
     private boolean  pollStatsBroker(Destination queue){
-       statsMessageListener.setDestination(queue);
+        statsMessageListener.setDestination(queue);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        LOGGER.info("Setting the destination to "+getQueueName(queue) +" at " +timestamp);
+        LOGGER.debug("Setting the destination to "+getQueueName(queue) +" at " +timestamp);
         jmsTemplate.execute(STATS_BROKER_DESTINATION +  getQueueName(queue), new ProducerCallbackImpl(statsQueue));
         //wait for a second to receive the message
         try {

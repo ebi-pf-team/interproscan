@@ -169,6 +169,8 @@
         <property name="statsMessageListener"  ref="statsMessageListener" />
         <property name="highMemJobRequestQueue" ref="highMemJobRequestQueue"/>
         <property name="workerManagerTopicQueue" ref="workerManagerTopic"/>
+        <property name="totalJobs" value="0"/>
+        <property name="unfinishedJobs" value="0"/>
     </bean>
 
 
