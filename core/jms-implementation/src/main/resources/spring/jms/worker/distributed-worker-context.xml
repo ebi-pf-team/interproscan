@@ -158,7 +158,8 @@
         <property name="workerManagerTopic" ref="workerManagerTopic"/>
         <property name="responseQueueMessageListener" ref="responseQueueMessageListener"/>
         <property name="managerTopicMessageListener" ref="managerTopicMessageListener"/>
-
+        <property name="gridThrottle" value="${grid.throttle}"/>
+        <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
     </bean>
 
 
@@ -206,6 +207,9 @@
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>
         <property name="workerMessageSender" ref="workerMessageSender"/>
+        <property name="statsUtil" ref="statsUtil"/>
+        <property name="gridThrottle" value="${grid.throttle}"/>
+        <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
 
     </bean>
 
@@ -285,6 +289,8 @@
         <property name="statsQueue" ref="statsQueue"/>
         <property name="statsMessageListener"  ref="statsMessageListener" />
         <property name="highMemJobRequestQueue" ref="highMemJobRequestQueue"/>
+        <property name="totalJobs" value="0"/>
+        <property name="unfinishedJobs" value="0"/>
     </bean>
 
 

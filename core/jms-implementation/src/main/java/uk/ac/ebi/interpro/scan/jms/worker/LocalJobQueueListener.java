@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransaction;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This implementation receives responses on the destinationResponseQueue
@@ -34,14 +35,14 @@ public class LocalJobQueueListener implements MessageListener {
      */
     private WorkerImpl controller;
 
-    private  int  jobCount = 0;
+    private AtomicInteger jobCount = new AtomicInteger(0);
 
-    public int getJobCount() {
+    public AtomicInteger getJobCount() {
         return jobCount;
     }
 
     public void setJobCount(int jobCount) {
-        this.jobCount = jobCount;
+        this.jobCount = new AtomicInteger (jobCount);
     }
 
     public void setLocalJmsTemplate(JmsTemplate localJmsTemplate) {
@@ -69,8 +70,9 @@ public class LocalJobQueueListener implements MessageListener {
 
     @Override
     public void onMessage(final Message message) {
-        jobCount++;
-        LOGGER.debug("Processing JobCount #: " + jobCount);
+        jobCount.incrementAndGet();
+        int localCount = jobCount.get();
+        LOGGER.debug("Processing JobCount #: " + localCount);
         final String messageId;
 
         try {
@@ -134,6 +136,6 @@ public class LocalJobQueueListener implements MessageListener {
             }
         }
 
-        LOGGER.debug("Finished Processing JobCount #: " + jobCount);
+        LOGGER.debug("Finished Processing JobCount #: " + localCount);
     }
 }
