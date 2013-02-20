@@ -5,58 +5,66 @@
 <#--Returns protein structure features for inclusion in DBML-->
     <#import "../macros/structuralLocation.ftl" as structuralLocationMacro/>
 
-    <#if (protein.structuralFeatures?has_content || protein.structuralPredictions?has_content)>
-        <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-        <div class="prot_sum">
-        <#else>
-        <div class="prot_sum" style="background:none;">
-        </#if>
+    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
+    <div class="prot_sum">
+    <#else>
+    <div class="prot_sum" style="background:none;">
+    </#if>
+<div class="top-row">
+    <div class="top-row-id">
+        <h1>Domains and repeats:</h1>
+    </div>
+    <div class="top-row-opt"><a href="#" title="Open domains and repeats view in a new window"><span
+            class="opt1"></span></a></div>
+</div>
 
-        <div class="top-row">
-            <div class="top-row-id">
-                <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-                    <h1>Domains and repeats</h1>
-                </#if>
-            </div>
-            <div class="top-row-opt"><a href="#" title="Open domains and repeats view in a new window"><span
-                    class="opt1"></span></a></div>
-        </div>
+    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
+    <div class="bot-row">
+        <div class="bot-row-line-top"></div>
+        <ol class="signatures">
 
+            <#include "condensed-view.ftl"/>
+
+        </ol>
+        <div class="bot-row-line-bot"></div>
+    </div>
+
+    <div class="prot_scale">
         <div class="bot-row">
-            <div class="bot-row-line-top"></div>
-            <ol class="signatures">
 
-                <#include "condensed-view.ftl"/>
-
-            </ol>
-            <div class="bot-row-line-bot"></div>
-        </div>
-
-        <div class="prot_scale">
-            <div class="bot-row">
-
-                <div class="bot-row-line">
-                    <div style="position:relative;">
-                        <!-- Position marker lines -->
+            <div class="bot-row-line">
+                <div style="position:relative;">
+                    <!-- Position marker lines -->
+                    <#list scale?split(",") as scaleMarker>
                         <!-- to build an exception for 0 -->
-                        <#list scale?split(",") as scaleMarker>
-                            <span class="scale_bar" style="left:${(scaleMarker?number?int / protein.length) * 100}%;"
+                        <#if scaleMarker?number == 0>
+                            <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
+                                  title="1"></span>
+                                <span class="scale_numb"
+                                      style="left:${(scaleMarker?number / protein.length) * 100}%;">1</span>
+                        <#else>
+                            <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
                                   title="${scaleMarker}"></span>
-                        <span class="scale_numb"
-                              style="left:${(scaleMarker?number?int / protein.length) * 100}%;">${scaleMarker}</span>
-                        </#list>
-                    </div>
+                                <span class="scale_numb"
+                                      style="left:${(scaleMarker?number / protein.length) * 100}%;">${scaleMarker}</span>
+                        </#if>
+                    </#list>
                 </div>
-
             </div>
+
         </div>
     </div>
 
+    <#else>
+    None predicted.
+    </#if>
+</div> <!-- Closing the prot_sum DIV -->
+
+    <#if (protein.structuralFeatures?has_content || protein.structuralPredictions?has_content)>
         <#global locationId=0>
 
-
         <#if ((protein.structuralFeatures?size>0) || (protein.structuralPredictions?size>0))>
-            <div class="prot_entries">
+            <div class="prot_entries" style="overflow: auto;">
                 <h1>Structural features and predictions</h1>
                 <#if (protein.structuralFeatures?size>0) >
                     <ol class="entries">
