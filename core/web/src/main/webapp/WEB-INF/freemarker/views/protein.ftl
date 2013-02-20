@@ -55,9 +55,7 @@
         <div class="main-box">
             <#-- TODO Remove this "if standalone" constraint once suitable code has been moved from the InterProWeb_5.2 project into the I5 codebase -->
             <#if standalone && protein??>
-                <h1>
-                    ${protein.ac}
-                </h1>
+                <h2 class="strapline">${protein.ac} </h2>
                 <#include "protein-header.ftl"/>
             </#if>
 
