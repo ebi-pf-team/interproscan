@@ -9,6 +9,6 @@
 
     <div class="popup_topl"><span class="${colourClass} caption_puce"></span>${supermatch.location.start}
         - ${supermatch.location.end}</div>
-${supermatch.entryHierarchyForPopup}
+<div class="rel_tree">${supermatch.entryHierarchyForPopup}</div>
 </div>
 </#macro>
