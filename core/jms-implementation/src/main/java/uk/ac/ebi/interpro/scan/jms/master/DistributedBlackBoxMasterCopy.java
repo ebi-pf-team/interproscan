@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -131,6 +132,10 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                 LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
                 LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                 LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                //update the statistics plugin
+                statsUtil.setTotalJobs(stepInstanceDAO.count());
+                statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+
                 Thread.sleep(50);   //   Thread.sleep(30*1000);
             }
         } catch (JMSException e) {
@@ -201,7 +206,9 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
             public void run() {
-                    //start new workers
+                //start new workers
+                int workerCount = 0;
+                boolean quickSpawnMode = false;
                 while (!shutdownCalled) {
                     //statsUtil.sendMessage();
                     final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
@@ -210,8 +217,13 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                     LOGGER.debug("Poll Job Request Queue queue");
                     final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                     if (statsAvailable) {
+                        workerCount = ((SubmissionWorkerRunner) workerRunner).getWorkerCount();
+                        if(statsMessageListener.getConsumers() > 0){
+                            quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
+                        }
                         final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                        if ((statsUtil.getStatsMessageListener().getConsumers() < 30 && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer) ||
+                        if ((statsUtil.getStatsMessageListener().getConsumers() < 30 && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer &&
+                                quickSpawnMode) ||
                                 (workerRequired && statsUtil.getStatsMessageListener().getConsumers() < 30)) {
                             LOGGER.debug("Starting a normal worker.");
                             workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
@@ -221,6 +233,10 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                     LOGGER.debug("Poll High Memory Job Request queue");
                     final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
                     if (highMemStatsAvailable) {
+                        workerCount += ((SubmissionWorkerRunner) workerRunnerHighMemory).getWorkerCount();
+                        if(statsMessageListener.getConsumers() > 0){
+                            quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
+                        }
                         final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
                         if ((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0) ||
                                 (highMemWorkerRequired && statsMessageListener.getConsumers() < 10)) {
