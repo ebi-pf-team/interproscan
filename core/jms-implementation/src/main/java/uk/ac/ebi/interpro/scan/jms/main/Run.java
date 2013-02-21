@@ -579,8 +579,14 @@ public class Run {
             //set master worker
             boolean highmemDebug = true;
             if (parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt())) {
+                LOGGER.debug("Worker has worker tier # set");
                 worker.setMasterWorker(parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt()));
-                final String tier = parsedCommandLine.getOptionValue(I5Option.TIER1.getLongOpt());
+                LOGGER.debug("Run: get worker tier ");
+                String tier = parsedCommandLine.getOptionValue(I5Option.TIER1.getLongOpt());
+                LOGGER.debug("Run: set worker tier " + tier);
+                int tierInt = Integer.parseInt(tier);
+                worker.setTier(tierInt);
+
                 LOGGER.debug("Worker tier:  " + tier);
                 highmemDebug = true;
             }
