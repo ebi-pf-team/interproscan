@@ -38,7 +38,7 @@ function preparePopup(spanId, numSuperMatchPopups) {
             delay: 500
         },
         style: {
-            classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-shadow'
+            classes: 'ui-tooltip-light ui-tooltip-shadow'
         },
         events: {
             render: function(event, api) {

@@ -52,8 +52,7 @@ public class FreemarkerTest {
         variables.put("img_resource_path", "resources");
         variables.put("js_resource_common", "resources/javascript/common.js");
         variables.put("js_resource_protein_popups", "resources/javascript/protein-popups.js");
-        variables.put("js_resource_jquery_ui1817_custom", "resources/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js");
-        variables.put("css_resource_jquery_ui1817_custom", "resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css");
+        variables.put("js_resource_jquery_ui1817_custom", "resources/javascript/jquery/jquery-ui-1.8.17.custom.min.js");
         variables.put("js_resource_protein_jquery_cookie", "resources/javascript/jquery/jquery.cookie.js");
         cfg.setAllSharedVariables(new SimpleHash(variables, new DefaultObjectWrapper()));
 
