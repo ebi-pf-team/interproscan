@@ -2,35 +2,29 @@
 
 <#if protein??>
 
-<div class="prot_tree">
-    <div class="prot_tree_desc">
+
         <#if (protein.familyEntries?has_content)>
-            <h1>Protein family membership:</h1>
-        ${protein.familyHierarchy}
+          <h3>Protein family membership</h3>
+          <div class="Family rel_tree">${protein.familyHierarchy}</div>
         <#else>
-        <div style="float: left;"><h1>Protein family membership:</h1></div>
-        <span style="margin: 6px 0 3px 6px; color:#838383;float:left; font-size:120%;">None predicted.</span>
+        <h3>Protein family membership</h3>
+        <p>None predicted.</p>
         </#if>
-    </div>
-</div>
+
 
     <#import "../macros/signature.ftl" as signatureMacro>
     <#if ! standalone>
         <#include "web_menu_javascript.ftl"/>
     </#if>
 
+    <h3>Domains and repeats</h3>
     <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
     <div class="prot_sum">
     <#else>
     <div class="prot_sum" style="background:none;">
     </#if>
-<div class="top-row">
-    <div class="top-row-id">
-        <h1>Domains and repeats:</h1>
-    </div>
-    <div class="top-row-opt"><a href="#" title="Open domains and repeats view in a new window"><span
-            class="opt1"></span></a></div>
-</div>
+
+
 
     <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
     <div class="bot-row">
@@ -55,7 +49,7 @@
                             <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
                                   title="1"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / protein.length) * 100}%;">1</span>
+                                      style="left:${(scaleMarker?number / protein.length) * 100+1}%;">1</span>
                         <#else>
                             <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
                                   title="${scaleMarker}"></span>
@@ -77,9 +71,11 @@
 </div> <!-- Closing the prot_sum DIV -->
 
     <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
-    <div class="prot_entries" style="overflow: auto;">
-        <h1>Detailed signature matches</h1>
+    <h3>Detailed signature matches</h3>
+
+
         <#if protein.entries?has_content>
+        <div class="prot_entries" style="overflow: auto;">
             <ol class="entries">
                 <#list protein.entries as entry>
                     <!-- Prepare required variables for this entry -->
@@ -134,6 +130,7 @@
                     </li>
                 </#list>
             </ol>
+        </div>
         </#if>
 
         <#if protein.unintegratedSignatures?has_content>
@@ -163,49 +160,53 @@
         <!-- No matches so the detailed matches section is omitted. -->
     </#if>
 
+<h3>GO term prediction</h3>
+
 <div class="prot_go">
-    <h1>GO Term prediction</h1>
 
     <div class="go_terms">
-
+        <h4>Biological Process</h4>
         <div class="go_terms_box">
-            <h2>Biological Process</h2>
+
             <#assign hasGo=false/>
-            <#list protein.processGoTerms as goTerm>
-                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+            <p><#list protein.processGoTerms as goTerm>
+            <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>
-            </#list>
+            </#list></p>
             <#if !hasGo>
-                None predicted.
+                <p>None predicted.</p>
             </#if>
         </div>
 
+        <h4>Molecular Function</h4>
         <div class="go_terms_box">
-            <h2>Molecular Function</h2>
+
             <#assign hasGo=false/>
-            <#list protein.functionGoTerms as goTerm>
-                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+        <p><#list protein.functionGoTerms as goTerm>
+              <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>
-            </#list>
+            </#list></p>
             <#if !hasGo>
-                None predicted.
+                <p>None predicted.</p>
             </#if>
         </div>
+
+        <h4>Cellular Component</h4>
         <div class="go_terms_box">
-            <h2>Cellular Component</h2>
+
             <#assign hasGo=false/>
-            <#list protein.componentGoTerms as goTerm>
+        <p><#list protein.componentGoTerms as goTerm>
                 <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>
-            </#list>
+            </#list></p>
             <#if !hasGo>
-                None predicted.
+                <p>None predicted.</p>
             </#if>
         </div>
     </div>
