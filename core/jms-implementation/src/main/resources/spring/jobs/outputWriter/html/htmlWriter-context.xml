@@ -48,8 +48,6 @@
                         <entry key="css_resource_protein" value="resources/css/protein.css"/>
                         <entry key="css_resource_type_colours" value="resources/css/type_colours.css"/>
                         <entry key="css_resource_database" value="resources/css/database.css"/>
-                        <entry key="css_resource_jquery_ui1817_custom"
-                               value="resources/javascript/jquery/ui/css/ui-lightness/jquery-ui-1.8.17.custom.css"/>
                         <entry key="js_resource_jquery171" value="resources/javascript/jquery/jquery-1.7.1.min.js"/>
                         <entry key="js_resource_jquery_qtip2" value="resources/javascript/qtip2/jquery.qtip.min.js"/>
                         <entry key="js_resource_protein" value="resources/javascript/protein.js"/>
@@ -59,7 +57,7 @@
                         <entry key="js_resource_common" value="resources/javascript/common.js"/>
                         <entry key="js_resource_protein_popups" value="resources/javascript/protein-popups.js"/>
                         <entry key="js_resource_jquery_ui1817_custom"
-                               value="resources/javascript/jquery/ui/js/jquery-ui-1.8.17.custom.min.js"/>
+                               value="resources/javascript/jquery/jquery-ui-1.8.17.custom.min.js"/>
                         <entry key="js_resource_protein_jquery_cookie"
                                value="resources/javascript/jquery/jquery.cookie.js"/>
                     </map>
