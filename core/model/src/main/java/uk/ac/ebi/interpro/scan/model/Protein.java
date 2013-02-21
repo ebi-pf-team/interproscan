@@ -67,6 +67,10 @@ public class Protein implements Serializable {
     @Transient
     public static final Pattern AMINO_ACID_PATTERN = Pattern.compile("^[A-Z-*]+$");
 
+    /* This pattern is used to detect asterix (in combination with the AMINO_ACID_PATTERN pattern). */
+    @Transient
+    public static final Pattern AMINO_ACID_WITHOUT_ASTERIX_PATTERN = Pattern.compile("^[A-Z-]+$");
+
     @Transient
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
 
@@ -327,6 +331,10 @@ public class Protein implements Serializable {
         // Check amino acid
         if (!AMINO_ACID_PATTERN.matcher(sequence).matches()) {
             throw new IllegalArgumentException("'sequence' is not an amino acid sequence [" + sequence + "]");
+        }
+        if (!AMINO_ACID_WITHOUT_ASTERIX_PATTERN.matcher(sequence).matches()) {
+            throw new IllegalArgumentException("You have submitted a protein sequence which contains an asterix (*).  This may be from an ORF " +
+                    "prediction program.  Please strip out all asterix characters from your sequence and resubmit your search.");
         }
         this.sequence = sequence;
         List<String> chunks = CHUNKER.chunkIntoList(sequence);
