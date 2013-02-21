@@ -5,7 +5,7 @@ in standalone mode. Also the protein-header is used as a dependency in InterPro 
 <div class="prot_gal">
 
     <div class="prot_gal_bloc">
-        <div class="prot_gal_col"><h1>Accession</h1></div>
+        <div class="prot_gal_col"><b>Accession</b></div>
         <div class="prot_gal_desc">
             <#if standalone>
                 ${protein.ac}
@@ -20,7 +20,7 @@ in standalone mode. Also the protein-header is used as a dependency in InterPro 
         <#--Taxonomy is known on the InterPro web 6 protein page, but not in InterProScan standalone mode, nor on the
         protein-structure page -->
         <div class="prot_gal_bloc">
-            <div class="prot_gal_col"><h1>Species</h1></div>
+            <div class="prot_gal_col"><b>Species</b></div>
             <div class="prot_gal_desc">${protein.taxFullName}</div>
         </div>
     </#if>
@@ -28,7 +28,7 @@ in standalone mode. Also the protein-header is used as a dependency in InterPro 
     <#--Work out if protein sequence is a fragment or not-->
     <#assign isProteinFragment=protein.proteinFragment />
     <div class="prot_gal_bloc">
-        <div class="prot_gal_col"><h1>Length</h1></div>
+        <div class="prot_gal_col"><b>Length</b></div>
         <div class="prot_gal_desc">${protein.length} amino acids
             <#if isProteinFragment>(fragment)<#else>(complete)</#if>
         </div>
