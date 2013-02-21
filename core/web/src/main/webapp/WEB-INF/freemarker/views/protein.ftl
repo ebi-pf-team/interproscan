@@ -24,7 +24,6 @@
     <link class="database" href="${css_resource_database}" rel="stylesheet" type="text/css"/>
     <link href="${css_resource_jquery_qtip2}" rel="stylesheet" type="text/css"/>
     <link href="${css_resource_protein}" rel="stylesheet" type="text/css"/>
-    <link href="${css_resource_jquery_ui1817_custom}" rel="stylesheet" type="text/css"/>
     <script src="${js_resource_jquery171}" type="text/javascript"></script>
     <script src="${js_resource_jquery_ui1817_custom}" type="text/javascript"></script>
     <script src="${js_resource_jquery_qtip2}" type="text/javascript"></script>
