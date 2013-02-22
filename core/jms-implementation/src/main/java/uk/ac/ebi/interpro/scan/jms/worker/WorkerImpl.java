@@ -495,7 +495,11 @@ public class WorkerImpl implements Worker {
                 canSpawnWorker = true;
                 break;
             default:
-                canSpawnWorker = true;
+                if(gridThrottle){
+                    canSpawnWorker = false;
+                }else{
+                    canSpawnWorker = true;
+                }
         }
         return  canSpawnWorker;
 
@@ -521,28 +525,34 @@ public class WorkerImpl implements Worker {
         if(statsUtil.isStopRemoteQueueJmsContainer()){
             LOGGER.debug("manageRemoteQueueListenerContainer - Stopping remote listener ");
             remoteQueueJmsContainer.stop();
+            statsUtil.setStopRemoteQueueJmsContainer(false);
         }else{
             LOGGER.debug("manageRemoteQueueListenerContainer - start remote listener if not running");
             if(!remoteQueueJmsContainer.isRunning()){
                 boolean startRemoteQueue = false;
                 switch(tier){
                     case 1:
-                        if(unfinishedJobs > maxUnfinishedJobs){
+                        if(unfinishedJobs < maxUnfinishedJobs){
                             startRemoteQueue = true;
                         }
                         break;
                     case 2:
-                        if(unfinishedJobs > maxUnfinishedJobs / 4){
+                        if(unfinishedJobs < maxUnfinishedJobs / 2){
                             startRemoteQueue = true;
                         }
                         break;
                     case 3:
-                        if(unfinishedJobs < maxUnfinishedJobs / 8){
+                        if(unfinishedJobs < maxUnfinishedJobs / 4){
                             startRemoteQueue = true;
                         }
                         break;
                     case 4:
-                        if(unfinishedJobs < maxUnfinishedJobs / 16){
+                        if(unfinishedJobs < 16){
+                            startRemoteQueue = true;
+                        }
+                        break;
+                    default:
+                        if(unfinishedJobs < 2){
                             startRemoteQueue = true;
                         }
                         break;

@@ -154,7 +154,7 @@
                 </property>
             </bean>
         </property>
-        <property name="statsUtil" ref="statsUtil"/>
+        <property name="statsUtil" ref="workerStatsUtil"/>
         <property name="workerManagerTopic" ref="workerManagerTopic"/>
         <property name="responseQueueMessageListener" ref="responseQueueMessageListener"/>
         <property name="managerTopicMessageListener" ref="managerTopicMessageListener"/>
@@ -207,7 +207,7 @@
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>
         <property name="workerMessageSender" ref="workerMessageSender"/>
-        <property name="statsUtil" ref="statsUtil"/>
+        <property name="statsUtil" ref="workerStatsUtil"/>
         <property name="gridThrottle" value="${grid.throttle}"/>
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
 
@@ -281,7 +281,7 @@
 
 
 
-    <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
+    <bean id="workerStatsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
         <property name="jmsTemplate" ref="localJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
