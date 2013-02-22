@@ -4,11 +4,12 @@ body { margin: 0; font-size: 13px; line-height: 1.538; } /* gives a line-height 
 body, button, input, select, textarea { font-family: sans-serif; color: #222; }
 /*/from boilerplate-style.css*/
 /*from grid*/
-.grid_24 {
+.container_24 {
 width: 100%;
-margin-left: 0;
-margin-right: 0;
+margin-left: auto;
+margin-right: auto;
 }
+
 .grid_1, .grid_2, .grid_3, .grid_4, .grid_5, .grid_6, .grid_7, .grid_8, .grid_9, .grid_10, .grid_11, .grid_12, .grid_13, .grid_14, .grid_15, .grid_16, .grid_17, .grid_18, .grid_19, .grid_20, .grid_21, .grid_22, .grid_23, .grid_24 {
 display: inline;
 float: left;
@@ -16,11 +17,22 @@ position: relative;
 margin-left: 1%;
 margin-right: 1%;}
 
+.grid_24 {
+width: 100%;
+margin-left: 0;
+margin-right: 0;
+}
+
 .container_24 .grid_5.alpha {
 width: 19.8333%;
 }
 .container_24 .grid_19.omega {
 width: 78.1666%;
+}
+
+.container_24 .grid_19.alpha,
+.container_24 .grid_19.omega {
+  width:78.1666%;
 }
 .alpha, .oldie .alpha {
 margin-left: 0;
@@ -183,13 +195,6 @@ a.neutral:hover, a.neutral:active, a.neutral:focus { text-decoration: none;borde
 a.ext, a.ext:link {padding-left: 13px; background: url(../images/ico_ext_link.png) no-repeat 0 2px;}
 a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_on.png) no-repeat 0 2px;}
 
-.left-menu {
-    border: 0px solid green;
-    display: block;
-    width: 170px; /* was 180px - to gain some space even if domain organisation is falling on 2 lines */
-    float: left;
-}
-
 /* Structures colours */
 span.PDB {
     background-color: #82a4bf;
@@ -217,110 +222,26 @@ span.MODBASE {
 
 .main-box {border: 1px solid #e4e4e4; float: left; width: 98%; /* this is a mystery to correct*/ } /*to remove when possible*/
 
-.menu-filter {
-    width: 162px;
-    clear: left;
-    float: left;
-    display: block;
-    border: 1px solid #d3d3d3;
-    padding: 6px;
-    font-size: 110%;
-    background-color: #efefef;
-}
-
-.menu-filter H1 {
-    color: #434343;
-    font-size: 120%;
-    font-weight: bold;
-}
-
-.menu-filter fieldset {
-    padding-top: 12px;
-}
-
-.menu-filter fieldset label.view_all {
-    padding-left: 19px;
-    padding-top: 5px;
-    background: url(../images/ico_type_all.png) no-repeat 0 2px;
-    font-weight: bold;
-}
-
-.menu-filter div {
-    margin-bottom: 10px;
-}
-
-.menu-filter div H1 {
-    color: #2e5882;
-    font-size: 110%;
-    font-weight: bold;
-    background-color: #f2f6f8;
-    border: 1px solid #9eb6ce;
-    padding: 4px 10px;
-    margin: 0;
-}
-
-.menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {
-    box-shadow: 0px 2px 2px #adadad;
-    -moz-box-shadow: 0px 2px 2px #adadad;
-    -khtml-box-shadow: 0px 2px 2px #adadad;
-    -webkit-box-shadow: 0px 2px 2px #adadad;
-}
-
-.menu-filter div fieldset {
-    border: 1px solid #d1d1d1;
-    margin: 0;
-}
-
-.menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-colour div {
-    display: block;
-}
-
-.menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {
-    background-color: #fff;
-    padding: 6px 2px;
-    border-top: 0;
-    -moz-border-radius: 0 0 4px 4px;
-    -khtml-border-radius: 0 0 4px 4px;
-    -webkit-border-radius: 0 0 4px 4px;
-    border-radius: 0 0 4px 4px;
-}
-
-.menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label {
-    border: 0px green solid;
-    padding-left: 19px;
-    padding-top: 5px;
-}
-
-.menu-filter .menu-filter-type label.family {
-    background: url(../images/ico_type_family.png) no-repeat 0 2px;
-}
-
-.menu-filter .menu-filter-type label.domains {
-    background: url(../images/ico_type_domain.png) no-repeat 0 2px;
-}
-
-.menu-filter .menu-filter-type label.repeats {
-    background: url(../images/ico_type_repeat.png) no-repeat 0 2px;
-}
-
-.menu-filter .menu-filter-type label.site {
-    background: url(../images/ico_type_site.png) no-repeat 0 2px;
-}
-
-.menu-filter .menu-filter-status label.uni {
-    background: url(../images/ico_type_uni.png) no-repeat 0 2px;
-}
-
-.menu-filter .menu-filter-colour {
-    font-size: 80%;
-}
-
-.menu-filter .menu-filter-colour legend {
-    font-size: 110%;
-    font-weight: bold;
-}
-
-
+/************************************* Interactive left filter protein page************************************/
+.menu-filter {min-width: 162px; clear: left;  margin-left:9px; margin-top:9px;  display: block;  border: 1px solid #d3d3d3;  padding: 9px;  background-color: #efefef; }
+.menu-filter H1 {color:#434343; font-size:120%;font-weight:bold; margin: 0 0 9px 0; padding:0;}
+.menu-filter fieldset { padding-top:12px;}
+.menu-filter fieldset label.view_all {padding-left:19px;padding-top:5px; background: url(../images/ico_type_all.png) no-repeat 0 2px; font-weight:bold;}
+.menu-filter div { margin-bottom:10px;}
+.menu-filter div H1 {color:#2e5882; font-size:110%;font-weight:bold; background-color:#f2f6f8; border:1px solid #9eb6ce; padding: 4px 10px; margin:0; }
+.menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {box-shadow:0px 2px 2px #adadad;-moz-box-shadow:0px 2px 2px #adadad ;-khtml-box-shadow:0px 2px 2px #adadad;-webkit-box-shadow:0px 2px 2px #adadad;}
+.menu-filter div fieldset {border: 1px solid #d1d1d1;  margin:0;}
+.menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-colour div {display: block;}
+.menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
+.menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label  {border:0px green solid;padding-left:19px;padding-top:5px; }
+.menu-filter .menu-filter-type label.family {background: url(../images/ico_type_family.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-type label.domains {background:url(../images/ico_type_domain.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-type label.repeats {background:url(../images/ico_type_repeat.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-type label.site {background:url(../images/ico_type_site.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-status label.uni {background:url(../images/ico_type_uni.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-colour { font-size:80%;}
+.menu-filter .menu-filter-colour legend { font-size:110%;font-weight:bold;}
+.menu-filter .menu-filter-colour fieldset {border-top: 1px solid #d1d1d1;}
 
 /*************************************BEGIN protein page************************************/
 .prot_gal, .prot_tree, .prot_sum , .prot_entries, /*.prot_go,*/ .prot_struct_tab {padding-left:9px; border:0px solid red;}
@@ -331,8 +252,6 @@ ol.entries li, ol.signatures li {list-style: none; margin:0; padding:0; }
 
 .prot_gal  { margin:20px 0;}
 .prot_entries, .prot_sum, .prot_scale {}/*fix the width of your sequence view*/
-
-/*fix the width of your sequence view*/
 /*.prot_gal h1,*/ .prot_sum h1, .prot_entries h1, .prot_tree  h1,.prot_sum h1, /*.prot_go h1,*/ .prot_struct_tab h1, .prot_struct_feat h1 {font-size:108%; color:#222; font-weight:bold;  padding:0;}
 /*.prot_gal h1,*/ .prot_tree h1  {margin: 6px 0 3px 0px;}
 .prot_sum h1 {margin-top: 6px;}
@@ -344,29 +263,27 @@ ol.entries li, ol.signatures li {list-style: none; margin:0; padding:0; }
 .prot_gal .prot_gal_source span {color:#838383;}
 .prot_gal hr {height:1px; background-color:#cdcdcd;border: 0;margin: 0 9px 0 0;padding: 0;}
 
-/*to replace by .rel_tree (same as entries)*/
  /*TREE RELATIONSHIPS*/
 .rel_tree {font-size: 88%; padding:5px 0 9px 0; }/*increase space top list - make it more balanced in the page - and add margin bottom too like h2*/
 .rel_tree ul {margin: 0 0 0px 9px; padding:0;}
 .rel_tree ul li.selected {font-weight: bold;}
 .rel_tree ul li { list-style: none;margin-left: 0px; padding-left: 26px; border:0px red solid; margin-bottom:4px;/*increase slightly space between list items*/}
 .rel_tree ul li ul {margin-left: 0px; margin-top:5px;}
-
 .Family ul li {background: url(../images/ico_tree_family.png) no-repeat 0 0;}
 .rel_tree a:link,.rel_tree a:visited {border: none;color: #871868;/*text-decoration: none;*/}
 .rel_tree a:hover { border-bottom: 1px solid #8C4DC2;}
- /*/TREE RELATIONSHIPS*/
+
 /*to replace by .rel_tree (same as entries)*/
-.prot_tree  {margin: 12px 0 24px 0; overflow:auto;}
-.prot_tree .prot_tree_desc {color:#393939;border: 0px solid green; margin-bottom: 6px;}
-.prot_tree .prot_tree_desc a {/*font-size:120%;*/}
-.prot_tree .prot_tree_desc a.neutral:link{text-decoration: none; color:#393939;}
-.prot_tree .prot_tree_desc a.neutral:hover, .prot_tree .prot_tree_desc a.neutral:active, .prot_tree .prot_tree_desc .a.neutral:focus {text-decoration: none;}
-.prot_tree .prot_tree_desc a.neutral span {color: #0072FE;}
-.prot_tree .prot_tree_desc div  {margin:0 0 3px;}
-.prot_tree .prot_tree_desc span {font-size:90%; color:#393939; border: 0px solid red;}
-.prot_tree ul li {list-style-type: none; padding-left: 26px; background: url(../images/ico_tree_family.png) no-repeat 0 0;}
-.prot_tree ul li ul li { margin-left: 14px; list-style-type: none; padding-left: 26px; background: url(../images/ico_tree_family.png) no-repeat 0 0; border: 0px solid red;}
+/*.prot_tree  {margin: 12px 0 24px 0; overflow:auto;}*/
+/*.prot_tree .prot_tree_desc {color:#393939;border: 0px solid green; margin-bottom: 6px;}*/
+/*.prot_tree .prot_tree_desc a {*//*font-size:120%;*//*}*/
+/*.prot_tree .prot_tree_desc a.neutral:link{text-decoration: none; color:#393939;}*/
+/*.prot_tree .prot_tree_desc a.neutral:hover, .prot_tree .prot_tree_desc a.neutral:active, .prot_tree .prot_tree_desc .a.neutral:focus {text-decoration: none;}*/
+/*.prot_tree .prot_tree_desc a.neutral span {color: #0072FE;}*/
+/*.prot_tree .prot_tree_desc div  {margin:0 0 3px;}*/
+/*.prot_tree .prot_tree_desc span {font-size:90%; color:#393939; border: 0px solid red;}*/
+/*.prot_tree ul li {list-style-type: none; padding-left: 26px; background: url(../images/ico_tree_family.png) no-repeat 0 0;}*/
+/*.prot_tree ul li ul li { margin-left: 14px; list-style-type: none; padding-left: 26px; background: url(../images/ico_tree_family.png) no-repeat 0 0; border: 0px solid red;}*/
 
 .prot_entries {margin: 12px 0 0 0; border:1px solid white;/*to solve bug puce with alignment*/}
 .prot_entries li.entry {margin-bottom:16px;}
