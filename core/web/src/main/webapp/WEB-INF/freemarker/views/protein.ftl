@@ -35,18 +35,19 @@
 
 </head>
 <body>
-<div class="contentsarea">
+<div class="container_24">
+<div class="grid_24 clearfix" id="content" >
 
 <#if protein?? && protein.entries?has_content>
 <#-- There are matches for this protein accession, therefore we can show the match filter menu -->
-    <div class="left-menu">
+    <div class="grid_5 alpha">
         <#include "protein-menu.ftl"/>
     </div>
 </#if>
 
 <#if protein?? && protein.ac?has_content>
 <#-- This protein accession exists, now start to display the data  -->
-    <div class="main-content">
+    <div class="grid_19 omega main-content">
         <div class="tab">
             <div class="Protein_tab">Protein</div>
         </div>
@@ -70,6 +71,7 @@
         </p>
 </#if>
 
+</div>
 </div>
 </body>
 </html>
