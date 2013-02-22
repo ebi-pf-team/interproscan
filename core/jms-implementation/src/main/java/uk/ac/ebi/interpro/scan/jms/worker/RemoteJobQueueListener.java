@@ -106,9 +106,10 @@ public class RemoteJobQueueListener implements MessageListener {
      */
     public void checkQueueState(){
         LOGGER.debug("checkQueueState - Check the state of the local queue depending on the tier we are in ");
-        int unfinishedJobs = statsUtil.getUnfinishedJobs();
-        LOGGER.debug("checkQueueState - unfinishedJobs: " + unfinishedJobs);
+        int unfinishedJobs = getUnifinishedJobs(); //statsUtil.getUnfinishedJobs();
+        LOGGER.debug("checkQueueState - maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
         if(statsUtil.isStopRemoteQueueJmsContainer()){
+            LOGGER.debug("checkQueueState : isStopRemoteQueueJmsContainer = true");
             return;
         }else{
             boolean stopRemoteQueue = false;
@@ -134,7 +135,7 @@ public class RemoteJobQueueListener implements MessageListener {
                     }
                     break;
                 default:
-                    if(unfinishedJobs > maxUnfinishedJobs / 32){
+                    if(unfinishedJobs > 2){
                         stopRemoteQueue = true;
                     }
             }
@@ -150,5 +151,11 @@ public class RemoteJobQueueListener implements MessageListener {
                 }
             }
         }
+    }
+
+    private int  getUnifinishedJobs(){
+        statsUtil.pollStatsBrokerResponseQueue();
+        int responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
+        return jobCount - responseDequeueCount;
     }
 }
