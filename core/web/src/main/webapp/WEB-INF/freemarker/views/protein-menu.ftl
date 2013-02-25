@@ -5,7 +5,8 @@
   Time: 14:58
   To change this template use File | Settings | File Templates.
 -->
-<div id="menu" style="display: none;">
+<div class="grid_5 alpha" id="menu" style="display: none;">
+
     <div class="menu-filter">
 
         <h1>Filter view on</h1>
@@ -37,7 +38,6 @@
             </fieldset>
         </div>
 
-
         <div class="menu-filter-status"><h1>Status</h1>
 
             <fieldset>
@@ -50,8 +50,8 @@
         </div>
 
         <div class="menu-filter-colour">
-            <div style="border:1px pink solid; overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;">
-                <div style=" float:left;color: #2e5882; font-size: 110%;  font-weight: bold;margin-bottom: 0px;">
+            <div style="overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;">
+                <div style="float:left;color: #2e5882; font-size: 110%;  font-weight: bold;margin-bottom: 0px;">
                     Colour by
                 </div>
 
@@ -62,21 +62,16 @@
                 </#if>
             </div>
             <fieldset>
-                <div style="background-color:white;">
-                    <div>
-                        <input type="radio" name="blobColour" id="domainColour" value="domainColour" checked="checked"/>
-                        <label for="domainColour">domain relationship</label>
-                    </div>
-                    <div>
-                        <input type="radio" name="blobColour" id="databaseColour" value="databaseColour"/>
-                        <label for="databaseColour">source database</label>
-                    </div>
-                </div>
+                <input type="radio" name="blobColour" id="domainColour" value="domainColour" checked="checked"/>
+                <label for="domainColour">domain relationship</label> <br/>
+
+                <input type="radio" name="blobColour" id="databaseColour" value="databaseColour"/>
+                <label for="databaseColour">source database</label>
             </fieldset>
         </div>
     </div>
-</div>
 
+</div>
 <script type="text/javascript">
     $(document).ready(function() {
 // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
