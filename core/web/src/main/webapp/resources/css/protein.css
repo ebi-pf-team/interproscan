@@ -241,7 +241,7 @@ span.MODBASE {
 .menu-filter .menu-filter-status label.uni {background:url(../images/ico_type_uni.png) no-repeat 0 2px;}
 .menu-filter .menu-filter-colour { font-size:80%;}
 .menu-filter .menu-filter-colour legend { font-size:110%;font-weight:bold;}
-.menu-filter .menu-filter-colour fieldset {border-top: 1px solid #d1d1d1;}
+.menu-filter .menu-filter-colour fieldset {border-top: 0px solid #d1d1d1;}
 
 /*************************************BEGIN protein page************************************/
 .prot_gal, .prot_tree, .prot_sum , .prot_entries, /*.prot_go,*/ .prot_struct_tab {padding-left:9px; border:0px solid red;}
@@ -350,7 +350,8 @@ border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-
 /**********************************************END protein page*************************************************************/
 
 /* Tooltip overwrite jquery.qtip.css */
-.ui-tooltip, .qtip {font-family: Verdana, Helvetica, sans-serif;  line-height: 120%; max-width: 400px; min-width: 200px; /* solve a  popup size bug for IE7 */}
+.qtip {font-size: 11px;} /*font smaller in Qtip*/
+.ui-tooltip, .qtip {font-size: 13px; font-family: Verdana, Helvetica, sans-serif;  line-height: 120%; max-width: 400px; min-width: 200px; /* solve a  popup size bug for IE7 */}
 .ui-tooltip-content .rel_tree {border:0px red solid; padding: 5px 0 0 0;}
 .ui-tooltip-light .ui-tooltip-titlebar {background-color: #fff; border-radius: 6px 6px 0 0;-moz-border-radius: 6px 6px 0 0;-webkit-border-radius: 6px 6px 0 0;}
 .ui-tooltip-light .ui-tooltip-titlebar, .ui-tooltip-light .ui-tooltip-content {box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);-webkit-box-shadow: 4px 2px rgba(0, 0, 0, 0.1);-moz-box-shadow: 4px 4px rgba(0, 0, 0, 0.1); border-color: #c0c0c0; color: #393939;}
