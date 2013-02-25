@@ -40,9 +40,9 @@
 
 <#if protein?? && protein.entries?has_content>
 <#-- There are matches for this protein accession, therefore we can show the match filter menu -->
-    <div class="grid_5 alpha">
+
         <#include "protein-menu.ftl"/>
-    </div>
+
 </#if>
 
 <#if protein?? && protein.ac?has_content>
