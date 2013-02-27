@@ -177,6 +177,8 @@ public class Run {
         STANDALONE("standalone", "spring/jms/activemq/activemq-standalone-master-context.xml"),
         //This mode allows spawning of distributed workers on demand using the new i5jms architecture
         DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
+        CLUSTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
+        GRID("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
@@ -276,7 +278,7 @@ public class Run {
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
-                LOGGER.info("Running as: " + mode);
+                LOGGER.info("Running in " + mode + " mode");
             }
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
@@ -494,7 +496,7 @@ public class Run {
                 bbMaster.setOutputFormats(parsedOutputFormats);
             }
             String tcpConnectionString = null;
-            if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER) {
+            if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER || mode == Mode.GRID) {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 
@@ -519,7 +521,7 @@ public class Run {
                     bbMaster.setProjectId(projectId);
                     ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                 } else {
-                    LOGGER.fatal("The Distributed master need a Cluster Run ID to continue, please specify the -clusterrunid (-crid) option.");
+                    LOGGER.fatal("InterProScan 5 in CLUSTER mode needs a Cluster Run ID to continue, please specify the -clusterrunid (-crid) option.");
                     System.exit(1);
                 }
             }
