@@ -37,8 +37,7 @@
 <div id="match-popup-${smid}" style="display: none;">
 
     <div class="popup_topl"><span class="${databaseName} caption_puce"></span>${location.start} - ${location.end}</div>
-    <div class="popup_botl"><abbr
-            title="${databaseMetadata.description}">${databaseMetadata.sourceName}</abbr><br/>
+    <div class="popup_botl" style="font-size:88%;"> <b>${databaseMetadata.sourceName}</b> <abbr class="icon icon-generic" data-icon="i" title="${databaseMetadata.description}"></abbr> <br/>
     ${links}<br/>
 
     </div>
