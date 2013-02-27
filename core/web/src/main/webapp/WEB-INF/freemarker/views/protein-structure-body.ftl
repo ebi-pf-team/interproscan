@@ -64,7 +64,7 @@
         <#if ((protein.structuralFeatures?size>0) || (protein.structuralPredictions?size>0))>
             <h3>Structural features and predictions</h3>
 
-            <div class="prot_entries" style="overflow: auto;">
+            <div class="prot_entries">
 
                 <#if (protein.structuralFeatures?size>0) >
                     <ol class="entries">
