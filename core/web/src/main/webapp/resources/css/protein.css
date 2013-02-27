@@ -264,9 +264,6 @@ ol.entries li, ol.signatures li {list-style: none; margin:0; padding:0; }
 
 .prot_gal { margin:20px 0;}
 .prot_entries, .prot_sum, .prot_scale {}/*fix the width of your sequence view*/
-/*.prot_gal h1,*/ .prot_sum h1, .prot_entries h1, .prot_tree  h1,.prot_sum h1, /*.prot_go h1,*/ .prot_struct_tab h1, .prot_struct_feat h1 {font-size:108%; color:#222; font-weight:bold;  padding:0;}
-/*.prot_gal h1,*/ .prot_tree h1  {margin: 6px 0 3px 0px;}
-.prot_sum h1 {margin-top: 6px;}
 
 .prot_gal .prot_gal_bloc  {border: 0px solid green; overflow:auto;clear:both;/* added for IE6 that doesn't recognise overflow*/}
 .prot_gal .prot_gal_bloc .prot_gal_col  {width:100px; display:block; float:left; margin-bottom: 4px; /*border: 1px solid red;*/}
@@ -363,8 +360,7 @@ border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-
 .ui-tooltip-content ul li.Repeat {background: url(../images/ico_tree_repeat.png) no-repeat 0 0;}
 
 .ui-tooltip .popup_topl {padding-bottom:4px; font-weight:bold;font-size:88%;}
-.ui-tooltip .popup_topl .caption_puce {width:6px; height:6px; border:1px solid #393939; float:left; margin: 2px 4px 0 0;zoom:1; /* for IE7 and IE6 to visualise the span and background without content*/}
+.ui-tooltip .popup_topl .caption_puce {width:6px; height:6px; border:1px solid #393939; float:left; margin: 4px 4px 0 0;zoom:1; /* for IE7 and IE6 to visualise the span and background without content*/}
 .ui-tooltip abbr {border-bottom: 1px solid transparent; cursor: help; vertical-align: middle;}
-/* /Tooltip overwrite jquery.qtip.css */
 
 .disabled {border:0px solid red; opacity:0.3; filter:alpha(opacity=30); /* For IE8 and earlier */}
