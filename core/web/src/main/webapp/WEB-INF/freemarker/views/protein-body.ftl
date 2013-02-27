@@ -75,7 +75,7 @@
 
 
         <#if protein.entries?has_content>
-        <div class="prot_entries" style="overflow: auto;">
+        <div class="prot_entries">
             <ol class="entries">
                 <#list protein.entries as entry>
                     <!-- Prepare required variables for this entry -->
