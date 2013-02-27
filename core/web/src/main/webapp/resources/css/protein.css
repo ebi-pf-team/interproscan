@@ -246,26 +246,6 @@ span.MODBASE {
 .menu-filter .menu-filter-colour .filter-colour-head .filter-colour-title-r {float:right;margin-bottom: 0px;}
 .menu-filter .menu-filter-colour fieldset {border-top: 0px solid #d1d1d1;}
 
-/*************************************BEGIN protein page************************************/
-.prot_gal, .prot_tree, .prot_sum , .prot_entries, /*.prot_go,*/ .prot_struct_tab {padding-left:9px; border:0px solid red;}
-#uni {background:none; border:0px solid green; margin-bottom: 24px;}/*exception only for unintegrated entries*/
-
-ol.entries, ol.signatures {margin: 0; padding: 0;}
-ol.entries li, ol.signatures li {list-style: none; margin:0; padding:0; }
-
-.prot_gal  { margin:20px 0;}
-.prot_entries, .prot_sum, .prot_scale {}/*fix the width of your sequence view*/
-/*.prot_gal h1,*/ .prot_sum h1, .prot_entries h1, .prot_tree  h1,.prot_sum h1, /*.prot_go h1,*/ .prot_struct_tab h1, .prot_struct_feat h1 {font-size:108%; color:#222; font-weight:bold;  padding:0;}
-/*.prot_gal h1,*/ .prot_tree h1  {margin: 6px 0 3px 0px;}
-.prot_sum h1 {margin-top: 6px;}
-
-.prot_gal .prot_gal_bloc  {border: 0px solid green; overflow:auto;clear:both;/* added for IE6 that doesn't recognise overflow*/}
-.prot_gal .prot_gal_bloc .prot_gal_col  {width:100px; display:block; float:left; margin-bottom: 4px; /*border: 1px solid red;*/}
-.prot_gal .prot_gal_bloc .prot_gal_desc {/*font-size:120%; color:#838383;*/ float:left; /*border: 1px solid blue;*/ }
-.prot_gal .prot_gal_source {float:right;display:block;font-size:80%; padding-right: 9px; /*to make it align with grid*/}
-.prot_gal .prot_gal_source span {color:#838383;}
-.prot_gal hr {height:1px; background-color:#cdcdcd;border: 0;margin: 0 9px 0 0;padding: 0;}
-
  /*TREE RELATIONSHIPS*/
 .rel_tree {font-size: 88%; padding:5px 0 9px 0; }/*increase space top list - make it more balanced in the page - and add margin bottom too like h2*/
 .rel_tree ul {margin: 0 0 0px 9px; padding:0;}
@@ -276,20 +256,27 @@ ol.entries li, ol.signatures li {list-style: none; margin:0; padding:0; }
 .rel_tree a:link,.rel_tree a:visited {border: none;color: #871868;/*text-decoration: none;*/}
 .rel_tree a:hover { border-bottom: 1px solid #8C4DC2;}
 
-/*to replace by .rel_tree (same as entries)*/
-/*.prot_tree  {margin: 12px 0 24px 0; overflow:auto;}*/
-/*.prot_tree .prot_tree_desc {color:#393939;border: 0px solid green; margin-bottom: 6px;}*/
-/*.prot_tree .prot_tree_desc a {*//*font-size:120%;*//*}*/
-/*.prot_tree .prot_tree_desc a.neutral:link{text-decoration: none; color:#393939;}*/
-/*.prot_tree .prot_tree_desc a.neutral:hover, .prot_tree .prot_tree_desc a.neutral:active, .prot_tree .prot_tree_desc .a.neutral:focus {text-decoration: none;}*/
-/*.prot_tree .prot_tree_desc a.neutral span {color: #0072FE;}*/
-/*.prot_tree .prot_tree_desc div  {margin:0 0 3px;}*/
-/*.prot_tree .prot_tree_desc span {font-size:90%; color:#393939; border: 0px solid red;}*/
-/*.prot_tree ul li {list-style-type: none; padding-left: 26px; background: url(../images/ico_tree_family.png) no-repeat 0 0;}*/
-/*.prot_tree ul li ul li { margin-left: 14px; list-style-type: none; padding-left: 26px; background: url(../images/ico_tree_family.png) no-repeat 0 0; border: 0px solid red;}*/
+/*************************************BEGIN protein page************************************/
+.prot_gal, .prot_sum, .prot_entries, .prot_struct_tab {padding: 0 9px; border:0px solid red;}
 
-.prot_entries {margin: 12px 0 0 0; border:1px solid white;/*to solve bug puce with alignment*/}
-.prot_entries li.entry {margin-bottom:16px;}
+ol.entries, ol.signatures {margin: 0; padding: 0;}
+ol.entries li, ol.signatures li {list-style: none; margin:0; padding:0; }
+
+.prot_gal { margin:20px 0;}
+.prot_entries, .prot_sum, .prot_scale {}/*fix the width of your sequence view*/
+/*.prot_gal h1,*/ .prot_sum h1, .prot_entries h1, .prot_tree  h1,.prot_sum h1, /*.prot_go h1,*/ .prot_struct_tab h1, .prot_struct_feat h1 {font-size:108%; color:#222; font-weight:bold;  padding:0;}
+/*.prot_gal h1,*/ .prot_tree h1  {margin: 6px 0 3px 0px;}
+.prot_sum h1 {margin-top: 6px;}
+
+.prot_gal .prot_gal_bloc  {border: 0px solid green; overflow:auto;clear:both;/* added for IE6 that doesn't recognise overflow*/}
+.prot_gal .prot_gal_bloc .prot_gal_col  {width:100px; display:block; float:left; margin-bottom: 4px; /*border: 1px solid red;*/}
+.prot_gal .prot_gal_bloc .prot_gal_desc {/*font-size:120%; color:#838383;*/ float:left; /*border: 1px solid blue;*/ }
+.prot_gal .prot_gal_source {float:right;display:block;font-size:80%;}
+.prot_gal .prot_gal_source span {color:#838383;}
+.prot_gal hr {height:1px; background-color:#cdcdcd;border: 0;margin: 0;padding: 0;}
+
+.prot_entries {margin: 9px 0;}
+.prot_entries li.entry {margin-bottom:9px;}
 .prot_entries .top-row {border: 0px solid red; overflow:auto;}
 .prot_entries .top-row .top-row-id {font-size:90%; float: left; border: 1px solid rgba(0,0,0,0.1); width:110px; padding: 1px 0 1px 6px; margin-right:12px; margin-bottom:2px; height: 24px; line-height: 24px; background-color: transparent;
 background-image: linear-gradient(top,rgba(255,255,255,.85),rgba(247,247,247,.85));
@@ -322,7 +309,7 @@ height:5px; top:0.4em;position:absolute; z-index: 1;  /* Show above match line *
 top:0.3em; */z-index:5; box-shadow: 0 0 0.5em rgba(0, 0, 255, 1); -webkit-box-shadow: 0 0 0.5em rgba(0, 0, 255, 1); -moz-box-shadow:    0 0 0.5em rgba(0, 0, 255, 1);}
 .prot_entries .bot-row ol.signatures li .bot-row-line .matches .grade {background:url(../images/bgd_dot.gif) repeat-y; width:1px;height:17px;position: absolute; z-index: 0;}/*used for the scale*/
 
-.prot_sum {margin: 9px 0 18px 0;}
+.prot_sum {margin: 9px 0;}
 .prot_sum .top-row {border: 0px solid red; overflow:auto;clear:both;/* added for IE6 that doesn't recognise overflow*/}
 .prot_sum .top-row .top-row-id {float: left; width:260px; }
 .prot_sum .top-row .top-row-opt { float:right; border:0px blue solid; margin-right:164px; padding-top:2px;}
