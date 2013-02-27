@@ -29,7 +29,7 @@
     <#else>
         <#list locationDataMap?keys as dataEntry>
             <#assign linkHref=databaseMetadata.getLinkUrl(dataEntry)>
-            <#assign links="<a class='ext' href='"+linkHref+"'>"+dataEntry+"</a><br/>">
+            <#assign links="<a class='ext' href='"+linkHref+"' >"+dataEntry+"<span class='external'></span></a><br/>">
         </#list>
     </#if>
     <@locationMacro.location smid="match-location-"+smid protein=protein titlePrefix=title location=location colourClass=databaseName/>
