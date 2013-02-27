@@ -5,7 +5,7 @@
   Time: 14:58
   To change this template use File | Settings | File Templates.
 -->
-<div class="grid_5 alpha" id="menu" style="display: none;">
+<div id="menu" style="display: none;">
 
     <div class="menu-filter">
 
@@ -50,13 +50,13 @@
         </div>
 
         <div class="menu-filter-colour">
-            <div style="overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;">
-                <div style="float:left;color: #2e5882; font-size: 110%;  font-weight: bold;margin-bottom: 0px;">
+            <div class="filter-colour-head">
+                <div class="filter-colour-title-l">
                     Colour by
                 </div>
 
                 <#if !standalone>
-                    <div style="float:right;margin-bottom: 0px;">
+                    <div  class="filter-colour-title-r">
                         <a href="http://www.ebi.ac.uk/interpro/user_manual.html#faqs_06" target="_blank">help</a>
                     </div>
                 </#if>
