@@ -223,7 +223,7 @@ span.MODBASE {
 .main-box {border: 1px solid #e4e4e4; float: left; width: 98%; /* this is a mystery to correct*/ } /*to remove when possible*/
 
 /************************************* Interactive left filter protein page************************************/
-.menu-filter {min-width: 162px; clear: left;  margin-left:9px; margin-top:9px;  display: block;  border: 1px solid #d3d3d3;  padding: 9px;  background-color: #efefef; }
+.menu-filter {/*min-width: 110px; clear: left;*/  margin-left:9px; margin-top:9px;  display: block;  border: 1px solid #d3d3d3;  padding: 9px;  background-color: #efefef; }
 .menu-filter H1 {color:#434343; font-size:120%;font-weight:bold; margin: 0 0 9px 0; padding:0;}
 .menu-filter fieldset { padding-top:12px;}
 .menu-filter fieldset label.view_all {padding-left:19px;padding-top:5px; background: url(../images/ico_type_all.png) no-repeat 0 2px; font-weight:bold;}
@@ -241,6 +241,9 @@ span.MODBASE {
 .menu-filter .menu-filter-status label.uni {background:url(../images/ico_type_uni.png) no-repeat 0 2px;}
 .menu-filter .menu-filter-colour { font-size:80%;}
 .menu-filter .menu-filter-colour legend { font-size:110%;font-weight:bold;}
+.menu-filter .menu-filter-colour .filter-colour-head {overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;}
+.menu-filter .menu-filter-colour .filter-colour-head .filter-colour-title-l {float:left;color: #2e5882; font-size: 110%;  font-weight: bold;margin-bottom: 0px;}
+.menu-filter .menu-filter-colour .filter-colour-head .filter-colour-title-r {float:right;margin-bottom: 0px;}
 .menu-filter .menu-filter-colour fieldset {border-top: 0px solid #d1d1d1;}
 
 /*************************************BEGIN protein page************************************/
