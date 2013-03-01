@@ -35,9 +35,9 @@ function displayUnintegrated(checkbox) {
     var checked = checkbox.checked;
     $.cookie('#' + checkbox.id, checked, { path: '/' });
     if (checked) {
-        $('#uni').show("blind", { direction: "vertical" }, 300);
+        $('#uni_sign').show("blind", { direction: "vertical" }, 300);
     }
     else {
-        $('#uni').hide("blind", { direction: "vertical" }, 300);
+        $('#uni_sign').hide("blind", { direction: "vertical" }, 300);
     }
 }
