@@ -135,7 +135,7 @@
 
         <#if protein.unintegratedSignatures?has_content>
 
-            <div class="prot_entries">
+            <div class="prot_entries" id="uni_sign">
                 <div class="top-row">
                     <div class="top-row-id"><img src="${img_resource_path}/images/ico_type_uni_small.png"
                                                  alt="Unintegrated signatures" title="Unintegrated signatures"/> no IPR
