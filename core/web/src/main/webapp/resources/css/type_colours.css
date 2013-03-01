@@ -1,10 +1,8 @@
 /*  TYPE Family , site, unintegrated */
 
-.matches .Family, .popup_topl .Family {background-color: #ffffff;}
-
-.matches .Active_site, .popup_topl .Active_site, .matches .Binding_site, .popup_topl .Binding_site, .matches .Conserved_site, .popup_topl .Conserved_site, .matches .PTM,  .popup_topl .PTM, .matches .SITE,  .popup_topl .SITE { background-color: #000000;}
-
-.matches .uni, .popup_topl .uni {background-color: #a5a5a5;}
+.Family {background-color: #ffffff;}
+.Active_site, .Binding_site, .Conserved_site, .PTM, .SITE { background-color: #000000;}
+.uni {background-color: #a5a5a5;}
 
 /*  TYPE domain & repeat */
 .c1 {
