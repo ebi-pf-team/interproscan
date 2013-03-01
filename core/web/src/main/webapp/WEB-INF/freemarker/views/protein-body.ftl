@@ -95,7 +95,7 @@
                             c${entryColours[entry.ac]} ${entry.type}
                         <#elseif entry.type?lower_case?starts_with("repeat")>
                             c${entryColours[entry.ac]} ${entry.type}
-                        <#else>               `
+                        <#else>
                         ${entry.type}
                         </#if>
                     </#assign>
