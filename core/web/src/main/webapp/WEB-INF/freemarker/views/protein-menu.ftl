@@ -6,7 +6,6 @@
   To change this template use File | Settings | File Templates.
 -->
 <div id="menu" style="display: none;">
-
     <div class="menu-filter">
 
         <h1>Filter view on</h1>
@@ -98,7 +97,7 @@
             }
 
             // Keep the filter menu in view
-            $("#menu").jScroll();
+//            $("#menu").jScroll();
             // CSS switching
             configureStylesheets($('input[name="blobColour"]:checked').attr('id') == 'domainColour'); // initialise
 
