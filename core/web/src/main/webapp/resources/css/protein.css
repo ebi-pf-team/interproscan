@@ -287,8 +287,8 @@ background-image: -webkit-linear-gradient(top,rgba(255,255,255,.85),rgba(247,247
 .prot_entries .top-row .top-row-id:hover {border: 1px solid #c6c6c6; background-image:none;box-shadow:1px 1px 1px rgba(0, 0, 0, 0.3);-moz-box-shadow:1px 1px 1px rgba(0, 0, 0, 0.3); -khtml-box-shadow:1px 1px 1px rgba(0, 0, 0, 0.3); -webkit-box-shadow:0px 0px 3px rgba(0, 0, 0, 0.3) ;}
 .prot_entries .top-row .top-row-id:hover a:hover {text-decoration:none;}
 .prot_entries .top-row .top-row-id img {float:left;margin-right: 9px; padding-top: 5px;}
-.prot_entries .top-row .top-row-id a, .prot_entries .top-row .top-row-id a:link {text-decoration: none; border-bottom: 0px solid  #525252;}
-.prot_entries .top-row .top-row-id a:hover, .prot_entries .top-row .top-row-id a:active, .prot_entries .top-row .top-row-id a:focus {text-decoration: none; border-bottom: 0px solid  #525252;}
+.prot_entries .top-row .top-row-id a, .prot_entries .top-row .top-row-id a:link {text-decoration: none; border-bottom: 0px solid  #525252;color: #871868;}
+.prot_entries .top-row .top-row-id a:hover, .prot_entries .top-row .top-row-id a:active, .prot_entries .top-row .top-row-id a:focus {text-decoration: none; border-bottom: 1px solid  #8C4DC2;}
 .prot_entries .top-row .top-row-name {font-size:90%; float: left; padding: 1px 0px;border:0px blue solid;}
 
 .prot_entries .bot-row {border: 0px solid green; overflow:auto; margin-top:1px;}
@@ -340,14 +340,15 @@ border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-
 /**********************************************END protein page*************************************************************/
 
 /* Tooltip overwrite jquery.qtip.css */
-.qtip {font-size: 11px;} /*font smaller in Qtip*/
 .ui-tooltip, .qtip {font-size: 13px; font-family: Verdana, Helvetica, sans-serif;  line-height: 1.2; max-width: 400px; min-width: 200px; /* solve a  popup size bug for IE7 */}
 .ui-tooltip-content .rel_tree {border:0px red solid; padding: 4px 0 ;}
 .ui-tooltip-light .ui-tooltip-titlebar {background-color: #fff; border-radius: 6px 6px 0 0;-moz-border-radius: 6px 6px 0 0;-webkit-border-radius: 6px 6px 0 0;}
 .ui-tooltip-light .ui-tooltip-titlebar, .ui-tooltip-light .ui-tooltip-content {box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);-webkit-box-shadow: 4px 2px rgba(0, 0, 0, 0.1);-moz-box-shadow: 4px 4px rgba(0, 0, 0, 0.1); border-color: #c0c0c0; color: #393939;}
 .ui-tooltip-light .ui-tooltip-content {border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;}
 .ui-tooltip-content {padding: 9px;}
-.ui-tooltip-shadow  {webkit-box-shadow: none;-moz-box-shadow: none;	box-shadow:none; }
+.ui-tooltip-content a:link, .ui-tooltip-content a:visited { border: none; color: #871868;}
+.ui-tooltip-content a:hover { border-bottom: 1px solid #8C4DC2;}
+.ui-tooltip-shadow  {webkit-box-shadow: none;-moz-box-shadow: none;	box-shadow:none;}
 
 
 /*.ui-tooltip-content ul li a.neutral, .ui-tooltip-content ul li a.neutral:link{text-decoration: none; color:#393939; *//*font-weight:bold;*//*}*/
