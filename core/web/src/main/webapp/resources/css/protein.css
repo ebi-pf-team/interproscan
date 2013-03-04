@@ -341,12 +341,12 @@ border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-
 
 /* Tooltip overwrite jquery.qtip.css */
 .qtip {font-size: 11px;} /*font smaller in Qtip*/
-.ui-tooltip, .qtip {font-size: 13px; font-family: Verdana, Helvetica, sans-serif;  line-height: 120%; max-width: 400px; min-width: 200px; /* solve a  popup size bug for IE7 */}
+.ui-tooltip, .qtip {font-size: 13px; font-family: Verdana, Helvetica, sans-serif;  line-height: 1.2; max-width: 400px; min-width: 200px; /* solve a  popup size bug for IE7 */}
 .ui-tooltip-content .rel_tree {border:0px red solid; padding: 5px 0 0 0;}
 .ui-tooltip-light .ui-tooltip-titlebar {background-color: #fff; border-radius: 6px 6px 0 0;-moz-border-radius: 6px 6px 0 0;-webkit-border-radius: 6px 6px 0 0;}
 .ui-tooltip-light .ui-tooltip-titlebar, .ui-tooltip-light .ui-tooltip-content {box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);-webkit-box-shadow: 4px 2px rgba(0, 0, 0, 0.1);-moz-box-shadow: 4px 4px rgba(0, 0, 0, 0.1); border-color: #c0c0c0; color: #393939;}
 .ui-tooltip-light .ui-tooltip-content {border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;}
-.ui-tooltip-content {padding: 0 6px 12px 6px;}
+.ui-tooltip-content {padding: 9px;}
 .ui-tooltip-shadow  {webkit-box-shadow: none;-moz-box-shadow: none;	box-shadow:none; }
 
 
