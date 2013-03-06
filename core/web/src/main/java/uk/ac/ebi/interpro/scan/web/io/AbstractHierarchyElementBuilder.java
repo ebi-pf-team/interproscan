@@ -77,7 +77,7 @@ public abstract class AbstractHierarchyElementBuilder {
             sb.append("\" ");
         }
         sb.append(">");
-        sb.append("<a href=\"http://www.ebi.ac.uk/interpro/IEntry?ac=");
+        sb.append("<a href=\"http://www.ebi.ac.uk/interpro/entry/");
         sb.append(entry.getAc());
         sb.append("\">");
         sb.append(entry.getName());

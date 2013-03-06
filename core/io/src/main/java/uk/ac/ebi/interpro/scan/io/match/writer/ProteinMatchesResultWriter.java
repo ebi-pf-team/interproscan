@@ -17,7 +17,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public abstract class ProteinMatchesResultWriter implements IProteinMatchesWriter {
+public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter {
 
     protected FileWriter fileWriter;
 
