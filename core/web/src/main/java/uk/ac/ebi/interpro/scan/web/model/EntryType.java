@@ -83,7 +83,7 @@ public enum EntryType {
         return (type == null) ? UNKNOWN : type;
         // In rare cases, may get IPR that's not been released yet, for example, the following
         // returned "IPR001438 does not exist. IPR001438 is not released" on 20 October 2011:
-        // http://www.ebi.ac.uk/interpro/IEntry?ac=IPR001438
+        // http://www.ebi.ac.uk/interpro/entry/IPR001438
     }
 
     @Override

@@ -119,7 +119,7 @@ public class FamilyHierachySvgElementBuilder {
         sb.append("<path stroke=\"black\" stroke-width=\"1\" stroke-dasharray=\"1\" d=\"M1,5 V10\" />");
         sb.append("<path stroke=\"black\" stroke-width=\"1\" stroke-dasharray=\"1\" d=\"M0.5,9.5 H6\" />");
         sb.append("<use x=\"8\" y=\"2\" xlink:href=\"#ico_type_family_small\"/>");
-        sb.append("<a xlink:href=\"http://www.ebi.ac.uk/interpro/IEntry?ac=");
+        sb.append("<a xlink:href=\"http://www.ebi.ac.uk/interpro/entry/");
         sb.append(entry.getAc());
         sb.append("\" target=\"_top\">");
         sb.append("<text x=\"24px\" y=\"12px\" text-decoration=\"underline\">");

@@ -56,7 +56,7 @@
 
                 <#if !standalone>
                     <div  class="filter-colour-title-r">
-                        <a href="http://www.ebi.ac.uk/interpro/user_manual.html#faqs_06" target="_blank">help</a>
+                        <a href="http://www.ebi.ac.uk/interpro/faqs#faqs_06" target="_blank">help</a>
                     </div>
                 </#if>
             </div>
