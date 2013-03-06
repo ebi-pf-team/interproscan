@@ -8,6 +8,6 @@ import java.io.IOException;
 /**
  * Write proteins to output
  */
-public interface IProteinMatchesWriter extends Closeable {
+public interface ProteinMatchesWriter extends Closeable {
     public int write(Protein protein) throws IOException;
 }

@@ -109,8 +109,8 @@
                         <div class="top-row">
                             <div class="top-row-id"><img src="${img_resource_path}/images/ico_type_${icon}_small.png"
                                                          alt="${title}" title="${title}"/> <a
-                                    href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}">${entry.ac}</a></div>
-                            <div class="top-row-name"><a href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entry.ac}"
+                                    href="http://www.ebi.ac.uk/interpro/entry/${entry.ac}">${entry.ac}</a></div>
+                            <div class="top-row-name"><a href="http://www.ebi.ac.uk/interpro/entry/${entry.ac}"
                                                          class="neutral">${entry.name}</a></div>
                         </div>
 

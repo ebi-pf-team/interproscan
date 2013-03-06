@@ -6,7 +6,7 @@
     <use x="6" y="6" xlink:href="#${reference}"/>
 
     <#if !entryType?lower_case?starts_with("unknown")>
-    <a xlink:href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entryAccession}" target="_top">
+    <a xlink:href="http://www.ebi.ac.uk/interpro/entry/${entryAccession}" target="_top">
     </#if>
     <text x="25px" y="15px" text-decoration="${textDecoration}" style="font-family:Verdana,Helvetica,sans-serif;
                              font-size:11px;stroke:none;fill:${filling}">${entryAccession}</text>
@@ -15,7 +15,7 @@
     </#if>
 </svg>
     <#if !entryType?lower_case?starts_with("unknown")>
-    <a xlink:href="http://www.ebi.ac.uk/interpro/IEntry?ac=${entryAccession}" target="_top">
+    <a xlink:href="http://www.ebi.ac.uk/interpro/entry/${entryAccession}" target="_top">
     </#if>
     <text x="123px" y="14px" text-decoration="${textDecoration}"
           style="font-family:Verdana,Helvetica,sans-serif;
