@@ -94,9 +94,10 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             return protein;
         } catch (Exception e) {
-            exitOnMatchServiceError();
+            displayMatchServiceError();
+            return null;
         }
-        return null;
+
     }
 
     @Override
@@ -149,9 +150,10 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             return precalculatedProteins;
         } catch (Exception e) {
-            exitOnMatchServiceError();
+            displayMatchServiceError();
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -163,21 +165,22 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         return preCalcMatchClient.isConfigured();
     }
 
-    private void exitOnMatchServiceError() {
+    private void displayMatchServiceError() {
         /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
-        System.err.println("\n\n" +
-                "Pre-calculated match lookup service failed - analysis halted\n" +
+        LOGGER.warn("\n\n" +
+                "Pre-calculated match lookup service failed - analysis proceeding to run locally\n" +
                 "============================================================\n\n" +
                 "The pre-calculated match lookup service has been configured\n" +
                 "in the interproscan.properties file. Unfortunately the web\n" +
-                "service has failed.  You can switch off the use of this service\n" +
-                "by editing the interproscan.properties file and setting the\n" +
+                "service has failed. Check the configuration of this service\n" +
+                "in the interproscan.properties file and, if nessary, set the\n" +
                 "appropriate property to look like this:\n\n" +
                 "precalculated.match.lookup.service.url=\n\n" +
                 "The analysis will then continue without using the lookup service.\n\n" +
-                "Please check that this is not a firewall issue and then\n" +
-                "inform the InterPro team of this error by sending an email to:\n\ninterhelp@ebi.ac.uk\n\n");
+                "If the problem persists, check if this is a firewall or proxy issue.\n" +
+                "If this still does not work please inform the InterPro team of this error\n" +
+                "by sending an email to:\n\ninterhelp@ebi.ac.uk\n\n" +
+                "In the meantime, the analysis will continue to run locally.\n\n");
 
-        System.exit(123);
     }
 }
