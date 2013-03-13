@@ -189,9 +189,6 @@ a:link, a:visited { border-bottom-color: #8c4dc2; }
 a:hover,a:focus,a:active {color: #8c4dc2; border-bottom: 1px solid #8c4dc2;}
 /*/from interpro-purple-colours.css*/
 
-/*ALMOST SAME AS INTERPRO (remove .contents and change image URL***Need to work out a better way of maintaining this css.*******************************/
-
-
 a.neutral, a.neutral:link {text-decoration: none; border-bottom: 0px solid  #525252; color: #222;}  /*link that has a neutral visual impact on the page - same colour as text*/
 a.neutral:hover, a.neutral:active, a.neutral:focus { text-decoration: none;border-bottom: 1px solid  #525252;}
 
@@ -234,6 +231,8 @@ span.MODBASE {
 .menu-filter div H1 {color:#2e5882; font-size:110%;font-weight:bold; background-color:#f2f6f8; border:1px solid #9eb6ce; padding: 4px 10px; margin:0; }
 .menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {box-shadow:0px 2px 2px #adadad;-moz-box-shadow:0px 2px 2px #adadad ;-khtml-box-shadow:0px 2px 2px #adadad;-webkit-box-shadow:0px 2px 2px #adadad;}
 .menu-filter div fieldset {border: 1px solid #d1d1d1;  margin:0;}
+.menu-filter .disabled {border:0px solid red;-moz-opacity: .5; opacity: 0.50; filter: alpha(opacity=50);}
+.menu-filter .disabled label {cursor:default;}
 .menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-colour div {display: block;}
 .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
 .menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label  {border:0px green solid;padding-left:19px;padding-top:5px; }
