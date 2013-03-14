@@ -1,12 +1,14 @@
 package uk.ac.ebi.interpro.scan.precalc.client;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
@@ -18,6 +20,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +29,7 @@ import java.util.List;
  * Client to query the REST web service for matches
  * and return an unmarshalled BerkeleyMatchXML object.
  *
- * @author Phil Jones
+ * @author Phil Jones, Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -36,6 +40,10 @@ public class MatchHttpClient {
     private static final String MD5_PARAMETER = "md5";
 
     private String url;
+
+    private String proxyHost;
+
+    private String proxyPort;
 
     private final Jaxb2Marshaller unmarshaller;
 
@@ -58,6 +66,13 @@ public class MatchHttpClient {
         this.url = url;
     }
 
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public void setProxyPort(String proxyPort) {
+        this.proxyPort = proxyPort;
+    }
 
     public BerkeleyMatchXML getMatches(String... md5s) throws IOException {
         if (LOG.isDebugEnabled()) {
@@ -70,6 +85,9 @@ public class MatchHttpClient {
         if (url == null || url.isEmpty()) {
             throw new IllegalStateException("The url must be set for the MatchHttpClient.getMatches method to function");
         }
+
+
+
         HttpClient httpclient = new DefaultHttpClient();
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String md5 : md5s) {
@@ -103,6 +121,13 @@ public class MatchHttpClient {
                 return null;
             }
         };
+        //set the proxy if needed
+        if(isProxyEnabled()){
+            LOG.debug("Using a Proxy server in getMatches: " + proxyHost+":"+proxyPort);
+            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+        }
+
         BerkeleyMatchXML matchXML = httpclient.execute(post, handler);
         httpclient.getConnectionManager().shutdown();
         return matchXML;
@@ -121,6 +146,7 @@ public class MatchHttpClient {
         if (url == null || url.isEmpty()) {
             throw new IllegalStateException("The url must be set for the MatchHttpClient.getMD5sOfProteinsAlreadyAnalysed method to function");
         }
+
         HttpClient httpclient = new DefaultHttpClient();
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String md5 : md5s) {
@@ -160,6 +186,15 @@ public class MatchHttpClient {
                 return md5sAlreadyAnalysed;
             }
         };
+
+        //set the proxy if needed
+        if(isProxyEnabled()){
+            LOG.debug("Using a Proxy server in getMD5sOfProteinsAlreadyAnalysed : " + proxyHost+":"+proxyPort);
+            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+
+        }
+
         List<String> response = httpclient.execute(post, handler);
         httpclient.getConnectionManager().shutdown();
         return response;
@@ -173,4 +208,21 @@ public class MatchHttpClient {
     public boolean isConfigured() {
         return url != null && !url.isEmpty();
     }
+
+    /**
+     * check if the http proxy is enabled
+     * if enabled configure the system properties
+     *
+     */
+    public boolean isProxyEnabled(){
+        //set the proxy if needed
+        if(!(proxyHost.isEmpty() || proxyHost == null || proxyPort.isEmpty() || proxyPort == null) ){
+//            System.setProperty("proxySet", "true");
+//            System.setProperty("http.proxyHost", proxyHost);
+//            System.setProperty("http.proxyPort", proxyPort);
+            return true;
+        }
+        return false;
+    }
+
 }
