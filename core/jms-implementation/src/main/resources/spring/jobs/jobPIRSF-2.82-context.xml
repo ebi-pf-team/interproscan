@@ -44,7 +44,7 @@
         <property name="retries" value="3"/>
         <!--More specific properties-->
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
-        <property name="binarySwitches" value="-A 0 --cpu 1 --acc -E 0.01"/>
+        <property name="binarySwitches" value="${hmmer2.hmmpfam.switches.pirsf}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path.2.82}"/>
@@ -111,7 +111,7 @@
         <property name="retries" value="3"/>
         <!--More specific properties-->
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
-        <property name="binarySwitches" value="-A 0 --cpu 1 --acc -E 0.01"/>
+        <property name="binarySwitches" value="${hmmer2.hmmpfam.switches.pirsf}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplateSubFam-2.82"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToHmmFile" value="${pirsf.hmm.subf.bin.path.2.82}"/>

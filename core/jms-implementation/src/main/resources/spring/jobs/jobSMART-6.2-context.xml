@@ -58,7 +58,7 @@
         <property name="stepDescription" value="Run HMM on selected proteins"/>
 
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
-        <property name="binarySwitches" value="--cpu 1 --acc -A 0"/>
+        <property name="binarySwitches" value="${hmmer2.hmmpfam.switches.smart}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
