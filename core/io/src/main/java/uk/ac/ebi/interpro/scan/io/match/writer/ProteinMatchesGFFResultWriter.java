@@ -84,7 +84,8 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     .append('"');
 //            gffAttributes.add("interPro_entry_desc=" + interProEntry.getDescription());
             if (mapToPathway) {
-                Collection<PathwayXref> pathwayXRefs = interProEntry.getPathwayXRefs();
+                List<PathwayXref> pathwayXRefs = new ArrayList<PathwayXref>(interProEntry.getPathwayXRefs());
+                Collections.sort(pathwayXRefs, new PathwayXrefComparator());
                 if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
                     StringBuilder sb = new StringBuilder();
                     for (PathwayXref xref : pathwayXRefs) {
@@ -102,7 +103,8 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             }
             matchFeature.addAttribute("Dbxref", dbxrefAttributeValue.toString());
             if (mapToGO) {
-                Collection<GoXref> goXRefs = interProEntry.getGoXRefs();
+                List<GoXref> goXRefs = new ArrayList<GoXref>(interProEntry.getGoXRefs());
+                Collections.sort(goXRefs, new GoXrefComparator());
                 if (goXRefs != null && goXRefs.size() > 0) {
                     StringBuilder sb = new StringBuilder();
                     for (GoXref xref : goXRefs) {

@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,6 +59,17 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
         }
         return proteinXRef.toString();
     }
+
+    protected List<String> getProteinAccessions(Protein protein) {
+        Set<ProteinXref> crossReferences = protein.getCrossReferences();
+        List<String> proteinXRefs = new ArrayList<String>(crossReferences.size());
+        for (ProteinXref crossReference : crossReferences) {
+            proteinXRefs.add(crossReference.getIdentifier());
+        }
+        return proteinXRefs;
+
+    }
+
 
     public void setMapToInterProEntries(boolean mapToInterProEntries) {
         this.mapToInterProEntries = mapToInterProEntries;
