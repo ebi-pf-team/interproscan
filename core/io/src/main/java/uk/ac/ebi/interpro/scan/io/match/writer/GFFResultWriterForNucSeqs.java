@@ -54,16 +54,18 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
     public int write(Protein protein) throws IOException {
-        String proteinIdFromGetorf = getProteinAccession(protein);
         int sequenceLength = protein.getSequenceLength();
         String md5 = protein.getMd5();
         String date = dmyFormat.format(new Date());
         Set<Match> matches = protein.getMatches();
         String proteinIdForGFF = null;
-        if (matches.size() > 0) {
-            proteinIdFromGetorf = super.getValidGFF3SeqId(proteinIdFromGetorf);
-            writeSequenceRegionPart(protein, sequenceLength, md5, proteinIdForGFF, proteinIdFromGetorf);
-            processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
+        List<String> proteinIdsFromGetOrf = getProteinAccessions(protein);
+        for (String proteinIdFromGetorf: proteinIdsFromGetOrf) {
+            if (matches.size() > 0) {
+                proteinIdFromGetorf = super.getValidGFF3SeqId(proteinIdFromGetorf);
+                writeSequenceRegionPart(protein, sequenceLength, md5, proteinIdForGFF, proteinIdFromGetorf);
+                processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
+            }
         }
         return 0;
     }

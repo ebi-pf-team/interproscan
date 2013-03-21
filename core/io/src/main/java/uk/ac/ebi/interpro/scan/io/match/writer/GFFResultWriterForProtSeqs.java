@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.model.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 
@@ -34,22 +35,25 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
     public int write(Protein protein) throws IOException {
-        String proteinIdsForGFF = getProteinAccession(protein);
+        List<String> proteinIdsForGFF = getProteinAccessions(protein);
+
         int sequenceLength = protein.getSequenceLength();
         String md5 = protein.getMd5();
         String date = dmyFormat.format(new Date());
         Set<Match> matches = protein.getMatches();
         //Write sequence region information
-        if (matches.size() > 0) {
-            //Check if protein accessions are GFF3 valid
-            proteinIdsForGFF = ProteinMatchesGFFResultWriter.getValidGFF3SeqId(proteinIdsForGFF);
-            //Write sequence-region
-            super.gffWriter.write("##sequence-region " + proteinIdsForGFF + " 1 " + sequenceLength);
-            writeReferenceLine(proteinIdsForGFF, sequenceLength, md5);
-            addFASTASeqToMap(proteinIdsForGFF, protein.getSequence());
+        for (String proteinIdForGFF: proteinIdsForGFF) {
+            if (matches.size() > 0) {
+                //Check if protein accessions are GFF3 valid
+                proteinIdForGFF = ProteinMatchesGFFResultWriter.getValidGFF3SeqId(proteinIdForGFF);
+                //Write sequence-region
+                super.gffWriter.write("##sequence-region " + proteinIdForGFF + " 1 " + sequenceLength);
+                writeReferenceLine(proteinIdForGFF, sequenceLength, md5);
+                addFASTASeqToMap(proteinIdForGFF, protein.getSequence());
 
-            processMatches(matches, proteinIdsForGFF, date, protein, proteinIdsForGFF);
-        }//end match size check
+                processMatches(matches, proteinIdForGFF, date, protein, proteinIdForGFF);
+            }//end match size check
+        }
         return 0;
     }
 
