@@ -87,7 +87,6 @@ public class MatchHttpClient {
         }
 
 
-
         HttpClient httpclient = new DefaultHttpClient();
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String md5 : md5s) {
@@ -122,8 +121,8 @@ public class MatchHttpClient {
             }
         };
         //set the proxy if needed
-        if(isProxyEnabled()){
-            LOG.debug("Using a Proxy server in getMatches: " + proxyHost+":"+proxyPort);
+        if (isProxyEnabled()) {
+            LOG.debug("Using a Proxy server in getMatches: " + proxyHost + ":" + proxyPort);
             HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
             httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
         }
@@ -188,8 +187,8 @@ public class MatchHttpClient {
         };
 
         //set the proxy if needed
-        if(isProxyEnabled()){
-            LOG.debug("Using a Proxy server in getMD5sOfProteinsAlreadyAnalysed : " + proxyHost+":"+proxyPort);
+        if (isProxyEnabled()) {
+            LOG.debug("Using a Proxy server in getMD5sOfProteinsAlreadyAnalysed : " + proxyHost + ":" + proxyPort);
             HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
             httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 
@@ -212,17 +211,16 @@ public class MatchHttpClient {
     /**
      * check if the http proxy is enabled
      * if enabled configure the system properties
-     *
      */
-    public boolean isProxyEnabled(){
+    public boolean isProxyEnabled() {
         //set the proxy if needed
-        if(!(proxyHost.isEmpty() || proxyHost == null || proxyPort.isEmpty() || proxyPort == null) ){
+        if (proxyHost == null || proxyHost.isEmpty() || proxyPort == null || proxyPort.isEmpty()) {
 //            System.setProperty("proxySet", "true");
 //            System.setProperty("http.proxyHost", proxyHost);
 //            System.setProperty("http.proxyPort", proxyPort);
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
 }
