@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.client;
 
+import junit.framework.Assert;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -88,4 +89,17 @@ public class MatchHttpClientTest {
         // NOTE - this is reading in a static file, rather than connecting to a real service.
         List<String> proteinsToAnalyse = matchClient.getMD5sOfProteinsAlreadyAnalysed("D000022E87E6B7B84CCCBA9BAF34568A", "HoHoHo");
     }
+
+    @Test
+    public void testIsProxyEnabled() {
+        //Set proxy host to NULL will disable the proxy
+        matchClient.setProxyHost(null);
+        Assert.assertFalse(matchClient.isProxyEnabled());
+        //Set proxy host and port will enable the proxy
+        matchClient.setProxyHost("localhost");
+        matchClient.setProxyPort("80");
+        Assert.assertTrue(matchClient.isProxyEnabled());
+    }
+
+
 }
