@@ -39,6 +39,8 @@ public class StatsUtil {
 
     private static int tier;
 
+    private int progressCounter = 0;
+
     public StatsUtil() {
 
     }
@@ -204,4 +206,26 @@ public class StatsUtil {
         return  statsMessageListener.getStats()!=null;
     }
 
+
+    /**
+     *   Display progress report based on the number of jobs left to run
+     */
+    public void displayProgress(){
+        if(unfinishedJobs > 0 && totalJobs > 5){
+            Long progress = (totalJobs - unfinishedJobs) / totalJobs;
+            if (progress > 0.25 && progress < 0.5 && progressCounter < 1){
+                System.out.println("Progress: 25% done" + " #:" + totalJobs + ":" + unfinishedJobs);
+                progressCounter = 1;
+            }else if  (progress > 0.5 && progress < 0.75 && progressCounter < 2){
+                System.out.println("Progress: 50% done" + " #:" + totalJobs + ":" + unfinishedJobs);
+                progressCounter = 2;
+            }else if  (progress > 0.75 && progress < 0.9 && progressCounter < 3){
+                System.out.println("Progress: 75% done" + " #:" + totalJobs + ":" + unfinishedJobs);
+                progressCounter = 3;
+            }else if  (progress > 0.9 && progressCounter < 4){
+                System.out.println("Progress: 90% done" + " #:" + totalJobs + ":" + unfinishedJobs);
+                progressCounter = 4;
+            }
+        }
+    }
 }
