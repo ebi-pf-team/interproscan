@@ -46,7 +46,7 @@ public class ProteinMatchesSVGResultWriter {
 
     private List<File> resultFiles = new ArrayList<File>();
 
-    private String tempDirectory;
+    private String outputDirectory;
 
     @Required
     public void setEntryHierarchyBeanId(String entryHierarchyBeanId) {
@@ -71,8 +71,8 @@ public class ProteinMatchesSVGResultWriter {
     }
 
     @Required
-    public void setTempDirectory(String tempDirectory) {
-        this.tempDirectory = tempDirectory;
+    public void setOutputDirectory(String outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
     public List<File> getResultFiles() {
@@ -112,11 +112,11 @@ public class ProteinMatchesSVGResultWriter {
                     Writer writer = null;
                     try {
                         final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
-                        checkTempDirectory(tempDirectory);
-                        if (!tempDirectory.endsWith("/")) {
-                            tempDirectory = tempDirectory + "/";
+                        checkTempDirectory(outputDirectory);
+                        if (!outputDirectory.endsWith("/")) {
+                            outputDirectory = outputDirectory + "/";
                         }
-                        final File newResultFile = new File(tempDirectory + xref.getIdentifier() + ".svg");
+                        final File newResultFile = new File(outputDirectory + xref.getIdentifier() + ".svg");
                         resultFiles.add(newResultFile);
                         writer = new PrintWriter(new FileWriter(newResultFile));
                         temp.process(model, writer);
@@ -139,8 +139,9 @@ public class ProteinMatchesSVGResultWriter {
     private void checkTempDirectory(String tempDirectory) throws IOException {
         File tempFileDirectory = new File(tempDirectory);
         if (!tempFileDirectory.exists()) {
-            boolean isCreated = tempFileDirectory.createNewFile();
-            if (isCreated) {
+            boolean isCreated = tempFileDirectory.mkdir();
+//            boolean isCreated = tempFileDirectory.createNewFile();
+            if (!isCreated) {
                 LOGGER.warn("Couldn't create temp directory " + tempDirectory);
             }
 

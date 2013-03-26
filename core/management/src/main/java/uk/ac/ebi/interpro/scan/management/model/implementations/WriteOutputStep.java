@@ -53,7 +53,7 @@ public class WriteOutputStep extends Step {
     private boolean compressHtmlAndSVGOutput;
 
     /* Not required. If TRUE (default), it will archive all SVG output files into a single archives.*/
-    private boolean archiveMode = true;
+    private boolean archiveSVGOutput = true;
 
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
@@ -67,8 +67,8 @@ public class WriteOutputStep extends Step {
     private static final int MAX_OUTPUT_ATTEMPTS = 3;
 
 
-    public void setArchiveMode(boolean archiveMode) {
-        this.archiveMode = archiveMode;
+    public void setArchiveSVGOutput(boolean archiveSVGOutput) {
+        this.archiveSVGOutput = archiveSVGOutput;
     }
 
     @Required
@@ -191,7 +191,7 @@ public class WriteOutputStep extends Step {
                             .append(outputFormat.getFileExtension());
                     //Extend file name by tar (tar.gz) extension if HTML or SVG
                     if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
-                        outputFile = new File(buildTarArchiveName(candidateFileName.toString(), compressHtmlAndSVGOutput));
+                        outputFile = new File(buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
                     } else {
                         outputFile = new File(candidateFileName.toString());
                     }
@@ -222,7 +222,7 @@ public class WriteOutputStep extends Step {
                     case SVG:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
-                            svgResultWriter.setTempDirectory(temporaryFileDirectory);
+                            svgResultWriter.setOutputDirectory(temporaryFileDirectory);
                         }
                         outputToSVG(outputFile, proteins);
                         break;
@@ -266,7 +266,9 @@ public class WriteOutputStep extends Step {
         xmlWriter.writeMatches(outputFile, matchesHolder);
     }
 
-    private void outputToTSV(File file, StepInstance stepInstance, List<Protein> proteins) throws IOException {
+    private void outputToTSV(final File file,
+                             final StepInstance stepInstance,
+                             final List<Protein> proteins) throws IOException {
         ProteinMatchesTSVResultWriter writer = null;
         try {
             writer = new ProteinMatchesTSVResultWriter(file);
@@ -322,14 +324,30 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToSVG(final File file, final List<Protein> proteins) throws IOException {
+    /**
+     * This method renders the SVG output files.
+     * <p/>
+     * Please note:
+     * <p/>
+     * When the SVG files aren't archived, they are written to the output file directory.
+     * Otherwise they will be written into the default outputDirectory of the {@link ProteinMatchesSVGResultWriter).
+     *
+     * @param outputDir Output directory (this file object contains the output path).
+     * @param proteins  Set of result proteins.
+     * @throws IOException
+     */
+    private void outputToSVG(final File outputDir, final List<Protein> proteins) throws IOException {
         if (proteins != null && proteins.size() > 0) {
+            //If the archive mode is switched off single SVG files should be written to the global output directory
+            if (!archiveSVGOutput) {
+                svgResultWriter.setOutputDirectory(outputDir.getAbsolutePath());
+            }
             for (Protein protein : proteins) {
                 svgResultWriter.write(protein);
             }
-            if (this.archiveMode) {
+            if (archiveSVGOutput) {
                 List<File> resultFiles = svgResultWriter.getResultFiles();
-                TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlAndSVGOutput);
+                TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, outputDir, compressHtmlAndSVGOutput);
                 tarArchiveBuilder.buildTarArchive();
                 //Delete result files in the temp directory at the end
                 for (File resultFile : resultFiles) {
@@ -353,22 +371,33 @@ public class WriteOutputStep extends Step {
      * <p/>
      * The expected file format would be <file-name>.<extension>
      *
-     * @param fileName           Input filename without extension
-     * @param compressHtmlOutput If TRUE,do compress tarball as well.
+     * @param fileName                Input filename without extension
+     * @param archiveHtmlAndSVGOutput If TRUE add tar extension
+     * @param compressHtmlOutput      If TRU
      * @return Tarball filename with extension added
      */
-    private String buildTarArchiveName(String fileName, boolean compressHtmlOutput) {
+    private String buildTarArchiveName(final String fileName,
+                                       final boolean archiveHtmlAndSVGOutput,
+                                       final boolean compressHtmlOutput,
+                                       final FileOutputFormat outputFormat) {
         if (fileName == null) {
             throw new IllegalStateException("HTML/SVG output file name was NULL");
         } else if (fileName.length() == 0) {
             throw new IllegalStateException("HTML/SVG output file name was empty");
         }
-        String fileExtension = (compressHtmlOutput ? ".tar.gz" : ".tar");
-        if (fileName.endsWith(fileExtension)) {
-            return fileName;
+
+        StringBuffer fileExtension = new StringBuffer();
+        if (outputFormat.equals(FileOutputFormat.SVG)) {
+            fileExtension.append(archiveHtmlAndSVGOutput ? ".tar" : "");
+            fileExtension.append((archiveHtmlAndSVGOutput && compressHtmlOutput) ? ".gz" : "");
+        } else if (outputFormat.equals(FileOutputFormat.HTML)) {
+            fileExtension.append(compressHtmlOutput ? ".tar.gz" : ".tar");
         }
 
-        return fileName + fileExtension;
+        if (fileName.endsWith(fileExtension.toString())) {
+            return fileName;
+        }
+        return fileName + fileExtension.toString();
     }
 
 

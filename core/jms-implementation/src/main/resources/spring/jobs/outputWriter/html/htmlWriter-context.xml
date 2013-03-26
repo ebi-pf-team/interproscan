@@ -13,7 +13,7 @@
     <!--<property name="freeMarkerTemplate" value="views/protein.ftl"/>-->
     <!--<property name="entryHierarchyBeanId" value="entryHierarchy"/>-->
     <!--<property name="htmlResourcesDir" value="data/freemarker/WEB-INF"/>-->
-    <!--<property name="tempDirectory" value="temp/"/>-->
+    <!--<property name="outputDirectory" value="temp/"/>-->
     <!--</bean>-->
 
     <bean id="htmlWriter"
