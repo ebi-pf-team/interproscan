@@ -135,7 +135,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                 //update the statistics plugin
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-
+                statsUtil.displayProgress();
                 Thread.sleep(50);   //   Thread.sleep(30*1000);
             }
         } catch (JMSException e) {

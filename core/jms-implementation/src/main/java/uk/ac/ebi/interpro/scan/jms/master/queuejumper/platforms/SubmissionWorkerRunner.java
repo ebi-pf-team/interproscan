@@ -117,11 +117,11 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         //label log file if high memory worker (hw) or normal worker (nw)
         String workerType = highMemory ? "hm" : "nw";
         if (projectId != null) {
-            this.agent_id = projectId+"_"+tcpUri.hashCode()+"_"+workerType+"_"+getWorkerCountString();
+            this.agent_id = projectId + "_" + tcpUri.hashCode() + "_"+workerType+"_" + getWorkerCountString();
         }else if(tcpUri != null ){
-            this.agent_id = "worker"+"_"+tcpUri.hashCode()+"_"+workerType+"_"+getWorkerCountString();
+            this.agent_id = "worker" + "_" + tcpUri.hashCode() + "_"+workerType + "_" + getWorkerCountString();
         }else{
-            this.agent_id = "worker_unid"+"_"+workerType+"_"+getWorkerCountString();
+            this.agent_id = "worker_unid" + "_" + workerType+"_" + getWorkerCountString();
         }
     }
 
@@ -154,28 +154,41 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     @Override
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
-        int activeJobs = lsfMonitor.activeJobs(projectId);
-        int pendingJobs = lsfMonitor.pendingJobs(projectId);
-        if (activeJobs > gridJobsLimit || (pendingJobs*5 > activeJobs && activeJobs > 5)) {
-            LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs + " pending Jpbs : " + pendingJobs);
-            return;
+        //monitor the cluster
+        if(gridName.equals("lsf")){
+            int activeJobs = lsfMonitor.activeJobs(projectId);
+            int pendingJobs = lsfMonitor.pendingJobs(projectId);
+            if (activeJobs > gridJobsLimit || (pendingJobs*5 > activeJobs && activeJobs > 5)) {
+                LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs + " pending Jpbs : " + pendingJobs);
+                return;
+            }
+            LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + activeJobs);
         }
-        LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + activeJobs);
-
         if (workerStartupStrategy.startUpWorker(priority)) {
             LOGGER.debug("startupNewWorker(): " );
             workerCount++;
+
             StringBuilder command = new StringBuilder(gridCommand);
 
             setAgent_id(tcpUri);
 
+            //add error and output log handling for the cluster
             if(agent_id != null){
                 command.append(" -o logs/"+ agent_id+".out");
                 command.append(" -e logs/"+ agent_id+".err");
-                command.append(" -J "+ agent_id);
+
+                if(gridName.equals("lsf")) {
+                    command.append(" -J "+ agent_id);
+                }
             }
             if(gridName.equals("lsf") && (projectId != null)) {
                 command.append(" -P "+ projectId);
+            }
+
+            //other grid submission commands
+            if(gridName.equals("other")){
+                command = new StringBuilder();
+                command.append("/bin/bash -c 'echo \"");
             }
 
             command.append(" " + i5Command);
@@ -215,6 +228,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Command ABOUT to be submitted: " + command);
             }
+
             try {
 //                Runtime.getRuntime().exec(command.toString());
                 final CommandLineConversation clc = new CommandLineConversationImpl();
