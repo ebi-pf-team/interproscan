@@ -27,15 +27,24 @@ public class BerkeleyMD5DBService extends AbstractDBService {
 
     private PrimaryIndex<String, BerkeleyConsideredProtein> primIDX = null;
 
+    private int cacheSizeInBytes;
+
     Environment myEnv = null;
     EntityStore store = null;
 
-    public BerkeleyMD5DBService(String databasePath) {
+    public BerkeleyMD5DBService(String databasePath, int cacheSizeInMegabytes) {
         Assert.notNull(databasePath, "The databasePath bean cannot be null.");
+        this.cacheSizeInBytes = cacheSizeInMegabytes * 1024 * 1024;
         this.databasePath = setPath(databasePath);
         System.out.println("Initializing BerkeleyDB MD5 Database (creating indexes): Please wait...");
         initializeMD5Index();
     }
+
+    public BerkeleyMD5DBService(String databasePath) {
+        // default cache size is 100 Mb to avoid using too much memory
+        this(databasePath, 100);
+    }
+
 
     /**
      * Clean up resources when this Service is finished with.
@@ -59,7 +68,7 @@ public class BerkeleyMD5DBService extends AbstractDBService {
         myEnvConfig.setReadOnly(true);
         myEnvConfig.setAllowCreate(false);
         myEnvConfig.setLocking(false);
-
+        myEnvConfig.setCacheSize(cacheSizeInBytes);
         storeConfig.setReadOnly(true);
         storeConfig.setAllowCreate(false);
         storeConfig.setTransactional(false);

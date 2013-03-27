@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.precalc.server.service.impl;
 import com.sleepycat.persist.EntityCursor;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.server.service.MatchesService;
@@ -17,6 +18,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
+@Repository
 public class MatchesServiceImpl implements MatchesService {
 
     private static final Logger LOGGER = Logger.getLogger(MatchesServiceImpl.class.getName());
@@ -33,9 +35,13 @@ public class MatchesServiceImpl implements MatchesService {
      */
     private BerkeleyMD5DBService berkeleyMD5Service;
 
-    public MatchesServiceImpl() {
+    private String interproscanVersion;
 
+    public MatchesServiceImpl(String interproscanVersion) {
+        Assert.notNull(interproscanVersion, "Interproscan version cannot be null");
+        this.interproscanVersion = interproscanVersion;
     }
+
 
     @Autowired
     public void setBerkeleyMatchDBService(BerkeleyMatchDBService berkeleyMatchDBService) {
@@ -97,6 +103,16 @@ public class MatchesServiceImpl implements MatchesService {
             }
         }
         return md5ToCalculate;
+    }
+
+    /**
+     * Web service request for the interproscan version on which the
+     * lookup service is based. Necessary for the client to check if
+     * it is in synch.
+     * @return
+     */
+    public String getServerVersion() {
+        return interproscanVersion;
     }
 
     /**

@@ -28,15 +28,25 @@ public class BerkeleyMatchDBService extends AbstractDBService {
 
     private SecondaryIndex<String, Long, BerkeleyMatch> secIDX = null;
 
+    private int cacheSizeInBytes;
+
     Environment myEnv = null;
     EntityStore store = null;
 
-    public BerkeleyMatchDBService(String databasePath) {
+    public BerkeleyMatchDBService(String databasePath, int cacheSizeInMegabytes) {
         Assert.notNull(databasePath, "The databasePath bean cannot be null.");
+        this.cacheSizeInBytes = cacheSizeInMegabytes * 1024 * 1024;
         this.databasePath = setPath(databasePath);
         System.out.println("Initializing BerkeleyDB Match Database (creating indexes): Please wait...");
         initializeMD5Index();
     }
+
+
+    public BerkeleyMatchDBService(String databasePath) {
+        // default cache memory set to  100 Mb to avoid using too much memory
+        this(databasePath, 100);
+    }
+
 
     /**
      * Clean up resources when this Service is finished with.
@@ -57,6 +67,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         EnvironmentConfig myEnvConfig = new EnvironmentConfig();
         StoreConfig storeConfig = new StoreConfig();
 
+        myEnvConfig.setCacheSize(cacheSizeInBytes);
         myEnvConfig.setReadOnly(true);
         myEnvConfig.setAllowCreate(false);
         myEnvConfig.setLocking(false);

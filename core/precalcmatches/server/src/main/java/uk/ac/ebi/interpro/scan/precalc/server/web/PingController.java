@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.server.web;
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,9 +17,11 @@ import java.io.PrintWriter;
 @Controller
 public class PingController {
 
+
     @RequestMapping("/ping")
     public void ping(HttpServletResponse resp) throws IOException {
-        final PrintWriter writer = resp.getWriter();
+        PrintWriter writer = resp.getWriter();
         writer.println("ok");
+        writer.close();
     }
 }
