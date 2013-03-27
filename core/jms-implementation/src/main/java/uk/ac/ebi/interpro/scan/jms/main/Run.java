@@ -21,6 +21,7 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -103,7 +104,8 @@ public class Run {
         DISABLE_PRECALC("disable-precalc", "dp", false, "Optional.  Disables use of the precalculated match lookup service.  All match calculations will be run locally.", null, false, true),
         HIGH_MEM("highmem", "hm", false, "Optional, switch on the creation of a high memory worker. Please note normal and high mem workers share the same Spring configuration file.", null, false, false),
         TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", "TIER", false, false),
-        CLUSTER_RUN_ID("clusterrunid", "crid", false, "Optional, switch to specify the Project name for this i5 run.", "CLUSTER-RUN-ID", false, false);
+        CLUSTER_RUN_ID("clusterrunid", "crid", false, "Optional, switch to specify the Project name for this i5 run.", "CLUSTER-RUN-ID", false, false),
+        USER_DIR("user_dir", "u", false, "The base directory for results (if absolute paths not specified)", "USER_DIRECTORY", false, false);
 
         private String longOpt;
 
@@ -299,7 +301,7 @@ public class Run {
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
                 //Info about active and de-active jobs is shown in the manual instruction (help) as well
-                if (args.length == 0) {
+                if (isInvalid(parsedCommandLine)) {
                     printHelp();
                     System.out.println("Available analyses:");    // LEAVE as System.out
                     for (Job job : jobs.getAnalysisJobs().getJobList()) {
@@ -454,7 +456,12 @@ public class Run {
             }
             //process tmp dir parameter capital T
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
-                master.setTemporaryDirectory(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()));
+                String temporaryDirectory = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt());
+                if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
+                    temporaryDirectory = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
+                                         File.separator + temporaryDirectory;
+                }
+                master.setTemporaryDirectory(temporaryDirectory);
             }
 
             checkIfBlackBoxMasterAndConfigure(master, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
@@ -474,10 +481,20 @@ public class Run {
 
             BlackBoxMaster bbMaster = (BlackBoxMaster) master;
             if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
-                bbMaster.setFastaFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()));
+                String fastaFilePath = parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt());
+                if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+                    fastaFilePath = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
+                                    File.separator + fastaFilePath;
+                }
+                bbMaster.setFastaFilePath(fastaFilePath);
             }
             if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
-                bbMaster.setOutputBaseFilename(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()));
+                String outputBaseFileName = I5Option.BASE_OUT_FILENAME.getLongOpt();
+                if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
+                    outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
+                                         File.separator + outputBaseFileName;
+                }
+                bbMaster.setOutputBaseFilename(outputBaseFileName);
                 haveSetBaseOutputFileName = true;
             }
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
@@ -490,7 +507,12 @@ public class Run {
                     System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
                     System.exit(3);
                 }
-                bbMaster.setExplicitOutputFilename(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()));
+                String explicitOutputFilename = parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt());
+                if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
+                    explicitOutputFilename = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
+                                             File.separator + explicitOutputFilename;
+                }
+                bbMaster.setExplicitOutputFilename(explicitOutputFilename);
             }
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
                 bbMaster.setOutputFormats(parsedOutputFormats);
@@ -889,5 +911,19 @@ public class Run {
                 }
             }
         }
+    }
+
+    private static boolean isInvalid(CommandLine commandline) {
+        Option[] options = commandline.getOptions();
+
+        if  (options.length == 0) {
+            return true;
+        } else if (options.length == 1) {
+            if (options[0].getLongOpt() == I5Option.USER_DIR.getLongOpt()) {
+                return true;
+            }
+
+        }
+        return false;
     }
 }
