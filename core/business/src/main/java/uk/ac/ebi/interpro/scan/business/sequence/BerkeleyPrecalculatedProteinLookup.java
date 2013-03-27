@@ -2,11 +2,15 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyToI5ModelDAO;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -33,7 +37,19 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     private BerkeleyToI5ModelDAO berkeleyToI5DAO;
 
+    private String interproscanVersion;
+
+
+
     public BerkeleyPrecalculatedProteinLookup() {
+
+
+    }
+
+    @Required
+    public void setInterproscanVersion(String interproscanVersion) {
+        Assert.notNull(interproscanVersion, "Interproscan version cannot be null");
+        this.interproscanVersion = interproscanVersion;
     }
 
     @Required
@@ -68,9 +84,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             return null;
         }
 
-        // First, check if the MD5 needs to be reanalyzed
+        // Check if the MD5 needs to be reanalyzed
 
         try {
+            // First, check if the lookup client and server are in synch
+            checkLookupSynchronisation();
             final String upperMD5 = protein.getMd5().toUpperCase();
 
             if (!preCalcMatchClient.getMD5sOfProteinsAlreadyAnalysed(upperMD5).contains(upperMD5)) {
@@ -94,7 +112,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             return protein;
         } catch (Exception e) {
-            displayMatchServiceError();
+            displayLookupError(e);
             return null;
         }
 
@@ -108,7 +126,9 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         }
 
         try {
-            // First, check if the MD5s have been precalculated
+            // First, check if the lookup client and server are in synch
+            checkLookupSynchronisation();
+            // Then, check if the MD5s have been precalculated
             String[] md5s = new String[proteins.size()];
             // Map for looking up proteins by MD5 efficiently.
             final Map<String, Protein> md5ToProteinMap = new HashMap<String, Protein>(proteins.size());
@@ -148,9 +168,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (berkeleyMatchXML != null) {
                 berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobNames);
             }
+
             return precalculatedProteins;
+
         } catch (Exception e) {
-            displayMatchServiceError();
+            displayLookupError(e);
             return null;
         }
 
@@ -165,22 +187,63 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         return preCalcMatchClient.isConfigured();
     }
 
-    private void displayMatchServiceError() {
+    /**
+     *   Check that the client and the server are based on the same version of interproscan
+     *   ie all member database versions are in synch
+     *   If not then display error message and exit
+     */
+    public void checkLookupSynchronisation() throws IOException {
+
+        String serverVersion = preCalcMatchClient.getServerVersion();
+
+         if (!interproscanVersion.equals(serverVersion)) {
+                displayLookupSynchronisationErrorAndExit(interproscanVersion, serverVersion);
+                System.exit(123);
+            }
+
+    }
+
+    private void displayLookupError(Exception e) {
         /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
         LOGGER.warn("\n\n" +
+                "The following problem was encountered by the pre-calculated match lookup service:\n" +
+                 e.getMessage() + "\n" +
                 "Pre-calculated match lookup service failed - analysis proceeding to run locally\n" +
                 "============================================================\n\n" +
                 "The pre-calculated match lookup service has been configured\n" +
                 "in the interproscan.properties file. Unfortunately the web\n" +
                 "service has failed. Check the configuration of this service\n" +
                 "in the interproscan.properties file and, if nessary, set the\n" +
-                "appropriate property to look like this:\n\n" +
+                "following property to look like this:\n\n" +
                 "precalculated.match.lookup.service.url=\n\n" +
-                "The analysis will then continue without using the lookup service.\n\n" +
                 "If the problem persists, check if this is a firewall or proxy issue.\n" +
+                "If it is a proxy issue, then setting the following property in the " +
+                "interproscan.properties file should work:\n\n" +
+                "precalculated.match.lookup.service.proxy.host=\n" +
+                "precalculated.match.lookup.service.proxy.port=\n\n" +
                 "If this still does not work please inform the InterPro team of this error\n" +
                 "by sending an email to:\n\ninterhelp@ebi.ac.uk\n\n" +
                 "In the meantime, the analysis will continue to run locally.\n\n");
+
+    }
+
+    private void displayLookupSynchronisationErrorAndExit(String clientVersion, String serverVersion) {
+
+        LOGGER.warn(
+                "The version of InterProScan you are using is " + clientVersion + "\n" +
+                "The version of the lookup service you are using is " + serverVersion + "\n" +
+                "As the data in these versions is not the same, you cannot use this match lookup service.\n" +
+                "You have the following options:\n" +
+                "i) Download the newest version of InterProScan5 from our FTP site\n" +
+                "    ftp://ftp.ebi.ac.uk/pub/databases/interpro/\n" +
+                "ii) Restart the search and disable the lookup by using the flag -dp on the command-line or by\n" +
+                "commenting out the in your configuration file starting\n" +
+                "    \"precalculated.match.lookup.service.url=\"\n" +
+                "Note that this will mean that you will run all of the analyses provided in\n" +
+                "InterProScan on all your sequences locally.\n" +
+                "iii) Download the match lookup service for your version of InterProScan and install it locally.  You\n" +
+                "will then need to edit the service URL in your configuration file to point to your local installation"
+        );
 
     }
 }

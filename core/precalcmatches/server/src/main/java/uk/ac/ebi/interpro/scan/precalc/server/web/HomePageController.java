@@ -28,5 +28,6 @@ public class HomePageController {
         writer.write("<p>Please note that this is a REST web service that has been designed specifically for use");
         writer.write(" by InterProScan 5 installations.</p>\n");
         writer.write("</body>\n</html>\n");
+        writer.close();
     }
 }

@@ -7,6 +7,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -50,6 +51,10 @@ public class MatchHttpClient {
     public static final String MATCH_SERVICE_PATH = "/matches";
 
     public static final String PROTEINS_TO_ANALYSE_SERVICE_PATH = "/isPrecalculated";
+
+    public static final String VERSION_PATH = "/version";
+
+    public static final String SERVER_VERSION_PREFIX = "SERVER:";
 
     public MatchHttpClient(Jaxb2Marshaller unmarshaller) {
         this.unmarshaller = unmarshaller;
@@ -145,7 +150,6 @@ public class MatchHttpClient {
         if (url == null || url.isEmpty()) {
             throw new IllegalStateException("The url must be set for the MatchHttpClient.getMD5sOfProteinsAlreadyAnalysed method to function");
         }
-
         HttpClient httpclient = new DefaultHttpClient();
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String md5 : md5s) {
@@ -197,6 +201,67 @@ public class MatchHttpClient {
         List<String> response = httpclient.execute(post, handler);
         httpclient.getConnectionManager().shutdown();
         return response;
+    }
+
+    public String getServerVersion() throws IOException {
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Call to MatchHttpClient.getServerVersion:");
+            }
+
+            if (url == null || url.isEmpty()) {
+                throw new IllegalStateException("The url must be set for the MatchHttpClient.getServerVersion method to function");
+            }
+            HttpClient httpclient = new DefaultHttpClient();
+
+            // Use HttpGet as the URL will be very short
+            HttpGet get = new HttpGet(url + VERSION_PATH);
+
+
+            ResponseHandler<String> handler = new ResponseHandler<String>() {
+                public String handleResponse(
+                        HttpResponse response) throws IOException {
+                    String serverVersion = "";
+                    HttpEntity responseEntity = response.getEntity();
+                    if (responseEntity != null) {
+
+                        // Stream in the response
+                        BufferedReader reader = null;
+                        try {
+                            reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
+                            String line;
+                            line = reader.readLine().trim();
+                            if (!line.isEmpty()) {
+                                    serverVersion  = line;
+                            }
+
+                        } finally {
+                            if (reader != null) {
+                                reader.close();
+                            }
+                        }
+
+                        if (serverVersion.startsWith(SERVER_VERSION_PREFIX)) {
+                            serverVersion = serverVersion.replace(SERVER_VERSION_PREFIX, "");
+                        }  else {
+                            throw new IOException("Could not determine server version");
+                        }
+                }
+                    return serverVersion;
+            }
+            };
+
+        //set the proxy if needed
+        if(isProxyEnabled()){
+            LOG.debug("Using a Proxy server in getServerVersion: " + proxyHost+":"+proxyPort);
+            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+        }
+
+        String serverVersion = httpclient.execute(get, handler);
+        httpclient.getConnectionManager().shutdown();
+        return serverVersion;
+
     }
 
     /**

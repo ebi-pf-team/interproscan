@@ -78,23 +78,23 @@ public class RunGetOrfStep extends RunBinaryStep {
             setMinSize(minSizeCommandLine);
         }
         final String fastaFile = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePath);
-        final List<String> command = new ArrayList<String>();
-        command.add(fullPathToBinary);
-        command.add("-sequence");
-        command.add(nucleicAcidSeqFilePath);
-        command.add("-outseq");
-        command.add(fastaFile);
-        if (this.minSize != null) {
-            command.add("-minsize");
-            command.add(this.minSize);
+            final List<String> command = new ArrayList<String>();
+            command.add(fullPathToBinary);
+            command.add("-sequence");
+            command.add(nucleicAcidSeqFilePath);
+            command.add("-outseq");
+            command.add(fastaFile);
+            if (this.minSize != null) {
+                command.add("-minsize");
+                command.add(this.minSize);
+            }
+            if (this.maxSize != null) {
+                command.add("-maxsize");
+                command.add(this.maxSize);
+            }
+            // Need to build binary switches.
+            // Need to have default minimum length (100?)
+            command.addAll(getBinarySwitchesAsList());
+            return command;
         }
-        if (this.maxSize != null) {
-            command.add("-maxsize");
-            command.add(this.maxSize);
-        }
-        // Need to build binary switches.
-        // Need to have default minimum length (100?)
-        command.addAll(getBinarySwitchesAsList());
-        return command;
-    }
 }

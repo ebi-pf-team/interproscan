@@ -305,4 +305,6 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         openReadingFrameDAO.insert(orfsAwaitingPersistence);
         openReadingFrameDAO.flush();
     }
+
+
 }
