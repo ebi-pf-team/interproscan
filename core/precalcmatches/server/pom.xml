@@ -62,6 +62,9 @@
         </dependency>
 
     </dependencies>
+    <properties>
+        <i5.version>${project.version}</i5.version>
+    </properties>
 
     <build>
         <resources>

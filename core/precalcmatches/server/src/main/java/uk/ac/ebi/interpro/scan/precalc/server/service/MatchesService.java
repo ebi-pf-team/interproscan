@@ -35,6 +35,7 @@ public interface MatchesService {
      */
     List<String> isPrecalculated(List<String> proteinMD5s);
 
+    String getServerVersion();
     /**
      * Cleanly shuts down the Berkeley DB environment.
      */

@@ -80,6 +80,7 @@ public class ShutdownController {
                     "<body><p>BerkeleyDB <b>NOT</b> shut down.  You must shut down directly <b>from the server running this " +
                     "service</b>, using wget or curl.</p></body></html>");
         }
+        writer.close();
     }
 
 }
