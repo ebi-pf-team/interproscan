@@ -12,6 +12,6 @@ public class Main {
     public static void main(String[] args) {
         final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("spring/htmlWriter-context.xml");
         final BerkeleyDBCreator creator = (BerkeleyDBCreator) ctx.getBean("dbCreator");
-        creator.run(new String[]{"output", "jdbc:oracle:thin:@cobra.ebi.ac.uk:1531:IPPRO", "interpro", "olymp"});
+        creator.run(new String[]{"output", "jdbc:oracle:thin:@cobra.ebi.ac.uk:1531:IPPRO", "username", "password"});
     }
 }
