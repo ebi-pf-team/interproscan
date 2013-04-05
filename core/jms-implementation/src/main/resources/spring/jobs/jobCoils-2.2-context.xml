@@ -11,6 +11,7 @@
         <property name="description" value="Prediction of Coiled Coil Regions in Proteins"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseCoils-2.2"/>
+        <property name="doRunLocally" value="true"/>
     </bean>
 
     <bean id="abstractCoilsStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">

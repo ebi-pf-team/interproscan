@@ -38,6 +38,8 @@
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="workerManagerTopic" ref="workerManagerTopic"/>
+        <property name="normalWorkerJobRequestQueue" ref="jobRequestQueue"/>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
