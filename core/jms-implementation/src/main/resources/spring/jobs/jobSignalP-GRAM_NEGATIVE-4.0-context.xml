@@ -17,6 +17,7 @@
                 <entry key="binary.signalp.4.0.path" value-ref="fullPathToSignalPBinary"/>
             </map>
         </property>
+        <property name="doRunLocally" value="true"/>
     </bean>
 
     <bean id="fullPathToSignalPBinary" class="java.lang.String">

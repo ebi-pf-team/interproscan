@@ -121,6 +121,36 @@ public class StepCreationSequenceLoadListener
                 addDependenciesAndStore(stepToStepInstances);
             }
 
+            //TODO: Quick fix solution, which allows to run analysis locally for analysis which aren't integrated in the lookup service or are licensed
+            //At the moment these are SignalP, TMHMM, Coils and  Phobius
+            if (bottomPrecalculatedSequenceId != null && topPrecalculatedSequenceId != null) {
+                // Instantiate the StepInstances - no dependencies yet.
+                for (Job job : jobs.getJobList()) {
+                    //Only create new step instances for analysis which aren't integrated in the lookup service
+                    //These jobs are flagged with 'doRunLocally'=TRUE
+                    if (job.isDoRunLocally()) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Job for which StepInstances are being created: " + job.getId());
+                        }
+                        for (Step step : job.getSteps()) {
+                            if (step.isCreateStepInstancesForNewProteins()) {
+                                if (LOGGER.isDebugEnabled()) {
+                                    LOGGER.debug("Creating StepInstance for step " + step.getId() + " protein range " + bottomPrecalculatedSequenceId + " - " + topPrecalculatedSequenceId);
+                                }
+                                final List<StepInstance> jobStepInstances = createStepInstances(step, bottomPrecalculatedSequenceId, topPrecalculatedSequenceId);
+                                stepToStepInstances.put(step, jobStepInstances);
+                                for (StepInstance jobStepInstance : jobStepInstances) {
+                                    for (StepInstance completionStepInstance : completionStepInstances) {
+                                        completionStepInstance.addDependentStepInstance(jobStepInstance);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                addDependenciesAndStore(stepToStepInstances);
+            }
+
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Storing Completion StepInstances");
             }
