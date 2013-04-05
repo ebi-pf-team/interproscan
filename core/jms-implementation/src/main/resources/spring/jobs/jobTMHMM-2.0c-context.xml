@@ -29,6 +29,7 @@
                 <entry key="tmhmm.model.path" value-ref="pathToModelFileId"/>
             </map>
         </property>
+        <property name="doRunLocally" value="true"/>
     </bean>
 
     <bean id="abstractTMHMMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">

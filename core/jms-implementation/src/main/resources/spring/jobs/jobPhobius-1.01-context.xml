@@ -22,6 +22,7 @@
                 <entry key="binary.phobius.pl.path.1.01" value-ref="pathToPhobiusPerlScript"/>
             </map>
         </property>
+        <property name="doRunLocally" value="true"/>
     </bean>
 
     <bean id="abstractPhobiusStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">

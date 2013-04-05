@@ -43,6 +43,17 @@ public class Job implements Serializable, BeanNameAware {
     private List<String> nonEmptyPaths;
 
     /**
+     * This boolean flag is only important if a job is of type analysis
+     * <p/>
+     * This flag is important for analysis which aren't integrated in the lookup service and makes sure they will run locally
+     * <p/>
+     * If set to TRUE it will perform the analysis locally instead of using on the lookup service results
+     * <p/>
+     * Used in the StepCreationSequenceLoadListener to create step instances for such jobs
+     */
+    private boolean doRunLocally = false;
+
+    /**
      * List of steps.  this is transient so they don't all get shoved
      * over the wire when each StepExecution is run.
      */
@@ -125,5 +136,13 @@ public class Job implements Serializable, BeanNameAware {
         sb.append(", steps=").append(steps);
         sb.append('}');
         return sb.toString();
+    }
+
+    public boolean isDoRunLocally() {
+        return doRunLocally;
+    }
+
+    public void setDoRunLocally(boolean doRunLocally) {
+        this.doRunLocally = doRunLocally;
     }
 }
