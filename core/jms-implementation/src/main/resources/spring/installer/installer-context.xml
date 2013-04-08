@@ -60,8 +60,8 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="HAMAP"/>
-                    <property name="releaseVersionNumber" value="201207.04"/>
-                    <property name="modelFiles" value="file:${hamap.profile.models.path.201207.04}"/>
+                    <property name="releaseVersionNumber" value="201302.26"/>
+                    <property name="modelFiles" value="file:${hamap.profile.models.path.201302.26}"/>
                     <property name="prositeModelType" value="ALL"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobHAMAP-201207.04"/>
@@ -114,8 +114,8 @@
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="TIGRFAM"/>
-                    <property name="releaseVersionNumber" value="12.0"/>
-                    <property name="modelFiles" value="file:${tigrfam.hmm.path.12.0}"/>
+                    <property name="releaseVersionNumber" value="13.0"/>
+                    <property name="modelFiles" value="file:${tigrfam.hmm.path.13.0}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobTIGRFAM-12.0"/>
                 </bean>
