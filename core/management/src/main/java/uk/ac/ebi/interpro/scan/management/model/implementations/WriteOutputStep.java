@@ -416,20 +416,13 @@ public class WriteOutputStep extends Step {
         writer.setMapToInterProEntries(mapToInterProEntries);
         writer.setMapToGo(mapToGO);
         writer.setMapToPathway(mapToPathway);
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Writing output:" + writer.getClass().getCanonicalName());
-        }
-        int locationCount = 0;
         if (proteins != null) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Loaded " + proteins.size() + " proteins...");
+                LOGGER.info("Loaded " + proteins.size() + " proteins.");
             }
             for (Protein protein : proteins) {
-                locationCount += writer.write(protein);
+                writer.write(protein);
             }
-        }
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Written out " + locationCount + " locations (should equal rows in TSV).");
         }
     }
 }
