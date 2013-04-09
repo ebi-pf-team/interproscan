@@ -15,8 +15,11 @@ import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Session;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -53,6 +56,8 @@ public class WorkerImpl implements Worker {
 
 
     private StatsUtil statsUtil;
+
+    private WorkerTransportListener workerTransportListener;
 
     private Destination statsQueue;
     /* Local job request queue */
@@ -94,6 +99,8 @@ public class WorkerImpl implements Worker {
     private String projectId;
 
     private int tier = 1;
+
+    private int maxTierDepth = 1;
 
     private boolean stopRemoteQueueJmsContainer = false;
 
@@ -145,6 +152,14 @@ public class WorkerImpl implements Worker {
             ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setTier(workerTier);
         }
         statsUtil.setTier(tier);
+    }
+
+    /**
+     * set the maximum tier dept for the network
+     * @param maxTierDepth
+     */
+    public void setMaxTierDepth(int maxTierDepth) {
+        this.maxTierDepth = maxTierDepth;
     }
 
     @Required
@@ -404,10 +419,17 @@ public class WorkerImpl implements Worker {
                 statsUtil.pollStatsBrokerJobQueue();
                 LOGGER.debug("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
 
+
                 //check/manage remoteQueueListenerContainer
                 if(gridThrottle){
                     manageRemoteQueueListenerContainer();
+                }else{
+                    //set the values for the statsUtil
+                    updateStatsUtilJobCounts();
                 }
+                //progress Report
+                statsUtil.displayWorkerProgress();
+
                 //create worker is necessary
                 if(canSpawnWorkers()){
                     if (isNewWorkersRequired()) {
@@ -432,14 +454,20 @@ public class WorkerImpl implements Worker {
             LOGGER.debug("Worker Run(): in Shutdown mode.");
             //dont exit until the workers have completed all the tasks and the responseMonitor has completed sending response messages to the master
             while (workersHaveRunningJobs() || responseQueueListenerBusy) {
+                //progress Report
+                statsUtil.displayWorkerProgress();
                 Thread.sleep(waitingTime);
             }
             //send shutdown message
-            managerTopicMessageListener.getWorkerMessageSender().sendShutDownMessage();
+            try {
+                managerTopicMessageListener.getWorkerMessageSender().sendShutDownMessage();
+            } catch (JMSException e){
+                LOGGER.warn("JMSException thrown. Unable to connect to remote workers", e);
+            }
             //sleep for 4 seconds and then exit
             Thread.sleep(10*1000);
             LOGGER.info("Worker Run(): completed tasks. Shutdown message sent. Stopping now.");
-            LOGGER.info("Worker Tier: " + tier + " Workers Spawned: " + getNumberOfWorkersSpawned() + " TotalJobCount: " + totalJobCount);
+            System.out.println("tier: " + tier + " workers spawned: " + getNumberOfWorkersSpawned() + " TotalJobCount: " + totalJobCount);
         } catch (InterruptedException e) {
             LOGGER.error("InterruptedException thrown by Worker.  Stopping now.", e);
         }
@@ -480,7 +508,14 @@ public class WorkerImpl implements Worker {
      * @return
      */
     public boolean canSpawnWorkers(){
+
         boolean canSpawnWorker = false;
+        if(((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).getGridName().equals("sge")){
+            return false;
+        }
+        if(tier == maxTierDepth){
+            return false;
+        }
         switch (tier) {
             case 1:
                 canSpawnWorker = true;
@@ -517,8 +552,7 @@ public class WorkerImpl implements Worker {
         }
         int requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
         //set the values for the statsUtil
-        statsUtil.setUnfinishedJobs(requestEnqueueCount - responseDequeueCount);
-        statsUtil.setTotalJobs(Long.valueOf(requestEnqueueCount));
+        updateStatsUtilJobCounts();
 
         int unfinishedJobs = requestEnqueueCount - responseDequeueCount;
         LOGGER.debug("manageRemoteQueueListenerContainer - unfinishedJobs : " + unfinishedJobs);
@@ -567,6 +601,10 @@ public class WorkerImpl implements Worker {
         }
     }
 
+    public void updateStatsUtilJobCounts(){
+        statsUtil.setUnfinishedJobs(statsUtil.getStatsMessageListener().getEnqueueCount() - statsUtil.getStatsMessageListener().getDequeueCount());
+        statsUtil.setTotalJobs(Long.valueOf(statsUtil.getStatsMessageListener().getEnqueueCount()));
+    }
     /**
      *   check if child workers have running jobs
      *
@@ -710,6 +748,7 @@ public class WorkerImpl implements Worker {
         }
     }
 
+
     /**
      * sets the masterUri  and configures the remote connection on this worker
      * - also sets the configuration for the master worker
@@ -742,8 +781,10 @@ public class WorkerImpl implements Worker {
 
         activeMQConnectionFactory.setRedeliveryPolicy(queuePolicy);
 
+        activeMQConnectionFactory.setTransportListener(workerTransportListener);
         final CachingConnectionFactory connectionFactory = new CachingConnectionFactory(activeMQConnectionFactory);
         connectionFactory.setSessionCacheSize(100);
+
         remoteQueueJmsContainer.setConnectionFactory(connectionFactory);
         managerTopicMessageListenerJmsContainer.setConnectionFactory(connectionFactory);
 
@@ -776,6 +817,16 @@ public class WorkerImpl implements Worker {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("MessageListenerContainer started, connected to: " + masterUri);
         }
+    }
+
+
+    /**
+     *
+     * @return
+     */
+    public void handleLostCopnnections(){
+
+
     }
 
     public String whoAmI(){
