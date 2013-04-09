@@ -70,7 +70,7 @@ public class WorkerMessageSenderImpl implements WorkerMessageSender {
     /**
      * Sends shut down message to connected workers.
      */
-    public void sendShutDownMessage() {
+    public void sendShutDownMessage() throws JMSException{
         LOGGER.debug("Sending a shutdown message to the workerManagerTopicQueue ");
         jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
