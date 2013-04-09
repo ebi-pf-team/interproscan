@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
@@ -23,6 +24,10 @@ public class ManagerTopicMessageListener implements MessageListener {
 
     private WorkerMessageSender workerMessageSender;
 
+    private int connectionLossCount = 0;
+
+    private Long previousExceptionTime;
+
     @Required
     public void setWorkerMessageSender(WorkerMessageSender workerMessageSender) {
         this.workerMessageSender = workerMessageSender;
@@ -40,6 +45,10 @@ public class ManagerTopicMessageListener implements MessageListener {
         this.shutdown = shutdown;
     }
 
+    public void setConnectionLossCount(int connectionLossCount) {
+        this.connectionLossCount = connectionLossCount;
+    }
+
     @Override
     public void onMessage(final Message message) {
         LOGGER.debug("Worker: Received shut down command from the master.");
@@ -47,7 +56,19 @@ public class ManagerTopicMessageListener implements MessageListener {
         setShutdown(true);
         //send message
         LOGGER.debug("Worker: received shutdown message.  Send message to child workers.");
-        workerMessageSender.sendShutDownMessage();
+        try{
+            workerMessageSender.sendShutDownMessage();
+
+        }catch (JMSException e) {
+            Long now = System.currentTimeMillis();
+            if (connectionLossCount == 0){
+                LOGGER.error("JMSException thrown in TopicMessageListener. ", e);
+            }
+            connectionLossCount++;
+            Long getConnectionLossTime;
+        }catch (Exception e) {
+            LOGGER.error("Exception thrown in TopicMessageListener.", e);
+        }
 //        localJmsTemplate.send(workerManagerTopic, new MessageCreator() {
 //            public Message createMessage(Session session) throws JMSException {
 //                return session.createObjectMessage();

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransaction;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
@@ -72,6 +73,10 @@ public class LocalJobQueueListener implements MessageListener {
     public void onMessage(final Message message) {
         jobCount.incrementAndGet();
         int localCount = jobCount.get();
+        if(localCount == 1){
+            String timeNow = Utilities.getTimeNow();
+            System.out.println(timeNow + "Processing JobCount #: " + localCount);
+        }
         LOGGER.debug("Processing JobCount #: " + localCount);
         final String messageId;
 
