@@ -105,7 +105,7 @@ public class Run {
         HIGH_MEM("highmem", "hm", false, "Optional, switch on the creation of a high memory worker. Please note normal and high mem workers share the same Spring configuration file.", null, false, false),
         TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", "TIER", false, false),
         CLUSTER_RUN_ID("clusterrunid", "crid", false, "Optional, switch to specify the Project name for this i5 run.", "CLUSTER-RUN-ID", false, false),
-        USER_DIR("user_dir", "u", false, "The base directory for results (if absolute paths not specified)", "USER_DIRECTORY", false, false);
+        USER_DIR("user_dir", "u", true, "The base directory for results (if absolute paths not specified)", "USER_DIRECTORY", false, false);
 
         private String longOpt;
 
@@ -454,13 +454,9 @@ public class Run {
             if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                 master.setAnalyses(parsedAnalyses);
             }
-            //process tmp dir parameter capital T
+            //process tmp dir (-T) option
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
-                String temporaryDirectory = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt());
-                if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
-                    temporaryDirectory = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
-                                         File.separator + temporaryDirectory;
-                }
+                String temporaryDirectory = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()), parsedCommandLine);
                 master.setTemporaryDirectory(temporaryDirectory);
             }
 
@@ -481,25 +477,22 @@ public class Run {
 
             BlackBoxMaster bbMaster = (BlackBoxMaster) master;
             if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
-                String fastaFilePath = parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt());
-                if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
-                    fastaFilePath = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
-                                    File.separator + fastaFilePath;
-                }
+                String fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
                 bbMaster.setFastaFilePath(fastaFilePath);
             }
             if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
-                String outputBaseFileName = I5Option.BASE_OUT_FILENAME.getLongOpt();
-                if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
-                    outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
-                                         File.separator + outputBaseFileName;
+                //As this option and the (-o) option are mutually exclusive with have to check that state
+                if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+                    System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
+                    System.exit(3);
                 }
+                String outputBaseFileName = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()), parsedCommandLine);
                 bbMaster.setOutputBaseFilename(outputBaseFileName);
                 haveSetBaseOutputFileName = true;
             }
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
-                if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0])) {
-                    System.out.println("\n\nYou must indicate a single output format excluding HTML, using the -f option if you wish to set an explicit output file name.");
+                if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0]) || "svg".equalsIgnoreCase(parsedOutputFormats[0])) {
+                    System.out.println("\n\nYou must indicate a single output format excluding HTML and SVG using the -f option if you wish to set an explicit output file name.");
                     System.exit(2);
                 }
 
@@ -507,11 +500,7 @@ public class Run {
                     System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
                     System.exit(3);
                 }
-                String explicitOutputFilename = parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt());
-                if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
-                    explicitOutputFilename = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
-                                             File.separator + explicitOutputFilename;
-                }
+                String explicitOutputFilename = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()), parsedCommandLine);
                 bbMaster.setExplicitOutputFilename(explicitOutputFilename);
             }
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
@@ -568,6 +557,26 @@ public class Run {
             final boolean mapToPathway = parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt());
             bbMaster.setMapToPathway(mapToPathway);
             bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
+        }
+    }
+
+    /**
+     * Transforms relative file paths to absolutes using the value of the USER_DIR option (which is mandatory).
+     *
+     * @param filePath
+     * @param parsedCommandLine
+     * @return
+     */
+    private static String getAbsoluteFilePath(final String filePath, final CommandLine parsedCommandLine) {
+        if (new File(filePath).isAbsolute()) {
+            return filePath;
+        } else {
+            if (!parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
+                throw new IllegalStateException("User directory option (-u) has to be present as it is mandatory, but it isn't.");
+            } else {
+                return parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()) +
+                        File.separator + filePath;
+            }
         }
     }
 
@@ -916,7 +925,7 @@ public class Run {
     private static boolean isInvalid(CommandLine commandline) {
         Option[] options = commandline.getOptions();
 
-        if  (options.length == 0) {
+        if (options.length == 0) {
             return true;
         } else if (options.length == 1) {
             if (options[0].getLongOpt() == I5Option.USER_DIR.getLongOpt()) {
