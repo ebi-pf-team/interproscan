@@ -1,5 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 /**
  * Created with IntelliJ IDEA.
  * User: nuka
@@ -18,4 +21,15 @@ public class Utilities {
         return sb.toString();
     }
 
+
+    /**
+     * display time now
+     * @return
+     */
+    public static String getTimeNow(){
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS");
+        String currentDate = sdf.format(cal.getTime());
+        return currentDate;
+    }
 }
