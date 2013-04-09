@@ -86,6 +86,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.gridName = gridName;
     }
 
+    public String getGridName() {
+        return gridName;
+    }
+
     @Required
     public void setHighMemory(boolean highMemory) {
         this.highMemory = highMemory;
