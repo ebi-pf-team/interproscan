@@ -29,7 +29,7 @@ public interface WorkerMessageSender {
     /**
      * send a shutdown message to the other worker nodes
      */
-    void sendShutDownMessage();
+    void sendShutDownMessage() throws JMSException;
 
     /**
      * set the remote JMS template

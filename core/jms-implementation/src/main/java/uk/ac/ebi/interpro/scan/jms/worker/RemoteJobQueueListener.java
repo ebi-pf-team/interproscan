@@ -91,6 +91,8 @@ public class RemoteJobQueueListener implements MessageListener {
         } catch (JMSException e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
             e.printStackTrace();
+        }  catch (Exception e) {
+            LOGGER.debug("Message problem: Failed to access message - "+e.toString());
         }
         //check the size of the queue
         if(gridThrottle){
