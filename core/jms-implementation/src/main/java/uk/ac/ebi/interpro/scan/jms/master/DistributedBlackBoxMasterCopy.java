@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
@@ -32,6 +33,8 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
     private StatsUtil statsUtil;
 
     private int maxMessagesOnQueuePerConsumer = 4;
+
+    private int maxConsumers;
 
     /**
      * completion time target for worker creation by the Master
@@ -135,7 +138,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                 //update the statistics plugin
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                statsUtil.displayProgress();
+                statsUtil.displayMasterProgress();
                 Thread.sleep(50);   //   Thread.sleep(30*1000);
             }
         } catch (JMSException e) {
@@ -177,6 +180,11 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
 
     public String getTcpUri() {
         return tcpUri;
+    }
+
+    @Required
+    public void setMaxConsumers(int maxConsumers) {
+        this.maxConsumers = maxConsumers;
     }
 
     public void setStatsUtil(StatsUtil statsUtil) {
@@ -222,9 +230,9 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                             quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
                         }
                         final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                        if ((statsUtil.getStatsMessageListener().getConsumers() < 30 && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer &&
+                        if ((statsUtil.getStatsMessageListener().getConsumers() < maxConsumers && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer &&
                                 quickSpawnMode) ||
-                                (workerRequired && statsUtil.getStatsMessageListener().getConsumers() < 30)) {
+                                (workerRequired && statsUtil.getStatsMessageListener().getConsumers() < maxConsumers)) {
                             LOGGER.debug("Starting a normal worker.");
                             workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
                         }

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
@@ -14,6 +15,8 @@ import javax.jms.JMSException;
 public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private static final Logger LOGGER = Logger.getLogger(StandaloneBlackBoxMaster.class.getName());
+
+    private StatsUtil statsUtil;
 
     @Override
     public void run() {
@@ -58,6 +61,11 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     }
                 }
 
+                //report progress
+                statsUtil.setTotalJobs(stepInstanceDAO.count());
+                statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                statsUtil.displayMasterProgress();
+
                 // Close down (break out of loop) if the analyses are all complete.
                 // The final clause checks that the protein load steps have been created so
                 // i5 doesn't finish prematurely.
@@ -75,5 +83,13 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         }
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
+    }
+
+    /**
+     *
+     * @param statsUtil
+     */
+    public void setStatsUtil(StatsUtil statsUtil) {
+        this.statsUtil = statsUtil;
     }
 }
