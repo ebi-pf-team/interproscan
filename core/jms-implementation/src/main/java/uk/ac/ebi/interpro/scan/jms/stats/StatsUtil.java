@@ -6,6 +6,8 @@ import org.springframework.jms.core.MessageCreator;
 
 import javax.jms.*;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -33,6 +35,8 @@ public class StatsUtil {
 
     private static int unfinishedJobs;
 
+    private int previousUnfinishedJobs = 0;
+
     private static boolean stopRemoteQueueJmsContainer = false;
 
     private AtomicBoolean RemoteQueueContainerStopped = new AtomicBoolean(false);
@@ -40,6 +44,8 @@ public class StatsUtil {
     private static int tier;
 
     private int progressCounter = 0;
+
+    private Long progressReportTime = Long.MAX_VALUE;
 
     public StatsUtil() {
 
@@ -208,24 +214,79 @@ public class StatsUtil {
 
 
     /**
-     *   Display progress report based on the number of jobs left to run
+     *   Display master job progress report based on the number of jobs left to run
      */
-    public void displayProgress(){
-        if(unfinishedJobs > 0 && totalJobs > 5){
-            Long progress = (totalJobs - unfinishedJobs) / totalJobs;
+    public void displayMasterProgress(){
+//        System.out.println("#un:to - " + unfinishedJobs + ":" + totalJobs);
+        if(unfinishedJobs > 0 && totalJobs > 5.0){
+            Double progress = (double)(totalJobs - unfinishedJobs) / (double) totalJobs;
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS");
+            String currentDate = sdf.format(cal.getTime());
+//            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
+            int connectionCount = statsMessageListener.getConsumers();
+            boolean displayProgress = false;
+            double actualProgress = 0d;
             if (progress > 0.25 && progress < 0.5 && progressCounter < 1){
-                System.out.println("Progress: 25% done" + " #:" + totalJobs + ":" + unfinishedJobs);
+                displayProgress = true;
                 progressCounter = 1;
             }else if  (progress > 0.5 && progress < 0.75 && progressCounter < 2){
-                System.out.println("Progress: 50% done" + " #:" + totalJobs + ":" + unfinishedJobs);
+                displayProgress = true;
                 progressCounter = 2;
             }else if  (progress > 0.75 && progress < 0.9 && progressCounter < 3){
-                System.out.println("Progress: 75% done" + " #:" + totalJobs + ":" + unfinishedJobs);
+                displayProgress = true;
                 progressCounter = 3;
             }else if  (progress > 0.9 && progressCounter < 4){
-                System.out.println("Progress: 90% done" + " #:" + totalJobs + ":" + unfinishedJobs);
+                displayProgress = true;
                 progressCounter = 4;
+            }else if  (progress > 0.9 && progressCounter  >= 4){
+                Long now = System.currentTimeMillis();
+                Long timeSinceLastReport = now - progressReportTime;
+                int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
+                if(timeSinceLastReport > 1800000 && changeSinceLastReport > 0){
+                    displayProgress = true;
+                    previousUnfinishedJobs = unfinishedJobs;
+                    progressCounter ++;
+                }
+            }
+            if(displayProgress){
+                progressReportTime = System.currentTimeMillis();
+                actualProgress = progress * 100;
+                System.out.println(currentDate + " " + String.format("%.0f%%",actualProgress) + " of analyses done");
+                String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
+                LOGGER.debug(statsMessageListener.getStats());
             }
         }
     }
+
+
+
+    /**
+     *   Display master job progress report based on the number of jobs left to run
+     */
+    public void displayWorkerProgress(){
+        if(progressCounter ==  0){
+             progressReportTime = System.currentTimeMillis();
+        }
+        Long now = System.currentTimeMillis();
+        Long timeSinceLastReport = now - progressReportTime;
+        float progressPercent = 0;
+        if(totalJobs > 5.0){
+            progressPercent = (totalJobs - unfinishedJobs) * 100 / totalJobs;
+        }
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS");
+        String currentDate = sdf.format(cal.getTime());
+        if(timeSinceLastReport > 1800000){
+            int connectionCount = statsMessageListener.getConsumers();
+            System.out.println(currentDate + " " + String.format("%.0f%%",progressPercent)  + " of analyses done");
+            String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
+            LOGGER.debug(statsMessageListener.getStats());
+            progressReportTime = System.currentTimeMillis();
+        }
+
+        progressCounter ++;
+    }
+
+
 }
