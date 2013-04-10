@@ -584,7 +584,8 @@ public class Run {
     }
 
     /**
-     * Checks if the file path exists. If it doesn't exist InterProScan 5 will exist.
+     * Checks if the specified output directory exists, and that the supplied file path is writable
+     * If either of these tests fails, InterProScan 5 will exit.
      *
      * @param filePath
      * @return
@@ -595,14 +596,15 @@ public class Run {
             parent = filePath;
         }
         File dir = new File(parent);
+        File file = new File(filePath);
         if (!dir.exists()) {
-            System.out.println("For the (-" + option + ") option you specified the following directory which doesn't exist:");
+            System.out.println("For the (-" + option + ") option you specified a directory which doesn't exist:");
             System.out.println(dir);
             System.exit(2);
         }
-        if (!dir.canWrite()) {
-            System.out.println("For the (-" + option + ") option you specified the following directory for which InterProScan 5 doesn't has write permission:");
-            System.out.println(dir);
+        if (!file.canWrite()) {
+            System.out.println("For the (-" + option + ") option you specified a location which cannot be written to:");
+            System.out.println(file);
             System.exit(2);
         }
     }
