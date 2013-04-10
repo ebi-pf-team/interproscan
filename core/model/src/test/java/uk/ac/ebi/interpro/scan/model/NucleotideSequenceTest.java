@@ -65,6 +65,35 @@ public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
         super.testXmlRoundTrip();
     }
 
+    @Test
+    public void testIUPACNucleotideCharacters() {
+        // This sequence contains all IPUAC nucleotide characters, so MUST be accepted as valid
+        String sequence = "cccaaaaaaatgatgcttatacatrttattataaagtctagctcagagcttttgttttcaaty" +
+                          "ttctatggttctcacagagattttctccacaatgaatcttattactgaattcccaaattgggc" +
+                          "agctatagca--ttcgatttcgnntttgaatcaaaagagaagactcggccattgatactcgca" +
+                          "gggaaatgcagagctaacaatccaccgtctagtttctatgaattgcaaaacatgttacaaata" +
+                          "dttttattgaaaacaaaacacagaatccagakctggaaaagacamaagattactagcagaaca" +
+                          "tttacggatggagcagaacatttacggatggagccgtagaaatagtcgtctgtctatcgacag" +
+                          "aaatstaaatacaacagtgattttattgatgagatgcagtctttagtttgcabgacggcaaca" +
+                          "haaagctttuttctttcatcttaataaatagacttaaaaagaatgaaaccaaacatccaactg" +
+                          "tvtaaataaccacttgcacttgcagtcattaatccaatttaagaaaccaaaaatccccaaaaat" +
+                          "taaatagccctctgcaaaggttttcaccaagaagacccagatccagggaaattttctggttttt" +
+                          "ttttcatttcgataaaaattaaacaggcgaattaccgtaatggagcgacgactgccattgcggt" +
+                          "twaagaagaaattatggaatgggcagcaacggaggtaactgttctagaaggaggctcccatctc" +
+                          "tgtagaatcttcagtaatgaggtggcttttcgtttyycgcggtgagtgcctgtcgtgagaagaa" +
+                           "tgtacaaggaagg.accaacgatggaacca.ggtcacggcgttcagaacattgccgcctccgt";
+        NucleotideSequence ns = new NucleotideSequence(sequence);
+
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidNucleotideCharacters() {
+        // Create a sequence with some completely invalid characters
+        NucleotideSequence ns = new NucleotideSequence("gggazatgcagagctaacaatccaccgtctagtttclatgaattgcaaaacatgttacaaata");
+
+    }
+
     private NucleotideSequence getPfamObject() {
         // Create nucleotide sequence
         NucleotideSequence ns = new NucleotideSequence("CCGGAAGTTATTCACATTTATATGCGGAACCTCATATAAAATGTGAAAAGAAGGAATGCATGGAATGAATATTGGACAAAAAGTACTGTTCGAACTTAAAA");
