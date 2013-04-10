@@ -47,6 +47,7 @@ public class NucleotideSequence implements Serializable {
     // TODO: Refactor code that can be shared with Protein class
 
     @Transient
+    //includes all valid IUPAC characters
     private static final Pattern SEQUENCE_PATTERN = Pattern.compile("^[atcgunryswkmbdhv\\.\\-]+$");
     @Transient
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+", Pattern.MULTILINE);
