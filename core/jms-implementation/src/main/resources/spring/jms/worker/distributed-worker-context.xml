@@ -158,14 +158,20 @@
         <property name="workerManagerTopic" ref="workerManagerTopic"/>
         <property name="responseQueueMessageListener" ref="responseQueueMessageListener"/>
         <property name="managerTopicMessageListener" ref="managerTopicMessageListener"/>
+        
         <property name="gridThrottle" value="${grid.throttle}"/>
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
+        <property name="maxTierDepth" value="${max.tier.depth}"/>
+        <property name="workerTransportListener" ref="workerTransportListener"/>
     </bean>
 
 
     <bean id="portExclusionList" class="java.lang.String">
         <constructor-arg value="${tcp.port.exclusion.list}"/>
     </bean>
+
+    <!-- JMS transport Listener-->
+    <bean id="workerTransportListener" class="uk.ac.ebi.interpro.scan.jms.worker.WorkerTransportListener" />
 
     <!-- LSF Monitor-->
     <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />
