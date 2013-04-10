@@ -457,6 +457,7 @@ public class Run {
             //process tmp dir (-T) option
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
                 String temporaryDirectory = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()), parsedCommandLine);
+                checkDirectoryExistenceAndWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
                 master.setTemporaryDirectory(temporaryDirectory);
             }
 
@@ -487,6 +488,7 @@ public class Run {
                     System.exit(3);
                 }
                 String outputBaseFileName = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()), parsedCommandLine);
+                checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
                 bbMaster.setOutputBaseFilename(outputBaseFileName);
                 haveSetBaseOutputFileName = true;
             }
@@ -501,6 +503,7 @@ public class Run {
                     System.exit(3);
                 }
                 String explicitOutputFilename = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()), parsedCommandLine);
+                checkDirectoryExistenceAndWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
                 bbMaster.setExplicitOutputFilename(explicitOutputFilename);
             }
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
@@ -579,6 +582,31 @@ public class Run {
             }
         }
     }
+
+    /**
+     * Checks if the file path exists. If it doesn't exist InterProScan 5 will exist.
+     *
+     * @param filePath
+     * @return
+     */
+    private static void checkDirectoryExistenceAndWritePermission(final String filePath, final String option) {
+        String parent = new File(filePath).getParent();
+        if (option.equals(I5Option.TEMP_DIRECTORY.getShortOpt())) {
+            parent = filePath;
+        }
+        File dir = new File(parent);
+        if (!dir.exists()) {
+            System.out.println("For the (-" + option + ") option you specified the following directory which doesn't exist:");
+            System.out.println(dir);
+            System.exit(2);
+        }
+        if (!dir.canWrite()) {
+            System.out.println("For the (-" + option + ") option you specified the following directory for which InterProScan 5 doesn't has write permission:");
+            System.out.println(dir);
+            System.exit(2);
+        }
+    }
+
 
     private static void checkIfDistributedWorkerAndConfigure(final Runnable runnable,
                                                              final CommandLine parsedCommandLine,
