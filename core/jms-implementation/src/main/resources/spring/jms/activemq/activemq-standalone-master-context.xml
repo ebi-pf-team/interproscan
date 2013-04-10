@@ -30,6 +30,7 @@
         <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
         <property name="hasInVmWorker" value="true"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
+        <property name="statsUtil" ref="statsUtil"/>
     </bean>
 
     <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.NonZeroExitOnUnrecoverableError"/>
@@ -50,6 +51,30 @@
 
     <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
         <constructor-arg ref="stepExecutionDAO"/>
+    </bean>
+
+
+    <!--Configuration for the statistics listener-->
+    <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="statsQueue"/>
+        <property name="concurrentConsumers" value="1"/>
+        <property name="messageListener" ref="statsMessageListener"/>
+    </bean>
+
+    <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
+
+
+    <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="jobRequestQueue" ref="jobRequestQueue"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="statsQueue" ref="statsQueue"/>
+        <property name="statsMessageListener"  ref="statsMessageListener" />
+        <property name="highMemJobRequestQueue" ref="highMemJobRequestQueue"/>
+        <property name="workerManagerTopicQueue" ref="workerManagerTopic"/>
+        <property name="totalJobs" value="0"/>
+        <property name="unfinishedJobs" value="0"/>
     </bean>
 
 </beans>
