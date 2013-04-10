@@ -4,6 +4,8 @@
 # Edit this script to suit your installation needs.
 #
 
+USER_DIR=$PWD
+
 cd $(dirname "$0")
 
 # set environment variables for getorf
@@ -33,6 +35,6 @@ then
     exit 1
 fi
 
-"$JAVA" -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=localhost:5005,suspend=y -jar -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms512M -Xmx2048M interproscan-5.jar "$@"
+"$JAVA" -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=localhost:5005,suspend=y -jar -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms512M -Xmx2048M interproscan-5.jar "$@" -u $USER_DIR
 
 #end
