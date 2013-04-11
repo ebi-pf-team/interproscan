@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
@@ -162,6 +163,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         }
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
+        System.out.println(Utilities.getTimeNow() + " 100% of analyses done:  InterProScan analyses completed");
         System.exit(0);
     }
 
@@ -262,7 +264,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                     }
 
                     try {
-                        Thread.sleep(1 * 10 * 1000);
+                        Thread.sleep(1 * 20 * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }

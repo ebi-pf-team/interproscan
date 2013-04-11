@@ -13,13 +13,12 @@ import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorker
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Session;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -57,7 +56,7 @@ public class WorkerImpl implements Worker {
 
     private StatsUtil statsUtil;
 
-    private WorkerTransportListener workerTransportListener;
+    private JMSTransportListener JMSTransportListener;
 
     private Destination statsQueue;
     /* Local job request queue */
@@ -323,6 +322,11 @@ public class WorkerImpl implements Worker {
         this.maxUnfinishedJobs = maxUnfinishedJobs;
     }
 
+    @Required
+    public void setJMSTransportListener(JMSTransportListener JMSTransportListener) {
+        this.JMSTransportListener = JMSTransportListener;
+    }
+
     public void jobStarted(String jmsMessageId) {
         synchronized (jobListLock) {
             if (LOGGER.isDebugEnabled()) {
@@ -402,8 +406,8 @@ public class WorkerImpl implements Worker {
      */
     @Override
     public void run() {
-        System.out.println("Running InterProScan worker - run() ...");
-        LOGGER.debug("Running InterProScan worker ... whoAmI: " + whoAmI() + " Throttle is " + gridThrottle + " Tier: " + tier);
+//        System.out.println(Utilities.getTimeNow() + " Running InterProScan worker  ...");
+        LOGGER.debug("Running InterProScan worker run() ... whoAmI: " + whoAmI() + " Throttle is " + gridThrottle + " Tier: " + tier);
         //startStatsMessageListener();
         statsUtil.pollStatsBrokerJobQueue();
 
@@ -467,7 +471,8 @@ public class WorkerImpl implements Worker {
             //sleep for 4 seconds and then exit
             Thread.sleep(10*1000);
             LOGGER.info("Worker Run(): completed tasks. Shutdown message sent. Stopping now.");
-            System.out.println("tier: " + tier + " workers spawned: " + getNumberOfWorkersSpawned() + " TotalJobCount: " + totalJobCount);
+            //t- tier ws:workers spawned
+            System.out.println(Utilities.getTimeNow() + " Worker has completed tasks -  t: " + tier + " ws: " + getNumberOfWorkersSpawned() + " jobcount: " + totalJobCount);
         } catch (InterruptedException e) {
             LOGGER.error("InterruptedException thrown by Worker.  Stopping now.", e);
         }
@@ -510,7 +515,7 @@ public class WorkerImpl implements Worker {
     public boolean canSpawnWorkers(){
 
         boolean canSpawnWorker = false;
-        if(((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).getGridName().equals("sge")){
+        if(!((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).getGridName().equals("lsf")){
             return false;
         }
         if(tier == maxTierDepth){
@@ -575,18 +580,8 @@ public class WorkerImpl implements Worker {
                             startRemoteQueue = true;
                         }
                         break;
-                    case 3:
-                        if(unfinishedJobs < maxUnfinishedJobs / 4){
-                            startRemoteQueue = true;
-                        }
-                        break;
-                    case 4:
-                        if(unfinishedJobs < 16){
-                            startRemoteQueue = true;
-                        }
-                        break;
                     default:
-                        if(unfinishedJobs < 2){
+                        if(unfinishedJobs < maxUnfinishedJobs / (Math.pow(2, tier - 1 ))){
                             startRemoteQueue = true;
                         }
                         break;
@@ -781,7 +776,7 @@ public class WorkerImpl implements Worker {
 
         activeMQConnectionFactory.setRedeliveryPolicy(queuePolicy);
 
-        activeMQConnectionFactory.setTransportListener(workerTransportListener);
+        activeMQConnectionFactory.setTransportListener(JMSTransportListener);
         final CachingConnectionFactory connectionFactory = new CachingConnectionFactory(activeMQConnectionFactory);
         connectionFactory.setSessionCacheSize(100);
 

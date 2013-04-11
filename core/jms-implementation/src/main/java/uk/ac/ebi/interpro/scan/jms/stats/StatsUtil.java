@@ -220,9 +220,6 @@ public class StatsUtil {
 //        System.out.println("#un:to - " + unfinishedJobs + ":" + totalJobs);
         if(unfinishedJobs > 0 && totalJobs > 5.0){
             Double progress = (double)(totalJobs - unfinishedJobs) / (double) totalJobs;
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS");
-            String currentDate = sdf.format(cal.getTime());
 //            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
             int connectionCount = statsMessageListener.getConsumers();
             boolean displayProgress = false;
@@ -252,7 +249,7 @@ public class StatsUtil {
             if(displayProgress){
                 progressReportTime = System.currentTimeMillis();
                 actualProgress = progress * 100;
-                System.out.println(currentDate + " " + String.format("%.0f%%",actualProgress) + " of analyses done");
+                System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",actualProgress) + " completed");
                 String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
                 LOGGER.debug(statsMessageListener.getStats());
             }
@@ -274,15 +271,16 @@ public class StatsUtil {
         if(totalJobs > 5.0){
             progressPercent = (totalJobs - unfinishedJobs) * 100 / totalJobs;
         }
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS");
-        String currentDate = sdf.format(cal.getTime());
         if(timeSinceLastReport > 1800000){
             int connectionCount = statsMessageListener.getConsumers();
-            System.out.println(currentDate + " " + String.format("%.0f%%",progressPercent)  + " of analyses done");
+            int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
+            int finishedJobs = totalJobs.intValue() - unfinishedJobs;
+//            System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",progressPercent)  + " of analyses done");
+            System.out.println(Utilities.getTimeNow() + " " + finishedJobs + " of " + totalJobs + " completed");
             String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
             LOGGER.debug(statsMessageListener.getStats());
             progressReportTime = System.currentTimeMillis();
+            previousUnfinishedJobs = unfinishedJobs;
         }
 
         progressCounter ++;
