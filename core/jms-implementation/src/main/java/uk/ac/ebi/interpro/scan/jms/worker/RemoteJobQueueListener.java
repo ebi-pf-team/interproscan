@@ -126,18 +126,8 @@ public class RemoteJobQueueListener implements MessageListener {
                         stopRemoteQueue = true;
                     }
                     break;
-                case 3:
-                    if(unfinishedJobs > maxUnfinishedJobs / 4){
-                        stopRemoteQueue = true;
-                    }
-                    break;
-                case 4:
-                    if(unfinishedJobs > maxUnfinishedJobs / 16){
-                        stopRemoteQueue = true;
-                    }
-                    break;
                 default:
-                    if(unfinishedJobs > 2){
+                    if(unfinishedJobs > maxUnfinishedJobs / (Math.pow(2, statsUtil.getTier() - 1 ))){
                         stopRemoteQueue = true;
                     }
             }
