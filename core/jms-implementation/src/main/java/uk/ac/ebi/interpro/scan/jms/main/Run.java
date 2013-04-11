@@ -14,6 +14,7 @@ import uk.ac.ebi.interpro.scan.jms.master.BlackBoxMaster;
 import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster;
 import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMasterCopy;
 import uk.ac.ebi.interpro.scan.jms.master.Master;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
@@ -105,7 +106,7 @@ public class Run {
         HIGH_MEM("highmem", "hm", false, "Optional, switch on the creation of a high memory worker. Please note normal and high mem workers share the same Spring configuration file.", null, false, false),
         TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", "TIER", false, false),
         CLUSTER_RUN_ID("clusterrunid", "crid", false, "Optional, switch to specify the Project name for this i5 run.", "CLUSTER-RUN-ID", false, false),
-        USER_DIR("user_dir", "u", true, "The base directory for results (if absolute paths not specified)", "USER_DIRECTORY", false, false);
+        USER_DIR("userdir", "u", false, "The base directory for results (if absolute paths not specified)", "USER_DIRECTORY", false, false);
 
         private String longOpt;
 
@@ -181,6 +182,7 @@ public class Run {
         DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CLUSTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         GRID("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
+        ES("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
@@ -276,7 +278,7 @@ public class Run {
                     ? Mode.valueOf(modeArgument.toUpperCase())
                     : DEFAULT_MODE;
 
-            System.out.println("Welcome to InterProScan 5RC6");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan 5RC6");
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
@@ -510,7 +512,7 @@ public class Run {
                 bbMaster.setOutputFormats(parsedOutputFormats);
             }
             String tcpConnectionString = null;
-            if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER || mode == Mode.GRID) {
+            if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER || mode == Mode.ES) {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 
@@ -534,6 +536,9 @@ public class Run {
                     System.out.println("The project/Cluster Run ID for this run is: " + projectId);
                     bbMaster.setProjectId(projectId);
                     ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
+                    final String userDir = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt());
+                    ((DistributedBlackBoxMasterCopy) bbMaster).setUserDir(userDir);
+                    ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerUserDir(userDir);
                 } else {
                     LOGGER.fatal("InterProScan 5 in CLUSTER mode needs a Cluster Run ID to continue, please specify the -clusterrunid (-crid) option.");
                     System.exit(1);
@@ -668,7 +673,7 @@ public class Run {
 //            workerMessageSender.setRemoteJmsTemplate(worker.getRemoteJmsTemplate());
 //            LOGGER.debug("parsedCommandLine 1: " + parsedCommandLine.toString());
             LOGGER.debug("I5Option.TEMP_DIRECTORY_NAME: " + I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
-            System.out.println("temp dir name: ");
+//            System.out.println("temp dir name: ");
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {
                 final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
                 if (LOGGER.isDebugEnabled())
@@ -899,11 +904,12 @@ public class Run {
             //Setting transport connector
             final String uriString = new StringBuilder("tcp://").append(hostname).append(':').append(port).toString();
             final TransportConnector tc = new TransportConnector();
+
             tc.setUri(new URI(uriString));
             broker.addConnector(tc);
             //
             broker.start();
-            System.out.println("uriString = " + uriString);
+            LOGGER.debug("uriString = " + uriString);
             return uriString;
         } catch (Exception e) {
             throw new IllegalStateException("Unable to configure the TCPTransport on the Broker", e);

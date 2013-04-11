@@ -4,8 +4,6 @@ import org.apache.activemq.transport.TransportListener;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
 import java.io.IOException;
 
 /**
@@ -13,9 +11,9 @@ import java.io.IOException;
  */
 
 @Component
-public class WorkerTransportListener implements TransportListener {
+public class JMSTransportListener implements TransportListener {
 
-    private static final Logger LOGGER = Logger.getLogger(WorkerTransportListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JMSTransportListener.class.getName());
 
     private int exceptionsCount = 0;
 
@@ -62,6 +60,7 @@ public class WorkerTransportListener implements TransportListener {
                     previousIOExceptionTime = System.currentTimeMillis();
                     brokenConnection = true;
                     LOGGER.debug("Worker Transport IO exception: ", e);
+                    e.printStackTrace();
                 }
             }
             exceptionsCount++;
@@ -80,6 +79,7 @@ public class WorkerTransportListener implements TransportListener {
             timePassed = now - previousIOExceptionTime;
             if (timePassed > 600000){
                 LOGGER.debug("Worker Transport interrupted > 10 min");
+
             }
         }
         lastInterrupt = System.currentTimeMillis();

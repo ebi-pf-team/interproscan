@@ -75,7 +75,7 @@ public class LocalJobQueueListener implements MessageListener {
         int localCount = jobCount.get();
         if(localCount == 1){
             String timeNow = Utilities.getTimeNow();
-            System.out.println(timeNow + "Processing JobCount #: " + localCount);
+            System.out.println(timeNow + " first transaction ... ");
         }
         LOGGER.debug("Processing JobCount #: " + localCount);
         final String messageId;

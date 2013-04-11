@@ -95,12 +95,17 @@
         <property name="hasInVmWorker" value="true"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="statsUtil" ref="statsUtil"/>
-
+        <property name="maxConsumers" value="${master.maxconsumers}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
         <constructor-arg value="${tcp.port.exclusion.list}"/>
     </bean>
+
+
+    <!-- JMS transport Listener-->
+    <bean id="masterTransportListener" class="uk.ac.ebi.interpro.scan.jms.worker.JMSTransportListener" />
+
 
     <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />
 

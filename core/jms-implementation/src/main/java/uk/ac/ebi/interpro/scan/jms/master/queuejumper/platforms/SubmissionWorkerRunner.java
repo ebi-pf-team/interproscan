@@ -25,6 +25,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private String projectId;
 
+    private String userDir;
+
     private String i5Command;
 
     private int tier = 1;
@@ -112,6 +114,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.workerCount = workerCount;
     }
 
+    public void setUserDir(String userDir) {
+        this.userDir = userDir;
+    }
+
     /**
      * create an id for the new worker given a project id
      *
@@ -163,7 +169,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
             int activeJobs = lsfMonitor.activeJobs(projectId);
             int pendingJobs = lsfMonitor.pendingJobs(projectId);
             if (activeJobs > gridJobsLimit || (pendingJobs*5 > activeJobs && activeJobs > 5)) {
-                LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs + " pending Jpbs : " + pendingJobs);
+                LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs + " pending Jobs : " + pendingJobs
+                    + "\n In the meantime InterProScan will continue to run");
                 return;
             }
             LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + activeJobs);
@@ -219,6 +226,12 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                 command.append(" --tempdirname=")
                         .append(temporaryDirectory);
             }
+
+            if (userDir != null) {
+                command.append(" --userdir=")
+                        .append(userDir);
+            }
+
 
             if (tier > 0) {
                 command.append(" --tier1=")
