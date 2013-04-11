@@ -64,7 +64,7 @@ public class Run {
             "java -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods " +
                     "-Xms512M -Xmx2048M -jar interproscan-5.jar";
     private static final String HEADER =
-            "\n\nPlease give us your feedback by sending an email to\n\ninterproscan-5-dev@googlegroups.com\n\n";
+            "\n\nPlease give us your feedback by sending an email to\n\ninterhelp@ebi.ac.uk\n\n";
     private static final String FOOTER = "Copyright (c) EMBL European Bioinformatics Institute, Hinxton, Cambridge, UK. (http://www.ebi.ac.uk) " +
             "The InterProScan software itself is " +
             "provided under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html). " +
