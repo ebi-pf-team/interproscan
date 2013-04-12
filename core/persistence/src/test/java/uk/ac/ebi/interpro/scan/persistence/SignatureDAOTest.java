@@ -60,7 +60,6 @@ public class SignatureDAOTest {
     @Before
     @After
     public void emptySignatureTable(){
-        dao.flush();
         dao.deleteAll();
         Assert.assertEquals("There should be no Signatures in the Signature table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
