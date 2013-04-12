@@ -41,7 +41,7 @@ public class SignatureLibraryReleaseDAOTest {
     @Before
     @After
     public void emptySignatureLibraryReleaseTable() {
-//        dao.flush();
+        dao.flush();
         dao.deleteAll();
         Assert.assertEquals("There should be no Releases in the SignatureLibraryRelease table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
