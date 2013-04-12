@@ -89,8 +89,8 @@ public class Run {
         MODE("mode", "m", false, "Optional, the mode in which InterProScan is being run, the default mode is " + Mode.STANDALONE.getRunnableBean() + ". Must be one of: " + Mode.getCommaSepModeList() + ".", "MODE-NAME", false, false),
         FASTA("fasta", "i", false, "Optional, path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false, true),
         OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences are TSV, XML and GFF3, or for nucleotide sequences GFF3 and XML.", "OUTPUT-FORMATS", true, true),
-        BASE_OUT_FILENAME("output-file-base", "b", false, "Optional, base output filename.  Note that this option and the --outfile (-o) option are mutually exclusive.  The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-FILE-BASE", false, true),
-        OUTPUT_FILE("outfile", "o", false, "Optional explicit output file name.  Note that this option and the --output-file-base (-b) option are mutually exclusive. If this option is given, you MUST specify a single output format using the -f option.  The output file name will not be modified. Note that specifying an output file name using this option OVERWRITES ANY EXISTING FILE.", "EXPLICIT_OUTPUT_FILENAME", false, true),
+        BASE_OUT_FILENAME("output-file-base", "b", false, "Optional, base output filename (relative or absolute path).  Note that this option and the --outfile (-o) option are mutually exclusive.  The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-FILE-BASE", false, true),
+        OUTPUT_FILE("outfile", "o", false, "Optional explicit output file name (relative or absolute path).  Note that this option and the --output-file-base (-b) option are mutually exclusive. If this option is given, you MUST specify a single output format using the -f option.  The output file name will not be modified. Note that specifying an output file name using this option OVERWRITES ANY EXISTING FILE.", "EXPLICIT_OUTPUT_FILENAME", false, true),
         ANALYSES("applications", "appl", false, "Optional, comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true, true),
         PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept (0 low -> 9 high).", "JMS-PRIORITY", false, false),
         IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation.", null, false, true),
@@ -101,7 +101,7 @@ public class Run {
         MIN_SIZE("minsize", "ms", false, "Optional, minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
                 "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false, true),
         TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Optional, used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false, false),
-        TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. The default location is /temp.", "TEMP-DIR", false, true),
+        TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory (relative or absolute path). The default location is temp/.", "TEMP-DIR", false, true),
         DISABLE_PRECALC("disable-precalc", "dp", false, "Optional.  Disables use of the precalculated match lookup service.  All match calculations will be run locally.", null, false, true),
         HIGH_MEM("highmem", "hm", false, "Optional, switch on the creation of a high memory worker. Please note normal and high mem workers share the same Spring configuration file.", null, false, false),
         TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", "TIER", false, false),
@@ -479,21 +479,37 @@ public class Run {
             boolean haveSetBaseOutputFileName = false;
 
             BlackBoxMaster bbMaster = (BlackBoxMaster) master;
+            String defaultFileOutputName = "i5_output.out";
             if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
                 String fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
                 bbMaster.setFastaFilePath(fastaFilePath);
+                defaultFileOutputName = new File(fastaFilePath).getName();
             }
+            //If (-b) option is specified
             if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
                 //As this option and the (-o) option are mutually exclusive with have to check that state
                 if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
                     System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
                     System.exit(3);
                 }
-                String outputBaseFileName = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()), parsedCommandLine);
+                String outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt());
+                //If outputBaseFileName is a directory (Simply check the ending) then set the defaultFileOutputName
+                if (outputBaseFileName.endsWith("/")) {
+                    outputBaseFileName += defaultFileOutputName;
+                }
+                outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
                 checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
                 bbMaster.setOutputBaseFilename(outputBaseFileName);
                 haveSetBaseOutputFileName = true;
             }
+            //If (-b) option ISN't specified but (-u) options is set
+            //Default file output path will be (USER_DIR + defaultFileOutputName)
+            else if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
+                String outputBaseFileName = getAbsoluteFilePath(defaultFileOutputName, parsedCommandLine);
+                checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
+                bbMaster.setOutputBaseFilename(outputBaseFileName);
+            }
+            //
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
                 if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0]) || "svg".equalsIgnoreCase(parsedOutputFormats[0])) {
                     System.out.println("\n\nYou must indicate a single output format excluding HTML and SVG using the -f option if you wish to set an explicit output file name.");
@@ -607,10 +623,31 @@ public class Run {
             System.out.println(dir);
             System.exit(2);
         }
-        if (!file.canWrite()) {
-            System.out.println("For the (-" + option + ") option you specified a location which cannot be written to:");
-            System.out.println(file);
-            System.exit(2);
+        if (file.exists()) {
+            if (!file.canWrite()) {
+                System.out.println("Can write test.");
+                System.out.println("For the (-" + option + ") option you specified a location which cannot be written to:");
+                System.out.println(file);
+                System.exit(2);
+            }
+        } else {
+            //Do a file creation and deletion file test
+            boolean fileCreated = false;
+            boolean fileDeleted = false;
+            try {
+                fileCreated = file.createNewFile();
+                fileDeleted = file.delete();
+                if (!fileCreated || !fileDeleted) {
+                    System.out.println("Create and delete test.");
+                    System.out.println("For the (-" + option + ") option you specified a location which cannot be written to:");
+                    System.out.println(file);
+                    System.exit(2);
+                }
+            } catch (IOException e) {
+                LOGGER.error("File creation test. Cannot create the specified output file!\n" +
+                        "Specified output file path (absolute): " + file.getAbsolutePath(), e);
+                throw new IllegalStateException("For the (-" + option + ") option you specified a location which cannot be written to:", e);
+            }
         }
     }
 
