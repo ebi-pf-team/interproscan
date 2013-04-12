@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -34,14 +35,21 @@ public class SignatureLibraryReleaseDAOTest {
     @Resource(name = "sigLibReleaseDAO")
     private SignatureLibraryReleaseDAO dao;
 
-    public void setDao(SignatureLibraryReleaseDAO dao) {
-        this.dao = dao;
-    }
+    @Resource(name = "modelDAO")
+    private ModelDAO modelDAO;
+
+    @Resource(name = "signatureDAO")
+    private SignatureDAO signatureDAO;
+
+//    public void setDao(SignatureLibraryReleaseDAO dao) {
+//        this.dao = dao;
+//    }
 
     @Before
     @After
     public void emptySignatureLibraryReleaseTable() {
-        dao.flush();
+        signatureDAO.deleteAll();
+        modelDAO.deleteAll();
         dao.deleteAll();
         Assert.assertEquals("There should be no Releases in the SignatureLibraryRelease table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
