@@ -38,10 +38,8 @@
           class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">
     </bean>
 
-    <bean id="modelDAO"
-          class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Model"/>
-    </bean>
+    <bean id="modelDAO" class="uk.ac.ebi.interpro.scan.persistence.ModelDAOImpl"/>
+
     <bean id="pfamDAO"
           class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl">
     </bean>

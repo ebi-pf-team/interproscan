@@ -66,7 +66,7 @@ public class SignatureDAOTest {
 
     @Test
     public void storeAndRetrieveSignature(){
-        emptySignatureTable();
+//        emptySignatureTable();
         Signature signature = new Signature
                 .Builder(SIGNATURE_ACCESSION)
                 .name(SIGNATURE_NAME)
