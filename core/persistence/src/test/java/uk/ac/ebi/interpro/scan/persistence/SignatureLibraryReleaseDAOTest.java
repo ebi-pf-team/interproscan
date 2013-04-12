@@ -41,6 +41,7 @@ public class SignatureLibraryReleaseDAOTest {
     @Before
     @After
     public void emptySignatureLibraryReleaseTable() {
+//        dao.flush();
         dao.deleteAll();
         Assert.assertEquals("There should be no Releases in the SignatureLibraryRelease table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
@@ -55,7 +56,7 @@ public class SignatureLibraryReleaseDAOTest {
         final SignatureLibrary testLibrary = SignatureLibrary.PRINTS;
         final String testVersion = "1.0";
 
-        emptySignatureLibraryReleaseTable();
+//        emptySignatureLibraryReleaseTable();
         assertFalse(dao.isReleaseAlreadyPersisted(testLibrary, testVersion));
         SignatureLibraryRelease sigLib1 = new SignatureLibraryRelease(testLibrary, testVersion, createSignature());
         dao.insert(sigLib1);
