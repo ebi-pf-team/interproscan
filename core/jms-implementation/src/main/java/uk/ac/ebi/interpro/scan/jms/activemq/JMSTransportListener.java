@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.jms.worker;
+package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.activemq.transport.TransportListener;
 import org.apache.log4j.Logger;
@@ -50,7 +50,7 @@ public class JMSTransportListener implements TransportListener {
     public void onException(IOException e) {
         if(exceptionsCount == 0){
             previousIOExceptionTime = System.currentTimeMillis();
-            LOGGER.debug("Worker Transport IO exception: ", e);
+            LOGGER.debug("Transport IO exception: ", e);
             exceptionsCount++;
         }else{
             Long now = System.currentTimeMillis();
@@ -59,8 +59,8 @@ public class JMSTransportListener implements TransportListener {
                 if (exceptionsCount > 15){
                     previousIOExceptionTime = System.currentTimeMillis();
                     brokenConnection = true;
-                    LOGGER.debug("Worker Transport IO exception: ", e);
-                    e.printStackTrace();
+                    LOGGER.debug("Transport connection IO exception: ", e);
+//                    e.printStackTrace();
                 }
             }
             exceptionsCount++;
@@ -74,12 +74,11 @@ public class JMSTransportListener implements TransportListener {
 
         Long timePassed = 0l;
         if(!interruptedConnection){
-            LOGGER.debug("Worker Transport interrupted: ");
+            LOGGER.debug("Transport interrupted: ");
         }else{
             timePassed = now - previousIOExceptionTime;
             if (timePassed > 600000){
-                LOGGER.debug("Worker Transport interrupted > 10 min");
-
+                LOGGER.debug("Transport interrupted  for > 10 min");
             }
         }
         lastInterrupt = System.currentTimeMillis();

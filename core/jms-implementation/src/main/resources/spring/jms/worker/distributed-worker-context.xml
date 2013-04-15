@@ -162,7 +162,7 @@
         <property name="gridThrottle" value="${grid.throttle}"/>
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
         <property name="maxTierDepth" value="${max.tier.depth}"/>
-        <property name="JMSTransportListener" ref="workerTransportListener"/>
+        <property name="jmsTransportListener" ref="jmsTransportListener"/>
     </bean>
 
 
@@ -171,7 +171,7 @@
     </bean>
 
     <!-- JMS transport Listener-->
-    <bean id="workerTransportListener" class="uk.ac.ebi.interpro.scan.jms.worker.JMSTransportListener" />
+    <bean id="jmsTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
 
     <!-- LSF Monitor-->
     <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />

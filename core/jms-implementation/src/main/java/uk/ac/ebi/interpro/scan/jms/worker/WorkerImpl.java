@@ -8,6 +8,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
+import uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener;
 import uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
@@ -56,7 +57,7 @@ public class WorkerImpl implements Worker {
 
     private StatsUtil statsUtil;
 
-    private JMSTransportListener JMSTransportListener;
+    private uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener jmsTransportListener;
 
     private Destination statsQueue;
     /* Local job request queue */
@@ -323,8 +324,8 @@ public class WorkerImpl implements Worker {
     }
 
     @Required
-    public void setJMSTransportListener(JMSTransportListener JMSTransportListener) {
-        this.JMSTransportListener = JMSTransportListener;
+    public void setJmsTransportListener(JMSTransportListener jmsTransportListener) {
+        this.jmsTransportListener = jmsTransportListener;
     }
 
     public void jobStarted(String jmsMessageId) {
@@ -776,7 +777,7 @@ public class WorkerImpl implements Worker {
 
         activeMQConnectionFactory.setRedeliveryPolicy(queuePolicy);
 
-        activeMQConnectionFactory.setTransportListener(JMSTransportListener);
+        activeMQConnectionFactory.setTransportListener(jmsTransportListener);
         final CachingConnectionFactory connectionFactory = new CachingConnectionFactory(activeMQConnectionFactory);
         connectionFactory.setSessionCacheSize(100);
 
