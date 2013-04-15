@@ -19,11 +19,29 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
     </amq:connectionFactory>
 
 
+    <bean id="inVmJmsFactoryWithTransportListener" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="failover:(vm://localhost?create=false)" />
+        <property name="useCompression" value="false"/>
+        <property name="optimizeAcknowledge" value="true"/>
+        <property name="alwaysSessionAsync" value="false" />
+        <property name="prefetchPolicy">
+            <bean class="org.apache.activemq.ActiveMQPrefetchPolicy">
+                <property name="queuePrefetch" value="1"/>
+            </bean>
+        </property>
+        <property name="transportListener">
+            <bean class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
+        </property>
+    </bean>
+
+    <!-- JMS transport Listener-->
+    <bean id="masterTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
+
     <!-- Spring JMS Template -->
     <bean id="inVmJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory">
             <bean class="org.springframework.jms.connection.CachingConnectionFactory">
-                <constructor-arg ref="inVmJmsFactory"/>
+                <constructor-arg ref="inVmJmsFactoryWithTransportListener"/>
                 <property name="sessionCacheSize" value="100"/>
             </bean>
         </property>
@@ -35,7 +53,7 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
     <bean id="inVmJmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory">
             <bean class="org.springframework.jms.connection.CachingConnectionFactory">
-                <constructor-arg ref="inVmJmsFactory"/>
+                <constructor-arg ref="inVmJmsFactoryWithTransportListener"/>
             </bean>
         </property>
         <property name="pubSubDomain" value="true"/>

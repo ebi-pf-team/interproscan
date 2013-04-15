@@ -40,6 +40,7 @@
         <amq:transportConnectors>
             <amq:transportConnector uri="vm://localhost"/>
         </amq:transportConnectors>
+
     </amq:broker>
 
     <bean id="distributedMaster" class="uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMasterCopy">
@@ -103,8 +104,6 @@
     </bean>
 
 
-    <!-- JMS transport Listener-->
-    <bean id="masterTransportListener" class="uk.ac.ebi.interpro.scan.jms.worker.JMSTransportListener" />
 
 
     <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />
