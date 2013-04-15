@@ -35,12 +35,6 @@ public class SignatureLibraryReleaseDAOTest {
     @Resource(name = "sigLibReleaseDAO")
     private SignatureLibraryReleaseDAO dao;
 
-    @Resource(name = "modelDAO")
-    private ModelDAO modelDAO;
-
-    @Resource(name = "signatureDAO")
-    private SignatureDAO signatureDAO;
-
 //    public void setDao(SignatureLibraryReleaseDAO dao) {
 //        this.dao = dao;
 //    }
@@ -48,8 +42,6 @@ public class SignatureLibraryReleaseDAOTest {
     @Before
     @After
     public void emptySignatureLibraryReleaseTable() {
-        signatureDAO.deleteAll();
-        modelDAO.deleteAll();
         dao.deleteAll();
         Assert.assertEquals("There should be no Releases in the SignatureLibraryRelease table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
@@ -63,8 +55,8 @@ public class SignatureLibraryReleaseDAOTest {
 
         final SignatureLibrary testLibrary = SignatureLibrary.PRINTS;
         final String testVersion = "1.0";
-
-//        emptySignatureLibraryReleaseTable();
+        //TODO: Why calling it explicitly, if we use @Before and @After annotation
+        //emptySignatureLibraryReleaseTable();
         assertFalse(dao.isReleaseAlreadyPersisted(testLibrary, testVersion));
         SignatureLibraryRelease sigLib1 = new SignatureLibraryRelease(testLibrary, testVersion, createSignature());
         dao.insert(sigLib1);

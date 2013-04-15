@@ -66,7 +66,8 @@ public class SignatureDAOTest {
 
     @Test
     public void storeAndRetrieveSignature(){
-//        emptySignatureTable();
+        //TODO: Why calling it explicitly, if we use @Before and @After annotation
+        //emptySignatureTable();
         Signature signature = new Signature
                 .Builder(SIGNATURE_ACCESSION)
                 .name(SIGNATURE_NAME)
