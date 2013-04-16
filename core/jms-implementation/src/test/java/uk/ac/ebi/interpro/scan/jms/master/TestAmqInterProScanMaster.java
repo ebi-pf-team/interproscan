@@ -65,9 +65,9 @@ public class TestAmqInterProScanMaster {
         //Run the test for an empty parameter
         outputFormats = null;
         master.processOutputFormats(params, outputFormats);
-        assertEquals("xml,gff3", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
+        assertEquals("tsv,xml,gff3", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
         outputFormats = new String[]{};
         master.processOutputFormats(params, outputFormats);
-        assertEquals("xml,gff3", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
+        assertEquals("tsv,xml,gff3", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
     }
 }
