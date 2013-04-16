@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
+import uk.ac.ebi.interpro.scan.jms.converter.Converter;
 import uk.ac.ebi.interpro.scan.jms.master.BlackBoxMaster;
 import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster;
 import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMasterCopy;
@@ -58,6 +59,8 @@ public class Run {
      * This is to remove clutter from the help message that may confuse users.
      */
     private static final Options COMMAND_LINE_OPTIONS_FOR_HELP = new Options();
+
+    private static final Options COMMAND_LINE_OPTIONS_FOR_CONVERT_MODE_HELP = new Options();
 
     private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
 
@@ -189,8 +192,11 @@ public class Run {
         MONITOR("monitor", "spring/monitor/monitor-context.xml"),
         INSTALLER("installer", "spring/installer/installer-context.xml"),
         // Use this mode for creating the test database that lives in /jms-implementation/src/test/resources/
-        EMPTY_INSTALLER("installer", "spring/installer/empty-installer-context.xml");
-        //
+        EMPTY_INSTALLER("installer", "spring/installer/empty-installer-context.xml"),
+        //This mode is for converting I5 XML files into an other output format supported by I5 and I4 XML as well (additional option)
+        CONVERT("convert", "spring/converter/converter-context.xml");
+
+
         private String contextXML;
 
         private String runnableBean;
@@ -234,6 +240,7 @@ public class Run {
 
 
     static {
+        //Usual I5 options
         for (I5Option i5Option : I5Option.values()) {
             OptionBuilder builder = OptionBuilder.withLongOpt(i5Option.getLongOpt())
                     .withDescription(i5Option.getDescription());
@@ -262,7 +269,6 @@ public class Run {
             }
         }
     }
-
 
     public static void main(String[] args) {
         // create the command line parser
@@ -298,12 +304,12 @@ public class Run {
             }
 
 
-            if (mode != Mode.INSTALLER && mode != Mode.EMPTY_INSTALLER) {
+            if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT)) {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
                 //Info about active and de-active jobs is shown in the manual instruction (help) as well
-                if (isInvalid(parsedCommandLine)) {
+                if (isInvalid(mode, parsedCommandLine)) {
                     printHelp();
                     System.out.println("Available analyses:");    // LEAVE as System.out
                     for (Job job : jobs.getAnalysisJobs().getJobList()) {
@@ -378,7 +384,15 @@ public class Run {
                     checkAnalysisJobsVersions(jobs.getAnalysisJobs().getJobList());
                     System.out.println(analysesPrintOutStr + jobs.getAnalysisJobs().getJobIdList());
                 }
-            } // End installer mode check
+            }
+            //Print help for the convert mode
+            else if (mode.equals(Mode.CONVERT)) {
+                if (isInvalid(mode, parsedCommandLine)) {
+                    buildConvertModeOptions();
+                    printConvertModeHelp();
+                    System.exit(1);
+                }
+            }
 
             // Validate the output formats supplied
             String[] parsedOutputFormats = null;
@@ -407,27 +421,19 @@ public class Run {
                     System.out.println(expectedSeqTypes + "\n\n");
                     System.exit(1);
                 }
-
-                // Check output format is valid for this sequence type
-                if (sequenceType.equalsIgnoreCase("n")) {
-                    if (parsedOutputFormats != null) {
-                        for (String outputFormat : parsedOutputFormats) {
-                            if (outputFormat.equalsIgnoreCase("tsv") || outputFormat.equalsIgnoreCase("html")) {
-                                System.out.println("\n\nTSV, HTML and SVG formats are not supported if you run I5 against nucleotide sequences. Supported formats are GFF3 and XML.");
-                                System.exit(1);
-                            }
-                        }
-                    }
-                }
             }
 
             if (mode.getRunnableBean() != null) {
                 final Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
 
-                checkIfMasterAndConfigure(runnable, parsedAnalyses, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
+                //Set up converter mode
+                if (runnable instanceof Converter) {
+                    runConvertMode(runnable, parsedCommandLine, parsedOutputFormats);
+                } else {
+                    checkIfMasterAndConfigure(runnable, parsedAnalyses, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
 
-                checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
-
+                    checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
+                }
                 System.out.println("Running InterProScan v5 in " + mode + " mode...");
 
                 runnable.run();
@@ -442,6 +448,51 @@ public class Run {
             LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
             System.exit(1);
         }
+    }
+
+    private static void runConvertMode(final Runnable runnable,
+                                       final CommandLine parsedCommandLine,
+                                       final String[] parsedOutputFormats) {
+        final Converter converter = (Converter) runnable;
+        //Get XML input file
+        if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
+            String xmlInputFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(xmlInputFilePath, I5Option.TEMP_DIRECTORY.getShortOpt());
+            converter.setXmlInputFilePath(xmlInputFilePath);
+        }
+        //Get base output directory
+        if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
+            String outputBaseFileName = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()), parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.TEMP_DIRECTORY.getShortOpt());
+            converter.setOutputPath(outputBaseFileName);
+        }
+        if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+            if (parsedOutputFormats == null || parsedOutputFormats.length != 1) {
+                System.out.println("\n\nYou must indicate a single output format using the -f option if you wish to set an explicit output file name.");
+                System.exit(2);
+            }
+
+            if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
+                System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
+                System.exit(3);
+            }
+            String explicitOutputFilename = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()), parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
+            converter.setExplicitFileName(explicitOutputFilename);
+        }
+        //Get output formats
+        if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
+            converter.setOutputFormats(parsedOutputFormats);
+        }
+        //Set temporary directory
+        final String filePath;
+        if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
+            filePath = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt());
+        } else {
+            filePath = "temp/";
+        }
+        final String temporaryDirectory = getAbsoluteFilePath(filePath, parsedCommandLine);
+        converter.setTemporaryDirectory(temporaryDirectory);
     }
 
     private static void checkIfMasterAndConfigure(final Runnable runnable,
@@ -771,9 +822,8 @@ public class Run {
     }
 
     /**
-     * Validate and tidy the comma separated list of output formats specified by the user:
-     * - Do the formats exist?
-     * - Is the format valid for this sequence type?
+     * Validate and tidy up the comma separated list of output formats specified by the user:
+     * - Does the formats exist?
      *
      * @return The tidied list of file extensions
      */
@@ -958,6 +1008,10 @@ public class Run {
         HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, HEADER, COMMAND_LINE_OPTIONS_FOR_HELP, FOOTER);
     }
 
+    private static void printConvertModeHelp() {
+        HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, HEADER, COMMAND_LINE_OPTIONS_FOR_CONVERT_MODE_HELP, FOOTER);
+    }
+
     /**
      * Checks to see if a specific port is available.
      * Checks for use both TCP and UDP use of ports.
@@ -995,7 +1049,7 @@ public class Run {
         }
     }
 
-    private static boolean isInvalid(CommandLine commandline) {
+    private static boolean isInvalid(final Mode mode, final CommandLine commandline) {
         Option[] options = commandline.getOptions();
 
         if (options.length == 0) {
@@ -1004,8 +1058,40 @@ public class Run {
             if (options[0].getLongOpt() == I5Option.USER_DIR.getLongOpt()) {
                 return true;
             }
-
+        } else if (!commandline.hasOption(I5Option.FASTA.getLongOpt())) {
+            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER)) {
+                return true;
+            }
         }
         return false;
+    }
+
+    private static void buildConvertModeOptions() {
+        //Convert mode options
+        for (Converter.ConvertModeOption convertModeOption : Converter.ConvertModeOption.values()) {
+            OptionBuilder builder = OptionBuilder.withLongOpt(convertModeOption.getLongOpt())
+                    .withDescription(convertModeOption.getDescription());
+            if (convertModeOption.isRequired()) {
+                builder = builder.isRequired();
+            }
+            if (convertModeOption.getArgumentName() != null) {
+                builder = builder.withArgName(convertModeOption.getArgumentName());
+                if (convertModeOption.hasMultipleArgs()) {
+                    builder = builder.hasArgs();
+                } else {
+                    builder = builder.hasArg();
+                }
+            }
+
+            builder = builder.withValueSeparator();
+
+            final Option option = (convertModeOption.getShortOpt() == null)
+                    ? builder.create()
+                    : builder.create(convertModeOption.getShortOpt());
+
+            if (convertModeOption.isIncludeInUsageMessage()) {
+                COMMAND_LINE_OPTIONS_FOR_CONVERT_MODE_HELP.addOption(option);
+            }
+        }
     }
 }

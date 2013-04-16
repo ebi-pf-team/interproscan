@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.writer;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -126,5 +127,40 @@ public class TarArchiveBuilder {
         }
         is.close();
         return bytes;
+    }
+
+    /**
+     * Builds a sensible tarball file name.<br>
+     * e.g. for a compressed file it would be: file-name.tar.gz
+     * <p/>
+     * The expected file format would be <file-name>.<extension>
+     *
+     * @param fileName                Input filename without extension
+     * @param archiveHtmlAndSVGOutput If TRUE add tar extension
+     * @param compressHtmlOutput      If TRU
+     * @return Tarball filename with extension added
+     */
+    public static String buildTarArchiveName(final String fileName,
+                                       final boolean archiveHtmlAndSVGOutput,
+                                       final boolean compressHtmlOutput,
+                                       final FileOutputFormat outputFormat) {
+        if (fileName == null) {
+            throw new IllegalStateException("HTML/SVG output file name was NULL");
+        } else if (fileName.length() == 0) {
+            throw new IllegalStateException("HTML/SVG output file name was empty");
+        }
+
+        StringBuffer fileExtension = new StringBuffer();
+        if (outputFormat.equals(FileOutputFormat.SVG)) {
+            fileExtension.append(archiveHtmlAndSVGOutput ? ".tar" : "");
+            fileExtension.append((archiveHtmlAndSVGOutput && compressHtmlOutput) ? ".gz" : "");
+        } else if (outputFormat.equals(FileOutputFormat.HTML)) {
+            fileExtension.append(compressHtmlOutput ? ".tar.gz" : ".tar");
+        }
+
+        if (fileName.endsWith(fileExtension.toString())) {
+            return fileName;
+        }
+        return fileName + fileExtension.toString();
     }
 }
