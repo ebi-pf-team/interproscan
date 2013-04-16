@@ -454,16 +454,35 @@ public class Run {
                                        final CommandLine parsedCommandLine,
                                        final String[] parsedOutputFormats) {
         final Converter converter = (Converter) runnable;
+        String defaultFileOutputName = "i5_convert_mode_output.out";
         //Get XML input file
         if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
             String xmlInputFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
             checkDirectoryExistenceAndWritePermission(xmlInputFilePath, I5Option.TEMP_DIRECTORY.getShortOpt());
             converter.setXmlInputFilePath(xmlInputFilePath);
+            defaultFileOutputName = new File(xmlInputFilePath).getName();
         }
         //Get base output directory
         if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
-            String outputBaseFileName = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt()), parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.TEMP_DIRECTORY.getShortOpt());
+            //As this option and the (-o) option are mutually exclusive with have to check that state
+            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+                System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
+                System.exit(3);
+            }
+            String outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt());
+            //If outputBaseFileName is a directory (Simply check the ending) then set the defaultFileOutputName
+            if (outputBaseFileName.endsWith("/")) {
+                outputBaseFileName += defaultFileOutputName;
+            }
+            outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
+            converter.setOutputPath(outputBaseFileName);
+        }
+        //If (-b) option ISN't specified but (-u) options is set
+        //Default file output path will be (USER_DIR + defaultFileOutputName)
+        else if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
+            String outputBaseFileName = getAbsoluteFilePath(defaultFileOutputName, parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
             converter.setOutputPath(outputBaseFileName);
         }
         if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
