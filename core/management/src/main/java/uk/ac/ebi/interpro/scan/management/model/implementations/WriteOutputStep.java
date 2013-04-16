@@ -191,7 +191,7 @@ public class WriteOutputStep extends Step {
                             .append(outputFormat.getFileExtension());
                     //Extend file name by tar (tar.gz) extension if HTML or SVG
                     if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
-                        outputFile = new File(buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
+                        outputFile = new File(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
                     } else {
                         outputFile = new File(candidateFileName.toString());
                     }
@@ -364,42 +364,6 @@ public class WriteOutputStep extends Step {
             }
         }
     }
-
-    /**
-     * Builds a sensible tarball file name.<br>
-     * e.g. for a compressed file it would be: file-name.tar.gz
-     * <p/>
-     * The expected file format would be <file-name>.<extension>
-     *
-     * @param fileName                Input filename without extension
-     * @param archiveHtmlAndSVGOutput If TRUE add tar extension
-     * @param compressHtmlOutput      If TRU
-     * @return Tarball filename with extension added
-     */
-    private String buildTarArchiveName(final String fileName,
-                                       final boolean archiveHtmlAndSVGOutput,
-                                       final boolean compressHtmlOutput,
-                                       final FileOutputFormat outputFormat) {
-        if (fileName == null) {
-            throw new IllegalStateException("HTML/SVG output file name was NULL");
-        } else if (fileName.length() == 0) {
-            throw new IllegalStateException("HTML/SVG output file name was empty");
-        }
-
-        StringBuffer fileExtension = new StringBuffer();
-        if (outputFormat.equals(FileOutputFormat.SVG)) {
-            fileExtension.append(archiveHtmlAndSVGOutput ? ".tar" : "");
-            fileExtension.append((archiveHtmlAndSVGOutput && compressHtmlOutput) ? ".gz" : "");
-        } else if (outputFormat.equals(FileOutputFormat.HTML)) {
-            fileExtension.append(compressHtmlOutput ? ".tar.gz" : ".tar");
-        }
-
-        if (fileName.endsWith(fileExtension.toString())) {
-            return fileName;
-        }
-        return fileName + fileExtension.toString();
-    }
-
 
     private void writeFASTASequences(ProteinMatchesGFFResultWriter writer) throws IOException {
         Map<String, String> identifierToSeqMap = writer.getIdentifierToSeqMap();
