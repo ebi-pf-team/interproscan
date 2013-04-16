@@ -49,6 +49,7 @@ public class Converter implements Runnable {
     private String explicitFileName;
 
     private String temporaryDirectory;
+
     /* Default value, if no output format is specified */
     private String[] outputFormats;
 
@@ -182,10 +183,7 @@ public class Converter implements Runnable {
     public void run() {
         //Instantiate input file
         final File inputFile = new File(xmlInputFilePath);
-        //Instantiate output file
-        if (this.outputFilePath == null) {
-            setOutputPath(inputFile.getAbsolutePath());
-        }
+
         //Change default temp directory
         svgResultWriter.setOutputDirectory(temporaryDirectory);
         htmlResultWriter.setTempDirectory(temporaryDirectory);
@@ -198,8 +196,6 @@ public class Converter implements Runnable {
             final String formatsAsString = Arrays.toString(getOutputFormats());
             LOGGER.info("Requested output formats are: " + (outputFormats != null ? formatsAsString : "Undefined, therefore the default set will be use, which is " + formatsAsString));
         }
-        System.out.println("Hallo");
-
         //read in XML file and map it to the I5 model
         Source source;
         try {
@@ -238,36 +234,27 @@ public class Converter implements Runnable {
                     LOGGER.info("Generating GFF3 result output...");
                     StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.GFF3.getFileExtension());
                     File outputFile = new File(outputFilePathBuilder.toString());
-                    checkOutputFile(outputFile);
                     outputToGFF(outputFile, sequenceType, proteins);
                     LOGGER.info("Finished generation of GFF3.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
                     LOGGER.info("Generating TSV result output...");
                     StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.TSV.getFileExtension());
                     File outputFile = new File(outputFilePathBuilder.toString());
-                    checkOutputFile(outputFile);
                     outputToTSV(outputFile, proteins);
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
-                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(outputFilePath, true, true, FileOutputFormat.HTML));
-                    checkOutputFile(outputFile);
+                    StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.HTML.getFileExtension());
+                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(outputFilePathBuilder.toString(), true, true, FileOutputFormat.HTML));
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension())) {
                     LOGGER.info("Generating SVG result output...");
-                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(outputFilePath, true, true, FileOutputFormat.SVG));
-                    checkOutputFile(outputFile);
+                    StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.SVG.getFileExtension());
+                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(outputFilePathBuilder.toString(), true, true, FileOutputFormat.SVG));
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");
-                }
-//                else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.TSV4.getFileExtension())) {
-//                    LOGGER.info("Generating raw (InterProScan 4 TSV file) result output...");
-//                    //TODO: Implement
-//                    LOGGER.info("Finished generation of TSV version 4.");
-//                }
-
-                else {
+                } else {
                     LOGGER.warn("The specified output format - " + fileOutputFormat + " - is not supported!");
                 }
             }
@@ -407,25 +394,6 @@ public class Converter implements Runnable {
         Map<String, String> identifierToSeqMap = writer.getIdentifierToSeqMap();
         for (String key : identifierToSeqMap.keySet()) {
             writer.writeFASTASequence(key, identifierToSeqMap.get(key));
-        }
-    }
-
-    private void checkOutputFile(File outputFile) {
-        if (outputFile != null) {
-            if (outputFile.exists()) {
-                if (!outputFile.delete()) {
-                    System.out.println("Unable to overwrite file " + outputFile + ".  Please check file permissions.");
-                    System.exit(101);
-                }
-            } else {
-                outputFile = new File("/home/maxim/projects/current/interproscan/core/jms-implementation/target/interproscan-5-dist.dir", "test_proteins.fasta.xml.tar.gz");
-                boolean isOutputDirCreated = outputFile.mkdirs();
-                if (!isOutputDirCreated) {
-                    throw new IllegalStateException("Cannot create output directory!");
-                }
-            }
-        } else {
-            throw new IllegalStateException("Output file should never be NULL at this position. Please email developers.");
         }
     }
 }
