@@ -13,7 +13,7 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public enum FileOutputFormat {
-    TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html"), SVG("svg");
+    TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html"), SVG("svg"), RAW("raw");
 
     private static final Logger LOGGER = Logger.getLogger(FileOutputFormat.class.getName());
 
@@ -61,6 +61,8 @@ public enum FileOutputFormat {
             return HTML;
         } else if (outputFormat.equalsIgnoreCase(SVG.getFileExtension())) {
             return SVG;
+        } else if (outputFormat.equalsIgnoreCase(RAW.getFileExtension())) {
+            return RAW;
         } else {
             return TSV;
         }
@@ -86,6 +88,8 @@ public enum FileOutputFormat {
                 fileOutputFormats.add(SVG);
             } else if (format.equalsIgnoreCase(TSV.getFileExtension())) {
                 fileOutputFormats.add(TSV);
+            } else if (format.equalsIgnoreCase(RAW.getFileExtension())) {
+                fileOutputFormats.add(RAW);
             } else {
                 LOGGER.warn("File format " + format + " was not a recognised option so will be ignored");
             }

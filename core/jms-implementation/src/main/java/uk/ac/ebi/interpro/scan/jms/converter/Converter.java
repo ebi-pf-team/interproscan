@@ -254,7 +254,14 @@ public class Converter implements Runnable {
                     File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(outputFilePathBuilder.toString(), true, true, FileOutputFormat.SVG));
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");
-                } else {
+                } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension())) {
+                    LOGGER.info("Generating RAW result output...");
+                    StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.RAW.getFileExtension());
+                    File outputFile = new File(outputFilePathBuilder.toString());
+                    outputToRAW(outputFile, proteins);
+                    LOGGER.info("Finished generation of RAW.");
+                }
+                else {
                     LOGGER.warn("The specified output format - " + fileOutputFormat + " - is not supported!");
                 }
             }
@@ -364,6 +371,25 @@ public class Converter implements Runnable {
             writeProteinMatches(writer, proteins);
             //This step writes FASTA sequence at the end of the GFF file
             writeFASTASequences(writer);
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    /**
+     * Output in InterProScan 4 RAW (TSV) output format.
+     * @param file The file to create
+     * @param proteins Protein data
+     * @throws IOException In the event of an input/output error.
+     */
+    private void outputToRAW(final File file,
+                             final Collection<Protein> proteins) throws IOException {
+        ProteinMatchesRAWResultWriter writer = null;
+        try {
+            writer = new ProteinMatchesRAWResultWriter(file);
+            writeProteinMatches(writer, proteins);
         } finally {
             if (writer != null) {
                 writer.close();
