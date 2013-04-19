@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import uk.ac.ebi.interpro.scan.model.GoCategory;
 import uk.ac.ebi.interpro.scan.model.GoXref;
 
 import javax.annotation.Resource;
@@ -44,13 +45,24 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         List<GoXref> result = null;
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("entry_ac", entryAc);
+//            result = this.jdbcTemplate
+//                    .query("SELECT ENTRY_AC, GO_ID FROM INTERPRO.INTERPRO2GO WHERE ENTRY_AC = :entry_ac",
+//                            namedParameters,
+//                            new RowMapper<GoXref>() {
+//                                public GoXref mapRow(ResultSet rs, int rowNum) throws SQLException {
+//                                    String identifier = rs.getString("go_id");
+//                                    return new GoXref(identifier, null, null);
+//                                }
+//                            });
             result = this.jdbcTemplate
-                    .query("SELECT ENTRY_AC, GO_ID FROM INTERPRO.INTERPRO2GO WHERE ENTRY_AC = :entry_ac",
+                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO.EBI.AC.UK g ON i2g.go_id = g.go_id WHERE ENTRY_AC = :entry_ac",
                             namedParameters,
                             new RowMapper<GoXref>() {
                                 public GoXref mapRow(ResultSet rs, int rowNum) throws SQLException {
                                     String identifier = rs.getString("go_id");
-                                    return new GoXref(identifier, null, null);
+                                    String name = rs.getString("name");
+                                    GoCategory category = GoCategory.parseName(name);
+                                    return new GoXref(identifier, name, category);
                                 }
                             });
 

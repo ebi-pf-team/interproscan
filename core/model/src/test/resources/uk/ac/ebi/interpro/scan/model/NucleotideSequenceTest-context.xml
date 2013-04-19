@@ -61,8 +61,8 @@
     <bean id="pfamXml" class="java.lang.String">
         <constructor-arg>
             <value>
-                <![CDATA[                
-<nucleotide-sequence xmlns="http://www.ebi.ac.uk/schema/interpro">
+                <![CDATA[
+<nucleotide-sequence xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
     <sequence md5="6e58bcca14d51fe29ba7265454b4f92c">ccggaagttattcacatttatatgcggaacctcatataaaatgtgaaaagaaggaatgcatggaatgaatattggacaaaaagtactgttcgaacttaaaa</sequence>
     <xref name="AP009179.1" id="AP009179" db="ENA"/>
     <orf strand="SENSE" start="3" end="63">
