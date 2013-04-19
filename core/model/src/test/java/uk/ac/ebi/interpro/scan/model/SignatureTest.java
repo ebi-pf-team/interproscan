@@ -16,25 +16,20 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.runner.RunWith;
-import org.junit.Test;
-import org.junit.Ignore;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.xml.sax.SAXException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for {@link Signature}
@@ -57,7 +52,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
 
         // Can use \n or XML escape character (&#10;) for new line
         String expectedXml =
-                "<signature ac='PF00001' xmlns='http://www.ebi.ac.uk/schema/interpro'>\n" +
+                "<signature ac='PF00001' xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>\n" +
                 "    <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), " +
                 "members of the opsin family, which have been considered to be typical members " +
                 "of the rhodopsin superfamily. " +
@@ -73,7 +68,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
                 "</signature>";
 
         Signature actual = unmarshal(expectedXml);
-        
+
         Signature expected = new Signature
                 .Builder("PF00001")
                 .abstractText(
@@ -145,7 +140,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
             LOGGER.debug(signature);
             LOGGER.debug(super.marshal(signature));
         }
-    }       
+    }
 
     @Test public void testRemoveModel()   {
         Signature signature = new Signature("SIG001");
@@ -177,7 +172,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
 
         // Expected XML
         String expectedXml =
-            "<signature xmlns='http://www.ebi.ac.uk/schema/interpro' ac='G3DSA:2.40.50.140' name='Nucleic acid-binding proteins'>" +
+            "<signature xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5' ac='G3DSA:2.40.50.140' name='Nucleic acid-binding proteins'>" +
             "   <signature-library-release library='GENE3D' version='3.1.0'/>" +
             "</signature>";
 
