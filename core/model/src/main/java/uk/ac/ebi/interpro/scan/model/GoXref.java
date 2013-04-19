@@ -58,7 +58,7 @@ public class GoXref extends Xref implements Serializable {
         this.category = category;
     }
 
-    @XmlAttribute
+    @XmlAttribute(name = "category")
     public GoCategory getCategory() {
         return category;
     }

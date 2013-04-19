@@ -126,7 +126,7 @@
                   http://www.nabble.com/maven-jaxb-schemagen-plugin-additional-hand-written-schema-import-td18921720.html
                 * Considered exec:java on com.sun.tools.jxc.SchemaGenerator but did not offer enough control:
                   java com.sun.tools.jxc.SchemaGenerator -cp target/classes/
-                                                         src/main/java/uk/ac/ebi/impact/model/ModelDatabaseRelease.java                
+                                                         src/main/java/uk/ac/ebi/impact/model/ModelDatabaseRelease.java
              -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -138,6 +138,7 @@
                         <configuration>
                             <tasks>
                                 <property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>
+                                <property name="latest.interpro.schema.version" value="1.1"/>
                                 <mkdir dir="${project.build.schema.dir}"/>
                                 <taskdef name="schemagen"
                                          classname="com.sun.tools.jxc.SchemaGenTask"
@@ -146,11 +147,11 @@
                                            destdir="${project.build.schema.dir}"
                                            classpathref="maven.compile.classpath">
                                     <!-- Following does not work: -->
-                                    <!--schema namespace="http://www.ebi.ac.uk/interpro/scan/model" file="${project.artifactId}.xsd" /-->
+                                    <!--schema namespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" file="${project.artifactId}.xsd" /-->
                                 </schemagen>
                                 <!-- 'schema' child element does not work, so have to rename file by hand -->
                                 <move file="${project.build.schema.dir}/schema1.xsd"
-                                      tofile="${project.build.schema.dir}/${project.artifactId}.xsd"/>
+                                      tofile="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd"/>
                             </tasks>
                         </configuration>
                         <goals>
