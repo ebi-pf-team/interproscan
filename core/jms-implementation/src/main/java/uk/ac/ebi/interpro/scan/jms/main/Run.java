@@ -11,10 +11,7 @@ import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.converter.Converter;
-import uk.ac.ebi.interpro.scan.jms.master.BlackBoxMaster;
-import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster;
-import uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMasterCopy;
-import uk.ac.ebi.interpro.scan.jms.master.Master;
+import uk.ac.ebi.interpro.scan.jms.master.*;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
@@ -94,6 +91,7 @@ public class Run {
         OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences are TSV, XML and GFF3, or for nucleotide sequences GFF3 and XML.", "OUTPUT-FORMATS", true, true),
         BASE_OUT_FILENAME("output-file-base", "b", false, "Optional, base output filename (relative or absolute path).  Note that this option and the --outfile (-o) option are mutually exclusive.  The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-FILE-BASE", false, true),
         OUTPUT_FILE("outfile", "o", false, "Optional explicit output file name (relative or absolute path).  Note that this option and the --output-file-base (-b) option are mutually exclusive. If this option is given, you MUST specify a single output format using the -f option.  The output file name will not be modified. Note that specifying an output file name using this option OVERWRITES ANY EXISTING FILE.", "EXPLICIT_OUTPUT_FILENAME", false, true),
+        OUTPUT_DIRECTORY("output-dir", "d", false, "Optional, output directory.  Note that this option and the --outfile (-o) option or the --output-file-base (-b) option are mutually exclusive. The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-DIR", false, true),
         ANALYSES("applications", "appl", false, "Optional, comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true, true),
         PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept (0 low -> 9 high).", "JMS-PRIORITY", false, false),
         IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation.", null, false, true),
@@ -388,9 +386,7 @@ public class Run {
             //Print help for the convert mode
             else if (mode.equals(Mode.CONVERT)) {
                 if (isInvalid(mode, parsedCommandLine)) {
-                    buildConvertModeOptions();
-                    printConvertModeHelp();
-                    System.exit(1);
+                    exitI5(Mode.CONVERT, 1);
                 }
             }
 
@@ -450,68 +446,26 @@ public class Run {
         }
     }
 
+    /**
+     * @param mode   One of InterProScan's mode.
+     * @param status Exit status for system.exit call.
+     */
+    private static void exitI5(final Mode mode, final int status) {
+        if (mode.equals(Mode.CONVERT)) {
+            buildConvertModeOptions();
+            printConvertModeHelp();
+            System.exit(status);
+        }
+    }
+
     private static void runConvertMode(final Runnable runnable,
                                        final CommandLine parsedCommandLine,
                                        final String[] parsedOutputFormats) {
-        final Converter converter = (Converter) runnable;
-        String defaultFileOutputName = "i5_convert_mode_output.out";
-        //Get XML input file
-        if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
-            String xmlInputFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(xmlInputFilePath, I5Option.TEMP_DIRECTORY.getShortOpt());
-            converter.setXmlInputFilePath(xmlInputFilePath);
-            defaultFileOutputName = new File(xmlInputFilePath).getName();
+        if (runnable instanceof SimpleBlackBoxMaster) {
+            SimpleBlackBoxMaster simpleMaster = (SimpleBlackBoxMaster) runnable;
+            LOGGER.debug("Setting up the simple black box master...");
+            setupSimpleBlackBoxMaster(simpleMaster, parsedCommandLine, parsedOutputFormats, "i5_convert_mode_output.out");
         }
-        //Get base output directory
-        if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
-            //As this option and the (-o) option are mutually exclusive with have to check that state
-            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
-                System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
-                System.exit(3);
-            }
-            String outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt());
-            //If outputBaseFileName is a directory (Simply check the ending) then set the defaultFileOutputName
-            if (outputBaseFileName.endsWith("/")) {
-                outputBaseFileName += defaultFileOutputName;
-            }
-            outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
-            converter.setOutputPath(outputBaseFileName);
-        }
-        //If (-b) option ISN't specified but (-u) options is set
-        //Default file output path will be (USER_DIR + defaultFileOutputName)
-        else if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
-            String outputBaseFileName = getAbsoluteFilePath(defaultFileOutputName, parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
-            converter.setOutputPath(outputBaseFileName);
-        }
-        if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
-            if (parsedOutputFormats == null || parsedOutputFormats.length != 1) {
-                System.out.println("\n\nYou must indicate a single output format using the -f option if you wish to set an explicit output file name.");
-                System.exit(2);
-            }
-
-            if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
-                System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
-                System.exit(3);
-            }
-            String explicitOutputFilename = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()), parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
-            converter.setExplicitFileName(explicitOutputFilename);
-        }
-        //Get output formats
-        if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
-            converter.setOutputFormats(parsedOutputFormats);
-        }
-        //Set temporary directory
-        final String filePath;
-        if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
-            filePath = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt());
-        } else {
-            filePath = "temp/";
-        }
-        final String temporaryDirectory = getAbsoluteFilePath(filePath, parsedCommandLine);
-        converter.setTemporaryDirectory(temporaryDirectory);
     }
 
     private static void checkIfMasterAndConfigure(final Runnable runnable,
@@ -543,60 +497,16 @@ public class Run {
             final String[] parsedOutputFormats,
             final AbstractApplicationContext ctx,
             final Mode mode,
-            final String sequenceType
-    ) {
+            final String sequenceType) {
+
+        if (master instanceof SimpleBlackBoxMaster) {
+            SimpleBlackBoxMaster simpleMaster = (SimpleBlackBoxMaster) master;
+            LOGGER.debug("Setting up the simple black box master...");
+            setupSimpleBlackBoxMaster(simpleMaster, parsedCommandLine, parsedOutputFormats, "i5_output.out");
+        }
         if (master instanceof BlackBoxMaster) {
-            boolean haveSetBaseOutputFileName = false;
-
             BlackBoxMaster bbMaster = (BlackBoxMaster) master;
-            String defaultFileOutputName = "i5_output.out";
-            if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
-                String fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
-                bbMaster.setFastaFilePath(fastaFilePath);
-                defaultFileOutputName = new File(fastaFilePath).getName();
-            }
-            //If (-b) option is specified
-            if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
-                //As this option and the (-o) option are mutually exclusive with have to check that state
-                if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
-                    System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
-                    System.exit(3);
-                }
-                String outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt());
-                //If outputBaseFileName is a directory (Simply check the ending) then set the defaultFileOutputName
-                if (outputBaseFileName.endsWith("/")) {
-                    outputBaseFileName += defaultFileOutputName;
-                }
-                outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
-                checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
-                bbMaster.setOutputBaseFilename(outputBaseFileName);
-                haveSetBaseOutputFileName = true;
-            }
-            //If (-b) option ISN't specified but (-u) options is set
-            //Default file output path will be (USER_DIR + defaultFileOutputName)
-            else if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
-                String outputBaseFileName = getAbsoluteFilePath(defaultFileOutputName, parsedCommandLine);
-                checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
-                bbMaster.setOutputBaseFilename(outputBaseFileName);
-            }
-            //
-            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
-                if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0]) || "svg".equalsIgnoreCase(parsedOutputFormats[0])) {
-                    System.out.println("\n\nYou must indicate a single output format excluding HTML and SVG using the -f option if you wish to set an explicit output file name.");
-                    System.exit(2);
-                }
 
-                if (haveSetBaseOutputFileName) {
-                    System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
-                    System.exit(3);
-                }
-                String explicitOutputFilename = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()), parsedCommandLine);
-                checkDirectoryExistenceAndWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
-                bbMaster.setExplicitOutputFilename(explicitOutputFilename);
-            }
-            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
-                bbMaster.setOutputFormats(parsedOutputFormats);
-            }
             String tcpConnectionString = null;
             if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER || mode == Mode.ES) {
                 tcpConnectionString = configureTCPTransport(ctx);
@@ -631,7 +541,6 @@ public class Run {
                 }
             }
 
-
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                 bbMaster.setSequenceType(sequenceType);
             }
@@ -644,7 +553,6 @@ public class Run {
                 bbMaster.disablePrecalc();
             }
 
-
             // GO terms and/or pathways will also imply IPR lookup
             final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
             bbMaster.setMapToGOAnnotations(mapToGo);
@@ -652,6 +560,96 @@ public class Run {
             bbMaster.setMapToPathway(mapToPathway);
             bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
         }
+    }
+
+    /**
+     * Used to setup standalone and convert mode.
+     */
+    private static void setupSimpleBlackBoxMaster(final SimpleBlackBoxMaster master,
+                                                  final CommandLine parsedCommandLine,
+                                                  final String[] parsedOutputFormats,
+                                                  String defaultOutputFileName) {
+        //Get the value for the (-i) option
+        if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
+            String fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(fastaFilePath, I5Option.FASTA.getShortOpt());
+            master.setFastaFilePath(fastaFilePath);
+            defaultOutputFileName = new File(fastaFilePath).getName();
+        }
+
+//        String defaultFileOutputName = "i5_convert_mode_output.out";
+
+        //Get the value for the (-b) option is specified
+        boolean haveSetBaseOutputFileName = false;
+
+        if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
+            //As this option and the (-o) option are mutually exclusive with have to check that state
+            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+                System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
+                System.exit(3);
+            }
+            String outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt());
+            //If outputBaseFileName is a directory (Simply check the ending) then set the defaultFileOutputName
+            if (outputBaseFileName.endsWith("/")) {
+                outputBaseFileName += defaultOutputFileName;
+            }
+            outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
+            master.setOutputBaseFilename(outputBaseFileName);
+            haveSetBaseOutputFileName = true;
+        }
+
+        //If (-b) option ISN't specified but (-u) options is set
+        //Default file output path will be (USER_DIR + defaultFileOutputName)
+        else if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
+            String outputBaseFileName = getAbsoluteFilePath(defaultOutputFileName, parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
+            master.setOutputBaseFilename(outputBaseFileName);
+        }
+
+        //Get the value for the (-o) option is specified
+        if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+            if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0]) || "svg".equalsIgnoreCase(parsedOutputFormats[0])) {
+                System.out.println("\n\nYou must indicate a single output format excluding HTML and SVG using the -f option if you wish to set an explicit output file name.");
+                System.exit(2);
+            }
+
+            if (haveSetBaseOutputFileName) {
+                System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
+                System.exit(3);
+            }
+            String explicitOutputFilename = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()), parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
+            master.setExplicitOutputFilename(explicitOutputFilename);
+        }
+
+        if (parsedCommandLine.hasOption(I5Option.OUTPUT_DIRECTORY.getLongOpt())) {
+            if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt()) || parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+                System.out.println("The options --output-file-base (-b), --outfile (-o) and --output-dir (-d) are mutually exclusive.");
+                System.exit(3);
+            }
+            String outputDirValue = parsedCommandLine.getOptionValue(I5Option.OUTPUT_DIRECTORY.getLongOpt());
+            if (!outputDirValue.endsWith("/")) {
+                outputDirValue += "/" + defaultOutputFileName;
+            }
+            String outputBaseFileName = getAbsoluteFilePath(outputDirValue, parsedCommandLine);
+            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.OUTPUT_DIRECTORY.getShortOpt());
+            master.setOutputBaseFilename(outputBaseFileName);
+        }
+        //Get the values for the output formats
+        if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
+            master.setOutputFormats(parsedOutputFormats);
+        }
+
+        //Set temporary directory
+        final String filePath;
+        if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
+            filePath = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt());
+        } else {
+            filePath = "temp/";
+        }
+        final String temporaryDirectory = getAbsoluteFilePath(filePath, parsedCommandLine);
+        master.setTemporaryDirectory(temporaryDirectory);
     }
 
     /**
@@ -689,7 +687,7 @@ public class Run {
         File dir = new File(parent);
         File file = new File(filePath);
         if (!dir.exists()) {
-            System.out.println("For the (-" + option + ") option you specified a directory which doesn't exist:");
+            System.out.println("For the (-" + option + ") option you specified a location which doesn't exist:");
             System.out.println(dir);
             System.exit(2);
         }

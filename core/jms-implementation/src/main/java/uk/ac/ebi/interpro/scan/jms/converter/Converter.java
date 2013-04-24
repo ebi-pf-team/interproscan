@@ -7,6 +7,7 @@ import org.springframework.oxm.UnmarshallingFailureException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.match.writer.*;
+import uk.ac.ebi.interpro.scan.jms.master.SimpleBlackBoxMaster;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
@@ -27,7 +28,7 @@ import java.util.*;
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  */
-public class Converter implements Runnable {
+public class Converter implements SimpleBlackBoxMaster {
 
     private static final Logger LOGGER = Logger.getLogger(Converter.class.getName());
 
@@ -47,6 +48,8 @@ public class Converter implements Runnable {
     private String outputFilePath;
 
     private String explicitFileName;
+
+    private boolean isExplicitFileNameSet = false;
 
     private String temporaryDirectory;
 
@@ -69,36 +72,21 @@ public class Converter implements Runnable {
         this.htmlResultWriter = htmlResultWriter;
     }
 
-    public String getXmlInputFilePath() {
-        return xmlInputFilePath;
+    public void setFastaFilePath(String fastaFilePath) {
+        this.xmlInputFilePath = fastaFilePath;
     }
 
-    public void setXmlInputFilePath(String xmlInputFilePath) {
-        this.xmlInputFilePath = xmlInputFilePath;
+    public void setOutputBaseFilename(String outputBaseFilename) {
+        this.outputFilePath = outputBaseFilename;
     }
 
-    public String getOutputFilePath() {
-        return outputFilePath;
-    }
-
-    public void setOutputPath(String outputFilePath) {
-        this.outputFilePath = outputFilePath;
-    }
-
-    public String getExplicitFileName() {
-        return explicitFileName;
-    }
-
-    public void setExplicitFileName(String explicitFileName) {
+    public void setExplicitOutputFilename(String explicitFileName) {
         this.explicitFileName = explicitFileName;
+        this.isExplicitFileNameSet = true;
     }
 
-    public String getTemporaryDirectory() {
-        return temporaryDirectory;
-    }
-
-    public void setTemporaryDirectory(String temporaryDirectory) {
-        this.temporaryDirectory = temporaryDirectory;
+    public void setOutputFormats(String[] outputFormats) {
+        this.outputFormats = outputFormats;
     }
 
     public String[] getOutputFormats() {
@@ -108,15 +96,20 @@ public class Converter implements Runnable {
         return outputFormats;
     }
 
-    public void setOutputFormats(String[] outputFormats) {
-        this.outputFormats = outputFormats;
+    public void setAnalyses(String[] analyses) {
+        //Unused, so leave it
+    }
+
+    public void setTemporaryDirectory(String temporaryDirectory) {
+        this.temporaryDirectory = temporaryDirectory;
     }
 
     public enum ConvertModeOption {
-        XML("xml", "i", false, "Optional, path to fasta file that should be loaded on Master startup.", "FASTA-FILE-PATH", false, true),
-        OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3 and HTML. Default for protein sequences are TSV, XML and GFF3, or for nucleotide sequences GFF3 and XML.", "OUTPUT-FORMATS", true, true),
+        XML("xml", "i", true, "Mandatory, path to the IMPACT XML file that should be loaded and converted.", "XML-FILE-PATH", false, true),
+        OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Available formats are TSV, GFF3 (default set) and RAW (InterProScan 4 TSV), HTML, SVG.", "OUTPUT-FORMATS", true, true),
         BASE_OUT_FILENAME("output-file-base", "b", false, "Optional, base output filename.  Note that this option and the --outfile (-o) option are mutually exclusive.  The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-FILE-BASE", false, true),
         OUTPUT_FILE("outfile", "o", false, "Optional explicit output file name.  Note that this option and the --output-file-base (-b) option are mutually exclusive. If this option is given, you MUST specify a single output format using the -f option.  The output file name will not be modified. Note that specifying an output file name using this option OVERWRITES ANY EXISTING FILE.", "EXPLICIT_OUTPUT_FILENAME", false, true),
+        OUTPUT_DIRECTORY("output-dir", "d", false, "Optional, output directory.  Note that this option and the --outfile (-o) option or the --output-file-base (-b) option are mutually exclusive. The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-DIR", false, true),
         TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. The default location is /temp.", "TEMP-DIR", false, true);
 
         private String longOpt;
@@ -191,7 +184,7 @@ public class Converter implements Runnable {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("The CONVERT mode is using the following settings...");
             LOGGER.info("Input file: " + inputFile.getAbsolutePath());
-            LOGGER.info("Output file path: " + outputFilePath + ".[gff3|tsv|svg.tar.gz|html.tar.gz]");
+            LOGGER.info("Output file path: " + (isExplicitFileNameSet ? explicitFileName : outputFilePath + ".[gff3|tsv|svg.tar.gz|html.tar.gz]"));
             LOGGER.info("Temporary directory: " + temporaryDirectory);
             final String formatsAsString = Arrays.toString(getOutputFormats());
             LOGGER.info("Requested output formats are: " + (outputFormats != null ? formatsAsString : "Undefined, therefore the default set will be use, which is " + formatsAsString));
@@ -232,36 +225,30 @@ public class Converter implements Runnable {
             for (String fileOutputFormat : getOutputFormats()) {
                 if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.GFF3.getFileExtension())) {
                     LOGGER.info("Generating GFF3 result output...");
-                    StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.GFF3.getFileExtension());
-                    File outputFile = new File(outputFilePathBuilder.toString());
+                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat));
                     outputToGFF(outputFile, sequenceType, proteins);
                     LOGGER.info("Finished generation of GFF3.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
                     LOGGER.info("Generating TSV result output...");
-                    StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.TSV.getFileExtension());
-                    File outputFile = new File(outputFilePathBuilder.toString());
+                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat));
                     outputToTSV(outputFile, proteins);
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
-                    StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.HTML.getFileExtension());
-                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(outputFilePathBuilder.toString(), true, true, FileOutputFormat.HTML));
+                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat), true, true, FileOutputFormat.HTML));
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension())) {
                     LOGGER.info("Generating SVG result output...");
-                    StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.SVG.getFileExtension());
-                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(outputFilePathBuilder.toString(), true, true, FileOutputFormat.SVG));
+                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat), true, true, FileOutputFormat.SVG));
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension())) {
                     LOGGER.info("Generating RAW result output...");
-                    StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(FileOutputFormat.RAW.getFileExtension());
-                    File outputFile = new File(outputFilePathBuilder.toString());
+                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat));
                     outputToRAW(outputFile, proteins);
                     LOGGER.info("Finished generation of RAW.");
-                }
-                else {
+                } else {
                     LOGGER.warn("The specified output format - " + fileOutputFormat + " - is not supported!");
                 }
             }
@@ -273,6 +260,16 @@ public class Converter implements Runnable {
             LOGGER.error("Cannot write or create result file!", e3);
         }
         //Write out the results to the specified output fo
+    }
+
+    private String getOutputFilePath(final boolean isExplicitFileNameSet,
+                                     final String fileOutputFormat) {
+        if (isExplicitFileNameSet) {
+            return explicitFileName;
+        } else {
+            StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(fileOutputFormat);
+            return outputFilePathBuilder.toString();
+        }
     }
 
     private void outputToTSV(final File file,
@@ -380,7 +377,8 @@ public class Converter implements Runnable {
 
     /**
      * Output in InterProScan 4 RAW (TSV) output format.
-     * @param file The file to create
+     *
+     * @param file     The file to create
      * @param proteins Protein data
      * @throws IOException In the event of an input/output error.
      */
