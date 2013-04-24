@@ -6,22 +6,20 @@ import java.util.Map;
  * Created with IntelliJ IDEA.
  * User: pjones
  */
-public interface BlackBoxMaster extends Master {
-    /**
-     * If a fasta file path is set, load the proteins at start up and analyse them.
-     *
-     * @param fastaFilePath from which to load the proteins at start up and analyse them.
-     */
-    void setFastaFilePath(String fastaFilePath);
+public interface BlackBoxMaster extends SimpleBlackBoxMaster {
 
     /**
-     * Allows the output formats to be changed from the default of all available formats for that sequence type.
+     * Boolean switch which activates the InterPro lookup.
      *
-     * @param outputFormats The comma separated list of output formats.
+     * @param mapToInterPro Default is FALSE (not activated)
      */
-    void setOutputFormats(String[] outputFormats);
-
     void setMapToInterProEntries(boolean mapToInterPro);
+
+    /**
+     * Boolean switch which activates the GO annotation lookup.
+     *
+     * @param mapToGO Default is FALSE (not activated)
+     */
 
     void setMapToGOAnnotations(boolean mapToGO);
 
@@ -51,26 +49,10 @@ public interface BlackBoxMaster extends Master {
      */
     void setMinSize(String minSize);
 
-
-    /**
-     * Allows an explicit (i.e. not modifiable) output file name to be specified.  If this is set,
-     * it is guaranteed that the user has specified a single output form (excluding HTML) and
-     * is responsible for giving the file a sensible name on a writable path.
-     *
-     * @param explicitFileName to be set.
-     */
-    void setExplicitOutputFilename(String explicitFileName);
-
     /**
      * Called to turn off the use of the precalculated match lookup service on this run.
      */
     void disablePrecalc();
-
-    /**
-     * @param outputBaseFilename if set, then the results will be output to this file in the format specified in
-     *                           the field outputFormat (defaulting to XML).
-     */
-    void setOutputBaseFilename(String outputBaseFilename);
 
     void processOutputFormats(final Map<String, String> params, final String[] outputFormats);
 
