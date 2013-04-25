@@ -45,23 +45,15 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         List<GoXref> result = null;
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("entry_ac", entryAc);
-//            result = this.jdbcTemplate
-//                    .query("SELECT ENTRY_AC, GO_ID FROM INTERPRO.INTERPRO2GO WHERE ENTRY_AC = :entry_ac",
-//                            namedParameters,
-//                            new RowMapper<GoXref>() {
-//                                public GoXref mapRow(ResultSet rs, int rowNum) throws SQLException {
-//                                    String identifier = rs.getString("go_id");
-//                                    return new GoXref(identifier, null, null);
-//                                }
-//                            });
             result = this.jdbcTemplate
-                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO.EBI.AC.UK g ON i2g.go_id = g.go_id WHERE ENTRY_AC = :entry_ac",
+                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO.EBI.AC.UK g ON i2g.go_id = g.go_id WHERE i2g.entry_ac = :entry_ac",
                             namedParameters,
                             new RowMapper<GoXref>() {
                                 public GoXref mapRow(ResultSet rs, int rowNum) throws SQLException {
                                     String identifier = rs.getString("go_id");
                                     String name = rs.getString("name");
-                                    GoCategory category = GoCategory.parseName(name);
+                                    String nameCode = rs.getString("category");
+                                    GoCategory category = GoCategory.parseNameCode(nameCode);
                                     return new GoXref(identifier, name, category);
                                 }
                             });
@@ -77,7 +69,7 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         final Map<String, Collection<GoXref>> result = new HashMap<String, Collection<GoXref>>();
         try {
             this.jdbcTemplate
-                    .query("SELECT * FROM INTERPRO.INTERPRO2GO",
+                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO.EBI.AC.UK g ON i2g.go_id = g.go_id",
                             new MapSqlParameterSource(),
                             new RowCallbackHandler() {
                                 @Override
@@ -98,7 +90,7 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("accessions", entryAccessions);
             this.jdbcTemplate
-                    .query("SELECT * FROM INTERPRO.INTERPRO2GO WHERE ENTRY_AC in (:accessions)",
+                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO.EBI.AC.UK g ON i2g.go_id = g.go_id WHERE i2g.entry_ac in (:accessions)",
                             namedParameters,
                             new RowCallbackHandler() {
                                 @Override
@@ -115,14 +107,17 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
     }
 
     private void addNewXref(ResultSet rs, final Map<String, Collection<GoXref>> result) throws SQLException {
-        String entryAcc = rs.getString("entry_ac");
+        String entryAc = rs.getString("entry_ac");
         String identifier = rs.getString("go_id");
-        GoXref newGoXRef = new GoXref(identifier, null, null);
-        Set<GoXref> goXrefs = (Set<GoXref>) result.get(entryAcc);
+        String name = rs.getString("name");
+        String nameCode = rs.getString("category");
+        GoCategory category = GoCategory.parseNameCode(nameCode);
+        GoXref newGoXRef = new GoXref(identifier, name, category);
+        Set<GoXref> goXrefs = (Set<GoXref>) result.get(entryAc);
         if (goXrefs == null) {
             goXrefs = new HashSet<GoXref>();
         }
         goXrefs.add(newGoXRef);
-        result.put(entryAcc, goXrefs);
+        result.put(entryAc, goXrefs);
     }
 }
