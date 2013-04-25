@@ -110,48 +110,40 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
                         mappingFields.add(status); // The status of the match (T: true, ?: unknown)
                         mappingFields.add(date); // The date of the run
 
-                        if (mapToInterProEntries) {
-                            Entry interProEntry = signature.getEntry();
-                            if (interProEntry != null) {
-                                mappingFields.add(interProEntry.getAccession()); // The corresponding InterPro entry (if iprlookup requested by the user)
-                                mappingFields.add(interProEntry.getDescription()); // The corresponding entry description (if iprlookup requested by the user)
-                                if (mapToGO) {
-                                    List<GoXref> goXRefs = new ArrayList<GoXref>(interProEntry.getGoXRefs());
-                                    Collections.sort(goXRefs, new GoXrefComparator());
-                                    if (goXRefs != null && goXRefs.size() > 0) {
-                                        StringBuilder sb = new StringBuilder();
-                                        for (GoXref xref : goXRefs) {
-                                            if (sb.length() > 0) {
-                                                sb.append(VALUE_SEPARATOR);
-                                            }
-                                            sb.append(xref.getIdentifier()); // Just writeComment the GO identifier to the output
-                                        }
-                                        mappingFields.add(sb.toString());
-                                    } else {
-                                        mappingFields.add("");
+                        // START if (mapToInterProEntries)
+                        final Entry interProEntry = signature.getEntry();
+                        if (interProEntry != null) {
+                            mappingFields.add(interProEntry.getAccession()); // The corresponding InterPro entry (if iprlookup requested by the user)
+                            mappingFields.add(interProEntry.getDescription()); // The corresponding entry description (if iprlookup requested by the user)
+                            // START if (mapToGO)
+                            // Example GO term format:
+                            // Molecular Function:prephenate dehydratase activity (GO:0004664), Biological Process:L-phenylalanine biosynthesis (GO:0009094)
+                            List<GoXref> goXRefs = new ArrayList<GoXref>(interProEntry.getGoXRefs());
+                            Collections.sort(goXRefs, new GoXrefComparator());
+                            if (goXRefs != null && goXRefs.size() > 0) {
+                                StringBuilder sb = new StringBuilder();
+                                for (GoXref xref : goXRefs) {
+                                    if (sb.length() > 0) {
+                                        sb.append(", "); // GO term separator
                                     }
+                                    final String category = xref.getCategory().getName();
+                                    sb.append(category);
+                                    sb.append(":");
+                                    sb.append(xref.getName());
+                                    sb.append(" (").append(xref.getIdentifier()).append(")");
                                 }
-//                                if (mapToPathway) {
-//                                    List<PathwayXref> pathwayXRefs = new ArrayList<PathwayXref>(interProEntry.getPathwayXRefs());
-//                                    Collections.sort(pathwayXRefs, new PathwayXrefComparator());
-//                                    if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
-//                                        StringBuilder sb = new StringBuilder();
-//                                        for (PathwayXref xref : pathwayXRefs) {
-//                                            if (sb.length() > 0) {
-//                                                sb.append(VALUE_SEPARATOR);
-//                                            }
-//                                            sb
-//                                                    .append(xref.getDatabaseName())
-//                                                    .append(": ")
-//                                                    .append(xref.getIdentifier());
-//                                        }
-//                                        mappingFields.add(sb.toString());
-//                                    } else {
-//                                        mappingFields.add("");
-//                                    }
-//                                }
+                                mappingFields.add(sb.toString());
+                            } else {
+                                // No GO terms associated
+                                // mappingFields.add("");
                             }
+                            // END if (mapToGO)
                         }
+                        else {
+                            mappingFields.add("NULL"); // No entry accession
+                            mappingFields.add("NULL"); // No entry name
+                        }
+                        // END if (mapToInterProEntries)
                         this.tsvWriter.write(mappingFields);
                     }
                 }
@@ -178,8 +170,8 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
         String crc64String = Long.toHexString( crc64Number ).toUpperCase();
         StringBuffer crc64 = new StringBuffer( "0000000000000000" );
         crc64.replace( crc64.length() - crc64String.length(),
-                       crc64.length(),
-                       crc64String );
+                crc64.length(),
+                crc64String );
 
         return crc64.toString();
     }
