@@ -225,31 +225,46 @@ public class Converter implements SimpleBlackBoxMaster {
             for (String fileOutputFormat : getOutputFormats()) {
                 if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.GFF3.getFileExtension())) {
                     LOGGER.info("Generating GFF3 result output...");
-                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat));
+                    final String extension = FileOutputFormat.GFF3.getFileExtension();
+                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, extension));
                     outputToGFF(outputFile, sequenceType, proteins);
                     LOGGER.info("Finished generation of GFF3.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
                     LOGGER.info("Generating TSV result output...");
-                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat));
+                    final String extension = FileOutputFormat.TSV.getFileExtension();
+                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, extension));
                     outputToTSV(outputFile, proteins);
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
-                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat), true, true, FileOutputFormat.HTML));
+                    final String extension = FileOutputFormat.HTML.getFileExtension();
+                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(getOutputFilePath(isExplicitFileNameSet, extension), true, true, FileOutputFormat.HTML));
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension())) {
                     LOGGER.info("Generating SVG result output...");
-                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat), true, true, FileOutputFormat.SVG));
+                    final String extension = FileOutputFormat.SVG.getFileExtension();
+                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(getOutputFilePath(isExplicitFileNameSet, extension), true, true, FileOutputFormat.SVG));
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension())) {
                     LOGGER.info("Generating RAW result output...");
-                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, fileOutputFormat));
+                    final String extension = FileOutputFormat.RAW.getFileExtension();
+                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, extension));
                     outputToRAW(outputFile, proteins);
                     LOGGER.info("Finished generation of RAW.");
+                } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.XML.getFileExtension())) {
+                    System.out.println("XML output format was ignored in convert mode.");
+                    // TODO Review this! Is XML allowed in CONVERT mode?
+//                    LOGGER.info("Generating XML result output...");
+//                    final String extension = FileOutputFormat.XML.getFileExtension();
+//                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, extension));
+//                    outputToXML(outputFile, proteins);
+//                    LOGGER.info("Finished generation of XML.");
                 } else {
-                    LOGGER.warn("The specified output format - " + fileOutputFormat + " - is not supported!");
+                    LOGGER.error("The specified output format - " + fileOutputFormat + " - is not supported!");
+                    System.out.println("\n\n" + "The specified output file format " + fileOutputFormat + " was not recognised." + "\n\n");
+                    System.exit(1);
                 }
             }
         } catch (FileNotFoundException e1) {
@@ -263,11 +278,11 @@ public class Converter implements SimpleBlackBoxMaster {
     }
 
     private String getOutputFilePath(final boolean isExplicitFileNameSet,
-                                     final String fileOutputFormat) {
+                                     final String extension) {
         if (isExplicitFileNameSet) {
             return explicitFileName;
         } else {
-            StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(fileOutputFormat);
+            StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(extension);
             return outputFilePathBuilder.toString();
         }
     }

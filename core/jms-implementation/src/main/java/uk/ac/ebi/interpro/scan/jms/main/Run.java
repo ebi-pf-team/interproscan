@@ -395,7 +395,7 @@ public class Run {
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
                 parsedOutputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
                 parsedOutputFormats = tidyOptionsArray(parsedOutputFormats);
-                validateOutputFormatList(parsedOutputFormats);
+                validateOutputFormatList(parsedOutputFormats, mode);
             }
 
             // Validate the sequence type
@@ -844,13 +844,18 @@ public class Run {
      *
      * @return The tidied list of file extensions
      */
-    private static void validateOutputFormatList(String[] outputFormats) {
+    private static void validateOutputFormatList(String[] outputFormats, Mode mode) {
         // TODO With org.apache.commons.cli v2 could use EnumValidator instead, but currently we use cli v1.2
         if (outputFormats != null && outputFormats.length > 0) {
             // The user manually specified at least one output format, now check it's OK
             for (String outputFormat : outputFormats) {
                 if (!FileOutputFormat.isExtensionValid(outputFormat)) {
                     System.out.println("\n\n" + "The specified output file format " + outputFormat + " was not recognised." + "\n\n");
+                    System.exit(1);
+                }
+                else if(!mode.equals(Mode.CONVERT) && outputFormat.equalsIgnoreCase("raw")) {
+                    // RAW output (InterProScan 4 TSV output) is only allowed in CONVERT mode
+                    System.out.println("\n\n" + "The specified output file format " + outputFormat + " is only supported in " + Mode.CONVERT.name() + " mode." + "\n\n");
                     System.exit(1);
                 }
             }
