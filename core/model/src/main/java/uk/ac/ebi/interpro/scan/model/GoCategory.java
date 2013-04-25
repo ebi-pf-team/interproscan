@@ -28,27 +28,33 @@ import java.io.Serializable;
 @XmlType(name="GoCategoryType")
 public enum GoCategory implements Serializable {
 
-    BIOLOGICAL_PROCESS("GO:0008150", "Biological Process", "Any process specifically pertinent to the functioning of " +
+    BIOLOGICAL_PROCESS("GO:0008150", "P", "Biological Process", "Any process specifically pertinent to the functioning of " +
             "integrated living units: cells, tissues, organs, and organisms. A process is a collection of molecular " +
             "events with a defined beginning and end."),
 
-    CELLULAR_COMPONENT("GO:0005575", "Cellular Component", "The part of a cell or its extracellular environment in " +
+    CELLULAR_COMPONENT("GO:0005575", "C", "Cellular Component", "The part of a cell or its extracellular environment in " +
             "which a gene product is located. A gene product may be located in one or more parts of a cell and its " +
             "location may be as specific as a particular macromolecular complex, that is, a stable, persistent " +
             "association of macromolecules that function together. "),
 
-    MOLECULAR_FUNCTION("GO:0003674", "Molecular Function", "Elemental activities, such as catalysis or binding, " +
+    MOLECULAR_FUNCTION("GO:0003674", "F", "Molecular Function", "Elemental activities, such as catalysis or binding, " +
             "describing the actions of a gene product at the molecular level. A given gene product may exhibit one " +
             "or more molecular functions.");
 
     private final String identifier;
-    private final String name;
+    private final String nameCode; // Category code from IWEBPRO1 (P, C or F)
+    private final String name; // Category name (Biological Process, Cellular Component or Molecular Function)
     private final String description;
 
-    private GoCategory(String identifier, String name, String description) {
+    private GoCategory(String identifier, String nameCode, String name, String description) {
         this.identifier  = identifier;
+        this.nameCode    = nameCode;
         this.name        = name;
         this.description = description;
+    }
+
+    public String getNameCode() {
+        return nameCode;
     }
 
     public String getName() {
@@ -66,7 +72,16 @@ public enum GoCategory implements Serializable {
     @Override public String toString() {
         return name;
     }
-    
+
+    public static GoCategory parseNameCode(String nameCode)  {
+        for (GoCategory m : GoCategory.values()) {
+            if (nameCode.equals(m.getNameCode())) {
+                return m;
+            }
+        }
+        throw new IllegalArgumentException("Unrecognised name code: " + nameCode);
+    }
+
     public static GoCategory parseName(String name)  {
         for (GoCategory m : GoCategory.values()) {
             if (name.equals(m.getName()))   {
@@ -75,5 +90,4 @@ public enum GoCategory implements Serializable {
         }
         throw new IllegalArgumentException("Unrecognised name: " + name);
     }
-
 }
