@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
@@ -16,8 +17,10 @@ import java.util.*;
  * @since 1.0-SNAPSHOT
  */
 public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
-    private TSVWriter tsvWriter;
 
+    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesRAWResultWriter.class.getName());
+
+    private TSVWriter tsvWriter;
 
     private static long _crc64Array [] = new long [256];
 
@@ -38,6 +41,33 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
             }
             _crc64Array[ i ] = k;
         }
+    }
+
+    private static Map<String, String> analysisI5toI4 = new HashMap<String, String>();
+    static {
+        Map<String, String> tempMap = new HashMap<String, String>();
+        tempMap.put(SignatureLibrary.PRODOM.getName(), "BlastProDom");
+        tempMap.put(SignatureLibrary.COILS.getName(), "Coils");
+        tempMap.put(SignatureLibrary.PRINTS.getName(), "FPrintScan");
+        tempMap.put(SignatureLibrary.GENE3D.getName(), "Gene3D");
+        tempMap.put(SignatureLibrary.HAMAP.getName(), "HAMAP");
+        tempMap.put(SignatureLibrary.PANTHER.getName(), "HMMPanther");
+        tempMap.put(SignatureLibrary.PIRSF.getName(), "HMMPIR");
+        tempMap.put(SignatureLibrary.SMART.getName(), "HMMSmart");
+        tempMap.put(SignatureLibrary.TIGRFAM.getName(), "HMMTigr");
+        tempMap.put(SignatureLibrary.PFAM.getName(), "HMMPfam");
+        tempMap.put(SignatureLibrary.PROSITE_PATTERNS.getName(), "PatternScan");
+        tempMap.put(SignatureLibrary.TMHMM.getName(), "TMHMM");
+        tempMap.put(SignatureLibrary.PROSITE_PROFILES.getName(), "ProfileScan");
+        tempMap.put(SignatureLibrary.SUPERFAMILY.getName(), "Superfamily"); // New SuperFamily version in I5, but results map cleanly to old so it's OK
+        //tempMap.put(SignatureLibrary.SIGNALP_EUK.getName(), "SignalPHMM"); // New SignalP version does not map cleanly to old
+        //tempMap.put(SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), "SignalPHMM"); // New SignalP version does not map cleanly to old
+        //tempMap.put(SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName(), "SignalPHMM"); // New SignalP version does not map cleanly to old
+        //tempMap.put(SignatureLibrary.PHOBIUS.getName(), ""); // Phobius was new in I5, doesn't exist in I4!
+        //tempMap.put(SignatureLibrary.PFAM_B.getName(), ""); // Not officially part of I5 (as far as users are aware)
+        //tempMap.put(SignatureLibrary.COMPARA.getName(), ""); // Not officially part of I5 (as far as users are aware)
+
+        analysisI5toI4 = Collections.unmodifiableMap(tempMap);
     }
 
     public ProteinMatchesRAWResultWriter(File file) throws IOException {
@@ -68,7 +98,14 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
                 final Signature signature = match.getSignature();
                 final String signatureAc = signature.getAccession();
                 final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
-                final String analysis = signatureLibrary.getName();
+                final String analysis = analysisI5toI4.get(signatureLibrary.getName());
+                if (analysis == null) {
+                    // Analysis invalid or not in the map, so don't include in the RAW output
+                    if (LOGGER.isInfoEnabled()) {
+                        LOGGER.info("Skipping " + signatureAc + " match, RAW output does not support matches from analysis " + signatureLibrary.getName());
+                    }
+                    continue;
+                }
                 final String description = match.getSignature().getDescription();
 
                 Set<Location> locations = match.getLocations();
@@ -175,4 +212,5 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
 
         return crc64.toString();
     }
+
 }
