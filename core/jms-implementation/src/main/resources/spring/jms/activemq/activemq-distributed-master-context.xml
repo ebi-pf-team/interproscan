@@ -2,8 +2,9 @@
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:amq="http://activemq.apache.org/schema/core"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <!--<import resource="activemq-queue-config-context.xml"/>-->
     <import resource="activemq-inVm-connection-config-context.xml"/>
@@ -11,7 +12,7 @@
     <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
 
     <!--  lets create an embedded ActiveMQ Broker -->
-    <amq:broker id="i5_broker"
+    <amq:broker id="jmsBroker"
                 useJmx="false"
                 persistent="true"
                 useShutdownHook="true"
@@ -22,25 +23,25 @@
         <!-- shutdownhook is the default shutdown mode for ActiveMQ, see:
         http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broker/BrokerService.html#setUseShutdownHook(boolean)
         -->
+        <amq:plugins>
+            <amq:statisticsBrokerPlugin id="stats"/>
+        </amq:plugins>
         <amq:systemUsage>
             <amq:systemUsage>
                 <amq:memoryUsage>
                     <amq:memoryUsage limit="1024 mb"/>
                 </amq:memoryUsage>
-                <!--<amq:storeUsage>-->
-                <!--<amq:storeUsage limit="1 gb"/>-->
-                <!--</amq:storeUsage>-->
-                <!--<amq:tempUsage>-->
-                <!--<amq:tempUsage limit="100 mb"/>-->
-                <!--</amq:tempUsage>-->
+                <amq:storeUsage>
+                <amq:storeUsage limit="1 gb"/>
+                </amq:storeUsage>
+                <amq:tempUsage>
+                <amq:tempUsage limit="100 mb"/>
+                </amq:tempUsage>
             </amq:systemUsage>
         </amq:systemUsage>
 
         <amq:transportConnectors>
-            <!-- Connector for remote workers-->
-            <amq:transportConnector name="remote" uri="tcp://${jms.broker.host.name}:${jms.broker.port.number}"/>
-            <!-- Connector for Master (the broker is embedded, so use in JVM communication).-->
-            <amq:transportConnector name="inVM" uri="vm://localhost"/>
+            <amq:transportConnector uri="vm://localhost"/>
         </amq:transportConnectors>
     </amq:broker>
 
@@ -52,7 +53,33 @@
         <property name="workerRunnerHighMemory" ref="workerRunnerHighMemory"/>
         <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
+        <property name="statsUtil" ref="statsUtil"/>
     </bean>
+
+    <!--Configuration for the statistics listener-->
+    <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="statsQueue"/>
+        <property name="concurrentConsumers" value="1"/>
+        <property name="messageListener" ref="statsMessageListener"/>
+    </bean>
+
+    <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
+
+
+
+    <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="jobRequestQueue" ref="jobRequestQueue"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="statsQueue" ref="statsQueue"/>
+        <property name="statsMessageListener"  ref="statsMessageListener" />
+        <property name="highMemJobRequestQueue" ref="highMemJobRequestQueue"/>
+        <property name="workerManagerTopicQueue" ref="workerManagerTopic"/>
+        <property name="totalJobs" value="0"/>
+        <property name="unfinishedJobs" value="0"/>
+    </bean>
+
 
     <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.EmailErrorAndContinueErrorStrategy"/>
 
@@ -60,12 +87,22 @@
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
         <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="normalWorkerJobRequestQueue" ref="jobRequestQueue"/>
+        <property name="highmemWorkerJobRequestQueue" ref="highMemJobRequestQueue"/>
+        <property name="workerManagerTopic" ref="workerManagerTopic"/>
+        <property name="jmsTopicTemplate" ref="inVmJmsTopicTemplate"/>
     </bean>
 
 
     <bean id="workerRunner"
           class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-        <property name="submissionCommand" value="${worker.command}"/>
+        <property name="submissionCommand" value="bsub -q production-rh6 -o worker.lsf.out -e worker.lsf.err -J i5EsJms ${worker.command}"/>
+        <property name="gridCommand" value="${grid.lsf.master.command}"/>
+        <property name="projectId" value="${user.digest}"/>
+        <property name="i5Command" value="${worker.command}"/>
+        <property name="gridJobsLimit" value="${grid.jobs.limit}"/>
+        <property name="lsfMonitor" ref="lsfMonitor"/>
+        <property name="gridName" value="${grid.name}"/>
         <property name="highMemory" value="false"/>
         <property name="workerStartupStrategy">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy">
@@ -75,11 +112,17 @@
 
     <bean id="workerRunnerHighMemory"
           class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-        <property name="submissionCommand" value="${worker.high.memory.command}"/>
+        <property name="submissionCommand" value="bsub -q production-rh6 -o highmem.worker.lsf.out -e highmem.worker.lsf.err -J i5EsJms ${worker.high.memory.command}"/>
+        <property name="gridCommand" value="${grid.lsf.master.high.memory.command}"/>
+        <property name="projectId" value="${user.digest}"/>
+        <property name="i5Command" value="${worker.high.memory.command}"/>
         <property name="highMemory" value="true"/>
+        <property name="gridName" value="${grid.name}"/>
         <property name="workerStartupStrategy">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
         </property>
+        <property name="gridJobsLimit" value="${grid.jobs.limit}"/>
+        <property name="lsfMonitor" ref="lsfMonitor"/>
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
@@ -92,6 +135,49 @@
         <constructor-arg ref="stepExecutionDAO"/>
     </bean>
 
+    <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />
+
+    <bean id="portExclusionList" class="java.lang.String">
+        <constructor-arg value="${tcp.port.exclusion.list}"/>
+    </bean>
+
+
+    <!--Configuration for the local job queue listener-->
+    <bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="jobRequestQueue"/>
+        <property name="messageListener" ref="localJobQueueListener"/>
+        <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
+        <property name="maxConcurrentConsumers" value="${maxnumber.of.embedded.workers}"/>
+        <property name="sessionTransacted" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+    </bean>
+
+    <!--<bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->
+    <!--<property name="jobResponseQueue" ref="jobResponseQueue"/>-->
+    <!--<property name="jmsTemplate" ref="inVmJmsTemplate"/>-->
+    <!--<property name="stepExecutor" ref="embeddedStepExecutor"/>-->
+    <!---->
+    <!--</bean>-->
+
+    <!--Listens to the local job queue and performs jobs-->
+    <bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.worker.LocalJobQueueListener">
+        <property name="stepExecutor" ref="embeddedStepExecutor"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
+
+    </bean>
+
+
+    <bean id="embeddedStepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
+        <property name="jobs" ref="jobs"/>
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="directoryManager" ref="tempDirectoryManager"/>
+    </bean>
+
+
+
     <!-- Quartz Scheduler - contains list of Quartz jobs. -->
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
@@ -101,6 +187,7 @@
             </list>
         </property>
     </bean>
+
 
     <!-- Quartz job to load proteins from UniParc -->
     <bean id="proteinLoadQuartzJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -119,8 +206,8 @@
     <!-- Quartz job to run spare parallel worker.  Currently turned on. -->
     <bean id="startSpareParallelWorkerQuartzJob"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="workerRunner"/>
-        <property name="targetMethod" value="startupNewWorker"/>
+        <property name="targetObject" ref="master"/>
+        <property name="targetMethod" value="startNewWorkerForQuartzJob"/>
     </bean>
 
     <bean id="startSpareParallelWorkerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">

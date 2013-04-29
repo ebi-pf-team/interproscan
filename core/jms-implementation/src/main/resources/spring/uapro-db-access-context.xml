@@ -13,11 +13,11 @@
 
     <bean id="uniparcDataSource" class="uk.ac.ebi.interpro.scan.jms.activemq.ExternalDriverDataSource">
         <constructor-arg ref="tempDirectoryManager"/>
-        <property name="driverJar" value="/sw/arch/dbtools/oracle/product/11.1.0.6.2/client/jdbc/lib/ojdbc6.jar"/>
-        <property name="driverClassName" value=""/>
-        <property name="url" value="jdbc:oracle:thin:@gin.ebi.ac.uk:1571:UAPRO"/>
-        <property name="username" value="interpro_webserver"/>
-        <property name="password" value="iwebserv"/>
+        <property name="driverJar" value=""/>
+        <property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@//kava.ebi.ac.uk:1531/ISDEV"/>
+        <property name="username" value="ops$craigm"/>
+        <property name="password" value="ispro_craigm"/>
     </bean>
 
 </beans>

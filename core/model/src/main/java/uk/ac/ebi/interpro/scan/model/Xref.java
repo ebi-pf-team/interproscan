@@ -45,7 +45,8 @@ abstract class Xref implements Serializable {
     protected Long id;
 
     @Column(nullable = false, unique = false, updatable = false)
-    @Index(name = "xrf_idx")
+    //keep the index name small to avoid child table indexes longer than 30 characters
+    @Index(name = "x_idx")
     private String identifier;
 
     @Column(nullable = true)

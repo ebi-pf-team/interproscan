@@ -69,9 +69,20 @@ public class LoadUniParcFromDBImpl implements LoadUniParcFromDB {
     @Transactional
     public void loadNewSequences() {
         // Get the 'high water mark' UPI in I5
+        // TODO - change table name after testing
         String highWaterMark = proteinXrefDao.getMaxUniparcId();
         LOGGER.debug("The high water mark UPI is " + highWaterMark);
-        final String sql = "select upi, seq_short, seq_long from uniparc.protein where upi > ? and rownum <= ? order by upi ASC";
+        /*
+         The query below has to be written as a select within a select
+         in order for the upis to be returned sequentially
+         */
+
+        final String sql = "select * from ( " +
+                           "select  upi, seq_short, seq_long " +
+                           "from uniparc_proteins " +
+                           "where upi > ? " +
+                           "order by upi ASC ) " +
+                           "where rownum <= ? ";
         jdbcTemplate.query(sql, new Object[]{highWaterMark, maximumProteins}, rowCallbackHandlerTemplate);
         rowCallbackHandlerTemplate.persist();
     }

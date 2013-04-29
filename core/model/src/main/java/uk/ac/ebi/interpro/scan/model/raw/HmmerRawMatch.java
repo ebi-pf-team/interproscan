@@ -18,10 +18,10 @@ import javax.persistence.Entity;
 @Entity
 public abstract class HmmerRawMatch extends RawMatch {
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false,  updatable = false)
     private double evalue;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false,  updatable = false)
     private double score;
 
     @Column(nullable = false, updatable = false)

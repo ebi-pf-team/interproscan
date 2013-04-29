@@ -50,34 +50,13 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     private boolean mapToPathway = false;
 
     protected boolean hasInVmWorker;
-
-    private String projectId;
-
-    private String userDir;
+    protected String userDir;
 
     @Required
     public void setHasInVmWorker(boolean hasInVmWorker) {
         this.hasInVmWorker = hasInVmWorker;
     }
 
-    public void setSubmissionWorkerRunnerProjectId(String projectId){
-        //set this as soon as the masters starts running
-        if (this.workerRunner instanceof SubmissionWorkerRunner){
-            ((SubmissionWorkerRunner) this.workerRunner).setProjectId(projectId);
-        }
-        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
-            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setProjectId(projectId);
-        }
-    }
-
-    public void setSubmissionWorkerRunnerUserDir(String userDir){
-        if (this.workerRunner instanceof SubmissionWorkerRunner){
-            ((SubmissionWorkerRunner) this.workerRunner).setUserDir(userDir);
-        }
-        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
-            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setUserDir(userDir);
-        }
-    }
 
     protected void loadInMemoryDatabase() throws InterruptedException {
         final Thread databaseLoaderThread = new Thread(databaseCleaner);
@@ -285,10 +264,6 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     public void setDatabaseCleaner(CleanRunDatabase databaseCleaner) {
         this.databaseCleaner = databaseCleaner;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
     }
 
     public void setUserDir(String userDir) {

@@ -172,7 +172,7 @@ public class Run {
 
     private enum Mode {
         //Mode for InterPro production
-        MASTER("master", "spring/jms/activemq/activemq-distributed-master-context.xml"),
+        MASTER("master", "spring/jms/master/production-master-context.xml"),
         //?
         WORKER("distributedWorkerController", "spring/jms/activemq/activemq-distributed-worker-context.xml"),
         DISTRIBUTED_WORKER("distributedWorkerController", "spring/jms/worker/distributed-worker-context.xml"),
@@ -486,10 +486,27 @@ public class Run {
                 checkDirectoryExistenceAndWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
                 master.setTemporaryDirectory(temporaryDirectory);
             }
-
+            checkIfProductionMasterAndConfigure(master, parsedCommandLine, ctx);
             checkIfBlackBoxMasterAndConfigure(master, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
         }
     }
+
+
+    private static void checkIfProductionMasterAndConfigure(
+            final Master master,
+            final CommandLine parsedCommandLine,
+            final AbstractApplicationContext ctx )  {
+
+        if (master instanceof ProductionMaster) {
+            LOGGER.info("Configuring tcpUri for ProductionMaster");
+            String tcpConnectionString = configureTCPTransport(ctx);
+            ((ProductionMaster) master).setTcpUri(tcpConnectionString);
+            ((ProductionMaster) master).setTcpUri(tcpConnectionString);
+
+        }
+
+    }
+
 
     private static void checkIfBlackBoxMasterAndConfigure(
             final Master master,
@@ -516,8 +533,8 @@ public class Run {
                 ((DistributedBlackBoxMaster) bbMaster).setTcpUri(tcpConnectionString);
                 if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
-                    bbMaster.setProjectId(projectId);
-                    ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
+                    ((ClusterUser)bbMaster).setProjectId(projectId);
+                    ((ClusterUser) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                 }
             }
             //TODO: The copy of the distributed master will retire someday (if distributed computing works fine)
@@ -530,7 +547,7 @@ public class Run {
                     LOGGER.debug("We have a project/Cluster Run ID.");
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     System.out.println("The project/Cluster Run ID for this run is: " + projectId);
-                    bbMaster.setProjectId(projectId);
+                    ((ClusterUser)bbMaster).setProjectId(projectId);
                     ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                     final String userDir = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt());
                     ((DistributedBlackBoxMasterCopy) bbMaster).setUserDir(userDir);

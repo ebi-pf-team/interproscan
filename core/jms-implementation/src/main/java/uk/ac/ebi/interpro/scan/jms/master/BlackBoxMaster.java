@@ -56,5 +56,6 @@ public interface BlackBoxMaster extends SimpleBlackBoxMaster {
 
     void processOutputFormats(final Map<String, String> params, final String[] outputFormats);
 
-    void setProjectId(String projectId);
+    void setUserDir(String userDir);
+
 }
