@@ -50,17 +50,24 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         final Step step = stepInstance.getStep(jobs);
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
 
+                        final boolean highPriorityStep = isHighPriorityStep(step);
+
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                         // as they are very abundant.
-                        final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep
+                        final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep || (! highPriorityStep)
                                 ? 4
                                 : 8;
+
 
                         // Performed in a transaction.
                         LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
                         messageSender.sendMessage(stepInstance, false, priority, false);
                     }
                 }
+                //check what is not completed
+                LOGGER.debug("StandAlone Master has no jobs but .. more Jobs may get generated ");
+                LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
 
                 //report progress
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
@@ -93,5 +100,27 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
      */
     public void setStatsUtil(StatsUtil statsUtil) {
         this.statsUtil = statsUtil;
+    }
+
+
+    /**
+     * * check if the job is hamap or prosite
+     *  then assign it higher priority
+     *
+     * @param step
+     * @return
+     */
+    public boolean  isHighPriorityStep(Step step){
+        boolean highPriorityStep = false;
+        LOGGER.debug(" Step Id for hamap and prosite checking: " + step.getId());
+        if(step.getId().toLowerCase().contains("hamap".toLowerCase()) || step.getId().toLowerCase().contains("prosite".toLowerCase())){
+            LOGGER.debug(" HAMAP/Prosite job: Should have high priority, but priority is normally 4");
+            if (!(step instanceof WriteFastaFileStep)){
+                highPriorityStep = true;
+            }else{
+                highPriorityStep = false;
+            }
+        }
+        return highPriorityStep;
     }
 }
