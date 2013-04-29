@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
+public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster implements ClusterUser{
 
     private static final Logger LOGGER = Logger.getLogger(DistributedBlackBoxMasterCopy.class.getName());
 
@@ -37,7 +37,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
 
     private int maxConsumers;
 
-    private boolean highPriorityStep;
+    private String projectId;
 
     /**
      * completion time target for worker creation by the Master
@@ -104,15 +104,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                         final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep
                                 ? LOW_PRIORITY
                                 : HIGH_PRIORITY;
-                        LOGGER.debug(" Step Id for hamap and prosite checking: " + step.getId());
-                        if(step.getId().toLowerCase().contains("hamap".toLowerCase()) || step.getId().toLowerCase().contains("prosite".toLowerCase())){
-                             LOGGER.debug(" HAMAP /Prosite job: Should have high priority, but priority is " + priority);
-                             if (!(step instanceof WriteFastaFileStep)){
-                                highPriorityStep = true;
-                             }else{
-                                 highPriorityStep = false;
-                             }
-                        }
+
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
                         countRegulator++;
@@ -143,7 +135,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                     }
                 }
                 //check what is not completed
-                LOGGER.debug("Distributed Master has no step instances ready yet but ... there are unfinished StepInstances ... ");
+                LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
                 LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                 LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
                 //update the statistics plugin
@@ -194,6 +186,14 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         return tcpUri;
     }
 
+    public void setProjectId(String projectId) {
+         this.projectId = projectId;
+    }
+
+    public String getProjectId() {
+        return this.projectId;
+    }
+
     @Required
     public void setMaxConsumers(int maxConsumers) {
         this.maxConsumers = maxConsumers;
@@ -203,23 +203,25 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         this.statsUtil = statsUtil;
     }
 
-    /**
-     * check if the job is hamap or prosite
-     *
-     *
-     */
-
-    public boolean  isHighPriorityStep(Step step, int priority){
-        boolean highPriorityStep = false;
-        if(step.getId().toLowerCase().contains("hamap".toLowerCase()) || step.getId().toLowerCase().contains("prosite".toLowerCase())){
-            LOGGER.debug(" HAMAP /Prosite job: Should have high priority, but priority is " + priority);
-            if (!(step instanceof WriteFastaFileStep)){
-                highPriorityStep = true;
-            }else{
-                highPriorityStep = false;
-            }
+    @Override
+    public void setSubmissionWorkerRunnerProjectId(String projectId){
+        //set this as soon as the masters starts running
+        if (this.workerRunner instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner) this.workerRunner).setProjectId(projectId);
         }
-        return highPriorityStep;
+        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setProjectId(projectId);
+        }
+    }
+
+    @Override
+    public void setSubmissionWorkerRunnerUserDir(String userDir){
+        if (this.workerRunner instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner) this.workerRunner).setUserDir(userDir);
+        }
+        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setUserDir(userDir);
+        }
     }
 
     /**
@@ -231,16 +233,13 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         //create two workers : one high memory and one non high memory
         final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
 
-        //how many workers should be started
-
         LOGGER.debug("Starting the first FOUR normal worker.");
         for (int i=0;i<3;i++){
             workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
         }
-        //high memory do have a higher priority compared to low memory workers
-        //not needed to start the high memory worker at initialisation
-//        LOGGER.debug("Starting the first high memory worker...");
-//        workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
+        LOGGER.debug("Starting the first high memory worker...");
+        // high memory do have a higher priority compared to low memory workers
+        workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
 
 
         Executor executor = Executors.newSingleThreadExecutor();
