@@ -225,40 +225,35 @@ public class Converter implements SimpleBlackBoxMaster {
             for (String fileOutputFormat : getOutputFormats()) {
                 if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.GFF3.getFileExtension())) {
                     LOGGER.info("Generating GFF3 result output...");
-                    final String extension = FileOutputFormat.GFF3.getFileExtension();
-                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, extension));
+                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.GFF3);
                     outputToGFF(outputFile, sequenceType, proteins);
                     LOGGER.info("Finished generation of GFF3.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
                     LOGGER.info("Generating TSV result output...");
-                    final String extension = FileOutputFormat.TSV.getFileExtension();
-                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, extension));
+                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.TSV);
                     outputToTSV(outputFile, proteins);
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
                     final String extension = FileOutputFormat.HTML.getFileExtension();
-                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(getOutputFilePath(isExplicitFileNameSet, extension), true, true, FileOutputFormat.HTML));
+                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.HTML);
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension())) {
                     LOGGER.info("Generating SVG result output...");
-                    final String extension = FileOutputFormat.SVG.getFileExtension();
-                    File outputFile = new File(TarArchiveBuilder.buildTarArchiveName(getOutputFilePath(isExplicitFileNameSet, extension), true, true, FileOutputFormat.SVG));
+                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.SVG);
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension())) {
                     LOGGER.info("Generating RAW result output...");
-                    final String extension = FileOutputFormat.RAW.getFileExtension();
-                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, extension));
+                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.RAW);
                     outputToRAW(outputFile, proteins);
                     LOGGER.info("Finished generation of RAW.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.XML.getFileExtension())) {
                     System.out.println("XML output format was ignored in convert mode.");
                     // TODO Review this! Is XML allowed in CONVERT mode?
 //                    LOGGER.info("Generating XML result output...");
-//                    final String extension = FileOutputFormat.XML.getFileExtension();
-//                    File outputFile = new File(getOutputFilePath(isExplicitFileNameSet, extension));
+//                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.XML);
 //                    outputToXML(outputFile, proteins);
 //                    LOGGER.info("Finished generation of XML.");
                 } else {
@@ -277,14 +272,56 @@ public class Converter implements SimpleBlackBoxMaster {
         //Write out the results to the specified output fo
     }
 
-    private String getOutputFilePath(final boolean isExplicitFileNameSet,
-                                     final String extension) {
+    private File initOutputFile(final boolean isExplicitFileNameSet,
+                                final FileOutputFormat fileFormat) {
+
+        /* Boolean flag for the HTML and SVG output generation. If TRUE, the generated tar archives will be compress (gzipped) as well */
+        boolean compressHtmlAndSVGOutput = true;
+
+        /* Not required. If TRUE (default), it will archive all SVG output files into a single archive.*/
+        boolean archiveSVGOutput = true;
+
+        File outputFile = null;
+
         if (isExplicitFileNameSet) {
-            return explicitFileName;
+            outputFile = new File(explicitFileName);
+            if (outputFile.exists()) {
+                if (!outputFile.delete()) {
+                    System.out.println("Unable to overwrite file " + outputFile + ".  Please check file permissions.");
+                    System.exit(101);
+                }
+            }
         } else {
-            StringBuilder outputFilePathBuilder = new StringBuilder(outputFilePath).append(".").append(extension);
-            return outputFilePathBuilder.toString();
+            // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
+            // but using an underscore rather than a space (pah!)
+            Integer counter = null;
+            boolean pathAvailable = false;
+            while (!pathAvailable) {
+                final StringBuilder candidateFileName = new StringBuilder(outputFilePath);
+                if (counter == null) {
+                    counter = 1;
+                }
+                else {
+                    // E.g. Output file name could become "test_proteins.fasta_1.tsv"
+                    candidateFileName
+                            .append('_')
+                            .append(counter++);
+                }
+                candidateFileName
+                        .append('.')
+                        .append(fileFormat.getFileExtension());
+                //Extend file name by tar (tar.gz) extension if HTML or SVG
+                if (fileFormat.equals(FileOutputFormat.HTML) || fileFormat.equals(FileOutputFormat.SVG)) {
+                    outputFile = new File(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, fileFormat));
+                }
+                else {
+                    outputFile = new File(candidateFileName.toString());
+                }
+                pathAvailable = !outputFile.exists();
+            }
+
         }
+        return outputFile;
     }
 
     private void outputToTSV(final File file,
