@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
@@ -18,7 +19,7 @@ import javax.jms.JMSException;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster {
+public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster{
 
     private String tcpUri;
 
@@ -134,4 +135,6 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster {
     public String getTcpUri() {
         return tcpUri;
     }
+
+
 }

@@ -92,6 +92,7 @@
         <property name="dependsUpon" ref="stepPfamAParseHmmerOutput-26.0"/>
         <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <!-- STEP 4 -->

@@ -48,6 +48,11 @@ public class StepCreationSequenceLoadListener
         this.completionJob = completionJob;
     }
 
+    public StepCreationSequenceLoadListener(Jobs analysisJobs,  Map<String, String> parameters) {
+        this.parameters = parameters;
+        this.jobs = analysisJobs;
+        this.completionJob = null;
+    }
 
     @Override
     @Transactional
