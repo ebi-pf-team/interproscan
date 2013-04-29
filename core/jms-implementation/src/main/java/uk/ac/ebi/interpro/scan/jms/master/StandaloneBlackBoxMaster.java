@@ -115,11 +115,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         LOGGER.debug(" Step Id for hamap and prosite checking: " + step.getId());
         if(step.getId().toLowerCase().contains("hamap".toLowerCase()) || step.getId().toLowerCase().contains("prosite".toLowerCase())){
             LOGGER.debug(" HAMAP/Prosite job: Should have high priority, but priority is normally 4");
-            if (!(step instanceof WriteFastaFileStep)){
-                highPriorityStep = true;
-            }else{
-                highPriorityStep = false;
-            }
+            highPriorityStep = true;
         }
         return highPriorityStep;
     }
