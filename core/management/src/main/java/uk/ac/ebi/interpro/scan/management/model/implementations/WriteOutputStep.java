@@ -52,7 +52,7 @@ public class WriteOutputStep extends Step {
     /* Boolean flag for the HTML and SVG output generation. If TRUE, the generated tar archives will be compress (gzipped) as well */
     private boolean compressHtmlAndSVGOutput;
 
-    /* Not required. If TRUE (default), it will archive all SVG output files into a single archives.*/
+    /* Not required. If TRUE (default), it will archive all SVG output files into a single archive.*/
     private boolean archiveSVGOutput = true;
 
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";

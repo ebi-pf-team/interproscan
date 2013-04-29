@@ -840,7 +840,7 @@ public class Run {
 
     /**
      * Validate and tidy up the comma separated list of output formats specified by the user:
-     * - Does the formats exist?
+     * - Do the formats exist?
      *
      * @return The tidied list of file extensions
      */
