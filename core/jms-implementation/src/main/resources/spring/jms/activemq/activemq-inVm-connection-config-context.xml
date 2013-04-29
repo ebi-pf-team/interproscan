@@ -12,12 +12,20 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
             useCompression="false"
             optimizeAcknowledge="true"
             brokerURL="vm://localhost?create=false"
-            alwaysSessionAsync="false">
+            alwaysSessionAsync="false"
+            exceptionListener="#masterExceptionListener"
+            transportListener="#masterTransportListener">
         <amq:prefetchPolicy>
             <amq:prefetchPolicy queuePrefetch="1"/>
         </amq:prefetchPolicy>
     </amq:connectionFactory>
 
+
+    <!-- JMS transport Listener-->
+    <bean id="masterTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
+
+    <!-- JMS Exception Listener-->
+    <bean id="masterExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener" />
 
     <bean id="inVmJmsFactoryWithTransportListener" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="failover:(vm://localhost?create=false)" />
@@ -34,8 +42,6 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
         </property>
     </bean>
 
-    <!-- JMS transport Listener-->
-    <bean id="masterTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
 
     <!-- Spring JMS Template -->
     <bean id="inVmJmsTemplate" class="org.springframework.jms.core.JmsTemplate">

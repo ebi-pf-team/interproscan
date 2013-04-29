@@ -91,7 +91,7 @@ public class LocalJobQueueListener implements MessageListener {
             if (controller != null) {
                 controller.jobStarted(messageId);
             }
-            LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+            LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID() + " cmd:  " + message.toString());
             LOGGER.info("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
 
             if (!(message instanceof ObjectMessage)) {

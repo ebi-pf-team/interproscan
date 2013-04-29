@@ -40,8 +40,10 @@
         <amq:transportConnectors>
             <amq:transportConnector uri="vm://localhost"/>
         </amq:transportConnectors>
-
     </amq:broker>
+
+    <!-- JMS Exception handler-->
+    <bean id="jmsIOExceptionHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSIOExceptionHandler" />
 
     <bean id="distributedMaster" class="uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMasterCopy">
         <property name="jobs" ref="jobs"/>

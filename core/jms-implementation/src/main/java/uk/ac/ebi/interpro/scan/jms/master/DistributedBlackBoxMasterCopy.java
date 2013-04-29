@@ -37,6 +37,8 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
 
     private int maxConsumers;
 
+    private boolean highPriorityStep;
+
     /**
      * completion time target for worker creation by the Master
      * should be  less than worker max lifetime  =  7*24*60*60*1000;
@@ -102,7 +104,15 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                         final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep
                                 ? LOW_PRIORITY
                                 : HIGH_PRIORITY;
-
+                        LOGGER.debug(" Step Id for hamap and prosite checking: " + step.getId());
+                        if(step.getId().toLowerCase().contains("hamap".toLowerCase()) || step.getId().toLowerCase().contains("prosite".toLowerCase())){
+                             LOGGER.debug(" HAMAP /Prosite job: Should have high priority, but priority is " + priority);
+                             if (!(step instanceof WriteFastaFileStep)){
+                                highPriorityStep = true;
+                             }else{
+                                 highPriorityStep = false;
+                             }
+                        }
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
                         countRegulator++;
@@ -133,7 +143,7 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
                     }
                 }
                 //check what is not completed
-                LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
+                LOGGER.debug("Distributed Master has no step instances ready yet but ... there are unfinished StepInstances ... ");
                 LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                 LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
                 //update the statistics plugin
@@ -193,7 +203,24 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         this.statsUtil = statsUtil;
     }
 
+    /**
+     * check if the job is hamap or prosite
+     *
+     *
+     */
 
+    public boolean  isHighPriorityStep(Step step, int priority){
+        boolean highPriorityStep = false;
+        if(step.getId().toLowerCase().contains("hamap".toLowerCase()) || step.getId().toLowerCase().contains("prosite".toLowerCase())){
+            LOGGER.debug(" HAMAP /Prosite job: Should have high priority, but priority is " + priority);
+            if (!(step instanceof WriteFastaFileStep)){
+                highPriorityStep = true;
+            }else{
+                highPriorityStep = false;
+            }
+        }
+        return highPriorityStep;
+    }
 
     /**
      * Mechanism to start a new worker
@@ -204,13 +231,16 @@ public class DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster {
         //create two workers : one high memory and one non high memory
         final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
 
+        //how many workers should be started
+
         LOGGER.debug("Starting the first FOUR normal worker.");
         for (int i=0;i<3;i++){
             workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
         }
-        LOGGER.debug("Starting the first high memory worker...");
-        // high memory do have a higher priority compared to low memory workers
-        workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
+        //high memory do have a higher priority compared to low memory workers
+        //not needed to start the high memory worker at initialisation
+//        LOGGER.debug("Starting the first high memory worker...");
+//        workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
 
 
         Executor executor = Executors.newSingleThreadExecutor();
