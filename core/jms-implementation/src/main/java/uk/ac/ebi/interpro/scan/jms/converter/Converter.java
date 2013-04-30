@@ -263,9 +263,9 @@ public class Converter implements SimpleBlackBoxMaster {
                 }
             }
         } catch (FileNotFoundException e1) {
-            LOGGER.error("File not found exception, neither input nor output file!", e1);
+            throw new IllegalArgumentException("File not found exception, neither input nor output file!", e1);
         } catch (UnmarshallingFailureException e2) {
-            LOGGER.error("Input file isn't in valid IMPACT XML!", e2);
+            throw new IllegalArgumentException("Input file isn't in valid IMPACT XML!", e2);
         } catch (IOException e3) {
             LOGGER.error("Cannot write or create result file!", e3);
         }
