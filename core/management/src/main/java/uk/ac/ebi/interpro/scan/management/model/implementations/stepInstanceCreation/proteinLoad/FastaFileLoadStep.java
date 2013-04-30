@@ -115,11 +115,11 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                             throw new IllegalStateException("FileNotFoundException thrown when attempting to load a fasta file located at " + file.getAbsolutePath(), e);
                         }
                     } else {
-                        throw new IllegalArgumentException("The fasta file " + providedPath + " is visible but cannot be read.  Please check file permissions.");
+                        throw new IllegalArgumentException("The fasta file " + providedPath + " is visible but cannot be read.  Please check the file permissions.");
                     }
                 } else {
                     // Absolute file path did not resolve, so try using the class loader.
-                    fastaFileInputStatusMessage = " - fasta file does not exist and absolute file path did not resolve,. ";
+                    fastaFileInputStatusMessage = " - fasta file does not exist and absolute file path did not resolve. ";
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("The file " + providedPath + " does not exist.  Attempting to access this file using the ClassLoader.");
                     }
