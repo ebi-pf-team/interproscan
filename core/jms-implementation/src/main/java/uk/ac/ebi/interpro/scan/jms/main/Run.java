@@ -278,10 +278,15 @@ public class Run {
 
             modeArgument = parsedCommandLine.getOptionValue(I5Option.MODE.getLongOpt());
 
-            final Mode mode = (modeArgument != null)
-                    ? Mode.valueOf(modeArgument.toUpperCase())
-                    : DEFAULT_MODE;
-
+            Mode mode = null;
+            try {
+                mode = (modeArgument != null)
+                        ? Mode.valueOf(modeArgument.toUpperCase())
+                        : DEFAULT_MODE;
+            } catch (IllegalArgumentException iae) {
+                LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
+                System.exit(1);
+            }
             System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan 5RC6");
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
@@ -439,9 +444,6 @@ public class Run {
         } catch (ParseException exp) {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
             printHelp();
-            System.exit(1);
-        } catch (IllegalArgumentException iae) {
-            LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
             System.exit(1);
         }
     }
