@@ -46,23 +46,23 @@
                 <!-- Analyses -->
                 <!--Old versions are switched off because they aren't in the database anymore-->
                 <ref bean="jobPfamA-26.0"/>
-                <!--<ref bean="jobPhobius-1.01"/>-->
-                <!--<ref bean="jobGene3d-3.5.0"/>-->
-                <!--<ref bean="jobPanther-7.2"/>-->
-                <!--<ref bean="jobPRINTS-42.0"/>-->
-                <!--<ref bean="jobCoils-2.2"/>-->
-                <!--<ref bean="jobHAMAP-201302.26"/>-->
-                <!--<ref bean="jobProDom-2006.1"/>-->
-                <!--<ref bean="jobPrositeProfiles-20.89"/>-->
-                <!--<ref bean="jobPrositePatterns-20.89"/>-->
-                <!--<ref bean="jobSignalP-EUK-4.0"/>-->
-                <!--<ref bean="jobSignalP-GRAM_POSITIVE-4.0"/>-->
-                <!--<ref bean="jobSignalP-GRAM_NEGATIVE-4.0"/>-->
-                <!--<ref bean="jobSMART-6.2"/>-->
-                <!--<ref bean="jobTIGRFAM-13.0"/>-->
-                <!--<ref bean="jobPIRSF-2.83"/>-->
-                <!--<ref bean="jobSuperFamily-1.75"/>-->
-                <!--<ref bean="jobTMHMM-2.0c"/>-->
+                <ref bean="jobPhobius-1.01"/>
+                <ref bean="jobGene3d-3.5.0"/>
+                <ref bean="jobPanther-7.2"/>
+                <ref bean="jobPRINTS-42.0"/>
+                <ref bean="jobCoils-2.2"/>
+                <ref bean="jobHAMAP-201302.26"/>
+                <ref bean="jobProDom-2006.1"/>
+                <ref bean="jobPrositeProfiles-20.89"/>
+                <ref bean="jobPrositePatterns-20.89"/>
+                <ref bean="jobSignalP-EUK-4.0"/>
+                <ref bean="jobSignalP-GRAM_POSITIVE-4.0"/>
+                <ref bean="jobSignalP-GRAM_NEGATIVE-4.0"/>
+                <ref bean="jobSMART-6.2"/>
+                <ref bean="jobTIGRFAM-13.0"/>
+                <ref bean="jobPIRSF-2.83"/>
+                <ref bean="jobSuperFamily-1.75"/>
+                <ref bean="jobTMHMM-2.0c"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
