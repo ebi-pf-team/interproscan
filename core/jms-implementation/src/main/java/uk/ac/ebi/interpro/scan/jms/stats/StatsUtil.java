@@ -128,7 +128,7 @@ public class StatsUtil {
         jmsTemplate.execute(STATS_BROKER_DESTINATION +  getQueueName(queue), new ProducerCallbackImpl(statsQueue));
         //wait for a second to receive the message
         try {
-            Thread.sleep(1*500);
+            Thread.sleep(3*1000);
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
