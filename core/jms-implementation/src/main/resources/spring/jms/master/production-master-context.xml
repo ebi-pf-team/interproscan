@@ -61,7 +61,7 @@
             </bean>
         </property>
         <property name="unrecoverableErrorStrategy">
-            <bean class="uk.ac.ebi.interpro.scan.jms.activemq.NonZeroExitOnUnrecoverableError"/>
+            <bean class="uk.ac.ebi.interpro.scan.jms.activemq.EmailErrorAndContinueErrorStrategy"/>
         </property>
         <property name="workerRunner">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
