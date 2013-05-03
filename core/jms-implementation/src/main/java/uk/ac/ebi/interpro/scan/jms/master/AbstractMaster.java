@@ -173,7 +173,14 @@ public abstract class AbstractMaster implements Master {
                 }
             }
         }
-        stepInstanceDAO.insert(stepToStepInstances);
+        try {
+            stepInstanceDAO.insert(stepToStepInstances);
+        } catch (Throwable t) {
+            LOGGER.debug("Error thrown by stepInstance DAO");
+            LOGGER.debug(t.getMessage());
+        }
+
+
     }
 
     @Override
