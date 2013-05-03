@@ -2,8 +2,10 @@
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:amq="http://activemq.apache.org/schema/core"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd"
+        xmlns:aop="http://www.springframework.org/schema/aop">
 
     <import resource="classpath:/spring/spring-properties-context.xml"/>
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
@@ -42,9 +44,10 @@
         </amq:transportConnectors>
     </amq:broker>
 
+
     <bean id="master" class="uk.ac.ebi.interpro.scan.jms.master.ProductionMaster">
         <property name="jobs" ref="jobs"/>
-        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="stepInstanceDAO" ref="productionStepInstanceDAO"/>
         <property name="projectId" value="${user.digest}"/>
         <property name="messageSender">
             <bean class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
@@ -72,9 +75,7 @@
                 <property name="highMemory" value="false"/>
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
-
-                </property>
-
+               </property>
             </bean>
         </property>
         <property name="workerRunnerHighMemory">
@@ -95,6 +96,7 @@
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="statsUtil" ref="statsUtil"/>
+        <property name="maxConsumers" value="${master.maxconsumers}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
@@ -179,7 +181,7 @@
         <property name="triggers">
             <list>
                 <ref bean="proteinLoadTrigger"/>
-                <ref bean="startSpareParallelWorkerTrigger"/>
+                <!--<ref bean="startSpareParallelWorkerTrigger"/>-->
             </list>
         </property>
     </bean>
@@ -194,24 +196,25 @@
 
     <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
-        <!-- Wait a while before attempting to load proteins. -->
+         <!--Wait a while before attempting to load proteins. -->
         <property name="startDelay" value="${ebi.uniparc.protein.load.start.delay.seconds}000"/>
         <property name="repeatInterval" value="${ebi.uniparc.protein.load.repeat.interval.seconds}000"/>
     </bean>
 
     <!-- Quartz job to run spare parallel worker.  Currently turned on. -->
-    <bean id="startSpareParallelWorkerQuartzJob"
-          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="master"/>
-        <property name="targetMethod" value="startNewWorkerForQuartzJob"/>
-    </bean>
+    <!--<bean id="startSpareParallelWorkerQuartzJob"-->
+          <!--class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+        <!--<property name="targetObject" ref="master"/>-->
+        <!--<property name="targetMethod" value="startNewWorkerForQuartzJob"/>-->
+    <!--</bean>-->
+<!---->
+    <!--<bean id="startSpareParallelWorkerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">-->
+        <!--<property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>-->
+        <!--<property name="startDelay" value="${spare.worker.start.delay.seconds}000"/>-->
+        <!--<property name="repeatInterval" value="${spare.worker.repeat.interval.seconds}000"/>-->
+    <!--</bean>-->
 
-    <bean id="startSpareParallelWorkerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-        <property name="jobDetail" ref="startSpareParallelWorkerQuartzJob"/>
-        <property name="startDelay" value="${spare.worker.start.delay.seconds}000"/>
-        <property name="repeatInterval" value="${spare.worker.repeat.interval.seconds}000"/>
-    </bean>
-
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 </beans>
 
 

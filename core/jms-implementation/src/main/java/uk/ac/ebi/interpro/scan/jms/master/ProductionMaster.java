@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
@@ -85,7 +86,9 @@ public class ProductionMaster extends AbstractMaster {
                         }
                         final Step step = stepInstance.getStep(jobs);
 
-                        final boolean canRunRemotely = !step.isRequiresDatabaseAccess();
+                        //final boolean canRunRemotely = !step.isRequiresDatabaseAccess();
+                        final boolean canRunRemotely = true;
+
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                         // as they are very abundant.
                         final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep
@@ -123,7 +126,11 @@ public class ProductionMaster extends AbstractMaster {
      * Called by quartz to load proteins from UniParc.
      */
     public void createProteinLoadJob() {
+        LOGGER.debug("StatsUtil class =" + statsUtil.getClass().toString());
+        LOGGER.debug("WorkerRunner class=" + workerRunner.getClass().toString());
+        LOGGER.debug("StepInstanceDAO class=" + stepInstanceDAO.getClass().toString());
         createStepInstancesForJob("jobLoadFromUniParc", null);
+        LOGGER.debug("Finished creating uniparc step instance");
     }
 
 
@@ -202,9 +209,6 @@ public class ProductionMaster extends AbstractMaster {
         // high memory do have a higher priority compared to low memory workers
         workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
 
-        if (true) {
-            return;
-        }
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
             public void run() {
@@ -216,14 +220,22 @@ public class ProductionMaster extends AbstractMaster {
                     final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
                     final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
 
-                    LOGGER.debug("Poll Job Request Queue queue");
+                    LOGGER.debug("Poll Job Request queue");
                     final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                     if (statsAvailable) {
                         workerCount = ((SubmissionWorkerRunner) workerRunner).getWorkerCount();
+                        LOGGER.debug("Worker count=" + workerCount );
                         if(statsMessageListener.getConsumers() > 0){
                             quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
+                            LOGGER.debug("Quickspawn mode=" + quickSpawnMode);
                         }
                         final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
+                        LOGGER.debug("Worker required=" + workerRequired);
+                        LOGGER.debug("StatsUtil.getConsumers=" + statsUtil.getStatsMessageListener().getConsumers());
+                        LOGGER.debug("Max consumers=" + maxConsumers);
+                        LOGGER.debug("StatsUtil.getQueueSize=" + statsUtil.getStatsMessageListener().getQueueSize());
+                        LOGGER.debug("Max messages on queue per consumer=" + maxMessagesOnQueuePerConsumer);
+
                         if ((statsUtil.getStatsMessageListener().getConsumers() < maxConsumers && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer &&
                                 quickSpawnMode) ||
                                 (workerRequired && statsUtil.getStatsMessageListener().getConsumers() < maxConsumers)) {
@@ -264,6 +276,11 @@ public class ProductionMaster extends AbstractMaster {
 
             }
         });
+    }
+
+    @Required
+    public void setMaxConsumers(int maxConsumers) {
+        this.maxConsumers = maxConsumers;
     }
 
 
