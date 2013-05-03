@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.management.model.*;
-
 import javax.persistence.Query;
 import java.util.*;
 
@@ -17,6 +16,9 @@ import java.util.*;
  * @since 1.0-SNAPSHOT
  */
 public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> implements StepInstanceDAO {
+
+
+    private int maxSerialGroupExecutions = 1;
 
     private Map<SerialGroup, List<String>> serialGroupToStepIdMap = new HashMap<SerialGroup, List<String>>();
 
@@ -130,7 +132,7 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
                     "select count(i) from StepInstance i inner join i.executions e " +
                             "where i.stepId in (:stepIds) and e.submittedTime is not null and e.completedTime is null");
             query.setParameter("stepIds", slice);
-            if ((Long) query.getSingleResult() > 0L) {
+            if ((Long) query.getSingleResult() >= maxSerialGroupExecutions) {
                 return false;
             }
         }
@@ -186,4 +188,10 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
         }
         return stepIds;
     }
+
+
+    public void setMaxSerialGroupExecutions(int maxSerialGroupExecutions) {
+        this.maxSerialGroupExecutions = maxSerialGroupExecutions;
+    }
+
 }

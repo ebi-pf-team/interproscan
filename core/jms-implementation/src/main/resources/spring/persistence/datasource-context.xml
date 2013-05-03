@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
 
     <!--todo: do we want to use this if the system is runnng in one JVM?-->
@@ -40,6 +41,13 @@
           class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl">
         <property name="lockObject" value="lockObject"/>
     </bean>
+
+    <bean id="productionStepInstanceDAO"
+          class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl">
+          <property name="lockObject" value="lockObject"/>
+          <property name="maxSerialGroupExecutions" value="${production.max.serial.group.executions}"/>
+    </bean>
+
 
     <bean id="stepExecutionDAO"
           class="uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAOImpl">
