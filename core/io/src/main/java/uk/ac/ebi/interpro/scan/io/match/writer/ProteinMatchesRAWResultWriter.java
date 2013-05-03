@@ -106,7 +106,7 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
                     }
                     continue;
                 }
-                final String description = match.getSignature().getDescription();
+                final String signatureName = match.getSignature().getName();
 
                 Set<Location> locations = match.getLocations();
                 if (locations != null) {
@@ -139,8 +139,8 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
                         mappingFields.add(crc64); // The crc64 (checksum) of the protein sequence (supposed to be unique)
                         mappingFields.add(Integer.toString(length)); // The length of the sequence (in AA)
                         mappingFields.add(analysis); // The analysis method launched
-                        mappingFields.add(signatureAc); // The database members entry for this match
-                        mappingFields.add((description == null ? "" : description)); // The database member description for the entry
+                        mappingFields.add(signatureAc); // The member database signature accession for this match
+                        mappingFields.add((signatureName == null ? "" : signatureName)); // The member database short name for the signature
                         mappingFields.add(Integer.toString(location.getStart())); // The start of the domain match
                         mappingFields.add(Integer.toString(location.getEnd())); // The end of the domain match
                         mappingFields.add(score); // The score of the match (reported by member database method)
