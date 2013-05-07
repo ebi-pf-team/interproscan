@@ -213,8 +213,6 @@
         <!--<property name="startDelay" value="${spare.worker.start.delay.seconds}000"/>-->
         <!--<property name="repeatInterval" value="${spare.worker.repeat.interval.seconds}000"/>-->
     <!--</bean>-->
-
-    <aop:aspectj-autoproxy proxy-target-class="true"/>
 </beans>
 
 
