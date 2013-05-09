@@ -42,7 +42,7 @@ public class Entry2SignaturesDAOImpl implements Entry2SignaturesDAO {
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("entry_ac", entryAc);
             result = this.jdbcTemplate
-                    .query("SELECT METHOD_AC FROM INTERPRO.ENTRY2METHOD WHERE ENTRY_AC = :entry_ac",
+                    .query("SELECT es.METHOD_AC FROM DW_ENTRY_SIGNATURE es JOIN DW_ENTRY e ON e.ENTRY_PK = es.ENTRY_FK WHERE e.ENTRY_AC = :entry_ac",
                             namedParameters,
                             new RowMapper<String>() {
                                 public String mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -52,7 +52,7 @@ public class Entry2SignaturesDAOImpl implements Entry2SignaturesDAO {
 
         } catch (Exception e) {
             LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
-                    "or is wrong configured. For more info take a look at the stack trace!", e);
+                    "or is incorrectly configured. For more information take a look at the stack trace!", e);
         }
         return result;
     }
@@ -61,7 +61,7 @@ public class Entry2SignaturesDAOImpl implements Entry2SignaturesDAO {
         final Map<String, Collection<String>> result = new HashMap<String, Collection<String>>();
         try {
             this.jdbcTemplate
-                    .query("SELECT * FROM INTERPRO.ENTRY2METHOD",
+                    .query("SELECT es.*, e.entry_ac FROM DW_ENTRY_SIGNATURE es JOIN DW_ENTRY e ON e.ENTRY_PK = es.ENTRY_FK",
                             new MapSqlParameterSource(),
                             new RowCallbackHandler() {
                                 @Override
@@ -79,7 +79,7 @@ public class Entry2SignaturesDAOImpl implements Entry2SignaturesDAO {
 
         } catch (Exception e) {
             LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
-                    "or is wrong configured. For more info take a look at the stack trace!", e);
+                    "or is incorrectly configured. For more information take a look at the stack trace!", e);
         }
         return result;
     }
@@ -89,7 +89,7 @@ public class Entry2SignaturesDAOImpl implements Entry2SignaturesDAO {
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("accessions", entryAccessions);
             this.jdbcTemplate
-                    .query("SELECT * FROM INTERPRO.ENTRY2METHOD WHERE ENTRY_AC in (:accessions)",
+                    .query("SELECT es.*, e.entry_ac FROM DW_ENTRY_SIGNATURE es JOIN DW_ENTRY e ON e.ENTRY_PK = es.ENTRY_FK WHERE e.ENTRY_AC in (:accessions)",
                             namedParameters,
                             new RowCallbackHandler() {
                                 @Override
@@ -107,7 +107,7 @@ public class Entry2SignaturesDAOImpl implements Entry2SignaturesDAO {
 
         } catch (Exception e) {
             LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
-                    "or is wrong configured. For more info take a look at the stack trace!", e);
+                    "or is incorrectly configured. For more information take a look at the stack trace!", e);
         }
         return result;
     }
