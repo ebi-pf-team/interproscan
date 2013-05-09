@@ -42,7 +42,7 @@ public enum GoCategory implements Serializable {
             "or more molecular functions.");
 
     private final String identifier;
-    private final String nameCode; // Category code from IWEBPRO1 (P, C or F)
+    private final String nameCode; // Category code from IPPRO (P, C or F)
     private final String name; // Category name (Biological Process, Cellular Component or Molecular Function)
     private final String description;
 

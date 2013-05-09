@@ -45,7 +45,7 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("entry_ac", entryAc);
             result = this.jdbcTemplate
-                    .query("SELECT DBCODE, AC, NAME FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC = :entry_ac",
+                    .query("SELECT ep.DBCODE, ep.PATHWAY_AC, ep.PATHWAY_NAME FROM DW_ENTRY_PATHWAY ep JOIN DW_ENTRY e ON ep.ENTRY_FK = e.ENTRY_PK WHERE e.ENTRY_AC = :entry_ac",
                             namedParameters,
                             new RowMapper<PathwayXref>() {
                                 public PathwayXref mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -67,7 +67,7 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
         final Map<String, Collection<PathwayXref>> result = new HashMap<String, Collection<PathwayXref>>();
         try {
             this.jdbcTemplate
-                    .query("SELECT * FROM INTERPRO.ENTRY2PATHWAY",
+                    .query("SELECT ep.*, e.entry_ac FROM DW_ENTRY_PATHWAY ep JOIN DW_ENTRY e ON ep.ENTRY_FK = e.ENTRY_PK",
                             new MapSqlParameterSource(),
                             new RowCallbackHandler() {
                                 @Override
@@ -88,7 +88,7 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("accessions", entryAccessions);
             this.jdbcTemplate
-                    .query("SELECT * FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC in (:accessions)",
+                    .query("SELECT ep.*, e.entry_ac FROM DW_ENTRY_PATHWAY ep JOIN DW_ENTRY e ON ep.ENTRY_FK = e.ENTRY_PK WHERE e.ENTRY_AC in (:accessions)",
                             namedParameters,
                             new RowCallbackHandler() {
                                 @Override
@@ -105,17 +105,17 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
     }
 
     private void addNewXref(ResultSet rs, final Map<String, Collection<PathwayXref>> result) throws SQLException {
-        String entryAcc = rs.getString("entry_ac");
-        String name = rs.getString("name");
-        String identifier = rs.getString("ac");
+        String entryAc = rs.getString("entry_ac");
+        String name = rs.getString("pathway_name");
+        String identifier = rs.getString("pathway_ac");
         String dbName = decodeDbCode(rs.getString("dbcode"));
         PathwayXref newPathway = new PathwayXref(identifier, name, dbName);
-        Set<PathwayXref> pathways = (Set<PathwayXref>) result.get(entryAcc);
+        Set<PathwayXref> pathways = (Set<PathwayXref>) result.get(entryAc);
         if (pathways == null) {
             pathways = new HashSet<PathwayXref>();
         }
         pathways.add(newPathway);
-        result.put(entryAcc, pathways);
+        result.put(entryAc, pathways);
     }
 
     private String decodeDbCode(String dbCode) {
