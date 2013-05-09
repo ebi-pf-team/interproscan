@@ -202,7 +202,7 @@
                 <third.party.log.level>info</third.party.log.level>
                 <!-- In the Jetty profile just use a relative path to the copies of the entry colours properties file
                 and entry hierarchy CSV file in version control. NOTE: This data may not have been generated recently,
-                or from the protein database you are currently using (IPPRO, IWEBPRO1 etc) therefore will introduce
+                or from the protein database you are currently using (IPPRO etc) therefore will introduce
                 inconsistencies! But that's OK, Jetty profile is used for development, not production! -->
                 <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
                 </match.data.webservice.url>
@@ -437,7 +437,7 @@ cd ~/Projects/i5/interproscan/core/web; mvn -Plocalhost-tomcat clean tomcat:rede
                 <deployment.folder>${basedir}/target</deployment.folder>
                 <!-- In the localhost profile just use a relative path to the copies of the entry colours properties file
                 and entry hierarchy CSV file in version control. NOTE: This data may not have been generated recently,
-                or from the protein database you are currently using (IPPRO, IWEBPRO1 etc) therefore will introduce
+                or from the protein database you are currently using (IPPRO etc) therefore will introduce
                 inconsistencies! But that's OK, this profile is used for development/testing, not production! -->
                 <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
                 </match.data.webservice.url>
