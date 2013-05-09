@@ -45,7 +45,7 @@ public class JdbcEntryDaoImpl implements JdbcEntryDao {
     public void loadEntriesAndMappings(Long releaseId) {
         if (jdbcTemplate != null) {
             entryRowCallbackHandler.setInterProReleaseId(releaseId);
-            jdbcTemplate.query("select * from DW_ENTRY e where e.checked='Y' and e.entry_ac='IPR001015'", entryRowCallbackHandler);
+            jdbcTemplate.query("select * from DW_ENTRY e where e.checked='Y'", entryRowCallbackHandler);
             entryRowCallbackHandler.processFinalRows();
         }
     }
