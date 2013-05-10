@@ -53,6 +53,7 @@ public class ResponseQueueMessageListener implements MessageListener {
         this.controller = controller;
     }
 
+
     @Override
     public void onMessage(final Message message) {
 
@@ -66,6 +67,7 @@ public class ResponseQueueMessageListener implements MessageListener {
         if (controller != null) {
             controller.jobResponseReceived();
         }
+        //what if the send action fails?
         remoteJmsTemplate.send(jobResponseQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 return message;
@@ -75,6 +77,7 @@ public class ResponseQueueMessageListener implements MessageListener {
         //send a message that the response has been sent to the master
         if (controller != null) {
             controller.jobResponseProcessed();
+            controller.workerState.addCompletedJob(message);
         }
     }
 }

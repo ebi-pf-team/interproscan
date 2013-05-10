@@ -77,7 +77,9 @@ public class LocalJobQueueListener implements MessageListener {
             String timeNow = Utilities.getTimeNow();
             System.out.println(timeNow + " first transaction ... ");
         }
+
         LOGGER.debug("Processing JobCount #: " + localCount);
+
         final String messageId;
 
         try {
@@ -113,7 +115,10 @@ public class LocalJobQueueListener implements MessageListener {
             // TODO - Need to add a dead-letter queue, so if this worker never gets as far as
             // acknoledging the message, the Master will know to re-run the StepInstance.
             try {
+                final long now = System.currentTimeMillis();
                 stepExecutor.executeInTransaction(stepExecution, message);
+                final long executionTime =   System.currentTimeMillis() - now;
+                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
             } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
@@ -138,6 +143,7 @@ public class LocalJobQueueListener implements MessageListener {
         } finally {
             if (controller != null) {
                 controller.jobFinished(messageId);
+                controller.workerState.addLocallyCompletedJob(message);
             }
         }
 
