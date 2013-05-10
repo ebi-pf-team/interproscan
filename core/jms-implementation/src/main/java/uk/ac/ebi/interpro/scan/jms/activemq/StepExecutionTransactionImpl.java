@@ -79,6 +79,7 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
             LOGGER.debug("Step ID: " + step.getId());
             LOGGER.debug("Step instance: " + stepInstance);
             LOGGER.debug("Step execution id: " + stepExecution.getId());
+            LOGGER.debug("Step: " + stepExecution.toString());
         }
 
         step.execute(stepInstance, getValidWorkingDirectory(step));

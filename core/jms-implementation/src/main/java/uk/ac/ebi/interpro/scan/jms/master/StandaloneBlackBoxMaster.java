@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +22,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     @Override
     public void run() {
+        final long now = System.currentTimeMillis();
         super.run();
+        statsUtil.getAvailableProcessors();
         try {
             loadInMemoryDatabase();
             int stepInstancesCreatedByLoadStep = createStepInstances();
@@ -65,7 +68,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     }
                 }
                 //check what is not completed
-                LOGGER.debug("StandAlone Master has no jobs but .. more Jobs may get generated ");
+                LOGGER.debug("StandAlone Master has no jobs ready .. more Jobs will be made ready ");
                 LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                 LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
 
@@ -92,6 +95,12 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
+        final long executionTime =   System.currentTimeMillis() - now;
+        LOGGER.debug("Execution Time (s) for Master: " + String.format("%d min, %d sec",
+                TimeUnit.MILLISECONDS.toMinutes(executionTime),
+                TimeUnit.MILLISECONDS.toSeconds(executionTime) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
+        ));
     }
 
     /**
@@ -112,9 +121,13 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
      */
     public boolean  isHighPriorityStep(Step step){
         boolean highPriorityStep = false;
-        LOGGER.debug(" Step Id for hamap and prosite checking: " + step.getId());
-        if(step.getId().toLowerCase().contains("hamap".toLowerCase()) || step.getId().toLowerCase().contains("prosite".toLowerCase())){
-            LOGGER.debug(" HAMAP/Prosite job: Should have high priority, but priority is normally 4");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(" Step Id for pfam and gene3d checking: " + step.getId());
+        }
+        if(step.getId().toLowerCase().contains("pfam".toLowerCase()) || step.getId().toLowerCase().contains("gene3d".toLowerCase())){
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(" Pfam/Gene3d job: " + step.getId()+ " Should have high priority, but priority is normally 4");
+            }
             highPriorityStep = true;
         }
         return highPriorityStep;

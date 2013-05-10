@@ -27,6 +27,8 @@ public class RemoteJobQueueListener implements MessageListener {
 
     private StatsUtil statsUtil;
 
+    private WorkerState workerState;
+
     private boolean gridThrottle = true;
 
     private int jobCount = 0;
@@ -63,6 +65,10 @@ public class RemoteJobQueueListener implements MessageListener {
         this.maxUnfinishedJobs = maxUnfinishedJobs;
     }
 
+    public void setWorkerState(WorkerState workerState) {
+        this.workerState = workerState;
+    }
+
     @Override
     public void onMessage(final Message message) {
         if(jobCount == 0){
@@ -88,6 +94,7 @@ public class RemoteJobQueueListener implements MessageListener {
         //send message
         try {
             workerMessageSender.sendMessage(jobRequestQueue,message, true);
+            workerState.addNewJob(message);
         } catch (JMSException e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
             e.printStackTrace();

@@ -13,7 +13,5 @@ import javax.jms.Message;
  * @since 1.0-SNAPSHOT
  */
 public interface StepExecutionTransaction {
-
     void executeInTransaction(StepExecution stepExecution, Message message);
-
 }

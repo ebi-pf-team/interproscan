@@ -3,7 +3,10 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 
+import javax.jms.Message;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,6 +46,17 @@ public class WorkerState implements Serializable, Comparable {
     private String jobId;
 
     /**
+     * All the jobs this worker has handled
+     */
+    private  List<Message> allJobs = new ArrayList<Message>();
+
+    private  List<Message>  allCompletedJobs = new ArrayList<Message>();
+
+    private  List<Message>  allNonAcknowledgedJobs = new ArrayList<Message>();
+
+    private  List<Message>  locallyCompletedJobs = new ArrayList<Message>();
+
+    /**
      * String with any content (at the moment!) describing
      * the status of the Worker.
      */
@@ -76,6 +90,38 @@ public class WorkerState implements Serializable, Comparable {
         this.hostName = hostName;
         this.workerIdentification = workerIdentification;
         this.singleUseOnly = singleUseOnly;
+    }
+
+    public List<Message> getAllJobs() {
+        return allJobs;
+    }
+
+    public void addNewJob(Message message) {
+        this.allJobs.add(message);
+    }
+
+    public List<Message> getAllCompletedJobs() {
+        return allCompletedJobs;
+    }
+
+    public void addCompletedJob(Message message){
+        this.allCompletedJobs.add(message);
+    }
+
+    public List<Message> getAllNonAcknowledgedJobs() {
+        return allNonAcknowledgedJobs;
+    }
+
+    public void addNonAcknowledgedJob(Message message) {
+        this.allNonAcknowledgedJobs = allNonAcknowledgedJobs;
+    }
+
+    public List<Message> getLocallyCompletedJobs() {
+        return locallyCompletedJobs;
+    }
+
+    public void addLocallyCompletedJob(Message message) {
+        this.locallyCompletedJobs.add(message);
     }
 
     public void setTimeAliveMillis(long timeAliveMillis) {
@@ -145,6 +191,23 @@ public class WorkerState implements Serializable, Comparable {
     public String getJobId() {
         return jobId;
     }
+
+
+    /**
+     * all jobs not completed are failed jobs
+     *
+     * @return   failedJobs
+     */
+    public final List<Message> getFailedJobs(){
+        final List<Message> failedJobs = new ArrayList<Message>();
+        for(Message job: allJobs){
+            if (! allCompletedJobs.contains(job)) {
+                failedJobs.add(job);
+            }
+        }
+        return failedJobs;
+    }
+
 
 
     @Override
