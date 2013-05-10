@@ -52,7 +52,7 @@ public class JdbcEntryDaoImpl implements JdbcEntryDao {
 
     public String getLatestDatabaseReleaseVersion() {
         if (jdbcTemplate != null) {
-            return jdbcTemplate.queryForObject("select v.version from DW_DB_VERSION v where v.dbcode='I'", String.class);
+            return jdbcTemplate.queryForObject("select v.version from interpro.db_version v where v.dbcode='I'", String.class);
         }
         return null;
     }
