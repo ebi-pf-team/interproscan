@@ -217,6 +217,10 @@ public class StepInstance implements Serializable {
         return timeCreated;
     }
 
+    public String getStepId() {
+        return stepId;
+    }
+
     /**
      * This method returns true if this StepInstance is a candidate to be submitted.
      * <p/>
