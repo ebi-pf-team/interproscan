@@ -287,4 +287,14 @@ public class StatsUtil {
     }
 
 
+    /**
+     *
+     */
+
+    public int getAvailableProcessors(){
+        int processors = Runtime.getRuntime().availableProcessors();
+        LOGGER.debug(Utilities.getTimeNow() + " Processors available: " + processors);
+        return processors;
+    }
+
 }
