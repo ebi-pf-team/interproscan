@@ -22,6 +22,7 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * This controller monitors the activity of the Worker.  If the worker is inactive and has
@@ -113,6 +114,8 @@ public class WorkerImpl implements Worker {
 
     private int maxUnfinishedJobs;
 
+    protected WorkerState workerState;
+
     /**
      * Constructor that requires a DefaultMessageListenerContainer - this needs to be set before anything else.
      *
@@ -133,6 +136,8 @@ public class WorkerImpl implements Worker {
         }
         this.managerTopicMessageListenerJmsContainer = managerTopicMessageListenerJmsContainer;
 
+        //initiallise the JobMonitor
+        //this.workerState = new WorkerState(111, UUID.fromString(tcpUri), tcpUri,false);
     }
 
     public void setProjectId(String projectId) {
@@ -479,7 +484,15 @@ public class WorkerImpl implements Worker {
             System.out.println(Utilities.getTimeNow() + " Worker has completed tasks -  t: " + tier + " ws: " + getNumberOfWorkersSpawned() + " jobcount: " + totalJobCount);
         } catch (InterruptedException e) {
             LOGGER.error("InterruptedException thrown by Worker.  Stopping now.", e);
+        }finally {
+            StringBuffer buf = new StringBuffer("WorkerState :\n\n");
+            buf.append("failedJobs: ").append(workerState.getFailedJobs().toString()).append("\n");
+            buf.append("allJobs: ").append(workerState.getAllJobs().toString()).append("\n");
+            LOGGER.debug(buf);
         }
+        //exit the worker
+
+        System.exit(0);
     }
 
     /**
@@ -743,6 +756,7 @@ public class WorkerImpl implements Worker {
                 buf.append("isSessionTransacted: ").append(remoteQueueJmsContainer.isSessionTransacted()).append("\n");
                 buf.append("isSubscriptionDurable: ").append(remoteQueueJmsContainer.isSubscriptionDurable()).append("\n");
                 LOGGER.trace(buf);
+
             }
         }
     }
@@ -798,6 +812,7 @@ public class WorkerImpl implements Worker {
         setRemoteJmsTemplate(jmsTemplate); // may not be necessary
         //set the remoteJmsTemplates for the responseQueue
         responseQueueMessageListener.setRemoteJmsTemplate(jmsTemplate);
+
         //((WorkerMessageSenderImpl) responseQueueMessageListener.getWorkerMessageSender()).setRemoteJmsTemplate(jmsTemplate);
         //set the remoteJmsTemplate for the workerMessageSender
 //        remoteQueueJmsContainer.initialize();

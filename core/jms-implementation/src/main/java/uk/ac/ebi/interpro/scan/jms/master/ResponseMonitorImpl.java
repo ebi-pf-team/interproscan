@@ -8,6 +8,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
+import java.util.List;
 
 /**
  * This implementation receives responses on the destinationResponseQueue
@@ -23,8 +24,16 @@ public class ResponseMonitorImpl implements MessageListener {
 
     StepExecutionDAO stepExecutionDAO;
 
+    public static final String CAN_RUN_REMOTELY_PROPERTY = "remote";
+
+    public int remoteJobs = 0;
+
     public ResponseMonitorImpl(StepExecutionDAO stepExecutionDAO) {
         this.stepExecutionDAO = stepExecutionDAO;
+    }
+
+    public int getRemoteJobs() {
+        return remoteJobs;
     }
 
     @Override
@@ -32,6 +41,7 @@ public class ResponseMonitorImpl implements MessageListener {
         LOGGER.info("Master: received a message on the  responseQueue");
         try {
             boolean canHandle = false;
+            boolean canRunRemotely = false;
             if (message instanceof ObjectMessage) {
                 ObjectMessage objectMessage = (ObjectMessage) message;
                 Object messageContents = objectMessage.getObject();
@@ -39,6 +49,15 @@ public class ResponseMonitorImpl implements MessageListener {
                     canHandle = true;
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
+                    canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);
+                    if(canRunRemotely){
+                        remoteJobs++;
+                    }
+
+                } else if (messageContents instanceof List){
+                    canHandle = true;
+                    List<Message> failedJobs =(List<Message>)    messageContents;
+                    LOGGER.debug("Received FAILED_JOB");
                 }
             }
             if (! canHandle){

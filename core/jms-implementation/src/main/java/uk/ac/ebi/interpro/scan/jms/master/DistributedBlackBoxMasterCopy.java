@@ -7,12 +7,18 @@ import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Master Controller for InterProScan 5.
@@ -39,6 +45,10 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
 
     private String projectId;
 
+    private volatile int remoteJobs = 0;
+
+    List<Message> failedJobs = new ArrayList<Message>();
+
     /**
      * completion time target for worker creation by the Master
      * should be  less than worker max lifetime  =  7*24*60*60*1000;
@@ -52,13 +62,15 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
     * Run the Master Application.
     */
     public void run() {
+        final long now = System.currentTimeMillis();
         super.run();
+        statsUtil.getAvailableProcessors();
         try {
             loadInMemoryDatabase();
 
             int stepInstancesCreatedByLoadStep = createStepInstances();
 
-
+            remoteJobs = 0;
             //this will start a new thread to create new workers
             startNewWorker();
 
@@ -107,6 +119,9 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
 
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
+                        if (canRunRemotely){
+                            remoteJobs ++;
+                        }
                         countRegulator++;
                     }
                 }
@@ -136,8 +151,10 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
                 }
                 //check what is not completed
                 LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
+                LOGGER.debug("Remote jobs: " + remoteJobs);
                 LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                 LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+
                 //update the statistics plugin
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
@@ -166,6 +183,13 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% of analyses done:  InterProScan analyses completed");
+        LOGGER.debug("Remote jobs: " + remoteJobs);
+        final long executionTime =   System.currentTimeMillis() - now;
+        LOGGER.debug("Execution Time (s) for Master: " + String.format("%d min, %d sec",
+                TimeUnit.MILLISECONDS.toMinutes(executionTime),
+                TimeUnit.MILLISECONDS.toSeconds(executionTime) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
+        ));
         System.exit(0);
     }
 
@@ -222,6 +246,40 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
         if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
             ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setUserDir(userDir);
         }
+    }
+
+    /**
+     * monitor the failedJobs Queue and resend the jobs
+     *
+     */
+    private void monitorFailedJobs(){
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            boolean highMemory = true;
+            boolean canRunRemotely = true;
+            public void run() {
+                while (!shutdownCalled) {
+                    if(failedJobs.size() > 0){
+                        for(Message message:failedJobs){
+                            final ObjectMessage stepExecutionMessage = (ObjectMessage) message;
+                            try {
+                                final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
+                                messageSender.sendMessage(stepExecution.getStepInstance(), highMemory, HIGH_PRIORITY, canRunRemotely);
+                                LOGGER.debug("Resending job after Major failure: " + stepExecution.getStepInstance().getId());
+                            }catch (Exception e)  {
+                                e.printStackTrace();
+                            }
+                        }
+                    }else{
+                        try {
+                            Thread.sleep(1 * 10 * 1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**
