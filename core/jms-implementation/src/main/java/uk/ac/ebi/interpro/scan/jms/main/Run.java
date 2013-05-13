@@ -183,7 +183,7 @@ public class Run {
         DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CLUSTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         GRID("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
-        ES("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
+        ES("distributedMaster", "spring/jms/master/es-mode-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
@@ -270,6 +270,7 @@ public class Run {
 
     public static void main(String[] args) {
         // create the command line parser
+        LOGGER.debug("Starting InterProScan 5 RC6 ...");
         CommandLineParser parser = new PosixParser();
         String modeArgument = null;
         try {
@@ -373,7 +374,7 @@ public class Run {
                 }
 
                 parsedAnalyses = getAnalysesToRun(parsedAnalysesRealAnalysesMap);
-                String analysesPrintOutStr = "Running the following analyses:\n";
+                String analysesPrintOutStr = Utilities.getTimeNow() + " Running the following analyses:\n";
                 //Version check
                 if (parsedAnalyses.length > 0) {
                     Set<Job> jobsToCheckMultipleVersionsSet = new HashSet<Job>();
@@ -435,7 +436,9 @@ public class Run {
 
                     checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
                 }
-                System.out.println("Running InterProScan v5 in " + mode + " mode...");
+                //checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
+
+                System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode...");
 
                 runnable.run();
             }
@@ -503,8 +506,6 @@ public class Run {
             LOGGER.info("Configuring tcpUri for ProductionMaster");
             String tcpConnectionString = configureTCPTransport(ctx);
             ((ProductionMaster) master).setTcpUri(tcpConnectionString);
-            ((ProductionMaster) master).setTcpUri(tcpConnectionString);
-
         }
 
     }
@@ -527,7 +528,7 @@ public class Run {
             BlackBoxMaster bbMaster = (BlackBoxMaster) master;
 
             String tcpConnectionString = null;
-            if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER || mode == Mode.ES) {
+            if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER) {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 

@@ -57,7 +57,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                         // as they are very abundant.
-                        final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep || (! highPriorityStep)
+                        final int priority = step.getSerialGroup() == null || (step instanceof WriteFastaFileStep && (! highPriorityStep))
+                                || (! highPriorityStep)
                                 ? 4
                                 : 8;
 
@@ -122,11 +123,12 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     public boolean  isHighPriorityStep(Step step){
         boolean highPriorityStep = false;
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(" Step Id for pfam and gene3d checking: " + step.getId());
+            LOGGER.debug(" Step Id for pfam,gene3d, pirsf, hamap checking: " + step.getId());
         }
-        if(step.getId().toLowerCase().contains("pfam".toLowerCase()) || step.getId().toLowerCase().contains("gene3d".toLowerCase())){
+        if(step.getId().toLowerCase().contains("pfam".toLowerCase()) || step.getId().toLowerCase().contains("gene3d".toLowerCase())
+                || step.getId().toLowerCase().contains("pirsf".toLowerCase()) || step.getId().toLowerCase().contains("hamap".toLowerCase())){
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(" Pfam/Gene3d job: " + step.getId()+ " Should have high priority, but priority is normally 4");
+                LOGGER.debug(" Pfam/Gene3d/pirsf/hamap job: " + step.getId()+ " Should have high priority, but priority is normally 4");
             }
             highPriorityStep = true;
         }
