@@ -291,20 +291,41 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
         //create two workers : one high memory and one non high memory
         final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
 
-        LOGGER.debug("Starting the first FOUR normal worker.");
-        for (int i=0;i<3;i++){
-            workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
-        }
-        LOGGER.debug("Starting the first high memory worker...");
-        // high memory do have a higher priority compared to low memory workers
-        workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,true);
-
-
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
             public void run() {
                 //start new workers
                 int workerCount = 0;
+                LOGGER.debug("Starting the first FOUR normal worker.");
+
+                boolean firstWorkersSpawned = false;
+                while(!firstWorkersSpawned) {
+                    if(remoteJobs < 0){
+                        try {
+                            Thread.sleep(1 * 10 * 1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        long totalJobs =  stepInstanceDAO.count();
+                        //TODO estimate the number of remote jobs needed per number of steps count
+                        int remoteJobsEstimate =  (int) (totalJobs/3);
+                        int initialWorkersCount = remoteJobsEstimate/maxMessagesOnQueuePerConsumer;
+                        LOGGER.debug("Remote jobs: " + remoteJobs);
+                        LOGGER.debug("Remote jobs estimate:" + remoteJobsEstimate);
+                        LOGGER.debug("Total jobs (StepInstances): " + totalJobs);
+                        for (int i=0;i< initialWorkersCount;i++){
+                            workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+                        }
+                        firstWorkersSpawned = true;
+                    }
+                }
+                //then you may sleep for a while to allow workers to setup
+                try {
+                    Thread.sleep(1 * 120 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 boolean quickSpawnMode = false;
                 while (!shutdownCalled) {
                     //statsUtil.sendMessage();
