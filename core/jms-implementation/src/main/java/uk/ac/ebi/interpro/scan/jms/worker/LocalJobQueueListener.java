@@ -78,8 +78,6 @@ public class LocalJobQueueListener implements MessageListener {
             System.out.println(timeNow + " first transaction ... ");
         }
 
-        LOGGER.debug("Processing JobCount #: " + localCount);
-
         final String messageId;
 
         try {
@@ -115,10 +113,14 @@ public class LocalJobQueueListener implements MessageListener {
             // TODO - Need to add a dead-letter queue, so if this worker never gets as far as
             // acknoledging the message, the Master will know to re-run the StepInstance.
             try {
+                final String stepName =  stepExecution.getStepInstance().getStepId();
+                LOGGER.debug("Processing " + stepName + " JobCount #: " + localCount);
                 final long now = System.currentTimeMillis();
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
-                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
+//                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
+                LOGGER.debug("Finished Processing " + stepName + " JobCount #: " + localCount);
+                LOGGER.warn("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepName + " time: " + executionTime);
             } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
@@ -147,6 +149,6 @@ public class LocalJobQueueListener implements MessageListener {
             }
         }
 
-        LOGGER.debug("Finished Processing JobCount #: " + localCount);
+
     }
 }
