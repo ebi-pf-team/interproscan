@@ -19,10 +19,17 @@
         <property name="autoStartup" value="true"/>
     </bean>
 
-    <bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">
-        <property name="jobResponseQueue" ref="jobResponseQueue"/>
-        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+    <!--<bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->
+        <!--<property name="jobResponseQueue" ref="jobResponseQueue"/>-->
+        <!--<property name="jmsTemplate" ref="inVmJmsTemplate"/>-->
+        <!--<property name="stepExecutor" ref="embeddedStepExecutor"/>-->
+    <!--</bean>-->
+
+    <!--Listens to the local job queue and performs jobs-->
+    <bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.worker.LocalJobQueueListener">
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
     </bean>
 
 
