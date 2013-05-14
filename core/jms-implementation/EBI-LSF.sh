@@ -8,7 +8,7 @@ master_host=ebi-002.ebi.ac.uk
 target="/homes/$USER"
 broker_data_folder=$target/$distribution_folder/broker_data
 temporary_file_folder=$target/$distribution_folder/temp
-temporary_file_folder=/nfs/nobackup/interpro/pjones
+temporary_file_folder=/nfs/nobackup2/interpro/pjones
 
 # Empty the JMS broker before starting up.
 ssh ${master_host} ps -o pid,cmd -u $USER \| grep interproscan \| cut -c 1-5 \| xargs kill
