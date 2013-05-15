@@ -91,7 +91,7 @@ abstract public class RunBinaryStep extends Step {
         }
         List<String> command = createCommand(stepInstance, temporaryFileDirectory);
         if (command != null && command.size() > 0) {
-            LOGGER.info("Running the following command: " + command);
+            LOGGER.debug("Running the following command: " + command);
 
             CommandLineConversation clc = new CommandLineConversationImpl();
             try {

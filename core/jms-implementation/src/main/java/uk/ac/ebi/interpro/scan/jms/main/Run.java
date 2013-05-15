@@ -290,10 +290,11 @@ public class Run {
             }
             System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan 5RC6");
             //String config = System.getProperty("config");
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+//            if (LOGGER.isInfoEnabled()) {
+                LOGGER.warn("Available processors: " + Runtime.getRuntime().availableProcessors());
+                LOGGER.warn("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
                 LOGGER.info("Running in " + mode + " mode");
-            }
+//            }
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
 

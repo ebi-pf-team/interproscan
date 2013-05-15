@@ -1,10 +1,17 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
+import com.sun.management.HotSpotDiagnosticMXBean;
 import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import javax.jms.*;
+import javax.management.MBeanServer;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -297,4 +304,33 @@ public class StatsUtil {
         return processors;
     }
 
+    public void memoryDisplay(){
+        MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heap = memBean.getHeapMemoryUsage();
+        MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
+    }
+
+    public void memoryMonitor(){
+
+        MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heap = memBean.getHeapMemoryUsage();
+        MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
+
+        // init code
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        HotSpotDiagnosticMXBean diagBean = null;
+        try {
+            diagBean = ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
+            // loop code
+            // add some code to figure if we have passed some threshold, then
+            LOGGER.debug("Memory diagnostic options: " + diagBean.getDiagnosticOptions().toString());
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
+//        File heapFile = new File(outputDir, "heap-" + curThreshold + ".hprof");
+//        log.info("Dumping heap file " + heapFile.getAbsolutePath());
+//        diagBean.dumpHeap(heapFile.getAbsolutePath(), true);
+    }
 }
