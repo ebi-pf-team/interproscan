@@ -13,7 +13,7 @@
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="amqEmbeddedWorker"/>
         <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
-        <property name="maxConcurrentConsumers" value="${number.of.embedded.workers}"/>
+        <property name="maxConcurrentConsumers" value="${maxnumber.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
         <property name="autoStartup" value="true"/>
