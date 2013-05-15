@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.jms.activemq.CleanRunDatabase;
-import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep;
@@ -50,6 +49,11 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     private boolean mapToPathway = false;
 
     protected boolean hasInVmWorker;
+
+    private int concurrentInVmWorkerCount;
+
+    private int maxConcurrentInVmWorkerCount;
+
     protected String userDir;
 
     @Required
@@ -268,5 +272,21 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     public void setUserDir(String userDir) {
         this.userDir = userDir;
+    }
+
+    public int getConcurrentInVmWorkerCount() {
+        return concurrentInVmWorkerCount;
+    }
+
+    public void setConcurrentInVmWorkerCount(int concurrentInVmWorkerCount) {
+        this.concurrentInVmWorkerCount = concurrentInVmWorkerCount;
+    }
+
+    public int getMaxConcurrentInVmWorkerCount() {
+        return maxConcurrentInVmWorkerCount;
+    }
+
+    public void setMaxConcurrentInVmWorkerCount(int maxConcurrentInVmWorkerCount) {
+        this.maxConcurrentInVmWorkerCount = maxConcurrentInVmWorkerCount;
     }
 }

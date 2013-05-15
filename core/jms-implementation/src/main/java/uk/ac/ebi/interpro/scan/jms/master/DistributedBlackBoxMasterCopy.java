@@ -40,7 +40,7 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
 
     private StatsUtil statsUtil;
 
-    private int maxMessagesOnQueuePerConsumer = 4;
+    private int maxMessagesOnQueuePerConsumer = 8;
 
     private int maxConsumers;
 
@@ -65,13 +65,12 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
-        statsUtil.getAvailableProcessors();
         try {
             loadInMemoryDatabase();
 
             int stepInstancesCreatedByLoadStep = createStepInstances();
 
-            remoteJobs.incrementAndGet();
+            //remoteJobs.incrementAndGet();
             //this will start a new thread to create new workers
             startNewWorker();
 
@@ -123,8 +122,10 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
                         if (canRunRemotely){
                             remoteJobs.incrementAndGet();
+                            LOGGER.debug("Remote jobs: added one more:  " + remoteJobs.get());
                         }
                         countRegulator++;
+                        controlledLogging = false;
                     }
                 }
 
@@ -154,7 +155,7 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
                 if(!controlledLogging){
                     //check what is not completed
                     LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
-                    LOGGER.debug("Remote jobs: " + remoteJobs);
+                    LOGGER.debug("Remote jobs: " + remoteJobs.get());
                     LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
                     controlledLogging = false;
@@ -187,7 +188,7 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% of analyses done:  InterProScan analyses completed");
-        LOGGER.debug("Remote jobs: " + remoteJobs);
+        LOGGER.debug("Remote jobs: " + remoteJobs.get());
         final long executionTime =   System.currentTimeMillis() - now;
         LOGGER.debug("Execution Time (s) for Master: " + String.format("%d min, %d sec",
                 TimeUnit.MILLISECONDS.toMinutes(executionTime),
@@ -229,6 +230,11 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
 
     public void setStatsUtil(StatsUtil statsUtil) {
         this.statsUtil = statsUtil;
+    }
+
+    public void setMaxMessagesOnQueuePerConsumer(int maxMessagesOnQueuePerConsumer) {
+        //worker max unfinished jobs / 2
+        this.maxMessagesOnQueuePerConsumer = maxMessagesOnQueuePerConsumer/2;
     }
 
     @Override
@@ -304,26 +310,34 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
 
                 boolean firstWorkersSpawned = false;
                 while(!firstWorkersSpawned) {
-                    LOGGER.debug("initial check - Remote jobs: " + remoteJobs.get());
-                    if(remoteJobs.get() < 0){
+                    final int actualRemoteJobs =   remoteJobs.get();
+                    LOGGER.debug("initial check - Remote jobs: " + actualRemoteJobs);
+                    if(actualRemoteJobs < 1){
                         try {
-                            Thread.sleep(1 * 10 * 1000);
+                            Thread.sleep(1 * 5 * 1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        LOGGER.debug("Remote jobs still = " + remoteJobs.get());
+                        LOGGER.debug("Remote jobs still = " + actualRemoteJobs);
                     }else{
                         long totalJobs =  stepInstanceDAO.count();
                         //TODO estimate the number of remote jobs needed per number of steps count
-                        int remoteJobsEstimate =  (int) (totalJobs/3);
-                        int initialWorkersCount = remoteJobsEstimate/maxMessagesOnQueuePerConsumer;
-                        LOGGER.debug("Remote jobs: " + remoteJobs);
-                        LOGGER.debug("Remote jobs estimate:" + remoteJobsEstimate);
+                        int remoteJobsEstimate =  (int) (totalJobs/6);
+                        int initialWorkersCount = Math.round(remoteJobsEstimate / maxMessagesOnQueuePerConsumer);
+                        LOGGER.debug("Remote jobs actual: " + actualRemoteJobs);
+                        LOGGER.debug("Remote jobs estimate: " + remoteJobsEstimate);
+                        LOGGER.debug("Initial Workers Count: " + initialWorkersCount);
                         LOGGER.debug("Total jobs (StepInstances): " + totalJobs);
-                        for (int i=0;i< initialWorkersCount;i++){
-                            workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+                        if(initialWorkersCount < 1 && remoteJobsEstimate > 10){
+                            initialWorkersCount = 1;
                         }
-                        firstWorkersSpawned = true;
+                        if(initialWorkersCount > 0){
+                            LOGGER.debug("Initial Workers created: " + initialWorkersCount);
+                            for (int i=0;i< initialWorkersCount;i++){
+                                workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+                            }
+                            firstWorkersSpawned = true;
+                        }
                     }
                 }
                 //then you may sleep for a while to allow workers to setup
