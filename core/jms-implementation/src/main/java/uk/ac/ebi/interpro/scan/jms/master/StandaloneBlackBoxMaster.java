@@ -24,7 +24,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
-        statsUtil.getAvailableProcessors();
+        LOGGER.warn("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         try {
             loadInMemoryDatabase();
             int stepInstancesCreatedByLoadStep = createStepInstances();
@@ -79,6 +79,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 //report progress
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
 
                 // Close down (break out of loop) if the analyses are all complete.

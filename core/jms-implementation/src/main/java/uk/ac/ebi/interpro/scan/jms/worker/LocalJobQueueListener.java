@@ -116,11 +116,12 @@ public class LocalJobQueueListener implements MessageListener {
                 final String stepName =  stepExecution.getStepInstance().getStepId();
                 LOGGER.debug("Processing " + stepName + " JobCount #: " + localCount);
                 final long now = System.currentTimeMillis();
+                final String timeNow = Utilities.getTimeNow();
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
 //                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
                 LOGGER.debug("Finished Processing " + stepName + " JobCount #: " + localCount);
-                LOGGER.warn("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepName + " time: " + executionTime);
+                LOGGER.warn("Execution Time (ms) for job started " + timeNow + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
             } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;

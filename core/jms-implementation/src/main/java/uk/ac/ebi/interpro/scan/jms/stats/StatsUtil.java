@@ -228,7 +228,6 @@ public class StatsUtil {
         if(unfinishedJobs > 0 && totalJobs > 5.0){
             Double progress = (double)(totalJobs - unfinishedJobs) / (double) totalJobs;
 //            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
-            int connectionCount = statsMessageListener.getConsumers();
             boolean displayProgress = false;
             double actualProgress = 0d;
             if (progress > 0.25 && progress < 0.5 && progressCounter < 1){
@@ -257,6 +256,7 @@ public class StatsUtil {
                 progressReportTime = System.currentTimeMillis();
                 actualProgress = progress * 100;
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",actualProgress) + " completed");
+                int connectionCount = statsMessageListener.getConsumers();
                 String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
                 LOGGER.debug(statsMessageListener.getStats());
             }
