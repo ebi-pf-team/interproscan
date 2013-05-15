@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Master Controller for InterProScan 5.
@@ -45,7 +46,7 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
 
     private String projectId;
 
-    private volatile int remoteJobs = 0;
+    private AtomicInteger remoteJobs = new AtomicInteger(0);
 
     List<Message> failedJobs = new ArrayList<Message>();
 
@@ -70,10 +71,11 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
 
             int stepInstancesCreatedByLoadStep = createStepInstances();
 
-            remoteJobs = 0;
+            remoteJobs.incrementAndGet();
             //this will start a new thread to create new workers
             startNewWorker();
 
+            boolean controlledLogging = false;
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             while (!shutdownCalled) {
@@ -120,7 +122,7 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
                         if (canRunRemotely){
-                            remoteJobs ++;
+                            remoteJobs.incrementAndGet();
                         }
                         countRegulator++;
                     }
@@ -149,12 +151,14 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
                         }
                     }
                 }
-                //check what is not completed
-                LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
-                LOGGER.debug("Remote jobs: " + remoteJobs);
-                LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
-
+                if(!controlledLogging){
+                    //check what is not completed
+                    LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
+                    LOGGER.debug("Remote jobs: " + remoteJobs);
+                    LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                    LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                    controlledLogging = false;
+                }
                 //update the statistics plugin
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
@@ -296,16 +300,18 @@ public class  DistributedBlackBoxMasterCopy extends AbstractBlackBoxMaster imple
             public void run() {
                 //start new workers
                 int workerCount = 0;
-                LOGGER.debug("Starting the first FOUR normal worker.");
+                LOGGER.debug("Starting the first N normal workers.");
 
                 boolean firstWorkersSpawned = false;
                 while(!firstWorkersSpawned) {
-                    if(remoteJobs < 0){
+                    LOGGER.debug("initial check - Remote jobs: " + remoteJobs.get());
+                    if(remoteJobs.get() < 0){
                         try {
                             Thread.sleep(1 * 10 * 1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        LOGGER.debug("Remote jobs still = " + remoteJobs.get());
                     }else{
                         long totalJobs =  stepInstanceDAO.count();
                         //TODO estimate the number of remote jobs needed per number of steps count
