@@ -43,10 +43,11 @@ public class DeleteFileStep extends Step {
             for (String fileName : fileNameTemplate) {
                 final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileName);
                 File file = new File(filePathName);
-                if (!file.delete()) {
-                    LOGGER.error("Unable to delete the file located at " + filePathName);
-                    throw new IllegalStateException("Unable to delete the file located at " + filePathName);
-                }
+                //TODO remove comment
+//                if (!file.delete()) {
+//                    LOGGER.error("Unable to delete the file located at " + filePathName);
+//                    throw new IllegalStateException("Unable to delete the file located at " + filePathName);
+//                }
             }
         }
         else {

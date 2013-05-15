@@ -31,6 +31,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
+            boolean controlledLogging = false;
             while (!shutdownCalled) {
                 boolean completed = true;
 
@@ -54,25 +55,27 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
 
                         final boolean highPriorityStep = isHighPriorityStep(step);
+                        final boolean lowPriorityStep  =  (! highPriorityStep) &&  (step.getSerialGroup() == null || step instanceof WriteFastaFileStep);
 
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                         // as they are very abundant.
-                        final int priority = step.getSerialGroup() == null || (step instanceof WriteFastaFileStep && (! highPriorityStep))
-                                || (! highPriorityStep)
-                                ? 4
-                                : 8;
+                        final int priority = lowPriorityStep ? 4 : 8;
 
 
                         // Performed in a transaction.
                         LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
                         messageSender.sendMessage(stepInstance, false, priority, false);
+                        controlledLogging = false;
                     }
                 }
                 //check what is not completed
-                LOGGER.debug("StandAlone Master has no jobs ready .. more Jobs will be made ready ");
-                LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
-
+//                statsUtil.memoryMonitor();
+                if(!controlledLogging){
+                    LOGGER.debug("StandAlone Master has no jobs ready .. more Jobs will be made ready ");
+                    LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                    LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                    controlledLogging = true;
+                }
                 //report progress
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
@@ -86,7 +89,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep) {
                     break;
                 }
-                Thread.sleep(200);  // Make sure the Master thread is not hogging resources required by in-memory workers.
+                //for standalone es mode this should be < 200
+                Thread.sleep(50);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by DistributedBlackBoxMaster: ", e);
@@ -97,7 +101,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
         final long executionTime =   System.currentTimeMillis() - now;
-        LOGGER.debug("Execution Time (s) for Master: " + String.format("%d min, %d sec",
+        LOGGER.warn("Execution time (s) for StandAlone Master: " + String.format("%d min, %d sec",
                 TimeUnit.MILLISECONDS.toMinutes(executionTime),
                 TimeUnit.MILLISECONDS.toSeconds(executionTime) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
@@ -123,12 +127,11 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     public boolean  isHighPriorityStep(Step step){
         boolean highPriorityStep = false;
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(" Step Id for pfam,gene3d, pirsf, hamap checking: " + step.getId());
+            LOGGER.debug(" Step Id for pirsf, hamap : " + step.getId());
         }
-        if(step.getId().toLowerCase().contains("pfam".toLowerCase()) || step.getId().toLowerCase().contains("gene3d".toLowerCase())
-                || step.getId().toLowerCase().contains("pirsf".toLowerCase()) || step.getId().toLowerCase().contains("hamap".toLowerCase())){
+        if(step.getId().toLowerCase().contains("pirsf".toLowerCase()) || step.getId().toLowerCase().contains("hamap".toLowerCase())){
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(" Pfam/Gene3d/pirsf/hamap job: " + step.getId()+ " Should have high priority, but priority is normally 4");
+                LOGGER.debug(" pirsf/hamap job: " + step.getId()+ " Should have high priority, but priority is normally 4");
             }
             highPriorityStep = true;
         }
