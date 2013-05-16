@@ -54,7 +54,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         final Step step = stepInstance.getStep(jobs);
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
 
-                        final boolean highPriorityStep = isHighPriorityStep(step);
+                        final boolean highPriorityStep = false; //isHighPriorityStep(step);
                         final boolean lowPriorityStep  =  (! highPriorityStep) &&  (step.getSerialGroup() == null || step instanceof WriteFastaFileStep);
 
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
@@ -79,7 +79,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 //report progress
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
+//                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
 
                 // Close down (break out of loop) if the analyses are all complete.
@@ -91,7 +91,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     break;
                 }
                 //for standalone es mode this should be < 200
-                Thread.sleep(50);  // Make sure the Master thread is not hogging resources required by in-memory workers.
+                Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by DistributedBlackBoxMaster: ", e);
