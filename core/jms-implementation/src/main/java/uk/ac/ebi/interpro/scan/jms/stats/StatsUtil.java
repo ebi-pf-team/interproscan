@@ -256,9 +256,9 @@ public class StatsUtil {
                 progressReportTime = System.currentTimeMillis();
                 actualProgress = progress * 100;
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",actualProgress) + " completed");
-                int connectionCount = statsMessageListener.getConsumers();
+                int connectionCount = 9999; //statsMessageListener.getConsumers();
                 String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
-                LOGGER.debug(statsMessageListener.getStats());
+//                LOGGER.debug(statsMessageListener.getStats());
             }
         }
     }
