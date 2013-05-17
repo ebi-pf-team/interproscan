@@ -485,10 +485,10 @@ public class WorkerImpl implements Worker {
         } catch (InterruptedException e) {
             LOGGER.error("InterruptedException thrown by Worker.  Stopping now.", e);
         }finally {
-            StringBuffer buf = new StringBuffer("WorkerState :\n\n");
-            buf.append("failedJobs: ").append(workerState.getFailedJobs().toString()).append("\n");
-            buf.append("allJobs: ").append(workerState.getAllJobs().toString()).append("\n");
-            LOGGER.debug(buf);
+//            StringBuffer buf = new StringBuffer("WorkerState :\n\n");
+//            buf.append("failedJobs: ").append(workerState.getFailedJobs().toString()).append("\n");
+//            buf.append("allJobs: ").append(workerState.getAllJobs().toString()).append("\n");
+//            LOGGER.debug(buf);
         }
         //exit the worker
 
