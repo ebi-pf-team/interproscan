@@ -2,9 +2,6 @@
 html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 body { margin: 0; font-size: 13px; line-height: 1.538; } /* gives a line-height of 20px */
 body, button, input, select, textarea { font-family: sans-serif; color: #222; }
-/* icon to indicate leaving ebi.ac.uk domain */
-a span.external {display: inline-block;height: 10px;background: url('http://www.ebi.ac.uk/web_guidelines/images/global/extlink.png') right center no-repeat; padding: 0 12px 0 0;} /*slightly improve to make the icon appear*/
-
 /*/from boilerplate-style.css*/
 /*from grid*/
 .container_24 {
@@ -152,20 +149,8 @@ abbr,acronym {
 		font-style: normal;
 	}
 
-.icon {
-		    text-decoration: none;
-	      font-style: normal;
-		}
-
-.icon-static:before, .icon-generic:before {
-		    font-family: 'EBI-Generic';
-		    /* font-size: 123.1%; */
-		    font-size: 100%;
-		    color: #bbb;
-	    	content: attr(data-icon);
-
-	  		margin: 0 0.3em 0 0;
-	    }
+.icon { text-decoration: none; font-style: normal;}
+.icon-static:before, .icon-generic:before {font-family: 'EBI-Generic'; /* font-size: 123.1%; */ font-size: 100%;  color: #bbb; 	content: attr(data-icon);	margin: 0 0.3em 0 0;}
 
 /*/from ebi-visual.css*/
 /*from ebi-global.css*/
@@ -192,8 +177,8 @@ a:hover,a:focus,a:active {color: #8c4dc2; border-bottom: 1px solid #8c4dc2;}
 a.neutral, a.neutral:link {text-decoration: none; border-bottom: 0px solid  #525252; color: #222;}  /*link that has a neutral visual impact on the page - same colour as text*/
 a.neutral:hover, a.neutral:active, a.neutral:focus { text-decoration: none;border-bottom: 1px solid  #525252;}
 
-/*a.ext, a.ext:link {padding-left: 13px; background: url(../images/ico_ext_link.png) no-repeat 0 2px;}*//*kept as it was, as the injected code suggested by ES may not work without connection */
-/*a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_on.png) no-repeat 0 2px;}*/
+a.ext, a.ext:link {padding-left: 13px; background: url(../images/ico_ext_link.png) no-repeat 0 2px;}
+a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_on.png) no-repeat 0 2px;}
 
 /* Structures colours */
 span.PDB {
@@ -367,3 +352,7 @@ border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-
 .ui-tooltip abbr {border-bottom: 1px solid transparent; cursor: help; vertical-align: middle;}
 
 .disabled {border:0px solid red; opacity:0.3; filter:alpha(opacity=30); /* For IE8 and earlier */}
+/*effect stick menu*/
+#content {position: relative;} /*Parent container that you want the sticky item to be contained in*/
+.stickit {margin-left: 0px; position: fixed;  top: 0; width:19.7%;/*this value is just for Interproscan*/}
+.stickit-end {bottom: 40px; position: absolute; right: 0;}/*Class added to the sticky item once it has reached the end of the container*/
