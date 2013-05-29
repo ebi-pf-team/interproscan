@@ -6,8 +6,7 @@
 
     <!--Import common beans-->
     <!--Old versions are switched off because they aren't in the database anymore-->
-    <!--<import resource="jobPfamA-24.0-context.xml"/>-->
-    <import resource="jobPfamA-26.0-context.xml"/>
+    <import resource="jobPfamA-27.0-context.xml"/>
     <import resource="jobPhobius-1.01-context.xml"/>
     <import resource="jobGene3d-3.5.0-context.xml"/>
     <import resource="jobPanther-7.2-context.xml"/>
@@ -45,7 +44,7 @@
 
                 <!-- Analyses -->
                 <!--Old versions are switched off because they aren't in the database anymore-->
-                <ref bean="jobPfamA-26.0"/>
+                <ref bean="jobPfamA-27.0"/>
                 <ref bean="jobPhobius-1.01"/>
                 <ref bean="jobGene3d-3.5.0"/>
                 <ref bean="jobPanther-7.2"/>

@@ -111,7 +111,7 @@ public class LocalJobQueueListener implements MessageListener {
 
 
             // TODO - Need to add a dead-letter queue, so if this worker never gets as far as
-            // acknoledging the message, the Master will know to re-run the StepInstance.
+            // acknowledging the message, the Master will know to re-run the StepInstance.
             try {
                 final String stepName =  stepExecution.getStepInstance().getStepId();
                 LOGGER.warn("Processing " + stepName + " JobCount #: " + localCount);
