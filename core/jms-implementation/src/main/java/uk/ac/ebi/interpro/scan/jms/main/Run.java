@@ -270,7 +270,7 @@ public class Run {
 
     public static void main(String[] args) {
         // create the command line parser
-        LOGGER.debug("Starting InterProScan 5 RC6 ...");
+        LOGGER.debug("Starting InterProScan 5 RC7...");
         CommandLineParser parser = new PosixParser();
         String modeArgument = null;
         try {
