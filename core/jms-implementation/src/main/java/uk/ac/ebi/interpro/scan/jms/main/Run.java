@@ -288,7 +288,7 @@ public class Run {
                 LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
                 System.exit(1);
             }
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan 5RC6");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan 5RC7");
             //String config = System.getProperty("config");
 //            if (LOGGER.isInfoEnabled()) {
                 LOGGER.warn("Available processors: " + Runtime.getRuntime().availableProcessors());
