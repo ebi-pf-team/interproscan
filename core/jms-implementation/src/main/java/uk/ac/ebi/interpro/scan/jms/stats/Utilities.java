@@ -28,7 +28,7 @@ public class Utilities {
      */
     public static String getTimeNow(){
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
         String currentDate = sdf.format(cal.getTime());
         return currentDate;
     }
