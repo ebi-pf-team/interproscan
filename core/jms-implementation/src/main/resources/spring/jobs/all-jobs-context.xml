@@ -256,6 +256,10 @@
         <constructor-arg value="getorf.err.txt"/>
     </bean>
 
+    <bean id="outputResultDevNullFile" class="java.lang.String">
+        <constructor-arg value="devnull.txt"/>
+    </bean>
+
     <bean id="getOrfDescriptionLineParser"
           class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
 
