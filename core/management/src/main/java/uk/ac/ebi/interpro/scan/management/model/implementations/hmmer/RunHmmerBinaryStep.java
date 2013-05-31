@@ -57,10 +57,17 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
 
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
+        final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
 
         List<String> command = new ArrayList<String>();
         command.add(this.getFullPathToBinary());
         command.addAll(this.getBinarySwitchesAsList());
+        // output file option
+        if(this.isUsesFileOutputSwitch()){
+            command.add("-o");
+            command.add(outputFilePathName);
+        }
+
         command.add(this.getFullPathToHmmFile());
         command.add(fastaFilePathName);
 
