@@ -23,6 +23,7 @@ import javax.jms.Session;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This controller monitors the activity of the Worker.  If the worker is inactive and has
@@ -41,7 +42,10 @@ public class WorkerImpl implements Worker {
     private long lastMessageFinishedTime = System.currentTimeMillis(); //new Date().getTime();
 
     private final List<String> runningJobs = new ArrayList<String>();
+
     private int totalJobCount = 0;
+    private AtomicInteger inVmWorkerCount = new AtomicInteger(0);
+
     private boolean responseQueueListenerBusy = false;
 
     private final Object jobListLock = new Object();
@@ -334,6 +338,10 @@ public class WorkerImpl implements Worker {
     @Required
     public void setJmsTransportListener(JMSTransportListener jmsTransportListener) {
         this.jmsTransportListener = jmsTransportListener;
+    }
+
+    public int getInVmWorkeNumber() {
+        return inVmWorkerCount.incrementAndGet();
     }
 
     public void jobStarted(String jmsMessageId) {
