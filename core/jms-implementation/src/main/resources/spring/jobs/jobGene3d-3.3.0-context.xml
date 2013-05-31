@@ -36,7 +36,7 @@
         <property name="dependsUpon" ref="stepGene3dWriteFasta"/>
         <property name="stepDescription" value="Run HMMER3"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
-        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.gene3d}"/>
+        <property name="binarySwitches" value="-Z 10019 --domE 1 ${hmmer3.hmmsearch.cpu.switch.gene3d}"/>
         <property name="fullPathToHmmFile" value="${gene3d.hmm.path.3.3.0}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
