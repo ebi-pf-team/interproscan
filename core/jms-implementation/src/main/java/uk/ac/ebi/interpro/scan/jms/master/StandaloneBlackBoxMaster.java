@@ -94,9 +94,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }
         } catch (JMSException e) {
-            LOGGER.error("JMSException thrown by DistributedBlackBoxMaster: ", e);
+            LOGGER.error("JMSException thrown by DistributedBlackBoxMasterOLD: ", e);
         } catch (Exception e) {
-            LOGGER.error("Exception thrown by DistributedBlackBoxMaster: ", e);
+            LOGGER.error("Exception thrown by DistributedBlackBoxMasterOLD: ", e);
         }
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
@@ -126,7 +126,6 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
      * @return
      */
     public boolean  isHighPriorityStep(Step step){
-        boolean highPriorityStep = false;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(" Step Id for pirsf, hamap : " + step.getId());
         }
@@ -134,8 +133,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(" pirsf/hamap job: " + step.getId()+ " Should have high priority, but priority is normally 4");
             }
-            highPriorityStep = true;
+            return true;
         }
-        return highPriorityStep;
+        return false;
     }
 }

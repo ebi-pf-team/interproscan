@@ -11,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Runs PANTHER binary.
+ * Runs PIRSF blastall binary.
  *
  * @author Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  */
 public final class PirsfBlastStep extends RunBinaryStep {
@@ -70,25 +71,28 @@ public final class PirsfBlastStep extends RunBinaryStep {
         //Path to blastall binary
 //        command.add(binaryPathString);
 //        //BLAST command
+        //command.add(this.ggetFullPathToBinary());
+
         command.add(binary);
+        command.addAll(this.getBinarySwitchesAsList());
         //Arguments
-        command.add("-p");
-        command.add("blastp");
-        //
-        command.add("-F");
-        command.add("F");
-        //e-Value cut off
-        command.add("-e");
-        command.add("0.0005");
-        //
-        command.add("-b");
-        command.add("300");
-        //
-        command.add("-v");
-        command.add("300");
-        //
-        command.add("-m");
-        command.add("8");
+//        command.add("-p");
+//        command.add("blastp");
+//        //
+//        command.add("-F");
+//        command.add("F");
+//        //e-Value cut off
+//        command.add("-e");
+//        command.add("0.0005");
+//        //
+//        command.add("-b");
+//        command.add("300");
+//        //
+//        command.add("-v");
+//        command.add("300");
+//        //
+//        command.add("-m");
+//        command.add("8");
         //BLAST database
         command.add("-d");
         command.add(blastDbFileResourceString);

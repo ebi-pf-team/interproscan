@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Manages the scheduling of StepIntances, based upon the pattern of dependencies in the JobXML definitions.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */

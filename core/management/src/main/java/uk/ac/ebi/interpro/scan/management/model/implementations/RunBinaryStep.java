@@ -39,6 +39,16 @@ abstract public class RunBinaryStep extends Step {
 
     private InputStream commandInputStream;
 
+    private boolean usesFileOutputSwitch = false;
+
+    public void setUsesFileOutputSwitch(boolean usesFileOutputSwitch) {
+        this.usesFileOutputSwitch = usesFileOutputSwitch;
+    }
+
+    public boolean isUsesFileOutputSwitch() {
+        return usesFileOutputSwitch;
+    }
+
     public String getOutputFileNameTemplate() {
         return outputFileNameTemplate;
     }
@@ -95,7 +105,13 @@ abstract public class RunBinaryStep extends Step {
 
             CommandLineConversation clc = new CommandLineConversationImpl();
             try {
-                clc.setOutputPathToFile(outputFileName, true, false);
+                //handle binaries that use -o or similar switch for output
+                if (this.usesFileOutputSwitch){
+                    outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, "devnull.txt");
+                    clc.setOutputPathToFile(outputFileName, true, false);
+                }else{
+                    clc.setOutputPathToFile(outputFileName, true, false);
+                }
                 clc.setCommandInputStream(createCommandInputStream(stepInstance, temporaryFileDirectory));
             } catch (IOException e) {
                 throw new IllegalStateException("IOException thrown when attempting to configure binary", e);
