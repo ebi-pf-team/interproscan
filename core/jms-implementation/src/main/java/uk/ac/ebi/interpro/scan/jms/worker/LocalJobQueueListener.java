@@ -38,6 +38,8 @@ public class LocalJobQueueListener implements MessageListener {
 
     private AtomicInteger jobCount = new AtomicInteger(0);
 
+    private int inVmworkerNumber = 0;
+
     public AtomicInteger getJobCount() {
         return jobCount;
     }
@@ -69,14 +71,32 @@ public class LocalJobQueueListener implements MessageListener {
         this.jobResponseQueue = jobResponseQueue;
     }
 
+    public void setInVmworkerNumber(int inVmworkerNumber) {
+        this.inVmworkerNumber = inVmworkerNumber;
+    }
+
     @Override
     public void onMessage(final Message message) {
         jobCount.incrementAndGet();
         int localCount = jobCount.get();
+        String timeNow = Utilities.getTimeNow();
         if(localCount == 1){
-            String timeNow = Utilities.getTimeNow();
             System.out.println(timeNow + " first transaction ... ");
         }
+        if (inVmworkerNumber == 0){
+            if (controller != null) {
+                setInVmworkerNumber(controller.getInVmWorkeNumber());
+            }else{
+                try {
+                    setInVmworkerNumber(message.getJMSMessageID().hashCode());
+                } catch (JMSException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    setInVmworkerNumber(timeNow.hashCode());
+                }
+            }
+        }
+        final String debugToken = " DEBUG ";
+        System.out.println(timeNow + debugToken + "worker-" + inVmworkerNumber + " job " + localCount);
 
         final String messageId;
 
@@ -113,15 +133,17 @@ public class LocalJobQueueListener implements MessageListener {
             // TODO - Need to add a dead-letter queue, so if this worker never gets as far as
             // acknowledging the message, the Master will know to re-run the StepInstance.
             try {
+
                 final String stepName =  stepExecution.getStepInstance().getStepId();
-                LOGGER.warn("Processing " + stepName + " JobCount #: " + localCount);
                 final long now = System.currentTimeMillis();
-                final String timeNow = Utilities.getTimeNow();
+                final String timeNow1 = Utilities.getTimeNow();
+                System.out.println(timeNow1 + debugToken + "Processing " + stepName + " JobCount #: " + localCount);
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
+                timeNow = Utilities.getTimeNow();
 //                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
-                LOGGER.warn("Finished Processing " + stepName + " JobCount #: " + localCount);
-                LOGGER.warn("Execution Time (ms) for job started " + timeNow + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
+                System.out.println(timeNow + debugToken + "Finished Processing " + stepName + " JobCount #: " + localCount);
+                System.out.println(timeNow + debugToken + "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
             } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
@@ -149,7 +171,7 @@ public class LocalJobQueueListener implements MessageListener {
                 controller.workerState.addLocallyCompletedJob(message);
             }
         }
-
+        System.out.println(Utilities.getTimeNow() + debugToken + "worker-" + inVmworkerNumber + " job " + localCount + " done");
 
     }
 }
