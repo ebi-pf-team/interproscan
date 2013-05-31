@@ -214,10 +214,10 @@ public class ClanFileParser implements Serializable {
                     if (clanAccessionMatcher.find()) {
                         String modelAccession = clanAccessionMatcher.group(1);
                         PfamModel model = clanData.getModelByModelAccession(modelAccession);
-                        if (model == null) {
-                            throw new IllegalArgumentException("Cannot find the model with accession " + modelAccession + " in the model accession to model map.");
+                        if (model != null) {
+                            model.setClan(clan);
                         }
-                        model.setClan(clan);
+
                     } else {
                         throw new IllegalArgumentException("Looks like a nesting line, but can't parse out the accession.  Line = " + line);
                     }
