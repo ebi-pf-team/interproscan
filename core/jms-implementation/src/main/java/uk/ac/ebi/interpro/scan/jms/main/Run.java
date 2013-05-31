@@ -533,8 +533,8 @@ public class Run {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 
-            if (bbMaster instanceof DistributedBlackBoxMaster && tcpConnectionString != null) {
-                ((DistributedBlackBoxMaster) bbMaster).setTcpUri(tcpConnectionString);
+            if (bbMaster instanceof DistributedBlackBoxMasterOLD && tcpConnectionString != null) {
+                ((DistributedBlackBoxMasterOLD) bbMaster).setTcpUri(tcpConnectionString);
                 if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     ((ClusterUser)bbMaster).setProjectId(projectId);
@@ -542,8 +542,8 @@ public class Run {
                 }
             }
             //TODO: The copy of the distributed master will retire someday (if distributed computing works fine)
-            if (bbMaster instanceof DistributedBlackBoxMasterCopy && tcpConnectionString != null) {
-                ((DistributedBlackBoxMasterCopy) bbMaster).setTcpUri(tcpConnectionString);
+            if (bbMaster instanceof DistributedBlackBoxMaster && tcpConnectionString != null) {
+                ((DistributedBlackBoxMaster) bbMaster).setTcpUri(tcpConnectionString);
                 //if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
 //                    final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                 // }
@@ -552,10 +552,10 @@ public class Run {
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     System.out.println("The project/Cluster Run ID for this run is: " + projectId);
                     ((ClusterUser)bbMaster).setProjectId(projectId);
-                    ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
+                    ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                     final String userDir = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt());
-                    ((DistributedBlackBoxMasterCopy) bbMaster).setUserDir(userDir);
-                    ((DistributedBlackBoxMasterCopy) bbMaster).setSubmissionWorkerRunnerUserDir(userDir);
+                    ((DistributedBlackBoxMaster) bbMaster).setUserDir(userDir);
+                    ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerUserDir(userDir);
                 } else {
                     LOGGER.fatal("InterProScan 5 in CLUSTER mode needs a Cluster Run ID to continue, please specify the -clusterrunid (-crid) option.");
                     System.exit(1);

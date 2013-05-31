@@ -45,7 +45,7 @@
     <!-- JMS Exception handler-->
     <bean id="jmsIOExceptionHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSIOExceptionHandler" />
 
-    <bean id="distributedMaster" class="uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMasterCopy">
+    <bean id="distributedMaster" class="uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster">
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="databaseCleaner" ref="databaseCleaner"/>
