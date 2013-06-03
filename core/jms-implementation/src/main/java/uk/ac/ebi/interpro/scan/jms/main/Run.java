@@ -183,7 +183,7 @@ public class Run {
         DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CLUSTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         GRID("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
-        ES("distributedMaster", "spring/jms/master/es-mode-master-context.xml"),
+        ES("fastResponse", "spring/jms/master/fastresponse-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
@@ -1102,7 +1102,7 @@ public class Run {
                 return true;
             }
         } else if (!commandline.hasOption(I5Option.FASTA.getLongOpt())) {
-            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER)) {
+            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.ES) ||mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER)) {
                 return true;
             }
         }
