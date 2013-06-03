@@ -29,6 +29,7 @@ public class FastResponseBlackBoxMaster extends AbstractBlackBoxMaster {
         try {
             loadInMemoryDatabase();
             int stepInstancesCreatedByLoadStep = createStepInstances();
+            int inputSize = 1;
 
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
