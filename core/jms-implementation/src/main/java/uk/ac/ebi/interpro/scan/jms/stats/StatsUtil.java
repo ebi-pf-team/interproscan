@@ -4,6 +4,8 @@ import com.sun.management.HotSpotDiagnosticMXBean;
 import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import javax.jms.*;
 import javax.management.MBeanServer;
@@ -15,6 +17,7 @@ import java.lang.management.MemoryUsage;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -54,8 +57,18 @@ public class StatsUtil {
 
     private Long progressReportTime = Long.MAX_VALUE;
 
+    private ProteinDAO proteinDAO;
+
     public StatsUtil() {
 
+    }
+
+    public ProteinDAO getProteinDAO() {
+        return proteinDAO;
+    }
+
+    public void setProteinDAO(ProteinDAO proteinDAO) {
+        this.proteinDAO = proteinDAO;
     }
 
     public synchronized int getTier() {
@@ -332,5 +345,27 @@ public class StatsUtil {
 //        File heapFile = new File(outputDir, "heap-" + curThreshold + ".hprof");
 //        log.info("Dumping heap file " + heapFile.getAbsolutePath());
 //        diagBean.dumpHeap(heapFile.getAbsolutePath(), true);
+    }
+
+    /**
+     * get the size of the input file
+     *
+     * @return
+     */
+    public int getProteinCount(){
+        Long size =  proteinDAO.count(); //  proteinDAO.getMaximumPrimaryKey();
+        LOGGER.debug("getMaximumPrimaryKey: " + proteinDAO.getMaximumPrimaryKey());
+        return size.intValue();
+    }
+
+    public int getLargestSequenceSize(){
+        final List<Protein> proteins = proteinDAO.getProteinsBetweenIds(0, proteinDAO.getMaximumPrimaryKey());
+        int largest = 0;
+        for (Protein protein : proteins){
+           if(protein.getSequenceLength() > largest){
+               largest = protein.getSequenceLength();
+           }
+        }
+        return largest;
     }
 }
