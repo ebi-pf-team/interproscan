@@ -168,7 +168,7 @@ public class LocalJobQueueListener implements MessageListener {
         } finally {
             if (controller != null) {
                 controller.jobFinished(messageId);
-                controller.workerState.addLocallyCompletedJob(message);
+//                controller.workerState.addLocallyCompletedJob(message);
             }
         }
         System.out.println(Utilities.getTimeNow() + debugToken + "worker-" + inVmworkerNumber + " job " + localCount + " done");

@@ -77,7 +77,7 @@ public class ResponseQueueMessageListener implements MessageListener {
         //send a message that the response has been sent to the master
         if (controller != null) {
             controller.jobResponseProcessed();
-            controller.workerState.addCompletedJob(message);
+//            controller.workerState.addCompletedJob(message);
         }
     }
 }

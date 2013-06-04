@@ -159,7 +159,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     LOGGER.debug("Remote jobs: " + remoteJobs.get());
                     LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
-                    controlledLogging = false;
+                    controlledLogging = true;
                 }
                 //update the statistics plugin
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
@@ -322,15 +322,19 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         LOGGER.debug("Remote jobs still = " + actualRemoteJobs);
                     }else{
                         long totalJobs =  stepInstanceDAO.count();
+
                         //TODO estimate the number of remote jobs needed per number of steps count
-                        int remoteJobsEstimate =  (int) (totalJobs/6);
-                        int initialWorkersCount = Math.round(remoteJobsEstimate / maxMessagesOnQueuePerConsumer);
+                        int remoteJobsEstimate =  (int) (totalJobs / 4);
+                        //initialWorkersCount = Math.round(remoteJobsEstimate / maxMessagesOnQueuePerConsumer);
+                        int initialWorkersCount = Math.round(remoteJobsEstimate / 4);
                         LOGGER.debug("Remote jobs actual: " + actualRemoteJobs);
                         LOGGER.debug("Remote jobs estimate: " + remoteJobsEstimate);
                         LOGGER.debug("Initial Workers Count: " + initialWorkersCount);
                         LOGGER.debug("Total jobs (StepInstances): " + totalJobs);
                         if(initialWorkersCount < 1 && remoteJobsEstimate > 10){
                             initialWorkersCount = 1;
+                        }else if(initialWorkersCount > (maxConsumers / 2)){
+                            initialWorkersCount = (maxConsumers / 2);
                         }
                         if(initialWorkersCount > 0){
                             LOGGER.debug("Initial Workers created: " + initialWorkersCount);
