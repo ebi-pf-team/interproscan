@@ -27,11 +27,13 @@ public class RemoteJobQueueListener implements MessageListener {
 
     private StatsUtil statsUtil;
 
-    private WorkerState workerState;
+//    private WorkerState workerState;
 
     private boolean gridThrottle = true;
 
     private int jobCount = 0;
+
+    long timeFirstMessageReceived = 0;
 
     private int maxUnfinishedJobs;
 
@@ -65,14 +67,15 @@ public class RemoteJobQueueListener implements MessageListener {
         this.maxUnfinishedJobs = maxUnfinishedJobs;
     }
 
-    public void setWorkerState(WorkerState workerState) {
-        this.workerState = workerState;
-    }
+//    public void setWorkerState(WorkerState workerState) {
+//        this.workerState = workerState;
+//    }
 
     @Override
     public void onMessage(final Message message) {
         if(jobCount == 0){
             LOGGER.debug("onMessage: FirstJobReceived  ");
+            timeFirstMessageReceived = System.currentTimeMillis();
         }
         jobCount ++;
         if (!(message instanceof ObjectMessage)) {
@@ -94,7 +97,7 @@ public class RemoteJobQueueListener implements MessageListener {
         //send message
         try {
             workerMessageSender.sendMessage(jobRequestQueue,message, true);
-            workerState.addNewJob(message);
+//            workerState.addNewJob(message);
         } catch (JMSException e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
             e.printStackTrace();
@@ -117,6 +120,17 @@ public class RemoteJobQueueListener implements MessageListener {
         LOGGER.debug("checkQueueState - Check the state of the local queue depending on the tier we are in ");
         int unfinishedJobs = getUnifinishedJobs(); //statsUtil.getUnfinishedJobs();
         LOGGER.debug("checkQueueState - maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
+        if(jobCount == 2){
+            long now = System.currentTimeMillis();
+            if((now - timeFirstMessageReceived) < 10*1000){
+                try {
+                    LOGGER.debug("First 8 messages ... ");
+                    Thread.sleep(15*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        }
         if(statsUtil.isStopRemoteQueueJmsContainer()){
             LOGGER.debug("checkQueueState : isStopRemoteQueueJmsContainer = true");
             return;
