@@ -14,18 +14,25 @@ import java.util.concurrent.TimeUnit;
  * @author Gift Nuka
  * @author  Phil Jones
  */
-public class FastResponseBlackBoxMaster extends AbstractBlackBoxMaster {
+public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
-    private static final Logger LOGGER = Logger.getLogger(FastResponseBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SSOptimisedBlackBoxMaster.class.getName());
 
     private StatsUtil statsUtil;
 
+    boolean ssDebug = false;
+
+    private static final int MEGA = 1024 * 1024;
 
     @Override
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
-        LOGGER.warn("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        if(ssDebug){
+            System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+            System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
+            System.out.println("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+        }
         try {
             loadInMemoryDatabase();
             int stepInstancesCreatedByLoadStep = createStepInstances();
@@ -88,12 +95,14 @@ public class FastResponseBlackBoxMaster extends AbstractBlackBoxMaster {
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
-        final long executionTime =   System.currentTimeMillis() - now;
-        LOGGER.warn("Execution time (s) for Master: " + String.format("%d min, %d sec",
-                TimeUnit.MILLISECONDS.toMinutes(executionTime),
-                TimeUnit.MILLISECONDS.toSeconds(executionTime) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
-        ));
+        if(ssDebug){
+            final long executionTime =   System.currentTimeMillis() - now;
+            System.out.println("Execution time (s) for Master: " + String.format("%d min, %d sec",
+                    TimeUnit.MILLISECONDS.toMinutes(executionTime),
+                    TimeUnit.MILLISECONDS.toSeconds(executionTime) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
+            ));
+        }
     }
 
 
@@ -145,6 +154,9 @@ public class FastResponseBlackBoxMaster extends AbstractBlackBoxMaster {
         this.statsUtil = statsUtil;
     }
 
+    public void setSsDebug(boolean ssDebug) {
+        this.ssDebug = ssDebug;
+    }
 
     /**
      * * check if the job is hamap or prosite
@@ -164,7 +176,7 @@ public class FastResponseBlackBoxMaster extends AbstractBlackBoxMaster {
                 || step.getId().toLowerCase().contains("tigrfam".toLowerCase())
                 ){
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(" pirsf/hamap/pfam/gene3d/tigrfam job: " + step.getId()+ " Should have high priority, but priority is normally 4");
+                LOGGER.debug(" pirsf/hamap/pfam/gene3d/tigrfam job: " + step.getId()+ " Should have high priority");
             }
             return true;
         }

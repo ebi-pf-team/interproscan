@@ -66,6 +66,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
+        LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         try {
             loadInMemoryDatabase();
 
@@ -110,7 +111,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         final boolean highMemory = resubmission && workerRunnerHighMemory != null && canRunRemotely;
 
                         if (highMemory) {
-                            LOGGER.warn("StepInstance " + stepInstance.getId() + " will be re-run in a high-memory worker.");
+                            LOGGER.warn("StepInstance " + stepInstance.getId() + " ("+ step.getId() + ") will be re-run in a high-memory worker.");
                         }
 
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
