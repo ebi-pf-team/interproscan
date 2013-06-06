@@ -183,7 +183,7 @@ public class Run {
         DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CLUSTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         GRID("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
-        ES("fastResponse", "spring/jms/master/fastresponse-master-context.xml"),
+        SS("ssOptimisedBlackBoxMaster", "spring/jms/master/ssoptimised-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
@@ -290,11 +290,10 @@ public class Run {
             }
             System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan 5RC7");
             //String config = System.getProperty("config");
-//            if (LOGGER.isInfoEnabled()) {
-                LOGGER.warn("Available processors: " + Runtime.getRuntime().availableProcessors());
-                LOGGER.warn("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
                 LOGGER.info("Running in " + mode + " mode");
-//            }
+            }
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
 
@@ -1102,7 +1101,7 @@ public class Run {
                 return true;
             }
         } else if (!commandline.hasOption(I5Option.FASTA.getLongOpt())) {
-            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.ES) ||mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER)) {
+            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.SS) ||mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER) || mode.equals(Mode.CLUSTER)) {
                 return true;
             }
         }
