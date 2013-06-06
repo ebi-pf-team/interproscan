@@ -28,6 +28,8 @@ public class LocalJobQueueListener implements MessageListener {
 
     private StepExecutionTransaction stepExecutor;
 
+    boolean ssDebug = false;
+
     /**
      * The distributed worker controller is in charge of calling 'stop' on the
      * Spring MonitorListenerContainer when the conditions are correct.
@@ -75,6 +77,14 @@ public class LocalJobQueueListener implements MessageListener {
         this.inVmworkerNumber = inVmworkerNumber;
     }
 
+    public boolean isSsDebug() {
+        return ssDebug;
+    }
+
+    public void setSsDebug(boolean ssDebug) {
+        this.ssDebug = ssDebug;
+    }
+
     @Override
     public void onMessage(final Message message) {
         jobCount.incrementAndGet();
@@ -96,7 +106,7 @@ public class LocalJobQueueListener implements MessageListener {
             }
         }
         final String debugToken = " DEBUG ";
-        System.out.println(timeNow + debugToken + "worker-" + inVmworkerNumber + " job " + localCount);
+//        System.out.println(timeNow + debugToken + "worker-" + inVmworkerNumber + " job " + localCount);
 
         final String messageId;
 
@@ -137,13 +147,17 @@ public class LocalJobQueueListener implements MessageListener {
                 final String stepName =  stepExecution.getStepInstance().getStepId();
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
-                System.out.println(timeNow1 + debugToken + "Processing " + stepName + " JobCount #: " + localCount);
+                if (ssDebug){
+                    System.out.println(timeNow1 + debugToken + "Processing " + stepName + " JobCount #: " + localCount);
+                }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
                 timeNow = Utilities.getTimeNow();
 //                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
-                System.out.println(timeNow + debugToken + "Finished Processing " + stepName + " JobCount #: " + localCount);
-                System.out.println(timeNow + debugToken + "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
+                if(ssDebug){
+                    System.out.println(timeNow + debugToken + "Finished Processing " + stepName + " JobCount #: " + localCount);
+                    System.out.println(timeNow + debugToken + "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
+                }
             } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
@@ -171,7 +185,10 @@ public class LocalJobQueueListener implements MessageListener {
 //                controller.workerState.addLocallyCompletedJob(message);
             }
         }
-        System.out.println(Utilities.getTimeNow() + debugToken + "worker-" + inVmworkerNumber + " job " + localCount + " done");
+        if(localCount == 1){
+            System.out.println(Utilities.getTimeNow()  + " first transaction ... done");
+            System.out.println(Utilities.getTimeNow()  + " InterProScan analyses continue ....");
+        }
 
     }
 }

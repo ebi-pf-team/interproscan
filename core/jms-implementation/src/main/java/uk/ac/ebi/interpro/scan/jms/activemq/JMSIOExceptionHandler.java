@@ -21,6 +21,8 @@ public class JMSIOExceptionHandler implements IOExceptionHandler {
     @Override
     public void handle(IOException e) {
         //To change body of implemented methods use File | Settings | File Templates.
+        e.printStackTrace();
+        LOGGER.debug("IOException has occured: " + e);
     }
 
     @Override

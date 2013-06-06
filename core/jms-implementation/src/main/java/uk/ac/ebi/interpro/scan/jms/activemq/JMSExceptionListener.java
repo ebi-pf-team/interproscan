@@ -21,9 +21,8 @@ public class JMSExceptionListener implements ExceptionListener {
 
         Exception ex = e.getLinkedException();
         if (ex != null) {
-            LOGGER.debug("JMS Exception: ", e);
+            LOGGER.debug("Custom JMS Exception handler: ", e);
         }
-
     }
 
 }
