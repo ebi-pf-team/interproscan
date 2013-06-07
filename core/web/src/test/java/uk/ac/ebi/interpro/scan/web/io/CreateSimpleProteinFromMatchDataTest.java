@@ -33,18 +33,18 @@ public class CreateSimpleProteinFromMatchDataTest {
     private AnalyseStructuralMatchDataResult structuralMatchAnalyser;
 
     @Resource
-    private String matchDataWebserviceUrl;
+    private String matchDataLocation;
 
     @Resource
-    private String structMatchDataWebserviceUrl;
+    private String structuralMatchDataLocation;
 
     @Test
     public void queryByAccessionTest() throws IOException {
 
         CreateSimpleProteinFromMatchData data = new CreateSimpleProteinFromMatchDataImpl(matchAnalyser,
                 structuralMatchAnalyser,
-                matchDataWebserviceUrl,
-                structMatchDataWebserviceUrl);
+                matchDataLocation,
+                structuralMatchDataLocation);
 
         SimpleProtein protein = data.queryByAccession("P38398");
 

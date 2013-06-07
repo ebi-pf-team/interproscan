@@ -27,8 +27,8 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
 
     private final AnalyseMatchDataResult matchAnalyser;
     private final AnalyseStructuralMatchDataResult structuralMatchAnalyser;
-    private String matchDataWebserviceUrl;
-    private String structMatchDataWebserviceUrl;
+    private String matchDataLocation;
+    private String structuralMatchDataLocation;
 
     private ResourceLoader resourceLoader;
 
@@ -38,18 +38,18 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
     private CreateSimpleProteinFromMatchDataImpl() {
         matchAnalyser = null;
         structuralMatchAnalyser = null;
-        matchDataWebserviceUrl = null;
-        structMatchDataWebserviceUrl = null;
+        matchDataLocation = null;
+        structuralMatchDataLocation = null;
     }
 
     public CreateSimpleProteinFromMatchDataImpl(AnalyseMatchDataResult matchAnalyser,
                                                 AnalyseStructuralMatchDataResult structuralMatchAnalyser,
-                                                String matchDataWebserviceUrl,
-                                                String structMatchDataWebserviceUrl) {
+                                                String matchDataLocation,
+                                                String structuralMatchDataLocation) {
         this.matchAnalyser = matchAnalyser;
         this.structuralMatchAnalyser = structuralMatchAnalyser;
-        this.matchDataWebserviceUrl = matchDataWebserviceUrl;
-        this.structMatchDataWebserviceUrl = structMatchDataWebserviceUrl;
+        this.matchDataLocation = matchDataLocation;
+        this.structuralMatchDataLocation = structuralMatchDataLocation;
     }
 
     @Autowired
@@ -113,18 +113,18 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
     }
 
     private String createMatchesUrl(String proteinAc, boolean isProteinAc) {
-        if (matchDataWebserviceUrl.startsWith("classpath:") || matchDataWebserviceUrl.startsWith("file:")) {
+        if (matchDataLocation.startsWith("classpath:") || matchDataLocation.startsWith("file:")) {
             // If using a manually supplied file on the classpath then just use that location (good for testing)
-            return matchDataWebserviceUrl;
+            return matchDataLocation;
         }
         // User has just supplied the protein accession, so build up the REST URL from that
         return buildUrl(proteinAc, isProteinAc, true);
     }
 
     private String createStructuralMatchesUrl(String proteinAc, boolean isProteinAc) {
-        if (structMatchDataWebserviceUrl.startsWith("classpath:") || structMatchDataWebserviceUrl.startsWith("file:")) {
+        if (structuralMatchDataLocation.startsWith("classpath:") || structuralMatchDataLocation.startsWith("file:")) {
             // If using a manually supplied file on the classpath then just use that location (good for testing)
-            return structMatchDataWebserviceUrl;
+            return structuralMatchDataLocation;
         }
         // User has just supplied the protein accession, so build up the REST URL from that
         return buildUrl(proteinAc, isProteinAc, false);
@@ -133,10 +133,10 @@ public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProtein
     private String buildUrl(String proteinAc, boolean isProteinAc, boolean isMatchUrl) {
         String prefix;
         if (isMatchUrl) {
-            prefix = matchDataWebserviceUrl;
+            prefix = matchDataLocation;
         }
         else {
-            prefix = structMatchDataWebserviceUrl;
+            prefix = structuralMatchDataLocation;
         }
         if (useLocalData()) {
             String currentDir = System.getProperty("user.dir");
