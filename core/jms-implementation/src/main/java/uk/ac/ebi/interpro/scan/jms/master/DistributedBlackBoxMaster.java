@@ -51,6 +51,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
     List<Message> failedJobs = new ArrayList<Message>();
 
+    private static final int MEGA = 1024 * 1024;
+
     /**
      * completion time target for worker creation by the Master
      * should be  less than worker max lifetime  =  7*24*60*60*1000;
@@ -67,6 +69,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         final long now = System.currentTimeMillis();
         super.run();
         LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        if(ssDebug){
+            System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+            System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
+            System.out.println("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+            System.out.println("tcpUri: " + tcpUri);
+        }
         try {
             loadInMemoryDatabase();
 
