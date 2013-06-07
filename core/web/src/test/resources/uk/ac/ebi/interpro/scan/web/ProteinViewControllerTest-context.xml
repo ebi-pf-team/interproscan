@@ -22,19 +22,8 @@
     <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchDataImpl">
         <constructor-arg ref="matchAnalyser"/>
         <constructor-arg ref="structuralMatchAnalyser"/>
-        <constructor-arg ref="matchDataWebserviceUrl"/>
-        <constructor-arg ref="structMatchDataWebserviceUrl"/>
-    </bean>
-
-    <!-- URL to use for InterPro webservices that provide the match and structural match data -->
-    <bean id="websrvicesProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:uk/ac/ebi/interpro/scan/web/webservices.properties"/>
-    </bean>
-    <bean id="matchDataWebserviceUrl" class="java.lang.String">
-        <constructor-arg value="${match.data.webservice.url}"/>
-    </bean>
-    <bean id="structMatchDataWebserviceUrl" class="java.lang.String">
-        <constructor-arg value="${structural.match.data.webservice.url}"/>
+        <constructor-arg value="classpath:data/proteins/P38398.tsv"/> <!-- Default data -->
+        <constructor-arg value="classpath:data/proteinStructures/P38398.tsv"/> <!-- Default data -->
     </bean>
 
 </beans>
