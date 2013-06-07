@@ -37,7 +37,6 @@ public class ProteinViewControllerTest {
         ProteinViewController c = new ProteinViewController();
         c.setEntryHierarchy(entryHierarchy);
         c.setMatchData(matchData);
-        //TODO: This test is relying on a web service specified in file webservices.properties. Should be improved.
         c.proteinBody("P38398");
     }
 

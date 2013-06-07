@@ -77,8 +77,8 @@
     <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchDataImpl">
     <constructor-arg ref="matchAnalyser"/>
     <constructor-arg ref="structuralMatchAnalyser"/>
-    <constructor-arg value="http://wwwint.ebi.ac.uk/interpro-rest/match/"/>
-    <constructor-arg value="http://wwwint.ebi.ac.uk/interpro-rest/structure/"/>
+    <constructor-arg value="classpath:data/proteins/Q97R95.tsv"/>
+    <constructor-arg value="classpath:data/proteinStructures/Q97R95.tsv"/>
     </bean>
 
     <!--<bean id="jaxb2" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">-->

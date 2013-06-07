@@ -21,14 +21,11 @@
         </constructor-arg>
     </bean>
 
-    <!-- URL to use for InterPro webservices that provide the match and structural match data -->
-    <bean id="websrvicesProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:uk/ac/ebi/interpro/scan/web/webservices.properties" />
-    </bean>
-    <bean id="matchDataWebserviceUrl" class="java.lang.String">
+    <bean id="matchDataLocation" class="java.lang.String">
         <constructor-arg value="classpath:data/proteins/P38398.tsv"/>
     </bean>
-    <bean id="structMatchDataWebserviceUrl" class="java.lang.String">
+
+    <bean id="structuralMatchDataLocation" class="java.lang.String">
         <constructor-arg value="classpath:data/proteinStructures/P38398.tsv"/>
     </bean>
 
