@@ -13,7 +13,7 @@
     <amq:queue id="highMemJobRequestQueue"  physicalName="jms.queue.highmem.${mvn.worker.job.request.queue}"/>
     <amq:queue id="jobResponseQueue" physicalName="jms.queue.${mvn.worker.job.response.queue}"/>
     <amq:queue id="statsQueue"  physicalName="jms.queue.${mvn.stats.queue}"/>
-    <amq:queue id="workerMonitorQueue" physicalName="jms.queue.${mvn.worker.monitor.queue}"/>
+    <amq:queue id="monitorQueue" physicalName="jms.queue.${mvn.monitor.queue}"/>
     <amq:queue id="testQueue"  physicalName="jms.queue.test.queue"/>
 
 
