@@ -20,8 +20,6 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private StatsUtil statsUtil;
 
-    boolean ssDebug = false;
-
     private static final int MEGA = 1024 * 1024;
 
     @Override
@@ -152,10 +150,6 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
      */
     public void setStatsUtil(StatsUtil statsUtil) {
         this.statsUtil = statsUtil;
-    }
-
-    public void setSsDebug(boolean ssDebug) {
-        this.ssDebug = ssDebug;
     }
 
     /**

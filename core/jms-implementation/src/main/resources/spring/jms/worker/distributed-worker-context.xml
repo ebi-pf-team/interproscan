@@ -52,11 +52,23 @@
             useCompression="false"
             optimizeAcknowledge="true"
             brokerURL="vm://localhost?create=false"
-            alwaysSessionAsync="false">
+            alwaysSessionAsync="false"
+            exceptionListener="#workerExceptionListener"
+            transportListener="#workerTransportListener">
         <amq:prefetchPolicy>
             <amq:prefetchPolicy queuePrefetch="1"/>
         </amq:prefetchPolicy>
     </amq:connectionFactory>
+
+
+    <!-- JMS Exception handler-->
+    <bean id="jmsIOExceptionHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSIOExceptionHandler" />
+
+    <!-- JMS transport Listener-->
+    <bean id="workerTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
+
+    <!-- JMS Exception Listener-->
+    <bean id="workerExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener" />
 
     <!-- Local Spring JMSTemplate -->
     <bean id="localJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
@@ -68,6 +80,7 @@
         </property>
         <property name="explicitQosEnabled" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+
     </bean>
 
     <!-- Local Spring JMSTopicTemplate -->
@@ -86,7 +99,9 @@
             useCompression="true"
             optimizeAcknowledge="true"
             alwaysSessionAsync="false"
-            brokerURL="vm://localhost?create=false">
+            brokerURL="vm://localhost?create=false"
+            exceptionListener="#workerExceptionListener"
+            transportListener="#workerTransportListener">
         <amq:prefetchPolicy>
             <amq:prefetchPolicy queuePrefetch="1"/>
         </amq:prefetchPolicy>
@@ -163,6 +178,7 @@
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
         <property name="maxTierDepth" value="${max.tier.depth}"/>
         <property name="jmsTransportListener" ref="jmsTransportListener"/>
+
     </bean>
 
 
@@ -182,6 +198,7 @@
     <property name="destination" ref="jobResponseQueue"/>
     <property name="concurrentConsumers" value="1"/>
     <property name="messageListener" ref="responseQueueMessageListener"/>
+    <property name="exceptionListener" ref="workerExceptionListener"/>
     </bean>
 
     <!--Listens to the local response queue and propagates to the remote one-->
@@ -206,6 +223,7 @@
         <property name="receiveTimeout" value="-1"/>
         <property name="messageListener" ref="remoteJobQueueListener"/>
         <property name="acceptMessagesWhileStopping" value="true"/>
+        <property name="exceptionListener" ref="workerExceptionListener"/>
     </bean>
 
     <!--Listens to the remote request queue and propagates to the local one-->
@@ -227,6 +245,7 @@
         <property name="maxConcurrentConsumers" value="${worker.maxnumber.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+        <property name="exceptionListener" ref="workerExceptionListener"/>
     </bean>
 
 
@@ -237,6 +256,8 @@
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
         <property name="controller" ref="distributedWorkerController"/>
+        <property name="ssDebug" value="${ss.debug.flag}"/>
+
     </bean>
 
     <!--<bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->
