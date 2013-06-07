@@ -37,9 +37,9 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
                 <property name="queuePrefetch" value="1"/>
             </bean>
         </property>
-        <property name="transportListener">
-            <bean class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
-        </property>
+        <property name="transportListener" ref="masterTransportListener"/>
+        <property name="exceptionListener" ref="masterExceptionListener"/>
+
     </bean>
 
 

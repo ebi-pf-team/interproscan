@@ -40,6 +40,7 @@
         <amq:transportConnectors>
             <amq:transportConnector uri="vm://localhost"/>
         </amq:transportConnectors>
+
     </amq:broker>
 
     <!-- JMS Exception handler-->
@@ -100,7 +101,8 @@
         <property name="statsUtil" ref="statsUtil"/>
         <property name="maxConsumers" value="${master.maxconsumers}"/>
         <property name="maxMessagesOnQueuePerConsumer" value="${worker.maxunfinished.jobs}"/>
-
+        <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
+        <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
@@ -116,6 +118,7 @@
         <property name="connectionFactory" ref="inVmJmsFactory"/>
         <property name="destination" ref="jobResponseQueue"/>
         <property name="messageListener" ref="responseMonitorListener"/>
+        <property name="exceptionListener" ref="masterExceptionListener"/>
     </bean>
 
     <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
@@ -131,6 +134,7 @@
         <property name="maxConcurrentConsumers" value="${maxnumber.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+        <property name="exceptionListener" ref="masterExceptionListener"/>
     </bean>
 
     <!--<bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->
@@ -165,7 +169,6 @@
     </bean>
 
     <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
-
 
 
     <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">

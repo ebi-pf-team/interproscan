@@ -36,6 +36,7 @@ public abstract class AbstractMaster implements Master {
     protected TemporaryDirectoryManager temporaryDirectoryManager;
     protected String baseDirectoryTemporaryFiles;
     protected String temporaryFileDirSuffix;
+    boolean ssDebug = false;
 
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
@@ -74,6 +75,10 @@ public abstract class AbstractMaster implements Master {
     @Required
     public void setMessageSender(MasterMessageSender messageSender) {
         this.messageSender = messageSender;
+    }
+
+    public void setSsDebug(boolean ssDebug) {
+        this.ssDebug = ssDebug;
     }
 
     /**
