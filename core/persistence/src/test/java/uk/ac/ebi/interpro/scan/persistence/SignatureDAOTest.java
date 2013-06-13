@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -65,6 +66,7 @@ public class SignatureDAOTest {
     }
 
     @Test
+    @Ignore
     public void storeAndRetrieveSignature(){
         //TODO: Why calling it explicitly, if we use @Before and @After annotation
         //emptySignatureTable();
