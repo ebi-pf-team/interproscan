@@ -20,7 +20,6 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
         </amq:prefetchPolicy>
     </amq:connectionFactory>
 
-
     <!-- JMS transport Listener-->
     <bean id="masterTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
 
@@ -47,7 +46,7 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
     <bean id="inVmJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory">
             <bean class="org.springframework.jms.connection.CachingConnectionFactory">
-                <constructor-arg ref="inVmJmsFactoryWithTransportListener"/>
+                <constructor-arg ref="inVmJmsFactory"/>
                 <property name="sessionCacheSize" value="100"/>
             </bean>
         </property>
@@ -59,7 +58,7 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
     <bean id="inVmJmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory">
             <bean class="org.springframework.jms.connection.CachingConnectionFactory">
-                <constructor-arg ref="inVmJmsFactoryWithTransportListener"/>
+                <constructor-arg ref="inVmJmsFactory"/>
             </bean>
         </property>
         <property name="pubSubDomain" value="true"/>
