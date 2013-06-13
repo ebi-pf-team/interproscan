@@ -50,7 +50,7 @@ public class JMSTransportListener implements TransportListener {
     public void onException(IOException e) {
         if(exceptionsCount == 0){
             previousIOExceptionTime = System.currentTimeMillis();
-            LOGGER.debug("Transport IO exception: ", e);
+            LOGGER.debug("Custom Transport IO exception: ", e);
             exceptionsCount++;
         }else{
             Long now = System.currentTimeMillis();
@@ -59,7 +59,7 @@ public class JMSTransportListener implements TransportListener {
                 if (exceptionsCount > 15){
                     previousIOExceptionTime = System.currentTimeMillis();
                     brokenConnection = true;
-                    LOGGER.debug("Transport connection IO exception: ", e);
+                    LOGGER.debug("Custom Transport connection IO exception: ", e);
 //                    e.printStackTrace();
                 }
             }

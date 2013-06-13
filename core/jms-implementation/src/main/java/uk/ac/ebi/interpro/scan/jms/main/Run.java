@@ -196,6 +196,7 @@ public class Run {
         //Use this mode to send shutdown commands to the master (monitoring or cluster version) or to get runtime statistics like submitted/finished jobs.
         MONITOR("monitorApplication", "spring/jms/monitoring/monitor-context.xml");
 
+
         private String contextXML;
 
         private String runnableBean;
@@ -540,7 +541,7 @@ public class Run {
         }
         if (master instanceof BlackBoxMaster) {
             BlackBoxMaster bbMaster = (BlackBoxMaster) master;
-
+            LOGGER.debug("Setting up the distributed black box master...");
             String tcpConnectionString = null;
             if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER) {
                 tcpConnectionString = configureTCPTransport(ctx);
@@ -561,10 +562,12 @@ public class Run {
 //                    final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                 // }
                 if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
-                    LOGGER.debug("We have a project/Cluster Run ID.");
+                    LOGGER.debug("We have a Project/Cluster Run ID.");
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     System.out.println("The project/Cluster Run ID for this run is: " + projectId);
                     ((ClusterUser) bbMaster).setProjectId(projectId);
+                    System.out.println("The Cluster Run ID for this run is: " + projectId);
+                    ((ClusterUser)bbMaster).setProjectId(projectId);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                     final String userDir = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt());
                     ((DistributedBlackBoxMaster) bbMaster).setUserDir(userDir);
@@ -597,7 +600,7 @@ public class Run {
     }
 
     /**
-     * Used to setup standalone and convert mode.
+     * Used to setup standalone. ssoptimised and convert mode.
      */
     private static void setupSimpleBlackBoxMaster(final SimpleBlackBoxMaster master,
                                                   final CommandLine parsedCommandLine,
@@ -605,8 +608,12 @@ public class Run {
                                                   String defaultOutputFileName) {
         //Get the value for the (-i) option
         if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
-            String fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(fastaFilePath, I5Option.FASTA.getShortOpt());
+
+            String fastaFilePath = parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt());
+            if(!fastaFilePath.equals("-")){
+                fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.FASTA.getLongOpt()), parsedCommandLine);
+                checkDirectoryExistenceAndWritePermission(fastaFilePath, I5Option.FASTA.getShortOpt());
+            }
             master.setFastaFilePath(fastaFilePath);
             defaultOutputFileName = new File(fastaFilePath).getName();
         }
@@ -1040,7 +1047,7 @@ public class Run {
                 // Test the port is available on this machine.
                 portAssigned = available(port);
             }
-            //if this is not a monitoring master, set a random broker name, otherwise you get RMI protocol exception when workers running on the same machine
+            //if this is not a production master, set a random broker name, otherwise you get RMI protocol exception when workers running on the same machine
             //broker.setBrokerName(Utilities.createUniqueJobName(8));
 
             //Setting transport connector

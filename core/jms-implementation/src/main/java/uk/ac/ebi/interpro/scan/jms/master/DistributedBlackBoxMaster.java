@@ -164,17 +164,18 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 }
                 if(!controlledLogging){
                     //check what is not completed
-                    LOGGER.debug("Distributed Master has no jobs but .. more Jobs may get generated ");
+                    LOGGER.debug("Distributed Master has no jobs scheduled .. more Jobs may get scheduled ");
                     LOGGER.debug("Remote jobs: " + remoteJobs.get());
                     LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+
                     controlledLogging = true;
                 }
                 //update the statistics plugin
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                 statsUtil.displayMasterProgress();
-                Thread.sleep(50);   //   Thread.sleep(30*1000);
+                Thread.sleep(1*2*1000);   //   Thread.sleep(30*1000);
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by DistributedBlackBoxMasterOLD: ", e);
@@ -189,7 +190,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             //statsUtil.pollStatsBrokerTopic();
             //final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
             //LOGGER.debug("Topic stats: " +statsMessageListener.getStats());
-            Thread.sleep(15*1000);
+            Thread.sleep(5*1000);
             messageSender.sendShutDownMessage();
             //LOGGER.debug("Topic stats 2: " +statsMessageListener.getStats());
         } catch (InterruptedException e) {
@@ -200,11 +201,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         System.out.println(Utilities.getTimeNow() + " 100% of analyses done:  InterProScan analyses completed");
         LOGGER.debug("Remote jobs: " + remoteJobs.get());
         final long executionTime =   System.currentTimeMillis() - now;
-        LOGGER.debug("Execution Time (s) for Master: " + String.format("%d min, %d sec",
-                TimeUnit.MILLISECONDS.toMinutes(executionTime),
-                TimeUnit.MILLISECONDS.toSeconds(executionTime) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
-        ));
+        if(ssDebug){
+            System.out.println("Execution Time (s) for Master: " + String.format("%d min, %d sec",
+                    TimeUnit.MILLISECONDS.toMinutes(executionTime),
+                    TimeUnit.MILLISECONDS.toSeconds(executionTime) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
+            ));
+        }
         System.exit(0);
     }
 
@@ -319,12 +322,17 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 LOGGER.debug("Starting the first N normal workers.");
 
                 boolean firstWorkersSpawned = false;
+                int waitMultiplier = 1;
+                if(isUseMatchLookupService()) {
+                    //wait longer  : 10 times normal waiting time
+                    waitMultiplier = 10;
+                }
                 while(!firstWorkersSpawned) {
                     final int actualRemoteJobs =   remoteJobs.get();
                     LOGGER.debug("initial check - Remote jobs: " + actualRemoteJobs);
                     if(actualRemoteJobs < 1){
                         try {
-                            Thread.sleep(1 * 5 * 1000);
+                            Thread.sleep(waitMultiplier * 2 * 1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -340,6 +348,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         LOGGER.debug("Remote jobs estimate: " + remoteJobsEstimate);
                         LOGGER.debug("Initial Workers Count: " + initialWorkersCount);
                         LOGGER.debug("Total jobs (StepInstances): " + totalJobs);
+                        if(ssDebug){
+                            System.out.println("Remote jobs actual: " + actualRemoteJobs);
+                            System.out.println("Remote jobs estimate: " + remoteJobsEstimate);
+                            System.out.println("Initial Workers Count: " + initialWorkersCount);
+                            System.out.println("Total jobs (StepInstances): " + totalJobs);
+                        }
                         if(initialWorkersCount < 1 && remoteJobsEstimate > 10){
                             initialWorkersCount = 1;
                         }else if(initialWorkersCount > (maxConsumers / 2)){
@@ -347,10 +361,20 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         }
                         if(initialWorkersCount > 0){
                             LOGGER.debug("Initial Workers created: " + initialWorkersCount);
+                            if(ssDebug){
+                                System.out.println("Initial Workers created: " + initialWorkersCount);
+                            }
                             for (int i=0;i< initialWorkersCount;i++){
                                 workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
                             }
                             firstWorkersSpawned = true;
+                        }else{
+                            LOGGER.debug("Remote jobs still = " + actualRemoteJobs);
+                            try {
+                                Thread.sleep(waitMultiplier * 4 * 1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

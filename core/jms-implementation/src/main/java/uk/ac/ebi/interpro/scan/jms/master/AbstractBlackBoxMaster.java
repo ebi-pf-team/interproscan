@@ -56,6 +56,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected String userDir;
 
+    boolean ssDebug;
+
     @Required
     public void setHasInVmWorker(boolean hasInVmWorker) {
         this.hasInVmWorker = hasInVmWorker;
@@ -226,6 +228,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         this.explicitFileName = explicitFileName;
     }
 
+    public boolean isUseMatchLookupService() {
+        return useMatchLookupService;
+    }
+
     /**
      * Called to turn off the use of the precalculated match lookup service on this run.
      */
@@ -288,5 +294,9 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     public void setMaxConcurrentInVmWorkerCount(int maxConcurrentInVmWorkerCount) {
         this.maxConcurrentInVmWorkerCount = maxConcurrentInVmWorkerCount;
+    }
+
+    public void setSsDebug(boolean ssDebug) {
+        this.ssDebug = ssDebug;
     }
 }
