@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.oxm.Marshaller;
@@ -102,6 +103,7 @@ public class FullRoundTripTest {
      * Test of <signature/> xml round trip.
      */
     @Test
+    @Ignore
     public void newSignatureRoundTrip() {
         ObjectRetriever<Signature, SignatureDAO> retriever = new ObjectRetriever<Signature, SignatureDAO>() {
             public Signature getObjectByPrimaryKey(SignatureDAO dao, Long primaryKey) {
