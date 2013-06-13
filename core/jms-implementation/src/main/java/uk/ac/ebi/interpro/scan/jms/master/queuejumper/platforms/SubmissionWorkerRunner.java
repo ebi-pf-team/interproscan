@@ -168,8 +168,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         if(gridName.equals("lsf")){
             int activeJobs = lsfMonitor.activeJobs(projectId);
             int pendingJobs = lsfMonitor.pendingJobs(projectId);
-            if (activeJobs > gridJobsLimit || (pendingJobs*5 > activeJobs && activeJobs > 5)) {
-                LOGGER.warn("Grid Job Limit has been reached,  active Jobs: " + activeJobs + " pending Jobs : " + pendingJobs
+            if (activeJobs > gridJobsLimit || (pendingJobs * 5 > activeJobs && activeJobs > 10)) {
+                LOGGER.warn("Grid Job Control: You have reached the maximum jobs allowed on the cluster or you have many pending jobs.  active Jobs: " + activeJobs + " pending Jobs : " + pendingJobs
                     + "\n In the meantime InterProScan will continue to run");
                 return;
             }
