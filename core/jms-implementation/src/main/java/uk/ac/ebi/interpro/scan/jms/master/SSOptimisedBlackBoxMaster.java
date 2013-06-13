@@ -26,6 +26,7 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
+        System.out.println(Utilities.getTimeNow() + " DEBUG ssDebug: "  + ssDebug);
         if(ssDebug){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
@@ -42,16 +43,20 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             int stepInstanceSubmitCount = 0;
             while (!shutdownCalled) {
                 boolean completed = true;
-                if (stepInstanceSubmitCount == 1){
+                if (stepInstanceSubmitCount == 1 && (! isUseMatchLookupService())){
                     for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
                         if (isHighPriorityStep(stepInstance.getStep(jobs))){
                             completed &= stepInstance.haveFinished(jobs);
                             stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
+                            if(ssDebug){
+                                System.out.println("step-submitted: " + stepInstance.getStep(jobs).getId());
+                            }
                         }
                     }
-//                    if(stepInstanceSubmitCount > 1) {
-//                        Thread.sleep(50);
-//                    }
+                    if(ssDebug){
+//                        System.out.println(Utilities.getTimeNow() + " DEBUG stepInstanceSubmitCount (1): " + stepInstanceSubmitCount);
+//                        System.out.println(Utilities.getTimeNow() + " DEBUG unifinished jobs (1): " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                    }
                     controlledLogging = false;
                 }else{
                     for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
@@ -63,9 +68,10 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 //check what is not completed
 //                statsUtil.memoryMonitor();
                 if(!controlledLogging){
-                    LOGGER.debug("InterProScan Master has no jobs ready .. more Jobs will be made ready ");
+                    LOGGER.debug("InterProScan Master has no stepInstances ready .. more may be ready soon ");
                     LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+//                    System.out.println(Utilities.getTimeNow() + " DEBUG stepInstanceSubmitCount (2): " + stepInstanceSubmitCount);
                     controlledLogging = true;
                 }
                 //report progress
@@ -83,7 +89,7 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                     break;
                 }
                 //for standalone es mode this should be < 200
-                Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
+                Thread.sleep(50);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by FastResponseBlackBoxMaster: ", e);
@@ -173,6 +179,13 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 LOGGER.debug(" pirsf/hamap/pfam/gene3d/tigrfam job: " + step.getId()+ " Should have high priority");
             }
             return true;
+        }
+        if(step.getId().toLowerCase().contains("".toLowerCase())
+                || step.getId().toLowerCase().contains("hamap".toLowerCase())
+                || step.getId().toLowerCase().contains("pfama".toLowerCase())
+                || step.getId().toLowerCase().contains("gene3d".toLowerCase())
+                || step.getId().toLowerCase().contains("tigrfam".toLowerCase())
+                ){
         }
         return false;
     }

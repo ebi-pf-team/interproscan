@@ -17,9 +17,11 @@ import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
+import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Session;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -841,7 +843,7 @@ public class WorkerImpl implements Worker {
             throw new IllegalStateException("This DistributeWorkerController does not have a reference to the JmsTemplateWrapper, needed to configure the connection.");
         }
 
-        final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory(masterUri);
+        final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory("failover:"+masterUri);
 
         activeMQConnectionFactory.setOptimizeAcknowledge(true);
         activeMQConnectionFactory.setUseCompression(true);
@@ -862,7 +864,6 @@ public class WorkerImpl implements Worker {
         final CachingConnectionFactory connectionFactory = new CachingConnectionFactory(activeMQConnectionFactory);
         connectionFactory.setSessionCacheSize(100);
         connectionFactory.setExceptionListener(jmsExceptionListener);
-
 
         remoteQueueJmsContainer.setConnectionFactory(connectionFactory);
         managerTopicMessageListenerJmsContainer.setConnectionFactory(connectionFactory);
@@ -890,10 +891,18 @@ public class WorkerImpl implements Worker {
             }
         }
         //start the listeners
+        LOGGER.debug("Start the listeners on the remote broker " );
+//        try {
+//               connectionFactory.setClientId(whoAmI());
+//        }catch (JMSException ex){
+//            // maybe ActiveMQ is not running. Abort
+//            // Something seriously went wrong with the factory or connection
+//            // creation. Abort the process here, as nothing can be done.
+//            LOGGER.error("JMS Error: connection factory or connection problems.. aborting");
+//            System.exit(2);
+//        }
         remoteQueueJmsContainer.start();
         managerTopicMessageListenerJmsContainer.start();
-
-
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("MessageListenerContainer started, connected to: " + masterUri);
         }
