@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.converter.Converter;
 import uk.ac.ebi.interpro.scan.jms.master.*;
+import uk.ac.ebi.interpro.scan.jms.monitoring.MasterControllerApplication;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
@@ -187,13 +188,13 @@ public class Run {
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
-        MONITOR("monitor", "spring/monitor/monitor-context.xml"),
         INSTALLER("installer", "spring/installer/installer-context.xml"),
         // Use this mode for creating the test database that lives in /jms-implementation/src/test/resources/
         EMPTY_INSTALLER("installer", "spring/installer/empty-installer-context.xml"),
         //This mode is for converting I5 XML files into an other output format supported by I5 and I4 XML as well (additional option)
-        CONVERT("convert", "spring/converter/converter-context.xml");
-
+        CONVERT("convert", "spring/converter/converter-context.xml"),
+        //Use this mode to send shutdown commands to the master (monitoring or cluster version) or to get runtime statistics like submitted/finished jobs.
+        MONITOR("monitorApplication", "spring/jms/monitoring/monitor-context.xml");
 
         private String contextXML;
 
@@ -308,7 +309,7 @@ public class Run {
             }
 
 
-            if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT)) {
+            if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
@@ -431,6 +432,8 @@ public class Run {
                 //Set up converter mode
                 if (runnable instanceof Converter) {
                     runConvertMode(runnable, parsedCommandLine, parsedOutputFormats);
+                } else if (runnable instanceof MasterControllerApplication) {
+                    runMasterControllerApplicationMode(runnable, parsedCommandLine, ctx, mode);
                 } else {
                     checkIfMasterAndConfigure(runnable, parsedAnalyses, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
 
@@ -448,6 +451,17 @@ public class Run {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
             printHelp();
             System.exit(1);
+        }
+    }
+
+    private static void runMasterControllerApplicationMode(Runnable runnable, CommandLine parsedCommandLine, AbstractApplicationContext ctx, Mode mode) {
+        final MasterControllerApplication masterControllerApplication = (MasterControllerApplication) runnable;
+
+        //set the master uri
+        if (parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
+            LOGGER.debug("commandline has option Master_ URI ");
+            final String masterUri = parsedCommandLine.getOptionValue(I5Option.MASTER_URI.getLongOpt());
+            masterControllerApplication.setBrokerURL(masterUri);
         }
     }
 
@@ -500,7 +514,7 @@ public class Run {
     private static void checkIfProductionMasterAndConfigure(
             final Master master,
             final CommandLine parsedCommandLine,
-            final AbstractApplicationContext ctx )  {
+            final AbstractApplicationContext ctx) {
 
         if (master instanceof ProductionMaster) {
             LOGGER.info("Configuring tcpUri for ProductionMaster");
@@ -536,7 +550,7 @@ public class Run {
                 ((DistributedBlackBoxMasterOLD) bbMaster).setTcpUri(tcpConnectionString);
                 if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
-                    ((ClusterUser)bbMaster).setProjectId(projectId);
+                    ((ClusterUser) bbMaster).setProjectId(projectId);
                     ((ClusterUser) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                 }
             }
@@ -550,7 +564,7 @@ public class Run {
                     LOGGER.debug("We have a project/Cluster Run ID.");
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     System.out.println("The project/Cluster Run ID for this run is: " + projectId);
-                    ((ClusterUser)bbMaster).setProjectId(projectId);
+                    ((ClusterUser) bbMaster).setProjectId(projectId);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                     final String userDir = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt());
                     ((DistributedBlackBoxMaster) bbMaster).setUserDir(userDir);
@@ -872,8 +886,7 @@ public class Run {
                 if (!FileOutputFormat.isExtensionValid(outputFormat)) {
                     System.out.println("\n\n" + "The specified output file format " + outputFormat + " was not recognised." + "\n\n");
                     System.exit(1);
-                }
-                else if(!mode.equals(Mode.CONVERT) && outputFormat.equalsIgnoreCase("raw")) {
+                } else if (!mode.equals(Mode.CONVERT) && outputFormat.equalsIgnoreCase("raw")) {
                     // RAW output (InterProScan 4 TSV output) is only allowed in CONVERT mode
                     System.out.println("\n\n" + "The specified output file format " + outputFormat + " is only supported in " + Mode.CONVERT.name() + " mode." + "\n\n");
                     System.exit(1);
@@ -1027,7 +1040,7 @@ public class Run {
                 // Test the port is available on this machine.
                 portAssigned = available(port);
             }
-            //if this is not a production master, set a random broker name, otherwise you get RMI protocol exception when workers running on the same machine
+            //if this is not a monitoring master, set a random broker name, otherwise you get RMI protocol exception when workers running on the same machine
             //broker.setBrokerName(Utilities.createUniqueJobName(8));
 
             //Setting transport connector
@@ -1101,7 +1114,7 @@ public class Run {
                 return true;
             }
         } else if (!commandline.hasOption(I5Option.FASTA.getLongOpt())) {
-            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.SS) ||mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER) || mode.equals(Mode.CLUSTER)) {
+            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.SS) || mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER) || mode.equals(Mode.CLUSTER)) {
                 return true;
             }
         }
