@@ -191,4 +191,9 @@ public class LocalJobQueueListener implements MessageListener {
         }
 
     }
+
+    public void getCurrentInVmWorkers(){
+
+    }
+
 }

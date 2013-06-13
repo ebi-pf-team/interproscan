@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSender;
 import uk.ac.ebi.interpro.scan.jms.activemq.UnrecoverableErrorStrategy;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
@@ -36,7 +37,7 @@ public abstract class AbstractMaster implements Master {
     protected TemporaryDirectoryManager temporaryDirectoryManager;
     protected String baseDirectoryTemporaryFiles;
     protected String temporaryFileDirSuffix;
-    boolean ssDebug = false;
+
 
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
@@ -77,9 +78,6 @@ public abstract class AbstractMaster implements Master {
         this.messageSender = messageSender;
     }
 
-    public void setSsDebug(boolean ssDebug) {
-        this.ssDebug = ssDebug;
-    }
 
     /**
      * Depending upon the mode of usage, I5 should handle failures appropriately / gracefully.

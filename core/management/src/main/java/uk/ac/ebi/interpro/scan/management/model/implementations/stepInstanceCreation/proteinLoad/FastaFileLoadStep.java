@@ -125,7 +125,13 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                     }
                     fastaFileInputStream = FastaFileLoadStep.class.getClassLoader().getResourceAsStream(providedPath);
                 }
-                if (fastaFileInputStream == null) {
+                //TODO unit test
+                boolean stdinOn = false;
+                if(providedPath.equals("-")){
+                    fastaFileInputStream = System.in;
+                    stdinOn = true;
+                }
+                if ((! stdinOn) && fastaFileInputStream == null) {
                     throw new IllegalArgumentException("Cannot find the fasta file located at " + providedPath + fastaFileInputStatusMessage);
                 }
 
