@@ -121,6 +121,14 @@
         <property name="exceptionListener" ref="masterExceptionListener"/>
     </bean>
 
+    <bean id="masterControllerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="monitorQueue"/>
+        <property name="messageListener" ref="monitorQueueMessageListener"/>
+    </bean>
+
+    <bean id="monitorQueueMessageListener" class="uk.ac.ebi.interpro.scan.jms.monitoring.MonitorQueueMessageListenerImpl"/>
+
     <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
         <constructor-arg ref="stepExecutionDAO"/>
     </bean>
