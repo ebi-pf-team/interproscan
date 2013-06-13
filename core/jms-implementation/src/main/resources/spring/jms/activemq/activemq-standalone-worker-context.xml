@@ -30,6 +30,7 @@
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="ssDebug" value="${ss.debug.flag}"/>
     </bean>
 
 

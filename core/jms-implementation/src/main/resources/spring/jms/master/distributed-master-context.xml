@@ -43,9 +43,6 @@
 
     </amq:broker>
 
-    <!-- JMS Exception handler-->
-    <bean id="jmsIOExceptionHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSIOExceptionHandler" />
-
     <bean id="distributedMaster" class="uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster">
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
@@ -67,7 +64,7 @@
         <property name="workerRunner">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
                 <property name="submissionCommand" value="bsub -q production-rh6 -o worker.lsf.out -e worker.lsf.err -J i5EsJms ${worker.command}"/>
-                <property name="gridCommand" value="${grid.lsf.master.command}"/>
+                <property name="gridCommand" value="${grid.master.submit.worker.command}"/>
                 <property name="projectId" value="${user.digest}"/>
                 <property name="i5Command" value="${worker.command}"/>
                 <property name="gridJobsLimit" value="${grid.jobs.limit}"/>
@@ -83,7 +80,7 @@
         <property name="workerRunnerHighMemory">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
                 <property name="submissionCommand" value="bsub -q production-rh6 -o highmem.worker.lsf.out -e highmem.worker.lsf.err -J i5EsJms ${worker.high.memory.command}"/>
-                <property name="gridCommand" value="${grid.lsf.master.high.memory.command}"/>
+                <property name="gridCommand" value="${grid.master.submit.high.memory.worker.command}"/>
                 <property name="projectId" value="${user.digest}"/>
                 <property name="i5Command" value="${worker.high.memory.command}"/>
                 <property name="highMemory" value="true"/>
@@ -118,7 +115,6 @@
         <property name="connectionFactory" ref="inVmJmsFactory"/>
         <property name="destination" ref="jobResponseQueue"/>
         <property name="messageListener" ref="responseMonitorListener"/>
-        <property name="exceptionListener" ref="masterExceptionListener"/>
     </bean>
 
     <bean id="masterControllerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
@@ -142,7 +138,6 @@
         <property name="maxConcurrentConsumers" value="${maxnumber.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
-        <property name="exceptionListener" ref="masterExceptionListener"/>
     </bean>
 
     <!--<bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->

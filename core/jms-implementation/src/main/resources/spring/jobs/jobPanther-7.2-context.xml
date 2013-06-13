@@ -114,7 +114,7 @@
         <property name="hmmerPath" ref="hmmerPath"/>
         <!--Add additional arguments/parameter-->
         <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
-        <property name="binarySwitches" value="-D I -E 1e-3 -n"/>
+        <property name="binarySwitches" value="${panther.binary.switches} ${panther.binary.cpu.switch}"/>
         <property name="perlScriptTempDir" ref="perlScriptTempDir"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
