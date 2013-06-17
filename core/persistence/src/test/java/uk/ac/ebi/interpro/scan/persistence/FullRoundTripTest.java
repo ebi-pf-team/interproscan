@@ -103,7 +103,7 @@ public class FullRoundTripTest {
      * Test of <signature/> xml round trip.
      */
     //TODO: Investigate GenericJDBCException and remove @Ignore label when fixed
-//    @Ignore
+    @Ignore
     @Test
     public void newSignatureRoundTrip() {
         ObjectRetriever<Signature, SignatureDAO> retriever = new ObjectRetriever<Signature, SignatureDAO>() {

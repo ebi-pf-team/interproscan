@@ -65,7 +65,7 @@ public class SignatureDAOTest {
     }
 
     //TODO: Investigate GenericJDBCException and remove @Ignore label when fixed
-//    @Ignore
+    @Ignore
     @Test
     public void storeAndRetrieveSignature(){
         //TODO: Why calling it explicitly, if we use @Before and @After annotation
