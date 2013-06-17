@@ -169,7 +169,8 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(" Step Id for pirsf, hamap : " + step.getId());
         }
-        if(step.getId().toLowerCase().contains("pirsf".toLowerCase())
+        if(step.getId().toLowerCase().contains("stepLoadFromFasta".toLowerCase())
+                || step.getId().toLowerCase().contains("pirsf".toLowerCase())
                 || step.getId().toLowerCase().contains("hamap".toLowerCase())
                 || step.getId().toLowerCase().contains("pfama".toLowerCase())
                 || step.getId().toLowerCase().contains("gene3d".toLowerCase())
@@ -180,13 +181,13 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             }
             return true;
         }
-        if(step.getId().toLowerCase().contains("".toLowerCase())
-                || step.getId().toLowerCase().contains("hamap".toLowerCase())
-                || step.getId().toLowerCase().contains("pfama".toLowerCase())
-                || step.getId().toLowerCase().contains("gene3d".toLowerCase())
-                || step.getId().toLowerCase().contains("tigrfam".toLowerCase())
-                ){
-        }
+//        if(step.getId().toLowerCase().contains("stepLoadFromFasta".toLowerCase())
+//                || step.getId().toLowerCase().contains("hamap".toLowerCase())
+//                || step.getId().toLowerCase().contains("pfama".toLowerCase())
+//                || step.getId().toLowerCase().contains("gene3d".toLowerCase())
+//                || step.getId().toLowerCase().contains("tigrfam".toLowerCase())
+//                ){
+//        }
         return false;
     }
 }
