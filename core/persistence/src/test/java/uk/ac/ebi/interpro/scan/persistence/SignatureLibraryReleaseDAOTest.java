@@ -3,10 +3,8 @@ package uk.ac.ebi.interpro.scan.persistence;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -51,8 +49,9 @@ public class SignatureLibraryReleaseDAOTest {
      * The method being tested should return true if a specific version of
      * a member database release has already been persisted.
      */
+    //TODO: Investigate GenericJDBCException and remove @Ignore label when fixed
+//    @Ignore
     @Test
-    @Ignore
     public void testIsReleaseAlreadyPersisted() {
 
         final SignatureLibrary testLibrary = SignatureLibrary.PRINTS;
