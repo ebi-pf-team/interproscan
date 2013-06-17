@@ -248,10 +248,14 @@ public class ProteinLoader implements SequenceLoader<Protein> {
      * @param analysisJobNames to be included in analysis.
      */
     public void storeAll(Set<Protein> parsedProteins, String analysisJobNames) {
-        for (Protein protein : parsedProteins) {
-            proteinsAwaitingPrecalcLookup.add(protein);
-            if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
-                lookupProteins(analysisJobNames);
+        LOGGER.debug("Storing " + parsedProteins.size() + " proteins in batches of " + proteinPrecalcLookupBatchSize);
+        //TODO: do notify() run this step when lookupProteins() is disabled
+        if (proteinLookup != null){
+            for (Protein protein : parsedProteins) {
+                proteinsAwaitingPrecalcLookup.add(protein);
+                if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
+                    lookupProteins(analysisJobNames);
+                }
             }
         }
     }
