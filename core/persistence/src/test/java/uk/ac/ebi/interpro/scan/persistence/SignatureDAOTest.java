@@ -46,7 +46,6 @@ import static junit.framework.TestCase.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-//@Ignore
 public class SignatureDAOTest {
 
     private static final Long LONG_ZERO = 0L;
@@ -65,8 +64,9 @@ public class SignatureDAOTest {
         Assert.assertEquals("There should be no Signatures in the Signature table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
 
+    //TODO: Investigate GenericJDBCException and remove @Ignore label when fixed
+//    @Ignore
     @Test
-    @Ignore
     public void storeAndRetrieveSignature(){
         //TODO: Why calling it explicitly, if we use @Before and @After annotation
         //emptySignatureTable();
