@@ -100,6 +100,7 @@
         <property name="maxMessagesOnQueuePerConsumer" value="${worker.maxunfinished.jobs}"/>
         <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
+        <property name="verboseFlag" value="${verbose.flag}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
