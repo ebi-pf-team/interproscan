@@ -121,11 +121,12 @@ public class RemoteJobQueueListener implements MessageListener {
         int unfinishedJobs = getUnifinishedJobs(); //statsUtil.getUnfinishedJobs();
         LOGGER.debug("checkQueueState - maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
         if(jobCount == 4){
+            LOGGER.info("checkQueueState - First 4 jobs : maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
             long now = System.currentTimeMillis();
-            if((now - timeFirstMessageReceived) < 2*1000){
+            if((now - timeFirstMessageReceived) < 1*1000){
                 try {
                     LOGGER.debug("First 4 messages ... ");
-                    Thread.sleep(5*1000);
+                    Thread.sleep(2*1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }

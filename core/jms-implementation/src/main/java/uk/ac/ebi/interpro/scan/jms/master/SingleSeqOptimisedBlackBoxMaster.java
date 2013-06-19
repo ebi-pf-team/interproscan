@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
  * @author Gift Nuka
  * @author  Phil Jones
  */
-public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
+public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
-    private static final Logger LOGGER = Logger.getLogger(SSOptimisedBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
 
     private StatsUtil statsUtil;
 
@@ -26,8 +26,8 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
-        System.out.println(Utilities.getTimeNow() + " DEBUG ssDebug: "  + ssDebug);
-        if(ssDebug){
+        System.out.println(Utilities.getTimeNow() + " DEBUG verboseFlag: "  + verboseFlag);
+        if(verboseFlag){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
             System.out.println("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
@@ -48,27 +48,27 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                         if (isHighPriorityStep(stepInstance.getStep(jobs))){
                             completed &= stepInstance.haveFinished(jobs);
                             stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
-                            if(ssDebug){
-                                System.out.println("step-submitted: " + stepInstance.getStep(jobs).getId());
+                            if(verboseFlag){
+//                                System.out.println("step-submitted: " + stepInstance.getStep(jobs).getId());
                             }
+                            controlledLogging = false;
                         }
                     }
-                    if(ssDebug){
-//                        System.out.println(Utilities.getTimeNow() + " DEBUG stepInstanceSubmitCount (1): " + stepInstanceSubmitCount);
-//                        System.out.println(Utilities.getTimeNow() + " DEBUG unifinished jobs (1): " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                    }
-                    controlledLogging = false;
                 }else{
+                    int submitted = 0;
                     for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
                         completed &= stepInstance.haveFinished(jobs);
-                        stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
+                        submitted = submitStepInstanceToRequestQueue(stepInstance);
+                        stepInstanceSubmitCount += submitted;
                     }
-                    controlledLogging = false;
+                    if (submitted > 0){
+                        controlledLogging = false;
+                    }
                 }
                 //check what is not completed
 //                statsUtil.memoryMonitor();
                 if(!controlledLogging){
-                    LOGGER.debug("InterProScan Master has no stepInstances ready .. more may be ready soon ");
+                    LOGGER.debug("InterProScan Master has no stepInstances ready to run yet ... but soon ");
                     LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
 //                    System.out.println(Utilities.getTimeNow() + " DEBUG stepInstanceSubmitCount (2): " + stepInstanceSubmitCount);
@@ -79,6 +79,12 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
+                if(verboseFlag && !controlledLogging){
+                    if(statsUtil.getUnfinishedJobs() < (statsUtil.getTotalJobs() / 2)){
+                        System.out.println(Utilities.getTimeNow() + "Step instances left: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        System.out.println(Utilities.getTimeNow() + " DEBUG " +  " Total step instances: " + stepInstanceDAO.count());
+                    }
+                }
 
                 // Close down (break out of loop) if the analyses are all complete.
                 // The final clause checks that the protein load steps have been created so
@@ -99,7 +105,7 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
-        if(ssDebug){
+        if(verboseFlag){
             final long executionTime =   System.currentTimeMillis() - now;
             System.out.println("Execution time (s) for Master: " + String.format("%d min, %d sec",
                     TimeUnit.MILLISECONDS.toMinutes(executionTime),
@@ -167,7 +173,7 @@ public class SSOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
      */
     public boolean  isHighPriorityStep(Step step){
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(" Step Id for pirsf, hamap : " + step.getId());
+            LOGGER.debug(" Step Id : " + step.getId());
         }
         if(step.getId().toLowerCase().contains("stepLoadFromFasta".toLowerCase())
                 || step.getId().toLowerCase().contains("pirsf".toLowerCase())
