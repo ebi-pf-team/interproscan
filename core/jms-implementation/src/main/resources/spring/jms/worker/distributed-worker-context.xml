@@ -257,8 +257,7 @@
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
         <property name="controller" ref="distributedWorkerController"/>
-        <property name="ssDebug" value="${ss.debug.flag}"/>
-
+        <property name="verboseFlag" value="${verbose.flag}"/>
     </bean>
 
     <!--<bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->

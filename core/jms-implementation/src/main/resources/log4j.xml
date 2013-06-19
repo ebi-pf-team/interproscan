@@ -27,9 +27,9 @@
         <!--<level value="debug"/>-->
     <!--</logger>-->
 
-    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer">-->
-        <!--<level value="debug"/>-->
-    <!--</logger>-->
+    <logger name="uk.ac.ebi.interpro.scan">
+        <level value="info"/>
+    </logger>
 
     <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep">-->
         <!--<level value="debug"/>-->

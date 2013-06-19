@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This util has several functions useful for the monitoring of the queues.
@@ -49,7 +50,7 @@ public class StatsUtil {
 
     private static boolean stopRemoteQueueJmsContainer = false;
 
-    private AtomicBoolean RemoteQueueContainerStopped = new AtomicBoolean(false);
+    static AtomicBoolean RemoteQueueContainerStopped = new AtomicBoolean(false);
 
     private static int tier;
 
@@ -59,8 +60,18 @@ public class StatsUtil {
 
     private ProteinDAO proteinDAO;
 
+    static private AtomicInteger remoteJobsCompleted = new AtomicInteger(0);
+
     public StatsUtil() {
 
+    }
+
+    static public int getRemoteJobsCompleted() {
+        return remoteJobsCompleted.get();
+    }
+
+    static public void incRemoteJobsCompleted() {
+        remoteJobsCompleted.incrementAndGet();
     }
 
     public ProteinDAO getProteinDAO() {

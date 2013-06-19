@@ -184,7 +184,7 @@ public class Run {
         DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CLUSTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         GRID("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
-        SS("ssOptimisedBlackBoxMaster", "spring/jms/master/ssoptimised-master-context.xml"),
+        SINGLESEQ("ssOptimisedBlackBoxMaster", "spring/jms/master/ssoptimised-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
@@ -1009,6 +1009,7 @@ public class Run {
      * @return the URI as a String for this transport, e.g. tcp://myservername:1901
      */
     private static String configureTCPTransport(final AbstractApplicationContext ctx) {
+        LOGGER.info(" configure TCP Transport, start Broker Service ");
         List<Integer> portExclusionList = null;
 
         if (ctx.containsBean(PORT_EXCLUSION_LIST_BEAN_ID)) {
@@ -1058,7 +1059,7 @@ public class Run {
             broker.addConnector(tc);
             //
             broker.start();
-            LOGGER.debug("uriString = " + uriString);
+            LOGGER.info("BrokerService  running at uriString = " + uriString);
             return uriString;
         } catch (Exception e) {
             throw new IllegalStateException("Unable to configure the TCPTransport on the Broker", e);
@@ -1121,7 +1122,7 @@ public class Run {
                 return true;
             }
         } else if (!commandline.hasOption(I5Option.FASTA.getLongOpt())) {
-            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.SS) || mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER) || mode.equals(Mode.CLUSTER)) {
+            if (mode.equals(Mode.CONVERT) || mode.equals(Mode.SINGLESEQ) || mode.equals(Mode.STANDALONE) || mode.equals(Mode.DISTRIBUTED_MASTER) || mode.equals(Mode.CLUSTER)) {
                 return true;
             }
         }

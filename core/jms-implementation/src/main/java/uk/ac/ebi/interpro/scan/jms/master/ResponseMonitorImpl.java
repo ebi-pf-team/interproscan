@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
@@ -51,6 +52,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
                     canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);
                     if(canRunRemotely){
+                        StatsUtil.incRemoteJobsCompleted();
                         remoteJobs++;
                     }
 
