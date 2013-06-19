@@ -449,10 +449,39 @@ public class WorkerImpl implements Worker {
     public void run() {
 //        System.out.println(Utilities.getTimeNow() + " Running InterProScan worker  ...");
         LOGGER.debug("Running InterProScan worker run() ... whoAmI: " + whoAmI() + " Throttle is " + gridThrottle + " Tier: " + tier);
-        //startStatsMessageListener();
-        LOGGER.warn("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
-        statsUtil.pollStatsBrokerJobQueue();
 
+        LOGGER.warn("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        //setup connection to master
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    LOGGER.info("Started configureMasterBrokerConnection");
+                    boolean connecctedToMasterBroker = configureMasterBrokerConnection();
+                    LOGGER.info("Finished configureMasterBrokerConnection");
+                } catch (Exception e) {
+                    LOGGER.error("configureMasterBrokerConnection exception", e);
+                }
+            }
+        });
+        thread.start();
+        long masterBrokerStartUpTime = maximumIdleTimeMillis/2;
+        long endTimeMillis = System.currentTimeMillis() + masterBrokerStartUpTime;
+        LOGGER.info("Wait for configureMasterBrokerConnection to finish, wait time:" + masterBrokerStartUpTime);
+        while (thread.isAlive()) {
+            if (System.currentTimeMillis() > endTimeMillis) {
+                LOGGER.warn("configureMasterBrokerConnection did not finish in time (" + masterBrokerStartUpTime + ")ms. It will run in vain.");
+                System.exit(0);
+            }
+            try {
+                Thread.sleep(50);
+            }
+            catch (InterruptedException ex) {
+                 ex.printStackTrace();
+            }
+        }
+
+        statsUtil.pollStatsBrokerJobQueue();
         try {
             while (!stopIfAppropriate()) {
                 if (LOGGER.isTraceEnabled()) LOGGER.trace("State while running:");
@@ -836,8 +865,19 @@ public class WorkerImpl implements Worker {
      */
     public void setMasterUri(String masterUri) {
         this.masterUri = masterUri;
+        //configureMasterBrokerConnection();
+    }
+
+    /**
+     * configures the remote connection on this worker
+     * - also sets the configuration for the master worker
+     * - then finally starts the message listener on this worker
+     */
+    private boolean configureMasterBrokerConnection(){
+
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Master URI passed in to Controller: " + masterUri);
+            LOGGER.debug("Configure master broker connection");
         }
         if (remoteJmsTemplate == null) {
             throw new IllegalStateException("This DistributeWorkerController does not have a reference to the JmsTemplateWrapper, needed to configure the connection.");
@@ -893,19 +933,28 @@ public class WorkerImpl implements Worker {
         //start the listeners
         LOGGER.debug("Start the listeners on the remote broker " );
 //        try {
-//               connectionFactory.setClientId(whoAmI());
+//            Connection connection = connectionFactory.createConnection();
+//            connection.setClientID(whoAmI());
 //        }catch (JMSException ex){
 //            // maybe ActiveMQ is not running. Abort
-//            // Something seriously went wrong with the factory or connection
-//            // creation. Abort the process here, as nothing can be done.
-//            LOGGER.error("JMS Error: connection factory or connection problems.. aborting");
-//            System.exit(2);
+//            if (ex.getLinkedException() instanceof IOException) {
+//                LOGGER.error("JMS IOException: connection factory or connection problems.. aborting");
+//            }else{
+//                // Something seriously went wrong with the factory or connection
+//                // creation. Abort the process here, as nothing can be done.
+//                LOGGER.error("JMS Error: connection factory or connection problems.. aborting");
+//            }
+//            ex.printStackTrace();
+//            return false;
+////            System.exit(2);
 //        }
+
         remoteQueueJmsContainer.start();
         managerTopicMessageListenerJmsContainer.start();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("MessageListenerContainer started, connected to: " + masterUri);
         }
+        return true;
     }
 
 

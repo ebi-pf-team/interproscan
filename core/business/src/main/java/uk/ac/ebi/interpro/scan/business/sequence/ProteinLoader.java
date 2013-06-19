@@ -250,14 +250,19 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     public void storeAll(Set<Protein> parsedProteins, String analysisJobNames) {
         LOGGER.debug("Storing " + parsedProteins.size() + " proteins in batches of " + proteinPrecalcLookupBatchSize);
         //TODO: do notify() run this step when lookupProteins() is disabled
-        if (proteinLookup != null){
-            for (Protein protein : parsedProteins) {
-                proteinsAwaitingPrecalcLookup.add(protein);
-                if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
-                    lookupProteins(analysisJobNames);
-                }
+        //complicated logic here
+        int count = 0;
+        for (Protein protein : parsedProteins) {
+            count++;
+            proteinsAwaitingPrecalcLookup.add(protein);
+            if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
+                lookupProteins(analysisJobNames);
+            }
+            if(count % 5000 == 0){
+                LOGGER.info("Stored " + count + "proteins");
             }
         }
+        LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");
     }
 
     /**

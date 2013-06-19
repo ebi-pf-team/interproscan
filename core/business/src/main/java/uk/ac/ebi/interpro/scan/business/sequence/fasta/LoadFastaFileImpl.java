@@ -68,7 +68,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                         // Store previous record, if it exists.
                         if (currentId != null) {
                             if (LOGGER.isDebugEnabled()) {
-                                if (++sequencesParsed % 500 == 0) {
+                                if (sequencesParsed % 500 == 0) {
                                     LOGGER.debug("Stored " + sequencesParsed + " sequences.");
                                     if (LOGGER.isTraceEnabled()) {
                                         LOGGER.trace("Current id: " + currentId);
@@ -85,8 +85,14 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                             final String seq = currentSequence.toString();
                             if (seq.trim().length() > 0) {
                                 addToMoleculeCollection(seq, currentId, parsedMolecules);
+                                sequencesParsed++;
                             }
                             currentSequence.delete(0, currentSequence.length());
+                            if (sequencesParsed % 5000 == 0) {
+                                if(LOGGER.isInfoEnabled()){
+                                    LOGGER.info( "Parsed " + sequencesParsed + "sequences");
+                                }
+                            }
                         }
                         currentId = parseId(line, lineNumber);
                     } else {
@@ -101,8 +107,14 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
             // Now iterate over Proteins and store using Sequence Loader.
+            if(LOGGER.isInfoEnabled()){
+                LOGGER.info( "Store and persist the sequences");
+            }
             sequenceLoader.storeAll(parsedMolecules, analysisJobNames);
             sequenceLoader.persist(sequenceLoaderListener, analysisJobNames);
+            if(LOGGER.isInfoEnabled()){
+                LOGGER.info( "Store and persist the sequences ...  completed");
+            }
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
         } finally {

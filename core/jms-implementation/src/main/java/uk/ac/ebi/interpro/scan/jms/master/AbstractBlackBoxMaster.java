@@ -56,7 +56,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected String userDir;
 
-    boolean ssDebug;
+    boolean verboseFlag;
 
     @Required
     public void setHasInVmWorker(boolean hasInVmWorker) {
@@ -296,7 +296,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         this.maxConcurrentInVmWorkerCount = maxConcurrentInVmWorkerCount;
     }
 
-    public void setSsDebug(boolean ssDebug) {
-        this.ssDebug = ssDebug;
+    public void setVerboseFlag(boolean verboseFlag) {
+        this.verboseFlag = verboseFlag;
     }
 }

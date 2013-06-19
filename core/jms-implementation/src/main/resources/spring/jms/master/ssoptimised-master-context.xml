@@ -22,7 +22,7 @@
         </amq:transportConnectors>
     </amq:broker>
 
-    <bean id="ssOptimisedBlackBoxMaster" class="uk.ac.ebi.interpro.scan.jms.master.SSOptimisedBlackBoxMaster">
+    <bean id="ssOptimisedBlackBoxMaster" class="uk.ac.ebi.interpro.scan.jms.master.SingleSeqOptimisedBlackBoxMaster">
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="databaseCleaner" ref="databaseCleaner"/>
@@ -33,7 +33,7 @@
         <property name="statsUtil" ref="statsUtil"/>
         <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
-        <property name="ssDebug" value="${ss.debug.flag}"/>
+        <property name="verboseFlag" value="${verbose.flag}"/>
     </bean>
 
     <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.NonZeroExitOnUnrecoverableError"/>

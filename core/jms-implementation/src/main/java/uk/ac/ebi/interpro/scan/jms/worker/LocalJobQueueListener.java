@@ -28,7 +28,7 @@ public class LocalJobQueueListener implements MessageListener {
 
     private StepExecutionTransaction stepExecutor;
 
-    boolean ssDebug = false;
+    boolean verboseFlag = false;
 
     /**
      * The distributed worker controller is in charge of calling 'stop' on the
@@ -77,12 +77,12 @@ public class LocalJobQueueListener implements MessageListener {
         this.inVmworkerNumber = inVmworkerNumber;
     }
 
-    public boolean isSsDebug() {
-        return ssDebug;
+    public boolean isVerboseFlag() {
+        return verboseFlag;
     }
 
-    public void setSsDebug(boolean ssDebug) {
-        this.ssDebug = ssDebug;
+    public void setVerboseFlag(boolean verboseFlag) {
+        this.verboseFlag = verboseFlag;
     }
 
     @Override
@@ -147,14 +147,14 @@ public class LocalJobQueueListener implements MessageListener {
                 final String stepName =  stepExecution.getStepInstance().getStepId();
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
-                if (ssDebug){
+                if (verboseFlag){
                     System.out.println(timeNow1 + debugToken + "Processing " + stepName + " JobCount #: " + localCount);
                 }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
                 timeNow = Utilities.getTimeNow();
 //                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
-                if(ssDebug){
+                if(verboseFlag){
                     System.out.println(timeNow + debugToken + "Finished Processing " + stepName + " JobCount #: " + localCount);
                     System.out.println(timeNow + debugToken + "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
                 }
