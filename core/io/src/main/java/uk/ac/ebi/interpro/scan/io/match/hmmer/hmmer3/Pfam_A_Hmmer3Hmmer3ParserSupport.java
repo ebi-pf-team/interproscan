@@ -93,9 +93,10 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
                 for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()) {
 
                     // Find out if the sequence match / domain match pass the GA cutoff.
-                    if ((sequenceMatch.getScore() >= gaValuesRetriever.getSequenceGAForAccession(methodMatches.getModelAccession()))
-                            &&
-                            (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getModelAccession()))) {
+                    // hmmer3 handles cutoff correctly, so we will disable this check
+//                    if ((sequenceMatch.getScore() >= gaValuesRetriever.getSequenceGAForAccession(methodMatches.getModelAccession()))
+//                            &&
+//                            (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getModelAccession()))) {
 
                         // Good sequence / domain match, so add to the rawResults.
 
@@ -129,7 +130,7 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
                                 domainMatch.getBias()
                         );
                         rawProtein.addMatch(match);
-                    } // End of testing if pass GA cutoff.
+//                    } // End of testing if pass GA cutoff.
                 } // End of looping over domain matches
             } // End of looping over sequence matches
         } catch (ParseException e) {
