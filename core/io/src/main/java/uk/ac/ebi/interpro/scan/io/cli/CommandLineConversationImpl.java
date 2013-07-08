@@ -267,6 +267,10 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
     private File createfileHandle(String filePath, boolean overwriteIfExists, boolean append) throws IOException {
         File sinkFile = new File(filePath);
+        //deal with /dev/null
+        if(filePath.equals("/dev/null")){
+            return sinkFile;
+        }
         if (sinkFile.exists()) {
             if (!sinkFile.isFile()) {
                 throw new IOException("Attempting to redirect to a path which points to a directory or hidden file.");
@@ -285,6 +289,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                         "The calling code has set overwriteIfExists to false, so this file will not be deleted.");
             }
         }
+
         return sinkFile;
     }
 

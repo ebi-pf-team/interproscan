@@ -108,6 +108,7 @@ abstract public class RunBinaryStep extends Step {
                 //handle binaries that use -o or similar switch for output
                 if (this.usesFileOutputSwitch){
                     outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, "devnull.txt");
+                    outputFileName = "/dev/null";
                     clc.setOutputPathToFile(outputFileName, true, false);
                 }else{
                     clc.setOutputPathToFile(outputFileName, true, false);
