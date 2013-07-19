@@ -43,7 +43,7 @@
         -->
         <property name="dependsUpon" ref="stepProDomWriteFastaFile-2006.1"/>
         <property name="stepDescription" value="Run ProDomBlast3i.pl perl script for selected proteins"/>
-        <property name="binarySwitches" value="-p blastp -h 0 -f"/>
+        <property name="binarySwitches" value="${prodomblast3i.binary.switches}"/>
         <property name="retries" value="3"/>
         <property name="perlCommand" value="${perl.command}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>

@@ -74,7 +74,7 @@
         <property name="dependsUpon" ref="stepSignalPEukTempOptionCheck-4.0"/>
         <property name="stepDescription"
                   value="Run SignalP binary for selected proteins with organism type set to euk"/>
-        <property name="binarySwitches" value="-t euk -f summary -c 70"/>
+        <property name="binarySwitches" value="${signalp.euk.binary.switches}"/>
         <property name="retries" value="3"/>
         <property name="perlCommand" value="${perl.command}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
