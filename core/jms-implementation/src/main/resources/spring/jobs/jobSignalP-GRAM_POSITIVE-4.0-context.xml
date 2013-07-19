@@ -75,7 +75,7 @@
         <property name="dependsUpon" ref="stepSignalPGramPositiveTempOptionCheck-4.0"/>
         <property name="stepDescription"
                   value="Run SignalP binary for selected proteins with organism type set to gram+"/>
-        <property name="binarySwitches" value="-t gram+ -f summary -c 70"/>
+        <property name="binarySwitches" value="${signalp.grampositive.binary.switches}"/>
         <property name="retries" value="3"/>
         <property name="perlCommand" value="${perl.command}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>

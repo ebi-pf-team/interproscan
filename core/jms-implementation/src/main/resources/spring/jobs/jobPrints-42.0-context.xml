@@ -41,7 +41,7 @@
         <property name="dependsUpon" ref="stepPrintsWriteFastaFile"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.fingerprintscan.path}"/>
-        <property name="binarySwitches" value="-e 0.0001 -d 10 -E 257043 84355444 -fj -o 15"/>
+        <property name="binarySwitches" value="${fingerprintscan.binary.switches}"/>
         <property name="fullPathToHmmFile" value="${prints.pval.path.42.0}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
