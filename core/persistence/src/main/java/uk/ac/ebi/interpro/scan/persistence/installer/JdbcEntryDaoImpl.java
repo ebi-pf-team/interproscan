@@ -45,14 +45,14 @@ public class JdbcEntryDaoImpl implements JdbcEntryDao {
     public void loadEntriesAndMappings(Long releaseId) {
         if (jdbcTemplate != null) {
             entryRowCallbackHandler.setInterProReleaseId(releaseId);
-            jdbcTemplate.query("select * from DW_ENTRY e where e.checked='Y'", entryRowCallbackHandler);
+            jdbcTemplate.query("select * from INTERPRO.ENTRY e where e.checked='Y'", entryRowCallbackHandler);
             entryRowCallbackHandler.processFinalRows();
         }
     }
 
     public String getLatestDatabaseReleaseVersion() {
         if (jdbcTemplate != null) {
-            return jdbcTemplate.queryForObject("select v.version from interpro.db_version v where v.dbcode='I'", String.class);
+            return jdbcTemplate.queryForObject("select v.version from INTERPRO.DB_VERSION v where v.dbcode='I'", String.class);
         }
         return null;
     }

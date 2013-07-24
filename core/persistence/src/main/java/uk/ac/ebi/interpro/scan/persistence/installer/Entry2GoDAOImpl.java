@@ -46,7 +46,7 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("entry_ac", entryAc);
             result = this.jdbcTemplate
-                    .query("SELECT eg.entry_ac, eg.go_id, eg.name, eg.category from DW_ENTRY_GO eg WHERE eg.entry_ac = :entry_ac",
+                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO g ON i2g.go_id = g.go_id WHERE i2g.entry_ac = :entry_ac",
                             namedParameters,
                             new RowMapper<GoXref>() {
                                 public GoXref mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -69,7 +69,7 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         final Map<String, Collection<GoXref>> result = new HashMap<String, Collection<GoXref>>();
         try {
             this.jdbcTemplate
-                    .query("SELECT eg.entry_ac, eg.go_id, eg.name, eg.category from DW_ENTRY_GO eg",
+                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO g ON i2g.go_id = g.go_id",
                             new MapSqlParameterSource(),
                             new RowCallbackHandler() {
                                 @Override
@@ -90,7 +90,7 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("accessions", entryAccessions);
             this.jdbcTemplate
-                    .query("SELECT eg.entry_ac, eg.go_id, eg.name, eg.category from DW_ENTRY_GO eg WHERE eg.entry_ac in (:accessions)",
+                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO g ON i2g.go_id = g.go_id WHERE i2g.entry_ac in (:accessions)",
                             namedParameters,
                             new RowCallbackHandler() {
                                 @Override
