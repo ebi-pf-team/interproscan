@@ -90,10 +90,14 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     @Override
     public void processRow(ResultSet resultSet) throws SQLException {
         // Get query row result
-        final String entryAc = resultSet.getString(2);
-        final String entryType = resultSet.getString(3);
-        final String name = resultSet.getString(5);
-        final String shortName = resultSet.getString(6);
+        final String entryAc = resultSet.getString(1);
+        final String entryType = resultSet.getString(2);
+        final String name = resultSet.getString(3);
+//        final String checked = resultSet.getString(4);
+//        final Date created = resultSet.getDate(5);
+//        final Date updated = resultSet.getDate(6);
+//        final String userStamp = resultSet.getString(7);
+        final String shortName = resultSet.getString(8);
 
         EntryType type = null;
         if (entryType != null && entryType.length() > 0) {
