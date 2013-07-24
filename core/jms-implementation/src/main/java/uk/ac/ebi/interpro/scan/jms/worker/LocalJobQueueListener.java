@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransaction;
+import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
@@ -41,6 +42,8 @@ public class LocalJobQueueListener implements MessageListener {
     private AtomicInteger jobCount = new AtomicInteger(0);
 
     private int inVmworkerNumber = 0;
+
+    StatsUtil statsUtil;
 
     public AtomicInteger getJobCount() {
         return jobCount;
@@ -85,6 +88,14 @@ public class LocalJobQueueListener implements MessageListener {
         this.verboseFlag = verboseFlag;
     }
 
+    public StatsUtil getStatsUtil() {
+        return statsUtil;
+    }
+
+    public void setStatsUtil(StatsUtil statsUtil) {
+        this.statsUtil = statsUtil;
+    }
+
     @Override
     public void onMessage(final Message message) {
         jobCount.incrementAndGet();
@@ -109,6 +120,7 @@ public class LocalJobQueueListener implements MessageListener {
 //        System.out.println(timeNow + debugToken + "worker-" + inVmworkerNumber + " job " + localCount);
 
         final String messageId;
+        final String stepName;
 
         try {
             messageId = message.getJMSMessageID();
@@ -144,7 +156,8 @@ public class LocalJobQueueListener implements MessageListener {
             // acknowledging the message, the Master will know to re-run the StepInstance.
             try {
 
-                final String stepName =  stepExecution.getStepInstance().getStepId();
+                stepName =  stepExecution.getStepInstance().getStepId();
+                statsUtil.jobStarted(stepName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
                 if (verboseFlag){
@@ -158,6 +171,7 @@ public class LocalJobQueueListener implements MessageListener {
                     System.out.println(timeNow + debugToken + "Finished Processing " + stepName + " JobCount #: " + localCount);
                     System.out.println(timeNow + debugToken + "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
                 }
+                statsUtil.jobFinished(stepName);
             } catch (Exception e) {
 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
@@ -173,7 +187,6 @@ public class LocalJobQueueListener implements MessageListener {
                     }
                 });
                 message.acknowledge(); // Acknowledge message following failure.
-
                 LOGGER.debug("Message returned to the broker to indicate that the StepExecution has failed: " + stepExecution.getId());
             }
 

@@ -54,9 +54,13 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     private int maxConcurrentInVmWorkerCount;
 
+    private int maxConcurrentInVmWorkerCountForWorkers;
+
     protected String userDir;
 
     boolean verboseFlag;
+    private final long startUpTime = System.currentTimeMillis();
+    private long maximumLifeMillis = Long.MAX_VALUE;
 
     @Required
     public void setHasInVmWorker(boolean hasInVmWorker) {
@@ -296,7 +300,31 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         this.maxConcurrentInVmWorkerCount = maxConcurrentInVmWorkerCount;
     }
 
+    public int getMaxConcurrentInVmWorkerCountForWorkers() {
+        return maxConcurrentInVmWorkerCountForWorkers;
+    }
+
+    public void setMaxConcurrentInVmWorkerCountForWorkers(int maxConcurrentInVmWorkerCountForWorkers) {
+        this.maxConcurrentInVmWorkerCountForWorkers = maxConcurrentInVmWorkerCountForWorkers;
+    }
+
     public void setVerboseFlag(boolean verboseFlag) {
         this.verboseFlag = verboseFlag;
+    }
+
+    public long getMaximumLifeMillis() {
+        return maximumLifeMillis;
+    }
+
+    public void setMaximumLifeMillis(long maximumLifeMillis) {
+        this.maximumLifeMillis = maximumLifeMillis;
+    }
+
+    public long getStartUpTime() {
+        return startUpTime;
+    }
+
+    public long getMasterLifeRemaining(){
+        return System.currentTimeMillis() - startUpTime;
     }
 }

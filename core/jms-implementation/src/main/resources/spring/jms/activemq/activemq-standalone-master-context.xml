@@ -67,7 +67,6 @@
 
     <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
 
-
     <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
         <property name="jmsTemplate" ref="inVmJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>

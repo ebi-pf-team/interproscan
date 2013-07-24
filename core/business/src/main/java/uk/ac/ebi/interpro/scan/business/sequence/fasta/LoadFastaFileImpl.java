@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -51,6 +53,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
         }
         BufferedReader reader = null;
         int sequencesParsed = 0;
+        SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
         try {
             reader = new BufferedReader(new InputStreamReader(fastaFileInputStream));
             String currentId = null;
@@ -89,9 +92,14 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                             }
                             currentSequence.delete(0, currentSequence.length());
                             if (sequencesParsed % 5000 == 0) {
-                                if(LOGGER.isInfoEnabled()){
-                                    LOGGER.info( "Parsed " + sequencesParsed + "sequences");
+                                if (sequencesParsed % 10000 == 0) {
+                                    System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Parsed " + sequencesParsed + " sequences");
+                                }else{
+                                    if(LOGGER.isInfoEnabled()){
+                                        LOGGER.info( "Parsed " + sequencesParsed + " sequences");
+                                    }
                                 }
+
                             }
                         }
                         currentId = parseId(line, lineNumber);

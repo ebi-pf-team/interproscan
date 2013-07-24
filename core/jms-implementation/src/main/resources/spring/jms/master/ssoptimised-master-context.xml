@@ -10,7 +10,7 @@
          TODO - need to rethink this to allow multiple standalone workers.
     -->
 
-    <import resource="classpath:/spring/jms/activemq/activemq-standalone-worker-context.xml"/>
+    <import resource="classpath:/spring/jms/worker/singleseq-standalone-worker-context.xml"/>
     <import resource="classpath:/spring/spring-properties-context.xml"/>
     <import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>
     <import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>
@@ -57,27 +57,5 @@
     </bean>
 
 
-    <!--Configuration for the statistics listener-->
-    <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
-        <property name="destination" ref="statsQueue"/>
-        <property name="concurrentConsumers" value="1"/>
-        <property name="messageListener" ref="statsMessageListener"/>
-    </bean>
-
-    <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
-
-
-    <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
-        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
-        <property name="jobRequestQueue" ref="jobRequestQueue"/>
-        <property name="jobResponseQueue" ref="jobResponseQueue"/>
-        <property name="statsQueue" ref="statsQueue"/>
-        <property name="statsMessageListener"  ref="statsMessageListener" />
-        <property name="highMemJobRequestQueue" ref="highMemJobRequestQueue"/>
-        <property name="workerManagerTopicQueue" ref="workerManagerTopic"/>
-        <property name="totalJobs" value="0"/>
-        <property name="unfinishedJobs" value="0"/>
-    </bean>
 
 </beans>
