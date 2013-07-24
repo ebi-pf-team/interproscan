@@ -12,10 +12,9 @@ import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * This class knows how to store protein sequences and cross references
@@ -252,6 +251,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         //TODO: do notify() run this step when lookupProteins() is disabled
         //complicated logic here
         int count = 0;
+        SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
         for (Protein protein : parsedProteins) {
             count++;
             proteinsAwaitingPrecalcLookup.add(protein);
@@ -259,7 +259,13 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 lookupProteins(analysisJobNames);
             }
             if(count % 5000 == 0){
-                LOGGER.info("Stored " + count + "proteins");
+                if (count % 10000 == 0) {
+                    System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Stored " + count + " sequences");
+                }else{
+                    if(LOGGER.isInfoEnabled()){
+                        LOGGER.info( "Stored " + count + " sequences");
+                    }
+                }
             }
         }
         LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");

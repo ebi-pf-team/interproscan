@@ -97,6 +97,9 @@ public class WorkerImpl implements Worker {
     protected long maximumIdleTimeMillis = Long.MAX_VALUE;
     protected long maximumLifeMillis = Long.MAX_VALUE;
 
+    private long currentMasterClockTime;
+    private long currentMasterlifeSpanRemaining;
+
     private int completionFactor = 20;
     private int maxConsumerSize = 40;
     private int queueConsumerRatio = 16;
@@ -169,6 +172,22 @@ public class WorkerImpl implements Worker {
             ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setTier(workerTier);
         }
         statsUtil.setTier(tier);
+    }
+
+    /**
+     *   Set the time for the submission worker runner
+     */
+    public void setSubmissionWorkerRunnerClockTime(){
+        final long currentClockTime = System.currentTimeMillis();
+        final long lifeRemaining =  maximumLifeMillis - (currentClockTime - startUpTime);
+        if (this.workerRunner instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner) this.workerRunner).setCurrentMasterClockTime(currentClockTime);
+            ((SubmissionWorkerRunner) this.workerRunner).setLifeSpanRemaining(lifeRemaining);
+        }
+        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setCurrentMasterClockTime(currentClockTime);
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setLifeSpanRemaining(lifeRemaining);
+        }
     }
 
     /**
@@ -259,6 +278,10 @@ public class WorkerImpl implements Worker {
 
     public void setMaximumLifeSeconds(Long maximumLife) {
         this.maximumLifeMillis = maximumLife * 1000;
+    }
+
+    public long getMaximumLifeMillis() {
+        return maximumLifeMillis;
     }
 
     @Required
@@ -368,6 +391,22 @@ public class WorkerImpl implements Worker {
         this.maxConcurrentInVmWorkerCount = maxConcurrentInVmWorkerCount;
     }
 
+    public long getCurrentMasterClockTime() {
+        return currentMasterClockTime;
+    }
+
+    public void setCurrentMasterClockTime(long currentMasterClockTime) {
+        this.currentMasterClockTime = currentMasterClockTime;
+    }
+
+    public long getCurrentMasterlifeSpanRemaining() {
+        return currentMasterlifeSpanRemaining;
+    }
+
+    public void setCurrentMasterlifeSpanRemaining(long currentMasterlifeSpanRemaining) {
+        this.currentMasterlifeSpanRemaining = currentMasterlifeSpanRemaining;
+    }
+
     public void jobStarted(String jmsMessageId) {
         synchronized (jobListLock) {
             if (LOGGER.isDebugEnabled()) {
@@ -407,24 +446,44 @@ public class WorkerImpl implements Worker {
         responseQueueListenerBusy = false;
     }
 
+    /**
+     * lifespan remaining =  maximumLifeMillis - (System.currentTimeMillis() - startUpTime)
+     *
+     * @return
+     */
     private Long lifeRemaining() {
-        return System.currentTimeMillis() - startUpTime;
+        return maximumLifeMillis - (System.currentTimeMillis() - startUpTime);
+    }
+
+    /**
+     * worker life is 20* less than that of the master
+     *  -- this makes sure that we have workers who can finish their jobs and die and other workers created in their place if
+     * needed.
+     * -- we also make sure that the master always outlives the workers
+     */
+    private void setMaximumLifeUsingMasterClockTimes(){
+        long remainingLifeForMaster = currentMasterlifeSpanRemaining - (System.currentTimeMillis() - currentMasterClockTime);
+        if(maximumLifeMillis > remainingLifeForMaster){
+            long idealWorkerLifeSpan = (long) (remainingLifeForMaster * 0.7);
+            setMaximumLifeSeconds(Long.valueOf(idealWorkerLifeSpan));
+        }
     }
 
     public boolean stopIfAppropriate() {
         synchronized (jobListLock) {
             final long now = System.currentTimeMillis();
-            final boolean exceededLifespan = (now - startUpTime) > maximumLifeMillis;
+            //start shutting down when you have 20* of lifespan remaining
+            final boolean exceededLifespan = lifeRemaining() < (maximumLifeMillis * 0.2);
             final boolean exceededIdleTime = (now - lastMessageFinishedTime) > maximumIdleTimeMillis;
-            LOGGER.debug("Now: "+ now+ " lastMessageFinished: " +lastMessageFinishedTime +" IdleTime: " +(now - lastMessageFinishedTime) + " maxIdleTime: "+maximumIdleTimeMillis);
+            LOGGER.debug("Now: "+ now+ " lastMessageFinished: " + lastMessageFinishedTime +" IdleTime: " +(now - lastMessageFinishedTime) + " maxIdleTime: " + maximumIdleTimeMillis);
             //if exceededIdleTime check if workers have running jobs
             if (runningJobs.size() == 0 && (exceededLifespan || (exceededIdleTime && (!workersHaveRunningJobs())))) {
 
                 if (LOGGER.isInfoEnabled()) {
                     if (exceededLifespan) {
-                        LOGGER.info("Stopping worker as exceeded maximum life span");
+                        LOGGER.info("Stopping worker as exceeded maximum life span, lifespan:" + maximumLifeMillis + " lifespan remaming: " + lifeRemaining());
                     } else {
-                        LOGGER.info("Stopping worker as idle for longer than max idle time");
+                        LOGGER.info("Stopping worker as idle for longer than max idle time, idle time: " + (now - lastMessageFinishedTime));
                     }
                 }
                 remoteQueueJmsContainer.stop();
@@ -480,6 +539,7 @@ public class WorkerImpl implements Worker {
                  ex.printStackTrace();
             }
         }
+
 
         statsUtil.pollStatsBrokerJobQueue();
         try {
@@ -567,10 +627,23 @@ public class WorkerImpl implements Worker {
         if(statsUtil.getStatsMessageListener().getConsumers() > 0){
             final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
             int currentRemoteWorkersCount = statsMessageListener.getConsumers() - maxConcurrentInVmWorkerCount;
-            int idealRemoteWorkersCount =  statsMessageListener.getQueueSize() /  maxConcurrentInVmWorkerCount;
-            numberOfNewWorkers = idealRemoteWorkersCount - currentRemoteWorkersCount - 1;
+            queueConsumerRatio = maxConcurrentInVmWorkerCount * 2;
+            int idealRemoteWorkersCount =  statsMessageListener.getQueueSize() /  queueConsumerRatio;
+            if(idealRemoteWorkersCount > maxConsumerSize){
+                idealRemoteWorkersCount = maxConsumerSize;
+            }
+            numberOfNewWorkers = idealRemoteWorkersCount - currentRemoteWorkersCount;
 //            numberOfNewWorkers = statsUtil.getUnfinishedJobs()/statsUtil.getStatsMessageListener().getConsumers();
+            System.out.println("worker status: "
+                    + " tier: " + tier
+                    + " maxConsumerSize : " + maxConsumerSize
+                    + " currentRemoteWorkersCount " + currentRemoteWorkersCount
+                    + " queueConsumerRatio: " + queueConsumerRatio
+                    + " idealRemoteWorkersCount: " + idealRemoteWorkersCount
+                    + " numberOfNewWorkers: " + numberOfNewWorkers);
         }
+
+        setSubmissionWorkerRunnerClockTime();
         for (int i=0; i <= numberOfNewWorkers; i++) {
             if (highMemory) {
                 LOGGER.debug("Starting a high memory worker.");
@@ -615,6 +688,9 @@ public class WorkerImpl implements Worker {
             return false;
         }
         if(tier == maxTierDepth){
+            return false;
+        }
+        if(lifeRemaining() < (maximumLifeMillis * 0.25) ){
             return false;
         }
         switch (tier) {
@@ -746,13 +822,21 @@ public class WorkerImpl implements Worker {
         LOGGER.debug("New worker Required - RequestQueue Stats: " + statsMessageListener.getStats());
 
         boolean quickSpawnMode = false;
-        int remoteWorkers = getNumberOfWorkers();
+        int remoteWorkerCount = getNumberOfWorkers();
         if (statsMessageListener.getConsumers() < statsMessageListener.getQueueSize()){
-            remoteWorkers = statsMessageListener.getConsumers() - maxConcurrentInVmWorkerCount;
+            remoteWorkerCount = statsMessageListener.getConsumers() - maxConcurrentInVmWorkerCount;
+            queueConsumerRatio = maxConcurrentInVmWorkerCount * 2;
             if(statsMessageListener.getConsumers() > 0){
-                quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
+                quickSpawnMode =  ((statsMessageListener.getQueueSize()/ remoteWorkerCount) > maxConcurrentInVmWorkerCount);
             }
             LOGGER.debug("New worker Required  quickSpawnMode: " + quickSpawnMode);
+            System.out.println("isNewWorkersRequired: maxConsumerSize : "
+                    +  maxConsumerSize
+                    + " currentRemoteWorkersCount " + remoteWorkerCount
+                    + " queueConsumerRatio: " + queueConsumerRatio
+                    + " quickSpawnMode: " + quickSpawnMode
+                    + " completionTargetMillis: " + lifeRemaining() / completionFactor);
+
             return (statsMessageListener.newWorkersRequired((int) (lifeRemaining() / completionFactor)) &&
                     (statsMessageListener.getConsumers() < maxConsumerSize) &&
                     (statsMessageListener.getConsumers() < statsMessageListener.getQueueSize() / queueConsumerRatio))

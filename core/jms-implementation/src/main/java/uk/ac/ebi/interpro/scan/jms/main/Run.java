@@ -99,6 +99,7 @@ public class Run {
         GOTERMS("goterms", "goterms", false, "Optional, switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false, true),
         PATHWAY_LOOKUP("pathways", "pa", false, "Optional, switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false, true),
         MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false, false),
+        MASTER_MAXLIFE("mastermaxlife", "mastermaxlife", false, "The maximum lifetime of the Master.", "MASTER-MAXLIFE", false, false),
         SEQUENCE_TYPE("seqtype", "t", false, "Optional, the type of the input sequences (dna/rna (n) or protein (p)).  The default sequence type is protein.", "SEQUENCE-TYPE", false, true),
         MIN_SIZE("minsize", "ms", false, "Optional, minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
                 "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false, true),
@@ -272,7 +273,7 @@ public class Run {
 
     public static void main(String[] args) {
         // create the command line parser
-        LOGGER.debug("Starting InterProScan 5 RC7...");
+        System.out.println("--- InterProScan 5 RC7 ---");
         CommandLineParser parser = new PosixParser();
         String modeArgument = null;
         try {
@@ -808,7 +809,7 @@ public class Run {
             //set the master uri
             //Please note: Make sure you set the master worker flag and the high memory flag before you set the master URI
             if (parsedCommandLine.hasOption(I5Option.MASTER_URI.getLongOpt())) {
-                LOGGER.debug("commandline has option Master_ URI ");
+                LOGGER.debug("commandline has option Master_URI ");
                 final String masterUri = parsedCommandLine.getOptionValue(I5Option.MASTER_URI.getLongOpt());
                 worker.setMasterUri(masterUri);
                 //want to change the remoteFactory
@@ -842,6 +843,23 @@ public class Run {
                 worker.setProjectId(parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt()));
 
             }
+            if (parsedCommandLine.hasOption(I5Option.MASTER_MAXLIFE.getLongOpt())) {
+                LOGGER.debug("commandline has option MASTER_MAXLIFE ");
+                final String masterMaxlife = parsedCommandLine.getOptionValue(I5Option.MASTER_MAXLIFE.getLongOpt());
+                String [] masterTime =  masterMaxlife.split(":");
+                String masterClockTimeStr = masterTime[0];
+                String masterLifeRemainingStr = masterTime[1];
+                System.out.println("master time passed: " + masterMaxlife);
+                System.out.println("master time passed: " + masterClockTimeStr+ " - " + masterLifeRemainingStr);
+
+                long masterClockTime = Long.valueOf(masterClockTimeStr.trim());
+                long masterLifeRemaining = Long.valueOf(masterLifeRemainingStr.trim());
+                LOGGER.info("masterclock time: " + masterClockTime + " master life remaining: " + masterLifeRemaining);
+                worker.setCurrentMasterClockTime(masterClockTime);
+                worker.setCurrentMasterlifeSpanRemaining(masterLifeRemaining);
+                //want to change the remoteFactory
+            }
+
             LOGGER.debug("parsedCommandLine: " + parsedCommandLine.toString());
 
         }

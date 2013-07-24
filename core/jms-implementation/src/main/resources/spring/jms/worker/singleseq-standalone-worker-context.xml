@@ -6,7 +6,7 @@
 
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
     <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
-    <import resource="activemq-inVm-connection-config-context.xml"/>
+    <import resource="classpath:/spring/jms/activemq/activemq-inVm-connection-config-context.xml"/>
 
     <bean id="amqEmbeddedWorkerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="inVmJmsFactory"/>

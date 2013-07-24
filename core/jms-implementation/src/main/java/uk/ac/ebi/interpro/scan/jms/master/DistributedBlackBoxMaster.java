@@ -275,6 +275,22 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     }
 
     /**
+     *   Set the time for the submission worker runner
+     */
+    public void setSubmissionWorkerRunnerMasterClockTime(){
+        final long currentClockTime = System.currentTimeMillis();
+        final long lifeRemaining =  6*60*60*1000 - (currentClockTime - getStartUpTime());
+        if (this.workerRunner instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner) this.workerRunner).setCurrentMasterClockTime(currentClockTime);
+            ((SubmissionWorkerRunner) this.workerRunner).setLifeSpanRemaining(lifeRemaining);
+        }
+        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setCurrentMasterClockTime(currentClockTime);
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setLifeSpanRemaining(lifeRemaining);
+        }
+    }
+
+    /**
      * monitor the failedJobs Queue and resend the jobs
      *
      */
@@ -330,6 +346,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     //wait longer  : 10 times normal waiting time
                     waitMultiplier = 10;
                 }
+                int maxConcurrentInVmWorkerCountForWorkers = getMaxConcurrentInVmWorkerCountForWorkers();
                 while(!firstWorkersSpawned) {
                     final int actualRemoteJobs =   remoteJobs.get();
                     LOGGER.debug("initial check - Remote jobs: " + actualRemoteJobs);
@@ -346,7 +363,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         //TODO estimate the number of remote jobs needed per number of steps count
                         int remoteJobsEstimate =  (int) (totalJobs / 4);
                         //initialWorkersCount = Math.round(remoteJobsEstimate / maxMessagesOnQueuePerConsumer);
-                        int initialWorkersCount = Math.round(remoteJobsEstimate / 4);
+                        int initialWorkersCount = Math.round(remoteJobsEstimate / (2 * maxConcurrentInVmWorkerCountForWorkers));
                         LOGGER.debug("Remote jobs actual: " + actualRemoteJobs);
                         LOGGER.debug("Remote jobs estimate: " + remoteJobsEstimate);
                         LOGGER.debug("Initial Workers Count: " + initialWorkersCount);
@@ -359,14 +376,15 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         }
                         if(initialWorkersCount < 1 && remoteJobsEstimate > 10){
                             initialWorkersCount = 1;
-                        }else if(initialWorkersCount > (maxConsumers / 2)){
-                            initialWorkersCount = (maxConsumers / 2);
+                        }else if(initialWorkersCount > (maxConsumers)){
+                            initialWorkersCount = (maxConsumers * 9 / 10);
                         }
                         if(initialWorkersCount > 0){
                             LOGGER.debug("Initial Workers created: " + initialWorkersCount);
                             if(verboseFlag){
                                 System.out.println("Initial Workers created: " + initialWorkersCount);
                             }
+                            setSubmissionWorkerRunnerMasterClockTime();
                             for (int i=0;i< initialWorkersCount;i++){
                                 workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
                             }
@@ -389,6 +407,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     e.printStackTrace();
                 }
                 boolean quickSpawnMode = false;
+                int queueConsumerRatio = maxConcurrentInVmWorkerCountForWorkers * 2;
+
                 while (!shutdownCalled) {
                     //statsUtil.sendMessage();
                     final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
@@ -399,20 +419,27 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             System.out.println("Remote jobs: " + remoteJobs.get());
                             System.out.println("Remote jobs completed: " +  StatsUtil.getRemoteJobsCompleted());
                             System.out.println("Remote jobs not completed: " + remoteJobsNotCompleted);
+                            System.out.println("All Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                            System.out.println("Total StepInstances: " + stepInstanceDAO.count());
                         }
                         if (remoteJobsNotCompleted > 0) {
+                            setSubmissionWorkerRunnerMasterClockTime();
                             LOGGER.debug("Poll Job Request Queue queue");
                             final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                             if (statsAvailable) {
                                 workerCount = ((SubmissionWorkerRunner) workerRunner).getWorkerCount();
-                                if(statsMessageListener.getConsumers() > 0){
-                                    quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
+                                int remoteWorkerCountEstimate = statsMessageListener.getConsumers() - getMaxConcurrentInVmWorkerCount();
+                                if(remoteWorkerCountEstimate > 0){
+                                    quickSpawnMode =  ((remoteJobsNotCompleted / remoteWorkerCountEstimate) > maxConcurrentInVmWorkerCountForWorkers);
+                                }else{
+                                    quickSpawnMode = false;
                                 }
                                 final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                                if ((statsUtil.getStatsMessageListener().getConsumers() < maxConsumers && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer &&
+                                if ((remoteWorkerCountEstimate < maxConsumers && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer &&
                                         quickSpawnMode) ||
-                                        (workerRequired && statsUtil.getStatsMessageListener().getConsumers() < maxConsumers)) {
+                                        (workerRequired && remoteWorkerCountEstimate < maxConsumers)) {
                                     LOGGER.debug("Starting a normal worker.");
+                                    setSubmissionWorkerRunnerMasterClockTime();
                                     workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
                                 }
                             }
@@ -428,6 +455,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                                 if ((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0) ||
                                         (highMemWorkerRequired && statsMessageListener.getConsumers() < 10)) {
                                     LOGGER.debug("Starting a high memory worker.");
+                                    setSubmissionWorkerRunnerMasterClockTime();
                                     workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);
                                 }
                             }

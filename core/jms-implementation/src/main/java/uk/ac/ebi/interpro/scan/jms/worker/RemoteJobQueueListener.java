@@ -4,8 +4,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
 import javax.jms.*;
+import java.util.Calendar;
 
 /**
  * This implementation receives responses on the destinationResponseQueue
@@ -86,7 +88,6 @@ public class RemoteJobQueueListener implements MessageListener {
             } catch (JMSException e) {
                 LOGGER.debug("Message problem: Failed to access message - "+e.toString());
                 e.printStackTrace();
-
             }
         }
 //        localJmsTemplate.send(jobRequestQueue, new MessageCreator() {
@@ -124,11 +125,20 @@ public class RemoteJobQueueListener implements MessageListener {
             LOGGER.info("checkQueueState - First 4 jobs : maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
             long now = System.currentTimeMillis();
             if((now - timeFirstMessageReceived) < 1*1000){
-                try {
-                    LOGGER.debug("First 4 messages ... ");
-                    Thread.sleep(2*1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                final long expectedSynchTime = statsUtil.getCurrentMasterClockTime() + (15 * 1000);
+                final long waitMasterSyncTime = expectedSynchTime - now;
+                if (waitMasterSyncTime > 0){
+                    try {
+                        LOGGER.debug("First 4 messages ... ");
+                        System.out.println(Utilities.getTimeNow()
+                                + " Master clock sync: wake up at "
+                                + expectedSynchTime
+                                + " i.e. in "
+                                + waitMasterSyncTime + " millis");
+                        Thread.sleep(waitMasterSyncTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
                 }
             }
         }
