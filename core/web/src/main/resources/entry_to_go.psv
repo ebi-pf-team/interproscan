@@ -104,7 +104,7 @@ IPR000066|GO:0016021|integral to membrane|component
 IPR000066|GO:0019684|photosynthesis, light reaction|process
 IPR000066|GO:0030077|plasma membrane light-harvesting complex|component
 IPR000066|GO:0045156|electron transporter, transferring electrons within the cyclic electron transport pathway of photosynthesis activity|function
-IPR000067|GO:0001539|ciliary or flagellar motility|process
+IPR000067|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR000067|GO:0003774|motor activity|function
 IPR000067|GO:0009431|bacterial-type flagellum basal body, MS ring|component
 IPR000068|GO:0004930|G-protein coupled receptor activity|function
@@ -134,13 +134,13 @@ IPR000079|GO:0005634|nucleus|component
 IPR000079|GO:0031492|nucleosomal DNA binding|function
 IPR000081|GO:0006508|proteolysis|process
 IPR000081|GO:0008233|peptidase activity|function
-IPR000081|GO:0016032|viral reproduction|process
+IPR000081|GO:0016032|viral process|process
 IPR000083|GO:0005576|extracellular region|component
 IPR000085|GO:0003678|DNA helicase activity|function
 IPR000085|GO:0006281|DNA repair|process
 IPR000085|GO:0006310|DNA recombination|process
 IPR000086|GO:0016787|hydrolase activity|function
-IPR000090|GO:0001539|ciliary or flagellar motility|process
+IPR000090|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR000090|GO:0003774|motor activity|function
 IPR000090|GO:0006935|chemotaxis|process
 IPR000090|GO:0009288|bacterial-type flagellum|component
@@ -150,7 +150,6 @@ IPR000092|GO:0008299|isoprenoid biosynthetic process|process
 IPR000093|GO:0003677|DNA binding|function
 IPR000093|GO:0006281|DNA repair|process
 IPR000093|GO:0006310|DNA recombination|process
-IPR000095|GO:0005515|protein binding|function
 IPR000096|GO:0005576|extracellular region|component
 IPR000096|GO:0006953|acute-phase response|process
 IPR000098|GO:0005125|cytokine activity|function
@@ -391,7 +390,7 @@ IPR000214|GO:0003906|DNA-(apurinic or apyrimidinic site) lyase activity|function
 IPR000214|GO:0006281|DNA repair|process
 IPR000214|GO:0008270|zinc ion binding|function
 IPR000214|GO:0016799|hydrolase activity, hydrolyzing N-glycosyl compounds|function
-IPR000215|GO:0004867|serine-type endopeptidase inhibitor activity|function
+IPR000215|GO:0005615|extracellular space|component
 IPR000217|GO:0005874|microtubule|component
 IPR000217|GO:0007017|microtubule-based process|process
 IPR000218|GO:0003735|structural constituent of ribosome|function
@@ -414,7 +413,7 @@ IPR000226|GO:0005126|cytokine receptor binding|function
 IPR000226|GO:0005576|extracellular region|component
 IPR000226|GO:0006955|immune response|process
 IPR000226|GO:0008083|growth factor activity|function
-IPR000227|GO:0004867|serine-type endopeptidase inhibitor activity|function
+IPR000227|GO:0003081|regulation of systemic arterial blood pressure by renin-angiotensin|process
 IPR000228|GO:0006396|RNA processing|process
 IPR000229|GO:0019013|viral nucleocapsid|component
 IPR000231|GO:0003735|structural constituent of ribosome|function
@@ -618,13 +617,13 @@ IPR000343|GO:0008883|glutamyl-tRNA reductase activity|function
 IPR000343|GO:0033014|tetrapyrrole biosynthetic process|process
 IPR000343|GO:0050661|NADP binding|function
 IPR000343|GO:0055114|oxidation-reduction process|process
-IPR000344|GO:0004888|transmembrane signaling receptor activity|function
+IPR000344|GO:0004930|G-protein coupled receptor activity|function
 IPR000344|GO:0007606|sensory perception of chemical stimulus|process
 IPR000344|GO:0016021|integral to membrane|component
 IPR000346|GO:0005184|neuropeptide hormone activity|function
 IPR000346|GO:0005576|extracellular region|component
 IPR000347|GO:0046872|metal ion binding|function
-IPR000349|GO:0016032|viral reproduction|process
+IPR000349|GO:0016032|viral process|process
 IPR000351|GO:0004983|neuropeptide Y receptor activity|function
 IPR000351|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR000351|GO:0016021|integral to membrane|component
@@ -691,7 +690,6 @@ IPR000381|GO:0005179|hormone activity|function
 IPR000381|GO:0005576|extracellular region|component
 IPR000382|GO:0004252|serine-type endopeptidase activity|function
 IPR000382|GO:0016021|integral to membrane|component
-IPR000382|GO:0022415|viral reproductive process|process
 IPR000383|GO:0004177|aminopeptidase activity|function
 IPR000383|GO:0006508|proteolysis|process
 IPR000385|GO:0003824|catalytic activity|function
@@ -741,7 +739,7 @@ IPR000402|GO:0005890|sodium:potassium-exchanging ATPase complex|component
 IPR000402|GO:0006813|potassium ion transport|process
 IPR000402|GO:0006814|sodium ion transport|process
 IPR000403|GO:0016773|phosphotransferase activity, alcohol group as acceptor|function
-IPR000404|GO:0016032|viral reproduction|process
+IPR000404|GO:0016032|viral process|process
 IPR000404|GO:0016070|RNA metabolic process|process
 IPR000404|GO:0019012|virion|component
 IPR000405|GO:0007186|G-protein coupled receptor signaling pathway|process
@@ -995,7 +993,7 @@ IPR000525|GO:0005727|extrachromosomal circular DNA|component
 IPR000525|GO:0006270|DNA replication initiation|process
 IPR000526|GO:0004872|receptor activity|function
 IPR000526|GO:0005788|endoplasmic reticulum lumen|component
-IPR000527|GO:0001539|ciliary or flagellar motility|process
+IPR000527|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR000527|GO:0003774|motor activity|function
 IPR000527|GO:0009427|bacterial-type flagellum basal body, distal rod, L ring|component
 IPR000528|GO:0006869|lipid transport|process
@@ -1029,7 +1027,7 @@ IPR000538|GO:0005540|hyaluronic acid binding|function
 IPR000538|GO:0007155|cell adhesion|process
 IPR000539|GO:0007166|cell surface receptor signaling pathway|process
 IPR000539|GO:0016020|membrane|component
-IPR000540|GO:0001539|ciliary or flagellar motility|process
+IPR000540|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR000540|GO:0003774|motor activity|function
 IPR000540|GO:0006935|chemotaxis|process
 IPR000540|GO:0016020|membrane|component
@@ -1072,7 +1070,7 @@ IPR000559|GO:0004329|formate-tetrahydrofolate ligase activity|function
 IPR000559|GO:0005524|ATP binding|function
 IPR000559|GO:0009396|folic acid-containing compound biosynthetic process|process
 IPR000560|GO:0003993|acid phosphatase activity|function
-IPR000563|GO:0001539|ciliary or flagellar motility|process
+IPR000563|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR000563|GO:0003774|motor activity|function
 IPR000563|GO:0009288|bacterial-type flagellum|component
 IPR000565|GO:0003677|DNA binding|function
@@ -1229,7 +1227,7 @@ IPR000654|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR000654|GO:0031683|G-protein beta/gamma-subunit complex binding|function
 IPR000655|GO:0003700|sequence-specific DNA binding transcription factor activity|function
 IPR000655|GO:0006355|regulation of transcription, DNA-dependent|process
-IPR000657|GO:0016032|viral reproduction|process
+IPR000657|GO:0016032|viral process|process
 IPR000659|GO:0004733|pyridoxamine-phosphate oxidase activity|function
 IPR000659|GO:0008615|pyridoxine biosynthetic process|process
 IPR000659|GO:0055114|oxidation-reduction process|process
@@ -1305,7 +1303,6 @@ IPR000693|GO:0005576|extracellular region|component
 IPR000693|GO:0009966|regulation of signal transduction|process
 IPR000696|GO:0004190|aspartic-type endopeptidase activity|function
 IPR000696|GO:0006508|proteolysis|process
-IPR000697|GO:0005515|protein binding|function
 IPR000698|GO:0007165|signal transduction|process
 IPR000699|GO:0005262|calcium channel activity|function
 IPR000699|GO:0016020|membrane|component
@@ -1352,7 +1349,7 @@ IPR000720|GO:0005507|copper ion binding|function
 IPR000720|GO:0006518|peptide metabolic process|process
 IPR000720|GO:0016020|membrane|component
 IPR000720|GO:0055114|oxidation-reduction process|process
-IPR000721|GO:0016032|viral reproduction|process
+IPR000721|GO:0016032|viral process|process
 IPR000722|GO:0003677|DNA binding|function
 IPR000722|GO:0003899|DNA-directed RNA polymerase activity|function
 IPR000722|GO:0006351|transcription, DNA-dependent|process
@@ -1396,7 +1393,7 @@ IPR000742|GO:0005515|protein binding|function
 IPR000743|GO:0004650|polygalacturonase activity|function
 IPR000743|GO:0005975|carbohydrate metabolic process|process
 IPR000744|GO:0006886|intracellular protein transport|process
-IPR000745|GO:0016032|viral reproduction|process
+IPR000745|GO:0016032|viral process|process
 IPR000745|GO:0019012|virion|component
 IPR000747|GO:0003677|DNA binding|function
 IPR000747|GO:0005634|nucleus|component
@@ -1490,7 +1487,7 @@ IPR000795|GO:0003924|GTPase activity|function
 IPR000795|GO:0005525|GTP binding|function
 IPR000796|GO:0006520|cellular amino acid metabolic process|process
 IPR000796|GO:0008483|transaminase activity|function
-IPR000797|GO:0016032|viral reproduction|process
+IPR000797|GO:0016032|viral process|process
 IPR000798|GO:0005737|cytoplasm|component
 IPR000798|GO:0008092|cytoskeletal protein binding|function
 IPR000798|GO:0019898|extrinsic to membrane|component
@@ -1927,7 +1924,7 @@ IPR001024|GO:0005515|protein binding|function
 IPR001025|GO:0003677|DNA binding|function
 IPR001028|GO:0004621|glycosylphosphatidylinositol phospholipase D activity|function
 IPR001028|GO:0005576|extracellular region|component
-IPR001029|GO:0001539|ciliary or flagellar motility|process
+IPR001029|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR001029|GO:0005198|structural molecule activity|function
 IPR001029|GO:0009288|bacterial-type flagellum|component
 IPR001030|GO:0008152|metabolic process|process
@@ -1942,7 +1939,7 @@ IPR001033|GO:0045296|cadherin binding|function
 IPR001034|GO:0003700|sequence-specific DNA binding transcription factor activity|function
 IPR001034|GO:0005622|intracellular|component
 IPR001034|GO:0006355|regulation of transcription, DNA-dependent|process
-IPR001035|GO:0001539|ciliary or flagellar motility|process
+IPR001035|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR001035|GO:0003774|motor activity|function
 IPR001035|GO:0009288|bacterial-type flagellum|component
 IPR001036|GO:0005215|transporter activity|function
@@ -2109,7 +2106,6 @@ IPR001115|GO:0019229|regulation of vasoconstriction|process
 IPR001115|GO:0055117|regulation of cardiac muscle contraction|process
 IPR001116|GO:0004994|somatostatin receptor activity|function
 IPR001116|GO:0007186|G-protein coupled receptor signaling pathway|process
-IPR001116|GO:0008285|negative regulation of cell proliferation|process
 IPR001116|GO:0016021|integral to membrane|component
 IPR001117|GO:0016491|oxidoreductase activity|function
 IPR001117|GO:0055114|oxidation-reduction process|process
@@ -2205,7 +2201,7 @@ IPR001168|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR001168|GO:0016021|integral to membrane|component
 IPR001170|GO:0016021|integral to membrane|component
 IPR001171|GO:0016020|membrane|component
-IPR001172|GO:0001539|ciliary or flagellar motility|process
+IPR001172|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR001172|GO:0003774|motor activity|function
 IPR001172|GO:0006935|chemotaxis|process
 IPR001172|GO:0009425|bacterial-type flagellum basal body|component
@@ -2755,7 +2751,7 @@ IPR001440|GO:0005515|protein binding|function
 IPR001441|GO:0016765|transferase activity, transferring alkyl or aryl (other than methyl) groups|function
 IPR001442|GO:0005201|extracellular matrix structural constituent|function
 IPR001442|GO:0005581|collagen|component
-IPR001444|GO:0001539|ciliary or flagellar motility|process
+IPR001444|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR001444|GO:0003774|motor activity|function
 IPR001444|GO:0005198|structural molecule activity|function
 IPR001444|GO:0009288|bacterial-type flagellum|component
@@ -2837,7 +2833,7 @@ IPR001490|GO:0017111|nucleoside-triphosphatase activity|function
 IPR001491|GO:0004888|transmembrane signaling receptor activity|function
 IPR001491|GO:0007596|blood coagulation|process
 IPR001491|GO:0016020|membrane|component
-IPR001492|GO:0001539|ciliary or flagellar motility|process
+IPR001492|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR001492|GO:0005198|structural molecule activity|function
 IPR001492|GO:0009420|bacterial-type flagellum filament|component
 IPR001493|GO:0016020|membrane|component
@@ -3089,7 +3085,7 @@ IPR001621|GO:0004601|peroxidase activity|function
 IPR001621|GO:0006979|response to oxidative stress|process
 IPR001621|GO:0020037|heme binding|function
 IPR001621|GO:0055114|oxidation-reduction process|process
-IPR001624|GO:0001539|ciliary or flagellar motility|process
+IPR001624|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR001624|GO:0003774|motor activity|function
 IPR001624|GO:0005198|structural molecule activity|function
 IPR001624|GO:0009288|bacterial-type flagellum|component
@@ -3113,9 +3109,8 @@ IPR001631|GO:0006265|DNA topological change|process
 IPR001634|GO:0001609|G-protein coupled adenosine receptor activity|function
 IPR001634|GO:0001973|adenosine receptor signaling pathway|process
 IPR001634|GO:0016021|integral to membrane|component
-IPR001635|GO:0003774|motor activity|function
-IPR001635|GO:0009296|flagellum assembly|process
 IPR001635|GO:0009424|bacterial-type flagellum hook|component
+IPR001635|GO:0044780|bacterial-type flagellum assembly|process
 IPR001636|GO:0004639|phosphoribosylaminoimidazolesuccinocarboxamide synthase activity|function
 IPR001636|GO:0006164|purine nucleotide biosynthetic process|process
 IPR001638|GO:0005215|transporter activity|function
@@ -3159,9 +3154,9 @@ IPR001656|GO:0009451|RNA modification|process
 IPR001656|GO:0009982|pseudouridine synthase activity|function
 IPR001657|GO:0007154|cell communication|process
 IPR001657|GO:0007275|multicellular organismal development|process
-IPR001658|GO:0004968|gonadotropin-releasing hormone receptor activity|function
 IPR001658|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR001658|GO:0016021|integral to membrane|component
+IPR001658|GO:0016500|protein-hormone receptor activity|function
 IPR001660|GO:0005515|protein binding|function
 IPR001661|GO:0004555|alpha,alpha-trehalase activity|function
 IPR001661|GO:0005991|trehalose metabolic process|process
@@ -3223,7 +3218,7 @@ IPR001686|GO:0016021|integral to membrane|component
 IPR001686|GO:0018991|oviposition|process
 IPR001688|GO:0004948|calcitonin receptor activity|function
 IPR001688|GO:0016020|membrane|component
-IPR001689|GO:0001539|ciliary or flagellar motility|process
+IPR001689|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR001689|GO:0003774|motor activity|function
 IPR001689|GO:0006935|chemotaxis|process
 IPR001689|GO:0009425|bacterial-type flagellum basal body|component
@@ -3411,7 +3406,7 @@ IPR001780|GO:0005622|intracellular|component
 IPR001780|GO:0005840|ribosome|component
 IPR001780|GO:0006412|translation|process
 IPR001781|GO:0008270|zinc ion binding|function
-IPR001782|GO:0001539|ciliary or flagellar motility|process
+IPR001782|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR001782|GO:0005198|structural molecule activity|function
 IPR001782|GO:0009428|bacterial-type flagellum basal body, distal rod, P ring|component
 IPR001782|GO:0030288|outer membrane-bounded periplasmic space|component
@@ -3583,7 +3578,7 @@ IPR001865|GO:0005840|ribosome|component
 IPR001865|GO:0006412|translation|process
 IPR001866|GO:0006275|regulation of DNA replication|process
 IPR001866|GO:0006355|regulation of transcription, DNA-dependent|process
-IPR001866|GO:0016032|viral reproduction|process
+IPR001866|GO:0016032|viral process|process
 IPR001867|GO:0000156|phosphorelay response regulator activity|function
 IPR001867|GO:0000160|phosphorelay signal transduction system|process
 IPR001867|GO:0003677|DNA binding|function
@@ -3614,8 +3609,7 @@ IPR001884|GO:0043022|ribosome binding|function
 IPR001884|GO:0045901|positive regulation of translational elongation|process
 IPR001884|GO:0045905|positive regulation of translational termination|process
 IPR001885|GO:0005506|iron ion binding|function
-IPR001885|GO:0006691|leukotriene metabolic process|process
-IPR001885|GO:0016165|lipoxygenase activity|function
+IPR001885|GO:0016702|oxidoreductase activity, acting on single donors with incorporation of molecular oxygen, incorporation of two atoms of oxygen|function
 IPR001885|GO:0055114|oxidation-reduction process|process
 IPR001887|GO:0003723|RNA binding|function
 IPR001887|GO:0004521|endoribonuclease activity|function
@@ -4405,11 +4399,11 @@ IPR002272|GO:0004963|follicle-stimulating hormone receptor activity|function
 IPR002272|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR002272|GO:0016021|integral to membrane|component
 IPR002273|GO:0004964|luteinizing hormone receptor activity|function
+IPR002273|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR002273|GO:0016021|integral to membrane|component
-IPR002273|GO:0042700|luteinizing hormone signaling pathway|process
+IPR002274|GO:0004996|thyroid-stimulating hormone receptor activity|function
 IPR002274|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR002274|GO:0016021|integral to membrane|component
-IPR002274|GO:0016500|protein-hormone receptor activity|function
 IPR002275|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR002275|GO:0016021|integral to membrane|component
 IPR002276|GO:0004930|G-protein coupled receptor activity|function
@@ -4626,7 +4620,6 @@ IPR002344|GO:0030529|ribonucleoprotein complex|component
 IPR002345|GO:0036094|small molecule binding|function
 IPR002346|GO:0016491|oxidoreductase activity|function
 IPR002346|GO:0055114|oxidation-reduction process|process
-IPR002348|GO:0008083|growth factor activity|function
 IPR002349|GO:0005515|protein binding|function
 IPR002350|GO:0005515|protein binding|function
 IPR002351|GO:0051381|histamine binding|function
@@ -4670,8 +4663,8 @@ IPR002368|GO:0005198|structural molecule activity|function
 IPR002368|GO:0009279|cell outer membrane|component
 IPR002368|GO:0016021|integral to membrane|component
 IPR002371|GO:0005198|structural molecule activity|function
-IPR002371|GO:0009296|flagellum assembly|process
 IPR002371|GO:0009424|bacterial-type flagellum hook|component
+IPR002371|GO:0044780|bacterial-type flagellum assembly|process
 IPR002373|GO:0001932|regulation of protein phosphorylation|process
 IPR002373|GO:0005952|cAMP-dependent protein kinase complex|component
 IPR002373|GO:0008603|cAMP-dependent protein kinase regulator activity|function
@@ -4922,7 +4915,7 @@ IPR002508|GO:0008745|N-acetylmuramoyl-L-alanine amidase activity|function
 IPR002508|GO:0009253|peptidoglycan catabolic process|process
 IPR002509|GO:0005975|carbohydrate metabolic process|process
 IPR002509|GO:0016810|hydrolase activity, acting on carbon-nitrogen (but not peptide) bonds|function
-IPR002511|GO:0019048|virus-host interaction|process
+IPR002511|GO:0019048|modulation by virus of host morphology or physiology|process
 IPR002511|GO:0030430|host cell cytoplasm|component
 IPR002511|GO:0060967|negative regulation of gene silencing by RNA|process
 IPR002512|GO:0000287|magnesium ion binding|function
@@ -5231,7 +5224,7 @@ IPR002685|GO:0016020|membrane|component
 IPR002686|GO:0003677|DNA binding|function
 IPR002686|GO:0004803|transposase activity|function
 IPR002686|GO:0006313|transposition, DNA-mediated|process
-IPR002689|GO:0016032|viral reproduction|process
+IPR002689|GO:0016032|viral process|process
 IPR002689|GO:0019031|viral envelope|component
 IPR002690|GO:0005198|structural molecule activity|function
 IPR002690|GO:0019028|viral capsid|component
@@ -5711,7 +5704,6 @@ IPR003063|GO:0015643|toxic substance binding|function
 IPR003063|GO:0030153|bacteriocin immunity|process
 IPR003064|GO:0005615|extracellular space|component
 IPR003064|GO:0016055|Wnt receptor signaling pathway|process
-IPR003065|GO:0009306|protein secretion|process
 IPR003067|GO:0009986|cell surface|component
 IPR003068|GO:0003677|DNA binding|function
 IPR003068|GO:0004879|ligand-activated sequence-specific DNA binding RNA polymerase II transcription factor activity|function
@@ -6318,10 +6310,9 @@ IPR003474|GO:0035429|gluconate transmembrane transport|process
 IPR003476|GO:0004565|beta-galactosidase activity|function
 IPR003476|GO:0005975|carbohydrate metabolic process|process
 IPR003477|GO:0003677|DNA binding|function
-IPR003478|GO:0019048|virus-host interaction|process
+IPR003478|GO:0019048|modulation by virus of host morphology or physiology|process
 IPR003480|GO:0016747|transferase activity, transferring acyl groups other than amino-acyl groups|function
-IPR003481|GO:0009288|bacterial-type flagellum|component
-IPR003481|GO:0009296|flagellum assembly|process
+IPR003481|GO:0009424|bacterial-type flagellum hook|component
 IPR003484|GO:0005829|cytosol|component
 IPR003484|GO:0009877|nodulation|process
 IPR003484|GO:0016746|transferase activity, transferring acyl groups|function
@@ -6358,7 +6349,7 @@ IPR003513|GO:0019069|viral capsid assembly|process
 IPR003513|GO:0046729|viral procapsid|component
 IPR003514|GO:0005198|structural molecule activity|function
 IPR003514|GO:0019028|viral capsid|component
-IPR003515|GO:0019048|virus-host interaction|process
+IPR003515|GO:0019048|modulation by virus of host morphology or physiology|process
 IPR003517|GO:0005201|extracellular matrix structural constituent|function
 IPR003520|GO:0009306|protein secretion|process
 IPR003521|GO:0006821|chloride transport|process
@@ -6644,7 +6635,6 @@ IPR003710|GO:0016491|oxidoreductase activity|function
 IPR003710|GO:0055114|oxidation-reduction process|process
 IPR003712|GO:0009439|cyanate metabolic process|process
 IPR003713|GO:0009288|bacterial-type flagellum|component
-IPR003713|GO:0009296|flagellum assembly|process
 IPR003714|GO:0005524|ATP binding|function
 IPR003715|GO:0015159|polysaccharide transmembrane transporter activity|function
 IPR003715|GO:0015774|polysaccharide transport|process
@@ -6725,7 +6715,7 @@ IPR003767|GO:0008152|metabolic process|process
 IPR003767|GO:0016491|oxidoreductase activity|function
 IPR003767|GO:0055114|oxidation-reduction process|process
 IPR003769|GO:0030163|protein catabolic process|process
-IPR003775|GO:0009296|flagellum assembly|process
+IPR003775|GO:0044780|bacterial-type flagellum assembly|process
 IPR003779|GO:0051920|peroxiredoxin activity|function
 IPR003779|GO:0055114|oxidation-reduction process|process
 IPR003780|GO:0006784|heme a biosynthetic process|process
@@ -7212,7 +7202,7 @@ IPR004075|GO:0031224|intrinsic to membrane|component
 IPR004075|GO:0045087|innate immune response|process
 IPR004076|GO:0004909|interleukin-1, Type I, activating receptor activity|function
 IPR004077|GO:0004910|interleukin-1, Type II, blocking receptor activity|function
-IPR004078|GO:0019048|virus-host interaction|process
+IPR004078|GO:0019048|modulation by virus of host morphology or physiology|process
 IPR004078|GO:0019966|interleukin-1 binding|function
 IPR004079|GO:0005183|gonadotropin hormone-releasing hormone activity|function
 IPR004080|GO:0005198|structural molecule activity|function
@@ -7529,7 +7519,7 @@ IPR004333|GO:0003677|DNA binding|function
 IPR004333|GO:0005634|nucleus|component
 IPR004338|GO:0006810|transport|process
 IPR004338|GO:0016020|membrane|component
-IPR004339|GO:0016032|viral reproduction|process
+IPR004339|GO:0016032|viral process|process
 IPR004339|GO:0019033|viral tegument|component
 IPR004340|GO:0003896|DNA primase activity|function
 IPR004340|GO:0006260|DNA replication|process
@@ -8680,10 +8670,10 @@ IPR004948|GO:0005524|ATP binding|function
 IPR004948|GO:0016740|transferase activity|function
 IPR004948|GO:0019204|nucleotide phosphatase activity|function
 IPR004953|GO:0008017|microtubule binding|function
-IPR004954|GO:0016032|viral reproduction|process
+IPR004954|GO:0016032|viral process|process
 IPR004955|GO:0019031|viral envelope|component
-IPR004955|GO:0019048|virus-host interaction|process
-IPR004956|GO:0016032|viral reproduction|process
+IPR004955|GO:0019048|modulation by virus of host morphology or physiology|process
+IPR004956|GO:0016032|viral process|process
 IPR004956|GO:0045893|positive regulation of transcription, DNA-dependent|process
 IPR004957|GO:0019028|viral capsid|component
 IPR004959|GO:0009405|pathogenesis|process
@@ -8697,7 +8687,7 @@ IPR004964|GO:0017000|antibiotic biosynthetic process|process
 IPR004965|GO:0008360|regulation of cell shape|process
 IPR004965|GO:0016020|membrane|component
 IPR004966|GO:0019031|viral envelope|component
-IPR004967|GO:0016032|viral reproduction|process
+IPR004967|GO:0016032|viral process|process
 IPR004973|GO:0003677|DNA binding|function
 IPR004973|GO:0003899|DNA-directed RNA polymerase activity|function
 IPR004973|GO:0019083|viral transcription|process
@@ -8730,7 +8720,7 @@ IPR005002|GO:0004615|phosphomannomutase activity|function
 IPR005002|GO:0005737|cytoplasm|component
 IPR005002|GO:0019307|mannose biosynthetic process|process
 IPR005003|GO:0005198|structural molecule activity|function
-IPR005005|GO:0016032|viral reproduction|process
+IPR005005|GO:0016032|viral process|process
 IPR005008|GO:0046677|response to antibiotic|process
 IPR005009|GO:0004482|mRNA (guanine-N7-)-methyltransferase activity|function
 IPR005009|GO:0006370|7-methylguanosine mRNA capping|process
@@ -8888,7 +8878,7 @@ IPR005165|GO:0005576|extracellular region|component
 IPR005165|GO:0008294|calcium- and calmodulin-responsive adenylate cyclase activity|function
 IPR005165|GO:0009405|pathogenesis|process
 IPR005166|GO:0019031|viral envelope|component
-IPR005167|GO:0019048|virus-host interaction|process
+IPR005167|GO:0019048|modulation by virus of host morphology or physiology|process
 IPR005171|GO:0016021|integral to membrane|component
 IPR005177|GO:0005524|ATP binding|function
 IPR005177|GO:0016772|transferase activity, transferring phosphorus-containing groups|function
@@ -9338,7 +9328,7 @@ IPR005497|GO:0045158|electron transporter, transferring electrons within cytochr
 IPR005499|GO:0005524|ATP binding|function
 IPR005499|GO:0009102|biotin biosynthetic process|process
 IPR005499|GO:0042410|6-carboxyhexanoate-CoA ligase activity|function
-IPR005503|GO:0001539|ciliary or flagellar motility|process
+IPR005503|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR005503|GO:0006935|chemotaxis|process
 IPR005503|GO:0009425|bacterial-type flagellum basal body|component
 IPR005512|GO:0005089|Rho guanyl-nucleotide exchange factor activity|function
@@ -9688,13 +9678,13 @@ IPR005750|GO:0008760|UDP-N-acetylglucosamine 1-carboxyvinyltransferase activity|
 IPR005750|GO:0019277|UDP-N-acetylgalactosamine biosynthetic process|process
 IPR005751|GO:0004003|ATP-dependent DNA helicase activity|function
 IPR005751|GO:0005737|cytoplasm|component
-IPR005751|GO:0006268|DNA unwinding involved in replication|process
+IPR005751|GO:0006268|DNA unwinding involved in DNA replication|process
 IPR005752|GO:0004003|ATP-dependent DNA helicase activity|function
 IPR005752|GO:0005737|cytoplasm|component
-IPR005752|GO:0006268|DNA unwinding involved in replication|process
+IPR005752|GO:0006268|DNA unwinding involved in DNA replication|process
 IPR005753|GO:0004003|ATP-dependent DNA helicase activity|function
 IPR005753|GO:0005737|cytoplasm|component
-IPR005753|GO:0006268|DNA unwinding involved in replication|process
+IPR005753|GO:0006268|DNA unwinding involved in DNA replication|process
 IPR005755|GO:0003735|structural constituent of ribosome|function
 IPR005755|GO:0006412|translation|process
 IPR005755|GO:0015934|large ribosomal subunit|component
@@ -10847,16 +10837,16 @@ IPR006297|GO:0005525|GTP binding|function
 IPR006298|GO:0005525|GTP binding|function
 IPR006299|GO:0030694|bacterial-type flagellum basal body, rod|component
 IPR006300|GO:0009425|bacterial-type flagellum basal body|component
-IPR006301|GO:0009296|flagellum assembly|process
 IPR006301|GO:0016021|integral to membrane|component
+IPR006301|GO:0044780|bacterial-type flagellum assembly|process
 IPR006302|GO:0015031|protein transport|process
 IPR006302|GO:0016021|integral to membrane|component
-IPR006303|GO:0009296|flagellum assembly|process
 IPR006303|GO:0016021|integral to membrane|component
+IPR006303|GO:0044780|bacterial-type flagellum assembly|process
 IPR006304|GO:0006810|transport|process
 IPR006304|GO:0016021|integral to membrane|component
-IPR006305|GO:0009296|flagellum assembly|process
 IPR006305|GO:0016021|integral to membrane|component
+IPR006305|GO:0044780|bacterial-type flagellum assembly|process
 IPR006306|GO:0006810|transport|process
 IPR006306|GO:0016021|integral to membrane|component
 IPR006307|GO:0006810|transport|process
@@ -11239,7 +11229,7 @@ IPR006642|GO:0003677|DNA binding|function
 IPR006642|GO:0006281|DNA repair|process
 IPR006644|GO:0005509|calcium ion binding|function
 IPR006644|GO:0016020|membrane|component
-IPR006645|GO:0032968|positive regulation of transcription elongation from RNA polymerase II promoter|process
+IPR006645|GO:0006355|regulation of transcription, DNA-dependent|process
 IPR006650|GO:0009168|purine ribonucleoside monophosphate biosynthetic process|process
 IPR006650|GO:0019239|deaminase activity|function
 IPR006652|GO:0005515|protein binding|function
@@ -11321,7 +11311,7 @@ IPR006710|GO:0005975|carbohydrate metabolic process|process
 IPR006711|GO:0005634|nucleus|component
 IPR006711|GO:0006351|transcription, DNA-dependent|process
 IPR006712|GO:0005634|nucleus|component
-IPR006714|GO:0001539|ciliary or flagellar motility|process
+IPR006714|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR006714|GO:0030288|outer membrane-bounded periplasmic space|component
 IPR006715|GO:0003700|sequence-specific DNA binding transcription factor activity|function
 IPR006715|GO:0005634|nucleus|component
@@ -11370,7 +11360,7 @@ IPR006748|GO:0016773|phosphotransferase activity, alcohol group as acceptor|func
 IPR006748|GO:0019748|secondary metabolic process|process
 IPR006751|GO:0005669|transcription factor TFIID complex|component
 IPR006751|GO:0006367|transcription initiation from RNA polymerase II promoter|process
-IPR006752|GO:0001539|ciliary or flagellar motility|process
+IPR006752|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR006754|GO:0003697|single-stranded DNA binding|function
 IPR006757|GO:0004872|receptor activity|function
 IPR006757|GO:0016020|membrane|component
@@ -11482,7 +11472,7 @@ IPR006858|GO:0019051|induction by virus of host apoptotic process|process
 IPR006858|GO:0042025|host cell nucleus|component
 IPR006863|GO:0016972|thiol oxidase activity|function
 IPR006863|GO:0055114|oxidation-reduction process|process
-IPR006870|GO:0016032|viral reproduction|process
+IPR006870|GO:0016032|viral process|process
 IPR006870|GO:0019031|viral envelope|component
 IPR006875|GO:0016012|sarcoglycan complex|component
 IPR006875|GO:0016021|integral to membrane|component
@@ -11596,9 +11586,6 @@ IPR006992|GO:0008152|metabolic process|process
 IPR006995|GO:0015078|hydrogen ion transmembrane transporter activity|function
 IPR006995|GO:0015986|ATP synthesis coupled proton transport|process
 IPR006995|GO:0045263|proton-transporting ATP synthase complex, coupling factor F(o)|component
-IPR006996|GO:0005813|centrosome|component
-IPR006996|GO:0005869|dynactin complex|component
-IPR006996|GO:0007017|microtubule-based process|process
 IPR007005|GO:0005634|nucleus|component
 IPR007007|GO:0007155|cell adhesion|process
 IPR007007|GO:0016021|integral to membrane|component
@@ -11615,8 +11602,9 @@ IPR007015|GO:0006351|transcription, DNA-dependent|process
 IPR007018|GO:0001104|RNA polymerase II transcription cofactor activity|function
 IPR007018|GO:0006357|regulation of transcription from RNA polymerase II promoter|process
 IPR007018|GO:0016592|mediator complex|component
-IPR007022|GO:0000245|spliceosomal complex assembly|process
+IPR007022|GO:0000387|spliceosomal snRNP assembly|process
 IPR007022|GO:0000398|mRNA splicing, via spliceosome|process
+IPR007022|GO:0005681|spliceosomal complex|component
 IPR007023|GO:0005634|nucleus|component
 IPR007023|GO:0042254|ribosome biogenesis|process
 IPR007024|GO:0009882|blue light photoreceptor activity|function
@@ -12026,7 +12014,7 @@ IPR007593|GO:0016021|integral to membrane|component
 IPR007594|GO:0005319|lipid transporter activity|function
 IPR007594|GO:0006869|lipid transport|process
 IPR007594|GO:0016021|integral to membrane|component
-IPR007596|GO:0016032|viral reproduction|process
+IPR007596|GO:0016032|viral process|process
 IPR007597|GO:0016787|hydrolase activity|function
 IPR007600|GO:0005198|structural molecule activity|function
 IPR007600|GO:0019028|viral capsid|component
@@ -12036,7 +12024,7 @@ IPR007601|GO:0019028|viral capsid|component
 IPR007601|GO:0019031|viral envelope|component
 IPR007602|GO:0003723|RNA binding|function
 IPR007605|GO:0004857|enzyme inhibitor activity|function
-IPR007605|GO:0019054|modulation by virus of host cellular process|process
+IPR007605|GO:0019054|modulation by virus of host process|process
 IPR007610|GO:0003723|RNA binding|function
 IPR007610|GO:0003968|RNA-directed RNA polymerase activity|function
 IPR007610|GO:0006351|transcription, DNA-dependent|process
@@ -12119,7 +12107,7 @@ IPR007657|GO:0016757|transferase activity, transferring glycosyl groups|function
 IPR007659|GO:0005198|structural molecule activity|function
 IPR007659|GO:0045095|keratin filament|component
 IPR007663|GO:0019058|viral infectious cycle|process
-IPR007664|GO:0016032|viral reproduction|process
+IPR007664|GO:0016032|viral process|process
 IPR007664|GO:0019031|viral envelope|component
 IPR007666|GO:0005975|carbohydrate metabolic process|process
 IPR007666|GO:0016773|phosphotransferase activity, alcohol group as acceptor|function
@@ -12131,7 +12119,7 @@ IPR007672|GO:0008430|selenium binding|function
 IPR007673|GO:0005634|nucleus|component
 IPR007673|GO:0007067|mitosis|process
 IPR007673|GO:0030261|chromosome condensation|process
-IPR007674|GO:0016032|viral reproduction|process
+IPR007674|GO:0016032|viral process|process
 IPR007676|GO:0004579|dolichyl-diphosphooligosaccharide-protein glycotransferase activity|function
 IPR007676|GO:0005783|endoplasmic reticulum|component
 IPR007676|GO:0006486|protein glycosylation|process
@@ -12171,7 +12159,7 @@ IPR007704|GO:0016021|integral to membrane|component
 IPR007704|GO:0016758|transferase activity, transferring hexosyl groups|function
 IPR007705|GO:0006886|intracellular protein transport|process
 IPR007705|GO:0016020|membrane|component
-IPR007706|GO:0016032|viral reproduction|process
+IPR007706|GO:0016032|viral process|process
 IPR007706|GO:0042025|host cell nucleus|component
 IPR007708|GO:0006397|mRNA processing|process
 IPR007708|GO:0016788|hydrolase activity, acting on ester bonds|function
@@ -12271,7 +12259,7 @@ IPR007802|GO:0009055|electron carrier activity|function
 IPR007802|GO:0009512|cytochrome b6f complex|component
 IPR007803|GO:0018193|peptidyl-amino acid modification|process
 IPR007805|GO:0031412|gas vesicle organization|process
-IPR007809|GO:0009296|flagellum assembly|process
+IPR007809|GO:0044780|bacterial-type flagellum assembly|process
 IPR007811|GO:0003677|DNA binding|function
 IPR007811|GO:0003899|DNA-directed RNA polymerase activity|function
 IPR007811|GO:0005666|DNA-directed RNA polymerase III complex|component
@@ -12364,9 +12352,6 @@ IPR007905|GO:0005783|endoplasmic reticulum|component
 IPR007905|GO:0016021|integral to membrane|component
 IPR007905|GO:0016125|sterol metabolic process|process
 IPR007905|GO:0047750|cholestenol delta-isomerase activity|function
-IPR007911|GO:0003677|DNA binding|function
-IPR007911|GO:0009296|flagellum assembly|process
-IPR007911|GO:0045893|positive regulation of transcription, DNA-dependent|process
 IPR007925|GO:0000746|conjugation|process
 IPR007925|GO:0003677|DNA binding|function
 IPR007933|GO:0003677|DNA binding|function
@@ -12384,8 +12369,8 @@ IPR007939|GO:0006878|cellular copper ion homeostasis|process
 IPR007939|GO:0009279|cell outer membrane|component
 IPR007943|GO:0016020|membrane|component
 IPR007944|GO:0003677|DNA binding|function
-IPR007944|GO:0030092|regulation of flagellum assembly|process
 IPR007944|GO:0045893|positive regulation of transcription, DNA-dependent|process
+IPR007944|GO:1902208|regulation of bacterial-type flagellum assembly|process
 IPR007945|GO:0007218|neuropeptide signaling pathway|process
 IPR007945|GO:0030141|secretory granule|component
 IPR007956|GO:0006633|fatty acid biosynthetic process|process
@@ -12449,7 +12434,7 @@ IPR008028|GO:0016020|membrane|component
 IPR008028|GO:0030234|enzyme regulator activity|function
 IPR008029|GO:0008833|deoxyribonuclease IV (phage-T4-induced) activity|function
 IPR008029|GO:0015074|DNA integration|process
-IPR008029|GO:0016032|viral reproduction|process
+IPR008029|GO:0016032|viral process|process
 IPR008031|GO:0008168|methyltransferase activity|function
 IPR008031|GO:0032259|methylation|process
 IPR008034|GO:0005576|extracellular region|component
@@ -12463,7 +12448,7 @@ IPR008037|GO:0030414|peptidase inhibitor activity|function
 IPR008041|GO:0003968|RNA-directed RNA polymerase activity|function
 IPR008041|GO:0016817|hydrolase activity, acting on acid anhydrides|function
 IPR008043|GO:0003968|RNA-directed RNA polymerase activity|function
-IPR008043|GO:0016032|viral reproduction|process
+IPR008043|GO:0016032|viral process|process
 IPR008045|GO:0003677|DNA binding|function
 IPR008045|GO:0003678|DNA helicase activity|function
 IPR008045|GO:0005524|ATP binding|function
@@ -13084,11 +13069,8 @@ IPR008424|GO:0007155|cell adhesion|process
 IPR008424|GO:0016021|integral to membrane|component
 IPR008425|GO:0004721|phosphoprotein phosphatase activity|function
 IPR008425|GO:0004725|protein tyrosine phosphatase activity|function
-IPR008426|GO:0000777|condensed chromosome kinetochore|component
-IPR008426|GO:0005634|nucleus|component
-IPR008426|GO:0007059|chromosome segregation|process
-IPR008426|GO:0043515|kinetochore binding|function
-IPR008426|GO:0051301|cell division|process
+IPR008426|GO:0000776|kinetochore|component
+IPR008426|GO:0051382|kinetochore assembly|process
 IPR008428|GO:0016758|transferase activity, transferring hexosyl groups|function
 IPR008428|GO:0032580|Golgi cisterna membrane|component
 IPR008431|GO:0004113|2',3'-cyclic-nucleotide 3'-phosphodiesterase activity|function
@@ -13134,6 +13116,9 @@ IPR008475|GO:0004629|phospholipase C activity|function
 IPR008475|GO:0016042|lipid catabolic process|process
 IPR008501|GO:0000445|THO complex part of transcription export complex|component
 IPR008501|GO:0006397|mRNA processing|process
+IPR008504|GO:0005783|endoplasmic reticulum|component
+IPR008504|GO:0016021|integral to membrane|component
+IPR008504|GO:0072546|ER membrane protein complex|component
 IPR008521|GO:0015095|magnesium ion transmembrane transporter activity|function
 IPR008521|GO:0015693|magnesium ion transport|process
 IPR008521|GO:0016020|membrane|component
@@ -13280,21 +13265,21 @@ IPR008738|GO:0003968|RNA-directed RNA polymerase activity|function
 IPR008738|GO:0004197|cysteine-type endopeptidase activity|function
 IPR008738|GO:0017111|nucleoside-triphosphatase activity|function
 IPR008739|GO:0004197|cysteine-type endopeptidase activity|function
-IPR008739|GO:0016032|viral reproduction|process
+IPR008739|GO:0016032|viral process|process
 IPR008739|GO:0019082|viral protein processing|process
 IPR008740|GO:0019082|viral protein processing|process
 IPR008741|GO:0004197|cysteine-type endopeptidase activity|function
-IPR008743|GO:0016032|viral reproduction|process
+IPR008743|GO:0016032|viral process|process
 IPR008743|GO:0019082|viral protein processing|process
 IPR008744|GO:0003723|RNA binding|function
 IPR008744|GO:0003968|RNA-directed RNA polymerase activity|function
 IPR008744|GO:0005524|ATP binding|function
 IPR008744|GO:0019079|viral genome replication|process
-IPR008748|GO:0016032|viral reproduction|process
+IPR008748|GO:0016032|viral process|process
 IPR008748|GO:0019082|viral protein processing|process
 IPR008750|GO:0006508|proteolysis|process
 IPR008750|GO:0008234|cysteine-type peptidase activity|function
-IPR008751|GO:0016032|viral reproduction|process
+IPR008751|GO:0016032|viral process|process
 IPR008751|GO:0019082|viral protein processing|process
 IPR008753|GO:0006508|proteolysis|process
 IPR008757|GO:0006508|proteolysis|process
@@ -13302,7 +13287,7 @@ IPR008757|GO:0008233|peptidase activity|function
 IPR008758|GO:0006508|proteolysis|process
 IPR008758|GO:0008236|serine-type peptidase activity|function
 IPR008760|GO:0004252|serine-type endopeptidase activity|function
-IPR008760|GO:0016032|viral reproduction|process
+IPR008760|GO:0016032|viral process|process
 IPR008760|GO:0019082|viral protein processing|process
 IPR008766|GO:0006260|DNA replication|process
 IPR008768|GO:0019069|viral capsid assembly|process
@@ -13315,8 +13300,6 @@ IPR008771|GO:0016987|sigma factor activity|function
 IPR008772|GO:0019634|organic phosphonate metabolic process|process
 IPR008773|GO:0019634|organic phosphonate metabolic process|process
 IPR008783|GO:0016021|integral to membrane|component
-IPR008784|GO:0005524|ATP binding|function
-IPR008784|GO:0019069|viral capsid assembly|process
 IPR008785|GO:0019031|viral envelope|component
 IPR008790|GO:0004672|protein kinase activity|function
 IPR008790|GO:0005524|ATP binding|function
@@ -13459,7 +13442,7 @@ IPR008917|GO:0003677|DNA binding|function
 IPR008917|GO:0006355|regulation of transcription, DNA-dependent|process
 IPR008918|GO:0003677|DNA binding|function
 IPR008918|GO:0003824|catalytic activity|function
-IPR008919|GO:0016032|viral reproduction|process
+IPR008919|GO:0016032|viral process|process
 IPR008920|GO:0000062|fatty-acyl-CoA binding|function
 IPR008920|GO:0003677|DNA binding|function
 IPR008920|GO:0003700|sequence-specific DNA binding transcription factor activity|function
@@ -13700,11 +13683,11 @@ IPR009132|GO:0016021|integral to membrane|component
 IPR009133|GO:0001594|trace-amine receptor activity|function
 IPR009133|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR009133|GO:0016021|integral to membrane|component
-IPR009134|GO:0005021|vascular endothelial growth factor-activated receptor activity|function
+IPR009134|GO:0004714|transmembrane receptor protein tyrosine kinase activity|function
 IPR009134|GO:0005524|ATP binding|function
 IPR009134|GO:0005887|integral to plasma membrane|component
 IPR009134|GO:0006468|protein phosphorylation|process
-IPR009134|GO:0048010|vascular endothelial growth factor receptor signaling pathway|process
+IPR009134|GO:0007169|transmembrane receptor protein tyrosine kinase signaling pathway|process
 IPR009135|GO:0005021|vascular endothelial growth factor-activated receptor activity|function
 IPR009135|GO:0005524|ATP binding|function
 IPR009135|GO:0005887|integral to plasma membrane|component
@@ -13743,6 +13726,7 @@ IPR009143|GO:0005102|receptor binding|function
 IPR009143|GO:0005576|extracellular region|component
 IPR009143|GO:0007275|multicellular organismal development|process
 IPR009143|GO:0016055|Wnt receptor signaling pathway|process
+IPR009144|GO:0004997|thyrotropin-releasing hormone receptor activity|function
 IPR009144|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR009144|GO:0016021|integral to membrane|component
 IPR009145|GO:0003723|RNA binding|function
@@ -13960,7 +13944,7 @@ IPR009431|GO:0032051|clathrin light chain binding|function
 IPR009431|GO:0048268|clathrin coat assembly|process
 IPR009433|GO:0005198|structural molecule activity|function
 IPR009433|GO:0016020|membrane|component
-IPR009433|GO:0016032|viral reproduction|process
+IPR009433|GO:0016032|viral process|process
 IPR009435|GO:0010447|response to acidity|process
 IPR009435|GO:0042597|periplasmic space|component
 IPR009437|GO:0005198|structural molecule activity|function
@@ -14183,8 +14167,8 @@ IPR009958|GO:0005576|extracellular region|component
 IPR009958|GO:0009405|pathogenesis|process
 IPR009958|GO:0030550|acetylcholine receptor inhibitor activity|function
 IPR009967|GO:0006402|mRNA catabolic process|process
-IPR009967|GO:0045718|negative regulation of flagellum assembly|process
 IPR009967|GO:0048027|mRNA 5'-UTR binding|function
+IPR009967|GO:1902209|negative regulation of bacterial-type flagellum assembly|process
 IPR009970|GO:0003677|DNA binding|function
 IPR009970|GO:0030261|chromosome condensation|process
 IPR009976|GO:0005737|cytoplasm|component
@@ -14314,7 +14298,6 @@ IPR010078|GO:0045982|negative regulation of purine nucleobase metabolic process|
 IPR010079|GO:0016763|transferase activity, transferring pentosyl groups|function
 IPR010079|GO:0043101|purine-containing compound salvage|process
 IPR010079|GO:0046110|xanthine metabolic process|process
-IPR010080|GO:0004043|L-aminoadipate-semialdehyde dehydrogenase activity|function
 IPR010081|GO:0008838|diaminopropionate ammonia-lyase activity|function
 IPR010081|GO:0030170|pyridoxal phosphate binding|function
 IPR010083|GO:0005737|cytoplasm|component
@@ -14436,6 +14419,7 @@ IPR010161|GO:0008270|zinc ion binding|function
 IPR010161|GO:0045148|tripeptide aminopeptidase activity|function
 IPR010164|GO:0008483|transaminase activity|function
 IPR010164|GO:0030170|pyridoxal phosphate binding|function
+IPR010166|GO:0006355|regulation of transcription, DNA-dependent|process
 IPR010167|GO:0004042|acetyl-CoA:L-glutamate N-acetyltransferase activity|function
 IPR010167|GO:0005737|cytoplasm|component
 IPR010167|GO:0006526|arginine biosynthetic process|process
@@ -14621,7 +14605,7 @@ IPR010271|GO:0009405|pathogenesis|process
 IPR010271|GO:0043230|extracellular organelle|component
 IPR010276|GO:0005184|neuropeptide hormone activity|function
 IPR010278|GO:0016021|integral to membrane|component
-IPR010278|GO:0016032|viral reproduction|process
+IPR010278|GO:0016032|viral process|process
 IPR010280|GO:0006396|RNA processing|process
 IPR010280|GO:0008173|RNA methyltransferase activity|function
 IPR010284|GO:0009523|photosystem II|component
@@ -14883,7 +14867,7 @@ IPR010614|GO:0004003|ATP-dependent DNA helicase activity|function
 IPR010614|GO:0005524|ATP binding|function
 IPR010615|GO:0004672|protein kinase activity|function
 IPR010615|GO:0005524|ATP binding|function
-IPR010615|GO:0016032|viral reproduction|process
+IPR010615|GO:0016032|viral process|process
 IPR010618|GO:0005576|extracellular region|component
 IPR010622|GO:0004672|protein kinase activity|function
 IPR010624|GO:0005524|ATP binding|function
@@ -14987,7 +14971,7 @@ IPR010809|GO:0007155|cell adhesion|process
 IPR010809|GO:0009288|bacterial-type flagellum|component
 IPR010810|GO:0006928|cellular component movement|process
 IPR010810|GO:0009288|bacterial-type flagellum|component
-IPR010810|GO:0043064|flagellum organization|process
+IPR010810|GO:0044781|bacterial-type flagellum organization|process
 IPR010812|GO:0009405|pathogenesis|process
 IPR010812|GO:0019867|outer membrane|component
 IPR010812|GO:0046903|secretion|process
@@ -15004,7 +14988,7 @@ IPR010831|GO:0005125|cytokine activity|function
 IPR010831|GO:0005576|extracellular region|component
 IPR010831|GO:0006955|immune response|process
 IPR010855|GO:0042025|host cell nucleus|component
-IPR010855|GO:0050792|regulation of viral reproduction|process
+IPR010855|GO:0050792|regulation of viral process|process
 IPR010857|GO:0005576|extracellular region|component
 IPR010857|GO:0007339|binding of sperm to zona pellucida|process
 IPR010874|GO:0000781|chromosome, telomeric region|component
@@ -15285,7 +15269,7 @@ IPR011179|GO:0005737|cytoplasm|component
 IPR011179|GO:0008299|isoprenoid biosynthetic process|process
 IPR011179|GO:0010181|FMN binding|function
 IPR011181|GO:0005525|GTP binding|function
-IPR011181|GO:0016032|viral reproduction|process
+IPR011181|GO:0016032|viral process|process
 IPR011181|GO:0019013|viral nucleocapsid|component
 IPR011182|GO:0009435|NAD biosynthetic process|process
 IPR011182|GO:0033735|aspartate dehydrogenase activity|function
@@ -16569,9 +16553,6 @@ IPR012280|GO:0016620|oxidoreductase activity, acting on the aldehyde or oxo grou
 IPR012280|GO:0046983|protein dimerization activity|function
 IPR012280|GO:0055114|oxidation-reduction process|process
 IPR012281|GO:0006633|fatty acid biosynthetic process|process
-IPR012285|GO:0016491|oxidoreductase activity|function
-IPR012285|GO:0051536|iron-sulfur cluster binding|function
-IPR012285|GO:0055114|oxidation-reduction process|process
 IPR012289|GO:0004553|hydrolase activity, hydrolyzing O-glycosyl compounds|function
 IPR012289|GO:0042597|periplasmic space|component
 IPR012290|GO:0005102|receptor binding|function
@@ -16705,6 +16686,7 @@ IPR012409|GO:0051266|sirohydrochlorin ferrochelatase activity|function
 IPR012409|GO:0051287|NAD binding|function
 IPR012409|GO:0055114|oxidation-reduction process|process
 IPR012410|GO:0048515|spermatid differentiation|process
+IPR012413|GO:0009405|pathogenesis|process
 IPR012414|GO:0008200|ion channel inhibitor activity|function
 IPR012414|GO:0009405|pathogenesis|process
 IPR012414|GO:0042151|nematocyst|component
@@ -16721,6 +16703,8 @@ IPR012476|GO:0016973|poly(A)+ mRNA export from nucleus|process
 IPR012481|GO:0016779|nucleotidyltransferase activity|function
 IPR012481|GO:0046677|response to antibiotic|process
 IPR012484|GO:0046870|cadmium ion binding|function
+IPR012485|GO:0000776|kinetochore|component
+IPR012485|GO:0034508|centromere complex assembly|process
 IPR012491|GO:0007059|chromosome segregation|process
 IPR012491|GO:0007131|reciprocal meiotic recombination|process
 IPR012493|GO:0004872|receptor activity|function
@@ -16828,7 +16812,7 @@ IPR012582|GO:0005634|nucleus|component
 IPR012582|GO:0006303|double-strand break repair via nonhomologous end joining|process
 IPR012584|GO:0005634|nucleus|component
 IPR012585|GO:0004518|nuclease activity|function
-IPR012585|GO:0050792|regulation of viral reproduction|process
+IPR012585|GO:0050792|regulation of viral process|process
 IPR012587|GO:0003712|transcription cofactor activity|function
 IPR012587|GO:0003724|RNA helicase activity|function
 IPR012587|GO:0005634|nucleus|component
@@ -17241,13 +17225,13 @@ IPR012819|GO:0005985|sucrose metabolic process|process
 IPR012819|GO:0046524|sucrose-phosphate synthase activity|function
 IPR012820|GO:0005985|sucrose metabolic process|process
 IPR012820|GO:0016157|sucrose synthase activity|function
-IPR012823|GO:0001539|ciliary or flagellar motility|process
+IPR012823|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR012823|GO:0003774|motor activity|function
 IPR012823|GO:0006935|chemotaxis|process
 IPR012823|GO:0009288|bacterial-type flagellum|component
 IPR012823|GO:0016020|membrane|component
 IPR012824|GO:0009236|cobalamin biosynthetic process|process
-IPR012826|GO:0001539|ciliary or flagellar motility|process
+IPR012826|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR012826|GO:0006935|chemotaxis|process
 IPR012826|GO:0009288|bacterial-type flagellum|component
 IPR012826|GO:0016020|membrane|component
@@ -17266,13 +17250,13 @@ IPR012833|GO:0016491|oxidoreductase activity|function
 IPR012833|GO:0055114|oxidation-reduction process|process
 IPR012834|GO:0006928|cellular component movement|process
 IPR012834|GO:0009426|bacterial-type flagellum basal body, distal rod|component
-IPR012834|GO:0043064|flagellum organization|process
+IPR012834|GO:0044781|bacterial-type flagellum organization|process
 IPR012835|GO:0006928|cellular component movement|process
 IPR012835|GO:0009288|bacterial-type flagellum|component
-IPR012835|GO:0043064|flagellum organization|process
+IPR012835|GO:0044781|bacterial-type flagellum organization|process
 IPR012836|GO:0006928|cellular component movement|process
 IPR012836|GO:0009288|bacterial-type flagellum|component
-IPR012836|GO:0043064|flagellum organization|process
+IPR012836|GO:0044781|bacterial-type flagellum organization|process
 IPR012837|GO:0005737|cytoplasm|component
 IPR012837|GO:0043365|[formate-C-acetyltransferase]-activating enzyme activity|function
 IPR012837|GO:0051539|4 iron, 4 sulfur cluster binding|function
@@ -17710,17 +17694,17 @@ IPR013375|GO:0043766|Sep-tRNA:Cys-tRNA synthase activity|function
 IPR013376|GO:0004602|glutathione peroxidase activity|function
 IPR013376|GO:0006979|response to oxidative stress|process
 IPR013376|GO:0055114|oxidation-reduction process|process
-IPR013377|GO:0001539|ciliary or flagellar motility|process
+IPR013377|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR013377|GO:0009288|bacterial-type flagellum|component
-IPR013377|GO:0009296|flagellum assembly|process
 IPR013377|GO:0016798|hydrolase activity, acting on glycosyl bonds|function
+IPR013377|GO:0044780|bacterial-type flagellum assembly|process
 IPR013380|GO:0005524|ATP binding|function
 IPR013380|GO:0005737|cytoplasm|component
 IPR013380|GO:0006754|ATP biosynthetic process|process
 IPR013380|GO:0030254|protein secretion by the type III secretion system|process
 IPR013380|GO:0030257|type III protein secretion system complex|component
 IPR013380|GO:0046961|proton-transporting ATPase activity, rotational mechanism|function
-IPR013384|GO:0001539|ciliary or flagellar motility|process
+IPR013384|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR013384|GO:0009424|bacterial-type flagellum hook|component
 IPR013385|GO:0030254|protein secretion by the type III secretion system|process
 IPR013386|GO:0009405|pathogenesis|process
@@ -18639,7 +18623,7 @@ IPR014409|GO:0000160|phosphorelay signal transduction system|process
 IPR014409|GO:0004673|protein histidine kinase activity|function
 IPR014409|GO:0016021|integral to membrane|component
 IPR014410|GO:0006355|regulation of transcription, DNA-dependent|process
-IPR014410|GO:0019048|virus-host interaction|process
+IPR014410|GO:0019048|modulation by virus of host morphology or physiology|process
 IPR014412|GO:0003968|RNA-directed RNA polymerase activity|function
 IPR014412|GO:0004252|serine-type endopeptidase activity|function
 IPR014412|GO:0004482|mRNA (guanine-N7-)-methyltransferase activity|function
@@ -19320,8 +19304,13 @@ IPR015527|GO:0006541|glutamine metabolic process|process
 IPR015527|GO:0008242|omega peptidase activity|function
 IPR015535|GO:0016936|galactoside binding|function
 IPR015553|GO:0004867|serine-type endopeptidase inhibitor activity|function
+IPR015553|GO:0030193|regulation of blood coagulation|process
+IPR015553|GO:0045916|negative regulation of complement activation|process
 IPR015555|GO:0004867|serine-type endopeptidase inhibitor activity|function
+IPR015555|GO:0008201|heparin binding|function
+IPR015555|GO:2000266|regulation of blood coagulation, intrinsic pathway|process
 IPR015556|GO:0004867|serine-type endopeptidase inhibitor activity|function
+IPR015556|GO:0043066|negative regulation of apoptotic process|process
 IPR015557|GO:0004867|serine-type endopeptidase inhibitor activity|function
 IPR015559|GO:0005507|copper ion binding|function
 IPR015559|GO:0016716|oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen, another compound as one donor, and incorporation of one atom of oxygen|function
@@ -20102,7 +20091,7 @@ IPR016253|GO:0009966|regulation of signal transduction|process
 IPR016254|GO:0004674|protein serine/threonine kinase activity|function
 IPR016254|GO:0005524|ATP binding|function
 IPR016254|GO:0006468|protein phosphorylation|process
-IPR016254|GO:0016032|viral reproduction|process
+IPR016254|GO:0016032|viral process|process
 IPR016255|GO:0004674|protein serine/threonine kinase activity|function
 IPR016255|GO:0005524|ATP binding|function
 IPR016255|GO:0006446|regulation of translational initiation|process
@@ -20270,7 +20259,7 @@ IPR016400|GO:0050658|RNA transport|process
 IPR016407|GO:0019073|viral DNA genome packaging|process
 IPR016408|GO:0006260|DNA replication|process
 IPR016408|GO:0016020|membrane|component
-IPR016408|GO:0016032|viral reproduction|process
+IPR016408|GO:0016032|viral process|process
 IPR016425|GO:0005506|iron ion binding|function
 IPR016425|GO:0008299|isoprenoid biosynthetic process|process
 IPR016425|GO:0046429|4-hydroxy-3-methylbut-2-en-1-yl diphosphate synthase activity|function
@@ -20347,6 +20336,7 @@ IPR016532|GO:0006357|regulation of transcription from RNA polymerase II promoter
 IPR016532|GO:0016592|mediator complex|component
 IPR016534|GO:0006886|intracellular protein transport|process
 IPR016536|GO:0005737|cytoplasm|component
+IPR016543|GO:0000266|mitochondrial fission|process
 IPR016544|GO:0000702|oxidized base lesion DNA N-glycosylase activity|function
 IPR016544|GO:0003906|DNA-(apurinic or apyrimidinic site) lyase activity|function
 IPR016544|GO:0006284|base-excision repair|process
@@ -20367,6 +20357,7 @@ IPR016569|GO:0042800|histone methyltransferase activity (H3-K4 specific)|functio
 IPR016569|GO:0051568|histone H3-K4 methylation|process
 IPR016574|GO:0009966|regulation of signal transduction|process
 IPR016574|GO:0016020|membrane|component
+IPR016576|GO:0005761|mitochondrial ribosome|component
 IPR016577|GO:0000287|magnesium ion binding|function
 IPR016577|GO:0004016|adenylate cyclase activity|function
 IPR016577|GO:0006171|cAMP biosynthetic process|process
@@ -20490,7 +20481,7 @@ IPR016758|GO:0005506|iron ion binding|function
 IPR016758|GO:0005737|cytoplasm|component
 IPR016758|GO:0006096|glycolysis|process
 IPR016764|GO:0008168|methyltransferase activity|function
-IPR016806|GO:0008180|signalosome|component
+IPR016806|GO:0008180|COP9 signalosome|component
 IPR016807|GO:0005680|anaphase-promoting complex|component
 IPR016807|GO:0030071|regulation of mitotic metaphase/anaphase transition|process
 IPR016807|GO:0031145|anaphase-promoting complex-dependent proteasomal ubiquitin-dependent protein catabolic process|process
@@ -20710,9 +20701,13 @@ IPR017241|GO:0002224|toll-like receptor signaling pathway|process
 IPR017241|GO:0004888|transmembrane signaling receptor activity|function
 IPR017241|GO:0006955|immune response|process
 IPR017241|GO:0016021|integral to membrane|component
+IPR017243|GO:0030133|transport vesicle|component
+IPR017243|GO:0031083|BLOC-1 complex|component
 IPR017244|GO:0005737|cytoplasm|component
 IPR017244|GO:0008990|rRNA (guanine-N2-)-methyltransferase activity|function
 IPR017244|GO:0031167|rRNA methylation|process
+IPR017246|GO:0006886|intracellular protein transport|process
+IPR017246|GO:0031083|BLOC-1 complex|component
 IPR017253|GO:0003677|DNA binding|function
 IPR017253|GO:0003700|sequence-specific DNA binding transcription factor activity|function
 IPR017253|GO:0005634|nucleus|component
@@ -20777,7 +20772,6 @@ IPR017335|GO:0051301|cell division|process
 IPR017336|GO:0005634|nucleus|component
 IPR017336|GO:0005737|cytoplasm|component
 IPR017336|GO:0061015|snRNA import into nucleus|process
-IPR017338|GO:0005104|fibroblast growth factor receptor binding|function
 IPR017340|GO:0000387|spliceosomal snRNP assembly|process
 IPR017340|GO:0000398|mRNA splicing, via spliceosome|process
 IPR017340|GO:0005685|U1 snRNP|component
@@ -20805,6 +20799,9 @@ IPR017361|GO:0046856|phosphatidylinositol dephosphorylation|process
 IPR017361|GO:0051800|phosphatidylinositol-3,4-bisphosphate 3-phosphatase activity|function
 IPR017361|GO:0051895|negative regulation of focal adhesion assembly|process
 IPR017361|GO:0051898|negative regulation of protein kinase B signaling cascade|process
+IPR017364|GO:0000245|spliceosomal complex assembly|process
+IPR017364|GO:0000387|spliceosomal snRNP assembly|process
+IPR017364|GO:0005681|spliceosomal complex|component
 IPR017366|GO:0005634|nucleus|component
 IPR017366|GO:0006355|regulation of transcription, DNA-dependent|process
 IPR017366|GO:0034720|histone H3-K4 demethylation|process
@@ -21048,7 +21045,6 @@ IPR017653|GO:0000287|magnesium ion binding|function
 IPR017653|GO:0008872|glucarate dehydratase activity|function
 IPR017653|GO:0019394|glucarate catabolic process|process
 IPR017654|GO:0008867|galactarate dehydratase activity|function
-IPR017654|GO:0019582|D-galactarate catabolic process|process
 IPR017655|GO:0016052|carbohydrate catabolic process|process
 IPR017655|GO:0047448|5-dehydro-4-deoxyglucarate dehydratase activity|function
 IPR017657|GO:0017000|antibiotic biosynthetic process|process
@@ -21404,7 +21400,7 @@ IPR018000|GO:0005230|extracellular ligand-gated ion channel activity|function
 IPR018000|GO:0006811|ion transport|process
 IPR018000|GO:0016021|integral to membrane|component
 IPR018000|GO:0045211|postsynaptic membrane|component
-IPR018006|GO:0001539|ciliary or flagellar motility|process
+IPR018006|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR018006|GO:0003774|motor activity|function
 IPR018006|GO:0006935|chemotaxis|process
 IPR018006|GO:0009288|bacterial-type flagellum|component
@@ -21992,10 +21988,8 @@ IPR018457|GO:0006810|transport|process
 IPR018457|GO:0016020|membrane|component
 IPR018460|GO:0016020|membrane|component
 IPR018461|GO:0016021|integral to membrane|component
-IPR018464|GO:0000775|chromosome, centromeric region|component
-IPR018464|GO:0005634|nucleus|component
-IPR018464|GO:0007059|chromosome segregation|process
-IPR018464|GO:0051301|cell division|process
+IPR018464|GO:0000776|kinetochore|component
+IPR018464|GO:0034508|centromere complex assembly|process
 IPR018465|GO:0005634|nucleus|component
 IPR018469|GO:0005789|endoplasmic reticulum membrane|component
 IPR018469|GO:0015031|protein transport|process
@@ -22076,6 +22070,8 @@ IPR018528|GO:0004664|prephenate dehydratase activity|function
 IPR018528|GO:0009094|L-phenylalanine biosynthetic process|process
 IPR018536|GO:0017009|protein-phycocyanobilin linkage|process
 IPR018539|GO:0005639|integral to nuclear inner membrane|component
+IPR018552|GO:0006281|DNA repair|process
+IPR018552|GO:0051382|kinetochore assembly|process
 IPR018554|GO:0005634|nucleus|component
 IPR018554|GO:0005737|cytoplasm|component
 IPR018554|GO:0006355|regulation of transcription, DNA-dependent|process
@@ -22188,6 +22184,8 @@ IPR019046|GO:0009307|DNA restriction-modification system|process
 IPR019057|GO:0003677|DNA binding|function
 IPR019057|GO:0009036|Type II site-specific deoxyribonuclease activity|function
 IPR019057|GO:0009307|DNA restriction-modification system|process
+IPR019064|GO:0009036|Type II site-specific deoxyribonuclease activity|function
+IPR019064|GO:0090305|nucleic acid phosphodiester bond hydrolysis|process
 IPR019067|GO:0003677|DNA binding|function
 IPR019067|GO:0009036|Type II site-specific deoxyribonuclease activity|function
 IPR019067|GO:0009307|DNA restriction-modification system|process
@@ -22398,7 +22396,7 @@ IPR019773|GO:0016714|oxidoreductase activity, acting on paired donors, with inco
 IPR019773|GO:0055114|oxidation-reduction process|process
 IPR019774|GO:0016714|oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen, reduced pteridine as one donor, and incorporation of one atom of oxygen|function
 IPR019774|GO:0055114|oxidation-reduction process|process
-IPR019776|GO:0001539|ciliary or flagellar motility|process
+IPR019776|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR019776|GO:0003774|motor activity|function
 IPR019776|GO:0005198|structural molecule activity|function
 IPR019776|GO:0009288|bacterial-type flagellum|component
@@ -22632,17 +22630,13 @@ IPR020003|GO:0005524|ATP binding|function
 IPR020004|GO:0008761|UDP-N-acetylglucosamine 2-epimerase activity|function
 IPR020004|GO:0009384|N-acylmannosamine kinase activity|function
 IPR020004|GO:0046380|N-acetylneuraminate biosynthetic process|process
-IPR020005|GO:0005524|ATP binding|function
-IPR020005|GO:0005737|cytoplasm|component
+IPR020005|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR020005|GO:0006200|ATP catabolic process|process
-IPR020005|GO:0009296|flagellum assembly|process
-IPR020005|GO:0015986|ATP synthesis coupled proton transport|process
-IPR020005|GO:0016820|hydrolase activity, acting on acid anhydrides, catalyzing transmembrane movement of substances|function
 IPR020005|GO:0016887|ATPase activity|function
-IPR020005|GO:0033178|proton-transporting two-sector ATPase complex, catalytic domain|component
+IPR020005|GO:0044780|bacterial-type flagellum assembly|process
 IPR020006|GO:0005525|GTP binding|function
 IPR020006|GO:0005886|plasma membrane|component
-IPR020006|GO:0043064|flagellum organization|process
+IPR020006|GO:0044781|bacterial-type flagellum organization|process
 IPR020021|GO:0016833|oxo-acid-lyase activity|function
 IPR020024|GO:0016301|kinase activity|function
 IPR020024|GO:0016773|phosphotransferase activity, alcohol group as acceptor|function
@@ -23499,6 +23493,7 @@ IPR022245|GO:0004197|cysteine-type endopeptidase activity|function
 IPR022245|GO:0016817|hydrolase activity, acting on acid anhydrides|function
 IPR022245|GO:0017111|nucleoside-triphosphatase activity|function
 IPR022247|GO:0004674|protein serine/threonine kinase activity|function
+IPR022259|GO:0015031|protein transport|process
 IPR022270|GO:0016702|oxidoreductase activity, acting on single donors with incorporation of molecular oxygen, incorporation of two atoms of oxygen|function
 IPR022270|GO:0055114|oxidation-reduction process|process
 IPR022278|GO:0004648|O-phospho-L-serine:2-oxoglutarate aminotransferase activity|function
@@ -23624,15 +23619,14 @@ IPR022422|GO:0006605|protein targeting|process
 IPR022422|GO:0006886|intracellular protein transport|process
 IPR022423|GO:0005185|neurohypophyseal hormone activity|function
 IPR022423|GO:0005576|extracellular region|component
-IPR022425|GO:0001539|ciliary or flagellar motility|process
+IPR022425|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR022425|GO:0006200|ATP catabolic process|process
-IPR022425|GO:0009288|bacterial-type flagellum|component
-IPR022425|GO:0009296|flagellum assembly|process
 IPR022425|GO:0016887|ATPase activity|function
+IPR022425|GO:0044780|bacterial-type flagellum assembly|process
 IPR022426|GO:0009288|bacterial-type flagellum|component
 IPR022426|GO:0016887|ATPase activity|function
 IPR022426|GO:0030257|type III protein secretion system complex|component
-IPR022426|GO:0043064|flagellum organization|process
+IPR022426|GO:0044781|bacterial-type flagellum organization|process
 IPR022429|GO:0000166|nucleotide binding|function
 IPR022429|GO:0005737|cytoplasm|component
 IPR022429|GO:0006419|alanyl-tRNA aminoacylation|process
@@ -23689,6 +23683,7 @@ IPR022490|GO:0015031|protein transport|process
 IPR022490|GO:0015450|P-P-bond-hydrolysis-driven protein transmembrane transporter activity|function
 IPR022494|GO:0003824|catalytic activity|function
 IPR022494|GO:0030976|thiamine pyrophosphate binding|function
+IPR022495|GO:0004674|protein serine/threonine kinase activity|function
 IPR022496|GO:0070526|threonylcarbamoyladenosine biosynthetic process|process
 IPR022498|GO:1901359|tungstate binding|function
 IPR022502|GO:0030976|thiamine pyrophosphate binding|function
@@ -23827,7 +23822,7 @@ IPR022768|GO:0051015|actin filament binding|function
 IPR022778|GO:0004721|phosphoprotein phosphatase activity|function
 IPR022778|GO:0004725|protein tyrosine phosphatase activity|function
 IPR022781|GO:0016021|integral to membrane|component
-IPR022781|GO:0043064|flagellum organization|process
+IPR022781|GO:0044781|bacterial-type flagellum organization|process
 IPR022783|GO:0003677|DNA binding|function
 IPR022783|GO:0005634|nucleus|component
 IPR022783|GO:0006355|regulation of transcription, DNA-dependent|process
@@ -24289,8 +24284,7 @@ IPR023556|GO:0008270|zinc ion binding|function
 IPR023556|GO:0009085|lysine biosynthetic process|process
 IPR023556|GO:0016811|hydrolase activity, acting on carbon-nitrogen (but not peptide) bonds, in linear amides|function
 IPR023557|GO:0016811|hydrolase activity, acting on carbon-nitrogen (but not peptide) bonds, in linear amides|function
-IPR023559|GO:0003677|DNA binding|function
-IPR023559|GO:0009296|flagellum assembly|process
+IPR023559|GO:0044780|bacterial-type flagellum assembly|process
 IPR023559|GO:0045893|positive regulation of transcription, DNA-dependent|process
 IPR023563|GO:0003735|structural constituent of ribosome|function
 IPR023563|GO:0005840|ribosome|component
@@ -24334,6 +24328,8 @@ IPR023598|GO:0006355|regulation of transcription, DNA-dependent|process
 IPR023598|GO:0016591|DNA-directed RNA polymerase II, holoenzyme|component
 IPR023598|GO:0019901|protein kinase binding|function
 IPR023598|GO:0051726|regulation of cell cycle|process
+IPR023599|GO:0016021|integral to membrane|component
+IPR023599|GO:0046677|response to antibiotic|process
 IPR023600|GO:0004326|tetrahydrofolylpolyglutamate synthase activity|function
 IPR023600|GO:0005524|ATP binding|function
 IPR023600|GO:0009396|folic acid-containing compound biosynthetic process|process
@@ -24643,7 +24639,7 @@ IPR023786|GO:0008688|3-(3-hydroxyphenyl)propionate hydroxylase activity|function
 IPR023786|GO:0019622|3-(3-hydroxy)phenylpropionate catabolic process|process
 IPR023786|GO:0055114|oxidation-reduction process|process
 IPR023787|GO:0035438|cyclic-di-GMP binding|function
-IPR023787|GO:0071945|regulation of bacterial flagellum cell motility by regulation of motor speed|process
+IPR023787|GO:0071945|regulation of bacterial-type flagellar cell motility by regulation of motor speed|process
 IPR023788|GO:0005975|carbohydrate metabolic process|process
 IPR023788|GO:0008270|zinc ion binding|function
 IPR023788|GO:0009025|tagatose-bisphosphate aldolase activity|function
@@ -25141,8 +25137,6 @@ IPR024945|GO:0005515|protein binding|function
 IPR024947|GO:0005262|calcium channel activity|function
 IPR024947|GO:0030285|integral to synaptic vesicle membrane|component
 IPR024947|GO:0048488|synaptic vesicle endocytosis|process
-IPR024950|GO:0006470|protein dephosphorylation|process
-IPR024950|GO:0008138|protein tyrosine/serine/threonine phosphatase activity|function
 IPR024951|GO:0004781|sulfate adenylyltransferase (ATP) activity|function
 IPR024956|GO:0000287|magnesium ion binding|function
 IPR024956|GO:0006400|tRNA modification|process
@@ -25540,15 +25534,8 @@ IPR026305|GO:0032021|NELF complex|component
 IPR026305|GO:0034244|negative regulation of transcription elongation from RNA polymerase II promoter|process
 IPR026306|GO:0005634|nucleus|component
 IPR026308|GO:0043065|positive regulation of apoptotic process|process
-IPR026310|GO:0001919|regulation of receptor recycling|process
-IPR026310|GO:0005764|lysosome|component
-IPR026310|GO:0007032|endosome organization|process
-IPR026310|GO:0007040|lysosome organization|process
 IPR026310|GO:0031902|late endosome membrane|component
 IPR026310|GO:0032008|positive regulation of TOR signaling cascade|process
-IPR026310|GO:0042632|cholesterol homeostasis|process
-IPR026310|GO:0043410|positive regulation of MAPK cascade|process
-IPR026310|GO:0045121|membrane raft|component
 IPR026310|GO:0071230|cellular response to amino acid stimulus|process
 IPR026312|GO:0043066|negative regulation of apoptotic process|process
 IPR026313|GO:0043066|negative regulation of apoptotic process|process
@@ -25766,6 +25753,7 @@ IPR026774|GO:0051607|defense response to virus|process
 IPR026777|GO:0032220|plasma membrane fusion involved in cytogamy|process
 IPR026777|GO:0043332|mating projection tip|component
 IPR026778|GO:0097190|apoptotic signaling pathway|process
+IPR026779|GO:0004860|protein kinase inhibitor activity|function
 IPR026781|GO:0000184|nuclear-transcribed mRNA catabolic process, nonsense-mediated decay|process
 IPR026784|GO:0005634|nucleus|component
 IPR026787|GO:0001669|acrosomal vesicle|component
@@ -25798,7 +25786,7 @@ IPR026812|GO:0030479|actin cortical patch|component
 IPR026813|GO:0006897|endocytosis|process
 IPR026813|GO:0032947|protein complex scaffold|function
 IPR026814|GO:0006898|receptor-mediated endocytosis|process
-IPR026815|GO:0001539|ciliary or flagellar motility|process
+IPR026815|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR026815|GO:0003777|microtubule motor activity|function
 IPR026815|GO:0007018|microtubule-based movement|process
 IPR026815|GO:0030031|cell projection assembly|process
@@ -25941,31 +25929,31 @@ IPR026971|GO:0007076|mitotic chromosome condensation|process
 IPR026973|GO:0009022|tRNA nucleotidyltransferase activity|function
 IPR026973|GO:0042780|tRNA 3'-end processing|process
 IPR026974|GO:0005681|spliceosomal complex|component
-IPR026975|GO:0001539|ciliary or flagellar motility|process
+IPR026975|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR026975|GO:0003777|microtubule motor activity|function
 IPR026975|GO:0005858|axonemal dynein complex|component
 IPR026975|GO:0016887|ATPase activity|function
-IPR026976|GO:0001539|ciliary or flagellar motility|process
+IPR026976|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR026976|GO:0003777|microtubule motor activity|function
 IPR026976|GO:0005858|axonemal dynein complex|component
 IPR026976|GO:0016887|ATPase activity|function
-IPR026977|GO:0001539|ciliary or flagellar motility|process
+IPR026977|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR026977|GO:0003777|microtubule motor activity|function
 IPR026977|GO:0005858|axonemal dynein complex|component
 IPR026977|GO:0016887|ATPase activity|function
-IPR026978|GO:0001539|ciliary or flagellar motility|process
+IPR026978|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR026978|GO:0003777|microtubule motor activity|function
 IPR026978|GO:0005858|axonemal dynein complex|component
 IPR026978|GO:0016887|ATPase activity|function
-IPR026979|GO:0001539|ciliary or flagellar motility|process
+IPR026979|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR026979|GO:0003777|microtubule motor activity|function
 IPR026979|GO:0005858|axonemal dynein complex|component
 IPR026979|GO:0016887|ATPase activity|function
-IPR026980|GO:0001539|ciliary or flagellar motility|process
+IPR026980|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR026980|GO:0003777|microtubule motor activity|function
 IPR026980|GO:0005858|axonemal dynein complex|component
 IPR026980|GO:0016887|ATPase activity|function
-IPR026981|GO:0001539|ciliary or flagellar motility|process
+IPR026981|GO:0001539|ciliary or bacterial-type flagellar motility|process
 IPR026981|GO:0003777|microtubule motor activity|function
 IPR026981|GO:0005858|axonemal dynein complex|component
 IPR026981|GO:0016887|ATPase activity|function
@@ -26570,6 +26558,7 @@ IPR027289|GO:0005496|steroid binding|function
 IPR027289|GO:0005634|nucleus|component
 IPR027289|GO:0006355|regulation of transcription, DNA-dependent|process
 IPR027290|GO:0005018|platelet-derived growth factor alpha-receptor activity|function
+IPR027290|GO:0048008|platelet-derived growth factor receptor signaling pathway|process
 IPR027292|GO:0003912|DNA nucleotidylexotransferase activity|function
 IPR027293|GO:0046983|protein dimerization activity|function
 IPR027294|GO:0007186|G-protein coupled receptor signaling pathway|process
@@ -26643,18 +26632,14 @@ IPR027344|GO:0004930|G-protein coupled receptor activity|function
 IPR027344|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR027344|GO:0016021|integral to membrane|component
 IPR027345|GO:0004982|N-formyl peptide receptor activity|function
-IPR027345|GO:0006935|chemotaxis|process
 IPR027345|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR027345|GO:0016021|integral to membrane|component
 IPR027346|GO:0004982|N-formyl peptide receptor activity|function
-IPR027346|GO:0006935|chemotaxis|process
-IPR027346|GO:0006954|inflammatory response|process
 IPR027346|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR027346|GO:0016021|integral to membrane|component
 IPR027347|GO:0004982|N-formyl peptide receptor activity|function
 IPR027347|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR027347|GO:0016021|integral to membrane|component
-IPR027347|GO:0016477|cell migration|process
 IPR027348|GO:0007186|G-protein coupled receptor signaling pathway|process
 IPR027348|GO:0008188|neuropeptide receptor activity|function
 IPR027348|GO:0016021|integral to membrane|component
@@ -26792,7 +26777,7 @@ IPR027529|GO:0005525|GTP binding|function
 IPR027529|GO:0005737|cytoplasm|component
 IPR027529|GO:0006167|AMP biosynthetic process|process
 IPR027530|GO:0005737|cytoplasm|component
-IPR027530|GO:0008180|signalosome|component
+IPR027530|GO:0008180|COP9 signalosome|component
 IPR027531|GO:0003743|translation initiation factor activity|function
 IPR027531|GO:0005737|cytoplasm|component
 IPR027531|GO:0005852|eukaryotic translation initiation factor 3 complex|component
@@ -26853,7 +26838,9 @@ IPR027639|GO:0050532|2-phosphosulfolactate phosphatase activity|function
 IPR027640|GO:0003777|microtubule motor activity|function
 IPR027640|GO:0005871|kinesin complex|component
 IPR027640|GO:0007018|microtubule-based movement|process
+IPR027641|GO:0003779|actin binding|function
 IPR027641|GO:0007015|actin filament organization|process
+IPR027641|GO:2000601|positive regulation of Arp2/3 complex-mediated actin nucleation|process
 IPR027642|GO:0005884|actin filament|component
 IPR027642|GO:0007015|actin filament organization|process
 IPR027642|GO:0045010|actin nucleation|process
@@ -27102,3 +27089,221 @@ IPR027809|GO:0070374|positive regulation of ERK1 and ERK2 cascade|process
 IPR027810|GO:0004944|C5a anaphylatoxin receptor activity|function
 IPR027810|GO:0006935|chemotaxis|process
 IPR027810|GO:0016021|integral to membrane|component
+IPR027881|GO:0005615|extracellular space|component
+IPR027881|GO:0010506|regulation of autophagy|process
+IPR027928|GO:0008201|heparin binding|function
+IPR027929|GO:1900758|negative regulation of D-amino-acid oxidase activity|process
+IPR027938|GO:0045444|fat cell differentiation|process
+IPR027939|GO:0009228|thiamine biosynthetic process|process
+IPR027946|GO:0045490|pectin catabolic process|process
+IPR027946|GO:0047487|oligogalacturonide lyase activity|function
+IPR027969|GO:0034237|protein kinase A regulatory subunit binding|function
+IPR027976|GO:0005634|nucleus|component
+IPR027976|GO:0005668|RNA polymerase transcription factor SL1 complex|component
+IPR027976|GO:0006355|regulation of transcription, DNA-dependent|process
+IPR027982|GO:0004968|gonadotropin-releasing hormone receptor activity|function
+IPR027982|GO:0007186|G-protein coupled receptor signaling pathway|process
+IPR027982|GO:0016021|integral to membrane|component
+IPR027983|GO:0004968|gonadotropin-releasing hormone receptor activity|function
+IPR027983|GO:0007186|G-protein coupled receptor signaling pathway|process
+IPR027983|GO:0016021|integral to membrane|component
+IPR027985|GO:0001881|receptor recycling|process
+IPR027998|GO:0005634|nucleus|component
+IPR027998|GO:0005739|mitochondrion|component
+IPR027998|GO:0045333|cellular respiration|process
+IPR028016|GO:0004930|G-protein coupled receptor activity|function
+IPR028016|GO:0007186|G-protein coupled receptor signaling pathway|process
+IPR028016|GO:0016021|integral to membrane|component
+IPR028017|GO:0004930|G-protein coupled receptor activity|function
+IPR028017|GO:0007186|G-protein coupled receptor signaling pathway|process
+IPR028017|GO:0016021|integral to membrane|component
+IPR028029|GO:0007155|cell adhesion|process
+IPR028056|GO:0042742|defense response to bacterium|process
+IPR028057|GO:0009405|pathogenesis|process
+IPR028057|GO:0017137|Rab GTPase binding|function
+IPR028057|GO:0032313|regulation of Rab GTPase activity|process
+IPR028057|GO:0044161|host cell cytoplasmic vesicle|component
+IPR028060|GO:0050829|defense response to Gram-negative bacterium|process
+IPR028060|GO:0050830|defense response to Gram-positive bacterium|process
+IPR028067|GO:0006955|immune response|process
+IPR028070|GO:0016021|integral to membrane|component
+IPR028088|GO:0003677|DNA binding|function
+IPR028128|GO:0003700|sequence-specific DNA binding transcription factor activity|function
+IPR028128|GO:0005634|nucleus|component
+IPR028128|GO:0006351|transcription, DNA-dependent|process
+IPR028128|GO:0045893|positive regulation of transcription, DNA-dependent|process
+IPR028129|GO:0005802|trans-Golgi network|component
+IPR028129|GO:0042998|positive regulation of Golgi to plasma membrane protein transport|process
+IPR028129|GO:0071253|connexin binding|function
+IPR028130|GO:0005576|extracellular region|component
+IPR028130|GO:0008233|peptidase activity|function
+IPR028130|GO:0031640|killing of cells of other organism|process
+IPR028131|GO:0005737|cytoplasm|component
+IPR028131|GO:0045765|regulation of angiogenesis|process
+IPR028132|GO:0001937|negative regulation of endothelial cell proliferation|process
+IPR028132|GO:0005737|cytoplasm|component
+IPR028132|GO:0016525|negative regulation of angiogenesis|process
+IPR028133|GO:0005869|dynactin complex|component
+IPR028133|GO:0007017|microtubule-based process|process
+IPR028133|GO:0007067|mitosis|process
+IPR028134|GO:0016579|protein deubiquitination|process
+IPR028136|GO:0005737|cytoplasm|component
+IPR028136|GO:0045766|positive regulation of angiogenesis|process
+IPR028137|GO:0006887|exocytosis|process
+IPR028137|GO:0030667|secretory granule membrane|component
+IPR028138|GO:0005576|extracellular region|component
+IPR028138|GO:0007218|neuropeptide signaling pathway|process
+IPR028140|GO:0009372|quorum sensing|process
+IPR028142|GO:0005102|receptor binding|function
+IPR028145|GO:0007130|synaptonemal complex assembly|process
+IPR028145|GO:0007131|reciprocal meiotic recombination|process
+IPR028145|GO:0007283|spermatogenesis|process
+IPR028160|GO:0000462|maturation of SSU-rRNA from tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)|process
+IPR028160|GO:0005730|nucleolus|component
+IPR028160|GO:0030686|90S preribosome|component
+IPR028160|GO:0030688|preribosome, small subunit precursor|component
+IPR028161|GO:0004325|ferrochelatase activity|function
+IPR028161|GO:0019354|siroheme biosynthetic process|process
+IPR028161|GO:0043115|precorrin-2 dehydrogenase activity|function
+IPR028174|GO:0005007|fibroblast growth factor-activated receptor activity|function
+IPR028174|GO:0060173|limb development|process
+IPR028175|GO:0005007|fibroblast growth factor-activated receptor activity|function
+IPR028175|GO:0048701|embryonic cranial skeleton morphogenesis|process
+IPR028176|GO:0001501|skeletal system development|process
+IPR028176|GO:0005007|fibroblast growth factor-activated receptor activity|function
+IPR028177|GO:0005007|fibroblast growth factor-activated receptor activity|function
+IPR028179|GO:0005923|tight junction|component
+IPR028180|GO:0000723|telomere maintenance|process
+IPR028180|GO:0004003|ATP-dependent DNA helicase activity|function
+IPR028180|GO:0005634|nucleus|component
+IPR028180|GO:0006302|double-strand break repair|process
+IPR028180|GO:0006310|DNA recombination|process
+IPR028180|GO:0007569|cell aging|process
+IPR028180|GO:0008408|3'-5' exonuclease activity|function
+IPR028181|GO:0001772|immunological synapse|component
+IPR028181|GO:0016021|integral to membrane|component
+IPR028181|GO:0097197|tetraspanin-enriched microdomain|component
+IPR028184|GO:0006355|regulation of transcription, DNA-dependent|process
+IPR028192|GO:0006915|apoptotic process|process
+IPR028196|GO:0005576|extracellular region|component
+IPR028205|GO:0008544|epidermis development|process
+IPR028209|GO:0001919|regulation of receptor recycling|process
+IPR028209|GO:0007040|lysosome organization|process
+IPR028209|GO:0031902|late endosome membrane|component
+IPR028209|GO:0032008|positive regulation of TOR signaling cascade|process
+IPR028209|GO:0032439|endosome localization|process
+IPR028209|GO:0042632|cholesterol homeostasis|process
+IPR028209|GO:0043410|positive regulation of MAPK cascade|process
+IPR028209|GO:0045121|membrane raft|component
+IPR028209|GO:0071230|cellular response to amino acid stimulus|process
+IPR028209|GO:0071986|Ragulator complex|component
+IPR028210|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028210|GO:0005576|extracellular region|component
+IPR028210|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028211|GO:0000390|spliceosomal complex disassembly|process
+IPR028211|GO:0071008|U2-type post-mRNA release spliceosomal complex|component
+IPR028221|GO:0005911|cell-cell junction|component
+IPR028222|GO:0044599|AP-5 adaptor complex|component
+IPR028223|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028223|GO:0005576|extracellular region|component
+IPR028223|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028224|GO:0007605|sensory perception of sound|process
+IPR028226|GO:0000278|mitotic cell cycle|process
+IPR028232|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028232|GO:0005576|extracellular region|component
+IPR028232|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028233|GO:0034464|BBSome|component
+IPR028233|GO:0042384|cilium assembly|process
+IPR028239|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028239|GO:0005576|extracellular region|component
+IPR028239|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028240|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028240|GO:0005576|extracellular region|component
+IPR028240|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028242|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028242|GO:0005576|extracellular region|component
+IPR028242|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028246|GO:0036128|CatSper complex|component
+IPR028246|GO:0097228|sperm principal piece|component
+IPR028247|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028247|GO:0005576|extracellular region|component
+IPR028247|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028249|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028249|GO:0005576|extracellular region|component
+IPR028249|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028251|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028251|GO:0005576|extracellular region|component
+IPR028251|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028252|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028252|GO:0005576|extracellular region|component
+IPR028252|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028253|GO:0005576|extracellular region|component
+IPR028253|GO:0008083|growth factor activity|function
+IPR028254|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028255|GO:0000776|kinetochore|component
+IPR028255|GO:0003677|DNA binding|function
+IPR028255|GO:0051382|kinetochore assembly|process
+IPR028256|GO:0000939|condensed chromosome inner kinetochore|component
+IPR028256|GO:0003677|DNA binding|function
+IPR028256|GO:0051382|kinetochore assembly|process
+IPR028262|GO:0000723|telomere maintenance|process
+IPR028268|GO:0031929|TOR signaling cascade|process
+IPR028268|GO:0031932|TORC2 complex|component
+IPR028270|GO:0001558|regulation of cell growth|process
+IPR028270|GO:0030950|establishment or maintenance of actin cytoskeleton polarity|process
+IPR028270|GO:0031505|fungal-type cell wall organization|process
+IPR028270|GO:0031932|TORC2 complex|component
+IPR028271|GO:0003723|RNA binding|function
+IPR028271|GO:0005845|mRNA cap binding complex|component
+IPR028271|GO:0032259|methylation|process
+IPR028272|GO:0009790|embryo development|process
+IPR028272|GO:0030334|regulation of cell migration|process
+IPR028272|GO:0031932|TORC2 complex|component
+IPR028272|GO:0032956|regulation of actin cytoskeleton organization|process
+IPR028273|GO:0035556|intracellular signal transduction|process
+IPR028279|GO:0005576|extracellular region|component
+IPR028279|GO:0008083|growth factor activity|function
+IPR028284|GO:0005576|extracellular region|component
+IPR028284|GO:0007399|nervous system development|process
+IPR028284|GO:0008083|growth factor activity|function
+IPR028285|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028285|GO:0005576|extracellular region|component
+IPR028285|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028287|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028287|GO:0005576|extracellular region|component
+IPR028287|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028288|GO:0005856|cytoskeleton|component
+IPR028288|GO:0030036|actin cytoskeleton organization|process
+IPR028289|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028289|GO:0005576|extracellular region|component
+IPR028289|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028290|GO:0005769|early endosome|component
+IPR028290|GO:0034314|Arp2/3 complex-mediated actin nucleation|process
+IPR028290|GO:0043014|alpha-tubulin binding|function
+IPR028290|GO:0071203|WASH complex|component
+IPR028291|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028291|GO:0005576|extracellular region|component
+IPR028291|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028292|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028292|GO:0005576|extracellular region|component
+IPR028292|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028293|GO:0030036|actin cytoskeleton organization|process
+IPR028295|GO:0008154|actin polymerization or depolymerization|process
+IPR028295|GO:0015629|actin cytoskeleton|component
+IPR028296|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028296|GO:0005576|extracellular region|component
+IPR028296|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028297|GO:0003779|actin binding|function
+IPR028297|GO:0006897|endocytosis|process
+IPR028297|GO:0007015|actin filament organization|process
+IPR028297|GO:0030479|actin cortical patch|component
+IPR028297|GO:2000601|positive regulation of Arp2/3 complex-mediated actin nucleation|process
+IPR028302|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028302|GO:0005576|extracellular region|component
+IPR028302|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028303|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028303|GO:0005576|extracellular region|component
+IPR028303|GO:0008543|fibroblast growth factor receptor signaling pathway|process
+IPR028304|GO:0005104|fibroblast growth factor receptor binding|function
+IPR028304|GO:0005576|extracellular region|component
+IPR028304|GO:0008543|fibroblast growth factor receptor signaling pathway|process
