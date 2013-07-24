@@ -79,6 +79,9 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
+                if(verboseFlag){
+                    statsUtil.displayMemoryAndRunningJobs();
+                }
                 if(verboseFlag && !controlledLogging){
                     if(statsUtil.getUnfinishedJobs() < (statsUtil.getTotalJobs() / 2)){
                         System.out.println(Utilities.getTimeNow() + "Step instances left: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());

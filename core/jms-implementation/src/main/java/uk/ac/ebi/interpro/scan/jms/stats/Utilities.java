@@ -1,8 +1,14 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
+import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
+import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
+import uk.ac.ebi.interpro.scan.io.cli.FileIsNotADirectoryException;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -140,7 +146,7 @@ public class Utilities {
 
         Process pr=pb.start();
         pr.waitFor();
-        if (pr.exitValue()==0) {
+        if (pr.exitValue() == 0) {
             BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
             return outReader.readLine().trim();
         } else {
@@ -148,4 +154,63 @@ public class Utilities {
             return "";
         }
     }
+
+    /**
+     * Gets a string representing the pid of this program - Java VM
+     */
+    public static String getSwapMemoryDetails(String PID) throws IOException,InterruptedException {
+
+        String [] memoryStats;
+        Vector<String> commands=new Vector<String>();
+        commands.add("/bin/bash");
+        commands.add("-c");
+        commands.add("ps -p "+ PID + " -o vsz,rss --no-header");
+//        commands.add("echo ps -p "+ PID + " -o vsz,rss | sed 1d");
+        ProcessBuilder pb = new ProcessBuilder(commands);
+        System.out.println(" Command is : " + pb.command());
+
+        Process pr = pb.start();
+        pr.waitFor();
+        if (pr.exitValue()==0) {
+            BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
+            memoryStats = outReader.readLine().trim().split("");
+            System.out.println(" String is : " + memoryStats);
+            int virtualMemory = Integer.parseInt(memoryStats[0]);
+            int residentMemory = Integer.parseInt(memoryStats[1]);
+            double percentMemory = Double.parseDouble(memoryStats[2]);
+            int swapEstimate =  virtualMemory -  residentMemory;
+            return "VSZ: " + virtualMemory / 1024 + " RSS: " + residentMemory / 1024 + " SWAP?: " +  swapEstimate / 1024 +" %MEM: " + percentMemory;
+        } else {
+//            System.out.println("Error while getting PID");
+            return "";
+        }
+    }
+    /**
+     * Gets a string representing the pid of this program - Java VM
+     */
+    public static String getSwapMemoryDetailsCLC(String PID) throws IOException,InterruptedException {
+
+        String [] memoryStats;
+        Vector<String> commands=new Vector<String>();
+        final CommandLineConversation clc = new CommandLineConversationImpl();
+
+        commands.add("/bin/bash");
+        commands.add("-c");
+        commands.add("'ps -p "+ PID + " -o vsz,rss --no-header'");
+//        commands.add("echo ps -p "+ PID + " -o vsz,rss | sed 1d");
+        ProcessBuilder pb = new ProcessBuilder(commands);
+        System.out.println(" Command is : " + pb.command());
+        int exitStatus = clc.runCommand(false, commands);
+        String clcOutput = clc.getOutput();
+        memoryStats = clcOutput.trim().split("");
+        System.out.println(" String is : " + clcOutput);
+        int virtualMemory = Integer.parseInt(memoryStats[0]);
+        int residentMemory = Integer.parseInt(memoryStats[1]);
+        double percentMemory = Double.parseDouble(memoryStats[2]);
+        int swapEstimate = virtualMemory - residentMemory;
+        return "VSZ: " + virtualMemory / 1024 + " RSS: " + residentMemory / 1024 + " SWAP?: " + swapEstimate / 1024 + " %MEM: " + percentMemory;
+
+    }
+
+
 }

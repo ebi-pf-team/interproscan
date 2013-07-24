@@ -4,19 +4,18 @@ import com.sun.management.HotSpotDiagnosticMXBean;
 import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import javax.jms.*;
 import javax.management.MBeanServer;
-import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,6 +60,19 @@ public class StatsUtil {
     private ProteinDAO proteinDAO;
 
     static private AtomicInteger remoteJobsCompleted = new AtomicInteger(0);
+
+    private final List<String> runningJobs = new ArrayList<String>();
+    private final Object jobListLock = new Object();
+    private long timeOfLastMemoryDisplay = System.currentTimeMillis();
+
+    private  long startUpTime;
+    private long maximumLifeMillis;
+
+    private long currentMasterClockTime;
+    private long currentMasterlifeSpanRemaining;
+
+    private SystemInfo systemInfo;
+
 
     public StatsUtil() {
 
@@ -146,6 +158,81 @@ public class StatsUtil {
         this.unfinishedJobs = unfinishedJobs;
     }
 
+    public long getStartUpTime() {
+        return startUpTime;
+    }
+
+    public void setStartUpTime(long startUpTime) {
+        this.startUpTime = startUpTime;
+    }
+
+    public long getMaximumLifeMillis() {
+        return maximumLifeMillis;
+    }
+
+    public void setMaximumLifeMillis(long maximumLifeMillis) {
+        this.maximumLifeMillis = maximumLifeMillis;
+    }
+
+    public long getCurrentMasterClockTime() {
+        return currentMasterClockTime;
+    }
+
+    public void setCurrentMasterClockTime(long currentMasterClockTime) {
+        this.currentMasterClockTime = currentMasterClockTime;
+    }
+
+    public long getCurrentMasterlifeSpanRemaining() {
+        return currentMasterlifeSpanRemaining;
+    }
+
+    public void setCurrentMasterlifeSpanRemaining(long currentMasterlifeSpanRemaining) {
+        this.currentMasterlifeSpanRemaining = currentMasterlifeSpanRemaining;
+    }
+
+    public SystemInfo getSystemInfo() {
+        return systemInfo;
+    }
+
+    public void setSystemInfo(SystemInfo systemInfo) {
+        this.systemInfo = systemInfo;
+    }
+
+    public void jobStarted(String stepId) {
+        synchronized (jobListLock) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Job " + stepId + " added to Worker.runningJobs");
+            }
+            runningJobs.add(stepId);
+        }
+    }
+
+    public void jobFinished(String stepId) {
+        synchronized (jobListLock) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Job " + stepId + " removed from Worker.runningJobs");
+            }
+            if (!runningJobs.remove(stepId)) {
+                LOGGER.error("Worker.jobFinished(jmsMessageId) has been called with a message ID that it does not recognise: " + stepId);
+            }
+//            lastMessageFinishedTime = System.currentTimeMillis(); //new Date().getTime();
+        }
+    }
+
+    //
+    public void displayMemoryAndRunningJobs(){
+        Long now = System.currentTimeMillis();
+        Long timeSinceLastMemoryDisplay = now - timeOfLastMemoryDisplay;
+        if(timeSinceLastMemoryDisplay > 5 * 1000){
+            displayMemInfo();
+            System.out.println(Utilities.getTimeNow() + " Current active Jobs" );
+            for(String runningJob:runningJobs){
+                System.out.println(runningJob);
+            }
+            timeOfLastMemoryDisplay = System.currentTimeMillis();
+        }
+
+    }
     /**
      * poll  the statistics broker plugin
      * @param queue
@@ -332,6 +419,34 @@ public class StatsUtil {
         MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heap = memBean.getHeapMemoryUsage();
         MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
+
+        if(systemInfo == null){
+            systemInfo = new SystemInfo();
+        }
+        System.out.println("SystemInfo \n " + systemInfo.Info());
+    }
+
+    public void displaySystemInfo(){
+        if(systemInfo == null){
+            systemInfo = new SystemInfo();
+        }
+        System.out.println(Utilities.getTimeNow() + " " + "SystemInfo \n " + systemInfo.Info());
+    }
+
+    public void displayMemInfo(){
+        if(systemInfo == null){
+            systemInfo = new SystemInfo();
+        }
+        System.out.println(Utilities.getTimeNow() + " " + systemInfo.MemInfo());
+        // get virtual memory etc
+        String PID = "";
+//        try{
+//            PID = Utilities.getPid();
+//            System.out.println(Utilities.getTimeNow() + " " + Utilities.getSwapMemoryDetails(PID));
+//        }catch (Exception ex ){
+//            LOGGER.debug("Error in getting process PID" + ex);
+//            System.out.println(Utilities.getTimeNow() + " Failed to get other memory stats - PID : " + PID);
+//        }
     }
 
     public void memoryMonitor(){
@@ -339,6 +454,7 @@ public class StatsUtil {
         MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heap = memBean.getHeapMemoryUsage();
         MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
+
 
         // init code
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
@@ -379,4 +495,5 @@ public class StatsUtil {
         }
         return largest;
     }
+
 }

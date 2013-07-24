@@ -100,6 +100,7 @@
         <property name="maxMessagesOnQueuePerConsumer" value="${worker.maxunfinished.jobs}"/>
         <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
+        <property name="maxConcurrentInVmWorkerCountForWorkers" value="${worker.maxnumber.of.embedded.workers}"/>
         <property name="verboseFlag" value="${verbose.flag}"/>
     </bean>
 
@@ -154,6 +155,7 @@
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
         <property name="verboseFlag" value="${verbose.flag}"/>
+        <property name="statsUtil" ref="statsUtil"/>
     </bean>
 
 

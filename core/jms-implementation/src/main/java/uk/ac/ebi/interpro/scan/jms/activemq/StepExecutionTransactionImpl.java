@@ -11,11 +11,9 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
+import javax.jms.*;
 import java.io.File;
+import java.lang.IllegalStateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +32,8 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
     private List<String> validatedDirectories = new ArrayList<String>();
 
     private static final Object validDirectoryLock = new Object();
+
+    public static final String CAN_RUN_REMOTELY_PROPERTY = "remote";
 
     private Jobs jobs;
 
@@ -81,6 +81,7 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
             LOGGER.debug("Step execution id: " + stepExecution.getId());
             LOGGER.debug("Step: " + stepExecution.toString());
         }
+        final boolean canRunRemotely = !step.isRequiresDatabaseAccess();
 
         step.execute(stepInstance, getValidWorkingDirectory(step));
         stepExecution.completeSuccessfully();
@@ -90,7 +91,9 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
 
         jmsTemplate.send(jobResponseQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                return session.createObjectMessage(stepExecution);
+                final ObjectMessage message = session.createObjectMessage(stepExecution);
+                message.setBooleanProperty(CAN_RUN_REMOTELY_PROPERTY, canRunRemotely);
+                return message;
             }
         });
 
