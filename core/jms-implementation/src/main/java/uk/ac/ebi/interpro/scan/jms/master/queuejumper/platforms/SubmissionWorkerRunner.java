@@ -51,7 +51,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private boolean gridArray = false;
 
-
+    private long currentMasterClockTime;
+    private long lifeSpanRemaining;
 
     @Required
     public void setGridJobsLimit(int gridJobsLimit) {
@@ -116,6 +117,22 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     public void setUserDir(String userDir) {
         this.userDir = userDir;
+    }
+
+    public long getCurrentMasterClockTime() {
+        return currentMasterClockTime;
+    }
+
+    public void setCurrentMasterClockTime(long currentMasterClockTime) {
+        this.currentMasterClockTime = currentMasterClockTime;
+    }
+
+    public long getLifeSpanRemaining() {
+        return lifeSpanRemaining;
+    }
+
+    public void setLifeSpanRemaining(long lifeSpanRemaining) {
+        this.lifeSpanRemaining = lifeSpanRemaining;
     }
 
     /**
@@ -241,6 +258,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                 command.append(" --clusterrunid=")
                         .append(projectId);
             }
+            command.append(" --mastermaxlife=")
+                        .append(currentMasterClockTime + ":" + lifeSpanRemaining);
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Command ABOUT to be submitted: " + command);
