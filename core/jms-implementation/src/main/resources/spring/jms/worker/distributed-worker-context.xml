@@ -258,6 +258,7 @@
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
         <property name="controller" ref="distributedWorkerController"/>
         <property name="verboseFlag" value="${verbose.flag}"/>
+        <property name="statsUtil" ref="workerStatsUtil"/>
     </bean>
 
     <!--<bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->

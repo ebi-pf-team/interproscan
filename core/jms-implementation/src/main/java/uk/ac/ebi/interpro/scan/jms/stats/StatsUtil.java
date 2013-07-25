@@ -440,13 +440,14 @@ public class StatsUtil {
         System.out.println(Utilities.getTimeNow() + " " + systemInfo.MemInfo());
         // get virtual memory etc
         String PID = "";
-//        try{
-//            PID = Utilities.getPid();
-//            System.out.println(Utilities.getTimeNow() + " " + Utilities.getSwapMemoryDetails(PID));
-//        }catch (Exception ex ){
-//            LOGGER.debug("Error in getting process PID" + ex);
-//            System.out.println(Utilities.getTimeNow() + " Failed to get other memory stats - PID : " + PID);
-//        }
+        try{
+            PID = Utilities.getPid();
+            System.out.println(Utilities.getTimeNow() + " " + Utilities.getSwapMemoryDetails(PID));
+        }catch (Exception ex ){
+            LOGGER.debug("Error in getting process PID" + ex);
+            System.out.println(Utilities.getTimeNow() + " Failed to get other memory stats - PID : " + PID + " " + ex);
+            ex.printStackTrace();
+        }
     }
 
     public void memoryMonitor(){
