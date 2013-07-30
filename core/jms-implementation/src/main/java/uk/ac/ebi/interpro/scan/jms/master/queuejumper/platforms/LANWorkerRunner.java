@@ -133,4 +133,19 @@ public class LANWorkerRunner implements WorkerRunner {
     public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, boolean masterWorker) {
         startupNewWorker();
     }
+
+    /**
+     * See {@link #startupNewWorker(int, String, String)} }
+     * The newWorkersCount is the number of workers to be created using a job Array
+     *
+     * * TODO: test it in this LAN mode?
+     * @param priority
+     * @param tcpUri
+     * @param temporaryDirectory
+     * @param newWorkersCount
+     */
+    @Override
+    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, int newWorkersCount) {
+        startupNewWorker();
+    }
 }

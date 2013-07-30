@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener;
@@ -17,11 +18,9 @@ import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
-import javax.jms.Connection;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Session;
+import javax.jms.*;
 import java.io.IOException;
+import java.lang.IllegalStateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -62,6 +61,7 @@ public class WorkerImpl implements Worker {
     private ResponseQueueMessageListener responseQueueMessageListener;
     private ManagerTopicMessageListener managerTopicMessageListener;
 
+    private WorkerMessageSender workerMessageSender;
 
     private boolean shutdown = false;
 
@@ -102,10 +102,11 @@ public class WorkerImpl implements Worker {
 
     private int completionFactor = 20;
     private int maxConsumerSize = 40;
-    private int queueConsumerRatio = 16;
+    private int queueConsumerRatio = 99;
 
     protected JmsTemplate localJmsTemplate;
     protected JmsTemplate remoteJmsTemplate;
+    private JmsTemplate jmsTopicTemplate;
 
     protected final String STATS_BROKER = "ActiveMQ.Statistics.Destination.";
 
@@ -122,11 +123,15 @@ public class WorkerImpl implements Worker {
 
     private boolean gridThrottle = true;
 
+    private String gridName;
+
     private TemporaryDirectoryManager temporaryDirectoryManager;
 
     private int maxUnfinishedJobs;
 
     protected WorkerState workerState;
+
+    boolean verboseFlag = false;
 
     /**
      * Constructor that requires a DefaultMessageListenerContainer - this needs to be set before anything else.
@@ -204,9 +209,10 @@ public class WorkerImpl implements Worker {
     }
 
     @Required
-    public void setManagerTopicMessageListener(ManagerTopicMessageListener managerTopicMessageListener) {
-        this.managerTopicMessageListener = managerTopicMessageListener;
+    public void setWorkerMessageSender(WorkerMessageSender workerMessageSender) {
+        this.workerMessageSender = workerMessageSender;
     }
+
 
     @Required
     public void setTemporaryDirectoryManager(TemporaryDirectoryManager temporaryDirectoryManager) {
@@ -219,6 +225,12 @@ public class WorkerImpl implements Worker {
     }
 
     @Required
+    public void setManagerTopicMessageListener(ManagerTopicMessageListener managerTopicMessageListener) {
+        this.managerTopicMessageListener = managerTopicMessageListener;
+    }
+
+
+    @Required
     public void setWorkerRunnerHighMemory(WorkerRunner workerRunnerHighMemory) {
         this.workerRunnerHighMemory = workerRunnerHighMemory;
     }
@@ -227,6 +239,7 @@ public class WorkerImpl implements Worker {
         this.queueConsumerRatio = queueConsumerRatio;
     }
 
+    @Required
     public void setMaxConsumerSize(int maxConsumerSize) {
         this.maxConsumerSize = maxConsumerSize;
     }
@@ -298,6 +311,11 @@ public class WorkerImpl implements Worker {
     }
 
     @Required
+    public void setJmsTopicTemplate(JmsTemplate jmsTopicTemplate) {
+        this.jmsTopicTemplate = jmsTopicTemplate;
+    }
+
+    @Required
     public void setHighMemory(boolean highMemory) {
         this.highMemory = highMemory;
 
@@ -319,6 +337,7 @@ public class WorkerImpl implements Worker {
         return tcpUri;
     }
 
+    @Required
     public void setStatsUtil(StatsUtil statsUtil) {
         this.statsUtil = statsUtil;
     }
@@ -407,6 +426,24 @@ public class WorkerImpl implements Worker {
         this.currentMasterlifeSpanRemaining = currentMasterlifeSpanRemaining;
     }
 
+    public boolean isVerboseFlag() {
+        return verboseFlag;
+    }
+
+    public void setVerboseFlag(boolean verboseFlag) {
+        this.verboseFlag = verboseFlag;
+    }
+
+
+    public String getGridName() {
+        return gridName;
+    }
+
+    @Required
+    public void setGridName(String gridName) {
+        this.gridName = gridName;
+    }
+
     public void jobStarted(String jmsMessageId) {
         synchronized (jobListLock) {
             if (LOGGER.isDebugEnabled()) {
@@ -477,7 +514,7 @@ public class WorkerImpl implements Worker {
             final boolean exceededIdleTime = (now - lastMessageFinishedTime) > maximumIdleTimeMillis;
             LOGGER.debug("Now: "+ now+ " lastMessageFinished: " + lastMessageFinishedTime +" IdleTime: " +(now - lastMessageFinishedTime) + " maxIdleTime: " + maximumIdleTimeMillis);
             //if exceededIdleTime check if workers have running jobs
-            if (runningJobs.size() == 0 && (exceededLifespan || (exceededIdleTime && (!workersHaveRunningJobs())))) {
+            if (exceededLifespan || runningJobs.size() == 0 && (exceededLifespan || (exceededIdleTime && (!workersHaveRunningJobs())))) {
 
                 if (LOGGER.isInfoEnabled()) {
                     if (exceededLifespan) {
@@ -524,7 +561,7 @@ public class WorkerImpl implements Worker {
             }
         });
         thread.start();
-        long masterBrokerStartUpTime = maximumIdleTimeMillis/2;
+        long masterBrokerStartUpTime = maximumIdleTimeMillis / 2;
         long endTimeMillis = System.currentTimeMillis() + masterBrokerStartUpTime;
         LOGGER.info("Wait for configureMasterBrokerConnection to finish, wait time:" + masterBrokerStartUpTime);
         while (thread.isAlive()) {
@@ -534,26 +571,42 @@ public class WorkerImpl implements Worker {
             }
             try {
                 Thread.sleep(50);
+                LOGGER.debug(Utilities.getTimeNow() + " Worker run() - configureMasterBrokerConnection thread.isAlive()");
             }
             catch (InterruptedException ex) {
                  ex.printStackTrace();
             }
         }
-
-
+        if(isVerboseFlag()){
+            System.out.println(Utilities.getTimeNow() + " Worker run() main loop");
+        }
+        if (statsUtil != null){
+            LOGGER.debug("StatsUtil is okay");
+        }else{
+            LOGGER.debug("StatsUtil is not okay, it is null");
+        }
         statsUtil.pollStatsBrokerJobQueue();
+        LOGGER.debug("check statutils");
         try {
             while (!stopIfAppropriate()) {
                 if (LOGGER.isTraceEnabled()) LOGGER.trace("State while running:");
-
+                if(verboseFlag){
+                    System.out.println(Utilities.getTimeNow() + "Worker  ");
+                }
 //                LOGGER.debug("Listening on: "+ remoteQueueJmsContainer.getDestinationName() +" or " + statsUtil.getQueueName(remoteQueueJmsContainer.getDestination()));
                 //populate the statistics broker values
                 statsUtil.pollStatsBrokerResponseQueue();
                 LOGGER.debug("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
-
+                if(verboseFlag){
+                    System.out.println(Utilities.getTimeNow() + "Worker response stats ");
+                    System.out.println("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+                }
                 statsUtil.pollStatsBrokerJobQueue();
                 LOGGER.debug("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
-
+                if(verboseFlag){
+                    System.out.println(Utilities.getTimeNow() + "Worker job request stats ");
+                    System.out.println("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
+                }
 
                 //check/manage remoteQueueListenerContainer
                 if(gridThrottle){
@@ -567,6 +620,9 @@ public class WorkerImpl implements Worker {
 
                 //create worker is necessary
                 if(canSpawnWorkers()){
+                    if(verboseFlag){
+                        System.out.println(Utilities.getTimeNow() + " Worker run() check if new worker is required");
+                    }
                     if (isNewWorkersRequired()) {
                         createWorker();
                     }
@@ -588,16 +644,23 @@ public class WorkerImpl implements Worker {
             //statsUtil.getStatsMessageListener().hasConsumers()
             LOGGER.debug("Worker Run(): in Shutdown mode.");
             //dont exit until the workers have completed all the tasks and the responseMonitor has completed sending response messages to the master
-            while (workersHaveRunningJobs() || responseQueueListenerBusy) {
+            while (workersHaveRunningJobs() || runningJobs.size() > 0 || responseQueueListenerBusy) {
                 //progress Report
                 statsUtil.displayWorkerProgress();
                 Thread.sleep(waitingTime);
             }
             //send shutdown message
             try {
-                managerTopicMessageListener.getWorkerMessageSender().sendShutDownMessage();
-            } catch (JMSException e){
-                LOGGER.warn("JMSException thrown. Unable to connect to remote workers", e);
+                LOGGER.warn("Send shutdown message to workers");
+                //workerMessageSender.sendShutDownMessage();
+                jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
+                    public Message createMessage(Session session) throws JMSException {
+                        return session.createObjectMessage();
+                    }
+                });
+            } catch (Exception e){
+                LOGGER.warn("Exception thrown while sending shutdown message");
+                e.printStackTrace();
             }
             //sleep for 4 seconds and then exit
             Thread.sleep(10*1000);
@@ -623,36 +686,40 @@ public class WorkerImpl implements Worker {
     private void createWorker() {
         LOGGER.debug("Creating a worker.");
         final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
-        int numberOfNewWorkers = 0;
+        int numberOfNewWorkers = 1;
         if(statsUtil.getStatsMessageListener().getConsumers() > 0){
             final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
             int currentRemoteWorkersCount = statsMessageListener.getConsumers() - maxConcurrentInVmWorkerCount;
-            queueConsumerRatio = maxConcurrentInVmWorkerCount * 2;
+            queueConsumerRatio = maxConcurrentInVmWorkerCount * 4 / tier;
             int idealRemoteWorkersCount =  statsMessageListener.getQueueSize() /  queueConsumerRatio;
-            if(idealRemoteWorkersCount > maxConsumerSize){
-                idealRemoteWorkersCount = maxConsumerSize;
+            if(idealRemoteWorkersCount > currentRemoteWorkersCount ){
+                numberOfNewWorkers = idealRemoteWorkersCount - currentRemoteWorkersCount;
+                if(numberOfNewWorkers + currentRemoteWorkersCount > maxConsumerSize){
+                    numberOfNewWorkers = maxConsumerSize -currentRemoteWorkersCount;
+                }
             }
-            numberOfNewWorkers = idealRemoteWorkersCount - currentRemoteWorkersCount;
+            if(verboseFlag){
 //            numberOfNewWorkers = statsUtil.getUnfinishedJobs()/statsUtil.getStatsMessageListener().getConsumers();
-            System.out.println("worker status: "
+                System.out.println("worker status: "
                     + " tier: " + tier
                     + " maxConsumerSize : " + maxConsumerSize
                     + " currentRemoteWorkersCount " + currentRemoteWorkersCount
                     + " queueConsumerRatio: " + queueConsumerRatio
                     + " idealRemoteWorkersCount: " + idealRemoteWorkersCount
                     + " numberOfNewWorkers: " + numberOfNewWorkers);
+            }
         }
 
         setSubmissionWorkerRunnerClockTime();
-        for (int i=0; i <= numberOfNewWorkers; i++) {
-            if (highMemory) {
-                LOGGER.debug("Starting a high memory worker.");
-                workerRunnerHighMemory.startupNewWorker(priority, tcpUri, temporaryDirectoryName);
-            } else {
-                LOGGER.debug("Starting a normal worker.");
-                workerRunner.startupNewWorker(priority, tcpUri, temporaryDirectoryName);
-            }
+
+        if (highMemory) {
+            LOGGER.debug("Starting high memory workers.");
+            workerRunnerHighMemory.startupNewWorker(priority, tcpUri, temporaryDirectoryName, numberOfNewWorkers);
+        } else {
+            LOGGER.debug("Starting normal workers.");
+            workerRunner.startupNewWorker(priority, tcpUri, temporaryDirectoryName, numberOfNewWorkers);
         }
+
     }
 
     public String getNumberOfWorkersSpawnedString(){
@@ -684,7 +751,17 @@ public class WorkerImpl implements Worker {
     public boolean canSpawnWorkers(){
 
         boolean canSpawnWorker = false;
-        if(!((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).getGridName().equals("lsf")){
+
+        if(isVerboseFlag()){
+            System.out.println("canSpawnWorkers - gridName: "
+                  +  gridName
+                  + " tier : " + tier
+                  + " maxTierDepth: " + maxTierDepth
+                  + " lifeRemaing: " + lifeRemaining()
+                  + " maximumLifeMillis: " + maximumLifeMillis
+            );
+        }
+        if(!gridName.equals("lsf")){
             return false;
         }
         if(tier == maxTierDepth){
@@ -822,24 +899,42 @@ public class WorkerImpl implements Worker {
         LOGGER.debug("New worker Required - RequestQueue Stats: " + statsMessageListener.getStats());
 
         boolean quickSpawnMode = false;
-        int remoteWorkerCount = getNumberOfWorkers();
-        if (statsMessageListener.getConsumers() < statsMessageListener.getQueueSize()){
-            remoteWorkerCount = statsMessageListener.getConsumers() - maxConcurrentInVmWorkerCount;
-            queueConsumerRatio = maxConcurrentInVmWorkerCount * 2;
-            if(statsMessageListener.getConsumers() > 0){
-                quickSpawnMode =  ((statsMessageListener.getQueueSize()/ remoteWorkerCount) > maxConcurrentInVmWorkerCount);
+        int totalRemoteWorkerSpawned = getNumberOfWorkers();
+        int consumerCount = statsMessageListener.getConsumers();
+        int remoteWorkerCount = consumerCount - maxConcurrentInVmWorkerCount;
+        int queueSize = statsMessageListener.getQueueSize();
+        if(verboseFlag){
+            System.out.println("isNewWorkersRequired: maxConsumerSize : "
+                    +  maxConsumerSize
+                    + " TotalConsumers: "  + consumerCount
+                    + " QueueSize: "   + queueSize
+                    + " totalRemoteWorkerSpawned: " + totalRemoteWorkerSpawned
+                    + " remoteWorkerCount: " + remoteWorkerCount
+                    + " queueConsumerRatio: " + queueConsumerRatio
+                    + " lifeRemaining: " + lifeRemaining() );
+
+        }
+        if (consumerCount < queueSize){
+            if(queueConsumerRatio == 99){
+                queueConsumerRatio  =  maxConcurrentInVmWorkerCount * 2;
+            }
+            if(remoteWorkerCount > 0 ){
+                quickSpawnMode =  (queueSize / remoteWorkerCount) > maxConcurrentInVmWorkerCount;
+            }else{
+                quickSpawnMode =  queueSize   > maxConcurrentInVmWorkerCount;
             }
             LOGGER.debug("New worker Required  quickSpawnMode: " + quickSpawnMode);
-            System.out.println("isNewWorkersRequired: maxConsumerSize : "
+            if(verboseFlag){
+                System.out.println("isNewWorkersRequired: maxConsumerSize : "
                     +  maxConsumerSize
                     + " currentRemoteWorkersCount " + remoteWorkerCount
                     + " queueConsumerRatio: " + queueConsumerRatio
                     + " quickSpawnMode: " + quickSpawnMode
                     + " completionTargetMillis: " + lifeRemaining() / completionFactor);
-
+            }
             return (statsMessageListener.newWorkersRequired((int) (lifeRemaining() / completionFactor)) &&
-                    (statsMessageListener.getConsumers() < maxConsumerSize) &&
-                    (statsMessageListener.getConsumers() < statsMessageListener.getQueueSize() / queueConsumerRatio))
+                    (consumerCount < maxConsumerSize) &&
+                    (consumerCount < queueSize / queueConsumerRatio))
                     || (quickSpawnMode);
         }
         return false;

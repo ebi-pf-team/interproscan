@@ -135,7 +135,7 @@
         <property name="jobRequestQueue"  ref="jobRequestQueue" />
         <property name="jobResponseQueue"  ref="jobResponseQueue" />
         <property name="highMemJobRequestQueue" ref="highMemJobRequestQueue"/>
-        <property name="maxConsumerSize"    value="40" />
+        <property name="maxConsumerSize"    value="${worker.maxconsumers}" />
         <property name="completionFactor"   value="20" />
         <property name="queueConsumerRatio" value="20"  />
         <property name="workerRunner">
@@ -171,15 +171,20 @@
         </property>
         <property name="statsUtil" ref="workerStatsUtil"/>
         <property name="workerManagerTopic" ref="workerManagerTopic"/>
+        <property name="jmsTopicTemplate" ref="jmsTopicTemplate"/>
         <property name="responseQueueMessageListener" ref="responseQueueMessageListener"/>
-        <property name="managerTopicMessageListener" ref="managerTopicMessageListener"/>
+        <property name="workerMessageSender" ref="workerMessageSender"/>
         
         <property name="gridThrottle" value="${grid.throttle}"/>
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
         <property name="maxTierDepth" value="${max.tier.depth}"/>
+
         <property name="jmsTransportListener" ref="jmsTransportListener"/>
         <property name="concurrentInVmWorkerCount" value="${worker.number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${worker.maxnumber.of.embedded.workers}"/>
+        <property name="gridName" value="${grid.name}"/>
+        <property name="verboseFlag" value="${verbose.flag}"/>
+        <property name="managerTopicMessageListener" ref="managerTopicMessageListener"/>
     </bean>
 
 

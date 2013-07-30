@@ -47,7 +47,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
     private String projectId;
 
+    Long timeLastSpawnedWorkers = System.currentTimeMillis();
+
     private AtomicInteger remoteJobs = new AtomicInteger(0);
+
+    private AtomicInteger localJobs = new AtomicInteger(0);
 
     List<Message> failedJobs = new ArrayList<Message>();
 
@@ -136,6 +140,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         if (canRunRemotely){
                             remoteJobs.incrementAndGet();
                             LOGGER.debug("Remote jobs: added one more:  " + remoteJobs.get());
+                        }else{
+                            localJobs.incrementAndGet();
+                            LOGGER.debug("Local jobs: added one more:  " + localJobs.get());
                         }
                         countRegulator++;
                         controlledLogging = false;
@@ -169,10 +176,19 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     //check what is not completed
                     LOGGER.debug("Distributed Master has no jobs scheduled .. more Jobs may get scheduled ");
                     LOGGER.debug("Remote jobs: " + remoteJobs.get());
+                    LOGGER.debug("Local jobs: " + localJobs.get());
                     LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
 
                     controlledLogging = true;
+                }
+                if(verboseFlag){
+                    //check what is not completed
+                    System.out.println("Distributed Master has no step instances scheduled ... more step instances may get scheduled ");
+                    System.out.println("Remote jobs: " + remoteJobs.get());
+                    System.out.println("Local jobs: " + localJobs.get());
+                    System.out.println("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                    System.out.println("Total StepInstances: " + stepInstanceDAO.count());
                 }
                 //update the statistics plugin
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
@@ -186,9 +202,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             LOGGER.error("Exception thrown by DistributedBlackBoxMasterOLD: ", e);
         }
 
-        //send a shutdown message before exiting
-        messageSender.sendShutDownMessage();
         try {
+            //send a shutdown message before exiting
+            messageSender.sendShutDownMessage();
+            if(verboseFlag){
+                System.out.println("main loop: Shutdown mode ... ");
+            }
             LOGGER.debug("Distributed Master:  sent shutdown message to workers");
             //statsUtil.pollStatsBrokerTopic();
             //final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
@@ -198,6 +217,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             //LOGGER.debug("Topic stats 2: " +statsMessageListener.getStats());
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
@@ -377,7 +398,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         if(initialWorkersCount < 1 && remoteJobsEstimate > 10){
                             initialWorkersCount = 1;
                         }else if(initialWorkersCount > (maxConsumers)){
-                            initialWorkersCount = (maxConsumers * 9 / 10);
+                            initialWorkersCount = (maxConsumers * 8 / 10);
+                        }
+                        //for small set of sequences
+                        if(totalJobs < 2000 ){
+                            initialWorkersCount = initialWorkersCount * 6 /10;
                         }
                         if(initialWorkersCount > 0){
                             LOGGER.debug("Initial Workers created: " + initialWorkersCount);
@@ -385,9 +410,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                                 System.out.println("Initial Workers created: " + initialWorkersCount);
                             }
                             setSubmissionWorkerRunnerMasterClockTime();
-                            for (int i=0;i< initialWorkersCount;i++){
-                                workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
-                            }
+                            timeLastSpawnedWorkers = System.currentTimeMillis();
+                            workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, initialWorkersCount);
+//                            for (int i=0;i< initialWorkersCount;i++){
+//                                workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+//                            }
                             firstWorkersSpawned = true;
                         }else{
                             LOGGER.debug("Remote jobs still = " + actualRemoteJobs);
@@ -406,68 +433,113 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                Long timeLastdisplayedStats = System.currentTimeMillis();
+                boolean displayStats = true;
                 boolean quickSpawnMode = false;
                 int queueConsumerRatio = maxConcurrentInVmWorkerCountForWorkers * 2;
 
+
                 while (!shutdownCalled) {
                     //statsUtil.sendMessage();
+                    System.out.println("Create workers loop: Current Total remoteJobs: "  + remoteJobs.get());
                     final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
                     final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
 
                     final int remoteJobsNotCompleted = remoteJobs.get() - StatsUtil.getRemoteJobsCompleted();
-                        if(verboseFlag && remoteJobsNotCompleted > 0){
+                    final int localJobsNotCompleted = localJobs.get() - StatsUtil.getLocalJobsCompleted();
+                    int queueSize = statsMessageListener.getQueueSize();
+
+                    if (System.currentTimeMillis() - timeLastdisplayedStats > 10 * 60 *1000) {
+                        displayStats = true;
+                        timeLastdisplayedStats =  System.currentTimeMillis();
+                    }
+                    if (verboseFlag && displayStats && remoteJobsNotCompleted > 0) {
+                        System.out.println("Remote jobs: " + remoteJobs.get());
+                        System.out.println("Remote jobs completed: " + StatsUtil.getRemoteJobsCompleted());
+                        System.out.println("Remote jobs not completed: " + remoteJobsNotCompleted);
+                        System.out.println("Local jobs: " + localJobs.get());
+                        System.out.println("Local jobs completed: " + StatsUtil.getLocalJobsCompleted());
+                        System.out.println("Local jobs not completed: " + localJobsNotCompleted);
+                        System.out.println("job Request queuesize " + queueSize);
+                        System.out.println("All Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        System.out.println("Total StepInstances: " + stepInstanceDAO.count());
+                    }
+                    if (remoteJobsNotCompleted > 0) {
+                        int remoteWorkerCount = 0;
+                        setSubmissionWorkerRunnerMasterClockTime();
+                        LOGGER.debug("Poll Job Request Queue queue");
+                        final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
+                        workerCount = ((SubmissionWorkerRunner) workerRunner).getWorkerCount();
+                        int remoteWorkerCountEstimate = statsMessageListener.getConsumers() - getMaxConcurrentInVmWorkerCount();
+                        remoteWorkerCount = remoteWorkerCountEstimate;
+                        queueSize = statsMessageListener.getQueueSize();
+                        int remoteJobsOntheQueue = queueSize - localJobsNotCompleted;
+                        if (statsAvailable && remoteJobsOntheQueue > 1 && remoteWorkerCountEstimate < (maxConsumers - 2)) {
+                            LOGGER.debug("Check if we can start a normal worker.");
+                            //have a standard continency time for lifespan
+                            if(System.currentTimeMillis() - timeLastSpawnedWorkers  > getMaximumLifeMillis() * 0.7){
+                                quickSpawnMode = true;
+                            }else if (remoteWorkerCountEstimate > 0) {
+                                quickSpawnMode = ((remoteJobsOntheQueue / remoteWorkerCountEstimate) > maxConcurrentInVmWorkerCountForWorkers);
+                            } else {
+                                quickSpawnMode = true;
+                            }
+
+                            if (quickSpawnMode) {
+                                LOGGER.debug("Starting a normal worker.");
+                                setSubmissionWorkerRunnerMasterClockTime();
+                                timeLastSpawnedWorkers = System.currentTimeMillis();
+                                workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+                            }
+                        }
+                        //statsUtil.sendhighMemMessage();
+                        LOGGER.debug("Poll High Memory Job Request queue");
+                        final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
+                        int highMemoryWorkerCount = ((SubmissionWorkerRunner) workerRunnerHighMemory).getWorkerCount();
+                        remoteWorkerCount += highMemoryWorkerCount;
+
+                        int remoteHighMemoryWorkerCountEstimate = statsMessageListener.getConsumers();
+                        int highMemoryQueueSize = statsMessageListener.getQueueSize();
+                        if (highMemStatsAvailable && remoteWorkerCount < maxConsumers) {
+                            final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
+                            if (highMemWorkerRequired && remoteHighMemoryWorkerCountEstimate < 1) {
+                                quickSpawnMode = true;
+                            }
+                            if ((highMemoryQueueSize / queueConsumerRatio) > remoteHighMemoryWorkerCountEstimate
+                                    || quickSpawnMode) {
+                                LOGGER.debug("Starting a high memory worker.");
+                                setSubmissionWorkerRunnerMasterClockTime();
+                                workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);
+                            }
+                        }
+
+                        LOGGER.debug("Poll the Job Response queue ");
+                        final boolean responseQueueStatsAvailable = statsUtil.pollStatsBrokerResponseQueue();
+                        if (!responseQueueStatsAvailable) {
+                            LOGGER.debug("The Job Response queue is not initialised");
+                        } else {
+                            LOGGER.debug("JobResponseQueue:  " + statsMessageListener.getStats().toString());
+                        }
+                        if (verboseFlag && displayStats && remoteJobsNotCompleted > 0) {
+                            System.out.println("normalRemoteWorkerCountEstimate: " + remoteWorkerCountEstimate);
+                            System.out.println("remoteHighMemoryWorkerCountEstimate: " + remoteHighMemoryWorkerCountEstimate);
+                            System.out.println("remoteWorkerCount: " + remoteWorkerCount);
+                            System.out.println("AllNormalWorkerCount: " + workerCount);
+                            System.out.println("AllHighMemoryWorkerCount: " + highMemoryWorkerCount);
+                            System.out.println("highMemoryQueueSize: " + highMemoryQueueSize);
+                        }
+                    }else{
+                        if (verboseFlag  && displayStats ) {
                             System.out.println("Remote jobs: " + remoteJobs.get());
-                            System.out.println("Remote jobs completed: " +  StatsUtil.getRemoteJobsCompleted());
                             System.out.println("Remote jobs not completed: " + remoteJobsNotCompleted);
+                            System.out.println("Local jobs: " + localJobs.get());
+                            System.out.println("Local jobs completed: " + StatsUtil.getLocalJobsCompleted());
+                            System.out.println("Local jobs not completed: " + localJobsNotCompleted);
+                            System.out.println("job Request queuesize " + queueSize);
                             System.out.println("All Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                             System.out.println("Total StepInstances: " + stepInstanceDAO.count());
                         }
-                        if (remoteJobsNotCompleted > 0) {
-                            setSubmissionWorkerRunnerMasterClockTime();
-                            LOGGER.debug("Poll Job Request Queue queue");
-                            final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
-                            if (statsAvailable) {
-                                workerCount = ((SubmissionWorkerRunner) workerRunner).getWorkerCount();
-                                int remoteWorkerCountEstimate = statsMessageListener.getConsumers() - getMaxConcurrentInVmWorkerCount();
-                                if(remoteWorkerCountEstimate > 0){
-                                    quickSpawnMode =  ((remoteJobsNotCompleted / remoteWorkerCountEstimate) > maxConcurrentInVmWorkerCountForWorkers);
-                                }else{
-                                    quickSpawnMode = false;
-                                }
-                                final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                                if ((remoteWorkerCountEstimate < maxConsumers && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer &&
-                                        quickSpawnMode) ||
-                                        (workerRequired && remoteWorkerCountEstimate < maxConsumers)) {
-                                    LOGGER.debug("Starting a normal worker.");
-                                    setSubmissionWorkerRunnerMasterClockTime();
-                                    workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
-                                }
-                            }
-                            //statsUtil.sendhighMemMessage();
-                            LOGGER.debug("Poll High Memory Job Request queue");
-                            final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
-                            if (highMemStatsAvailable) {
-                                workerCount += ((SubmissionWorkerRunner) workerRunnerHighMemory).getWorkerCount();
-                                if(statsMessageListener.getConsumers() > 0){
-                                    quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
-                                }
-                                final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                                if ((statsMessageListener.getConsumers() < 5 && statsMessageListener.getQueueSize() > 0) ||
-                                        (highMemWorkerRequired && statsMessageListener.getConsumers() < 10)) {
-                                    LOGGER.debug("Starting a high memory worker.");
-                                    setSubmissionWorkerRunnerMasterClockTime();
-                                    workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);
-                                }
-                            }
-
-                            LOGGER.debug("Poll the Job Response queue ");
-                            final boolean responseQueueStatsAvailable = statsUtil.pollStatsBrokerResponseQueue();
-                            if (!responseQueueStatsAvailable) {
-                                LOGGER.debug("The Job Response queue is not initialised");
-                            } else {
-                                LOGGER.debug("JobResponseQueue:  " + statsMessageListener.getStats().toString());
-                            }
-                        }
+                    }
 
                     try {
                         Thread.sleep(1 * 20 * 1000);

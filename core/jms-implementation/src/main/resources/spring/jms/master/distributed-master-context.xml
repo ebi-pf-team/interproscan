@@ -132,7 +132,7 @@
     </bean>
 
     <!--Configuration for the local job queue listener-->
-    <bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+    <bean id="localQueueJmsContainerFatMaster" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="inVmJmsFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="localJobQueueListener"/>
@@ -140,14 +140,30 @@
         <property name="maxConcurrentConsumers" value="${maxnumber.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+
     </bean>
 
+    <!--Configuration for the local job queue listener as a fat client-->
+    <!--<bean id="localQueueJmsContainerThinMaster" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="inVmJmsFactory"/>-->
+        <!--<property name="destination" ref="jobRequestQueue"/>-->
+        <!--<property name="messageListener" ref="localJobQueueListener"/>-->
+        <!--<property name="concurrentConsumers" value="2"/>-->
+        <!--<property name="maxConcurrentConsumers" value="2"/>-->
+        <!--<property name="sessionTransacted" value="true"/>-->
+        <!--<property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>-->
+        <!--<property name="messageSelector" value="remote = FALSE"/>-->
+        <!--<property name="autoStartup" value="${fat.master}"/>-->
+    <!--</bean>-->
+
+    <!--<property name="messageSelector" value="remote = FALSE"/>-->
     <!--<bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->
         <!--<property name="jobResponseQueue" ref="jobResponseQueue"/>-->
         <!--<property name="jmsTemplate" ref="inVmJmsTemplate"/>-->
         <!--<property name="stepExecutor" ref="embeddedStepExecutor"/>-->
         <!---->
     <!--</bean>-->
+
 
     <!--Listens to the local job queue and performs jobs-->
     <bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.worker.LocalJobQueueListener">

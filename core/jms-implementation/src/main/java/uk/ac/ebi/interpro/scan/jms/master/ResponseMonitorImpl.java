@@ -55,7 +55,10 @@ public class ResponseMonitorImpl implements MessageListener {
                         StatsUtil.incRemoteJobsCompleted();
                         remoteJobs++;
 //                        System.out.println("Remote Job completed, remoteJobs:" + remoteJobs + " statsutil.remotejobs: " + StatsUtil.getRemoteJobsCompleted() );
+                    }else{
+                        StatsUtil.incLocalJobsCompleted();
                     }
+
 
                 } else if (messageContents instanceof List){
                     canHandle = true;

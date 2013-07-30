@@ -47,6 +47,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private int workerCount = 0;
 
+    private int newWorkersCount = 0;
+
     private String gridName = "lsf";
 
     private boolean gridArray = false;
@@ -135,6 +137,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.lifeSpanRemaining = lifeSpanRemaining;
     }
 
+
+
     /**
      * create an id for the new worker given a project id
      *
@@ -178,6 +182,15 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.masterWorker = false;
     }
 
+    /**
+     * The newWorkersCount is the number of workers to be created
+     */
+    public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory, int newWorkersCount) {
+        this.newWorkersCount = newWorkersCount;
+        startupNewWorker(priority, tcpUri, temporaryDirectory);
+        //reset the masterworker variable
+        this.newWorkersCount = 0;
+    }
 
     @Override
     public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
@@ -189,24 +202,42 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                 LOGGER.warn("Grid Job Control: You have reached the maximum jobs allowed on the cluster or you have many pending jobs.  active Jobs: " + activeJobs + " pending Jobs : " + pendingJobs
                     + "\n In the meantime InterProScan will continue to run");
                 return;
+            }else{
+                if(newWorkersCount > 1 && (newWorkersCount > gridJobsLimit - activeJobs) ){
+                    newWorkersCount = gridJobsLimit - activeJobs;
+                }
             }
             LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + activeJobs);
         }
         if (workerStartupStrategy.startUpWorker(priority)) {
             LOGGER.debug("startupNewWorker(): " );
-            workerCount++;
+            setAgent_id(tcpUri);
+            if(newWorkersCount >  1){
+                workerCount += newWorkersCount;
+            }else{
+                workerCount++;
+            }
 
             StringBuilder command = new StringBuilder(gridCommand);
 
-            setAgent_id(tcpUri);
+
 
             //add error and output log handling for the cluster
+            String jobArray;
+            String jobIndex;
             if(agent_id != null){
-                command.append(" -o logs/"+ agent_id+".out");
-                command.append(" -e logs/"+ agent_id+".err");
+                if(gridName.equals("lsf") && newWorkersCount > 1){
+                    jobArray = "[1-"+newWorkersCount+"]";
+                    jobIndex = ".%I";
+                }else{
+                    jobArray = "";
+                    jobIndex = "";
+                }
+                command.append(" -o logs/"+ agent_id+".out" + jobIndex);
+                command.append(" -e logs/"+ agent_id+".err" + jobIndex);
 
                 if(gridName.equals("lsf")) {
-                    command.append(" -J "+ agent_id);
+                    command.append(" -J "+ agent_id + jobArray);
                 }
             }
             if(gridName.equals("lsf") && (projectId != null)) {
