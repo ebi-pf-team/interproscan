@@ -438,14 +438,15 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 boolean quickSpawnMode = false;
                 int queueConsumerRatio = maxConcurrentInVmWorkerCountForWorkers * 2;
 
-
+                int remoteJobsNotCompletedEstimate = remoteJobs.get();
                 while (!shutdownCalled) {
                     //statsUtil.sendMessage();
-                    System.out.println("Create workers loop: Current Total remoteJobs: "  + remoteJobs.get());
+                    LOGGER.debug("Create workers loop: Current Total remoteJobs not completed: "  + remoteJobsNotCompletedEstimate);
                     final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
                     final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
 
                     final int remoteJobsNotCompleted = remoteJobs.get() - StatsUtil.getRemoteJobsCompleted();
+                    remoteJobsNotCompletedEstimate =  remoteJobsNotCompleted;
                     final int localJobsNotCompleted = localJobs.get() - StatsUtil.getLocalJobsCompleted();
                     int queueSize = statsMessageListener.getQueueSize();
 
