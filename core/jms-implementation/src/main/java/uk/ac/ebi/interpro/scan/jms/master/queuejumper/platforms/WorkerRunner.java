@@ -36,6 +36,17 @@ public interface WorkerRunner {
     public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, boolean masterWorker);
 
     /**
+     * See {@link #startupNewWorker(int, String, String)} }
+     * The newWorkersCount is the number of workers to be created using a job Array
+     * @param priority
+     * @param tcpUri
+     * @param temporaryDirectory
+     * @param newWorkersCount
+     */
+    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, int newWorkersCount);
+
+
+    /**
      * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
      * Assumes that the jar being executed has a main class define in the MANIFEST.
      * Sets the worker to only accept jobs above the priority passed in as argument.

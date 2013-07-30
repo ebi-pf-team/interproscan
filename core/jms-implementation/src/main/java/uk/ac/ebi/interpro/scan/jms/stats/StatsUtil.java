@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This util has several functions useful for the monitoring of the queues.
@@ -61,6 +63,8 @@ public class StatsUtil {
 
     static private AtomicInteger remoteJobsCompleted = new AtomicInteger(0);
 
+    static private AtomicInteger localJobsCompleted = new AtomicInteger(0);
+
     private final List<String> runningJobs = new ArrayList<String>();
     private final Object jobListLock = new Object();
     private long timeOfLastMemoryDisplay = System.currentTimeMillis();
@@ -73,6 +77,7 @@ public class StatsUtil {
 
     private SystemInfo systemInfo;
 
+    private Lock pollStatsLock = new ReentrantLock();
 
     public StatsUtil() {
 
@@ -84,6 +89,14 @@ public class StatsUtil {
 
     static public void incRemoteJobsCompleted() {
         remoteJobsCompleted.incrementAndGet();
+    }
+
+    public static int getLocalJobsCompleted() {
+        return localJobsCompleted.get();
+    }
+
+    public static void incLocalJobsCompleted() {
+        localJobsCompleted.incrementAndGet();
     }
 
     public ProteinDAO getProteinDAO() {
@@ -225,6 +238,7 @@ public class StatsUtil {
         Long timeSinceLastMemoryDisplay = now - timeOfLastMemoryDisplay;
         if(timeSinceLastMemoryDisplay > 5 * 1000){
             displayMemInfo();
+
             System.out.println(Utilities.getTimeNow() + " Current active Jobs" );
             for(String runningJob:runningJobs){
                 System.out.println(runningJob);
@@ -239,7 +253,7 @@ public class StatsUtil {
      * @return
      */
 
-    private boolean  pollStatsBroker(Destination queue){
+    private synchronized  boolean  pollStatsBroker(Destination queue){
         statsMessageListener.setDestination(queue);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         LOGGER.debug("Setting the destination to "+getQueueName(queue) +" at " +timestamp);
@@ -254,6 +268,7 @@ public class StatsUtil {
     }
 
     public boolean  pollStatsBrokerJobQueue(){
+
         return  pollStatsBroker(jobRequestQueue);
     }
 
@@ -330,6 +345,20 @@ public class StatsUtil {
         return  statsMessageListener.getStats()!=null;
     }
 
+    /**
+     * set the unfinished jobs
+     */
+    public void updateStatsUtilJobCounts(){
+        pollStatsBrokerResponseQueue();
+        int responseDequeueCount =    statsMessageListener.getDequeueCount();
+        pollStatsBrokerJobQueue();
+        int requestEnqueueCount =    statsMessageListener.getEnqueueCount();
+
+        //unfinishedJobs = requestEnqueueCount - responseDequeueCount;
+        setUnfinishedJobs(requestEnqueueCount - responseDequeueCount);
+        setTotalJobs(Long.valueOf(requestEnqueueCount));
+        pollStatsBrokerJobQueue();
+    }
 
     /**
      *   Display master job progress report based on the number of jobs left to run
@@ -400,7 +429,6 @@ public class StatsUtil {
             progressReportTime = System.currentTimeMillis();
             previousUnfinishedJobs = unfinishedJobs;
         }
-
         progressCounter ++;
     }
 
@@ -437,12 +465,15 @@ public class StatsUtil {
         if(systemInfo == null){
             systemInfo = new SystemInfo();
         }
-        System.out.println(Utilities.getTimeNow() + " " + systemInfo.MemInfo());
+        System.out.println(systemInfo.MemInfo());
+        System.out.println(getHeapNonHeapUsage());
         // get virtual memory etc
         String PID = "";
         try{
             PID = Utilities.getPid();
-            System.out.println(Utilities.getTimeNow() + " " + Utilities.getSwapMemoryDetails(PID));
+            System.out.println(Utilities.getTimeNow() + " " + Utilities.getSwapMemoryDetailsCLC(PID));
+            Utilities.runFreeCmd();
+            Utilities.runVmstatCmd();
         }catch (Exception ex ){
             LOGGER.debug("Error in getting process PID" + ex);
             System.out.println(Utilities.getTimeNow() + " Failed to get other memory stats - PID : " + PID + " " + ex);
@@ -450,12 +481,30 @@ public class StatsUtil {
         }
     }
 
-    public void memoryMonitor(){
-
+    /**
+     * get memory usage for the JVM
+     * @return
+     */
+    public String getHeapNonHeapUsage(){
         MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heap = memBean.getHeapMemoryUsage();
         MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
 
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("heap: ");
+        sb.append(heap);
+        sb.append("\n");
+        sb.append("nonheap: ");
+        sb.append(nonheap);
+        return sb.toString();
+
+    }
+
+    /**
+     * get memeory utilisation from the JvM
+     */
+    public void getJVMMemory(){
 
         // init code
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
@@ -474,7 +523,6 @@ public class StatsUtil {
 //        log.info("Dumping heap file " + heapFile.getAbsolutePath());
 //        diagBean.dumpHeap(heapFile.getAbsolutePath(), true);
     }
-
     /**
      * get the size of the input file
      *

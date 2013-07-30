@@ -31,6 +31,9 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
             System.out.println("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+
+            //start a new thread for printing memory
+
         }
         try {
             loadInMemoryDatabase();
@@ -115,6 +118,11 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                     TimeUnit.MILLISECONDS.toSeconds(executionTime) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
             ));
+            try{
+                Utilities.getProcStatus();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
         }
     }
 

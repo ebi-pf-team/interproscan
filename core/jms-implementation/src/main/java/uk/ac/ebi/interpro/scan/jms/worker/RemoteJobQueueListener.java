@@ -119,13 +119,16 @@ public class RemoteJobQueueListener implements MessageListener {
      */
     public void checkQueueState(){
         LOGGER.debug("checkQueueState - Check the state of the local queue depending on the tier we are in ");
-        int unfinishedJobs = getUnifinishedJobs(); //statsUtil.getUnfinishedJobs();
+        int unfinishedJobs = statsUtil.getUnfinishedJobs();
+//        int unfinishedJobs = getUnfinishedJobs(); //statsUtil.getUnfinishedJobs();
+
         LOGGER.debug("checkQueueState - maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
         if(jobCount == 4){
             LOGGER.info("checkQueueState - First 4 jobs : maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
             long now = System.currentTimeMillis();
             if((now - timeFirstMessageReceived) < 1*1000){
-                final long expectedSynchTime = statsUtil.getCurrentMasterClockTime() + (15 * 1000);
+                //wait for 15 seconds as otherwise we end up with lots of workers without work?
+                final long expectedSynchTime = statsUtil.getCurrentMasterClockTime() + (25 * 1000);
                 final long waitMasterSyncTime = expectedSynchTime - now;
                 if (waitMasterSyncTime > 0){
                     try {
@@ -147,6 +150,10 @@ public class RemoteJobQueueListener implements MessageListener {
             return;
         }else{
             boolean stopRemoteQueue = false;
+            if((jobCount %  (maxUnfinishedJobs / (Math.pow(2, statsUtil.getTier() - 1))) == 0)){
+                statsUtil.updateStatsUtilJobCounts();
+                unfinishedJobs = statsUtil.getUnfinishedJobs();
+            }
             switch(statsUtil.getTier()){
                 case 1:
                     if(unfinishedJobs > maxUnfinishedJobs){
@@ -158,8 +165,13 @@ public class RemoteJobQueueListener implements MessageListener {
                         stopRemoteQueue = true;
                     }
                     break;
+                case 3:
+                    if(unfinishedJobs > maxUnfinishedJobs / 2 * 2){
+                        stopRemoteQueue = true;
+                    }
+                    break;
                 default:
-                    if(unfinishedJobs > maxUnfinishedJobs / (Math.pow(2, statsUtil.getTier() - 1 ))){
+                    if(unfinishedJobs > maxUnfinishedJobs / (Math.pow(2, statsUtil.getTier()))){
                         stopRemoteQueue = true;
                     }
             }
@@ -177,7 +189,7 @@ public class RemoteJobQueueListener implements MessageListener {
         }
     }
 
-    private int  getUnifinishedJobs(){
+    private int  getUnfinishedJobs(){
         statsUtil.pollStatsBrokerResponseQueue();
         int responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
         return jobCount - responseDequeueCount;
