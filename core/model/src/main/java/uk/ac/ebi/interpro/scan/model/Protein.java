@@ -25,7 +25,6 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
@@ -508,11 +507,9 @@ public class Protein implements Serializable {
     @XmlTransient
     private static class Md5Helper {
 
-        private static final Pattern MD5_PATTERN = Pattern.compile("^[A-Fa-f0-9]{32}$");
-
         private static final MessageDigest m;
 
-        private static final int HEXADECIMAL_RADIX = 16;
+        private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
 
         static {
             try {
@@ -522,7 +519,7 @@ public class Protein implements Serializable {
             }
         }
 
-        static String calculateMd5(String sequence) {
+       private static String calculateMd5(String sequence) {
             String md5;
             // As using single instance of MessageDigest, make thread safe.
             // This should be much faster than creating a new MessageDigest object
@@ -530,9 +527,19 @@ public class Protein implements Serializable {
             synchronized (m) {
                 m.reset();
                 m.update(sequence.getBytes(), 0, sequence.length());
-                md5 = new BigInteger(1, m.digest()).toString(HEXADECIMAL_RADIX);
+                byte[] data = m.digest();
+                md5 = toHex(data);
             }
             return (md5.toLowerCase(Locale.ENGLISH));
+        }
+
+        private static String toHex(byte[] data) {
+            char[] chars = new char[data.length * 2];
+            for (int i = 0; i < data.length; i++) {
+                chars[i * 2] = HEX_DIGITS[(data[i] >> 4) & 0xf];
+                chars[i * 2 + 1] = HEX_DIGITS[data[i] & 0xf];
+            }
+            return new String(chars);
         }
 
     }
