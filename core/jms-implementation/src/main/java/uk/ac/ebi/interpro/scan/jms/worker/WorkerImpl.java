@@ -104,6 +104,8 @@ public class WorkerImpl implements Worker {
     private int maxConsumerSize = 40;
     private int queueConsumerRatio = 99;
 
+    private double lifeTimeContingency = 0.3;
+
     protected JmsTemplate localJmsTemplate;
     protected JmsTemplate remoteJmsTemplate;
     private JmsTemplate jmsTopicTemplate;
@@ -486,12 +488,31 @@ public class WorkerImpl implements Worker {
     /**
      * lifespan remaining =  maximumLifeMillis - (System.currentTimeMillis() - startUpTime)
      *
-     * @return
+     * @return  lifeRemaining
      */
     private Long lifeRemaining() {
         return maximumLifeMillis - (System.currentTimeMillis() - startUpTime);
     }
 
+    /**
+     *
+     * @return  exceededLifespan
+     */
+    private boolean exceededLifespan(){
+        final long now = System.currentTimeMillis();
+        final boolean exceededLifespan = lifeRemaining() < (maximumLifeMillis * lifeTimeContingency);
+        return exceededLifespan;
+    }
+
+    /**
+     *
+     * @return   exceededIdleTime
+     */
+    private boolean exceededIdleTime(){
+        final long now = System.currentTimeMillis();
+        final boolean exceededIdleTime = (now - lastMessageFinishedTime) > maximumIdleTimeMillis;
+        return exceededIdleTime;
+    }
     /**
      * worker life is 20* less than that of the master
      *  -- this makes sure that we have workers who can finish their jobs and die and other workers created in their place if
@@ -510,8 +531,8 @@ public class WorkerImpl implements Worker {
         synchronized (jobListLock) {
             final long now = System.currentTimeMillis();
             //start shutting down when you have 20* of lifespan remaining
-            final boolean exceededLifespan = lifeRemaining() < (maximumLifeMillis * 0.2);
-            final boolean exceededIdleTime = (now - lastMessageFinishedTime) > maximumIdleTimeMillis;
+            final boolean exceededLifespan = exceededLifespan();
+            final boolean exceededIdleTime = exceededIdleTime();
             LOGGER.debug("Now: "+ now+ " lastMessageFinished: " + lastMessageFinishedTime +" IdleTime: " +(now - lastMessageFinishedTime) + " maxIdleTime: " + maximumIdleTimeMillis);
             //if exceededIdleTime check if workers have running jobs
             if (exceededLifespan || runningJobs.size() == 0 && (exceededLifespan || (exceededIdleTime && (!workersHaveRunningJobs())))) {
@@ -646,6 +667,9 @@ public class WorkerImpl implements Worker {
             //dont exit until the workers have completed all the tasks and the responseMonitor has completed sending response messages to the master
             while (workersHaveRunningJobs() || runningJobs.size() > 0 || responseQueueListenerBusy) {
                 //progress Report
+                if(lifeRemaining() < 30 * 1000){
+                    throw new IllegalStateException("The worker has exceeded its lifespan.");
+                }
                 statsUtil.displayWorkerProgress();
                 Thread.sleep(waitingTime);
             }
@@ -668,12 +692,12 @@ public class WorkerImpl implements Worker {
             //t- tier ws:workers spawned
             System.out.println(Utilities.getTimeNow() + " Worker has completed tasks -  t: " + tier + " ws: " + getNumberOfWorkersSpawnedString() + " jobcount: " + totalJobCount);
         } catch (InterruptedException e) {
-            LOGGER.error("InterruptedException thrown by Worker.  Stopping now.", e);
-        }finally {
-//            StringBuffer buf = new StringBuffer("WorkerState :\n\n");
-//            buf.append("failedJobs: ").append(workerState.getFailedJobs().toString()).append("\n");
-//            buf.append("allJobs: ").append(workerState.getAllJobs().toString()).append("\n");
-//            LOGGER.debug(buf);
+            LOGGER.fatal("InterruptedException thrown by Worker.  Stopping now.", e);
+            System.exit(999);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.fatal("The worker will now exit with a non-zero exit status.");
+            System.exit(999);
         }
         //exit the worker
 
