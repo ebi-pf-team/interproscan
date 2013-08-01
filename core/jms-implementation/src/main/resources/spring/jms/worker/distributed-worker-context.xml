@@ -140,8 +140,8 @@
         <property name="queueConsumerRatio" value="20"  />
         <property name="workerRunner">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-                <property name="submissionCommand" value="${grid.submit.worker.command} ${worker.command}"/>
-                <property name="gridCommand" value="${grid.submit.worker.command}"/>
+                <property name="submissionCommand" value="${grid.worker.submit.command} ${worker.command}"/>
+                <property name="gridCommand" value="${grid.worker.submit.command}"/>
                 <property name="projectId" value="${user.digest}"/>
                 <property name="i5Command" value="${worker.command}"/>
                 <property name="gridJobsLimit" value="${grid.jobs.limit}"/>
@@ -156,8 +156,8 @@
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="workerRunnerHighMemory">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-                <property name="submissionCommand" value="${grid.submit.worker.command} ${worker.high.memory.command}"/>
-                <property name="gridCommand" value="${grid.submit.worker.high.memory.command}"/>
+                <property name="submissionCommand" value="${grid.worker.submit.command} ${worker.high.memory.command}"/>
+                <property name="gridCommand" value="${grid.worker.submit.high.memory.command}"/>
                 <property name="projectId" value="${user.digest}"/>
                 <property name="i5Command" value="${worker.high.memory.command}"/>
                 <property name="gridJobsLimit" value="${grid.jobs.limit}"/>
