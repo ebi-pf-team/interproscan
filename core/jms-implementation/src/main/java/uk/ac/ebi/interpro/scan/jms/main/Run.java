@@ -273,7 +273,6 @@ public class Run {
 
     public static void main(String[] args) {
         // create the command line parser
-        System.out.println("--- InterProScan 5 RC7 ---");
         CommandLineParser parser = new PosixParser();
         String modeArgument = null;
         try {
@@ -567,8 +566,6 @@ public class Run {
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     System.out.println("The project/Cluster Run ID for this run is: " + projectId);
                     ((ClusterUser) bbMaster).setProjectId(projectId);
-                    System.out.println("The Cluster Run ID for this run is: " + projectId);
-                    ((ClusterUser)bbMaster).setProjectId(projectId);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                     final String userDir = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt());
                     ((DistributedBlackBoxMaster) bbMaster).setUserDir(userDir);
@@ -578,6 +575,12 @@ public class Run {
                     System.exit(1);
                 }
             }
+//            if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster){
+//                if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
+//                    final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
+//                    ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
+//                }
+//            }
 
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                 bbMaster.setSequenceType(sequenceType);
@@ -607,6 +610,7 @@ public class Run {
                                                   final CommandLine parsedCommandLine,
                                                   final String[] parsedOutputFormats,
                                                   String defaultOutputFileName) {
+
         //Get the value for the (-i) option
         if (parsedCommandLine.hasOption(I5Option.FASTA.getLongOpt())) {
 
@@ -849,8 +853,8 @@ public class Run {
                 String [] masterTime =  masterMaxlife.split(":");
                 String masterClockTimeStr = masterTime[0];
                 String masterLifeRemainingStr = masterTime[1];
-                System.out.println("master time passed: " + masterMaxlife);
-                System.out.println("master time passed: " + masterClockTimeStr+ " - " + masterLifeRemainingStr);
+                LOGGER.debug("master time passed: " + masterMaxlife);
+                LOGGER.debug("master time passed: " + masterClockTimeStr+ " - " + masterLifeRemainingStr);
 
                 long masterClockTime = Long.valueOf(masterClockTimeStr.trim());
                 long masterLifeRemaining = Long.valueOf(masterLifeRemainingStr.trim());
