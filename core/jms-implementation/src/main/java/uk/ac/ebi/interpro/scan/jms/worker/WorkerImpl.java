@@ -651,7 +651,7 @@ public class WorkerImpl implements Worker {
             }
             //send shutdown message
             try {
-                LOGGER.warn("Send shutdown message to workers");
+                LOGGER.debug("Send shutdown message to workers");
                 //workerMessageSender.sendShutDownMessage();
                 jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
                     public Message createMessage(Session session) throws JMSException {
