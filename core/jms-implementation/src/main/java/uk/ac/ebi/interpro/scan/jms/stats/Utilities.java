@@ -213,7 +213,7 @@ public class Utilities {
             BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
             output = outReader.readLine().trim();
 
-            System.out.println(" Command is : " + pb.command());
+//            System.out.println(" Command is : " + pb.command());
             //int exitStatus = clc.runCommand(command);
             //String clcOutput = clc.getOutput();
             //String error = clc.getErrorMessage();
@@ -254,7 +254,7 @@ public class Utilities {
             while ((line = outReader.readLine()) != null) {
                 output += line + "\n";
             }
-            System.out.println(output);
+            System.out.println("free -m output: \n" + output);
         } else {
             System.out.println("Error in running 'free -m'");
 
@@ -281,7 +281,7 @@ public class Utilities {
             while ((line = outReader.readLine()) != null) {
                 output += line + "\n";
             }
-            System.out.println(output);
+            System.out.println("vmstat -t -S m output: \n" + output);
         } else {
             System.out.println("Error in running 'free -m'");
 
@@ -341,6 +341,34 @@ public class Utilities {
             System.out.println(output);
         } else {
             System.out.println("Error in running 'cat /proc/self/status'");
+
+        }
+        return "";
+    }
+
+    /**
+     * get vm stats from /proc
+     */
+    public static String runBjobs(String runId) throws IOException,InterruptedException {
+
+        Vector<String> commands=new Vector<String>();
+        commands.add("/bin/bash");
+        commands.add("-c");
+        commands.add("bjobs -l -J " + runId + " | grep SWAP");
+        ProcessBuilder pb=new ProcessBuilder(commands);
+//        System.out.println("Running " + commands.toString());
+        Process pr=pb.start();
+        pr.waitFor();
+        if (pr.exitValue() == 0) {
+            BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
+            String output = "";
+            String line = null;
+            while ((line = outReader.readLine()) != null) {
+                output += line + "\n";
+            }
+            System.out.println("bjobs -l -J " + runId + " | grep SWAP = " + output);
+        } else {
+            System.out.println("Error in running " + commands.toString());
 
         }
         return "";

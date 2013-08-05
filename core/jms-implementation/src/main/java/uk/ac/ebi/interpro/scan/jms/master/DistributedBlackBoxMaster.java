@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
@@ -107,6 +108,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         messageSender.sendShutDownMessage();
                         unrecoverableErrorStrategy.failed(stepInstance, jobs);
                     }
+                    //
+
                     completed &= stepInstance.haveFinished(jobs);
                     if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)) {
                         if (LOGGER.isDebugEnabled()) {
@@ -312,6 +315,47 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     }
 
     /**
+     * Resend failed/long running jobs
+     */
+    public void handleLongRunningJobs(){
+        for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+            final Step step = stepInstance.getStep(jobs);
+            final boolean canRunRemotely = !step.isRequiresDatabaseAccess();
+            if (canRunRemotely){
+
+//                StepExecution freshStepExecution = (StepExecution) messageContents;
+                StepExecution stepExecution;
+
+                int size = stepInstance.getExecutions().size();
+                int count = 0;
+                for (StepExecution exec : stepInstance.getExecutions()) {
+                    final StepExecutionState executionState = exec.getState();
+                    switch (executionState) {
+                        case NEW_STEP_EXECUTION:
+                            System.out.println("This step is a new step execution : " + stepInstance.getStepId());
+                        case STEP_EXECUTION_SUBMITTED:
+                            System.out.println("This job has been submitted : " + stepInstance.getStepId());
+                        case STEP_EXECUTION_RUNNING:
+                            System.out.println("This step is sucessfull : " + stepInstance.getStepId());
+                        case STEP_EXECUTION_SUCCESSFUL:
+                            System.out.println("This step has run and was successful: " + stepInstance.getStepId());
+                            return;
+                        default:
+                            break;
+                    }
+                    count ++;
+                    if(count == size){
+                        stepExecution = exec;
+                        stepExecution.setState(StepExecutionState.STEP_EXECUTION_FAILED);
+                        //stepExecution.fail();
+                    }
+
+                }
+            }
+        }
+    }
+
+    /**
      * monitor the failedJobs Queue and resend the jobs
      *
      */
@@ -471,7 +515,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         LOGGER.debug("Poll Job Request Queue queue");
                         final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                         workerCount = ((SubmissionWorkerRunner) workerRunner).getWorkerCount();
-                        int remoteWorkerCountEstimate = statsMessageListener.getConsumers() - getMaxConcurrentInVmWorkerCount();
+                        int remoteWorkerCountEstimate = statsMessageListener.getConsumers() - (0 + getMaxConcurrentInVmWorkerCount());
                         remoteWorkerCount = remoteWorkerCountEstimate;
                         queueSize = statsMessageListener.getQueueSize();
                         int remoteJobsOntheQueue = queueSize - localJobsNotCompleted;
@@ -528,6 +572,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             System.out.println("AllNormalWorkerCount: " + workerCount);
                             System.out.println("AllHighMemoryWorkerCount: " + highMemoryWorkerCount);
                             System.out.println("highMemoryQueueSize: " + highMemoryQueueSize);
+                        }
+                        //try to check if we need to submit jobs
+                        Long now = System.currentTimeMillis();
+                        if(now - statsUtil.getLastMessageRecevivedTime() > 20 * 60 * 1000){
+                             //something wrong
+                             //resend the remote jobs
+
                         }
                     }else{
                         if (verboseFlag  && displayStats ) {

@@ -100,11 +100,11 @@ public class WorkerImpl implements Worker {
     private long currentMasterClockTime;
     private long currentMasterlifeSpanRemaining;
 
+    private double lifeTimeContingency = 0.3;
+
     private int completionFactor = 20;
     private int maxConsumerSize = 40;
     private int queueConsumerRatio = 99;
-
-    private double lifeTimeContingency = 0.3;
 
     protected JmsTemplate localJmsTemplate;
     protected JmsTemplate remoteJmsTemplate;
@@ -488,7 +488,7 @@ public class WorkerImpl implements Worker {
     /**
      * lifespan remaining =  maximumLifeMillis - (System.currentTimeMillis() - startUpTime)
      *
-     * @return  lifeRemaining
+     * @return
      */
     private Long lifeRemaining() {
         return maximumLifeMillis - (System.currentTimeMillis() - startUpTime);
@@ -675,7 +675,7 @@ public class WorkerImpl implements Worker {
             }
             //send shutdown message
             try {
-                LOGGER.debug("Send shutdown message to workers");
+                LOGGER.warn("Send shutdown message to workers");
                 //workerMessageSender.sendShutDownMessage();
                 jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
                     public Message createMessage(Session session) throws JMSException {
@@ -696,7 +696,7 @@ public class WorkerImpl implements Worker {
             System.exit(999);
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.fatal("The worker will now exit with a non-zero exit status.");
+            LOGGER.fatal("Exception thrown. The worker will now exit with a non-zero exit status.");
             System.exit(999);
         }
         //exit the worker
