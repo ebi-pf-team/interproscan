@@ -185,7 +185,7 @@ public class Run {
         DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         CLUSTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
         GRID("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
-        SINGLESEQ("ssOptimisedBlackBoxMaster", "spring/jms/master/ssoptimised-master-context.xml"),
+        SINGLESEQ("ssOptimisedBlackBoxMaster", "spring/jms/master/singleseq-optimised-master-context.xml"),
         CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
         CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
         CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
@@ -575,12 +575,15 @@ public class Run {
                     System.exit(1);
                 }
             }
-//            if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster){
-//                if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
-//                    final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
-//                    ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
-//                }
-//            }
+
+            if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster){
+                if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
+                    final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
+                    ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
+                    final ResourceMonitor resourceMonitor = (ResourceMonitor) ctx.getBean("resourceMonitor");
+                    resourceMonitor.setRunId(runId);
+                }
+            }
 
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                 bbMaster.setSequenceType(sequenceType);

@@ -67,6 +67,9 @@ public class StatsUtil {
 
     private final List<String> runningJobs = new ArrayList<String>();
     private final Object jobListLock = new Object();
+    private Long lastMessageRecevivedTime = System.currentTimeMillis();
+    private Long lastLocalMessageFinishedTime = System.currentTimeMillis();
+
     private long timeOfLastMemoryDisplay = System.currentTimeMillis();
 
     private  long startUpTime;
@@ -211,6 +214,21 @@ public class StatsUtil {
         this.systemInfo = systemInfo;
     }
 
+    public Long getLastLocalMessageFinishedTime() {
+        return lastLocalMessageFinishedTime;
+    }
+
+    public Long getLastMessageRecevivedTime() {
+        return lastMessageRecevivedTime;
+    }
+
+    /**
+     * Time last message was received
+     */
+    public void updateLastMessageReceivedTime(){
+        lastMessageRecevivedTime = System.currentTimeMillis();
+    }
+
     public void jobStarted(String stepId) {
         synchronized (jobListLock) {
             if (LOGGER.isDebugEnabled()) {
@@ -228,7 +246,7 @@ public class StatsUtil {
             if (!runningJobs.remove(stepId)) {
                 LOGGER.error("Worker.jobFinished(jmsMessageId) has been called with a message ID that it does not recognise: " + stepId);
             }
-//            lastMessageFinishedTime = System.currentTimeMillis(); //new Date().getTime();
+            lastLocalMessageFinishedTime = System.currentTimeMillis(); //new Date().getTime();
         }
     }
 
@@ -246,6 +264,13 @@ public class StatsUtil {
             timeOfLastMemoryDisplay = System.currentTimeMillis();
         }
 
+    }
+
+    public void displayRunningJobs(){
+        System.out.println(Utilities.getTimeNow() + " Current active Jobs" );
+        for(String runningJob:runningJobs){
+            System.out.println(String.format("%" + 26 + "s", runningJob));
+        }
     }
     /**
      * poll  the statistics broker plugin
@@ -465,6 +490,7 @@ public class StatsUtil {
         if(systemInfo == null){
             systemInfo = new SystemInfo();
         }
+        System.out.println(Utilities.getTimeNow() + " Stats from the JVM ");
         System.out.println(systemInfo.MemInfo());
         System.out.println(getHeapNonHeapUsage());
         // get virtual memory etc

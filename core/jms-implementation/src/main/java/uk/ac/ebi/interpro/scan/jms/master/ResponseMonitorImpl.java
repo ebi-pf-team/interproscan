@@ -29,12 +29,18 @@ public class ResponseMonitorImpl implements MessageListener {
 
     public int remoteJobs = 0;
 
+    private StatsUtil statsUtil;
+
     public ResponseMonitorImpl(StepExecutionDAO stepExecutionDAO) {
         this.stepExecutionDAO = stepExecutionDAO;
     }
 
     public int getRemoteJobs() {
         return remoteJobs;
+    }
+
+    public void setStatsUtil(StatsUtil statsUtil) {
+        this.statsUtil = statsUtil;
     }
 
     @Override
@@ -52,7 +58,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
                     canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);
                     if(canRunRemotely){
-                        StatsUtil.incRemoteJobsCompleted();
+                        statsUtil.incRemoteJobsCompleted();
                         remoteJobs++;
 //                        System.out.println("Remote Job completed, remoteJobs:" + remoteJobs + " statsutil.remotejobs: " + StatsUtil.getRemoteJobsCompleted() );
                     }else{
@@ -65,6 +71,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     List<Message> failedJobs =(List<Message>)    messageContents;
                     LOGGER.debug("Received FAILED_JOB");
                 }
+                statsUtil.updateLastMessageReceivedTime();
             }
             if (! canHandle){
                 LOGGER.error("Master: received a message that I don't know how to handle.");

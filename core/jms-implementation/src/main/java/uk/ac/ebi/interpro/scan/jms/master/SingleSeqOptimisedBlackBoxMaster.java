@@ -8,6 +8,9 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
+import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -20,10 +23,13 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private StatsUtil statsUtil;
 
+    private String runId;
+
     private static final int MEGA = 1024 * 1024;
 
     @Override
     public void run() {
+
         final long now = System.currentTimeMillis();
         super.run();
         if(verboseFlag){
@@ -31,12 +37,16 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
             System.out.println("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
-
-            //start a new thread for printing memory
-
         }
+
+        //start a new thread to monitor memory usage
+        displayMemoryUsage();
+
         try {
             loadInMemoryDatabase();
+            if(verboseFlag){
+                System.out.println(Utilities.getTimeNow() + " Loaded in memory database ");
+            }
             int stepInstancesCreatedByLoadStep = createStepInstances();
             int inputSize = 1;
 
@@ -51,9 +61,6 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                         if (isHighPriorityStep(stepInstance.getStep(jobs))){
                             completed &= stepInstance.haveFinished(jobs);
                             stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
-                            if(verboseFlag){
-//                                System.out.println("step-submitted: " + stepInstance.getStep(jobs).getId());
-                            }
                             controlledLogging = false;
                         }
                     }
@@ -68,8 +75,6 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                         controlledLogging = false;
                     }
                 }
-                //check what is not completed
-//                statsUtil.memoryMonitor();
                 if(!controlledLogging){
                     LOGGER.debug("InterProScan Master has no stepInstances ready to run yet ... but soon ");
                     LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
@@ -82,9 +87,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
-                if(verboseFlag){
-                    statsUtil.displayMemoryAndRunningJobs();
-                }
+
                 if(verboseFlag && !controlledLogging){
                     if(statsUtil.getUnfinishedJobs() < (statsUtil.getTotalJobs() / 2)){
                         System.out.println(Utilities.getTimeNow() + "Step instances left: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
@@ -108,6 +111,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         } catch (Exception e) {
             LOGGER.error("Exception thrown by FastResponseBlackBoxMaster: ", e);
         }
+
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
@@ -118,11 +122,11 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                     TimeUnit.MILLISECONDS.toSeconds(executionTime) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
             ));
-            try{
-                Utilities.getProcStatus();
-            }catch (Exception ex){
-                ex.printStackTrace();
-            }
+        }
+        try{
+            Utilities.getProcStatus();
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 
@@ -175,6 +179,10 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         this.statsUtil = statsUtil;
     }
 
+    public void setRunId(String runId) {
+        this.runId = runId;
+    }
+
     /**
      * * check if the job is hamap or prosite
      *  then assign it higher priority
@@ -206,5 +214,34 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 //                ){
 //        }
         return false;
+    }
+
+    /**
+     * display memory information
+     */
+    public void displayMemoryUsage(){
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            public void run() {
+                //run the memory footprint display every 5 seconds
+               // if(verboseFlag){
+                    while (!shutdownCalled) {
+                        try{
+                            if (runId != null){
+                                System.out.println("----------------------------------------------");
+                                Utilities.runBjobs(runId);
+
+                                //statsUtil.displayMemInfo();
+                                statsUtil.displayMemoryAndRunningJobs();
+                            }
+                            //sleep for 5 seconds
+                            Thread.sleep(5 * 1000);
+                        }catch (Exception ex){
+                            LOGGER.warn(" Problems parsing bjobs command: " + ex);
+                        }
+                    }
+               // }
+            }
+         });
     }
 }
