@@ -129,6 +129,7 @@
 
     <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
         <constructor-arg ref="stepExecutionDAO"/>
+        <property name="statsUtil" ref="statsUtil"/>
     </bean>
 
     <!--Configuration for the local job queue listener-->
