@@ -28,7 +28,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         try {
             loadInMemoryDatabase();
             int stepInstancesCreatedByLoadStep = createStepInstances();
-            if(verboseFlag){
+            if(verboseLog){
                 System.out.println(Utilities.getTimeNow() + " DEBUG " +  " step instances: " + stepInstanceDAO.count());
             }
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)

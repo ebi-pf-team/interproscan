@@ -59,8 +59,6 @@ public class StatsUtil {
 
     private Long progressReportTime = Long.MAX_VALUE;
 
-    private ProteinDAO proteinDAO;
-
     static private AtomicInteger remoteJobsCompleted = new AtomicInteger(0);
 
     static private AtomicInteger localJobsCompleted = new AtomicInteger(0);
@@ -100,14 +98,6 @@ public class StatsUtil {
 
     public static void incLocalJobsCompleted() {
         localJobsCompleted.incrementAndGet();
-    }
-
-    public ProteinDAO getProteinDAO() {
-        return proteinDAO;
-    }
-
-    public void setProteinDAO(ProteinDAO proteinDAO) {
-        this.proteinDAO = proteinDAO;
     }
 
     public synchronized int getTier() {
@@ -548,27 +538,6 @@ public class StatsUtil {
 //        File heapFile = new File(outputDir, "heap-" + curThreshold + ".hprof");
 //        log.info("Dumping heap file " + heapFile.getAbsolutePath());
 //        diagBean.dumpHeap(heapFile.getAbsolutePath(), true);
-    }
-    /**
-     * get the size of the input file
-     *
-     * @return
-     */
-    public int getProteinCount(){
-        Long size =  proteinDAO.count(); //  proteinDAO.getMaximumPrimaryKey();
-        LOGGER.debug("getMaximumPrimaryKey: " + proteinDAO.getMaximumPrimaryKey());
-        return size.intValue();
-    }
-
-    public int getLargestSequenceSize(){
-        final List<Protein> proteins = proteinDAO.getProteinsBetweenIds(0, proteinDAO.getMaximumPrimaryKey());
-        int largest = 0;
-        for (Protein protein : proteins){
-           if(protein.getSequenceLength() > largest){
-               largest = protein.getSequenceLength();
-           }
-        }
-        return largest;
     }
 
 }

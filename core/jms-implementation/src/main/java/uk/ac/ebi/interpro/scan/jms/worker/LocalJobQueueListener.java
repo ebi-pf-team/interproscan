@@ -29,7 +29,7 @@ public class LocalJobQueueListener implements MessageListener {
 
     private StepExecutionTransaction stepExecutor;
 
-    boolean verboseFlag = false;
+    boolean verboseLog = false;
 
     /**
      * The distributed worker controller is in charge of calling 'stop' on the
@@ -80,12 +80,12 @@ public class LocalJobQueueListener implements MessageListener {
         this.inVmworkerNumber = inVmworkerNumber;
     }
 
-    public boolean isVerboseFlag() {
-        return verboseFlag;
+    public boolean isVerboseLog() {
+        return verboseLog;
     }
 
-    public void setVerboseFlag(boolean verboseFlag) {
-        this.verboseFlag = verboseFlag;
+    public void setVerboseLog(boolean verboseLog) {
+        this.verboseLog = verboseLog;
     }
 
     public StatsUtil getStatsUtil() {
@@ -160,14 +160,14 @@ public class LocalJobQueueListener implements MessageListener {
                 statsUtil.jobStarted(stepName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
-                if (verboseFlag){
+                if (verboseLog){
                     System.out.println(timeNow1 + debugToken + "Processing " + stepName + " JobCount #: " + localCount);
                 }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
                 timeNow = Utilities.getTimeNow();
 //                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
-                if(verboseFlag){
+                if(verboseLog){
                     System.out.println(timeNow + debugToken + "Finished Processing " + stepName + " JobCount #: " + localCount);
                     System.out.println(timeNow + debugToken + "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
                 }
