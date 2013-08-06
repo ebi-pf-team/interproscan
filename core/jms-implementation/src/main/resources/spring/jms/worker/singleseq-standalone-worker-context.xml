@@ -30,7 +30,7 @@
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
-        <property name="verboseFlag" value="${verbose.flag}"/>
+        <property name="verboseLog" value="${verbose.log}"/>
         <property name="statsUtil" ref="statsUtil"/>
     </bean>
 

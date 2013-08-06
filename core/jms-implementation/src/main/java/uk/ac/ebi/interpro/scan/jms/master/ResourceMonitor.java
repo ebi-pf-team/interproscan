@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -16,7 +17,8 @@ import java.util.concurrent.Executors;
  * currently just tracking memory usage
  *
  */
-public class ResourceMonitor {
+
+public class ResourceMonitor implements  Runnable{
 
     private static final Logger LOGGER = Logger.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
 
@@ -51,28 +53,39 @@ public class ResourceMonitor {
         this.verbose = verbose;
     }
 
+    @PostConstruct
+    public void run(){
+        displayMemoryUsage();
+    }
     /**
      * display memory information
      */
+
     public void displayMemoryUsage(){
         final long startUpTime = System.currentTimeMillis();
 
-        while (System.currentTimeMillis() - startUpTime > maximumLifeMillis){
+        if(verbose){
             try {
-                System.out.println(Utilities.getTimeNow() +" ----------------------------------------------");
-                statsUtil.displayRunningJobs();
                 if (runId != null) {
                     Utilities.runBjobs(runId);
                 }
-                //statsUtil.displayMemInfo();
-                statsUtil.displayMemInfo();
-                statsUtil.displayRunningJobs();
-                Utilities.runBjobs(runId);
-
-                //sleep for 5 seconds
-                Thread.sleep(timeDelay * 1000);
+                while (System.currentTimeMillis() - startUpTime > maximumLifeMillis){
+                    System.out.println(Utilities.getTimeNow() +" ----------------------------------------------");
+                    statsUtil.displayRunningJobs();
+                    if (runId != null) {
+                        Utilities.runBjobs(runId);
+                    }
+                    //statsUtil.displayMemInfo();
+                    statsUtil.displayMemInfo();
+                    statsUtil.displayRunningJobs();
+                    if (runId != null) {
+                        Utilities.runBjobs(runId);
+                    }
+                    //sleep for 5 seconds
+                    Thread.sleep(timeDelay * 1000);
+                }
             } catch (Exception ex) {
-                LOGGER.warn(" Problems parsing bjobs command: " + ex);
+                LOGGER.warn(" Problems parsing bjobs command ...: " + ex);
             }
         }
 

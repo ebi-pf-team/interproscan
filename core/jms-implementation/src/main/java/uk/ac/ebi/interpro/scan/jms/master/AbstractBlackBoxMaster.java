@@ -58,7 +58,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected String userDir;
 
-    boolean verboseFlag;
+    boolean verboseLog;
     private final long startUpTime = System.currentTimeMillis();
     private long maximumLifeMillis = Long.MAX_VALUE;
 
@@ -308,8 +308,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         this.maxConcurrentInVmWorkerCountForWorkers = maxConcurrentInVmWorkerCountForWorkers;
     }
 
-    public void setVerboseFlag(boolean verboseFlag) {
-        this.verboseFlag = verboseFlag;
+    public void setVerboseLog(boolean verboseLog) {
+        this.verboseLog = verboseLog;
     }
 
     public long getMaximumLifeMillis() {

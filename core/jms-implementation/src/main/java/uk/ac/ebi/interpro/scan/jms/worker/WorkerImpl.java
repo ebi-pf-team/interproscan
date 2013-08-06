@@ -22,6 +22,8 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
+import javax.jms.*;
+import java.lang.IllegalStateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -133,7 +135,7 @@ public class WorkerImpl implements Worker {
 
     protected WorkerState workerState;
 
-    boolean verboseFlag = false;
+    boolean verboseLog = false;
 
     /**
      * Constructor that requires a DefaultMessageListenerContainer - this needs to be set before anything else.
@@ -428,12 +430,12 @@ public class WorkerImpl implements Worker {
         this.currentMasterlifeSpanRemaining = currentMasterlifeSpanRemaining;
     }
 
-    public boolean isVerboseFlag() {
-        return verboseFlag;
+    public boolean isVerboseLog() {
+        return verboseLog;
     }
 
-    public void setVerboseFlag(boolean verboseFlag) {
-        this.verboseFlag = verboseFlag;
+    public void setVerboseLog(boolean verboseLog) {
+        this.verboseLog = verboseLog;
     }
 
 
@@ -565,9 +567,7 @@ public class WorkerImpl implements Worker {
     @Override
     public void run() {
 //        System.out.println(Utilities.getTimeNow() + " Running InterProScan worker  ...");
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Running InterProScan worker run() ... whoAmI: " + whoAmI() + " Throttle is " + gridThrottle + " Tier: " + tier);
-        }
+        LOGGER.debug("Running InterProScan worker run() ... whoAmI: " + whoAmI() + " Throttle is " + gridThrottle + " Tier: " + tier);
 
         LOGGER.warn("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         //setup connection to master
@@ -604,7 +604,7 @@ public class WorkerImpl implements Worker {
                 ex.printStackTrace();
             }
         }
-        if(isVerboseFlag()){
+        if(isVerboseLog()){
             System.out.println(Utilities.getTimeNow() + " Worker run() main loop");
         }
         if (LOGGER.isDebugEnabled()) {
@@ -620,7 +620,7 @@ public class WorkerImpl implements Worker {
         try {
             while (!stopIfAppropriate()) {
                 if (LOGGER.isTraceEnabled()) LOGGER.trace("State while running:");
-                if(verboseFlag){
+                if(verboseLog){
                     System.out.println(Utilities.getTimeNow() + "Worker  ");
                 }
 //                LOGGER.debug("Listening on: "+ remoteQueueJmsContainer.getDestinationName() +" or " + statsUtil.getQueueName(remoteQueueJmsContainer.getDestination()));
@@ -629,7 +629,7 @@ public class WorkerImpl implements Worker {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
-                if(verboseFlag){
+                if(verboseLog){
                     System.out.println(Utilities.getTimeNow() + "Worker response stats ");
                     System.out.println("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
@@ -637,7 +637,7 @@ public class WorkerImpl implements Worker {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
-                if(verboseFlag){
+                if(verboseLog){
                     System.out.println(Utilities.getTimeNow() + "Worker job request stats ");
                     System.out.println("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
@@ -654,7 +654,7 @@ public class WorkerImpl implements Worker {
 
                 //create worker is necessary
                 if(canSpawnWorkers()){
-                    if(verboseFlag){
+                    if(verboseLog){
                         System.out.println(Utilities.getTimeNow() + " Worker run() check if new worker is required");
                     }
                     if (isNewWorkersRequired()) {
@@ -735,7 +735,7 @@ public class WorkerImpl implements Worker {
                     numberOfNewWorkers = maxConsumerSize -currentRemoteWorkersCount;
                 }
             }
-            if(verboseFlag){
+            if(verboseLog){
 //            numberOfNewWorkers = statsUtil.getUnfinishedJobs()/statsUtil.getStatsMessageListener().getConsumers();
                 System.out.println("worker status: "
                         + " tier: " + tier
@@ -789,7 +789,7 @@ public class WorkerImpl implements Worker {
 
         boolean canSpawnWorker = false;
 
-        if(isVerboseFlag()){
+        if(isVerboseLog()){
             System.out.println("canSpawnWorkers - gridName: "
                     +  gridName
                     + " tier : " + tier
@@ -954,7 +954,7 @@ public class WorkerImpl implements Worker {
         int consumerCount = statsMessageListener.getConsumers();
         int remoteWorkerCount = consumerCount - maxConcurrentInVmWorkerCount;
         int queueSize = statsMessageListener.getQueueSize();
-        if(verboseFlag){
+        if(verboseLog){
             System.out.println("isNewWorkersRequired: maxConsumerSize : "
                     +  maxConsumerSize
                     + " TotalConsumers: "  + consumerCount
@@ -977,7 +977,7 @@ public class WorkerImpl implements Worker {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("New worker Required  quickSpawnMode: " + quickSpawnMode);
             }
-            if(verboseFlag){
+            if(verboseLog){
                 System.out.println("isNewWorkersRequired: maxConsumerSize : "
                         +  maxConsumerSize
                         + " currentRemoteWorkersCount " + remoteWorkerCount
@@ -1164,22 +1164,6 @@ public class WorkerImpl implements Worker {
         }
         //start the listeners
         LOGGER.debug("Start the listeners on the remote broker " );
-//        try {
-//            Connection connection = connectionFactory.createConnection();
-//            connection.setClientID(whoAmI());
-//        }catch (JMSException ex){
-//            // maybe ActiveMQ is not running. Abort
-//            if (ex.getLinkedException() instanceof IOException) {
-//                LOGGER.error("JMS IOException: connection factory or connection problems.. aborting");
-//            }else{
-//                // Something seriously went wrong with the factory or connection
-//                // creation. Abort the process here, as nothing can be done.
-//                LOGGER.error("JMS Error: connection factory or connection problems.. aborting");
-//            }
-//            ex.printStackTrace();
-//            return false;
-////            System.exit(2);
-//        }
 
         remoteQueueJmsContainer.start();
         managerTopicMessageListenerJmsContainer.start();
@@ -1191,10 +1175,11 @@ public class WorkerImpl implements Worker {
 
 
     /**
-     *
+     *   error recovery ??
+     *   
      * @return
      */
-    public void handleLostConnections(){
+    public void handleLostCopnnections(){
 
 
     }

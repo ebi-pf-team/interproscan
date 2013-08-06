@@ -101,7 +101,7 @@
         <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCountForWorkers" value="${worker.maxnumber.of.embedded.workers}"/>
-        <property name="verboseFlag" value="${verbose.flag}"/>
+        <property name="verboseLog" value="${verbose.log}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
@@ -171,7 +171,7 @@
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
-        <property name="verboseFlag" value="${verbose.flag}"/>
+        <property name="verboseLog" value="${verbose.log}"/>
         <property name="statsUtil" ref="statsUtil"/>
     </bean>
 
