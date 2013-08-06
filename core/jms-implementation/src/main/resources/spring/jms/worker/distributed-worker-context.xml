@@ -183,7 +183,7 @@
         <property name="concurrentInVmWorkerCount" value="${worker.number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${worker.maxnumber.of.embedded.workers}"/>
         <property name="gridName" value="${grid.name}"/>
-        <property name="verboseFlag" value="${verbose.flag}"/>
+        <property name="verboseLog" value="${verbose.log}"/>
         <property name="managerTopicMessageListener" ref="managerTopicMessageListener"/>
     </bean>
 
@@ -262,7 +262,7 @@
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="localJmsTemplate"/>
         <property name="controller" ref="distributedWorkerController"/>
-        <property name="verboseFlag" value="${verbose.flag}"/>
+        <property name="verboseLog" value="${verbose.log}"/>
         <property name="statsUtil" ref="workerStatsUtil"/>
     </bean>
 

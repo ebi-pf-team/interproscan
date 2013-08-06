@@ -74,7 +74,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         final long now = System.currentTimeMillis();
         super.run();
         LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
-        if(verboseFlag){
+        if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
             System.out.println("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
@@ -85,7 +85,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
             int stepInstancesCreatedByLoadStep = createStepInstances();
 
-            if(verboseFlag){
+            if(verboseLog){
                 System.out.println(Utilities.getTimeNow() + " DEBUG " +  " step instances: " + stepInstanceDAO.count());
             }
             //remoteJobs.incrementAndGet();
@@ -185,7 +185,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                     controlledLogging = true;
                 }
-                if(verboseFlag){
+                if(verboseLog){
                     //check what is not completed
                     System.out.println("Distributed Master has no step instances scheduled ... more step instances may get scheduled ");
                     System.out.println("Remote jobs: " + remoteJobs.get());
@@ -208,7 +208,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         try {
             //send a shutdown message before exiting
             messageSender.sendShutDownMessage();
-            if(verboseFlag){
+            if(verboseLog){
                 System.out.println("main loop: Shutdown mode ... ");
             }
             LOGGER.debug("Distributed Master:  sent shutdown message to workers");
@@ -228,7 +228,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         System.out.println(Utilities.getTimeNow() + " 100% of analyses done:  InterProScan analyses completed");
         LOGGER.debug("Remote jobs: " + remoteJobs.get());
         final long executionTime =   System.currentTimeMillis() - now;
-        if(verboseFlag){
+        if(verboseLog){
             System.out.println("Execution Time (s) for Master: " + String.format("%d min, %d sec",
                     TimeUnit.MILLISECONDS.toMinutes(executionTime),
                     TimeUnit.MILLISECONDS.toSeconds(executionTime) -
@@ -433,7 +433,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         LOGGER.debug("Remote jobs estimate: " + remoteJobsEstimate);
                         LOGGER.debug("Initial Workers Count: " + initialWorkersCount);
                         LOGGER.debug("Total jobs (StepInstances): " + totalJobs);
-                        if(verboseFlag){
+                        if(verboseLog){
                             System.out.println("Remote jobs actual: " + actualRemoteJobs);
                             System.out.println("Remote jobs estimate: " + remoteJobsEstimate);
                             System.out.println("Initial Workers Count: " + initialWorkersCount);
@@ -450,7 +450,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         }
                         if(initialWorkersCount > 0){
                             LOGGER.debug("Initial Workers created: " + initialWorkersCount);
-                            if(verboseFlag){
+                            if(verboseLog){
                                 System.out.println("Initial Workers created: " + initialWorkersCount);
                             }
                             setSubmissionWorkerRunnerMasterClockTime();
@@ -498,7 +498,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         displayStats = true;
                         timeLastdisplayedStats =  System.currentTimeMillis();
                     }
-                    if (verboseFlag && displayStats && remoteJobsNotCompleted > 0) {
+                    if (verboseLog && displayStats && remoteJobsNotCompleted > 0) {
                         System.out.println("Remote jobs: " + remoteJobs.get());
                         System.out.println("Remote jobs completed: " + StatsUtil.getRemoteJobsCompleted());
                         System.out.println("Remote jobs not completed: " + remoteJobsNotCompleted);
@@ -565,7 +565,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         } else {
                             LOGGER.debug("JobResponseQueue:  " + statsMessageListener.getStats().toString());
                         }
-                        if (verboseFlag && displayStats && remoteJobsNotCompleted > 0) {
+                        if (verboseLog && displayStats && remoteJobsNotCompleted > 0) {
                             System.out.println("normalRemoteWorkerCountEstimate: " + remoteWorkerCountEstimate);
                             System.out.println("remoteHighMemoryWorkerCountEstimate: " + remoteHighMemoryWorkerCountEstimate);
                             System.out.println("remoteWorkerCount: " + remoteWorkerCount);
@@ -581,7 +581,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                         }
                     }else{
-                        if (verboseFlag  && displayStats ) {
+                        if (verboseLog && displayStats ) {
                             System.out.println("Remote jobs: " + remoteJobs.get());
                             System.out.println("Remote jobs not completed: " + remoteJobsNotCompleted);
                             System.out.println("Local jobs: " + localJobs.get());

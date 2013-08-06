@@ -200,10 +200,6 @@ public class Utilities {
         String [] memoryStats;
         Vector<String> commands=new Vector<String>();
         final CommandLineConversation clc = new CommandLineConversationImpl();
-
-//        commands.add("/bin/bash");
-//        commands.add("-c");
-//        commands.add("'ps -p "+ PID + " -o vsz,rss --no-header'");
         String output = "";
         String command ="ps -p "+ PID + " -v --no-header";
         ProcessBuilder pb = new ProcessBuilder(command.split(" "));
@@ -212,14 +208,7 @@ public class Utilities {
         if (pr.exitValue()==0) {
             BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
             output = outReader.readLine().trim();
-
-//            System.out.println(" Command is : " + pb.command());
-            //int exitStatus = clc.runCommand(command);
-            //String clcOutput = clc.getOutput();
-            //String error = clc.getErrorMessage();
             memoryStats = output.trim().split("\\s+");
-           // System.out.println(" Output is  " + memoryStats.length + " long : "+ output);
-           // System.out.println(" Error is : " + error);
             int virtualMemory = Integer.parseInt(memoryStats[6]);
             int residentMemory = Integer.parseInt(memoryStats[7]);
             double percentMemory = Double.parseDouble(memoryStats[8]);
@@ -238,53 +227,24 @@ public class Utilities {
      * run the 'free -m' command to get system swap and memory usage
      */
     public static String runFreeCmd() throws IOException,InterruptedException {
-
         Vector<String> commands=new Vector<String>();
-        commands.add("/bin/bash");
-        commands.add("-c");
         commands.add("free -m");
-        ProcessBuilder pb=new ProcessBuilder(commands);
-
-        Process pr=pb.start();
-        pr.waitFor();
-        if (pr.exitValue() == 0) {
-            BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            String output = "";
-            String line = null;
-            while ((line = outReader.readLine()) != null) {
-                output += line + "\n";
-            }
+        String output = runBashCommand(commands);
+        if (output != null) {
             System.out.println("free -m output: \n" + output);
-        } else {
-            System.out.println("Error in running 'free -m'");
-
         }
         return "";
     }
+
     /**
      * run the vmstat command to get more swap and memeory usage
      */
     public static String runVmstatCmd() throws IOException,InterruptedException {
-
         Vector<String> commands=new Vector<String>();
-        commands.add("/bin/bash");
-        commands.add("-c");
         commands.add("vmstat -t -S m");
-        ProcessBuilder pb=new ProcessBuilder(commands);
-
-        Process pr=pb.start();
-        pr.waitFor();
-        if (pr.exitValue() == 0) {
-            BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            String output = "";
-            String line = null;
-            while ((line = outReader.readLine()) != null) {
-                output += line + "\n";
-            }
+        String output = runBashCommand(commands);
+        if (output != null) {
             System.out.println("vmstat -t -S m output: \n" + output);
-        } else {
-            System.out.println("Error in running 'free -m'");
-
         }
         return "";
     }
@@ -293,27 +253,12 @@ public class Utilities {
      * get vm stats from /proc
      */
     public static String getProcStatus() throws IOException,InterruptedException {
-
         String PID = getPid();
         Vector<String> commands=new Vector<String>();
-        commands.add("/bin/bash");
-        commands.add("-c");
         commands.add("cat /proc/" + PID + "/status");
-        ProcessBuilder pb=new ProcessBuilder(commands);
-
-        Process pr=pb.start();
-        pr.waitFor();
-        if (pr.exitValue() == 0) {
-            BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            String output = "";
-            String line = null;
-            while ((line = outReader.readLine()) != null) {
-                output += line + "\n";
-            }
+        String output = runBashCommand(commands);
+        if (output != null) {
             System.out.println(output);
-        } else {
-            System.out.println("Error in running 'cat /proc/" + PID + "/status'");
-
         }
         return "";
     }
@@ -322,26 +267,11 @@ public class Utilities {
      * get vm stats from /proc
      */
     public static String getProcSelfStatus() throws IOException,InterruptedException {
-
         Vector<String> commands=new Vector<String>();
-        commands.add("/bin/bash");
-        commands.add("-c");
         commands.add("cat /proc/self/status");
-        ProcessBuilder pb=new ProcessBuilder(commands);
-
-        Process pr=pb.start();
-        pr.waitFor();
-        if (pr.exitValue() == 0) {
-            BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            String output = "";
-            String line = null;
-            while ((line = outReader.readLine()) != null) {
-                output += line + "\n";
-            }
+        String output = runBashCommand(commands);
+        if (output != null) {
             System.out.println(output);
-        } else {
-            System.out.println("Error in running 'cat /proc/self/status'");
-
         }
         return "";
     }
@@ -350,12 +280,29 @@ public class Utilities {
      * get vm stats from /proc
      */
     public static String runBjobs(String runId) throws IOException,InterruptedException {
-
-        Vector<String> commands=new Vector<String>();
-        commands.add("/bin/bash");
-        commands.add("-c");
+        Vector<String> commands =new Vector<String>();
         commands.add("bjobs -l -J " + runId + " | grep SWAP");
-        ProcessBuilder pb=new ProcessBuilder(commands);
+        String output = runBashCommand(commands);
+        if (output != null) {
+            System.out.println("bjobs -l -J " + runId + " | grep SWAP = " + output);
+        }
+        return "";
+    }
+
+    /**
+     * run bash commands
+     *
+     * @param commands
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static String runBashCommand(Vector<String> commands) throws IOException,InterruptedException{
+        Vector<String> bashcommand =new Vector<String>();
+        bashcommand.add("/bin/bash");
+        bashcommand.add("-c");
+        bashcommand.addAll(commands);
+        ProcessBuilder pb=new ProcessBuilder(bashcommand);
 //        System.out.println("Running " + commands.toString());
         Process pr=pb.start();
         pr.waitFor();
@@ -366,11 +313,11 @@ public class Utilities {
             while ((line = outReader.readLine()) != null) {
                 output += line + "\n";
             }
-            System.out.println("bjobs -l -J " + runId + " | grep SWAP = " + output);
+            return output;
         } else {
             System.out.println("Error in running " + commands.toString());
-
         }
-        return "";
+        return null;
     }
+
 }

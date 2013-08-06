@@ -8,7 +8,6 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
-import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +24,8 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private String runId;
 
+    private  int timeDelay = 10;
+
     private static final int MEGA = 1024 * 1024;
 
     @Override
@@ -32,19 +33,20 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
         final long now = System.currentTimeMillis();
         super.run();
-        if(verboseFlag){
-            System.out.println(Utilities.getTimeNow() + " DEBUG verboseFlag: "  + verboseFlag);
+        if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
             System.out.println("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+
+            //start a new thread to monitor memory usage
+            displayMemoryUsage();
         }
 
-        //start a new thread to monitor memory usage
-        displayMemoryUsage();
+
 
         try {
             loadInMemoryDatabase();
-            if(verboseFlag){
+            if(verboseLog){
                 System.out.println(Utilities.getTimeNow() + " Loaded in memory database ");
             }
             int stepInstancesCreatedByLoadStep = createStepInstances();
@@ -88,7 +90,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
 
-                if(verboseFlag && !controlledLogging){
+                if(verboseLog && !controlledLogging){
                     if(statsUtil.getUnfinishedJobs() < (statsUtil.getTotalJobs() / 2)){
                         System.out.println(Utilities.getTimeNow() + "Step instances left: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                         System.out.println(Utilities.getTimeNow() + " DEBUG " +  " Total step instances: " + stepInstanceDAO.count());
@@ -115,7 +117,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
-        if(verboseFlag){
+        if(verboseLog){
             final long executionTime =   System.currentTimeMillis() - now;
             System.out.println("Execution time (s) for Master: " + String.format("%d min, %d sec",
                     TimeUnit.MILLISECONDS.toMinutes(executionTime),
@@ -183,6 +185,10 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         this.runId = runId;
     }
 
+    public void setTimeDelay(int timeDelay) {
+        this.timeDelay = timeDelay;
+    }
+
     /**
      * * check if the job is hamap or prosite
      *  then assign it higher priority
@@ -224,23 +230,30 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         executor.execute(new Runnable() {
             public void run() {
                 //run the memory footprint display every 5 seconds
-               // if(verboseFlag){
-                    while (!shutdownCalled) {
-                        try{
-                            if (runId != null){
-                                System.out.println("----------------------------------------------");
+                final long startUpTime = System.currentTimeMillis();
+                System.out.print(" in the memeory debug loop " + verboseLog);
+                    try {
+                        if (runId != null) {
+                            Utilities.runBjobs(runId);
+                        }
+                        while (System.currentTimeMillis() - startUpTime < getMaximumLifeMillis()){
+                            System.out.println(Utilities.getTimeNow() +" ----------------------------------------------");
+                            statsUtil.displayRunningJobs();
+                            if (runId != null) {
                                 Utilities.runBjobs(runId);
-
-                                //statsUtil.displayMemInfo();
-                                statsUtil.displayMemoryAndRunningJobs();
+                            }
+                            //statsUtil.displayMemInfo();
+                            statsUtil.displayMemInfo();
+                            statsUtil.displayRunningJobs();
+                            if (runId != null) {
+                                Utilities.runBjobs(runId);
                             }
                             //sleep for 5 seconds
-                            Thread.sleep(5 * 1000);
-                        }catch (Exception ex){
-                            LOGGER.warn(" Problems parsing bjobs command: " + ex);
+                            Thread.sleep(timeDelay * 1000);
                         }
+                    } catch (Exception ex) {
+                        LOGGER.warn(" Problems parsing bjobs command ...: " + ex);
                     }
-               // }
             }
          });
     }

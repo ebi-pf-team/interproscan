@@ -580,8 +580,8 @@ public class Run {
                 if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
                     final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
-                    final ResourceMonitor resourceMonitor = (ResourceMonitor) ctx.getBean("resourceMonitor");
-                    resourceMonitor.setRunId(runId);
+//                    final ResourceMonitor resourceMonitor = (ResourceMonitor) ctx.getBean("resourceMonitor");
+//                    resourceMonitor.setRunId(runId);
                 }
             }
 
