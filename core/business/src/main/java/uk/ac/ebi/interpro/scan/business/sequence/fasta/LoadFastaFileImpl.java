@@ -48,9 +48,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
     @Transactional
     public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener, String analysisJobNames, boolean useMatchLookupService) {
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
-        }
+        LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         BufferedReader reader = null;
         int sequencesParsed = 0;
         SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
@@ -60,6 +58,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
             final StringBuffer currentSequence = new StringBuffer();
             int lineNumber = 0;
             String line;
+            boolean foundIdLine = false;
 
             final Set<T> parsedMolecules = new HashSet<T>();
 
@@ -68,6 +67,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                 if (line.length() > 0) {
                     if ('>' == line.charAt(0)) {
                         // Found ID line.
+                        foundIdLine = true;
                         // Store previous record, if it exists.
                         if (currentId != null) {
                             if (LOGGER.isDebugEnabled()) {
@@ -105,7 +105,22 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                         currentId = parseId(line, lineNumber);
                     } else {
                         // must be a sequence line.
-                        currentSequence.append(line.trim());
+                        if (foundIdLine) {
+                            currentSequence.append(line.trim());
+                        }
+                        else {
+                            // The sequence had no FASTA header, fatal user input error!
+                            LOGGER.fatal("A FASTA input sequence had no header. Stopping now.");
+                            System.out.println("Error: All input sequences should include their FASTA header lines.");
+                            System.out.println("In the provided input, no FASTA header could be found before line: " + line);
+                            System.out.println("No seqeuences have been processed.");
+                            System.exit(999);
+                            // Note: This doesn't stop this sort of issue, but we can't account for everything!
+                            // > Seq 1
+                            // Seq1Sequence
+                            //
+                            // Seq2Sequence
+                        }
                     }
                 }
             }
