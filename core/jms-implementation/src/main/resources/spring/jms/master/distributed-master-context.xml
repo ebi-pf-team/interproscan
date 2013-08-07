@@ -205,7 +205,6 @@
         <property name="workerManagerTopicQueue" ref="workerManagerTopic"/>
         <property name="totalJobs" value="0"/>
         <property name="unfinishedJobs" value="0"/>
-        <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
 

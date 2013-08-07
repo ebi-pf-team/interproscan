@@ -124,12 +124,13 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                     TimeUnit.MILLISECONDS.toSeconds(executionTime) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
             ));
+            try{
+                Utilities.getProcStatus();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
         }
-        try{
-            Utilities.getProcStatus();
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
+
     }
 
 
