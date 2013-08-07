@@ -232,7 +232,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             public void run() {
                 //run the memory footprint display every 5 seconds
                 final long startUpTime = System.currentTimeMillis();
-                System.out.print(" in the memeory debug loop " + verboseLog);
+
                     try {
                         if (runId != null) {
                             Utilities.runBjobs(runId);
