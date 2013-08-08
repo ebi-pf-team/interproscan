@@ -40,7 +40,7 @@
     </text>
 
 <#--protein info component-->
-<#global proteinInfoComponentHeight=180/>
+<#global proteinInfoComponentHeight=120/>
 <#global yPosition=30/>
 <#include "component/protein-info-component.ftl"/>
 
