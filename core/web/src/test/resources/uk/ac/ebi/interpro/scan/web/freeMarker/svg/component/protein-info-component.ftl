@@ -7,28 +7,29 @@
         ${protein.ac}
         </tspan>
     </text>
-    <text y="75px" font-size="13" font-family="Verdana, Helvetica, sans-serif">
-        <tspan font-weight="bold" x="10px" style="fill: #393939">
-            Accession
-        </tspan>
-        <tspan x="10px" dx="100px" fill="#838383">${protein.ac}</tspan>
-        <tspan font-weight="bold" x="10px" dy="30px" style="fill: #393939">
-            Species
-        </tspan>
-        <tspan x="10px" dx="100px" fill="#838383">${protein.taxFullName}</tspan>
+    <#--Protein accession, species and fragment/complete not necessarily known for a submitted sequence, therefore commented out...-->
+    <text y="50px" font-size="13" font-family="Verdana, Helvetica, sans-serif">
+        <#--<tspan font-weight="bold" x="10px" style="fill: #393939">-->
+            <#--Accession-->
+        <#--</tspan>-->
+        <#--<tspan x="10px" dx="100px" fill="#838383">${protein.ac}</tspan>-->
+        <#--<tspan font-weight="bold" x="10px" dy="30px" style="fill: #393939">-->
+            <#--Species-->
+        <#--</tspan>-->
+        <#--<tspan x="10px" dx="100px" fill="#838383">${protein.taxFullName}</tspan>-->
         <tspan font-weight="bold" x="10px" dy="30px" style="fill: #393939">
             Length
         </tspan>
-    <#--Work out if protein sequence is a fragment or not-->
-    <#assign isProteinFragment=protein.proteinFragment />
+    <#--&lt;#&ndash;Work out if protein sequence is a fragment or not&ndash;&gt;-->
+    <#--<#assign isProteinFragment=protein.proteinFragment />-->
         <tspan x="10px" dx="100px" fill="#838383">${protein.length} amino acids
-        <#if isProteinFragment>(fragment)<#else>(complete)</#if>
+        <#--<#if isProteinFragment>(fragment)<#else>(complete)</#if>-->
         </tspan>
     </text>
-    <text x="1065" y="145" font-size="10">
-        <tspan fill="#525252" font-family="Verdana, Helvetica, sans-serif">Source:</tspan>
-        <tspan fill="#838383" font-family="Verdana, Helvetica, sans-serif">UniProtKB</tspan>
-    </text>
+    <#--<text x="1065" y="145" font-size="10">-->
+        <#--<tspan fill="#525252" font-family="Verdana, Helvetica, sans-serif">Source:</tspan>-->
+        <#--<tspan fill="#838383" font-family="Verdana, Helvetica, sans-serif">UniProtKB</tspan>-->
+    <#--</text>-->
 
-    <line x1="10" y1="150" x2="${(globalDocumentWidth - 80)?string("0")}" y2="150" stroke="#CDCDCD" stroke-width="1"/>
+    <line x1="10" y1="100" x2="${(globalDocumentWidth - 80)?string("0")}" y2="100" stroke="#CDCDCD" stroke-width="1"/>
 </svg>
