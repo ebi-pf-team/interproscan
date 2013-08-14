@@ -80,7 +80,9 @@ public class StepInstance implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     private List<StepInstance> dependsUpon = new ArrayList<StepInstance>();
 
+    // Full list of analyses for -appl parameter can be more than the 255 character String default!
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    @Column(length = 350)
 //    @MapKeyJoinColumn ()
 //    @CollectionOfElements(targetElement = String.class, fetch = FetchType.EAGER)
 //    @MapKeyManyToMany(targetEntity = String.class)
