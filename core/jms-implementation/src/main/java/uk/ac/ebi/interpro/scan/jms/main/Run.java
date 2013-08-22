@@ -793,7 +793,9 @@ public class Run {
             //set the tcpUri for the worker
             if (tcpConnectionString != null) {
                 worker.setTcpUri(tcpConnectionString);
-                LOGGER.debug("Remote worker has tcpConnectionString: " + tcpConnectionString);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Remote worker has tcpConnectionString: " + tcpConnectionString);
+                }
             }
             //set high memory option
             worker.setHighMemory(parsedCommandLine.hasOption(I5Option.HIGH_MEM.getLongOpt()));
@@ -805,11 +807,15 @@ public class Run {
                 worker.setMasterWorker(parsedCommandLine.hasOption(I5Option.TIER1.getLongOpt()));
                 LOGGER.debug("Run: get worker tier ");
                 String tier = parsedCommandLine.getOptionValue(I5Option.TIER1.getLongOpt());
-                LOGGER.debug("Run: set worker tier " + tier);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Run: set worker tier " + tier);
+                }
                 int tierInt = Integer.parseInt(tier);
                 worker.setTier(tierInt);
 
-                LOGGER.debug("Worker tier:  " + tier);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Worker tier:  " + tier);
+                }
                 highmemDebug = true;
             }
 
@@ -826,7 +832,9 @@ public class Run {
 //            final WorkerMessageSenderImpl workerMessageSender = (WorkerMessageSenderImpl) ctx.getBean("workerMessageSender");
 //            workerMessageSender.setRemoteJmsTemplate(worker.getRemoteJmsTemplate());
 //            LOGGER.debug("parsedCommandLine 1: " + parsedCommandLine.toString());
-            LOGGER.debug("I5Option.TEMP_DIRECTORY_NAME: " + I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("I5Option.TEMP_DIRECTORY_NAME: " + I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
+            }
 //            System.out.println("temp dir name: ");
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY_NAME.getLongOpt())) {
                 final String temporaryDirectoryName = parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY_NAME.getLongOpt());
@@ -856,18 +864,24 @@ public class Run {
                 String [] masterTime =  masterMaxlife.split(":");
                 String masterClockTimeStr = masterTime[0];
                 String masterLifeRemainingStr = masterTime[1];
-                LOGGER.debug("master time passed: " + masterMaxlife);
-                LOGGER.debug("master time passed: " + masterClockTimeStr+ " - " + masterLifeRemainingStr);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("master time passed: " + masterMaxlife);
+                    LOGGER.debug("master time passed: " + masterClockTimeStr+ " - " + masterLifeRemainingStr);
+                }
 
                 long masterClockTime = Long.valueOf(masterClockTimeStr.trim());
                 long masterLifeRemaining = Long.valueOf(masterLifeRemainingStr.trim());
-                LOGGER.info("masterclock time: " + masterClockTime + " master life remaining: " + masterLifeRemaining);
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("masterclock time: " + masterClockTime + " master life remaining: " + masterLifeRemaining);
+                }
                 worker.setCurrentMasterClockTime(masterClockTime);
                 worker.setCurrentMasterlifeSpanRemaining(masterLifeRemaining);
                 //want to change the remoteFactory
             }
 
-            LOGGER.debug("parsedCommandLine: " + parsedCommandLine.toString());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("parsedCommandLine: " + parsedCommandLine.toString());
+            }
 
         }
     }
@@ -1084,7 +1098,9 @@ public class Run {
             broker.addConnector(tc);
             //
             broker.start();
-            LOGGER.info("BrokerService  running at uriString = " + uriString);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("BrokerService  running at uriString = " + uriString);
+            }
             return uriString;
         } catch (Exception e) {
             throw new IllegalStateException("Unable to configure the TCPTransport on the Broker", e);
