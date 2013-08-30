@@ -116,9 +116,8 @@ public class ProteinMatchesSVGResultWriter {
                         if (!outputDirectory.endsWith("/")) {
                             outputDirectory = outputDirectory + "/";
                         }
-                        UrlFriendlyIdGenerator gen = UrlFriendlyIdGenerator.getInstance();
-                        String urlFriendlyIdentifier = gen.generate(xref.getIdentifier());
-                        final File newResultFile = new File(outputDirectory + urlFriendlyIdentifier + ".svg");
+
+                        final File newResultFile = new File(outputDirectory + xref.getIdentifier() + ".svg");
                         resultFiles.add(newResultFile);
                         writer = new PrintWriter(new FileWriter(newResultFile));
                         temp.process(model, writer);
