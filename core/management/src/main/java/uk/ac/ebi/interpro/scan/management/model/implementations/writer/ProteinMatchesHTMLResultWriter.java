@@ -170,7 +170,10 @@ public class ProteinMatchesHTMLResultWriter {
                         if (!tempDirectory.endsWith("/")) {
                             tempDirectory = tempDirectory + "/";
                         }
-                        final File newResultFile = new File(tempDirectory + xref.getIdentifier() + ".html");
+                        // remove url-unfriendly characters
+                        UrlFriendlyIdGenerator gen = UrlFriendlyIdGenerator.getInstance();
+                        String urlFriendlyIdentifier = gen.generate(xref.getIdentifier());
+                        final File newResultFile = new File(tempDirectory + urlFriendlyIdentifier + ".html");
                         resultFiles.add(newResultFile);
                         writer = new PrintWriter(new FileWriter(newResultFile));
                         temp.process(model, writer);
