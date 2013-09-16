@@ -18,7 +18,7 @@
                 useShutdownHook="true"
                 dedicatedTaskRunner="false"
                 deleteAllMessagesOnStartup="true"
-                dataDirectory="${broker.directory}"
+                tmpDataDirectory="${jms.broker.temp.directory}"
             >
         <!-- shutdownhook is the default shutdown mode for ActiveMQ, see:
         http://activemq.apache.org/maven/activemq-core/apidocs/org/apache/activemq/broker/BrokerService.html#setUseShutdownHook(boolean)
@@ -54,6 +54,8 @@
         <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="statsUtil" ref="statsUtil"/>
+        <property name="maxConsumers" value="${master.maxconsumers}"/>
+        <property name="temporaryDirectory" value="${temporary.file.directory}"/>
     </bean>
 
     <!--Configuration for the statistics listener-->

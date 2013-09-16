@@ -22,7 +22,8 @@
             persistent="false"
             useShutdownHook="false"
             start="false"
-            dedicatedTaskRunner="false">
+            dedicatedTaskRunner="false"
+            tmpDataDirectory="${jms.broker.temp.directory}">
         <amq:plugins>
             <amq:statisticsBrokerPlugin id="stats"/>
         </amq:plugins>
@@ -174,7 +175,7 @@
         <property name="jmsTopicTemplate" ref="jmsTopicTemplate"/>
         <property name="responseQueueMessageListener" ref="responseQueueMessageListener"/>
         <property name="workerMessageSender" ref="workerMessageSender"/>
-        
+
         <property name="gridThrottle" value="${grid.throttle}"/>
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
         <property name="maxTierDepth" value="${max.tier.depth}"/>

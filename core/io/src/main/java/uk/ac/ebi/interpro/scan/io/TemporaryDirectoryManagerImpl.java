@@ -44,7 +44,9 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
      */
     @Override
     public String replacePath(String inputURI) {
-        LOGGER.debug("About to filter: " + inputURI);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("About to filter: " + inputURI);
+        }
         if (inputURI.contains(TemporaryDirectoryManager.DIRECTORY_TEMPLATE)) {
 
             synchronized (LOCK) {
@@ -54,10 +56,14 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
                 String[] components = inputURI.split("[:;]");
                 for (String component : components) {
                     if (component.contains(DIRECTORY_TEMPLATE)) {
-                        LOGGER.debug("Component of URL: " + component);
-                        LOGGER.debug("temporaryDirectoryName: " + temporaryDirectoryName);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Component of URL: " + component);
+                            LOGGER.debug("temporaryDirectoryName: " + temporaryDirectoryName);
+                        }
                         String prefix = component.substring(0, component.indexOf(DIRECTORY_TEMPLATE));
-                        LOGGER.debug("prefix: " + prefix);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("prefix: " + prefix);
+                        }
                         File temporaryDirectory = new File(prefix, temporaryDirectoryName);
 
                         if (!createdDirectories.contains(temporaryDirectory.getPath())) {
@@ -78,7 +84,9 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
             }
 
             final String modifiedInputURI = inputURI.replace(TemporaryDirectoryManager.DIRECTORY_TEMPLATE, temporaryDirectoryName);
-            LOGGER.debug("modifiedInputURI: " + modifiedInputURI);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("modifiedInputURI: " + modifiedInputURI);
+            }
             return modifiedInputURI;
         }
         return inputURI;

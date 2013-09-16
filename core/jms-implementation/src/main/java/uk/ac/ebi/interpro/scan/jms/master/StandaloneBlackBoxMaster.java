@@ -24,7 +24,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
-        LOGGER.warn("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        if(verboseLog){
+            System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        }
         try {
             loadInMemoryDatabase();
             int stepInstancesCreatedByLoadStep = createStepInstances();
@@ -103,12 +105,16 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
-        final long executionTime =   System.currentTimeMillis() - now;
-        LOGGER.warn("Execution time (s) for StandAlone Master: " + String.format("%d min, %d sec",
-                TimeUnit.MILLISECONDS.toMinutes(executionTime),
-                TimeUnit.MILLISECONDS.toSeconds(executionTime) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
-        ));
+
+        if(verboseLog){
+            final long executionTime =   System.currentTimeMillis() - now;
+            System.out.println("Execution time : (" + TimeUnit.MILLISECONDS.toSeconds(executionTime)+ " s) => " + String.format("%d min, %d sec",
+                    TimeUnit.MILLISECONDS.toMinutes(executionTime),
+                    TimeUnit.MILLISECONDS.toSeconds(executionTime) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
+            ));
+        }
+        System.exit(0);
     }
 
     /**

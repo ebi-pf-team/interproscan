@@ -47,6 +47,7 @@
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
+
     </bean>
 
     <bean id="stepPfamADeleteFastaFile-27.0"
