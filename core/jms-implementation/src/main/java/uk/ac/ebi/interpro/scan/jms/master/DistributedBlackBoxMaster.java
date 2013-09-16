@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements ClusterUser{
+public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements ClusterUser {
 
     private static final Logger LOGGER = Logger.getLogger(DistributedBlackBoxMaster.class.getName());
 
@@ -48,13 +48,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
     private String projectId;
 
-    Long timeLastSpawnedWorkers = System.currentTimeMillis();
+    private Long timeLastSpawnedWorkers = System.currentTimeMillis();
 
     private AtomicInteger remoteJobs = new AtomicInteger(0);
 
     private AtomicInteger localJobs = new AtomicInteger(0);
 
-    List<Message> failedJobs = new ArrayList<Message>();
+    private List<Message> failedJobs = new ArrayList<Message>();
 
     private static final int MEGA = 1024 * 1024;
 
@@ -68,12 +68,14 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     private static final int HIGH_PRIORITY = 8;
 
     /**
-    * Run the Master Application.
-    */
+     * Run the Master Application.
+     */
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
-        LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        }
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
@@ -142,10 +144,15 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
                         if (canRunRemotely){
                             remoteJobs.incrementAndGet();
-                            LOGGER.debug("Remote jobs: added one more:  " + remoteJobs.get());
-                        }else{
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Remote jobs: added one more:  " + remoteJobs.get());
+                            }
+                        }
+                        else {
                             localJobs.incrementAndGet();
-                            LOGGER.debug("Local jobs: added one more:  " + localJobs.get());
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Local jobs: added one more:  " + localJobs.get());
+                            }
                         }
                         countRegulator++;
                         controlledLogging = false;
@@ -177,11 +184,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 }
                 if(!controlledLogging){
                     //check what is not completed
-                    LOGGER.debug("Distributed Master has no jobs scheduled .. more Jobs may get scheduled ");
-                    LOGGER.debug("Remote jobs: " + remoteJobs.get());
-                    LOGGER.debug("Local jobs: " + localJobs.get());
-                    LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                    LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Distributed Master has no jobs scheduled .. more Jobs may get scheduled ");
+                        LOGGER.debug("Remote jobs: " + remoteJobs.get());
+                        LOGGER.debug("Local jobs: " + localJobs.get());
+                        LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                    }
 
                     controlledLogging = true;
                 }
@@ -219,14 +228,16 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             messageSender.sendShutDownMessage();
             //LOGGER.debug("Topic stats 2: " +statsMessageListener.getStats());
         } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
         databaseCleaner.closeDatabaseCleaner();
         LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% of analyses done:  InterProScan analyses completed");
-        LOGGER.debug("Remote jobs: " + remoteJobs.get());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Remote jobs: " + remoteJobs.get());
+        }
         final long executionTime =   System.currentTimeMillis() - now;
         if(verboseLog){
             System.out.println("Execution Time (s) for Master: " + String.format("%d min, %d sec",
@@ -256,7 +267,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     }
 
     public void setProjectId(String projectId) {
-         this.projectId = projectId;
+        this.projectId = projectId;
     }
 
     public String getProjectId() {
@@ -372,7 +383,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             try {
                                 final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
                                 messageSender.sendMessage(stepExecution.getStepInstance(), highMemory, HIGH_PRIORITY, canRunRemotely);
-                                LOGGER.debug("Resending job after Major failure: " + stepExecution.getStepInstance().getId());
+                                if (LOGGER.isDebugEnabled()) {
+                                    LOGGER.debug("Resending job after Major failure: " + stepExecution.getStepInstance().getId());
+                                }
                             }catch (Exception e)  {
                                 e.printStackTrace();
                             }
@@ -381,7 +394,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         try {
                             Thread.sleep(1 * 10 * 1000);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -414,25 +427,32 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 int maxConcurrentInVmWorkerCountForWorkers = getMaxConcurrentInVmWorkerCountForWorkers();
                 while(!firstWorkersSpawned) {
                     final int actualRemoteJobs =   remoteJobs.get();
-                    LOGGER.debug("initial check - Remote jobs: " + actualRemoteJobs);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("initial check - Remote jobs: " + actualRemoteJobs);
+                    }
                     if(actualRemoteJobs < 1){
                         try {
                             Thread.sleep(waitMultiplier * 2 * 1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        LOGGER.debug("Remote jobs still = " + actualRemoteJobs);
-                    }else{
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Remote jobs still = " + actualRemoteJobs);
+                        }
+                    }
+                    else{
                         long totalJobs =  stepInstanceDAO.count();
 
                         //TODO estimate the number of remote jobs needed per number of steps count
                         int remoteJobsEstimate =  (int) (totalJobs / 4);
                         //initialWorkersCount = Math.round(remoteJobsEstimate / maxMessagesOnQueuePerConsumer);
                         int initialWorkersCount = Math.round(remoteJobsEstimate / (2 * maxConcurrentInVmWorkerCountForWorkers));
-                        LOGGER.debug("Remote jobs actual: " + actualRemoteJobs);
-                        LOGGER.debug("Remote jobs estimate: " + remoteJobsEstimate);
-                        LOGGER.debug("Initial Workers Count: " + initialWorkersCount);
-                        LOGGER.debug("Total jobs (StepInstances): " + totalJobs);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Remote jobs actual: " + actualRemoteJobs);
+                            LOGGER.debug("Remote jobs estimate: " + remoteJobsEstimate);
+                            LOGGER.debug("Initial Workers Count: " + initialWorkersCount);
+                            LOGGER.debug("Total jobs (StepInstances): " + totalJobs);
+                        }
                         if(verboseLog){
                             System.out.println("Remote jobs actual: " + actualRemoteJobs);
                             System.out.println("Remote jobs estimate: " + remoteJobsEstimate);
@@ -449,7 +469,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             initialWorkersCount = initialWorkersCount * 6 /10;
                         }
                         if(initialWorkersCount > 0){
-                            LOGGER.debug("Initial Workers created: " + initialWorkersCount);
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Initial Workers created: " + initialWorkersCount);
+                            }
                             if(verboseLog){
                                 System.out.println("Initial Workers created: " + initialWorkersCount);
                             }
@@ -461,7 +483,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 //                            }
                             firstWorkersSpawned = true;
                         }else{
-                            LOGGER.debug("Remote jobs still = " + actualRemoteJobs);
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Remote jobs still = " + actualRemoteJobs);
+                            }
                             try {
                                 Thread.sleep(waitMultiplier * 4 * 1000);
                             } catch (InterruptedException e) {
@@ -485,7 +509,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 int remoteJobsNotCompletedEstimate = remoteJobs.get();
                 while (!shutdownCalled) {
                     //statsUtil.sendMessage();
-                    LOGGER.debug("Create workers loop: Current Total remoteJobs not completed: "  + remoteJobsNotCompletedEstimate);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Create workers loop: Current Total remoteJobs not completed: "  + remoteJobsNotCompletedEstimate);
+                    }
                     final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
                     final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
 
@@ -560,10 +586,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                         LOGGER.debug("Poll the Job Response queue ");
                         final boolean responseQueueStatsAvailable = statsUtil.pollStatsBrokerResponseQueue();
-                        if (!responseQueueStatsAvailable) {
-                            LOGGER.debug("The Job Response queue is not initialised");
-                        } else {
-                            LOGGER.debug("JobResponseQueue:  " + statsMessageListener.getStats().toString());
+                        if (LOGGER.isDebugEnabled()) {
+                            if (!responseQueueStatsAvailable) {
+                                LOGGER.debug("The Job Response queue is not initialised");
+                            } else {
+                                LOGGER.debug("JobResponseQueue:  " + statsMessageListener.getStats().toString());
+                            }
                         }
                         if (verboseLog && displayStats && remoteJobsNotCompleted > 0) {
                             System.out.println("normalRemoteWorkerCountEstimate: " + remoteWorkerCountEstimate);
@@ -576,11 +604,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         //try to check if we need to submit jobs
                         Long now = System.currentTimeMillis();
                         if(now - statsUtil.getLastMessageRecevivedTime() > 20 * 60 * 1000){
-                             //something wrong
-                             //resend the remote jobs
+                            //something wrong
+                            //resend the remote jobs
 
                         }
-                    }else{
+                    }
+                    else {
                         if (verboseLog && displayStats ) {
                             System.out.println("Remote jobs: " + remoteJobs.get());
                             System.out.println("Remote jobs not completed: " + remoteJobsNotCompleted);
@@ -596,7 +625,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     try {
                         Thread.sleep(1 * 20 * 1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        e.printStackTrace();
                     }
                 }
 

@@ -1,15 +1,13 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.io.cli.FileIsNotADirectoryException;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * @author Gift Nuka
@@ -17,6 +15,7 @@ import java.util.Vector;
  */
 public class Utilities {
 
+    private static volatile Logger LOGGER = Logger.getLogger(Utilities.class.getName());
 
     public static String createUniqueJobName(int jobNameLength) {
         StringBuffer sb = new StringBuffer();
@@ -258,7 +257,8 @@ public class Utilities {
         commands.add("cat /proc/" + PID + "/status");
         String output = runBashCommand(commands);
         if (output != null) {
-            System.out.println(output);
+            System.err.println(getTimeNow() + " process stats: ");
+            System.err.println(output);
         }
         return "";
     }
@@ -287,6 +287,93 @@ public class Utilities {
             System.out.println("bjobs -l -J " + runId + " | grep SWAP = " + output);
         }
         return "";
+    }
+
+
+    static public  String getCurrentProcess() throws IOException,InterruptedException {
+        String PID = getPid();
+        Vector<String> commands=new Vector<String>();
+        commands.add("ps -o cmd= -p " + PID);
+        String output = runBashCommand(commands);
+        if (output != null) {
+            LOGGER.debug(commands + " current comd: \n" + output);
+        }
+        return output;
+    }
+
+
+    static public  List<String> getChildProcesses() throws IOException,InterruptedException {
+        String PID = getPid();
+        Vector<String> commands=new Vector<String>();
+        commands.add("ps -o pid= --ppid " + PID);
+        String output = runBashCommand(commands);
+        List<String> list = new ArrayList<String>();
+        if (output != null) {
+            String [] outputList =  output.split("\n");
+            list = new ArrayList<String>(outputList.length);
+            System.out.println(commands + " current processes: \n" + output);
+            for (String pid : outputList) {
+                list.add(pid.trim());
+            }
+        }
+        return list;
+    }
+
+    static public List <String> getNewChildProcesses(List<String> oldPIDList, List<String> newPIDList){
+        newPIDList.removeAll(oldPIDList);
+        return newPIDList;
+    }
+
+
+    static public  String getProcessCmd(String PID) throws IOException,InterruptedException {
+        Vector<String> commands=new Vector<String>();
+        commands.add("ps -o cmd= -p " + PID);
+        String output = runBashCommand(commands);
+        if (output != null) {
+            LOGGER.debug(commands + " comd name: \n" + output);
+        }
+        return output;
+    }
+
+    static public  String getCurrentProcesses() throws IOException,InterruptedException {
+        String PID = getPid();
+        Vector<String> commands=new Vector<String>();
+        commands.add("ps -o pid,vsize,rss,cmd --ppid " + PID);
+        String output = runBashCommand(commands);
+        if (output != null) {
+            LOGGER.debug(" current cmds: \n" + output);
+            LOGGER.debug( " current java cmd count: " + getJavaCmdCount(output));
+        }
+        return output;
+    }
+
+
+
+    static public int getJavaCmdCount(String psOutput){
+        int javaCommandCount = 0;
+        String[] cmds = psOutput.split("\n");
+
+        for (String cmd : cmds) {
+            if (cmd.contains("java")) {
+                javaCommandCount++;
+            }
+        }
+        return javaCommandCount;
+    }
+
+
+    static public boolean isForkHappening(){
+        String processes = null;
+        try {
+            processes = getCurrentProcesses();
+            return getJavaCmdCount(processes) > 0;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return false;
+
     }
 
     /**

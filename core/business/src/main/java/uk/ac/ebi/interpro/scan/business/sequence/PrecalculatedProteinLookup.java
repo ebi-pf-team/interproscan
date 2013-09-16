@@ -21,11 +21,11 @@ public interface PrecalculatedProteinLookup {
     boolean isConfigured();
 
     /**
-     *   Check that the client and the server are based on the same version of interproscan
-     *   ie all member database versions are in synch
-     *   If not then display error message and exit
+     *   If the client and the server are based on the same version of interproscan
+     *   return true, otherwise return false
      */
-    void checkLookupSynchronisation() throws IOException;
+    boolean isSynchronised() throws IOException;
+
 
 
 }

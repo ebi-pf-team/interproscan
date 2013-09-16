@@ -38,6 +38,24 @@ public class CommandLineConversationImpl implements CommandLineConversation {
     private File workingDirectory;
     private volatile IOException exceptionThrownByGobbler;
 
+    private String stepInstanceStepId;
+    private boolean verboseLog;
+
+
+    /**
+     * set stepId for logs
+     *
+     */
+
+    public void setStepInstanceStepId(String stepInstanceStepId) {
+        this.stepInstanceStepId = stepInstanceStepId;
+    }
+
+
+    public void setVerboseLog(boolean verboseLog) {
+        this.verboseLog = verboseLog;
+    }
+
     /**
      * This is an optional InputStream of data to be piped into the command (i.e. on STDIN).
      */
@@ -76,6 +94,9 @@ public class CommandLineConversationImpl implements CommandLineConversation {
     public int runCommand(boolean mergeErrorIntoOutput, List<String> commands)
             throws IOException, InterruptedException {
 
+        //set verbose on/off
+        setVerboseLog(CommandLineConversationMonitor.isVerboseLog());
+
         ProcessBuilder pb = new ProcessBuilder(commands);
 
         // Set error redirect as requested.
@@ -98,12 +119,46 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Command Line: \n " + pb.command());
         }
-
-        Process process = pb.start();
+        if(verboseLog){
+            System.out.println(CommandLineConversationMonitor.getTimeNow() + " In CommandLineConversation: " + stepInstanceStepId);
+        }
+        Long getLockTime = System.currentTimeMillis();
+        Process process;
+        //lock the CommandLineConversationMonitor  only if the binaryrundelay is set
+        try{
+            if(CommandLineConversationMonitor.getBinaryRunDelay() > 0){
+                CommandLineConversationMonitor.binaryRunLock.lock();
+                CommandLineConversationMonitor.simpleBinaryRunDelay(stepInstanceStepId);
+            }
+            LOGGER.debug("Start process in clc:  " + stepInstanceStepId);
+            if(verboseLog){
+                System.out.println(CommandLineConversationMonitor.getTimeNow() + " Start process in clc:  " + stepInstanceStepId);
+            }
+            //fork the process
+            process = pb.start();
+        }finally {
+            if(CommandLineConversationMonitor.getBinaryRunDelay() > 0){
+                CommandLineConversationMonitor.binaryRunLock.unlock();
+            }
+        }
+        Long releaseLockTime = System.currentTimeMillis();
+        Long startuptime = System.currentTimeMillis() - releaseLockTime;
         final StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), outputFileHandle);
         final StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), errorFileHandle);
         errorGobbler.start();
         outputGobbler.start();
+
+        Long startuptime2 = System.currentTimeMillis() - releaseLockTime;
+        Long lockTime = releaseLockTime - getLockTime;
+        Long processCompleteStartUpTime = System.currentTimeMillis() - getLockTime;
+        if(verboseLog){
+            System.out.println(CommandLineConversationMonitor.getTimeNow()
+                    + " Started process in clc:  " + stepInstanceStepId
+                    + " startuptime:  " + startuptime + " ms"
+                    + " startuptime2: " + startuptime2  + " ms"
+                    + " waiting and lock time : " + processCompleteStartUpTime + " ms"
+                    + " locktime : " + lockTime  + " ms");
+        }
         if (commandInputStream != null) {
             BufferedOutputStream bos = null;
             try {

@@ -16,7 +16,23 @@
     <import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>
 
     <!--  Embedded ActiveMQ Broker - in vm connections only· -->
-    <amq:broker useJmx="false" persistent="false" useShutdownHook="false">
+    <amq:broker useJmx="false"
+                persistent="false"
+                useShutdownHook="false"
+                tmpDataDirectory="${jms.broker.temp.directory}">
+        <amq:systemUsage>
+            <amq:systemUsage>
+                <amq:memoryUsage>
+                    <amq:memoryUsage limit="1024 mb"/>
+                </amq:memoryUsage>
+                <amq:storeUsage>
+                <amq:storeUsage limit="1 gb"/>
+                </amq:storeUsage>
+                <amq:tempUsage>
+                <amq:tempUsage limit="100 mb"/>
+                </amq:tempUsage>
+            </amq:systemUsage>
+        </amq:systemUsage>
         <amq:transportConnectors>
             <amq:transportConnector uri="vm://localhost"/>
         </amq:transportConnectors>
@@ -35,7 +51,7 @@
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
         <property name="verboseLog" value="${verbose.log}"/>
         <property name="timeDelay" value="${resource.monitor.time.delay}"/>
-
+        <property name="temporaryDirectory" value="${temporary.file.directory}"/>
     </bean>
 
     <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.NonZeroExitOnUnrecoverableError"/>

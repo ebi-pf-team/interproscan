@@ -58,6 +58,7 @@ abstract public class RunBinaryStep extends Step {
         this.outputFileNameTemplate = hmmerOutputFilePathTemplate;
     }
 
+
     /**
      * Allows binary switches to be passed in as a white-space separated String
      * (for ease of configuration).
@@ -81,6 +82,7 @@ abstract public class RunBinaryStep extends Step {
     public final List<String> getBinarySwitchesAsList() {
         return binarySwitchesInList;
     }
+
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
@@ -120,6 +122,9 @@ abstract public class RunBinaryStep extends Step {
 
             int exitStatus;
             try {
+
+                clc.setStepInstanceStepId(stepInstance.getStepId());
+                LOGGER.debug("Now Running  : " + stepInstance.getStepId());
                 exitStatus = clc.runCommand(false, command);
             } catch (IOException e) {
                 throw new IllegalStateException("IOException thrown when attempting to run binary", e);

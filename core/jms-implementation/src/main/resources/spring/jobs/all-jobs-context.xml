@@ -77,6 +77,12 @@
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.out"/>
     </bean>
 
+    <bean id="clcMonitor" class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationMonitor">
+        <property name="binaryRunDelay" value="${binary.run.delay}"/>
+        <property name="checkForkInProgress" value="${check.fork.progress}"/>
+        <property name="verboseLog" value="${verbose.log}"/>
+    </bean>
+
 
     <!--<import resource="all-jobs-context.xml"/>-->
 

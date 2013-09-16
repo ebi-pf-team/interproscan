@@ -117,7 +117,9 @@ public class ProteinMatchesSVGResultWriter {
                             outputDirectory = outputDirectory + "/";
                         }
 
-                        final File newResultFile = new File(outputDirectory + xref.getIdentifier() + ".svg");
+                        UrlFriendlyIdGenerator gen = UrlFriendlyIdGenerator.getInstance();
+                        String urlFriendlyId = gen.generate(xref.getIdentifier());
+                        final File newResultFile = new File(outputDirectory + urlFriendlyId + ".svg");
                         resultFiles.add(newResultFile);
                         writer = new PrintWriter(new FileWriter(newResultFile));
                         temp.process(model, writer);
@@ -140,7 +142,7 @@ public class ProteinMatchesSVGResultWriter {
     private void checkTempDirectory(String tempDirectory) throws IOException {
         File tempFileDirectory = new File(tempDirectory);
         if (!tempFileDirectory.exists()) {
-            boolean isCreated = tempFileDirectory.mkdir();
+            boolean isCreated = tempFileDirectory.mkdirs();
 //            boolean isCreated = tempFileDirectory.createNewFile();
             if (!isCreated) {
                 LOGGER.warn("Couldn't create temp directory " + tempDirectory);

@@ -87,8 +87,10 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         // Check if the MD5 needs to be reanalyzed
 
         try {
-            // First, check if the lookup client and server are in synch
-            checkLookupSynchronisation();
+            // Only proceed if the lookup client and server are in sync
+            if (!isSynchronised()) {
+                return null;
+            }
             final String upperMD5 = protein.getMd5().toUpperCase();
 
             if (!preCalcMatchClient.getMD5sOfProteinsAlreadyAnalysed(upperMD5).contains(upperMD5)) {
@@ -126,8 +128,10 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         }
 
         try {
-            // First, check if the lookup client and server are in synch
-            checkLookupSynchronisation();
+            // Only proceed if the lookup client and server are in sync
+            if (!isSynchronised()) {
+                return null;
+            }
             // Then, check if the MD5s have been precalculated
             String[] md5s = new String[proteins.size()];
             // Map for looking up proteins by MD5 efficiently.
@@ -188,18 +192,16 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     }
 
     /**
-     *   Check that the client and the server are based on the same version of interproscan
-     *   ie all member database versions are in synch
-     *   If not then display error message and exit
+     *   If the client and the server are based on the same version of interproscan
+     *   return true, otherwise return false
      */
-    public void checkLookupSynchronisation() throws IOException {
-
+    public boolean isSynchronised() throws IOException {
         String serverVersion = preCalcMatchClient.getServerVersion();
-
-         if (!interproscanVersion.equals(serverVersion)) {
-                displayLookupSynchronisationErrorAndExit(interproscanVersion, serverVersion);
-                System.exit(123);
-            }
+        if (!serverVersion.equals(interproscanVersion)) {
+            displayLookupSynchronisationError(interproscanVersion, serverVersion);
+            return false;
+        }
+        return true;
 
     }
 
@@ -227,22 +229,19 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     }
 
-    private void displayLookupSynchronisationErrorAndExit(String clientVersion, String serverVersion) {
+    private void displayLookupSynchronisationError(String clientVersion, String serverVersion) {
 
         LOGGER.warn(
-                "The version of InterProScan you are using is " + clientVersion + "\n" +
+                "\n\nThe version of InterProScan you are using is " + clientVersion + "\n" +
                 "The version of the lookup service you are using is " + serverVersion + "\n" +
                 "As the data in these versions is not the same, you cannot use this match lookup service.\n" +
-                "You have the following options:\n" +
-                "i) Download the newest version of InterProScan5 from our FTP site\n" +
-                "    ftp://ftp.ebi.ac.uk/pub/databases/interpro/\n" +
-                "ii) Restart the search and disable the lookup by using the flag -dp on the command-line or by\n" +
-                "commenting out the in your configuration file starting\n" +
-                "    \"precalculated.match.lookup.service.url=\"\n" +
-                "Note that this will mean that you will run all of the analyses provided in\n" +
-                "InterProScan on all your sequences locally.\n" +
-                "iii) Download the match lookup service for your version of InterProScan and install it locally.  You\n" +
-                "will then need to edit the service URL in your configuration file to point to your local installation"
+                "InterProScan will now run locally\n" +
+                "If you would like to use the match lookup service, you have the following options:\n" +
+                "i) Download the newest version of InterProScan5 from our FTP site:\n" +
+                "   ftp://ftp.ebi.ac.uk/pub/databases/interpro/\n" +
+                "ii) Download the match lookup service for your version of InterProScan from our FTP site and install it locally.\n" +
+                "    You will then need to edit the following property in your configuration file to point to your local installation:\n" +
+                "    precalculated.match.lookup.service.url=\n\n"
         );
 
     }

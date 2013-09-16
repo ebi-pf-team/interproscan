@@ -6,58 +6,31 @@
  * @version $Id: database.css,v 1.4 2012/03/20 15:14:07 pesseat Exp $
  */
 
-span.pfam, span.pfamb {
-    background-color: #0000ff;
-}
+span.pfam, span.pfamb {background-color: #0000ff;}
 
-span.panther {
-    background-color: #a66c32;
-}
+span.panther {background-color: #a66c32;}
 
-span.prints {
-    background-color: #33cc33;
-}
+span.prints {background-color: #33cc33;}
 
-span.pirsf {
-    background-color: #ffa8fd;
-}
+span.pirsf {background-color: #ffa8fd;}
 
-span.smart {
-    background-color: #ff0000;
-}
+span.smart {background-color: #ff0000;}
 
-span.prosite-profiles {
-    background-color: #ff9000;
-}
+span.prosite-profiles {background-color: #ff9000;}
 
-span.prosite-patterns {
-    background-color: #ffff00;
-}
+span.prosite-patterns {background-color: #ffff00;}
 
-span.hamap {
-    background-color: #0ff7fa;
-}
+span.hamap {background-color: #0ff7fa;}
 
-span.gene3d {
-    background-color: #b852d4;
-}
+span.gene3d {background-color: #b852d4;}
 
-span.superfamily {
-    background-color: #000;
-}
+span.superfamily {background-color: #000;}
 
-span.tigrfams {
-    background-color: #5d8ca2;
-}
+span.tigrfams {background-color: #5d8ca2;}
 
-span.prodom {
-    background-color: #92acd1;
-}
+span.prodom {background-color: #92acd1;}
 
-span.signalp {
-    background-color: #a5a5a5;
-}
-
-span.tmhmm {
-    background-color: #ededed;
-}
+span.signalp-euk, span.signalp-gram+-prok, span.signalp-gram--prok {background-color: rgb(255, 51, 153);}
+span.tmhmm {background-color: #a5a5a5;}
+span.phobius {background-color: rgb(153, 0, 0);}
+span.coils {background-color: #c3b8f0;}

@@ -21,20 +21,6 @@ if [[ "$JAVA" == "" ]]; then
     exit 1
 fi
 
-VERSION=$("$JAVA" -version 2>&1 | { read X; printf '%s' "${X#*\"}"; } )
-MAJOR_VERSION=${VERSION%%.*}
-MINOR_VERSION=${VERSION#*.}
-MINOR_VERSION=${MINOR_VERSION%%.*}
-
-if [[ "${MAJOR_VERSION}" == "1" && "${MINOR_VERSION}" -lt "6" ]];
-then
-    printf 'Java version 1.6 or above required\n'
-    printf 'Detected version %s.%s\n' "${MAJOR_VERSION}" "${MINOR_VERSION}"
-    printf 'Install the correct version \n'
-    printf 'or edit the interproscan.sh script to disable version check.\n'
-    exit 1
-fi
-
-"$JAVA" -jar -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms2048M -Xmx2048M interproscan-5.jar $@ -u $USER_DIR
+"$JAVA" -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms256M -Xmx2048M -jar interproscan-5.jar $@ -u $USER_DIR
 
 #end 

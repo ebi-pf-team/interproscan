@@ -26,7 +26,14 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private  int timeDelay = 10;
 
+    private  int binaryRunDelay = 999;
+
+    Long timeSinceLastBinaryRun = System.currentTimeMillis();
+
     private static final int MEGA = 1024 * 1024;
+
+    int binaryStepCount = 0;
+    int nonBinaryStepCount = 0;
 
     @Override
     public void run() {
@@ -38,10 +45,8 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
             System.out.println("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
 
-            //start a new thread to monitor memory usage
-            displayMemoryUsage();
+            //display initial memory usage
         }
-
 
 
         try {
@@ -55,16 +60,29 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             boolean controlledLogging = false;
+
+            //allow users to specify any job to run prioritising expensive jobs (pfam, tigrfam, hamap, pirsf)
+            boolean firstPass = true;
+
             int stepInstanceSubmitCount = 0;
             while (!shutdownCalled) {
+                boolean runningFirstStep = stepInstanceDAO.count() == stepInstanceDAO.retrieveUnfinishedStepInstances().size();
+
                 boolean completed = true;
-                if (stepInstanceSubmitCount == 1 && (! isUseMatchLookupService())){
-                    for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
-                        if (isHighPriorityStep(stepInstance.getStep(jobs))){
-                            completed &= stepInstance.haveFinished(jobs);
-                            stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
-                            controlledLogging = false;
+                if (stepInstanceSubmitCount == 1 && firstPass && (! isUseMatchLookupService())){
+                    if(verboseLog){
+                        LOGGER.debug("Steps left: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                    }
+                    if(! runningFirstStep){
+                        for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                            if (isHighPriorityStep(stepInstance.getStep(jobs))){
+                                completed &= stepInstance.haveFinished(jobs);
+                                stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
+                                controlledLogging = false;
+                            }
                         }
+                        LOGGER.debug("Steps left after first pass: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        firstPass = false;
                     }
                 }else{
                     int submitted = 0;
@@ -119,18 +137,14 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
         if(verboseLog){
             final long executionTime =   System.currentTimeMillis() - now;
-            System.out.println("Execution time (s) for Master: " + String.format("%d min, %d sec",
+            System.out.println("Computation time (s): (" + TimeUnit.MILLISECONDS.toSeconds(executionTime)+ " s) => " + String.format("%d min, %d sec",
                     TimeUnit.MILLISECONDS.toMinutes(executionTime),
                     TimeUnit.MILLISECONDS.toSeconds(executionTime) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
             ));
-            try{
-                Utilities.getProcStatus();
-            }catch (Exception ex){
-                ex.printStackTrace();
-            }
         }
 
+        System.exit(0);
     }
 
 
@@ -147,9 +161,10 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Step submitted:" + stepInstance);
                 }
+                String stepInstanceId = stepInstance.getStepId();
                 final boolean resubmission = stepInstance.getExecutions().size() > 0;
                 if (resubmission) {
-                    LOGGER.warn("StepInstance " + stepInstance.getId() + " is being re-run following a failure.");
+                    LOGGER.warn("StepInstance " + stepInstanceId+ " is being re-run following a failure.");
                 }
                 final Step step = stepInstance.getStep(jobs);
                 // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
@@ -160,6 +175,8 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                 // as they are very abundant.
                 final int priority = lowPriorityStep ? 4 : 8;
+
+                Long now = System.currentTimeMillis();
 
 
                 // Performed in a transaction.
@@ -190,6 +207,10 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         this.timeDelay = timeDelay;
     }
 
+    public void setBinaryRunDelay(int binaryRunDelay) {
+        this.binaryRunDelay = binaryRunDelay;
+    }
+
     /**
      * * check if the job is hamap or prosite
      *  then assign it higher priority
@@ -213,49 +234,9 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             }
             return true;
         }
-//        if(step.getId().toLowerCase().contains("stepLoadFromFasta".toLowerCase())
-//                || step.getId().toLowerCase().contains("hamap".toLowerCase())
-//                || step.getId().toLowerCase().contains("pfama".toLowerCase())
-//                || step.getId().toLowerCase().contains("gene3d".toLowerCase())
-//                || step.getId().toLowerCase().contains("tigrfam".toLowerCase())
-//                ){
-//        }
+
         return false;
     }
 
-    /**
-     * display memory information
-     */
-    public void displayMemoryUsage(){
-        Executor executor = Executors.newSingleThreadExecutor();
-        executor.execute(new Runnable() {
-            public void run() {
-                //run the memory footprint display every 5 seconds
-                final long startUpTime = System.currentTimeMillis();
 
-                    try {
-                        if (runId != null) {
-                            Utilities.runBjobs(runId);
-                        }
-                        while (System.currentTimeMillis() - startUpTime < getMaximumLifeMillis()){
-                            System.out.println(Utilities.getTimeNow() +" ----------------------------------------------");
-                            statsUtil.displayRunningJobs();
-                            if (runId != null) {
-                                Utilities.runBjobs(runId);
-                            }
-                            //statsUtil.displayMemInfo();
-                            statsUtil.displayMemInfo();
-                            statsUtil.displayRunningJobs();
-                            if (runId != null) {
-                                Utilities.runBjobs(runId);
-                            }
-                            //sleep for 5 seconds
-                            Thread.sleep(timeDelay * 1000);
-                        }
-                    } catch (Exception ex) {
-                        LOGGER.warn(" Problems parsing bjobs command ...: " + ex);
-                    }
-            }
-         });
-    }
 }

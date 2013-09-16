@@ -20,7 +20,8 @@
             persistent="false"
             useShutdownHook="false"
             start="false"
-            dedicatedTaskRunner="false">
+            dedicatedTaskRunner="false"
+            tmpDataDirectory="${jms.broker.temp.directory}">
         <amq:plugins>
             <amq:statisticsBrokerPlugin id="stats"/>
         </amq:plugins>
@@ -40,7 +41,6 @@
         <amq:transportConnectors>
             <amq:transportConnector uri="vm://localhost"/>
         </amq:transportConnectors>
-
     </amq:broker>
 
     <bean id="distributedMaster" class="uk.ac.ebi.interpro.scan.jms.master.DistributedBlackBoxMaster">
@@ -102,6 +102,7 @@
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCountForWorkers" value="${worker.maxnumber.of.embedded.workers}"/>
         <property name="verboseLog" value="${verbose.log}"/>
+        <property name="temporaryDirectory" value="${temporary.file.directory}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
