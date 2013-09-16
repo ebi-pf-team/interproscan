@@ -6,7 +6,6 @@ import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSender;
 import uk.ac.ebi.interpro.scan.jms.activemq.UnrecoverableErrorStrategy;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
@@ -104,7 +103,14 @@ public abstract class AbstractMaster implements Master {
             if (!baseDirectoryTemporaryFiles.endsWith("/")) {
                 setTemporaryDirectory(baseDirectoryTemporaryFiles + "/");
             }
-            jobs.setBaseDirectoryTemporaryFiles(baseDirectoryTemporaryFiles + temporaryFileDirSuffix);
+            if (baseDirectoryTemporaryFiles.endsWith(temporaryFileDirSuffix + "/")) {
+                // The [UNIQUE] was already added (use temp directory as specified in interproscan.properties)
+                jobs.setBaseDirectoryTemporaryFiles(baseDirectoryTemporaryFiles);
+            }
+            else {
+                // The [UNIQUE] directory needs adding now (temp directory was probably specified by the user on the command line)
+                jobs.setBaseDirectoryTemporaryFiles(baseDirectoryTemporaryFiles + temporaryFileDirSuffix);
+            }
         }
     }
 
@@ -186,7 +192,11 @@ public abstract class AbstractMaster implements Master {
 
     }
 
-    @Override
+    public String getTemporaryDirectory() {
+        return this.baseDirectoryTemporaryFiles;
+    }
+
+    @Required
     public void setTemporaryDirectory(String temporaryDirectory) {
         this.baseDirectoryTemporaryFiles = temporaryDirectory;
     }
@@ -197,7 +207,6 @@ public abstract class AbstractMaster implements Master {
      *
      * @param analyses a comma separated list of analyses (job names) that should be run. Null for all jobs.
      */
-    @Override
     public void setAnalyses(String[] analyses) {
         this.analyses = analyses;
     }

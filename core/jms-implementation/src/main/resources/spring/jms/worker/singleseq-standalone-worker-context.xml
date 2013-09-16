@@ -8,6 +8,7 @@
     <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
     <import resource="classpath:/spring/jms/activemq/activemq-inVm-connection-config-context.xml"/>
 
+    <!-- embedded worker for binary and non-binary jobs -->
     <bean id="amqEmbeddedWorkerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="inVmJmsFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
@@ -17,6 +18,19 @@
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
         <property name="autoStartup" value="true"/>
+    </bean>
+
+    <!-- embedded worker for non-binary jobs -->
+    <bean id="amqEmbeddedWorkerThinJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+    <property name="connectionFactory" ref="inVmJmsFactory"/>
+    <property name="destination" ref="jobRequestQueue"/>
+    <property name="messageListener" ref="amqEmbeddedWorker"/>
+    <property name="concurrentConsumers" value="2"/>
+    <property name="maxConcurrentConsumers" value="2"/>
+    <property name="sessionTransacted" value="true"/>
+    <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+    <property name="messageSelector" value="remote = FALSE"/>
+    <property name="autoStartup" value="true"/>
     </bean>
 
     <!--<bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->
@@ -41,7 +55,6 @@
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="directoryManager" ref="tempDirectoryManager"/>
     </bean>
-
 
 
     <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">

@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.web.model;
 import java.util.regex.Pattern;
 
 /**
- * TODO: Add description
+ * Signature databases.
  *
  * @author Antony Quinn
  * @version $Id$
@@ -134,6 +134,38 @@ public enum MatchDataSource {
             "http://swissmodel.expasy.org/",
             "http://swissmodel.expasy.org/repository/?pid=smr03&amp;query_1_input=$0"),
 
+    // Others
+
+    COILS(0,
+            "COILS compares a sequence to a database of known parallel two-stranded coiled-coils and derives a " +
+                    "similarity score and then calculates the probability that the sequence will adopt a coiled-coil " +
+                    "conformation.",
+            "http://embnet.vital-it.ch/software/COILS_form.html",
+            "http://embnet.vital-it.ch/software/COILS_form.html"),
+
+    PHOBIUS(0,
+            "Phobius is a combined transmembrane topology and signal peptide predictor.",
+            "http://phobius.sbc.su.se/",
+            "http://phobius.sbc.su.se/"),
+
+    TMHMM(0,
+            "TMHMM provides the prediction of transmembrane helices in proteins.",
+            "http://www.cbs.dtu.dk/services/TMHMM/",
+            "http://www.cbs.dtu.dk/services/TMHMM/"),
+
+    // db == 'SignalP_EUK', db == 'SignalP_GRAM+' or db == 'SignalP_GRAM-'
+    SIGNALP(0,
+            "SignalP predicts the presence and location of signal peptide cleavage sites in amino acid sequences " +
+                    "from different organisms: Gram-positive prokaryotes, Gram-negative prokaryotes, and eukaryotes.",
+            "http://www.cbs.dtu.dk/services/SignalP/",
+            "http://www.cbs.dtu.dk/services/SignalP/"),
+
+    SIGNALP_EUK("SignalP euk", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+
+    SIGNALP_GRAM_POSITIVE("SignalP Gram+ prok", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+
+    SIGNALP_GRAM_NEGATIVE("SignalP Gram- prok", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+
     // Other
     UNKNOWN;
 
@@ -209,14 +241,29 @@ public enum MatchDataSource {
      */
     public static MatchDataSource parseName(String name) {
         if (name != null) {
+
+            // First get the supplied SignatureLibraryRelease "name" in the same format as it would be for the
+            // MatchDataSource name that we will later iterate over
+            name = name.toLowerCase().replaceAll("\\s+", ""); // Supplied name to check
+            if (name.contains("_")) {
+                // SignalP is the only SignatureLibraryRelease name to contain an underscore
+                name = name.replaceAll("_", "");
+                if (name.contains("gram")) {
+                    name = name.replaceAll("positive", "+prok");
+                    name = name.replaceAll("negative", "-prok");
+                }
+            }
+
+            // Now iterate over the MatchDataSource names to see if we have a match
             for (MatchDataSource m : MatchDataSource.values()) {
-                if (name.equals(m.toString())) {
+                String mName = m.toString().toLowerCase(); // Possible name match
+                if (name.equals(mName)) {
                     // E.g. "SMART"
                     return m;
                 } else {
                     // E.g. Match "PROSITE profiles" from InterPro database with "ProSiteProfiles" from I5
-                    name = name.toLowerCase().replaceAll("\\s+", "");
-                    String mName = m.toString().toLowerCase().replaceAll("\\s+", "");
+                    // SignatureLibraryRelease name
+                    mName = mName.replaceAll("\\s+", "");
                     if (name.equals(mName)) {
                         return m;
                     }

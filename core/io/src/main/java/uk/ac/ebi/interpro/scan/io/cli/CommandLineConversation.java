@@ -95,9 +95,24 @@ public interface CommandLineConversation extends Serializable {
      */
     void setWorkingDirectory(String directoryPath) throws FileNotFoundException, FileIsNotADirectoryException;
 
+
+    /**
+     *
+     * @param stepInstanceStepId
+     */
+    void setStepInstanceStepId(String stepInstanceStepId);
+
+    /**
+     *
+     * @param verboseLog
+     */
+    void setVerboseLog(boolean verboseLog);
+
+
     /**
      * @return The output from the last command run, or null if no output was produced or no command has been run.
      */
+
     String getOutput();
 
     /**

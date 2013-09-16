@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<#-- Override default number format, otherwise freemarker will automatically write "1000" as "1,000" instead - not what
+we would expect! -->
+<#setting number_format="computer">
+
 <#assign globalDocumentWidth=1280/>
 <#assign globalDocumentHeight=svgDocumentHeight/>
 <#assign globalDocumentWidthFormatted=globalDocumentWidth?string("0")/>

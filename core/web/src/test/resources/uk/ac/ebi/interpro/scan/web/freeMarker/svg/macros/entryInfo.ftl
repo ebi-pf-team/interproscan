@@ -1,7 +1,7 @@
 <#macro entryInfo entryType reference title entryAccession entryName filling textDecoration height>
 <svg>
     <rect x="1px" y="1px" width="110px" height="${height}"
-          style="stroke:#D8D8D8;fill:transparent;stroke-width:0.5"/>
+          style="stroke:#D8D8D8;fill:transparent;fill-opacity:0;stroke-width:0.5"/>
 
     <use x="6" y="6" xlink:href="#${reference}"/>
 

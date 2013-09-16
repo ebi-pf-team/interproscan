@@ -171,7 +171,9 @@ public class ProteinMatchesHTMLResultWriter {
                             tempDirectory = tempDirectory + "/";
                         }
 
-                        final File newResultFile = new File(tempDirectory + xref.getIdentifier() + ".html");
+                        UrlFriendlyIdGenerator gen = UrlFriendlyIdGenerator.getInstance();
+                        String urlFriendlyId = gen.generate(xref.getIdentifier());
+                        final File newResultFile = new File(tempDirectory + urlFriendlyId + ".html");
                         resultFiles.add(newResultFile);
                         writer = new PrintWriter(new FileWriter(newResultFile));
                         temp.process(model, writer);

@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.UnmarshallingFailureException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
+import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.io.match.writer.*;
+import uk.ac.ebi.interpro.scan.jms.main.AbstractI5Runner;
 import uk.ac.ebi.interpro.scan.jms.master.SimpleBlackBoxMaster;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
@@ -28,7 +30,7 @@ import java.util.*;
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  */
-public class Converter implements SimpleBlackBoxMaster {
+public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster {
 
     private static final Logger LOGGER = Logger.getLogger(Converter.class.getName());
 
@@ -51,7 +53,13 @@ public class Converter implements SimpleBlackBoxMaster {
 
     private boolean isExplicitFileNameSet = false;
 
+    private TemporaryDirectoryManager temporaryDirectoryManager;
+
     private String temporaryDirectory;
+
+    private String temporaryFileDirSuffix;
+
+    private boolean deleteWorkingDirectoryOnCompletion;
 
     /* Default value, if no output format is specified */
     private String[] outputFormats;
@@ -100,76 +108,46 @@ public class Converter implements SimpleBlackBoxMaster {
         //Unused, so leave it
     }
 
+    @Required
+    public void setTemporaryDirectoryManager(TemporaryDirectoryManager temporaryDirectoryManager) {
+        this.temporaryDirectoryManager = temporaryDirectoryManager;
+    }
+
+    public String getTemporaryDirectory() {
+        return this.temporaryDirectory;
+    }
+
+    @Required
     public void setTemporaryDirectory(String temporaryDirectory) {
         this.temporaryDirectory = temporaryDirectory;
     }
 
-    public enum ConvertModeOption {
-        XML("xml", "i", true, "Mandatory, path to the IMPACT XML file that should be loaded and converted.", "XML-FILE-PATH", false, true),
-        OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Available formats are TSV, GFF3 (default set) and RAW (InterProScan 4 TSV), HTML, SVG.", "OUTPUT-FORMATS", true, true),
-        BASE_OUT_FILENAME("output-file-base", "b", false, "Optional, base output filename.  Note that this option and the --outfile (-o) option are mutually exclusive.  The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-FILE-BASE", false, true),
-        OUTPUT_FILE("outfile", "o", false, "Optional explicit output file name.  Note that this option and the --output-file-base (-b) option are mutually exclusive. If this option is given, you MUST specify a single output format using the -f option.  The output file name will not be modified. Note that specifying an output file name using this option OVERWRITES ANY EXISTING FILE.", "EXPLICIT_OUTPUT_FILENAME", false, true),
-        OUTPUT_DIRECTORY("output-dir", "d", false, "Optional, output directory.  Note that this option and the --outfile (-o) option or the --output-file-base (-b) option are mutually exclusive. The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-DIR", false, true),
-        TEMP_DIRECTORY("tempdir", "T", false, "Optional, specify temporary file directory. The default location is /temp.", "TEMP-DIR", false, true);
+    @Required
+    public void setTemporaryFileDirSuffix(String temporaryFileDirSuffix) {
+        this.temporaryFileDirSuffix = temporaryFileDirSuffix;
+    }
 
-        private String longOpt;
+    @Required
+    public void setDeleteWorkingDirectoryOnCompletion(boolean deleteWorkingDirectoryOnCompletion) {
+        this.deleteWorkingDirectoryOnCompletion = deleteWorkingDirectoryOnCompletion;
+    }
 
-        private boolean multipleArgs;
+    /**
+     * Setup the temporary directory for use in convert mode
+     */
+    private void setupTemporaryDirectory() {
+        if (temporaryDirectory != null) {
+            if (!temporaryDirectory.endsWith("/")) {
+                temporaryDirectory = temporaryDirectory + "/";
+            }
+            if (!temporaryDirectory.endsWith(temporaryFileDirSuffix + "/")) {
+                // The [UNIQUE] directory needs adding now (temp directory was probably specified by the user on the command line)
+                temporaryDirectory = temporaryDirectory + temporaryFileDirSuffix;
+            }
+            final String temporaryDirectoryName = temporaryDirectoryManager.getReplacement();
+            temporaryDirectory = temporaryDirectory.replace(temporaryFileDirSuffix, temporaryDirectoryName);
 
-        private String shortOpt;
-
-        private boolean required;
-
-        private String description;
-
-        private String argumentName;
-
-        private boolean includeInUsageMessage;
-
-        private ConvertModeOption(
-                String longOpt,
-                String shortOpt,
-                boolean required,
-                String description,
-                String argumentName,
-                boolean multipleArgs,
-                boolean includeInUsageMessage
-        ) {
-            this.longOpt = longOpt;
-            this.shortOpt = shortOpt;
-            this.required = required;
-            this.description = description;
-            this.argumentName = argumentName;
-            this.multipleArgs = multipleArgs;
-            this.includeInUsageMessage = includeInUsageMessage;
-        }
-
-        public String getLongOpt() {
-            return longOpt;
-        }
-
-        public String getShortOpt() {
-            return shortOpt;
-        }
-
-        public boolean isRequired() {
-            return required;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getArgumentName() {
-            return argumentName;
-        }
-
-        public boolean hasMultipleArgs() {
-            return multipleArgs;
-        }
-
-        public boolean isIncludeInUsageMessage() {
-            return includeInUsageMessage;
+            setTemporaryDirectory(temporaryDirectory);
         }
     }
 
@@ -178,6 +156,11 @@ public class Converter implements SimpleBlackBoxMaster {
         final File inputFile = new File(xmlInputFilePath);
 
         //Change default temp directory
+        if (temporaryDirectory == null) {
+            throw new IllegalStateException("Temporary directory for convert mode was NULL");
+        }
+        setupTemporaryDirectory();
+
         svgResultWriter.setOutputDirectory(temporaryDirectory);
         htmlResultWriter.setTempDirectory(temporaryDirectory);
 
@@ -269,7 +252,24 @@ public class Converter implements SimpleBlackBoxMaster {
         } catch (IOException e3) {
             LOGGER.error("Cannot write or create result file!", e3);
         }
-        //Write out the results to the specified output fo
+
+        // TODO Possible refactoring to consider, currently there is similar code in WriteOutputStep.execute() method
+        if (deleteWorkingDirectoryOnCompletion) {
+            // Clean up empty working directory.
+            final String workingDirectory = temporaryDirectory.substring(0, temporaryDirectory.lastIndexOf('/'));
+            File file = new File(workingDirectory);
+            if (file.exists()) {
+                for (File subDir : file.listFiles()) {
+                    if (!subDir.delete()) {
+                        LOGGER.warn("At run completion, unable to delete temporary directory " + subDir.getAbsolutePath());
+                    }
+                }
+            }
+            if (!file.delete()) {
+                LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
+            }
+        }
+
     }
 
     private File initOutputFile(final boolean isExplicitFileNameSet,

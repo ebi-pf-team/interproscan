@@ -22,7 +22,8 @@
             persistent="false"
             useShutdownHook="false"
             start="false"
-            dedicatedTaskRunner="false">
+            dedicatedTaskRunner="false"
+            tmpDataDirectory="${jms.broker.temp.directory}">
         <amq:systemUsage>
             <amq:systemUsage>
                 <amq:memoryUsage>
@@ -76,6 +77,7 @@
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="hasInVmWorker" value="true"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
+        <property name="temporaryDirectory" value="${temporary.file.directory}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
