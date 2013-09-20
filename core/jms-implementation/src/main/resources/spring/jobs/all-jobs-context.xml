@@ -9,7 +9,7 @@
     <import resource="jobPfamA-27.0-context.xml"/>
     <import resource="jobPhobius-1.01-context.xml"/>
     <import resource="jobGene3d-3.5.0-context.xml"/>
-    <import resource="jobPanther-7.2-context.xml"/>
+    <import resource="jobPanther-8.1-context.xml"/>
     <import resource="jobPrints-42.0-context.xml"/>
     <import resource="jobCoils-2.2-context.xml"/>
     <import resource="jobHAMAP-201302.26-context.xml"/>
@@ -20,7 +20,7 @@
     <import resource="jobSignalP-GRAM_NEGATIVE-4.0-context.xml"/>
     <import resource="jobSMART-6.2-context.xml"/>
     <import resource="jobTIGRFAM-13.0-context.xml"/>
-    <import resource="jobPIRSF-2.83-context.xml"/>
+    <import resource="jobPIRSF-2.84-context.xml"/>
     <import resource="jobProDom-2006.1-context.xml"/>
     <import resource="jobSuperFamily-1.75-context.xml"/>
     <import resource="jobTMHMM-2.0c-context.xml"/>
@@ -47,7 +47,7 @@
                 <ref bean="jobPfamA-27.0"/>
                 <ref bean="jobPhobius-1.01"/>
                 <ref bean="jobGene3d-3.5.0"/>
-                <ref bean="jobPanther-7.2"/>
+                <ref bean="jobPanther-8.1"/>
                 <ref bean="jobPRINTS-42.0"/>
                 <ref bean="jobCoils-2.2"/>
                 <ref bean="jobHAMAP-201302.26"/>
@@ -59,7 +59,7 @@
                 <ref bean="jobSignalP-GRAM_NEGATIVE-4.0"/>
                 <ref bean="jobSMART-6.2"/>
                 <ref bean="jobTIGRFAM-13.0"/>
-                <ref bean="jobPIRSF-2.83"/>
+                <ref bean="jobPIRSF-2.84"/>
                 <ref bean="jobSuperFamily-1.75"/>
                 <ref bean="jobTMHMM-2.0c"/>
             </list>
