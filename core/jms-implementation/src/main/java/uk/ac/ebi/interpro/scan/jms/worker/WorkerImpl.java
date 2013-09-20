@@ -119,6 +119,8 @@ public class WorkerImpl implements Worker {
 
     private String projectId;
 
+    private String logDir;
+
     private int tier = 1;
 
     private int maxTierDepth = 1;
@@ -198,6 +200,18 @@ public class WorkerImpl implements Worker {
             ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setLifeSpanRemaining(lifeRemaining);
         }
     }
+
+
+    public void setSubmissionWorkerLogDir(String logDir){
+        //set this as soon as the masters starts running
+        if (this.workerRunner instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner) this.workerRunner).setLogDir(logDir);
+        }
+        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
+            ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).setLogDir(logDir);
+        }
+    }
+
 
     /**
      * set the maximum tier dept for the network
@@ -448,6 +462,14 @@ public class WorkerImpl implements Worker {
         this.gridName = gridName;
     }
 
+    public String getLogDir() {
+        return logDir;
+    }
+
+    public void setLogDir(String logDir) {
+        this.logDir = logDir;
+    }
+
     public void jobStarted(String jmsMessageId) {
         synchronized (jobListLock) {
             if (LOGGER.isDebugEnabled()) {
@@ -536,9 +558,19 @@ public class WorkerImpl implements Worker {
             final boolean exceededLifespan = exceededLifespan();
             final boolean exceededIdleTime = exceededIdleTime();
             LOGGER.debug("Now: "+ now+ " lastMessageFinished: " + lastMessageFinishedTime +" IdleTime: " +(now - lastMessageFinishedTime) + " maxIdleTime: " + maximumIdleTimeMillis);
-            //if exceededIdleTime check if workers have running jobs
-            if (exceededLifespan || runningJobs.size() == 0 && (exceededLifespan || (exceededIdleTime && (!workersHaveRunningJobs())))) {
 
+            //if exceededIdleTime check if workers have running jobs
+            boolean thisWorkerIsIdle = runningJobs.size() == 0 && exceededIdleTime;
+            boolean childWorkersAreIdle = ! workersHaveRunningJobs();
+            if(verboseLog){
+                Utilities.verboseLog("lastMessageFinished: "      + lastMessageFinishedTime
+                        +" IdleTime: "  +(now - lastMessageFinishedTime)
+                        + " maxIdleTime: "  + maximumIdleTimeMillis);
+                Utilities.verboseLog("thisWorkerIsIdle : " + thisWorkerIsIdle
+                        + " childWorkersAreIdle : " + childWorkersAreIdle);
+            }
+            if (exceededLifespan
+                    || (thisWorkerIsIdle && childWorkersAreIdle)) {
                 if (LOGGER.isInfoEnabled()) {
                     if (exceededLifespan) {
                         LOGGER.info("Stopping worker as exceeded maximum life span, lifespan:" + maximumLifeMillis + " lifespan remaming: " + lifeRemaining());
@@ -566,10 +598,11 @@ public class WorkerImpl implements Worker {
      */
     @Override
     public void run() {
-//        System.out.println(Utilities.getTimeNow() + " Running InterProScan worker  ...");
+//        Utilities.verboseLog(Utilities.getTimeNow() + " Running InterProScan worker  ...");
         LOGGER.debug("Running InterProScan worker run() ... whoAmI: " + whoAmI() + " Throttle is " + gridThrottle + " Tier: " + tier);
-
-        LOGGER.warn("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        if(verboseLog){
+            Utilities.verboseLog("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+        }
         //setup connection to master
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -605,7 +638,7 @@ public class WorkerImpl implements Worker {
             }
         }
         if(isVerboseLog()){
-            System.out.println(Utilities.getTimeNow() + " Worker run() main loop");
+            Utilities.verboseLog("Worker run() main loop");
         }
         if (LOGGER.isDebugEnabled()) {
             if (statsUtil != null){
@@ -617,11 +650,18 @@ public class WorkerImpl implements Worker {
         }
         statsUtil.pollStatsBrokerJobQueue();
         LOGGER.debug("check statutils");
+
+        //set the consumer ratio
+        if(queueConsumerRatio == 99 || queueConsumerRatio == 0){
+            queueConsumerRatio = (maxConcurrentInVmWorkerCount * 2) - tier;
+        }else{
+            queueConsumerRatio = queueConsumerRatio - tier;
+        }
         try {
             while (!stopIfAppropriate()) {
                 if (LOGGER.isTraceEnabled()) LOGGER.trace("State while running:");
                 if(verboseLog){
-                    System.out.println(Utilities.getTimeNow() + "Worker  ");
+                    Utilities.verboseLog("Worker  ");
                 }
 //                LOGGER.debug("Listening on: "+ remoteQueueJmsContainer.getDestinationName() +" or " + statsUtil.getQueueName(remoteQueueJmsContainer.getDestination()));
                 //populate the statistics broker values
@@ -630,16 +670,16 @@ public class WorkerImpl implements Worker {
                     LOGGER.debug("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
                 if(verboseLog){
-                    System.out.println(Utilities.getTimeNow() + "Worker response stats ");
-                    System.out.println("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+                    Utilities.verboseLog("Worker response stats ");
+                    Utilities.verboseLog("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
                 statsUtil.pollStatsBrokerJobQueue();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
                 if(verboseLog){
-                    System.out.println(Utilities.getTimeNow() + "Worker job request stats ");
-                    System.out.println("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
+                    Utilities.verboseLog("Worker job request stats ");
+                    Utilities.verboseLog("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
 
                 //check/manage remoteQueueListenerContainer
@@ -655,7 +695,7 @@ public class WorkerImpl implements Worker {
                 //create worker is necessary
                 if(canSpawnWorkers()){
                     if(verboseLog){
-                        System.out.println(Utilities.getTimeNow() + " Worker run() check if new worker is required");
+                        Utilities.verboseLog(" Worker run() check if new worker is required");
                     }
                     if (isNewWorkersRequired()) {
                         createWorker();
@@ -666,44 +706,44 @@ public class WorkerImpl implements Worker {
                     LOGGER.debug("Worker Run(): Received shutdown message.  message already sent to child workers.");
                     break;
                 }
-                Thread.sleep(5*1000);
+                Thread.sleep(5 * 1000);
             }
             //stop the message listener
             remoteQueueJmsContainer.stop();
-            long waitingTime=10 * 1000;
+            long waitingTime = 10 * 1000;
             //if shutdown is activated reduce waiting time
             if (shutdown) {
-                waitingTime=1000;
+                waitingTime = 1000;
             }
+            //send shutdown message if not done so already
+            if (! managerTopicMessageListener.isShutdown()){
+                sendShutdownMessage();
+            }
+
             //statsUtil.getStatsMessageListener().hasConsumers()
             LOGGER.debug("Worker Run(): in Shutdown mode.");
+
             //dont exit until the workers have completed all the tasks and the responseMonitor has completed sending response messages to the master
-            while (workersHaveRunningJobs() || runningJobs.size() > 0 || responseQueueListenerBusy) {
+            while (workersHaveRunningJobs() || responseQueueListenerBusy || runningJobs.size() > 0 ) {
                 //progress Report
-                if(lifeRemaining() < 30 * 1000){
+                if(lifeRemaining() < 5 * 1000){
+                    LOGGER.warn("The worker has exceeded its lifespan,  life remaining: " + lifeRemaining() + "ms" );
                     throw new IllegalStateException("The worker has exceeded its lifespan.");
                 }
                 statsUtil.displayWorkerProgress();
+                if(remoteQueueJmsContainer.isRunning()){
+                    remoteQueueJmsContainer.stop();
+                }
                 Thread.sleep(waitingTime);
             }
             //send shutdown message
-            try {
-                LOGGER.warn("Send shutdown message to workers");
-                //workerMessageSender.sendShutDownMessage();
-                jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
-                    public Message createMessage(Session session) throws JMSException {
-                        return session.createObjectMessage();
-                    }
-                });
-            } catch (Exception e){
-                LOGGER.warn("Exception thrown while sending shutdown message");
-                e.printStackTrace();
-            }
-            //sleep for 4 seconds and then exit
-            Thread.sleep(10*1000);
+            sendShutdownMessage();
+
+            //sleep for 5 seconds and then exit
+            Thread.sleep(5 * 1000);
             LOGGER.info("Worker Run(): completed tasks. Shutdown message sent. Stopping now.");
             //t- tier ws:workers spawned
-            System.out.println(Utilities.getTimeNow() + " Worker has completed tasks -  t: " + tier + " ws: " + getNumberOfWorkersSpawnedString() + " jobcount: " + totalJobCount);
+            Utilities.verboseLog(" Worker has completed tasks -  t: " + tier + " ws: " + getNumberOfWorkersSpawnedString() + " jobcount: " + totalJobCount);
         } catch (InterruptedException e) {
             LOGGER.fatal("InterruptedException thrown by Worker.  Stopping now.", e);
             System.exit(999);
@@ -718,6 +758,26 @@ public class WorkerImpl implements Worker {
     }
 
     /**
+     * send shutdown message to the workers
+     *
+     */
+    public void sendShutdownMessage(){
+        //send shutdown message
+        try {
+            LOGGER.warn("Send shutdown message to workers");
+            //workerMessageSender.sendShutDownMessage();
+            jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
+                public Message createMessage(Session session) throws JMSException {
+                    return session.createObjectMessage();
+                }
+            });
+        } catch (Exception e){
+            LOGGER.warn("Exception thrown while sending shutdown message");
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Create a worker depending on the conditions specified
      */
     private void createWorker() {
@@ -727,7 +787,7 @@ public class WorkerImpl implements Worker {
         if(statsUtil.getStatsMessageListener().getConsumers() > 0){
             final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
             int currentRemoteWorkersCount = statsMessageListener.getConsumers() - maxConcurrentInVmWorkerCount;
-            queueConsumerRatio = maxConcurrentInVmWorkerCount * 4 / tier;
+
             int idealRemoteWorkersCount =  statsMessageListener.getQueueSize() /  queueConsumerRatio;
             if(idealRemoteWorkersCount > currentRemoteWorkersCount ){
                 numberOfNewWorkers = idealRemoteWorkersCount - currentRemoteWorkersCount;
@@ -737,7 +797,7 @@ public class WorkerImpl implements Worker {
             }
             if(verboseLog){
 //            numberOfNewWorkers = statsUtil.getUnfinishedJobs()/statsUtil.getStatsMessageListener().getConsumers();
-                System.out.println("worker status: "
+                Utilities.verboseLog("worker status: "
                         + " tier: " + tier
                         + " maxConsumerSize : " + maxConsumerSize
                         + " currentRemoteWorkersCount " + currentRemoteWorkersCount
@@ -790,7 +850,7 @@ public class WorkerImpl implements Worker {
         boolean canSpawnWorker = false;
 
         if(isVerboseLog()){
-            System.out.println("canSpawnWorkers - gridName: "
+            Utilities.verboseLog("canSpawnWorkers - gridName: "
                     +  gridName
                     + " tier : " + tier
                     + " maxTierDepth: " + maxTierDepth
@@ -955,7 +1015,7 @@ public class WorkerImpl implements Worker {
         int remoteWorkerCount = consumerCount - maxConcurrentInVmWorkerCount;
         int queueSize = statsMessageListener.getQueueSize();
         if(verboseLog){
-            System.out.println("isNewWorkersRequired: maxConsumerSize : "
+            Utilities.verboseLog("isNewWorkersRequired: maxConsumerSize : "
                     +  maxConsumerSize
                     + " TotalConsumers: "  + consumerCount
                     + " QueueSize: "   + queueSize
@@ -966,9 +1026,7 @@ public class WorkerImpl implements Worker {
 
         }
         if (consumerCount < queueSize){
-            if(queueConsumerRatio == 99){
-                queueConsumerRatio  =  maxConcurrentInVmWorkerCount * 2;
-            }
+
             if(remoteWorkerCount > 0 ){
                 quickSpawnMode =  (queueSize / remoteWorkerCount) > maxConcurrentInVmWorkerCount;
             }else{
@@ -978,7 +1036,7 @@ public class WorkerImpl implements Worker {
                 LOGGER.debug("New worker Required  quickSpawnMode: " + quickSpawnMode);
             }
             if(verboseLog){
-                System.out.println("isNewWorkersRequired: maxConsumerSize : "
+                Utilities.verboseLog("isNewWorkersRequired: maxConsumerSize : "
                         +  maxConsumerSize
                         + " currentRemoteWorkersCount " + remoteWorkerCount
                         + " queueConsumerRatio: " + queueConsumerRatio
@@ -1114,8 +1172,8 @@ public class WorkerImpl implements Worker {
         if (remoteJmsTemplate == null) {
             throw new IllegalStateException("This DistributeWorkerController does not have a reference to the JmsTemplateWrapper, needed to configure the connection.");
         }
-
-        final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory("failover:"+masterUri);
+        int failoverTimeout = 5 * 1000;
+        final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory("failover:(" + masterUri + ")?timeout=" + failoverTimeout);
 
         activeMQConnectionFactory.setOptimizeAcknowledge(true);
         activeMQConnectionFactory.setUseCompression(true);
@@ -1125,7 +1183,7 @@ public class WorkerImpl implements Worker {
         //set the RedeliveryPolicy
         RedeliveryPolicy queuePolicy =  activeMQConnectionFactory.getRedeliveryPolicy();
         queuePolicy.setInitialRedeliveryDelay(0);
-        queuePolicy.setRedeliveryDelay(1*1000);
+        queuePolicy.setRedeliveryDelay(1 * 1000);
         queuePolicy.setUseExponentialBackOff(false);
         queuePolicy.setMaximumRedeliveries(4);
 

@@ -27,6 +27,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private String userDir;
 
+    private String logDir;
+
     private String i5Command;
 
     private int tier = 1;
@@ -121,6 +123,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.userDir = userDir;
     }
 
+    public void setLogDir(String logDir) {
+        this.logDir = logDir;
+    }
+
     public long getCurrentMasterClockTime() {
         return currentMasterClockTime;
     }
@@ -167,33 +173,36 @@ public class SubmissionWorkerRunner implements WorkerRunner {
      * Assumes that the jar being executed has a main class define in the MANIFEST.
      */
     @Override
-    public void startupNewWorker() {
+    public int startupNewWorker() {
         final int priority = (Math.random() < 0.5) ? 4 : 8;
-        startupNewWorker(priority);
+        int actualWorkersStarted = startupNewWorker(priority);
+        return actualWorkersStarted;
     }
 
     /**
      * The masterWorker boolean flag indicates if a worker was created by the master itself. TRUE if created by the master, otherwise FALSE.
      */
-    public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory, boolean masterWorker) {
+    public int startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory, boolean masterWorker) {
         this.masterWorker = masterWorker;
-        startupNewWorker(priority, tcpUri, temporaryDirectory);
+        int actualWorkersStarted = startupNewWorker(priority, tcpUri, temporaryDirectory);
         //reset the masterworker variable
         this.masterWorker = false;
+        return actualWorkersStarted;
     }
 
     /**
      * The newWorkersCount is the number of workers to be created
      */
-    public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory, int newWorkersCount) {
+    public int startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory, int newWorkersCount) {
         this.newWorkersCount = newWorkersCount;
-        startupNewWorker(priority, tcpUri, temporaryDirectory);
+        int actualWorkersStarted = startupNewWorker(priority, tcpUri, temporaryDirectory);
         //reset the masterworker variable
         this.newWorkersCount = 0;
+        return actualWorkersStarted;
     }
 
     @Override
-    public void startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
+    public int startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
         //monitor the cluster
         if(gridName.equals("lsf")){
             int activeJobs = lsfMonitor.activeJobs(projectId);
@@ -201,7 +210,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
             if (activeJobs > gridJobsLimit || (pendingJobs * 5 > activeJobs && activeJobs > 10)) {
                 LOGGER.warn("Grid Job Control: You have reached the maximum jobs allowed on the cluster or you have many pending jobs.  active Jobs: " + activeJobs + " pending Jobs : " + pendingJobs
                     + "\n In the meantime InterProScan will continue to run");
-                return;
+                return 0;
             }else{
                 if(newWorkersCount > 1 && (newWorkersCount > gridJobsLimit - activeJobs) ){
                     newWorkersCount = gridJobsLimit - activeJobs;
@@ -233,8 +242,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                     jobArray = "";
                     jobIndex = "";
                 }
-                command.append(" -o logs/"+ agent_id+".out" + jobIndex);
-                command.append(" -e logs/"+ agent_id+".err" + jobIndex);
+                command.append(" -o " + logDir + "/"+ agent_id+".out" + jobIndex);
+                command.append(" -e " + logDir + "/"+ agent_id+".err" + jobIndex);
 
                 if(gridName.equals("lsf")) {
                     command.append(" -J "+ agent_id + jobArray);
@@ -302,13 +311,17 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                 int exitStatus = clc.runCommand(false, command.toString().split(" "));
                 if (exitStatus != 0) {
                     LOGGER.warn("Non-zero exit status from attempting to run a worker: \nCommand:" + command + "\nExit status: " + exitStatus + "\nError output: " + clc.getErrorMessage());
+                    newWorkersCount = 0;
                 }
             } catch (IOException e) {
                 LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:" + command + "\nESee stack trace: ", e);
+                newWorkersCount = 0;
             } catch (InterruptedException e) {
                 LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:" + command + "\nESee stack trace: ", e);
+                newWorkersCount = 0;
             }
         }
+        return newWorkersCount;
     }
 
     /**
@@ -319,8 +332,9 @@ public class SubmissionWorkerRunner implements WorkerRunner {
      * @param priority being the minimum message priority that this worker will accept.
      */
     @Override
-    public void startupNewWorker(int priority) {
-        startupNewWorker(priority, null, null);
+    public int startupNewWorker(int priority) {
+        int actualWorkersStarted = startupNewWorker(priority, null, null);
+        return actualWorkersStarted;
     }
 
 

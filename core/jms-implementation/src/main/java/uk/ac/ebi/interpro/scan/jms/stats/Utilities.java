@@ -407,4 +407,9 @@ public class Utilities {
         return null;
     }
 
+
+    //verbose output using System out
+    public static void verboseLog(String out){
+        System.out.println(Utilities.getTimeNow() + " " + out);
+    }
 }

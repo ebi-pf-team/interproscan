@@ -102,21 +102,25 @@ public class XrefParser {
         if (crossReference != null) {
             if (crossReference.startsWith(SWISSPROT_DB_NAME) || crossReference.startsWith(TREMBL_DB_NAME)) {
                 String[] chunks = PIPE_REGEX.split(crossReference);
-                if (chunks.length == 3) {
+                if (chunks.length >= 3) {
                     String database = chunks[0];
                     String identifier = chunks[1].trim();
                     String description = chunks[2];
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description);
+                }  else {
+                    throw new IllegalStateException("Uniprot cross reference not in expected format: " + crossReference);
                 }
             } else if (crossReference.startsWith(GENERAL_IDENTIFIER)) {
                 String[] chunks = PIPE_REGEX.split(crossReference);
-                if (chunks.length == 5) {
+                if (chunks.length >= 5) {
                     String database = chunks[2];
                     String identifier = chunks[3].trim();
                     String description = chunks[4];
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description.trim());
+                } else {
+                    throw new IllegalStateException("gi cross reference not in expected format: " + crossReference);
                 }
             } else {
                 final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);

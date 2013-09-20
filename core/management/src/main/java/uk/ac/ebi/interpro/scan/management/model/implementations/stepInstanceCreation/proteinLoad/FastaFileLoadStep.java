@@ -93,6 +93,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
             String  fastaFileInputStatusMessage ="";
             try {
                 File file = new File(providedPath);
+                System.out.println("Loading file " + providedPath);
                 if (file.exists()) {
                     fastaFileInputStatusMessage = " - fasta file exists";
                     if (file.canRead()) {
@@ -104,18 +105,28 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                             // Should skip all subsequent steps, BUT should not "fail" - should elegantly report no proteins with zero exit status
                             // Need to output empty files of the types expected, so external pipeline is not broken.
                             if (file.getName().contains("orfs")) {
-                                throw new IllegalArgumentException("The ORF predication tool EMBOSS: getorf produced an empty result file (" + providedPath + ").");
-                            }
+                                System.out.println("\nThe ORF predication tool EMBOSS: getorf produced an empty result file (" + providedPath + ").");
+                                System.out.println("Therefore there are no proteins for InterproScan to analyse");
+                                System.out.println("Finishing...");
+                                System.exit(0);
+                        }
                             // TODO - Should this also behave elegantly and output empty files?
-                            throw new IllegalArgumentException("The FASTA input file " + providedPath + " is readable but empty. Please provide a valid (not empty) FASTA input file.");
+                            System.out.println("\nThe FASTA input file " + providedPath + " is empty.");
+                            System.out.println("Therefore there are no sequences for InterproScan to analyse");
+                            System.out.println("Finishing...");
+                            System.exit(0);
                         }
                         try {
                             fastaFileInputStream = new FileInputStream(file);
                         } catch (FileNotFoundException e) {
-                            throw new IllegalStateException("FileNotFoundException thrown when attempting to load a fasta file located at " + file.getAbsolutePath(), e);
+                            System.out.println("\nERROR: Could not find FASTA input file " + file.getAbsolutePath());
+                            System.out.println("Exiting...");
+                            System.exit(2);
                         }
                     } else {
-                        throw new IllegalArgumentException("The fasta file " + providedPath + " is visible but cannot be read.  Please check the file permissions.");
+                        System.out.println("\nERROR: The FASTA input file " + providedPath + " is visible but cannot be read.  Please check the file permissions.");
+                        System.out.println("Exiting...");
+                        System.exit(2);
                     }
                 } else {
                     // Absolute file path did not resolve, so try using the class loader.
@@ -132,7 +143,9 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                     stdinOn = true;
                 }
                 if ((! stdinOn) && fastaFileInputStream == null) {
-                    throw new IllegalArgumentException("Cannot find the fasta file located at " + providedPath + fastaFileInputStatusMessage);
+                    System.out.println("Cannot find the fasta file located at " + providedPath + fastaFileInputStatusMessage);
+                    System.out.println("Exiting...");
+                    System.exit(2) ;
                 }
 
                 if (LOGGER.isDebugEnabled()) {

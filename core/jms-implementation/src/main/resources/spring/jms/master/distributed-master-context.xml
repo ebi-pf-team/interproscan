@@ -95,20 +95,24 @@
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="hasInVmWorker" value="true"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
-        <property name="statsUtil" ref="statsUtil"/>
+        <property name="statsUtil" ref="masterStatsUtil"/>
         <property name="maxConsumers" value="${master.maxconsumers}"/>
         <property name="maxMessagesOnQueuePerConsumer" value="${worker.maxunfinished.jobs}"/>
         <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCountForWorkers" value="${worker.maxnumber.of.embedded.workers}"/>
         <property name="verboseLog" value="${verbose.log}"/>
-        <property name="temporaryDirectory" value="${temporary.file.directory}"/>
+        <property name="localQueueJmsContainerFatMaster" ref="localQueueJmsContainerFatMaster"/>
+        <property name="localQueueJmsContainerThinMaster" ref="localQueueJmsContainerThinMaster"/>
+        <property name="logDir" value="${log.dir}"/>
+        <property name="ftMode" value="${recover.unknown.step.state}"/>
+
+
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
         <constructor-arg value="${tcp.port.exclusion.list}"/>
     </bean>
-
 
 
 
@@ -130,7 +134,7 @@
 
     <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
         <constructor-arg ref="stepExecutionDAO"/>
-        <property name="statsUtil" ref="statsUtil"/>
+        <property name="statsUtil" ref="masterStatsUtil"/>
     </bean>
 
     <!--Configuration for the local job queue listener-->
@@ -146,17 +150,17 @@
     </bean>
 
     <!--&lt;!&ndash;Configuration for the local job queue listener as a fat client&ndash;&gt;-->
-    <!--<bean id="localQueueJmsContainerThinMaster" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
-        <!--<property name="connectionFactory" ref="inVmJmsFactory"/>-->
-        <!--<property name="destination" ref="jobRequestQueue"/>-->
-        <!--<property name="messageListener" ref="localJobQueueListener"/>-->
-        <!--<property name="concurrentConsumers" value="2"/>-->
-        <!--<property name="maxConcurrentConsumers" value="2"/>-->
-        <!--<property name="sessionTransacted" value="true"/>-->
-        <!--<property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>-->
-        <!--<property name="messageSelector" value="remote = FALSE"/>-->
-        <!--<property name="autoStartup" value="${fat.master}"/>-->
-    <!--</bean>-->
+    <bean id="localQueueJmsContainerThinMaster" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="jobRequestQueue"/>
+        <property name="messageListener" ref="localJobQueueListener"/>
+        <property name="concurrentConsumers" value="${thinmaster.number.of.embedded.workers}"/>
+        <property name="maxConcurrentConsumers" value="${thinmaster.maxnumber.of.embedded.workers}"/>
+        <property name="sessionTransacted" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+        <property name="messageSelector" value="remote = FALSE"/>
+        <property name="autoStartup" value="true"/>
+    </bean>
 
     <!--<property name="messageSelector" value="remote = FALSE"/>-->
     <!--<bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">-->
@@ -173,7 +177,7 @@
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
         <property name="verboseLog" value="${verbose.log}"/>
-        <property name="statsUtil" ref="statsUtil"/>
+        <property name="statsUtil" ref="masterStatsUtil"/>
     </bean>
 
 
@@ -190,18 +194,18 @@
         <property name="connectionFactory" ref="inVmJmsFactory"/>
         <property name="destination" ref="statsQueue"/>
         <property name="concurrentConsumers" value="1"/>
-        <property name="messageListener" ref="statsMessageListener"/>
+        <property name="messageListener" ref="masterStatsMessageListener"/>
     </bean>
 
-    <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
+    <bean id="masterStatsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
 
 
-    <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
+    <bean id="masterStatsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
         <property name="jmsTemplate" ref="inVmJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="statsQueue" ref="statsQueue"/>
-        <property name="statsMessageListener"  ref="statsMessageListener" />
+        <property name="statsMessageListener"  ref="masterStatsMessageListener" />
         <property name="highMemJobRequestQueue" ref="highMemJobRequestQueue"/>
         <property name="workerManagerTopicQueue" ref="workerManagerTopic"/>
         <property name="totalJobs" value="0"/>
