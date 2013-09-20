@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
@@ -56,9 +57,15 @@ public class ResponseMonitorImpl implements MessageListener {
                     canHandle = true;
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
+                    if(statsUtil.getAllStepInstances().containsKey(freshStepExecution.getStepInstance().getId())) {
+                        statsUtil.updateSubmittedStepInstances(freshStepExecution.getStepInstance());
+                    }else{
+                        LOGGER.debug("stepInstanceId not found in submitted stepInstances: " + freshStepExecution.getStepInstance().getId());
+                    }
                     canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);
                     if(canRunRemotely){
                         statsUtil.incRemoteJobsCompleted();
+
                         remoteJobs++;
 //                        System.out.println("Remote Job completed, remoteJobs:" + remoteJobs + " statsutil.remotejobs: " + StatsUtil.getRemoteJobsCompleted() );
                     }else{

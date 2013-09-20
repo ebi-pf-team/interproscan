@@ -186,6 +186,7 @@
         <property name="gridName" value="${grid.name}"/>
         <property name="verboseLog" value="${verbose.log}"/>
         <property name="managerTopicMessageListener" ref="managerTopicMessageListener"/>
+        <property name="logDir" value="${log.dir}"/>
     </bean>
 
 

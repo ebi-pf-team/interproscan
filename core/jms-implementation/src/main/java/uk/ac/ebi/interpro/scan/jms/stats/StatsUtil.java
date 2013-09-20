@@ -5,18 +5,21 @@ import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
+import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import javax.jms.*;
+import javax.jms.Queue;
 import javax.management.MBeanServer;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -64,8 +67,12 @@ public class StatsUtil {
     static private AtomicInteger localJobsCompleted = new AtomicInteger(0);
 
     private final List<String> runningJobs = new ArrayList<String>();
+
+    private final ConcurrentMap<Long, String> submittedStepInstances = new ConcurrentHashMap<Long, String> ();
+
     private final Object jobListLock = new Object();
-    private Long lastMessageRecevivedTime = System.currentTimeMillis();
+
+    private Long lastMessageReceivedTime = System.currentTimeMillis();
     private Long lastLocalMessageFinishedTime = System.currentTimeMillis();
 
     private long timeOfLastMemoryDisplay = System.currentTimeMillis();
@@ -208,15 +215,64 @@ public class StatsUtil {
         return lastLocalMessageFinishedTime;
     }
 
-    public Long getLastMessageRecevivedTime() {
-        return lastMessageRecevivedTime;
+    public Long getLastMessageReceivedTime() {
+        return lastMessageReceivedTime;
     }
+
+    public void setLastMessageReceivedTime(Long lastMessageReceivedTime) {
+        this.lastMessageReceivedTime = lastMessageReceivedTime;
+    }
+
+    public ConcurrentMap getAllStepInstances() {
+        return submittedStepInstances;
+    }
+
+    public void addToSubmittedStepInstances(StepInstance stepInstance){
+        submittedStepInstances.put(stepInstance.getId(), stepInstance.toString());
+    }
+
+    public void updateSubmittedStepInstances(StepInstance stepInstance){
+        submittedStepInstances.replace(stepInstance.getId(), "Done " + stepInstance.toString());
+    }
+
+    public void removeFromSubmittedStepInstances(StepInstance stepInstance){
+        submittedStepInstances.remove(stepInstance.getId());
+    }
+
+
+    public void printSubmittedStepInstances(){
+        Utilities.verboseLog(" submittedStepInstances:");
+        Set ids = submittedStepInstances.keySet();
+        Utilities.verboseLog(" submittedStepInstances:" + ids.size());
+        //Collections.sort((List<Comparable>) ids);
+
+        for(Object stepInstanceId:ids){
+            Long id = (Long) stepInstanceId;
+            System.out.println(id + ":" + submittedStepInstances.get(id));
+        }
+    }
+
+    public void getNonAcknowledgedSubmittedStepInstances(){
+        Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
+        Set ids = submittedStepInstances.entrySet();
+        Utilities.verboseLog(" submittedStepInstances:" + ids.size()
+                );
+        //Collections.sort((List<Comparable>) ids);
+
+        for (Object entry : submittedStepInstances.entrySet()){
+            entry = (Map.Entry<Long, String>) entry;
+            if(! ((Map.Entry<Long, String>) entry).getValue().contains("Done")){
+                System.out.println(((Map.Entry<Long, String>) entry).getKey() + ":" + ((Map.Entry<Long, String>) entry).getValue());
+            }
+        }
+    }
+
 
     /**
      * Time last message was received
      */
     public void updateLastMessageReceivedTime(){
-        lastMessageRecevivedTime = System.currentTimeMillis();
+        lastMessageReceivedTime = System.currentTimeMillis();
     }
 
     public void jobStarted(String stepId) {
@@ -257,11 +313,16 @@ public class StatsUtil {
     }
 
     public void displayRunningJobs(){
-        System.out.println(Utilities.getTimeNow() + " Current active Jobs" );
+        Utilities.verboseLog("Current active Jobs" );
         for(String runningJob:runningJobs){
-            System.out.println(String.format("%" + 26 + "s", runningJob));
+            Utilities.verboseLog(String.format("%" + 26 + "s", runningJob));
         }
     }
+
+    public List<String> getRunningJobs() {
+        return runningJobs;
+    }
+
     /**
      * poll  the statistics broker plugin
      * @param queue
@@ -358,6 +419,36 @@ public class StatsUtil {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return  statsMessageListener.getStats()!=null;
+    }
+
+    /**
+     * display queue statistics for debugging
+     *
+     */
+    public void displayQueueStatistics(){
+        final boolean  requestQueueStatsAvailable = pollStatsBrokerJobQueue();
+        if (!requestQueueStatsAvailable) {
+            System.out.println("JobRequestQueue: not initialised");
+        } else {
+            System.out.println("JobRequestQueue:  " + statsMessageListener.getStats().toString());
+        }
+        final boolean responseQueueStatsAvailable = pollStatsBrokerResponseQueue();
+        if (!responseQueueStatsAvailable) {
+            System.out.println("JobResponseQueue: not initialised");
+        } else {
+            System.out.println("JobResponseQueue:  " + statsMessageListener.getStats().toString());
+        }
+
+    }
+
+    public void displayHighMemoryQueueStatistics(){
+        final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
+        if (!requestQueueStatsAvailable) {
+            System.out.println("JobRequestQueue: not initialised");
+        } else {
+            System.out.println("HighMemoryJobRequestQueue:  " + statsMessageListener.getStats().toString());
+        }
+
     }
 
     /**

@@ -65,7 +65,7 @@ public class LANWorkerRunner implements WorkerRunner {
      * Assumes that the jar being executed has a main class define in the MANIFEST.
      */
     @Override
-    public void startupNewWorker() {
+    public int startupNewWorker() {
         List<uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerSettings> lanServerSettingsList = lanServerListing.getListServerSettings();
         for (uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerSettings serverSettings : lanServerSettingsList) {
             setLanServerSettings(serverSettings);
@@ -93,6 +93,7 @@ public class LANWorkerRunner implements WorkerRunner {
                 }
             }
         }
+        return 1;
     }
 
     /**
@@ -103,8 +104,9 @@ public class LANWorkerRunner implements WorkerRunner {
      * @param priority being the minimum message priority that this worker will accept.
      */
     @Override
-    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory) {
+    public int startupNewWorker(int priority, String tcpUri, String temporaryDirectory) {
         startupNewWorker(priority);
+        return 1;
     }
 
     /**
@@ -115,8 +117,9 @@ public class LANWorkerRunner implements WorkerRunner {
      * @param priority being the minimum message priority that this worker will accept.
      */
     @Override
-    public void startupNewWorker(int priority) {
+    public int startupNewWorker(int priority) {
         startupNewWorker();
+        return 1;
     }
 
     /**
@@ -130,8 +133,9 @@ public class LANWorkerRunner implements WorkerRunner {
      * @param masterWorker
      */
     @Override
-    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, boolean masterWorker) {
+    public int startupNewWorker(int priority, String tcpUri, String temporaryDirectory, boolean masterWorker) {
         startupNewWorker();
+        return 1;
     }
 
     /**
@@ -145,7 +149,8 @@ public class LANWorkerRunner implements WorkerRunner {
      * @param newWorkersCount
      */
     @Override
-    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, int newWorkersCount) {
+    public int startupNewWorker(int priority, String tcpUri, String temporaryDirectory, int newWorkersCount) {
         startupNewWorker();
+        return 1;
     }
 }

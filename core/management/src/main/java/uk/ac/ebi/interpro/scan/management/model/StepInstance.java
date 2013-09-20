@@ -99,6 +99,9 @@ public class StepInstance implements Serializable {
     @OneToMany(targetEntity = StepExecution.class, fetch = FetchType.EAGER, mappedBy = "stepInstance", cascade = {})
     private Set<StepExecution> executions = new TreeSet<StepExecution>();
 
+    @Transient
+    private transient boolean stateUnknown =false;
+
     public StepInstance(Step step) {
         this(step, null, null, null, null);
     }
@@ -333,6 +336,26 @@ public class StepInstance implements Serializable {
         return StepExecutionState.STEP_EXECUTION_FAILED == getState()
                 &&
                 haveFinished(jobs);
+    }
+
+    //set state to unknown
+    public void setStateUnknown(boolean stateUnknown) {
+        this.stateUnknown = stateUnknown;
+    }
+
+    /**
+     * called by the master if the stepState is unknown, the message might have been lost
+     *
+     * if something went wrong and we have no record, resubmit this step
+     */
+    public boolean canBeSubmittedAfterUnknownFailure(Jobs jobs){
+        if(stateUnknown ){
+            if( this.getExecutions().size() < this.getStep(jobs).getRetries() ){
+                this.stateUnknown = false;
+                return true;
+            }
+        }
+        return false;
     }
 
 
