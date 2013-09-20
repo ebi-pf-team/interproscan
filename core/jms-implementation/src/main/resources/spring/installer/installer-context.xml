@@ -85,15 +85,15 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="2.83"/>
+                    <property name="releaseVersionNumber" value="2.84"/>
                     <property name="modelFiles">
                         <list>
-                            <value>file:${pirsf.hmm.path.2.83}</value>
-                            <value>file:${pirsf.hmm.subf.path.2.83}</value>
+                            <value>file:${pirsf.hmm.path.2.84}</value>
+                            <value>file:${pirsf.hmm.subf.path.2.84}</value>
                         </list>
                     </property>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF-2.83"/>
+                    <property name="analysisJobId" value="jobPIRSF-2.84"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prodom.model.ProDomModelParser">
                     <property name="signatureLibrary" value="PRODOM"/>
@@ -106,9 +106,9 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
-                    <property name="releaseVersionNumber" value="7.2"/>
+                    <property name="releaseVersionNumber" value="8.1"/>
                     <property name="analysisJobId" value="jobPanther"/>
-                    <property name="modelFiles" value="file:${panther.models.dir.7.2}"/>
+                    <property name="modelFiles" value="file:${panther.models.dir.8.1}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="namesTabFile" value="names.tab"/>
                 </bean>
