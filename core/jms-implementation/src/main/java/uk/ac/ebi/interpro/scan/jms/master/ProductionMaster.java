@@ -101,7 +101,7 @@ public class ProductionMaster extends AbstractMaster {
 
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, useHighMemoryWorker, priority, canRunRemotely);
-
+                        statsUtil.addToSubmittedStepInstances(stepInstance);
                     }
                 }
                 progressReport();
