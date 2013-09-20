@@ -43,7 +43,7 @@ public class LocalJobQueueListener implements MessageListener {
 
     private int inVmworkerNumber = 0;
 
-    StatsUtil statsUtil;
+    private StatsUtil statsUtil;
 
     public AtomicInteger getJobCount() {
         return jobCount;
@@ -102,7 +102,7 @@ public class LocalJobQueueListener implements MessageListener {
         int localCount = jobCount.get();
         String timeNow = Utilities.getTimeNow();
         if(localCount == 1){
-            System.out.println(timeNow + " first transaction ... ");
+            Utilities.verboseLog("first transaction ... ");
         }
         if (inVmworkerNumber == 0){
             if (controller != null) {
@@ -117,7 +117,7 @@ public class LocalJobQueueListener implements MessageListener {
             }
         }
         final String debugToken = " DEBUG ";
-//        System.out.println(timeNow + debugToken + "worker-" + inVmworkerNumber + " job " + localCount);
+//        Utilities.verboseLog(timeNow + debugToken + "worker-" + inVmworkerNumber + " job " + localCount);
 
         final String messageId;
         final String stepName;
@@ -161,15 +161,15 @@ public class LocalJobQueueListener implements MessageListener {
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
                 if (verboseLog){
-                    System.out.println(timeNow1 + debugToken + "Processing " + stepName + " JobCount #: " + localCount);
+                    Utilities.verboseLog("Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepExecution.getId());
                 }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
                 timeNow = Utilities.getTimeNow();
 //                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
                 if(verboseLog){
-                    System.out.println(timeNow + debugToken + "Finished Processing " + stepName + " JobCount #: " + localCount);
-                    System.out.println(timeNow + debugToken + "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
+                    Utilities.verboseLog("Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepExecution.getId());
+                    Utilities.verboseLog("Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
                 }
                 statsUtil.jobFinished(stepName);
             } catch (Exception e) {
@@ -199,8 +199,8 @@ public class LocalJobQueueListener implements MessageListener {
             }
         }
         if(localCount == 1){
-            System.out.println(Utilities.getTimeNow()  + " first transaction ... done");
-            System.out.println(Utilities.getTimeNow()  + " InterProScan analyses continue ....");
+            Utilities.verboseLog("first transaction ... done");
+            Utilities.verboseLog("InterProScan analyses continue ....");
         }
 
     }

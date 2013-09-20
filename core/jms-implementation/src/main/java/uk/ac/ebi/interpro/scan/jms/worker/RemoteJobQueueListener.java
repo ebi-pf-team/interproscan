@@ -133,11 +133,11 @@ public class RemoteJobQueueListener implements MessageListener {
                 if (waitMasterSyncTime > 0){
                     try {
                         LOGGER.debug("First 4 messages ... ");
-                        System.out.println(Utilities.getTimeNow()
-                                + " Master clock sync: wake up at "
-                                + expectedSynchTime
-                                + " i.e. in "
-                                + waitMasterSyncTime + " millis");
+                        Utilities.verboseLog(
+                                "Master clock sync: wake up at "
+                                        + expectedSynchTime
+                                        + " i.e. in "
+                                        + waitMasterSyncTime + " millis");
                         Thread.sleep(waitMasterSyncTime);
                     } catch (InterruptedException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

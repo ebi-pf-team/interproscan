@@ -14,7 +14,7 @@ public interface WorkerRunner {
      * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
      * Assumes that the jar being executed has a main class define in the MANIFEST.
      */
-    public void startupNewWorker();
+    public int startupNewWorker();
 
     /**
      * Runs a new worker JVM, by whatever mechanism (e.g. LSF, PBS, SunGridEngine)
@@ -23,7 +23,7 @@ public interface WorkerRunner {
      *
      * @param priority being the minimum message priority that this worker will accept.
      */
-    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory);
+    public int startupNewWorker(int priority, String tcpUri, String temporaryDirectory);
 
     /**
      * See {@link #startupNewWorker(int, String, String)} }
@@ -33,7 +33,7 @@ public interface WorkerRunner {
      * @param temporaryDirectory
      * @param masterWorker
      */
-    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, boolean masterWorker);
+    public int startupNewWorker(int priority, String tcpUri, String temporaryDirectory, boolean masterWorker);
 
     /**
      * See {@link #startupNewWorker(int, String, String)} }
@@ -43,7 +43,7 @@ public interface WorkerRunner {
      * @param temporaryDirectory
      * @param newWorkersCount
      */
-    public void startupNewWorker(int priority, String tcpUri, String temporaryDirectory, int newWorkersCount);
+    public int startupNewWorker(int priority, String tcpUri, String temporaryDirectory, int newWorkersCount);
 
 
     /**
@@ -53,5 +53,5 @@ public interface WorkerRunner {
      *
      * @param priority being the minimum message priority that this worker will accept.
      */
-    public void startupNewWorker(int priority);
+    public int startupNewWorker(int priority);
 }

@@ -392,12 +392,25 @@ public class Run extends AbstractI5Runner {
                 if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
                     LOGGER.debug("We have a Project/Cluster Run ID.");
                     final String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
-                    System.out.println("The project/Cluster Run ID for this run is: " + projectId);
+                    System.out.println("The Project/Cluster Run ID for this run is: " + projectId);
                     ((ClusterUser) bbMaster).setProjectId(projectId);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerProjectId(projectId);
                     final String userDir = parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt());
                     ((DistributedBlackBoxMaster) bbMaster).setUserDir(userDir);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerUserDir(userDir);
+                    //setup the logdir
+                    final File dir = new File(((DistributedBlackBoxMaster) bbMaster).getLogDir(), projectId.replaceAll("\\s+",""));
+                    if (!dir.exists() && !dir.mkdirs()) {
+                        try {
+                            throw new IOException("Unable to create " + dir.getAbsolutePath());
+                        } catch (IOException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                    }
+                    String logDir = ((DistributedBlackBoxMaster) bbMaster).getLogDir()+ "/"+ projectId.replaceAll("\\s+","");
+                    ((DistributedBlackBoxMaster) bbMaster).setLogDir(logDir);
+                    ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerLogDir(logDir);
+
                 } else {
                     LOGGER.fatal("InterProScan 5 in CLUSTER mode needs a Cluster Run ID to continue, please specify the -clusterrunid (-crid) option.");
                     System.exit(1);
@@ -492,8 +505,13 @@ public class Run extends AbstractI5Runner {
                 System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
                 System.exit(3);
             }
-            String explicitOutputFilename = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt()), parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
+
+            String outputFilename =  parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt());
+            String explicitOutputFilename = outputFilename;
+            if(!outputFilename.trim().equals("-")){
+                explicitOutputFilename = getAbsoluteFilePath(outputFilename, parsedCommandLine);
+                checkDirectoryExistenceAndWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
+            }
             master.setExplicitOutputFilename(explicitOutputFilename);
         }
 
@@ -638,7 +656,21 @@ public class Run extends AbstractI5Runner {
             }
             //set the project name for this i5 run
             if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
-                worker.setProjectId(parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt()));
+                String projectId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
+                worker.setProjectId(projectId);
+
+                //setup the logdir
+                final File dir = new File(worker.getLogDir(), projectId.replaceAll("\\s+",""));
+                if (!dir.exists() && !dir.mkdirs()) {
+                    try {
+                        throw new IOException("Unable to create " + dir.getAbsolutePath());
+                    } catch (IOException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+                String logDir = worker.getLogDir()+ "/"+ projectId.replaceAll("\\s+","");
+                worker.setLogDir(logDir);
+                worker.setSubmissionWorkerLogDir(logDir);
 
             }
             if (parsedCommandLine.hasOption(I5Option.MASTER_MAXLIFE.getLongOpt())) {
