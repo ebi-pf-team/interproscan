@@ -69,6 +69,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         // Performed in a transaction.
                         LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
                         messageSender.sendMessage(stepInstance, false, priority, false);
+                        statsUtil.addToSubmittedStepInstances(stepInstance);
                         controlledLogging = false;
                     }
                 }

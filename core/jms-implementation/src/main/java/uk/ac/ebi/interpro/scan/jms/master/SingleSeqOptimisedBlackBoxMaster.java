@@ -182,6 +182,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 // Performed in a transaction.
                 LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
                 messageSender.sendMessage(stepInstance, false, priority, false);
+                statsUtil.addToSubmittedStepInstances(stepInstance);
                 return 1;
             }
         } catch (JMSException e) {
