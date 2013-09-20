@@ -178,7 +178,8 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             source = new StreamSource(new FileReader(new File(xmlInputFilePath)));
             IMatchesHolder object = (IMatchesHolder) marshaller.unmarshal(source);
 
-            final Collection<Protein> proteins;
+            Collection<Protein> proteins = null;
+            Collection<NucleotideSequence> nucleotideSequences = null;
             final char sequenceType;
 
             if (object instanceof ProteinMatchesHolder) {
@@ -186,7 +187,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                 sequenceType = 'p';
             } else {
                 proteins = new HashSet<Protein>();
-                Set<NucleotideSequence> nucleotideSequences = ((NucleicAcidMatchesHolder) object).getNucleotideSequences();
+                nucleotideSequences = ((NucleicAcidMatchesHolder) object).getNucleotideSequences();
                 for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
                     Set<OpenReadingFrame> openReadingFrames = nucleotideSequence.getOpenReadingFrames();
                     for (OpenReadingFrame orf : openReadingFrames) {
@@ -209,7 +210,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                 if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.GFF3.getFileExtension())) {
                     LOGGER.info("Generating GFF3 result output...");
                     File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.GFF3);
-                    outputToGFF(outputFile, sequenceType, proteins);
+                    if (sequenceType == 'n') {
+                        outputNucleotideSequencesToGFF(outputFile, nucleotideSequences);
+                    } else {
+                        outputProteinsToGFF(outputFile, proteins);
+                    }
                     LOGGER.info("Finished generation of GFF3.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
                     LOGGER.info("Generating TSV result output...");
@@ -300,8 +305,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                 final StringBuilder candidateFileName = new StringBuilder(outputFilePath);
                 if (counter == null) {
                     counter = 1;
-                }
-                else {
+                } else {
                     // E.g. Output file name could become "test_proteins.fasta_1.tsv"
                     candidateFileName
                             .append('_')
@@ -313,8 +317,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                 //Extend file name by tar (tar.gz) extension if HTML or SVG
                 if (fileFormat.equals(FileOutputFormat.HTML) || fileFormat.equals(FileOutputFormat.SVG)) {
                     outputFile = new File(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, fileFormat));
-                }
-                else {
+                } else {
                     outputFile = new File(candidateFileName.toString());
                 }
                 pathAvailable = !outputFile.exists();
@@ -404,20 +407,31 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         }
     }
 
-    private void outputToGFF(final File outputFile,
-                             final char sequenceType,
-                             final Collection<Protein> proteins) throws IOException {
+    private void outputProteinsToGFF(final File outputFile,
+                                     final Collection<Protein> proteins) throws IOException {
         ProteinMatchesGFFResultWriter writer = null;
         try {
-            if (sequenceType == 'n') {
-                writer = new GFFResultWriterForNucSeqs(outputFile);
-            }//Default tsvWriter for proteins
-            else {
-                writer = new GFFResultWriterForProtSeqs(outputFile);
-            }
+            writer = new GFFResultWriterForProtSeqs(outputFile);
 
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, proteins);
+            //This step writes FASTA sequence at the end of the GFF file
+            writeFASTASequences(writer);
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    private void outputNucleotideSequencesToGFF(final File outputFile,
+                                                final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
+        GFFResultWriterForNucSeqs writer = null;
+        try {
+            writer = new GFFResultWriterForNucSeqs(outputFile);
+
+            //This step writes features (protein matches) into the GFF file
+            writeProteinMatches(writer, nucleotideSequences);
             //This step writes FASTA sequence at the end of the GFF file
             writeFASTASequences(writer);
         } finally {
@@ -462,6 +476,21 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             }
             for (Protein protein : proteins) {
                 writer.write(protein);
+            }
+        }
+    }
+
+    private void writeProteinMatches(final GFFResultWriterForNucSeqs writer,
+                                     final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
+        writer.setMapToInterProEntries(true);
+        writer.setMapToGo(true);
+        writer.setMapToPathway(true);
+        if (nucleotideSequences != null) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Loaded " + nucleotideSequences.size() + " nucleotide sequences.");
+            }
+            for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
+                writer.write(nucleotideSequence);
             }
         }
     }
