@@ -80,6 +80,14 @@ public class RunGetOrfStep extends RunBinaryStep {
         final String fastaFile = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePath);
             final List<String> command = new ArrayList<String>();
             command.add(fullPathToBinary);
+            /*
+            Using the pearson format switch (undocumented feature!) means that getorf will
+            use all text up to the first space as the identifier.
+            This is essential for the short term nucletide header fix to work (IBU-2426)
+            TODO - consider removing this switch when the long-term fix is implemented
+             */
+            command.add("-sf");
+            command.add("pearson");
             command.add("-sequence");
             command.add(nucleicAcidSeqFilePath);
             command.add("-outseq");

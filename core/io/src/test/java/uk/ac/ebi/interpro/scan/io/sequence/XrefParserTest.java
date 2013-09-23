@@ -16,9 +16,15 @@ public class XrefParserTest extends TestCase {
 
     @Test
     public void testGetNucleotideSequenceXref() {
+
         NucleotideSequenceXref nucleotideSequenceXref = XrefParser.getNucleotideSequenceXref("ENA|AACH01000026|AACH01000026.1 Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence.");
+        /*
+        The ENA parsing has been removed from I5 at the moment as part of the
+        short-term nucleotide header fix  (IBU-2426)
+        TODO - decide if ENA parsing should be re-implmented when the long-term fix is in place
         Assert.assertEquals("ENA", nucleotideSequenceXref.getDatabaseName());
         Assert.assertEquals("AACH01000026", nucleotideSequenceXref.getIdentifier());
+        */
         //
         nucleotideSequenceXref = XrefParser.getNucleotideSequenceXref("Wilf");
         Assert.assertNull(nucleotideSequenceXref.getDatabaseName());

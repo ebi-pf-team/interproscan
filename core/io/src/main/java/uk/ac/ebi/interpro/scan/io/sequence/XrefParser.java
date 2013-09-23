@@ -42,6 +42,10 @@ public class XrefParser {
 
 
     /**
+     * NB All ENA parsing has been commented out for the moment
+     * This is to allow the short-term fix to the nucleotide header problem (IBU-2426)
+     * TODO - reimplement when the long-term fix is in place
+     *
      * This parser only supports FASTA headers from ENA at the moment. All other FASTA headers are returned un-parsed.
      * If you are extending it don't forget to update the unit test at the same time.
      * <p/>
@@ -57,15 +61,19 @@ public class XrefParser {
      */
     public static NucleotideSequenceXref getNucleotideSequenceXref(String crossReference) {
         if (crossReference != null) {
+            /*
+
+
             if (crossReference.startsWith(ENA_DB_NAME)) {
                 String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length == 3) {
                     String database = chunks[0];
                     String identifier = chunks[1].trim();
                     String description = chunks[2];
+
                     return new NucleotideSequenceXref(database, identifier, description);
                 }
-            }
+            } */
             return stripUniqueIdentifierAndTrimForNucleotideSeq(crossReference);
         }
         return null;
@@ -100,7 +108,23 @@ public class XrefParser {
      */
     public static ProteinXref getProteinXref(String crossReference) {
         if (crossReference != null) {
-            if (crossReference.startsWith(SWISSPROT_DB_NAME) || crossReference.startsWith(TREMBL_DB_NAME)) {
+
+            /*
+            The getorf headers are identified first to allow the short-term fix for nucleotide
+            sequence headers to work  (IBU-2426). Otherwise the protein identifiers may not correspond with the
+            stored nucleotide identifiers
+            TODO - possibly move back to original position in code (see commented-out code below) when the long-term fix is implemented
+
+             */
+            final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);
+            if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Checking for match to GETORF regex, crossRef: " + crossReference);
+                if (matcher.find()) {
+                    if (LOGGER.isDebugEnabled()) LOGGER.debug("MATCHES");
+                    return new ProteinXref(null, matcher.group(1), null, matcher.group(2));
+                }
+
+            if ( crossReference.startsWith(SWISSPROT_DB_NAME) || crossReference.startsWith(TREMBL_DB_NAME) )  {
                 String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length >= 3) {
                     String database = chunks[0];
@@ -112,6 +136,7 @@ public class XrefParser {
                     throw new IllegalStateException("Uniprot cross reference not in expected format: " + crossReference);
                 }
             } else if (crossReference.startsWith(GENERAL_IDENTIFIER)) {
+                System.out.println("Protein xref: " + crossReference);
                 String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length >= 5) {
                     String database = chunks[2];
@@ -123,7 +148,7 @@ public class XrefParser {
                     throw new IllegalStateException("gi cross reference not in expected format: " + crossReference);
                 }
             } else {
-                final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);
+                /*final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Checking for match to GETORF regex, crossRef: " + crossReference);
                 if (matcher.find()) {
@@ -131,8 +156,9 @@ public class XrefParser {
                     return new ProteinXref(null, matcher.group(1), null, matcher.group(2));
                 } else {
                     if (LOGGER.isDebugEnabled()) LOGGER.debug("No Match.");
+                    */
                     return stripUniqueIdentifierAndTrimForProteinSeq(crossReference);
-                }
+                //}
             }
         }
         return null;

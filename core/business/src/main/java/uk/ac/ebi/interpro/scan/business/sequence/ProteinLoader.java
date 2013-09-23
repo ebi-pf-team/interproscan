@@ -4,10 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
-import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
-import uk.ac.ebi.interpro.scan.model.OpenReadingFrame;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.ProteinXref;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
@@ -299,13 +296,27 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
                 //Get rid of the underscore
                 nucleotideId = XrefParser.stripOfFinalUnderScore(nucleotideId);
+                /*
+                  Commented-out version number stripping to allow the short-term fix for nucleotide headers to work (IBU-2426)
+                  TODO - consider if this is really necessary (may not be a good idea in all cases)
+                */
                 //Get rid of those pesky version numbers too
-                nucleotideId = XrefParser.stripOfVersionNumberIfExists(nucleotideId);
+                //nucleotideId = XrefParser.stripOfVersionNumberIfExists(nucleotideId);
                 NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
                 //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                 //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
                 if (nucleotide == null) {
+                    if (LOGGER.isDebugEnabled()) {
+                        List<NucleotideSequence> seqs= nucleotideSequenceDAO.retrieveAll();
+                        for (NucleotideSequence ns: seqs) {
+                            Set<NucleotideSequenceXref> nsXrefs = ns.getCrossReferences() ;
+                            for (NucleotideSequenceXref nsXref: nsXrefs) {
+                                LOGGER.debug("Nucleotide xref identifier: " + nsXref.getIdentifier());
+                            }
+                        }
+                    }
                     throw new IllegalStateException("Couldn't find nucleotide sequence by the following cross reference: " + nucleotideId);
+
                 }
                 newOrf.setNucleotideSequence(nucleotide);
                 newOrf.setProtein(newProtein);
