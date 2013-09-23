@@ -241,8 +241,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 "   ftp://ftp.ebi.ac.uk/pub/databases/interpro/\n" +
                 "ii) Download the match lookup service for your version of InterProScan from our FTP site and install it locally.\n" +
                 "    You will then need to edit the following property in your configuration file to point to your local installation:\n" +
-                "    precalculated.match.lookup.service.url=\n\n"
-        );
-
+                "    precalculated.match.lookup.service.url=\n\n" +
+                "In the meantime, the analysis will continue to run locally.\n\n");
     }
 }
