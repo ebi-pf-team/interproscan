@@ -4,6 +4,7 @@ import com.sun.management.HotSpotDiagnosticMXBean;
 import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -64,11 +66,17 @@ public class StatsUtil {
 
     static private AtomicInteger remoteJobsCompleted = new AtomicInteger(0);
 
+    private AtomicLong remoteJobsCount = new AtomicLong(0);
+
+    private AtomicLong totalStepInstanceCount = new AtomicLong(0);
+
     static private AtomicInteger localJobsCompleted = new AtomicInteger(0);
 
-    private final List<String> runningJobs = new ArrayList<String>();
+    private final List<String> runningJobs = Collections.synchronizedList(new ArrayList<String>());
 
-    private final ConcurrentMap<Long, String> submittedStepInstances = new ConcurrentHashMap<Long, String> ();
+    private final ConcurrentMap<Integer, String> submittedStepInstances = new ConcurrentHashMap<Integer, String> ();
+
+    ConcurrentMap<UUID, WorkerState> workerStateMap = new ConcurrentHashMap<UUID, WorkerState>();
 
     private final Object jobListLock = new Object();
 
@@ -105,6 +113,22 @@ public class StatsUtil {
 
     public static void incLocalJobsCompleted() {
         localJobsCompleted.incrementAndGet();
+    }
+
+    public AtomicLong getRemoteJobsCount() {
+        return remoteJobsCount;
+    }
+
+    public void setRemoteJobsCount(int remoteJobsCount) {
+        this.remoteJobsCount.set(remoteJobsCount);
+    }
+
+    public AtomicLong getTotalStepInstanceCount() {
+        return totalStepInstanceCount;
+    }
+
+    public void setTotalStepInstanceCount(Long totalStepInstanceCount) {
+        this.totalStepInstanceCount.set(totalStepInstanceCount);
     }
 
     public synchronized int getTier() {
@@ -223,22 +247,39 @@ public class StatsUtil {
         this.lastMessageReceivedTime = lastMessageReceivedTime;
     }
 
+
     public ConcurrentMap getAllStepInstances() {
         return submittedStepInstances;
     }
 
+    public int getSubmittedStepInstancesCount(){
+        return submittedStepInstances.size();
+    }
+
     public void addToSubmittedStepInstances(StepInstance stepInstance){
-        submittedStepInstances.put(stepInstance.getId(), stepInstance.toString());
+        Integer key = getKey(stepInstance.getId(), stepInstance.getStepId());
+        submittedStepInstances.put(key, stepInstance.toString());
     }
 
     public void updateSubmittedStepInstances(StepInstance stepInstance){
-        submittedStepInstances.replace(stepInstance.getId(), "Done " + stepInstance.toString());
+
+        Integer key = getKey(stepInstance.getId(), stepInstance.getStepId());
+        Utilities.verboseLog("Update submittedStepInstance: " + key + " (" + stepInstance.getStepId() +")");
+        submittedStepInstances.replace(key, "Done " + stepInstance.toString());
+        if(! submittedStepInstances.containsKey(key)){
+            LOGGER.warn("stepInstance key  not found in submitted stepInstances: "
+                    + stepInstance.getId() + " -  " + stepInstance.getStepId());
+        }
     }
 
     public void removeFromSubmittedStepInstances(StepInstance stepInstance){
         submittedStepInstances.remove(stepInstance.getId());
     }
 
+    public Integer getKey(Long id, String name){
+        String keyString = name + id.toString();
+        return new Integer(keyString.hashCode());
+    }
 
     public void printSubmittedStepInstances(){
         Utilities.verboseLog(" submittedStepInstances:");
@@ -252,19 +293,34 @@ public class StatsUtil {
         }
     }
 
-    public void getNonAcknowledgedSubmittedStepInstances(){
+    public void printNonAcknowledgedSubmittedStepInstances(){
         Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
         Set ids = submittedStepInstances.entrySet();
         Utilities.verboseLog(" submittedStepInstances:" + ids.size()
-                );
+        );
         //Collections.sort((List<Comparable>) ids);
 
         for (Object entry : submittedStepInstances.entrySet()){
             entry = (Map.Entry<Long, String>) entry;
-            if(! ((Map.Entry<Long, String>) entry).getValue().contains("Done")){
-                System.out.println(((Map.Entry<Long, String>) entry).getKey() + ":" + ((Map.Entry<Long, String>) entry).getValue());
+            if(! ((Map.Entry<Integer, String>) entry).getValue().contains("Done")){
+                System.out.println(((Map.Entry<Integer, String>) entry).getKey() + ":" + ((Map.Entry<Integer, String>) entry).getValue());
             }
         }
+    }
+
+    public Set<String> getNonAcknowledgedSubmittedStepInstances(){
+        Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
+        Set ids = submittedStepInstances.entrySet();
+        Set<String> nonAcknowledgedStepInstances = new TreeSet<String>();
+        Utilities.verboseLog(" submittedStepInstances:" + ids.size());
+
+        for (Object entry : submittedStepInstances.entrySet()){
+            entry = (Map.Entry<Long, String>) entry;
+            if(! ((Map.Entry<Integer, String>) entry).getValue().contains("Done")){
+                nonAcknowledgedStepInstances.add(((Map.Entry<Integer, String>) entry).getValue());
+            }
+        }
+        return nonAcknowledgedStepInstances;
     }
 
 
@@ -304,7 +360,8 @@ public class StatsUtil {
             displayMemInfo();
 
             System.out.println(Utilities.getTimeNow() + " Current active Jobs" );
-            for(String runningJob:runningJobs){
+            List <String> currentRunningJobs =  getRunningJobs();
+            for(String runningJob:currentRunningJobs){
                 System.out.println(runningJob);
             }
             timeOfLastMemoryDisplay = System.currentTimeMillis();
@@ -314,13 +371,31 @@ public class StatsUtil {
 
     public void displayRunningJobs(){
         Utilities.verboseLog("Current active Jobs" );
-        for(String runningJob:runningJobs){
+        List <String> currentRunningJobs =  getRunningJobs();
+        for(String runningJob:currentRunningJobs){
             Utilities.verboseLog(String.format("%" + 26 + "s", runningJob));
         }
     }
 
     public List<String> getRunningJobs() {
-        return runningJobs;
+        synchronized(runningJobs){
+            return Collections.unmodifiableList(new ArrayList<String>(runningJobs));
+        }
+    }
+
+    public ConcurrentMap<UUID, WorkerState> getWorkerStateMap() {
+        return workerStateMap;
+    }
+
+    /**
+     * insert or replace worker state
+     * @param workerState
+     */
+    public void updateWorkerStateMap(WorkerState workerState){
+        if(workerStateMap.replace(workerState.getWorkerIdentification(), workerState) == null){
+            workerStateMap.putIfAbsent(workerState.getWorkerIdentification(), workerState);
+
+        }
     }
 
     /**
@@ -502,6 +577,7 @@ public class StatsUtil {
                 progressReportTime = System.currentTimeMillis();
                 actualProgress = progress * 100;
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",actualProgress) + " completed");
+
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
                 String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
 //                LOGGER.debug(statsMessageListener.getStats());
@@ -516,7 +592,7 @@ public class StatsUtil {
      */
     public void displayWorkerProgress(){
         if(progressCounter ==  0){
-             progressReportTime = System.currentTimeMillis();
+            progressReportTime = System.currentTimeMillis();
         }
         Long now = System.currentTimeMillis();
         Long timeSinceLastReport = now - progressReportTime;
@@ -530,7 +606,9 @@ public class StatsUtil {
             int finishedJobs = totalJobs.intValue() - unfinishedJobs;
 //            System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",progressPercent)  + " of analyses done");
             System.out.println(Utilities.getTimeNow() + " " + finishedJobs + " of " + totalJobs + " completed");
+
             String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
+
             LOGGER.debug(statsMessageListener.getStats());
             progressReportTime = System.currentTimeMillis();
             previousUnfinishedJobs = unfinishedJobs;

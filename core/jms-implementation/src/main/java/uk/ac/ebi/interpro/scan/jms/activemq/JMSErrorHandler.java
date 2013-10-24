@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ErrorHandler;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
 /**
  *
@@ -22,9 +23,10 @@ public class JMSErrorHandler implements ErrorHandler {
         errorCount ++;
         LOGGER.error("Error in listener", t);
 
-        if(errorCount == 3){
+        if(errorCount == 5){
+            Utilities.verboseLog("Error in Listener, exit after sending shutdown message to other workers: " +  t);
             // We may not be able to recover from this error, likely to be an IO, OS problem
-            System.exit(1);
+//            System.exit(1);
         }
     }
 

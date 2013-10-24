@@ -5,11 +5,12 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
+import javax.jms.*;
+import java.io.Serializable;
+import java.lang.IllegalStateException;
 
 /**
  * Worker Message Sender handles all the jmsTemplate message sending for the worker
@@ -18,9 +19,16 @@ import javax.jms.Session;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class WorkerMessageSenderImpl implements WorkerMessageSender {
+public class WorkerMessageSenderImpl implements Serializable, WorkerMessageSender {
 
     private static final Logger LOGGER = Logger.getLogger(WorkerMessageSenderImpl.class.getName());
+
+
+    public static final String MESSAGE_PROPERTY = "messagetype";
+
+
+    public static final String TOPIC_MESSAGE_PROPERTY = "messagetype";
+
 
     private JmsTemplate localJmsTemplate;
     private JmsTemplate remoteJmsTemplate;
@@ -69,12 +77,27 @@ public class WorkerMessageSenderImpl implements WorkerMessageSender {
 
     /**
      * Sends shut down message to connected workers.
+     * @param message
      */
-    public void sendShutDownMessage() throws JMSException{
+    public void sendShutDownMessage(final Message message) throws JMSException{
         LOGGER.debug("Sending a shutdown message to the workerManagerTopicQueue ");
         jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                return session.createObjectMessage();
+                return message;
+            }
+        });
+    }
+
+
+    @Override
+    public void sendTopicMessage(final ClusterState clusterState) {
+        LOGGER.debug("Sending a ClusterState message to the workerManagerTopicQueue ");
+
+        jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                final ObjectMessage message = session.createObjectMessage(clusterState);
+                message.setStringProperty(TOPIC_MESSAGE_PROPERTY, "clusterState");
+                return message;
             }
         });
     }
@@ -120,5 +143,47 @@ public class WorkerMessageSenderImpl implements WorkerMessageSender {
             }
         }
         //return true
+    }
+
+    @Transactional
+    public void sendMessage(Destination destination, final WorkerState workerState, boolean local) throws JMSException {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Attempting to send message to queue: " + destination);
+        }
+        Utilities.verboseLog("Attempting to send message to queue: " + destination);
+
+        if (local) {
+            if (!localJmsTemplate.isExplicitQosEnabled()) {
+                throw new IllegalStateException("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
+            }
+
+            synchronized (localJmsTemplateLock) {
+                localJmsTemplate.send(destination, new MessageCreator() {
+                    public Message createMessage(Session session) throws JMSException {
+                        final ObjectMessage message = session.createObjectMessage(workerState);
+                        message.setStringProperty(MESSAGE_PROPERTY, "workerState");
+
+                        return  message;
+                    }
+                });
+            }
+        } else {
+            if (!remoteJmsTemplate.isExplicitQosEnabled()) {
+                throw new IllegalStateException("It is not possible to set the priority of the JMS message, as the JMSTemplate does not have explicitQosEnabled.");
+            }
+
+            synchronized (remoteJmsTemplateLock) {
+                remoteJmsTemplate.send(destination, new MessageCreator() {
+                    public Message createMessage(Session session) throws JMSException {
+                        final ObjectMessage message = session.createObjectMessage(workerState);
+                        message.setStringProperty(MESSAGE_PROPERTY, "workerState");
+
+                        return message;
+                    }
+                });
+            }
+        }
+        //return true
+
     }
 }

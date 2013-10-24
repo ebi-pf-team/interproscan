@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -27,9 +28,20 @@ public interface WorkerMessageSender {
     void sendMessage(Destination destination, final Message message, boolean local) throws JMSException;
 
     /**
-     * send a shutdown message to the other worker nodes
+     * Creates messages to be sent to the any queue for this worker and other worker nodes.
+     * Does all of this in a transaction,
+     *
+     * @param workerState to send as a message
+     * @throws javax.jms.JMSException in the event of a failure sending the message to the JMS Broker.
      */
-    void sendShutDownMessage() throws JMSException;
+    @Transactional
+    void sendMessage(Destination destination, final WorkerState workerState, boolean local) throws JMSException;
+
+    /**
+     * send a shutdown message to the other worker nodes
+     * @param message
+     */
+    void sendShutDownMessage(final Message message) throws JMSException;
 
     /**
      * set the remote JMS template
@@ -51,4 +63,8 @@ public interface WorkerMessageSender {
      * @param jmsTopicTemplate
      */
     void setJmsTopicTemplate(JmsTemplate jmsTopicTemplate);
+
+
+
+    void sendTopicMessage(final ClusterState clusterState);
 }

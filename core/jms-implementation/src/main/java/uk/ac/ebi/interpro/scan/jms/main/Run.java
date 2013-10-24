@@ -118,7 +118,7 @@ public class Run extends AbstractI5Runner {
             }
 
 
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5-44.0");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5-44.0u1");
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
@@ -522,8 +522,9 @@ public class Run extends AbstractI5Runner {
             }
             String outputDirValue = parsedCommandLine.getOptionValue(I5Option.OUTPUT_DIRECTORY.getLongOpt());
             if (!outputDirValue.endsWith("/")) {
-                outputDirValue += "/" + defaultOutputFileName;
+                outputDirValue += "/";
             }
+            outputDirValue += defaultOutputFileName;
             String outputBaseFileName = getAbsoluteFilePath(outputDirValue, parsedCommandLine);
             checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.OUTPUT_DIRECTORY.getShortOpt());
             master.setOutputBaseFilename(outputBaseFileName);
@@ -888,7 +889,8 @@ public class Run extends AbstractI5Runner {
         final BrokerService broker = (BrokerService) ctx.getBean("jmsBroker");
         try {
             // Get hostname
-            final String hostname = InetAddress.getLocalHost().getHostName();
+            //get canonical hostname as otherwise hostname may not be exactly how other machines see this host
+            final String hostname = InetAddress.getLocalHost().getCanonicalHostName();
 
             // Select a random port above 1024, excluding LSF ports and check availability.
             boolean portAssigned = false;

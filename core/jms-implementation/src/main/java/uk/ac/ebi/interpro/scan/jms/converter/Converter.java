@@ -99,7 +99,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     public String[] getOutputFormats() {
         if (outputFormats == null) {
-            return new String[]{"tsv", "gff3"};
+            // By default, if no output formats are supplied then return in all formats (except RAW)
+            return new String[]{
+                    FileOutputFormat.TSV.getFileExtension(),
+                    FileOutputFormat.GFF3.getFileExtension()
+            };
         }
         return outputFormats;
     }
@@ -223,7 +227,6 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
-                    final String extension = FileOutputFormat.HTML.getFileExtension();
                     File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.HTML);
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");

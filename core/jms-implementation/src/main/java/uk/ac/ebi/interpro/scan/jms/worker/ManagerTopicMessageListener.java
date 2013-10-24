@@ -2,10 +2,14 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
+import uk.ac.ebi.interpro.scan.jms.monitoring.*;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
 
 /**
  * This implementation receives messages on the workerManagerTopic
@@ -28,6 +32,8 @@ public class ManagerTopicMessageListener implements MessageListener {
 
     private Long previousExceptionTime;
 
+    private WorkerImpl controller;
+
     @Required
     public void setWorkerMessageSender(WorkerMessageSender workerMessageSender) {
         this.workerMessageSender = workerMessageSender;
@@ -49,31 +55,54 @@ public class ManagerTopicMessageListener implements MessageListener {
         this.connectionLossCount = connectionLossCount;
     }
 
+    public WorkerImpl getController() {
+        return controller;
+    }
+
+    public void setController(WorkerImpl controller) {
+        this.controller = controller;
+    }
+
     @Override
     public void onMessage(final Message message) {
-        LOGGER.debug("Worker: Received shut down command from the master.");
+        LOGGER.debug("Worker: Received Shutdown or clusterState message from the master.");
         //set the shutdown flag for this worker
-        setShutdown(true);
-        //send message
-        LOGGER.debug("Worker: received shutdown message.  Send message to child workers.");
-        try{
-            workerMessageSender.sendShutDownMessage();
 
-        }catch (JMSException e) {
-            Long now = System.currentTimeMillis();
-            if (connectionLossCount == 0){
-                LOGGER.error("JMSException thrown in TopicMessageListener. ", e);
+        if (message instanceof ObjectMessage) {
+            ObjectMessage objectMessage = (ObjectMessage) message;
+            Object messageContents = null;
+            try {
+                messageContents = objectMessage.getObject();
+                if (messageContents instanceof Shutdown) {
+                    if(Utilities.verboseLogLevel > 4){
+                        Utilities.verboseLog("Worker Received Shutdown message: ");
+                    }
+                    setShutdown(true);
+                    workerMessageSender.sendShutDownMessage(message);
+                } else if (messageContents instanceof ClusterState) {
+                    ClusterState clusterState = (ClusterState) messageContents;
+                    if(Utilities.verboseLogLevel > 4){
+                        Utilities.verboseLog("Worker Received clusterState: " + clusterState.toString());
+                    }
+                    if (controller != null) {
+                        controller.setSubmissionWorkerClusterState(clusterState);
+                    }
+                    workerMessageSender.sendTopicMessage(clusterState);
+
+                } else {
+                    LOGGER.warn("Received unknown message  " + messageContents.toString());
+                }
+            } catch (JMSException e) {
+                Long now = System.currentTimeMillis();
+                if (connectionLossCount == 0) {
+                    LOGGER.error("JMSException thrown in TopicMessageListener. ", e);
+                }
+                connectionLossCount++;
+                Long getConnectionLossTime;
+            } catch (Exception e) {
+                LOGGER.error("Exception thrown in TopicMessageListener.", e);
             }
-            connectionLossCount++;
-            Long getConnectionLossTime;
-        }catch (Exception e) {
-            LOGGER.error("Exception thrown in TopicMessageListener.", e);
         }
-//        localJmsTemplate.send(workerManagerTopic, new MessageCreator() {
-//            public Message createMessage(Session session) throws JMSException {
-//                return session.createObjectMessage();
-//            }
-//        });
-        //controller.setShutdown(true);
+
     }
 }

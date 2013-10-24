@@ -41,10 +41,13 @@ public class MatchLocationSvgElementBuilder {
                 int scaledLocationStart = ScaledLocationUtil.getScaledLocationStart(scaleFactor, locStart);
                 int scaledRectangleWidth = ScaledLocationUtil.getScaledLocationLength(scaleFactor, locStart, locEnd, proteinLength);
 
+                //It occurs, that the scaledRectangleWidth is zero for very short matches (match length < 4)
+                //If that happens will be set to the default value 1 to make it visible
+
                 result.append("<rect");
                 result.append(" ");
                 appendColourClass(result, entryType, entryColourMap, entryAccession);
-                result.append("x=\"" + scaledLocationStart + "px\" y=\"" + 5 + "px\" width=\"" + scaledRectangleWidth + "px\" height=\"" + 7 + "px\"");
+                result.append("x=\"" + scaledLocationStart + "px\" y=\"" + 5 + "px\" width=\"" + (scaledRectangleWidth == 0 ? 1 : scaledRectangleWidth) + "px\" height=\"" + 7 + "px\"");
                 result.append(" ");
                 result.append("rx=\"3.984848\" ry=\"5.6705141\"");
                 result.append(" ");

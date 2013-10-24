@@ -66,6 +66,7 @@
         <property name="perlCommand" value="${perl.command}"/>
         <property name="outputFileNameTemplate" ref="tempOptionCheckOutputFileTemplate"/>
         <property name="fullPathToSignalPBinary" ref="fullPathToSignalPBinary"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <!-- STEP: Run the SignalP binary in eukaryote mode -->
@@ -89,6 +90,7 @@
                 <property name="tempOptionLine" value="-T   Specify temporary file directory. Default: /tmp"/>
             </bean>
         </property>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <!-- STEP: Parse the SignalP binary output and persist the results in the database. No post processing required. -->

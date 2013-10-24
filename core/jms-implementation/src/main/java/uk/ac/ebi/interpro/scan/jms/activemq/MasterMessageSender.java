@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
 import javax.jms.JMSException;
@@ -9,6 +10,7 @@ import javax.jms.JMSException;
  * Interface for the message sender used by the Master implementation.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -25,4 +27,7 @@ public interface MasterMessageSender {
     void sendMessage(StepInstance stepInstance, final boolean highMemory, final int priority, final boolean canRunRemotely) throws JMSException;
 
     void sendShutDownMessage();
+
+
+    void sendTopicMessage(final ClusterState clusterState);
 }

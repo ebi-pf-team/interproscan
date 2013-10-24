@@ -192,6 +192,7 @@
         <property name="binarySwitches" value="${blastall.switches.pirsf} ${blastall.cpu.switch.pirsf}"/>
         <property name="fastaFilePathTemplate" ref="fastaToBlastFileName-2.84"/>
         <property name="outputFileNameTemplate" ref="blastResultOutputFileName-2.84"/>
+        <property name="requiresDatabaseAccess" value="false"/>
         <property name="retries" value="3"/>
     </bean>
 

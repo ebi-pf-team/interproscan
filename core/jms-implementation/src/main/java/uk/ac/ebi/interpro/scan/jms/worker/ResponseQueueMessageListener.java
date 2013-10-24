@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
 
@@ -66,6 +68,7 @@ public class ResponseQueueMessageListener implements MessageListener {
 //        }
         if (controller != null) {
             controller.jobResponseReceived();
+            LOGGER.debug("Worker: received ... send message to jobResponseQueue");
         }
         //what if the send action fails?
         remoteJmsTemplate.send(jobResponseQueue, new MessageCreator() {
@@ -73,11 +76,26 @@ public class ResponseQueueMessageListener implements MessageListener {
                 return message;
             }
         });
-        LOGGER.debug("Worker: received and sent a message on the jobResponseQueue");
+
+        Long stepId  = 0l;
+        String stepName = "dummy";
+        try {
+            final ObjectMessage stepExecutionMessage = (ObjectMessage) message;
+            final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
+            stepName =  stepExecution.getStepInstance().getStepId();
+            stepId = stepExecution.getStepInstance().getId();
+
+        } catch (JMSException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        LOGGER.debug("Worker: received and sent a message on the jobResponseQueue: "
+                + stepId + " - " + stepName);
+        Utilities.verboseLog("Worker: received and sent a message on the jobResponseQueue: "
+                + stepId + " - " + stepName);
         //send a message that the response has been sent to the master
         if (controller != null) {
             controller.jobResponseProcessed();
-//            controller.workerState.addCompletedJob(message);
+            controller.removeJobFromWorkerState(message);
         }
     }
 }

@@ -5,8 +5,13 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor;
+import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -57,6 +62,9 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private long currentMasterClockTime;
     private long lifeSpanRemaining;
+
+    private ClusterState clusterState;
+
 
     @Required
     public void setGridJobsLimit(int gridJobsLimit) {
@@ -144,6 +152,9 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     }
 
 
+    public void setClusterState(ClusterState clusterState) {
+        this.clusterState = clusterState;
+    }
 
     /**
      * create an id for the new worker given a project id
@@ -204,120 +215,93 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Override
     public int startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
         //monitor the cluster
+
+        Utilities.verboseLog("startupNewWorker ");
+
         if(gridName.equals("lsf")){
-            int activeJobs = lsfMonitor.activeJobs(projectId);
-            int pendingJobs = lsfMonitor.pendingJobs(projectId);
-            if (activeJobs > gridJobsLimit || (pendingJobs * 5 > activeJobs && activeJobs > 10)) {
-                LOGGER.warn("Grid Job Control: You have reached the maximum jobs allowed on the cluster or you have many pending jobs.  active Jobs: " + activeJobs + " pending Jobs : " + pendingJobs
-                    + "\n In the meantime InterProScan will continue to run");
-                return 0;
-            }else{
-                if(newWorkersCount > 1 && (newWorkersCount > gridJobsLimit - activeJobs) ){
-                    newWorkersCount = gridJobsLimit - activeJobs;
+
+            if(clusterState != null) { // && timeSinceLastClusterStateUpdate < 2 * 60 * 1000){
+                Long timeSinceLastClusterStateUpdate = System.currentTimeMillis() - clusterState.getLastUpdated();
+
+                int runningJobs =  clusterState.getAllClusterProjectJobsCount() - clusterState.getPendingClusterProjectJobsCount();
+
+                DateFormat df = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
+                if(Utilities.verboseLogLevel > 1){
+                    Utilities.verboseLog("Grid Job Control: "
+                            + "gridJobsLimit: " + gridJobsLimit
+                            + " activeJobs: " + clusterState.getAllClusterProjectJobsCount()
+                            + " runningJobs: " + runningJobs
+                            + " runningJobs: * 10%: " + runningJobs * 0.1
+                            + " pendingJobs:" +  clusterState.getPendingClusterProjectJobsCount()
+                            + "timestamp: " + df.format(new Date(clusterState.getLastUpdated())));
                 }
+                if (! clusterState.canSubmitToCluster()) {
+                    LOGGER.warn("Grid Job Control: You have reached the maximum jobs allowed on the cluster or you have many pending jobs.  active Jobs: " + clusterState.getAllClusterProjectJobsCount() + " pending Jobs : " + clusterState.getPendingClusterProjectJobsCount()
+                            + "\n In the meantime InterProScan will continue to run");
+                    return 0;
+                }else{
+                    if(newWorkersCount > 1 && (newWorkersCount > gridJobsLimit - clusterState.getAllClusterProjectJobsCount()) ){
+                        newWorkersCount = gridJobsLimit - clusterState.getAllClusterProjectJobsCount();
+                    }
+                }
+                LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + clusterState.getAllClusterProjectJobsCount());
+            }else{
+                LOGGER.warn("startupNewWorker(): clusterState IsNull " );
             }
-            LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + activeJobs);
         }
         if (workerStartupStrategy.startUpWorker(priority)) {
             LOGGER.debug("startupNewWorker(): " );
             setAgent_id(tcpUri);
+
             if(newWorkersCount >  1){
                 workerCount += newWorkersCount;
             }else{
                 workerCount++;
             }
 
-            StringBuilder command = new StringBuilder(gridCommand);
+            StringBuilder interproscanCommandArguments = new StringBuilder();
 
-
-
-            //add error and output log handling for the cluster
-            String jobArray;
-            String jobIndex;
-            if(agent_id != null){
-                if(gridName.equals("lsf") && newWorkersCount > 1){
-                    jobArray = "[1-"+newWorkersCount+"]";
-                    jobIndex = ".%I";
-                }else{
-                    jobArray = "";
-                    jobIndex = "";
-                }
-                command.append(" -o " + logDir + "/"+ agent_id+".out" + jobIndex);
-                command.append(" -e " + logDir + "/"+ agent_id+".err" + jobIndex);
-
-                if(gridName.equals("lsf")) {
-                    command.append(" -J "+ agent_id + jobArray);
-                }
-            }
-            if(gridName.equals("lsf") && (projectId != null)) {
-                command.append(" -P "+ projectId);
-            }
-
-            //other grid submission commands
-            if(gridName.equals("other")){
-                command = new StringBuilder();
-                command.append("/bin/bash -c 'echo \"");
-            }
-
-            command.append(" " + i5Command);
-
-            LOGGER.debug("command without arguments : " + command);
-            if (tcpUri == null) {
-                command.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
-            } else {
-//                command.append(highMemory ? " --mode=cl_highmem_worker" : " --mode=cl_worker");
-//                command.append(highMemory ? " --mode=distributed_worker --highmem" : " --mode=distributed_worker");
-                command.append(highMemory ? " --mode=distributed_worker --highmem" : " --mode=distributed_worker");
-            }
-            if (priority > 0) {
-                command.append(" --priority=")
-                        .append(priority);
-            }
-
-            if (tcpUri != null) {
-                command.append(" --masteruri=")
-                        .append(tcpUri);
-            }
-
-            if (temporaryDirectory != null) {
-                command.append(" --tempdirname=")
-                        .append(temporaryDirectory);
-            }
-
-            if (userDir != null) {
-                command.append(" --userdir=")
-                        .append(userDir);
-            }
-
-
-            if (tier > 0) {
-                command.append(" --tier1=")
-                        .append(tier);
-            }
-            if (this.projectId != null) {
-                command.append(" --clusterrunid=")
-                        .append(projectId);
-            }
-            command.append(" --mastermaxlife=")
-                        .append(currentMasterClockTime + ":" + lifeSpanRemaining);
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Command ABOUT to be submitted: " + command);
-            }
+            StringBuilder commandToSubmit = new StringBuilder();
 
             try {
-//                Runtime.getRuntime().exec(command.toString());
-                final CommandLineConversation clc = new CommandLineConversationImpl();
-                int exitStatus = clc.runCommand(false, command.toString().split(" "));
-                if (exitStatus != 0) {
-                    LOGGER.warn("Non-zero exit status from attempting to run a worker: \nCommand:" + command + "\nExit status: " + exitStatus + "\nError output: " + clc.getErrorMessage());
+                int maxWorkerIndex = newWorkersCount;
+                if(gridName.equals("lsf")) {
+                    //for lsf we submit using job arrays
+                    maxWorkerIndex = 1;
+                }
+                int failedSubmissions = 0;
+                for(int workerIndex = 0;workerIndex < maxWorkerIndex;workerIndex++){
+                    final CommandLineConversation clc = new CommandLineConversationImpl();
+                    commandToSubmit = new StringBuilder(gridCommand)
+                            .append(getClusterCommandArguments(workerIndex)
+                                    .append(" " + i5Command)
+                                    .append(getInterproscanCommandArguments(priority,tcpUri,temporaryDirectory)));
+                    LOGGER.debug("command to submit to cluster: " + commandToSubmit);
+                    if(Utilities.verboseLogLevel > 1){
+                        Utilities.verboseLog("command to submit to cluster:  "
+                                + commandToSubmit);
+                    }
+                    int exitStatus = clc.runCommand(false, commandToSubmit.toString().split(" "));
+                    if (exitStatus != 0) {
+                        LOGGER.warn("Non-zero exit status from attempting to run a worker: \nCommand:"
+                                + commandToSubmit + "\nExit status: "
+                                + exitStatus + "\nError output: "
+                                + clc.getErrorMessage());
+                        failedSubmissions++;
+                    }
+                }
+                if(failedSubmissions > 0 && maxWorkerIndex == 1) {
                     newWorkersCount = 0;
+                }else{
+                    newWorkersCount -= failedSubmissions;
                 }
             } catch (IOException e) {
-                LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:" + command + "\nESee stack trace: ", e);
+                LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:"
+                        + commandToSubmit + "\nSee stack trace: ", e);
                 newWorkersCount = 0;
             } catch (InterruptedException e) {
-                LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:" + command + "\nESee stack trace: ", e);
+                LOGGER.warn("Unable to start worker - MASTER WILL CONTINUE however. \nCommand:"
+                        + commandToSubmit + "\nSee stack trace: ", e);
                 newWorkersCount = 0;
             }
         }
@@ -337,6 +321,95 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         return actualWorkersStarted;
     }
 
+    /**
+     *  get the cluster command arguments
+     *
+     * @param workerIndex
+     * @return
+     */
+    private StringBuilder getClusterCommandArguments(int workerIndex){
+        StringBuilder clusterCommandAguments = new StringBuilder();
+
+        //add error and output log handling for the cluster
+        String jobArray;
+        String jobIndex;
+        if(agent_id != null){
+            if(gridName.equals("lsf") && newWorkersCount > 1){
+                jobArray = "[1-"+newWorkersCount+"]";
+                jobIndex = ".%I";
+            }else{
+                jobArray = "";
+                jobIndex = "." + workerIndex;
+            }
+            clusterCommandAguments.append(" -o " + logDir + "/"+ agent_id+".out" + jobIndex);
+            clusterCommandAguments.append(" -e " + logDir + "/"+ agent_id+".err" + jobIndex);
+
+            if(gridName.equals("lsf")) {
+                clusterCommandAguments.append(" -J "+ agent_id + jobArray);
+            }
+        }
+        if(gridName.equals("lsf") && (projectId != null)) {
+            clusterCommandAguments.append(" -P "+ projectId);
+        }
+
+        //other grid submission commands
+        if(gridName.equals("other")){
+            clusterCommandAguments = new StringBuilder();
+            clusterCommandAguments.append("/bin/bash -c 'echo \"");
+        }
+        return clusterCommandAguments;
+    }
+
+    /**
+     * get the arguments for the interproscan5 command
+     * @param priority
+     * @param tcpUri
+     * @param temporaryDirectory
+     * @return
+     */
+    private StringBuilder getInterproscanCommandArguments(final int priority, final String tcpUri, final String temporaryDirectory){
+        StringBuilder interproscanCommandArguments = new StringBuilder();
+        if (tcpUri == null) {
+            interproscanCommandArguments.append(highMemory ? " --mode=highmem_worker" : " --mode=worker");
+        } else {
+//                command.append(highMemory ? " --mode=cl_highmem_worker" : " --mode=cl_worker");
+//                command.append(highMemory ? " --mode=distributed_worker --highmem" : " --mode=distributed_worker");
+            interproscanCommandArguments.append(highMemory ? " --mode=distributed_worker --highmem" : " --mode=distributed_worker");
+        }
+        if (priority > 0) {
+            interproscanCommandArguments.append(" --priority=")
+                    .append(priority);
+        }
+
+        if (tcpUri != null) {
+            interproscanCommandArguments.append(" --masteruri=")
+                    .append(tcpUri);
+        }
+
+        if (temporaryDirectory != null) {
+            interproscanCommandArguments.append(" --tempdirname=")
+                    .append(temporaryDirectory);
+        }
+
+        if (userDir != null) {
+            interproscanCommandArguments.append(" --userdir=")
+                    .append(userDir);
+        }
+
+
+        if (tier > 0) {
+            interproscanCommandArguments.append(" --tier1=")
+                    .append(tier);
+        }
+        if (this.projectId != null) {
+            interproscanCommandArguments.append(" --clusterrunid=")
+                    .append(projectId);
+        }
+        interproscanCommandArguments.append(" --mastermaxlife=")
+                .append(currentMasterClockTime + ":" + lifeSpanRemaining);
+
+        return interproscanCommandArguments;
+    }
 
 //TODO: work out how to configure submission scripts.
 
