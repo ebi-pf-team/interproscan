@@ -143,7 +143,6 @@ public class ProteinMatchesSVGResultWriter {
         File tempFileDirectory = new File(tempDirectory);
         if (!tempFileDirectory.exists()) {
             boolean isCreated = tempFileDirectory.mkdirs();
-//            boolean isCreated = tempFileDirectory.createNewFile();
             if (!isCreated) {
                 LOGGER.warn("Couldn't create temp directory " + tempDirectory);
             }

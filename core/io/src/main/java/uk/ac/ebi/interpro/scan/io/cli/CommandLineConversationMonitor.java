@@ -33,6 +33,8 @@ public class CommandLineConversationMonitor {
 
     private static  boolean verboseLog = false;
 
+    private static  int verboseLogLevel = 0;
+
     public static final Lock binaryRunLock = new ReentrantLock();
 
     public static String parentProcessName;
@@ -49,6 +51,14 @@ public class CommandLineConversationMonitor {
 
     public void setVerboseLog(boolean verboseLog) {
         this.verboseLog = verboseLog;
+    }
+
+    public static int getVerboseLogLevel() {
+        return verboseLogLevel;
+    }
+
+    public void setVerboseLogLevel(int verboseLogLevel) {
+        CommandLineConversationMonitor.verboseLogLevel = verboseLogLevel;
     }
 
     public void setBinaryRunDelay(Long binaryRunDelay) {
@@ -75,7 +85,7 @@ public class CommandLineConversationMonitor {
         Long elapsedTime = System.currentTimeMillis() - timeSinceLastBinaryRun;
         binaryStepCount ++;
         LOGGER.debug("Binary Step # " + binaryStepCount + "(" + stepid +") elapsed time: " + elapsedTime);
-        if(verboseLog)  {
+        if(verboseLogLevel > 5)  {
             System.out.println(getTimeNow() + " Binary Step # " + binaryStepCount + "(" + stepid +") elapsed time: " + elapsedTime);
         }
         if(binaryRunDelay == 0){

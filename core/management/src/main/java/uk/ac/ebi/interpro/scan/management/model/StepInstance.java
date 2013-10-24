@@ -155,9 +155,11 @@ public class StepInstance implements Serializable {
 
     public void addStepExecution(StepExecution stepExecution) {
         // Sanity check
-        for (StepExecution previousExecutions : executions) {
-            if (previousExecutions.getState() != StepExecutionState.STEP_EXECUTION_FAILED) {
-                throw new IllegalStateException("Attempting to add a new StepExecution to step " + this + " when there is an existing (NON-STEP_EXECUTION_FAILED) step execution.");
+        if (!stateUnknown) {
+            for (StepExecution previousExecutions : executions) {
+                if (previousExecutions.getState() != StepExecutionState.STEP_EXECUTION_FAILED) {
+                    throw new IllegalStateException("Attempting to add a new StepExecution to step " + this + " when there is an existing (NON-STEP_EXECUTION_FAILED) step execution.");
+                }
             }
         }
         executions.add(stepExecution);
@@ -185,6 +187,14 @@ public class StepInstance implements Serializable {
             }
         }
         return StepExecutionState.STEP_EXECUTION_FAILED;
+    }
+
+    /**
+     * get the stepInstance State
+     * @return
+     */
+    public StepExecutionState getStepInstanceState(){
+        return getState();
     }
 
     public Long getId() {
@@ -338,7 +348,12 @@ public class StepInstance implements Serializable {
                 haveFinished(jobs);
     }
 
-    //set state to unknown
+    /**
+     *
+     * set state to unknown for adding new stepExecutions
+     *
+     */
+
     public void setStateUnknown(boolean stateUnknown) {
         this.stateUnknown = stateUnknown;
     }

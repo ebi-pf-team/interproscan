@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
+import uk.ac.ebi.interpro.scan.jms.monitoring.*;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -17,6 +19,7 @@ import java.util.Enumeration;
  * Sends messages to the work queue on behalf of the master.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -27,6 +30,9 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
     public static final String HIGH_MEMORY_PROPERTY = "highmem";
 
     public static final String CAN_RUN_REMOTELY_PROPERTY = "remote";
+
+    public static final String TOPIC_MESSAGE_PROPERTY = "messagetype";
+
 
     private JmsTemplate jmsTemplate;
     private JmsTemplate jmsTopicTemplate;
@@ -85,9 +91,10 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
      */
     public void sendShutDownMessage() {
         LOGGER.debug("Sending a shutdown message to the workerManagerTopicQueue ");
+
         jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                return session.createObjectMessage();
+                return session.createObjectMessage(new Shutdown());
             }
         });
     }
@@ -159,5 +166,19 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
         if(highMemory && canRunRemotely){
             setWorkerJobRequestQueue(normalWorkerJobRequestQueue);
         }
+    }
+
+
+    @Override
+    public void sendTopicMessage(final ClusterState clusterState) {
+        LOGGER.debug("Sending a ClusterState message to the workerManagerTopicQueue ");
+
+        jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                final ObjectMessage message = session.createObjectMessage(clusterState);
+                message.setStringProperty(TOPIC_MESSAGE_PROPERTY, "clusterState");
+                return message;
+            }
+        });
     }
 }

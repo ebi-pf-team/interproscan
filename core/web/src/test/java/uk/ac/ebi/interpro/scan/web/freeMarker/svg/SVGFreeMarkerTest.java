@@ -18,6 +18,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
@@ -59,7 +60,18 @@ public class SVGFreeMarkerTest {
 //        writeResultToFile(model, template, proteinAccession);
         String result = writeResultToString(model, template);
         assertNotNull(result);
+        //Check certain key words
         assertTrue(result.contains("Q97R95"));
+        assertTrue(result.contains("Length"));
+        assertTrue(result.contains("Domains and repeats"));
+        assertTrue(result.contains("Detailed signature matches"));
+        assertTrue(result.contains("GO Term prediction"));
+        //Test the existence/non-existence of certain elements and attributes in the SVG document
+        //Make sure you never have the case of blobs with width zero
+        assertFalse(result.contains("width=\"0px\""));
+        assertTrue(result.contains("<rect class="));
+        assertTrue(result.contains("<a xlink:href=\"http://www.ebi.ac.uk/interpro/entry/"));
+        assertTrue(result.contains("onmouseover=\"ShowTooltip("));
     }
 
     private String writeResultToString(SimpleHash model, Template template) throws IOException, TemplateException {
@@ -71,7 +83,9 @@ public class SVGFreeMarkerTest {
 
 
     /**
-     * Writes FreeMarkers result into a file. Please note: This method is not part of the test. Use this method to see the result file.
+     * Writes FreeMarkers result into a file. Please note: This method is not part of the test.
+     * <p/>
+     * Use this method for debugging only.
      */
     protected void writeResultToFile(SimpleHash model, Template template, String fileName) throws IOException, TemplateException {
         final String resultFilePath = "${home.dir}/{test.dir}" + fileName + ".svg";

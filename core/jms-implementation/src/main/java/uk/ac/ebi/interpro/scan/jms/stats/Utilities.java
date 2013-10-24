@@ -17,6 +17,10 @@ public class Utilities {
 
     private static volatile Logger LOGGER = Logger.getLogger(Utilities.class.getName());
 
+    public static boolean verboseLog = false;
+
+    public static int verboseLogLevel = 0;
+
     public static String createUniqueJobName(int jobNameLength) {
         StringBuffer sb = new StringBuffer();
         for (int x = 0; x < jobNameLength; x++) {
@@ -407,9 +411,10 @@ public class Utilities {
         return null;
     }
 
-
     //verbose output using System out
     public static void verboseLog(String out){
-        System.out.println(Utilities.getTimeNow() + " " + out);
+        if(verboseLogLevel > 0){
+            System.out.println(Utilities.getTimeNow() + " " + out);
+        }
     }
 }

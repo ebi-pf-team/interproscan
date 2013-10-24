@@ -58,9 +58,15 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected String userDir;
 
-    boolean verboseLog;
+    protected boolean verboseLog;
+
+    protected int verboseLogLevel;
+
+
     private final long startUpTime = System.currentTimeMillis();
     private long maximumLifeMillis = Long.MAX_VALUE;
+
+    protected int gridCheckInterval = 60; //seconds
 
     @Required
     public void setHasInVmWorker(boolean hasInVmWorker) {
@@ -312,6 +318,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         this.verboseLog = verboseLog;
     }
 
+    public void setVerboseLogLevel(int verboseLogLevel) {
+        this.verboseLogLevel = verboseLogLevel;
+    }
+
     public long getMaximumLifeMillis() {
         return maximumLifeMillis;
     }
@@ -326,5 +336,13 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     public long getMasterLifeRemaining(){
         return System.currentTimeMillis() - startUpTime;
+    }
+
+    public int getGridCheckInterval() {
+        return gridCheckInterval;
+    }
+
+    public void setGridCheckInterval(int gridCheckInterval) {
+        this.gridCheckInterval = gridCheckInterval;
     }
 }

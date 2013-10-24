@@ -57,11 +57,11 @@ public class ResponseMonitorImpl implements MessageListener {
                     canHandle = true;
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
-                    if(statsUtil.getAllStepInstances().containsKey(freshStepExecution.getStepInstance().getId())) {
-                        statsUtil.updateSubmittedStepInstances(freshStepExecution.getStepInstance());
-                    }else{
-                        LOGGER.debug("stepInstanceId not found in submitted stepInstances: " + freshStepExecution.getStepInstance().getId());
+                    if(Utilities.verboseLogLevel > 4){
+                        Utilities.verboseLog("ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
                     }
+                    statsUtil.updateSubmittedStepInstances(freshStepExecution.getStepInstance());
+
                     canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);
                     if(canRunRemotely){
                         statsUtil.incRemoteJobsCompleted();
@@ -69,7 +69,7 @@ public class ResponseMonitorImpl implements MessageListener {
                         remoteJobs++;
 //                        System.out.println("Remote Job completed, remoteJobs:" + remoteJobs + " statsutil.remotejobs: " + StatsUtil.getRemoteJobsCompleted() );
                     }else{
-                        StatsUtil.incLocalJobsCompleted();
+                        statsUtil.incLocalJobsCompleted();
                     }
 
 
