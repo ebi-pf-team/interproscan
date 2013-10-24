@@ -29,7 +29,7 @@ public class RemoteJobQueueListener implements MessageListener {
 
     private StatsUtil statsUtil;
 
-//    private WorkerState workerState;
+    private WorkerState workerState;
 
     private boolean gridThrottle = true;
 
@@ -69,7 +69,12 @@ public class RemoteJobQueueListener implements MessageListener {
         this.maxUnfinishedJobs = maxUnfinishedJobs;
     }
 
-//    public void setWorkerState(WorkerState workerState) {
+    @Required
+    public void setWorkerState(WorkerState workerState) {
+        this.workerState = workerState;
+    }
+
+    //    public void setWorkerState(WorkerState workerState) {
 //        this.workerState = workerState;
 //    }
 
@@ -98,7 +103,7 @@ public class RemoteJobQueueListener implements MessageListener {
         //send message
         try {
             workerMessageSender.sendMessage(jobRequestQueue,message, true);
-//            workerState.addNewJob(message);
+            workerState.addNonFinishedJob(message);
         } catch (JMSException e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
             e.printStackTrace();
@@ -126,7 +131,7 @@ public class RemoteJobQueueListener implements MessageListener {
         if(jobCount == 4){
             LOGGER.info("checkQueueState - First 4 jobs : maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
             long now = System.currentTimeMillis();
-            if((now - timeFirstMessageReceived) < 1*1000){
+            if((now - timeFirstMessageReceived) < 1 * 1000){
                 //wait for 15 seconds as otherwise we end up with lots of workers without work?
                 final long expectedSynchTime = statsUtil.getCurrentMasterClockTime() + (25 * 1000);
                 final long waitMasterSyncTime = expectedSynchTime - now;
@@ -165,11 +170,6 @@ public class RemoteJobQueueListener implements MessageListener {
                         stopRemoteQueue = true;
                     }
                     break;
-                case 3:
-                    if(unfinishedJobs > maxUnfinishedJobs / 2 * 2){
-                        stopRemoteQueue = true;
-                    }
-                    break;
                 default:
                     if(unfinishedJobs > maxUnfinishedJobs / (Math.pow(2, statsUtil.getTier()))){
                         stopRemoteQueue = true;
@@ -181,7 +181,7 @@ public class RemoteJobQueueListener implements MessageListener {
                 statsUtil.setStopRemoteQueueJmsContainer(true);
                 //wait for some seconds before exiting onMessage
                 try {
-                    Thread.sleep(15*1000);
+                    Thread.sleep(15 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }

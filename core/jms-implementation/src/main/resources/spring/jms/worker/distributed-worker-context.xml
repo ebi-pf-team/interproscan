@@ -62,6 +62,10 @@
     </amq:connectionFactory>
 
 
+    <!-- JMS Error handler-->
+    <bean id="jmsErrorHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSErrorHandler" />
+
+
     <!-- JMS Exception handler-->
     <bean id="jmsIOExceptionHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSIOExceptionHandler" />
 
@@ -136,9 +140,10 @@
         <property name="jobRequestQueue"  ref="jobRequestQueue" />
         <property name="jobResponseQueue"  ref="jobResponseQueue" />
         <property name="highMemJobRequestQueue" ref="highMemJobRequestQueue"/>
+        <property name="systemMonitorQueue" ref="monitorQueue"/>
         <property name="maxConsumerSize"    value="${worker.maxconsumers}" />
         <property name="completionFactor"   value="20" />
-        <property name="queueConsumerRatio" value="20"  />
+        <property name="queueConsumerRatio" value="${steps.to.consumer.ratio}"  />
         <property name="workerRunner">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
                 <property name="submissionCommand" value="${grid.worker.submit.command} ${worker.command}"/>
@@ -174,19 +179,23 @@
         <property name="workerManagerTopic" ref="workerManagerTopic"/>
         <property name="jmsTopicTemplate" ref="jmsTopicTemplate"/>
         <property name="responseQueueMessageListener" ref="responseQueueMessageListener"/>
+        <property name="workerMonitorQueueListener" ref="monitorQueueMessageListener"/>
         <property name="workerMessageSender" ref="workerMessageSender"/>
 
         <property name="gridThrottle" value="${grid.throttle}"/>
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
         <property name="maxTierDepth" value="${max.tier.depth}"/>
-
+        <property name="jmsExceptionListener" ref="workerExceptionListener"/>
         <property name="jmsTransportListener" ref="jmsTransportListener"/>
         <property name="concurrentInVmWorkerCount" value="${worker.number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${worker.maxnumber.of.embedded.workers}"/>
         <property name="gridName" value="${grid.name}"/>
         <property name="verboseLog" value="${verbose.log}"/>
+        <property name="verboseLogLevel" value="${verbose.log.level}"/>
         <property name="managerTopicMessageListener" ref="managerTopicMessageListener"/>
         <property name="logDir" value="${log.dir}"/>
+        <property name="workerState" ref="workerState"/>
+        <property name="timeKeeper" ref="timeKeeper"/>
     </bean>
 
 
@@ -199,6 +208,12 @@
 
     <!-- LSF Monitor-->
     <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />
+
+    <!--workerState-->
+    <bean id="workerState"  class="uk.ac.ebi.interpro.scan.jms.worker.WorkerState" />
+
+    <!--TimeKeeper-->
+    <bean id="timeKeeper"  class="uk.ac.ebi.interpro.scan.jms.worker.TimeKeeper" />
 
     <!--Configuration for the job response queue listener-->
     <bean id="responseQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
@@ -232,6 +247,7 @@
         <property name="messageListener" ref="remoteJobQueueListener"/>
         <property name="acceptMessagesWhileStopping" value="true"/>
         <property name="exceptionListener" ref="workerExceptionListener"/>
+        <property name="errorHandler" ref="jmsErrorHandler"/>
     </bean>
 
     <!--Listens to the remote request queue and propagates to the local one-->
@@ -242,7 +258,7 @@
         <property name="statsUtil" ref="workerStatsUtil"/>
         <property name="gridThrottle" value="${grid.throttle}"/>
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
-
+        <property name="workerState" ref="workerState"/>
     </bean>
 
     <bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
@@ -297,6 +313,7 @@
         <property name="destination" ref="workerManagerTopic"/>
         <property name="messageListener" ref="managerTopicMessageListener"/>
         <property name="pubSubDomain" value="true" />
+        <property name="errorHandler" ref="jmsErrorHandler"/>
     </bean>
 
 
@@ -314,7 +331,13 @@
         <property name="highmemWorkerJobRequestQueue" ref="highMemJobRequestQueue"/>
     </bean>
 
+    <!--Listens to the local response queue and propagates to the remote one-->
+    <bean id="monitorQueueMessageListener" class="uk.ac.ebi.interpro.scan.jms.monitoring.WorkerMonitorQueueListener">
+        <property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="systemMonitorQueue" ref="monitorQueue"/>
+        <!--<property name="workerMessageSender" ref="workerMessageSender"/>-->
 
+    </bean>
 
     <bean id="workerStatsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
         <property name="jmsTemplate" ref="localJmsTemplate"/>

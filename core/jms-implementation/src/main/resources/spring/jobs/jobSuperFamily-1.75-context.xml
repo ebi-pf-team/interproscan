@@ -74,6 +74,7 @@
         <property name="hmmer3ResultsFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="binaryOutputFileNameTemplate" ref="superFamilyBinaryOutputFileTemplate-1.75"/>
         <property name="outputFileNameTemplate" ref="superFamilyBinaryStandardOutputFileTemplate-1.75"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
     <!-- STEP: Parse the SuperFamily binary output and persist the results in the database. No post processing required. -->

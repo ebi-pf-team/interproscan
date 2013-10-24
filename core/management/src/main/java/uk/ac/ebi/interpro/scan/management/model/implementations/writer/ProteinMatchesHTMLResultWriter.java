@@ -212,7 +212,7 @@ public class ProteinMatchesHTMLResultWriter {
     private void checkTempDirectory(String tempDirectory) throws IOException {
         File tempFileDirectory = new File(tempDirectory);
         if (!tempFileDirectory.exists()) {
-            boolean isCreated = tempFileDirectory.createNewFile();
+            boolean isCreated = tempFileDirectory.mkdirs();
             if (isCreated) {
                 LOGGER.warn("Couldn't create temp directory " + tempDirectory);
             }

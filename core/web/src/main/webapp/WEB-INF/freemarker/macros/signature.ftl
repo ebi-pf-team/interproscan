@@ -10,7 +10,11 @@
     <#assign maxAcLength=16><#--Maximum signature accession length-->
     <#assign maxOverallLength=20> <#-- Maximum allowed length of accession and name -->
     <#assign acLength=signature.ac?length> <#-- Actual length of the signature accession, e.g. G3DSA:2.40.20.10 -->
-    <#assign nameLength=signature.name?length> <#-- Actual length of the signature name, e.g. Pept_Ser_Cys -->
+    <#if signature.name??>
+        <#assign nameLength=signature.name?length> <#-- Actual length of the signature name, e.g. Pept_Ser_Cys -->
+    <#else>
+        <#assign nameLength=0> <#-- No signature name -->
+    </#if>
     <#assign maxNameLength=maxOverallLength?number - acLength?number> <#-- Initialise the maximum allowed length of name -->
     <#if ((acLength?number) > (maxAcLength?number))>
     <#-- Accession was too long therefore should actually subtract maxAcLength instead of acLength -->
@@ -18,7 +22,7 @@
     </#if>
 
 <#-- Now display the signature accession -->
-    <#if signature.ac != signature.name>
+    <#if signature.name?? && signature.ac != signature.name>
     <#--Link text may be abbreviated therefore need to display the full text in the link title-->
     <a href="${signature.dataSource.getLinkUrl(signature.ac)}" title="${signature.ac} (${signature.name})"
        class="neutral">
@@ -35,7 +39,7 @@
 </a>
 
 <#-- Now display the signature name (if not identical to the accession) -->
-    <#if signature.ac != signature.name>
+    <#if signature.name?? && signature.ac != signature.name>
         <#if ((nameLength?number) > (maxNameLength?number))>
         <#--Name is too long, need to truncate it-->
             <span>(${signature.name?substring(0, maxNameLength - 3)}...)</span>

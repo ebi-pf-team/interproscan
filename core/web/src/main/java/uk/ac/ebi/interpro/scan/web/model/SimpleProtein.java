@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.web.model;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.io.FamilyHierachyElementBuilder;
 import uk.ac.ebi.interpro.scan.web.io.svg.FamilyHierachySvgElementBuilder;
@@ -208,6 +207,7 @@ public final class SimpleProtein implements Serializable {
 
     /**
      * Returns the height in pixel for the GO annotation section within the SVG template.
+     *
      * @param heightPerXrefLine
      * @param globalHeight
      * @return
@@ -247,6 +247,7 @@ public final class SimpleProtein implements Serializable {
 
     /**
      * Returns the height in pixel for the un-integrated signatures section within the SVG template.
+     *
      * @param heightPerSignatureLine
      * @param globalHeight
      * @return
@@ -363,6 +364,8 @@ public final class SimpleProtein implements Serializable {
         if (entryHierarchy == null) {
             throw new IllegalArgumentException("SimpleProtein.valueOf method: the EntryHierarchy parameter must not be null.");
         }
+
+        // 1) Create SimpleProtein object
         String crc64 = UNKNOWN;
         String taxScienceName = UNKNOWN;
         String taxFullName = UNKNOWN;
@@ -372,40 +375,51 @@ public final class SimpleProtein implements Serializable {
         final String proteinDesc = (xref.getDescription() == null) ? UNKNOWN : xref.getDescription();
         final SimpleProtein simpleProtein = new SimpleProtein(proteinAc, proteinName, proteinDesc, protein.getSequenceLength(),
                 protein.getMd5(), crc64, 0, taxScienceName, taxFullName, isProteinFragment);
-        // Get entries and corresponding signatures
+
+        //Iterate over all protein matches
         for (final Match match : protein.getMatches()) {
-            // Signature
+            // 2) Create SimpleSignature object
             final Signature signature = match.getSignature();
             final String signatureAc = signature.getAccession();
             final String signatureName = (signature.getName() == null || signature.getName().length() == 0)
                     ? signatureAc
                     : signature.getName();
+            SignatureLibraryRelease signatureLibraryRelease = signature.getSignatureLibraryRelease();
+            final String signatureLibraryName = signatureLibraryRelease == null ? "UNKNOWN" : signatureLibraryRelease.getLibrary().getName();
+            SimpleSignature simpleSignature = new SimpleSignature(signatureAc, signatureName, signatureLibraryName);
 
-            // Entry
+            // 3) Create SimpleEntry object
             final Entry entry = signature.getEntry();
-
             SimpleEntry simpleEntry = (entry == null)
                     ? new SimpleEntry("", SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, EntryType.UNKNOWN, entryHierarchy)
                     : new SimpleEntry(entry.getAccession(), entry.getName(), entry.getDescription(), EntryType.mapFromModelEntryType(entry.getType()), entryHierarchy);
-            // Add the locations to the Entry from the Signatures
-            final SimpleSignature ss = new SimpleSignature(signatureAc, signatureName, signature.getSignatureLibraryRelease().getLibrary().getName());
-            for (Object o : match.getLocations()) {
-                final Location location = (Location) o;
-                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
-                // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
-                ss.getLocations().add(simpleLocation);
-                simpleEntry.getLocations().add(simpleLocation);
-            }
 
+            // If SimpleEntry entry already exists, get it
             if (simpleProtein.getAllEntries().contains(simpleEntry)) {
-                // Entry already exists, so get it
                 simpleEntry = simpleProtein.getAllEntries().get(simpleProtein.getAllEntries().indexOf(simpleEntry));
-            } else {
-                // Create new entry
+            } else {//Else add it to the list of simple protein entries
                 simpleProtein.getAllEntries().add(simpleEntry);
             }
 
-            simpleEntry.getSignaturesMap().put(signatureAc, ss);
+            // If SimpleSignature entry already exists, get it
+            if (simpleEntry.getSignaturesMap().containsKey(signatureAc)) {
+                simpleSignature = simpleEntry.getSignaturesMap().get(signatureAc);
+            } else {
+                simpleEntry.getSignaturesMap().put(signatureAc, simpleSignature);
+            }
+
+            //Iterate over match locations
+            for (Object o : match.getLocations()) {
+
+                // 4) Create SimpleLocation object
+                final Location location = (Location) o;
+                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
+
+                // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
+                simpleSignature.getLocations().add(simpleLocation);
+                // Add location to the list of super matches
+                simpleEntry.getLocations().add(simpleLocation);
+            }
         }
         return simpleProtein;
     }
@@ -420,6 +434,7 @@ public final class SimpleProtein implements Serializable {
 
     /**
      * Returns the height in pixel for family hierarchy section within the SVG template.
+     *
      * @param heightPerHierarchyLevel
      * @param globalHeight
      * @return

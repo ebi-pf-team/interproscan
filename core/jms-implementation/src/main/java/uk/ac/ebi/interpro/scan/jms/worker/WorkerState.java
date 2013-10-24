@@ -1,23 +1,34 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+/**
+ * The WorkerState class is used to transmit the state of
+ * a Worker to a caller, usually this is the master.
+ *
+ * @author gift nuka
+ * @since 5-44.0u1
+ *
+ */
+
+import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-/**
- * The WorkerState class is used to transmit the state of
- * a Worker to a caller.
- *
- * @author Phil Jones
- * @version $Id: WorkerState.java,v 1.3 2009/10/16 15:40:30 pjones Exp $
- * @since 1.0
- */
-public class WorkerState implements Serializable, Comparable {
+
+public class WorkerState implements Serializable {
+
+
+    private static final Logger LOGGER = Logger.getLogger(WorkerState.class.getName());
 
     /**
      * How long has the Worker been alive for?
@@ -25,34 +36,27 @@ public class WorkerState implements Serializable, Comparable {
     private long timeAliveMillis;
 
     /**
-     * A double value between 0 and 1 indicating the proportion of the
-     * job completed.  This value CAN be null, indicating that the
-     * completion status is unknown.
+     * How long has the Worker been alive for?
      */
-    private Double proportionComplete;
+    private String logDir;
 
-    /**
-     * Should be a human readable, useful description of the current job.
-     * TODO - for multi-use workers, should they return a List of all the jobs
-     * they have already done?
-     */
-    private String jobDescription;
-
-    /**
-     * Should be a unique identifier for the current job.
-     * TODO - for multi-use workers, should the return a List of all the job IDs
-     * they have already done?
-     */
-    private String jobId;
 
     /**
      * All the jobs this worker has handled
      */
-    private  List<Message> allJobs = new ArrayList<Message>();
+    private List<StepExecution> allJobs = new ArrayList<StepExecution>();
 
-    private  List<Message>  allCompletedJobs = new ArrayList<Message>();
+    /**
+     * All the jobs this worker has handled
+     */
+    private List<StepExecution> allJobsHandled = new ArrayList<StepExecution>();
 
-    private  List<Message>  allNonAcknowledgedJobs = new ArrayList<Message>();
+    /**
+     * All the jobs not yet finished
+     */
+    private ConcurrentMap<Long, StepExecution>  nonFinishedJobs = new ConcurrentHashMap<Long, StepExecution>();
+
+    private  List<Message>  locallyRunningJobs = new ArrayList<Message>();
 
     private  List<Message>  locallyCompletedJobs = new ArrayList<Message>();
 
@@ -70,50 +74,95 @@ public class WorkerState implements Serializable, Comparable {
     /**
      * The host that the Worker is running on.
      */
-    private final String hostName;
+    private String hostName;
 
     /**
-     * Indicates if the Worker is for single use only.
+     * The masterUri for the master broker.
      */
-    private final boolean singleUseOnly;
+    private String masterTcpUri;
 
-    private final UUID workerIdentification;
+
+    /**
+     * The uri for this worker.
+     */
+    private String tcpUri;
+
+    private String projectId;
+
+    private UUID workerIdentification;
 
     private Throwable exceptionThrown;
 
-//    private WorkerState(){
-//
-//    }
+    private int processors;
 
-    public WorkerState(long timeAliveMillis, String hostName, UUID workerIdentification, boolean singleUseOnly) {
-        this.timeAliveMillis = timeAliveMillis;
-        this.hostName = hostName;
-        this.workerIdentification = workerIdentification;
-        this.singleUseOnly = singleUseOnly;
+    private int tier;
+
+    private int workersSpawned;
+
+    private boolean processedByMaster = false;
+
+    private WorkerState(){
+
     }
 
-    public List<Message> getAllJobs() {
+    public WorkerState(long timeAliveMillis, String hostName, UUID workerIdentification, String projectId,
+                       String masterTcpUri, String logDir) {
+        this.timeAliveMillis = timeAliveMillis;
+        this.tcpUri = hostName;
+        this.hostName = hostName;
+        this.workerIdentification = workerIdentification;
+        this.projectId = projectId;
+        this.masterTcpUri = masterTcpUri;
+        this.logDir =logDir;
+    }
+
+    public List<StepExecution> getAllJobs() {
         return allJobs;
     }
 
-    public void addNewJob(Message message) {
-        this.allJobs.add(message);
+    public void addNewJob(StepExecution stepExecution) {
+        this.allJobs.add(stepExecution);
     }
 
-    public List<Message> getAllCompletedJobs() {
-        return allCompletedJobs;
+    public void addNonFinishedJob(Message message){
+        try {
+            LOGGER.debug("addNonFinishedJob: " + message.getJMSMessageID());
+            ObjectMessage stepExecutionMessage = (ObjectMessage) message;
+            final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
+            this.nonFinishedJobs.put(stepExecution.getStepInstance().getId(), stepExecution);
+            this.allJobs.add(stepExecution);
+            if(Utilities.verboseLogLevel > 4){
+                Utilities.verboseLog("Received StepInstance:  added to unfinishedJobs - " + stepExecution.getStepInstance().toString());
+            }
+        } catch (JMSException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
     }
 
-    public void addCompletedJob(Message message){
-        this.allCompletedJobs.add(message);
+    /**
+     * remove
+     *
+     * @param message
+     */
+    public synchronized void removeFromNonFinishedJobs(Message message){
+
+        try {
+            LOGGER.debug("removeFromNonFinishedJobs: " + message.getJMSMessageID());
+            ObjectMessage stepExecutionMessage = (ObjectMessage) message;
+            final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
+            this.nonFinishedJobs.remove(stepExecution.getStepInstance().getId());
+        } catch (JMSException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
-    public List<Message> getAllNonAcknowledgedJobs() {
-        return allNonAcknowledgedJobs;
+    public ConcurrentMap<Long, StepExecution> getNonFinishedJobs() {
+        return nonFinishedJobs;
     }
 
-    public void addNonAcknowledgedJob(Message message) {
-        this.allNonAcknowledgedJobs = allNonAcknowledgedJobs;
+    public void addLocallyCompletedJobsJob(Message message) {
+        this.locallyCompletedJobs.add(message);
     }
 
     public List<Message> getLocallyCompletedJobs() {
@@ -128,9 +177,6 @@ public class WorkerState implements Serializable, Comparable {
         this.timeAliveMillis = timeAliveMillis;
     }
 
-    public void setProportionComplete(Double proportionComplete) {
-        this.proportionComplete = proportionComplete;
-    }
 
     public void setWorkerStatus(String workerStatus) {
         this.workerStatus = workerStatus;
@@ -138,14 +184,6 @@ public class WorkerState implements Serializable, Comparable {
 
     public void setExceptionThrown(Throwable exceptionThrown) {
         this.exceptionThrown = exceptionThrown;
-    }
-
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
-    }
-
-    public void setJobDescription(String jobDescription) {
-        this.jobDescription = jobDescription;
     }
 
     public StepExecutionState getStepExecutionStatus() {
@@ -160,14 +198,6 @@ public class WorkerState implements Serializable, Comparable {
         return timeAliveMillis;
     }
 
-    public Double getProportionComplete() {
-        return proportionComplete;
-    }
-
-    public String getJobDescription() {
-        return jobDescription;
-    }
-
     public String getWorkerStatus() {
         return workerStatus;
     }
@@ -180,32 +210,125 @@ public class WorkerState implements Serializable, Comparable {
         return workerIdentification;
     }
 
-    public boolean isSingleUseOnly() {
-        return singleUseOnly;
+    public void setLogDir(String logDir) {
+        this.logDir = logDir;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public void setTcpUri(String tcpUri) {
+        this.tcpUri = tcpUri;
+    }
+
+    public void setMasterTcpUri(String masterTcpUri) {
+        this.masterTcpUri = masterTcpUri;
+    }
+
+    public String getMasterTcpUri() {
+        return masterTcpUri;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setWorkerIdentification(UUID workerIdentification) {
+        this.workerIdentification = workerIdentification;
     }
 
     public Throwable getExceptionThrown() {
         return exceptionThrown;
     }
 
-    public String getJobId() {
-        return jobId;
+    public void setProcessors(int processors) {
+        this.processors = processors;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public void setWorkersSpawned(int workersSpawned) {
+        this.workersSpawned = workersSpawned;
+    }
+
+    public int getProcessors() {
+        return processors;
+    }
+
+    public String getTcpUri() {
+        return tcpUri;
+    }
+
+    public int getWorkersSpawned() {
+        return workersSpawned;
+    }
+
+    public int getTier() {
+        return tier;
+    }
+
+    public String getLogDir() {
+        return logDir;
+    }
+
+    public int getTotalStepCount(){
+        return allJobs.size();
     }
 
 
-    /**
-     * all jobs not completed are failed jobs
-     *
-     * @return   failedJobs
-     */
-    public final List<Message> getFailedJobs(){
-        final List<Message> failedJobs = new ArrayList<Message>();
-        for(Message job: allJobs){
-            if (! allCompletedJobs.contains(job)) {
-                failedJobs.add(job);
-            }
+    public int getUnfinishedStepCount(){
+        return nonFinishedJobs.size();
+    }
+
+    public void printWorkerState(){
+        Utilities.verboseLog(toString());
+    }
+
+    public boolean isProcessedByMaster() {
+        return processedByMaster;
+    }
+
+    public void setProcessedByMaster(boolean processedByMaster) {
+        this.processedByMaster = processedByMaster;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer workerState = new StringBuffer("WorkerState: " + workerIdentification).append("\n");
+        workerState.append("hostname: " + hostName).append("\n");
+        workerState.append("processors: " + processors).append("\n");
+        workerState.append("thisworker_id: " + projectId
+                + "_" + tcpUri.hashCode()).append("\n");
+        workerState.append("tier: " + tier).append("\n");
+
+        workerState.append("masterId: " + projectId
+                + "_" + masterTcpUri.hashCode()).append("\n");
+
+        workerState.append("status: " + workerStatus).append("\n");
+
+        workerState.append("logDir: " + logDir).append("\n");
+        workerState.append("logDirPath: " + logDir + "/" + projectId
+                + "_" + masterTcpUri.hashCode()).append("\n");
+        workerState.append("workers spawned: " + workersSpawned).append("\n");
+        workerState.append("jotalJobsReceived: " + allJobs.size()).append("\n");
+        workerState.append("jobsNotFinished: " + nonFinishedJobs.size()).append("\n");
+        workerState.append("summary: " + hostName + ":"
+                + processors + ":" + allJobs.size()).append("\n");
+        int count = 0;
+        for(StepExecution stepExecution: nonFinishedJobs.values()){
+            workerState.append(count + ": " + stepExecution.getStepInstance().getId()
+                    + " - " + stepExecution.getStepInstance().getStepId()
+            ).append("\n");
+            count ++;
         }
-        return failedJobs;
+        return workerState.toString();
     }
 
 
@@ -225,10 +348,7 @@ public class WorkerState implements Serializable, Comparable {
         if (exceptionThrown != null ? !exceptionThrown.equals(that.exceptionThrown) : that.exceptionThrown != null)
             return false;
         if (!hostName.equals(that.hostName)) return false;
-        if (jobDescription != null ? !jobDescription.equals(that.jobDescription) : that.jobDescription != null)
-            return false;
-        if (jobId != null ? !jobId.equals(that.jobId) : that.jobId != null) return false;
-        if (proportionComplete != null ? !proportionComplete.equals(that.proportionComplete) : that.proportionComplete != null)
+        if (masterTcpUri != null ? !masterTcpUri.equals(that.masterTcpUri) : that.masterTcpUri != null)
             return false;
         if (workerStatus != null ? !workerStatus.equals(that.workerStatus) : that.workerStatus != null) return false;
         if (!workerIdentification.equals(that.workerIdentification)) return false;
@@ -239,86 +359,11 @@ public class WorkerState implements Serializable, Comparable {
     @Override
     public int hashCode() {
         int result = (int) (timeAliveMillis ^ (timeAliveMillis >>> 32));
-        result = 31 * result + (proportionComplete != null ? proportionComplete.hashCode() : 0);
-        result = 31 * result + (jobDescription != null ? jobDescription.hashCode() : 0);
-        result = 31 * result + (jobId != null ? jobId.hashCode() : 0);
-        result = 31 * result + (workerStatus != null ? workerStatus.hashCode() : 0);
+        result = 31 * result + (logDir != null ? logDir.hashCode() : 0);
+        result = 31 * result + (masterTcpUri != null ? masterTcpUri.hashCode() : 0);
         result = 31 * result + hostName.hashCode();
         result = 31 * result + workerIdentification.hashCode();
         result = 31 * result + (exceptionThrown != null ? exceptionThrown.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).
-                append("timeAliveMillis", timeAliveMillis).
-                append("proportionComplete", proportionComplete).
-                append("jobDescription", jobDescription).
-                append("jobId", jobId).
-                append("workerStatus", workerStatus).
-                append("hostName", hostName).
-                append("singleUseOnly", singleUseOnly).
-                append("workerIdentification", workerIdentification).
-                append("exceptionThrown", exceptionThrown).
-                toString();
-    }
-
-    /**
-     * Compares this object with the specified object for order.  Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.
-     * <p/>
-     * <p>The implementor must ensure <tt>sgn(x.compareTo(y)) ==
-     * -sgn(y.compareTo(x))</tt> for all <tt>x</tt> and <tt>y</tt>.  (This
-     * implies that <tt>x.compareTo(y)</tt> must throw an exception iff
-     * <tt>y.compareTo(x)</tt> throws an exception.)
-     * <p/>
-     * <p>The implementor must also ensure that the relation is transitive:
-     * <tt>(x.compareTo(y)&gt;0 &amp;&amp; y.compareTo(z)&gt;0)</tt> implies
-     * <tt>x.compareTo(z)&gt;0</tt>.
-     * <p/>
-     * <p>Finally, the implementor must ensure that <tt>x.compareTo(y)==0</tt>
-     * implies that <tt>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</tt>, for
-     * all <tt>z</tt>.
-     * <p/>
-     * <p>It is strongly recommended, but <i>not</i> strictly required that
-     * <tt>(x.compareTo(y)==0) == (x.equals(y))</tt>.  Generally speaking, any
-     * class that implements the <tt>Comparable</tt> interface and violates
-     * this condition should clearly indicate this fact.  The recommended
-     * language is "Note: this class has a natural ordering that is
-     * inconsistent with equals."
-     * <p/>
-     * <p>In the foregoing description, the notation
-     * <tt>sgn(</tt><i>expression</i><tt>)</tt> designates the mathematical
-     * <i>signum</i> function, which is defined to return one of <tt>-1</tt>,
-     * <tt>0</tt>, or <tt>1</tt> according to whether the value of
-     * <i>expression</i> is negative, zero or positive.
-     *
-     * @param o the object to be compared.
-     * @return a negative integer, zero, or a positive integer as this object
-     *         is less than, equal to, or greater than the specified object.
-     * @throws ClassCastException if the specified object's type prevents it
-     *                            from being compared to this object.
-     */
-    @Override
-    public int compareTo(Object o) {
-        WorkerState other = (WorkerState) o;
-        if (this == other || this.equals(other)) {
-            return 0;
-        }
-        int thisSingle = (this.isSingleUseOnly()) ? 0 : 1;
-        int otherSingle = (other.isSingleUseOnly()) ? 0 : 1;
-        int comparator = otherSingle - thisSingle;
-        if (comparator == 0) {
-            comparator = this.getHostName().compareTo(other.getHostName());
-        }
-        if (comparator == 0) {
-            comparator = (this.getWorkerIdentification().compareTo(other.getWorkerIdentification()));
-        }
-        if (comparator == 0) {
-            comparator = this.getJobId().compareTo(other.getJobId());
-        }
-        return comparator;
     }
 }

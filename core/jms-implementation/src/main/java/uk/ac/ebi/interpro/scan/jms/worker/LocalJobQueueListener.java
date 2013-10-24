@@ -31,6 +31,8 @@ public class LocalJobQueueListener implements MessageListener {
 
     boolean verboseLog = false;
 
+    private int verboseLogLevel;
+
     /**
      * The distributed worker controller is in charge of calling 'stop' on the
      * Spring MonitorListenerContainer when the conditions are correct.
@@ -86,6 +88,14 @@ public class LocalJobQueueListener implements MessageListener {
 
     public void setVerboseLog(boolean verboseLog) {
         this.verboseLog = verboseLog;
+    }
+
+    public int getVerboseLogLevel() {
+        return verboseLogLevel;
+    }
+
+    public void setVerboseLogLevel(int verboseLogLevel) {
+        this.verboseLogLevel = verboseLogLevel;
     }
 
     public StatsUtil getStatsUtil() {
@@ -157,18 +167,23 @@ public class LocalJobQueueListener implements MessageListener {
             try {
 
                 stepName =  stepExecution.getStepInstance().getStepId();
+                Long stepId = stepExecution.getStepInstance().getId();
                 statsUtil.jobStarted(stepName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
                 if (verboseLog){
-                    Utilities.verboseLog("Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepExecution.getId());
+                    if (verboseLogLevel > 2){
+                        Utilities.verboseLog("Processing " + stepName + " JobCount #: " + localCount
+                                + " - stepInstanceId = " + stepId
+                                + "\n stepInstance: " + stepExecution.getStepInstance().toString()  );
+                    }
                 }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
                 timeNow = Utilities.getTimeNow();
 //                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
-                if(verboseLog){
-                    Utilities.verboseLog("Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepExecution.getId());
+                if(verboseLogLevel > 2){
+                    Utilities.verboseLog("Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
                     Utilities.verboseLog("Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
                 }
                 statsUtil.jobFinished(stepName);

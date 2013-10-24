@@ -3,7 +3,11 @@
     <#assign maxAcLength=16><#--Maximum signature accession length-->
     <#assign maxOverallLength=20> <#-- Maximum allowed length of accession and name -->
     <#assign acLength=signature.ac?length> <#-- Actual length of the signature accession, e.g. G3DSA:2.40.20.10 -->
-    <#assign nameLength=signature.name?length> <#-- Actual length of the signature name, e.g. Pept_Ser_Cys -->
+    <#if signature.name??>
+        <#assign nameLength=signature.name?length> <#-- Actual length of the signature name, e.g. Pept_Ser_Cys -->
+    <#else>
+        <#assign nameLength=0> <#-- No signature name -->
+    </#if>
     <#assign maxNameLength=maxOverallLength?number - acLength?number> <#-- Initialise the maximum allowed length of name -->
     <#if ((acLength?number) > (maxAcLength?number))>
     <#-- Accession was too long therefore should actually subtract maxAcLength instead of acLength -->
@@ -22,7 +26,7 @@ ${signature.getMatchLocationsViewSvg(protein.length,entryColours,entryType,entry
         <tspan style="text-decoration:underline;fill:#525252;font-size: 11px">
             <a xlink:href="${signature.dataSource.getLinkUrl(signature.ac)}"
                target="_top">
-                <#if signature.ac != signature.name>
+                <#if signature.name?? && signature.ac != signature.name>
                     <title>${signature.ac} (${signature.name})</title>
                     <#else>
                         <title>${signature.ac}</title>
@@ -33,7 +37,7 @@ ${signature.getMatchLocationsViewSvg(protein.length,entryColours,entryType,entry
                     <#else>${signature.ac}</#if>
             </a>
         </tspan>
-        <#if signature.ac != signature.name>
+        <#if signature.name?? && signature.ac != signature.name>
             <tspan style="fill:#525252;font-size: 9px">
             <#--Name is too long, need to truncate it-->
                 <#if ((nameLength?number) > (maxNameLength?number))>

@@ -81,6 +81,7 @@
         <property name="binaryRunDelay" value="${binary.run.delay}"/>
         <property name="checkForkInProgress" value="${check.fork.progress}"/>
         <property name="verboseLog" value="${verbose.log}"/>
+        <property name="verboseLogLevel" value="${verbose.log.level}"/>
     </bean>
 
 

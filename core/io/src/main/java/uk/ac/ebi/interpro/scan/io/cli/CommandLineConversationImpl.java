@@ -40,7 +40,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
     private String stepInstanceStepId;
     private boolean verboseLog;
-
+    private int verboseLogLevel;
 
     /**
      * set stepId for logs
@@ -54,6 +54,10 @@ public class CommandLineConversationImpl implements CommandLineConversation {
 
     public void setVerboseLog(boolean verboseLog) {
         this.verboseLog = verboseLog;
+    }
+
+    public void setVerboseLogLevel(int verboseLogLevel) {
+        this.verboseLogLevel = verboseLogLevel;
     }
 
     /**
@@ -97,6 +101,8 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         //set verbose on/off
         setVerboseLog(CommandLineConversationMonitor.isVerboseLog());
 
+        setVerboseLogLevel(CommandLineConversationMonitor.getVerboseLogLevel());
+
         ProcessBuilder pb = new ProcessBuilder(commands);
 
         // Set error redirect as requested.
@@ -119,7 +125,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Command Line: \n " + pb.command());
         }
-        if(verboseLog){
+        if(verboseLogLevel > 5){
             System.out.println(CommandLineConversationMonitor.getTimeNow() + " In CommandLineConversation: " + stepInstanceStepId);
         }
         Long getLockTime = System.currentTimeMillis();
@@ -131,7 +137,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                 CommandLineConversationMonitor.simpleBinaryRunDelay(stepInstanceStepId);
             }
             LOGGER.debug("Start process in clc:  " + stepInstanceStepId);
-            if(verboseLog){
+            if(verboseLogLevel > 5){
                 System.out.println(CommandLineConversationMonitor.getTimeNow() + " Start process in clc:  " + stepInstanceStepId);
             }
             //fork the process
@@ -151,7 +157,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         Long startuptime2 = System.currentTimeMillis() - releaseLockTime;
         Long lockTime = releaseLockTime - getLockTime;
         Long processCompleteStartUpTime = System.currentTimeMillis() - getLockTime;
-        if(verboseLog){
+        if(verboseLogLevel > 5){
             System.out.println(CommandLineConversationMonitor.getTimeNow()
                     + " Started process in clc:  " + stepInstanceStepId
                     + " startuptime:  " + startuptime + " ms"
