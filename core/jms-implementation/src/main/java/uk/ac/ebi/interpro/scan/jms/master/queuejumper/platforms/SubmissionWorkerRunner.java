@@ -156,6 +156,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.clusterState = clusterState;
     }
 
+    public ClusterState getClusterState() {
+        return clusterState;
+    }
+
     /**
      * create an id for the new worker given a project id
      *
