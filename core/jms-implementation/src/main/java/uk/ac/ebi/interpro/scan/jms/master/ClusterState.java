@@ -3,6 +3,9 @@ package uk.ac.ebi.interpro.scan.jms.master;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Gift Nuka
@@ -121,9 +124,11 @@ public class ClusterState implements Serializable {
     @Override
     public String toString() {
         StringBuffer clusterState = new StringBuffer("ClusterState: " + Utilities.getTimeNow()).append("\n");
-        clusterState.append( "gridJobsLimit: " + gridLimit).append("\n");
-        clusterState.append("activeJobs: " + allClusterProjectJobsCount).append("\n");
-        clusterState.append("pendingJobs: " + pendingClusterProjectJobsCount).append("\n");
+        clusterState.append( "gridJobsLimit: " + gridLimit).append(" ");
+        clusterState.append("activeJobs: " + allClusterProjectJobsCount).append(" ");
+        clusterState.append("pendingJobs: " + pendingClusterProjectJobsCount).append(" ");
+        DateFormat df = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
+        clusterState.append("timestamp: " + df.format(new Date(lastUpdated)));
         return clusterState.toString();
     }
 
