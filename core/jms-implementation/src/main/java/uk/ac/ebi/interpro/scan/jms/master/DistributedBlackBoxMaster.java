@@ -97,7 +97,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
-        Long timeLastdisplayedStats = System.currentTimeMillis();
+        Long timeLastDisplayedStatsAndUpdatedClusterState = System.currentTimeMillis();
         boolean displayStats = true;
 
         Utilities.verboseLog = verboseLog;
@@ -120,7 +120,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             //this will start a new thread to create new workers
             startNewWorker();
             //update the cluster stats
-            updateClusterState();
+            ScheduledExecutorService scheduledExecutorService = updateClusterState();
             //monior the workers
             monitorFailedJobs();
 
@@ -291,9 +291,18 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         }
                     }
                 }
-                if (System.currentTimeMillis() - timeLastdisplayedStats > 5 * 60 * 1000) {
+                if (System.currentTimeMillis() - timeLastDisplayedStatsAndUpdatedClusterState > 5 * 60 * 1000) {
                     displayStats = true;
-                    timeLastdisplayedStats =  System.currentTimeMillis();
+                    timeLastDisplayedStatsAndUpdatedClusterState =  System.currentTimeMillis();
+                    Long timeSinceClusterLastUpdatedClusterState = System.currentTimeMillis()  - ((SubmissionWorkerRunner) this.workerRunner).getClusterState().getLastUpdated();
+                    //TODO move to a controller bean
+                    Utilities.verboseLog("timeSinceClusterLastUpdatedClusterState: " + timeSinceClusterLastUpdatedClusterState);
+                    if(timeSinceClusterLastUpdatedClusterState > 3 * gridCheckInterval * 1000){
+                        //shutdown the previous executor task and start a new task
+                        scheduledExecutorService.shutdownNow();
+                        scheduledExecutorService = updateClusterState();
+                        LOGGER.warn("Restarted scheduledExecutorService for updating ClusterState");
+                    }
                 }else{
                     displayStats = false;
                 }
@@ -1063,7 +1072,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     }
 
 
-    public void updateClusterState(){
+    public ScheduledExecutorService updateClusterState(){
         //execute every 2 min after a 10 sec delay
         ScheduledExecutorService SERVICE = Executors.newSingleThreadScheduledExecutor();
         SERVICE.scheduleAtFixedRate(new Runnable() {
@@ -1072,22 +1081,25 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 Utilities.verboseLog("start lsf monitor ");
                 Long startTimeForMonitor = System.currentTimeMillis();
                 if (gridName.equals("lsf")) {
-
-                    int activeJobs = lsfMonitor.activeJobs(projectId);
-                    int pendingJobs = lsfMonitor.pendingJobs(projectId);
-                    int runningJobs = activeJobs - pendingJobs;
-                    ClusterState clusterState = new ClusterState(gridLimit, activeJobs, pendingJobs);
-                    if(verboseLogLevel > 5) {
-                        Utilities.verboseLog("Grid Job Control: "
-                                + " gridLimit: " + gridLimit
-                                + " activeJobs: " + activeJobs
-                                + " runningJobs: " + runningJobs
-                                + " runningJobs: * 10%: " + +runningJobs * 0.1
-                                + " pendingJobs:" + pendingJobs);
+                    try {
+                        int activeJobs = lsfMonitor.activeJobs(projectId);
+                        int pendingJobs = lsfMonitor.pendingJobs(projectId);
+                        int runningJobs = activeJobs - pendingJobs;
+                        ClusterState clusterState = new ClusterState(gridLimit, activeJobs, pendingJobs);
+                        if(verboseLogLevel > 3) {
+                            Utilities.verboseLog("Grid Job Control: "
+                                    + " gridLimit: " + gridLimit
+                                    + " activeJobs: " + activeJobs
+                                    + " runningJobs: " + runningJobs
+                                    + " runningJobs: * 10%: " + +runningJobs * 0.1
+                                    + " pendingJobs:" + pendingJobs);
+                        }
+                        setSubmissionWorkerClusterState(clusterState);
+                        messageSender.sendTopicMessage(clusterState);
+                        Utilities.verboseLog(clusterState.toString());
+                    }catch (Exception e){
+                        LOGGER.warn("Problems accessing cluster stats");
                     }
-                    setSubmissionWorkerClusterState(clusterState);
-                    messageSender.sendTopicMessage(clusterState);
-                    Utilities.verboseLog(clusterState.toString());
                 }
                 Long timePassed = System.currentTimeMillis() - startTimeForMonitor;
                 Utilities.verboseLog("End  lsf monitor : Took " + timePassed + " ms");
@@ -1095,6 +1107,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             }
         }, 1, gridCheckInterval, TimeUnit.SECONDS);
 
+        return SERVICE;
     }
 
 
