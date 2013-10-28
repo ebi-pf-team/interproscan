@@ -152,6 +152,15 @@ public class WorkerImpl implements Worker {
 
     private TimeKeeper timeKeeper;
 
+    private ClusterState clusterState;
+
+    protected int gridCheckInterval = 60; //seconds
+
+    Long timeLastUpdatedClusterState = System.currentTimeMillis();
+
+    private boolean jmsRelatedExceptionReceived = false;
+
+    private int jmsRelatedExceptionCount = 0;
     /**
      * Constructor that requires a DefaultMessageListenerContainer - this needs to be set before anything else.
      *
@@ -525,6 +534,22 @@ public class WorkerImpl implements Worker {
         this.timeKeeper = timeKeeper;
     }
 
+    public ClusterState getClusterState() {
+        return clusterState;
+    }
+
+    public void setClusterState(ClusterState clusterState) {
+        this.clusterState = clusterState;
+    }
+
+    public int getGridCheckInterval() {
+        return gridCheckInterval;
+    }
+
+    public void setGridCheckInterval(int gridCheckInterval) {
+        this.gridCheckInterval = gridCheckInterval;
+    }
+
     public void jobStarted(String jmsMessageId) {
         synchronized (jobListLock) {
             if (LOGGER.isDebugEnabled()) {
@@ -883,7 +908,9 @@ public class WorkerImpl implements Worker {
     public void sendShutdownMessage(){
         //send shutdown message
         try {
-            LOGGER.warn("Send shutdown message to workers");
+            if(Utilities.verboseLogLevel > 2){
+                Utilities.verboseLog("Send shutdown message to workers");
+            }
             //workerMessageSender.sendShutDownMessage();
             jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
@@ -923,7 +950,40 @@ public class WorkerImpl implements Worker {
         //return true
     }
 
+    /**
+     * exit interproscan 5  worker
+     * @param status
+     */
+    public void systemExit(int status){
+        //wait for 20 seconds before shutting to get the stats from the remaining workers
+        try {
+            sendShutdownMessage();
+            Thread.sleep(1 * 20 * 1000);
+            Long timeAlive = System.currentTimeMillis() - startUpTime;
+            workerState.setTimeAliveMillis(timeAlive);
+            workerState.setWorkerStatus("COMPLETED");
+            sendWorkerStateMessage(workerState);
+            System.out.println(workerState.toString());
+            LOGGER.debug("Ending WorkerImpl run");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }finally{
+            //always exit
+            if(status != 0){
+                System.err.println("Interproscan worker failed. Exception thrown by WorkerImpl. Check the log file for details");
+            }
+            System.exit(status);
+        }
+        System.exit(status);
+    }
 
+    public synchronized void handleFailure(String className){
+        jmsRelatedExceptionReceived = true;
+        jmsRelatedExceptionCount ++;
+        Utilities.verboseLog("Handle JMSExceptions (" + className + "): #" + jmsRelatedExceptionCount);
+    }
     /**
      * Create a worker depending on the conditions specified
      */
@@ -990,6 +1050,17 @@ public class WorkerImpl implements Worker {
         return numberOfWorkers;
     }
 
+    public ClusterState getWorkerRunnerClusterState(){
+        final ClusterState  clusterState = null;
+        if (this.workerRunner instanceof SubmissionWorkerRunner){
+            return ((SubmissionWorkerRunner) this.workerRunner).getClusterState();
+        }
+        if ( this.workerRunnerHighMemory  instanceof SubmissionWorkerRunner){
+            return  ((SubmissionWorkerRunner)  this.workerRunnerHighMemory ).getClusterState();
+        }
+        return clusterState;
+    }
+
     /**
      * check if this worker can spawn any worker
      * @return
@@ -1010,7 +1081,18 @@ public class WorkerImpl implements Worker {
         if(!gridName.equals("lsf")){
             return false;
         }
-        if(tier == maxTierDepth){
+        if(clusterState != null){
+            Long timeSinceClusterLastUpdatedClusterState = System.currentTimeMillis()  - clusterState.getLastUpdated();
+            //TODO move to a controller bean
+            Utilities.verboseLog("timeSinceClusterLastUpdatedClusterState: " + timeSinceClusterLastUpdatedClusterState);
+            if(timeSinceClusterLastUpdatedClusterState > 2 * gridCheckInterval * 1000){
+                Utilities.verboseLog("ClusterState is not uptodate:" + clusterState.toString());
+                return false;
+            }
+        }else{
+            return false;
+        }
+            if(tier == maxTierDepth){
             return false;
         }
         if(lifeRemaining() < (maximumLifeMillis * 0.25) ){
@@ -1322,7 +1404,7 @@ public class WorkerImpl implements Worker {
         if (remoteJmsTemplate == null) {
             throw new IllegalStateException("This DistributeWorkerController does not have a reference to the JmsTemplateWrapper, needed to configure the connection.");
         }
-        int failoverTimeout = 3 * 1000;
+        int failoverTimeout = 5 * 1000;
         int maxReconnectAttempts = 5;
         final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory("failover:(" + masterUri + ")"
                 + "?timeout=" + failoverTimeout
@@ -1371,6 +1453,8 @@ public class WorkerImpl implements Worker {
         //set the remoteJmsTemplates for the responseQueue
         responseQueueMessageListener.setRemoteJmsTemplate(jmsTemplate);
         workerMonitorQueueListener.setRemoteJmsTemplate(jmsTemplate);
+        //set the remote jms template for the worker message sender
+        workerMessageSender.setRemoteJmsTemplate(jmsTemplate);
 
         //((WorkerMessageSenderImpl) responseQueueMessageListener.getWorkerMessageSender()).setRemoteJmsTemplate(jmsTemplate);
         //set the remoteJmsTemplate for the workerMessageSender

@@ -266,8 +266,8 @@ public class StatsUtil {
         Integer key = getKey(stepInstance.getId(), stepInstance.getStepId());
         Utilities.verboseLog("Update submittedStepInstance: " + key + " (" + stepInstance.getStepId() +")");
         submittedStepInstances.replace(key, "Done " + stepInstance.toString());
-        if(! submittedStepInstances.containsKey(key)){
-            LOGGER.warn("stepInstance key  not found in submitted stepInstances: "
+        if(Utilities.verboseLogLevel > 2 && ! submittedStepInstances.containsKey(key)){
+            Utilities.verboseLog("stepInstance key  not found in submitted stepInstances: "
                     + stepInstance.getId() + " -  " + stepInstance.getStepId());
         }
     }
@@ -546,8 +546,9 @@ public class StatsUtil {
      */
     public void displayMasterProgress(){
 //        System.out.println("#un:to - " + unfinishedJobs + ":" + totalJobs);
-        if(unfinishedJobs > 0 && totalJobs > 5.0){
-            Double progress = (double)(totalJobs - unfinishedJobs) / (double) totalJobs;
+        Long masterTotalJobs = totalJobs;
+        if(unfinishedJobs > 0 && masterTotalJobs > 5.0){
+            Double progress = (double)(masterTotalJobs - unfinishedJobs) / (double) masterTotalJobs;
 //            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
             boolean displayProgress = false;
             double actualProgress = 0d;
@@ -579,7 +580,7 @@ public class StatsUtil {
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",actualProgress) + " completed");
 
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
-                String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
+                String debugProgressString = " #:t" + masterTotalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
 //                LOGGER.debug(statsMessageListener.getStats());
             }
         }
@@ -597,17 +598,18 @@ public class StatsUtil {
         Long now = System.currentTimeMillis();
         Long timeSinceLastReport = now - progressReportTime;
         float progressPercent = 0;
-        if(totalJobs > 5.0){
-            progressPercent = (totalJobs - unfinishedJobs) * 100 / totalJobs;
+        Long workerTotalJobs = totalJobs;
+        if(workerTotalJobs > 5.0){
+            progressPercent = (workerTotalJobs - unfinishedJobs) * 100 / workerTotalJobs;
         }
         if(timeSinceLastReport > 1800000){
             int connectionCount = statsMessageListener.getConsumers();
             int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
-            int finishedJobs = totalJobs.intValue() - unfinishedJobs;
+            int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
 //            System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",progressPercent)  + " of analyses done");
-            System.out.println(Utilities.getTimeNow() + " " + finishedJobs + " of " + totalJobs + " completed");
+            System.out.println(Utilities.getTimeNow() + " " + finishedJobs + " of " + workerTotalJobs + " completed");
 
-            String debugProgressString = " #:t" + totalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
+            String debugProgressString = " #:t" + workerTotalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
 
             LOGGER.debug(statsMessageListener.getStats());
             progressReportTime = System.currentTimeMillis();

@@ -66,36 +66,45 @@ public class ResponseQueueMessageListener implements MessageListener {
 //            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //            LOGGER.warn("Worker: received message but failed to send it to the master/manager jobResponseQueue");
 //        }
-        if (controller != null) {
-            controller.jobResponseReceived();
-            LOGGER.debug("Worker: received ... send message to jobResponseQueue");
-        }
-        //what if the send action fails?
-        remoteJmsTemplate.send(jobResponseQueue, new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                return message;
+        try{
+            if (controller != null) {
+                controller.jobResponseReceived();
+                LOGGER.debug("Worker: received ... send message to jobResponseQueue");
             }
-        });
+            //what if the send action fails?
+            remoteJmsTemplate.send(jobResponseQueue, new MessageCreator() {
+                public Message createMessage(Session session) throws JMSException {
+                    return message;
+                }
+            });
 
-        Long stepId  = 0l;
-        String stepName = "dummy";
-        try {
+            Long stepId  = 0l;
+            String stepName = "dummy";
             final ObjectMessage stepExecutionMessage = (ObjectMessage) message;
             final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
             stepName =  stepExecution.getStepInstance().getStepId();
             stepId = stepExecution.getStepInstance().getId();
 
+            LOGGER.debug("Worker: received and sent a message on the jobResponseQueue: "
+                    + stepId + " - " + stepName);
+            Utilities.verboseLog("Worker: received and sent a message on the jobResponseQueue: "
+                    + stepId + " - " + stepName);
+            //send a message that the response has been sent to the master
+            if (controller != null) {
+                controller.jobResponseProcessed();
+                controller.removeJobFromWorkerState(message);
+
+            }
         } catch (JMSException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        LOGGER.debug("Worker: received and sent a message on the jobResponseQueue: "
-                + stepId + " - " + stepName);
-        Utilities.verboseLog("Worker: received and sent a message on the jobResponseQueue: "
-                + stepId + " - " + stepName);
-        //send a message that the response has been sent to the master
-        if (controller != null) {
-            controller.jobResponseProcessed();
-            controller.removeJobFromWorkerState(message);
+            if (controller != null) {
+                controller.handleFailure(ResponseQueueMessageListener.class.getName());
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            if (controller != null) {
+                controller.handleFailure(ResponseQueueMessageListener.class.getName());
+            }
         }
     }
 }

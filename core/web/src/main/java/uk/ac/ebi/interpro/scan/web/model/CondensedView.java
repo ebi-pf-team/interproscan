@@ -66,8 +66,10 @@ public class CondensedView implements Serializable {
         // Initially the SimpleSuperMatches are just matches - the merging occurs in the next method call.
         for (final SimpleEntry entry : protein.getAllEntries()) {
             if (INCLUDED_TYPES.contains(entry.getType())) {
-                for (final SimpleLocation location : entry.getLocations()) {
-                    superMatchList.add(new SimpleSuperMatch(entry, location));
+                for (SimpleSignature simpleSignature : entry.getSignatures()) {
+                    for (final SimpleLocation location : simpleSignature.getLocations()) {
+                        superMatchList.add(new SimpleSuperMatch(entry, location));
+                    }
                 }
             }
         }

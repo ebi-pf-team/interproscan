@@ -93,7 +93,8 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                             currentSequence.delete(0, currentSequence.length());
                             if (sequencesParsed % 5000 == 0) {
                                 if (sequencesParsed % 10000 == 0) {
-                                    System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Parsed " + sequencesParsed + " sequences");
+                                    //TODO use utilities.verboselog
+                                    //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Parsed " + sequencesParsed + " sequences");
                                 }else{
                                     if(LOGGER.isInfoEnabled()){
                                         LOGGER.info( "Parsed " + sequencesParsed + " sequences");

@@ -1111,6 +1111,22 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     }
 
 
+    private boolean clusterStateUpdatedRecently(){
+        ClusterState clusterState =  ((SubmissionWorkerRunner) this.workerRunner).getClusterState();
+        if(clusterState != null){
+            Long timeSinceClusterLastUpdatedClusterState = System.currentTimeMillis()  - clusterState.getLastUpdated();
+            //TODO move to a controller bean
+            Utilities.verboseLog("timeSinceClusterLastUpdatedClusterState: " + timeSinceClusterLastUpdatedClusterState);
+            if(timeSinceClusterLastUpdatedClusterState > 2 * gridCheckInterval * 1000){
+                Utilities.verboseLog("ClusterState is not uptodate:" + clusterState.toString());
+                return false;
+            }
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     private void logJobQueueMessageListenerContainerState() {
 
         if(localQueueJmsContainerFatMaster != null){

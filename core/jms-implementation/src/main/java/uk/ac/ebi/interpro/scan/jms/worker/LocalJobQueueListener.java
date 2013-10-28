@@ -207,6 +207,14 @@ public class LocalJobQueueListener implements MessageListener {
 
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown in MessageListener.", e);
+            if (controller != null) {
+                controller.handleFailure(LocalJobQueueListener.class.getName());
+            }
+        } catch (Exception e) {
+            LOGGER.error("JMSException thrown in MessageListener.", e);
+            if (controller != null) {
+                controller.handleFailure(LocalJobQueueListener.class.getName());
+            }
         } finally {
             if (controller != null) {
                 controller.jobFinished(messageId);
