@@ -39,7 +39,7 @@ public class MatchLocationSvgElementBuilder {
                 int locStart = simpleLocation.getStart();
                 int locEnd = simpleLocation.getEnd();
                 int scaledLocationStart = ScaledLocationUtil.getScaledLocationStart(scaleFactor, locStart);
-                int scaledRectangleWidth = ScaledLocationUtil.getScaledLocationLength(scaleFactor, locStart, locEnd, proteinLength);
+                int scaledRectangleWidth = ScaledLocationUtil.getScaledLocationLength(scaleFactor, locStart, locEnd + 1, proteinLength); // Blob drawn as ending at location + 1 (start of next amino acid)
 
                 //It occurs, that the scaledRectangleWidth is zero for very short matches (match length < 4)
                 //If that happens will be set to the default value 1 to make it visible
