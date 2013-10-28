@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 import org.apache.activemq.transport.TransportListener;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
 import java.io.IOException;
 
@@ -51,6 +52,9 @@ public class JMSTransportListener implements TransportListener {
         if(exceptionsCount == 0){
             previousIOExceptionTime = System.currentTimeMillis();
             LOGGER.debug("Custom Transport IO exception: ", e);
+            if(Utilities.verboseLogLevel > 4) {
+                Utilities.verboseLog("Custom Transport IO exception: " + e);
+            }
             exceptionsCount++;
         }else{
             Long now = System.currentTimeMillis();
@@ -60,6 +64,9 @@ public class JMSTransportListener implements TransportListener {
                     previousIOExceptionTime = System.currentTimeMillis();
                     brokenConnection = true;
                     LOGGER.debug("Custom Transport connection IO exception: ", e);
+                    if(Utilities.verboseLogLevel > 4) {
+                        Utilities.verboseLog("Custom Transport connection IO exception: " + e);
+                    }
 //                    e.printStackTrace();
                 }
             }
@@ -71,14 +78,16 @@ public class JMSTransportListener implements TransportListener {
     @Override
     public void transportInterupted() {
         Long now = System.currentTimeMillis();
-
+        if(Utilities.verboseLogLevel > 4) {
+            Utilities.verboseLog("Transport interrupted: ...");
+        }
         Long timePassed = 0l;
         if(!interruptedConnection){
             LOGGER.debug("Transport interrupted: ");
         }else{
             timePassed = now - previousIOExceptionTime;
             if (timePassed > 600000){
-                LOGGER.debug("Transport interrupted  for > 10 min");
+                LOGGER.warn("Transport interrupted  for > 10 min");
             }
         }
         lastInterrupt = System.currentTimeMillis();
@@ -90,5 +99,8 @@ public class JMSTransportListener implements TransportListener {
     public void transportResumed() {
         //To change body of implemented methods use File | Settings | File Templates.
         interruptedConnection = false;
+        if(Utilities.verboseLogLevel > 4) {
+            Utilities.verboseLog("Custom Transport resumed ...");
+        }
     }
 }

@@ -65,6 +65,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private ClusterState clusterState;
 
+    private Long timeLastDisplayedGridWarnMessage = System.currentTimeMillis();
+
 
     @Required
     public void setGridJobsLimit(int gridJobsLimit) {
@@ -240,8 +242,13 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                             + "timestamp: " + df.format(new Date(clusterState.getLastUpdated())));
                 }
                 if (! clusterState.canSubmitToCluster()) {
-                    LOGGER.warn("Grid Job Control: You have reached the maximum jobs allowed on the cluster or you have many pending jobs.  active Jobs: " + clusterState.getAllClusterProjectJobsCount() + " pending Jobs : " + clusterState.getPendingClusterProjectJobsCount()
+                    Long timeSinceLastDisplayedWarningMessage = System.currentTimeMillis() - timeLastDisplayedGridWarnMessage;
+                    //only display this message every five minutes
+                    if(timeSinceLastClusterStateUpdate > 5 * 60 * 1000){
+                        LOGGER.warn("Grid Job Control: You have reached the maximum jobs allowed on the cluster or you have many pending jobs.  active Jobs: " + clusterState.getAllClusterProjectJobsCount() + " pending Jobs : " + clusterState.getPendingClusterProjectJobsCount()
                             + "\n In the meantime InterProScan will continue to run");
+                         timeLastDisplayedGridWarnMessage = System.currentTimeMillis();
+                    }
                     return 0;
                 }else{
                     if(newWorkersCount > 1 && (newWorkersCount > gridJobsLimit - clusterState.getAllClusterProjectJobsCount()) ){

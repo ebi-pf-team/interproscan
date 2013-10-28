@@ -257,13 +257,18 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             }
             if(count % 5000 == 0){
                 if (count % 10000 == 0) {
-                    System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Stored " + count + " sequences");
+                    //TODO use utilities.verboselog to log this
+                    //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Stored " + count + " sequences");
+
                 }else{
                     if(LOGGER.isInfoEnabled()){
                         LOGGER.info( "Stored " + count + " sequences");
                     }
                 }
             }
+        }
+        if (count > 10000) {
+            System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " sequences for analysis");
         }
         LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");
     }
