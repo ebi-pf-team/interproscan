@@ -73,7 +73,9 @@
     <bean id="workerTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
 
     <!-- JMS Exception Listener-->
-    <bean id="workerExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener" />
+    <bean id="workerExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener" >
+        <property name="controller" ref="distributedWorkerController"/>
+    </bean>
 
     <!-- Local Spring JMSTemplate -->
     <bean id="localJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
@@ -196,6 +198,8 @@
         <property name="logDir" value="${log.dir}"/>
         <property name="workerState" ref="workerState"/>
         <property name="timeKeeper" ref="timeKeeper"/>
+        <property name="gridCheckInterval" value="${grid.check.interval.seconds}"/>
+
     </bean>
 
 

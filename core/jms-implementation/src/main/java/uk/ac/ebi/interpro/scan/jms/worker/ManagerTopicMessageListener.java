@@ -67,21 +67,20 @@ public class ManagerTopicMessageListener implements MessageListener {
     public void onMessage(final Message message) {
         LOGGER.debug("Worker: Received Shutdown or clusterState message from the master.");
         //set the shutdown flag for this worker
-
-        if (message instanceof ObjectMessage) {
-            ObjectMessage objectMessage = (ObjectMessage) message;
-            Object messageContents = null;
-            try {
+        try {
+            if (message instanceof ObjectMessage) {
+                ObjectMessage objectMessage = (ObjectMessage) message;
+                Object messageContents = null;
                 messageContents = objectMessage.getObject();
                 if (messageContents instanceof Shutdown) {
-                    if(Utilities.verboseLogLevel > 4){
+                    if (Utilities.verboseLogLevel > 4) {
                         Utilities.verboseLog("Worker Received Shutdown message: ");
                     }
                     setShutdown(true);
                     workerMessageSender.sendShutDownMessage(message);
                 } else if (messageContents instanceof ClusterState) {
                     ClusterState clusterState = (ClusterState) messageContents;
-                    if(Utilities.verboseLogLevel > 4){
+                    if (Utilities.verboseLogLevel > 4) {
                         Utilities.verboseLog("Worker Received clusterState: " + clusterState.toString());
                     }
                     if (controller != null) {
@@ -92,17 +91,22 @@ public class ManagerTopicMessageListener implements MessageListener {
                 } else {
                     LOGGER.warn("Received unknown message  " + messageContents.toString());
                 }
-            } catch (JMSException e) {
-                Long now = System.currentTimeMillis();
-                if (connectionLossCount == 0) {
-                    LOGGER.error("JMSException thrown in TopicMessageListener. ", e);
-                }
-                connectionLossCount++;
-                Long getConnectionLossTime;
-            } catch (Exception e) {
-                LOGGER.error("Exception thrown in TopicMessageListener.", e);
+            }
+        } catch (JMSException e) {
+            Long now = System.currentTimeMillis();
+            if (connectionLossCount == 0) {
+                LOGGER.error("JMSException thrown in TopicMessageListener. ", e);
+            }
+            connectionLossCount++;
+            Long getConnectionLossTime;
+            if (controller != null) {
+                controller.handleFailure(ManagerTopicMessageListener.class.getName());
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception thrown in TopicMessageListener.", e);
+            if (controller != null) {
+                controller.handleFailure(ManagerTopicMessageListener.class.getName());
             }
         }
-
     }
 }

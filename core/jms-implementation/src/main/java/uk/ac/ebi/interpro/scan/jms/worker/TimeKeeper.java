@@ -36,7 +36,7 @@ public class TimeKeeper {
 
                 while(System.currentTimeMillis() - startUpTime < maximumLifeMillis){
                     timeToSleep = maximumLifeMillis - (System.currentTimeMillis() - startUpTime);
-                    System.out.println("Time To sleep/live: " + timeToSleep);
+                    Utilities.verboseLog("Time To sleep/live: " + timeToSleep);
                     try {
                         Thread.sleep(timeToSleep + (10 * 1000));
                     } catch (InterruptedException e) {
