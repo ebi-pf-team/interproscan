@@ -164,7 +164,7 @@ public class CondensedView implements Serializable {
                         int locStart = superMatch.getLocation().getStart();
                         int locEnd = superMatch.getLocation().getEnd();
                         int scaledLocationStart = ScaledLocationUtil.getScaledLocationStart(scaleFactor, locStart);
-                        int scaledRectangleWidth = ScaledLocationUtil.getScaledLocationLength(scaleFactor, locStart, locEnd, proteinLength);
+                        int scaledRectangleWidth = ScaledLocationUtil.getScaledLocationLength(scaleFactor, locStart, locEnd + 1, proteinLength); // Blob drawn as ending at location + 1 (start of next amino acid)
                         SimpleEntry firstSimpleEntry = superMatch.getFirstEntry();
                         String entryAccession = "";
                         if (firstSimpleEntry != null) {
@@ -173,7 +173,7 @@ public class CondensedView implements Serializable {
                         result.append("<rect");
                         result.append(" ");
                         appendColourClass(result, entryType.toString(), entryColourMap, entryAccession);
-                        result.append("x=\"" + scaledLocationStart + "px\" y=\"" + 5 + "px\" width=\"" + scaledRectangleWidth + "px\" height=\"" + 7 + "px\"");
+                        result.append("x=\"" + scaledLocationStart + "px\" y=\"" + 5 + "px\" width=\"" + (scaledRectangleWidth == 0 ? 1 : scaledRectangleWidth) + "px\" height=\"" + 7 + "px\"");
                         result.append(" ");
                         result.append("rx=\"3.984848\" ry=\"5.6705141\"");
                         result.append(" ");
