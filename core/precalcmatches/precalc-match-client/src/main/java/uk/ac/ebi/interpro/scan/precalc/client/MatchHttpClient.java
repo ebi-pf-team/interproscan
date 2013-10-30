@@ -21,8 +21,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -205,9 +203,7 @@ public class MatchHttpClient {
 
     public String getServerVersion() throws IOException {
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Call to MatchHttpClient.getServerVersion:");
-            }
+            LOG.debug("Call to MatchHttpClient.getServerVersion:");
 
             if (url == null || url.isEmpty()) {
                 throw new IllegalStateException("The url must be set for the MatchHttpClient.getServerVersion method to function");
