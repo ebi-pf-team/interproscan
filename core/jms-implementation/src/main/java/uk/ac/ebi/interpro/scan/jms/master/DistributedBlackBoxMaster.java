@@ -294,14 +294,17 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 if (System.currentTimeMillis() - timeLastDisplayedStatsAndUpdatedClusterState > 5 * 60 * 1000) {
                     displayStats = true;
                     timeLastDisplayedStatsAndUpdatedClusterState =  System.currentTimeMillis();
-                    Long timeSinceClusterLastUpdatedClusterState = System.currentTimeMillis()  - ((SubmissionWorkerRunner) this.workerRunner).getClusterState().getLastUpdated();
-                    //TODO move to a controller bean
-                    Utilities.verboseLog("timeSinceClusterLastUpdatedClusterState: " + timeSinceClusterLastUpdatedClusterState);
-                    if(timeSinceClusterLastUpdatedClusterState > 3 * gridCheckInterval * 1000){
-                        //shutdown the previous executor task and start a new task
-                        scheduledExecutorService.shutdownNow();
-                        scheduledExecutorService = updateClusterState();
-                        LOGGER.warn("Restarted scheduledExecutorService for updating ClusterState");
+                    ClusterState clusterState = ((SubmissionWorkerRunner) this.workerRunner).getClusterState();
+                    if(clusterState != null){
+                        Long timeSinceClusterLastUpdatedClusterState = System.currentTimeMillis()  - clusterState.getLastUpdated();
+                        //TODO move to a controller bean
+                        Utilities.verboseLog("timeSinceClusterLastUpdatedClusterState: " + timeSinceClusterLastUpdatedClusterState);
+                        if(timeSinceClusterLastUpdatedClusterState > 3 * gridCheckInterval * 1000){
+                            //shutdown the previous executor task and start a new task
+                            scheduledExecutorService.shutdownNow();
+                            scheduledExecutorService = updateClusterState();
+                            LOGGER.warn("Restarted scheduledExecutorService for updating ClusterState");
+                        }
                     }
                 }else{
                     displayStats = false;
