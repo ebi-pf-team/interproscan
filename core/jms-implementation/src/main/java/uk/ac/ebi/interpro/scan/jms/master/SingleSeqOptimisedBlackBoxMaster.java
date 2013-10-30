@@ -8,8 +8,6 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -127,13 +125,13 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 Thread.sleep(50);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }
         } catch (JMSException e) {
-            LOGGER.error("JMSException thrown by FastResponseBlackBoxMaster: ", e);
+            LOGGER.error("JMSException thrown by SingleSeqOptimisedBlackBoxMaster: ", e);
+            systemExit(999);
         } catch (Exception e) {
-            LOGGER.error("Exception thrown by FastResponseBlackBoxMaster: ", e);
+            LOGGER.error("Exception thrown by SingleSeqOptimisedBlackBoxMaster: ", e);
+            systemExit(999);
         }
 
-        databaseCleaner.closeDatabaseCleaner();
-        LOGGER.debug("Ending");
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
         if(verboseLog){
             final long executionTime =   System.currentTimeMillis() - now;
@@ -144,7 +142,27 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             ));
         }
 
-        System.exit(0);
+        systemExit(0);
+    }
+
+    /**
+     * Exit InterProScan 5 immediately with the supplied exit code.
+     * @param status Exit code to use
+     */
+    private void systemExit(int status){
+        try {
+            databaseCleaner.closeDatabaseCleaner();
+            LOGGER.debug("Ending");
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            // Always exit
+            if(status != 0){
+                System.err.println("InterProScan analysis failed. Exception thrown by SingleSeqOptimisedBlackBoxMaster. Check the log file for details");
+            }
+            System.exit(status);
+        }
+        System.exit(status);
     }
 
 

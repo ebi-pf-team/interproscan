@@ -99,12 +99,13 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }
         } catch (JMSException e) {
-            LOGGER.error("JMSException thrown by DistributedBlackBoxMasterOLD: ", e);
+            LOGGER.error("JMSException thrown by StandaloneBlackBoxMaster: ", e);
+            systemExit(999);
         } catch (Exception e) {
-            LOGGER.error("Exception thrown by DistributedBlackBoxMasterOLD: ", e);
+            LOGGER.error("Exception thrown by StandaloneBlackBoxMaster: ", e);
+            systemExit(999);
         }
-        databaseCleaner.closeDatabaseCleaner();
-        LOGGER.debug("Ending");
+
         System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
 
         if(verboseLog){
@@ -115,8 +116,29 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
             ));
         }
-        System.exit(0);
+        systemExit(0);
     }
+
+    /**
+     * Exit InterProScan 5 immediately with the supplied exit code.
+     * @param status Exit code to use
+     */
+    private void systemExit(int status){
+        try {
+            databaseCleaner.closeDatabaseCleaner();
+            LOGGER.debug("Ending");
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            // Always exit
+            if(status != 0){
+                System.err.println("InterProScan analysis failed. Exception thrown by StandaloneBlackBoxMaster. Check the log file for details");
+            }
+            System.exit(status);
+        }
+        System.exit(status);
+    }
+
 
     /**
      *

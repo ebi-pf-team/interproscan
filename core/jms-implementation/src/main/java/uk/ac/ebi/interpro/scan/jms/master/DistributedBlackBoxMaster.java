@@ -16,8 +16,6 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.ObjectMessage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -363,8 +361,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     }
 
     /**
-     * exit interproscan 5
-     * @param status
+     * Exit InterProScan 5 immediately with the supplied exit code.
+     * @param status Exit code to use
      */
     private void systemExit(int status){
         //wait for 30 seconds before shutting to get the stats from the remaining workers
@@ -382,9 +380,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         } catch (Exception e){
             e.printStackTrace();
         }finally{
-            //always exit
+            // Always exit
             if(status != 0){
-                System.err.println("Interproscan analysis failed. Exception thrown by DistributedBlackBoxMaster. Check the log file for details");
+                System.err.println("InterProScan analysis failed. Exception thrown by DistributedBlackBoxMaster. Check the log file for details");
             }
             System.exit(status);
         }
