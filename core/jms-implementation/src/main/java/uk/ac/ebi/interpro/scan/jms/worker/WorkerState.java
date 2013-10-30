@@ -5,7 +5,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
  * a Worker to a caller, usually this is the master.
  *
  * @author gift nuka
- * @since 5-44.0u1
+ * @since 5.1-44.0
  *
  */
 
