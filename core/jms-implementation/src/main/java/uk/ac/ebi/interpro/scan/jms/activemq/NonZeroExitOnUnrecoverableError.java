@@ -39,6 +39,6 @@ public class NonZeroExitOnUnrecoverableError implements UnrecoverableErrorStrate
             }
         }
         LOGGER.fatal("The JVM will now exit with a non-zero exit status.");
-        System.exit(999);
+        throw new IllegalStateException("InterProScan exiting with non-zero status, see logs for further information.");
     }
 }
