@@ -196,8 +196,13 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      *   return true, otherwise return false
      */
     public boolean isSynchronised() throws IOException {
+        // checks if the interpro data version is the same
+        // codes version differences are ignored
+        // TODO make this more robust - currently assumes everyhting after the last dash is the interpro version
         String serverVersion = preCalcMatchClient.getServerVersion();
-        if (!serverVersion.equals(interproscanVersion)) {
+        int finalDashIndex = interproscanVersion.lastIndexOf("-");
+        String interproDataVersion = interproscanVersion.substring(finalDashIndex);
+        if (!serverVersion.endsWith(interproDataVersion)) {
             displayLookupSynchronisationError(interproscanVersion, serverVersion);
             return false;
         }
