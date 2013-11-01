@@ -213,7 +213,7 @@ public class ProteinMatchesHTMLResultWriter {
         File tempFileDirectory = new File(tempDirectory);
         if (!tempFileDirectory.exists()) {
             boolean isCreated = tempFileDirectory.mkdirs();
-            if (isCreated) {
+            if (!isCreated) {
                 LOGGER.warn("Couldn't create temp directory " + tempDirectory);
             }
 
