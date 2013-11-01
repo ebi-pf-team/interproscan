@@ -166,47 +166,40 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
     }
 
 
-    public int submitStepInstanceToRequestQueue(StepInstance stepInstance) throws JMSException{
-        try {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
+    public int submitStepInstanceToRequestQueue(StepInstance stepInstance) throws Exception{
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
+        }
+        if (stepInstance.hasFailedPermanently(jobs)) {
+            unrecoverableErrorStrategy.failed(stepInstance, jobs);
+        }
+
+        if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Step submitted:" + stepInstance);
             }
-            if (stepInstance.hasFailedPermanently(jobs)) {
-                unrecoverableErrorStrategy.failed(stepInstance, jobs);
+            String stepInstanceId = stepInstance.getStepId();
+            final boolean resubmission = stepInstance.getExecutions().size() > 0;
+            if (resubmission) {
+                LOGGER.warn("StepInstance " + stepInstanceId + " is being re-run following a failure.");
             }
+            final Step step = stepInstance.getStep(jobs);
+            // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
 
-            if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Step submitted:" + stepInstance);
-                }
-                String stepInstanceId = stepInstance.getStepId();
-                final boolean resubmission = stepInstance.getExecutions().size() > 0;
-                if (resubmission) {
-                    LOGGER.warn("StepInstance " + stepInstanceId+ " is being re-run following a failure.");
-                }
-                final Step step = stepInstance.getStep(jobs);
-                // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
+            final boolean highPriorityStep = false; //isHighPriorityStep(step);
+            final boolean lowPriorityStep = (!highPriorityStep) && (step.getSerialGroup() == null || step instanceof WriteFastaFileStep);
 
-                final boolean highPriorityStep = false; //isHighPriorityStep(step);
-                final boolean lowPriorityStep  =  (! highPriorityStep) &&  (step.getSerialGroup() == null || step instanceof WriteFastaFileStep);
+            // Serial groups should be high priority, however exclude WriteFastaFileStep from this
+            // as they are very abundant.
+            final int priority = lowPriorityStep ? 4 : 8;
 
-                // Serial groups should be high priority, however exclude WriteFastaFileStep from this
-                // as they are very abundant.
-                final int priority = lowPriorityStep ? 4 : 8;
+            Long now = System.currentTimeMillis();
 
-                Long now = System.currentTimeMillis();
-
-
-                // Performed in a transaction.
-                LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
-                messageSender.sendMessage(stepInstance, false, priority, false);
-                statsUtil.addToSubmittedStepInstances(stepInstance);
-                return 1;
-            }
-        } catch (JMSException e) {
-            LOGGER.error("JMSException thrown by FastResponseBlackBoxMaster: ", e);
-        } catch (Exception e) {
-            LOGGER.error("Exception thrown by FastResponseBlackBoxMaster: ", e);
+            // Performed in a transaction.
+            LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
+            messageSender.sendMessage(stepInstance, false, priority, false);
+            statsUtil.addToSubmittedStepInstances(stepInstance);
+            return 1;
         }
         return 0;
     }
