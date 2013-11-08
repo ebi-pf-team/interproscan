@@ -60,27 +60,27 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="HAMAP"/>
-                    <property name="releaseVersionNumber" value="201302.26"/>
-                    <property name="modelFiles" value="file:${hamap.profile.models.path.201302.26}"/>
+                    <property name="releaseVersionNumber" value="201310.09"/>
+                    <property name="modelFiles" value="file:${hamap.profile.models.path.201310.09}"/>
                     <property name="prositeModelType" value="ALL"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobHAMAP-201207.04"/>
+                    <property name="analysisJobId" value="jobHAMAP-201310.09"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
-                    <property name="releaseVersionNumber" value="20.89"/>
-                    <property name="modelFiles" value="file:${prosite.models.path.20.89}"/>
+                    <property name="releaseVersionNumber" value="20.97"/>
+                    <property name="modelFiles" value="file:${prosite.models.path.20.97}"/>
                     <property name="prositeModelType" value="PATTERNS"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPrositePatterns-20.89"/>
+                    <property name="analysisJobId" value="jobPrositePatterns-20.97"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PROFILES"/>
-                    <property name="releaseVersionNumber" value="20.89"/>
-                    <property name="modelFiles" value="file:${prosite.models.path.20.89}"/>
+                    <property name="releaseVersionNumber" value="20.97"/>
+                    <property name="modelFiles" value="file:${prosite.models.path.20.97}"/>
                     <property name="prositeModelType" value="PROFILES"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPrositeProfiles-20.89"/>
+                    <property name="analysisJobId" value="jobPrositeProfiles-20.97"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
