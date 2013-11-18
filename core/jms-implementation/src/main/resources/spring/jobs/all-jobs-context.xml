@@ -275,7 +275,7 @@
     </bean>
 
     <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">
-        <property name="interproscanVersion" value="${match.lookup.data.version}"/>
+        <property name="interproscanVersion" value="${i5.version}"/>
         <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
         <property name="berkeleyToI5DAO" ref="berkeleyToI5ModelDAO"/>
     </bean>

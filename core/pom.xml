@@ -100,7 +100,6 @@
         <h2.database.version>1.3.168</h2.database.version>
         <i5.svn.revision>5.1-44.0</i5.svn.revision>
         <i5.version>${project.version}</i5.version>
-        <match.lookup.data.version>5-44.0</match.lookup.data.version><!-- TODO Change to 45.0 at next InterPro data release? See also IBU-2569 -->
     </properties>
 
     <modules>
