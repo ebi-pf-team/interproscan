@@ -194,11 +194,17 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      *   return true, otherwise return false
      */
     public boolean isSynchronised() throws IOException {
+        // checks if the interpro data version is the same
+        // codes version differences are ignored
+        // TODO make this more robust - currently assumes everyhting after the last dash is the interpro version
         String serverVersion = preCalcMatchClient.getServerVersion();
-        if (!serverVersion.equals(interproscanVersion)) {
+        int finalDashIndex = interproscanVersion.lastIndexOf("-");
+        String interproDataVersion = interproscanVersion.substring(finalDashIndex);
+        if (!serverVersion.endsWith(interproDataVersion)) {
             displayLookupSynchronisationError(interproscanVersion, serverVersion);
             return false;
         }
+
         return true;
 
     }
@@ -207,7 +213,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
         LOGGER.warn("\n\n" +
                 "The following problem was encountered by the pre-calculated match lookup service:\n" +
-                 e.getMessage() + "\n" +
+                e.getMessage() + "\n" +
                 "Pre-calculated match lookup service failed - analysis proceeding to run locally\n" +
                 "============================================================\n\n" +
                 "The pre-calculated match lookup service has been configured\n" +
@@ -231,15 +237,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         LOGGER.warn(
                 "\n\nThe version of InterProScan you are using is " + clientVersion + "\n" +
-                "The version of the lookup service you are using is " + serverVersion + "\n" +
-                "As the data in these versions is not the same, you cannot use this match lookup service.\n" +
-                "InterProScan will now run locally\n" +
-                "If you would like to use the match lookup service, you have the following options:\n" +
-                "i) Download the newest version of InterProScan5 from our FTP site:\n" +
-                "   ftp://ftp.ebi.ac.uk/pub/databases/interpro/\n" +
-                "ii) Download the match lookup service for your version of InterProScan from our FTP site and install it locally.\n" +
-                "    You will then need to edit the following property in your configuration file to point to your local installation:\n" +
-                "    precalculated.match.lookup.service.url=\n\n" +
-                "In the meantime, the analysis will continue to run locally.\n\n");
+                        "The version of the lookup service you are using is " + serverVersion + "\n" +
+                        "As the data in these versions is not the same, you cannot use this match lookup service.\n" +
+                        "InterProScan will now run locally\n" +
+                        "If you would like to use the match lookup service, you have the following options:\n" +
+                        "i) Download the newest version of InterProScan5 from our FTP site:\n" +
+                        "   ftp://ftp.ebi.ac.uk/pub/databases/interpro/\n" +
+                        "ii) Download the match lookup service for your version of InterProScan from our FTP site and install it locally.\n" +
+                        "    You will then need to edit the following property in your configuration file to point to your local installation:\n" +
+                        "    precalculated.match.lookup.service.url=\n\n" +
+                        "In the meantime, the analysis will continue to run locally.\n\n");
     }
 }
