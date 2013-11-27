@@ -133,19 +133,19 @@ public class XrefParser {
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description);
                 }  else {
-                    throw new IllegalStateException("Uniprot cross reference not in expected format: " + crossReference);
+                    return stripUniqueIdentifierAndTrimForProteinSeq(crossReference);
                 }
             } else if (crossReference.startsWith(GENERAL_IDENTIFIER)) {
                 System.out.println("Protein xref: " + crossReference);
                 String[] chunks = PIPE_REGEX.split(crossReference);
-                if (chunks.length >= 5) {
+                if (chunks.length >= 4) {
                     String database = chunks[2];
                     String identifier = chunks[3].trim();
                     String description = chunks[4];
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description.trim());
                 } else {
-                    throw new IllegalStateException("gi cross reference not in expected format: " + crossReference);
+                    return stripUniqueIdentifierAndTrimForProteinSeq(crossReference);
                 }
             } else {
                 /*final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);
