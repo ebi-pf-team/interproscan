@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.interpro.scan.batch</groupId>
     <artifactId>interproscan-batch</artifactId>
     <packaging>jar</packaging>
-    <version>5.2-45.0</version>    
+    <version>5.3-45.0</version>
     <name>InterProScan Batch</name>
     <description>InterProScan Batch</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
-    
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -36,23 +36,23 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>5.2-45.0</version>
+            <version>5.3-45.0</version>
         </dependency>
 
         <!-- i5 ProActive Spring Batch -->
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan.batch.proactive</groupId>
             <artifactId>interproscan-batch-proactive</artifactId>
-            <version>5.2-45.0</version>
-        </dependency>        
+            <version>5.3-45.0</version>
+        </dependency>
 
         <!-- MySQL -->
-        <dependency>        
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.6</version>
         </dependency>
-       
+
         <!-- Unit testing -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -65,7 +65,7 @@
 			<artifactId>spring-batch-test</artifactId>
 			<version>${spring.batch.version}</version>
 			<scope>test</scope>
-		</dependency>        
+		</dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -83,7 +83,7 @@
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.7</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
 
     </dependencies>
 
@@ -92,7 +92,7 @@
         <!-- Use Java 5 language features -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>                
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
@@ -122,8 +122,8 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>     
+            </plugin>
         </plugins>
     </build>
-    
+
 </project>
