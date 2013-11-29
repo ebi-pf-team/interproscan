@@ -138,7 +138,7 @@ public class XrefParser {
             } else if (crossReference.startsWith(GENERAL_IDENTIFIER)) {
                 System.out.println("Protein xref: " + crossReference);
                 String[] chunks = PIPE_REGEX.split(crossReference);
-                if (chunks.length >= 4) {
+                if (chunks.length >= 5) {
                     String database = chunks[2];
                     String identifier = chunks[3].trim();
                     String description = chunks[4];
