@@ -79,7 +79,7 @@ public class LoadUniParcFromDBImpl implements LoadUniParcFromDB {
 
         final String sql = "select * from ( " +
                            "select  upi, seq_short, seq_long " +
-                           "from uniparc_proteins " +
+                           "from uniparc.protein " +
                            "where upi > ? " +
                            "order by upi ASC ) " +
                            "where rownum <= ? ";
