@@ -141,7 +141,8 @@
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
-
+        <property name="verboseLog" value="${verbose.log}"/>
+        <property name="statsUtil" ref="statsUtil"/>
     </bean>
 
 
@@ -162,7 +163,6 @@
     </bean>
 
     <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
-
 
 
     <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
