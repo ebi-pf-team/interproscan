@@ -834,8 +834,9 @@ public class WorkerImpl implements Worker {
 
 
             }
-            //stop the message listener
-            remoteQueueJmsContainer.stop();
+            //shutdown the message listener container
+            // using shutdown() and not stop() as stop() still allows the container to receive messages afterwards
+            remoteQueueJmsContainer.shutdown();
             long waitingTime = 10 * 1000;
             //if shutdown is activated reduce waiting time
             if (shutdown) {
@@ -868,7 +869,7 @@ public class WorkerImpl implements Worker {
                 Thread.sleep(waitingTime);
                 statsUtil.displayWorkerProgress();
                 if(remoteQueueJmsContainer.isRunning()){
-                    remoteQueueJmsContainer.stop();
+                    remoteQueueJmsContainer.shutdown();
                 }
             }
             LOGGER.info("Worker Run(): completed tasks. Shutdown message sent. Stopping now.");
