@@ -62,6 +62,7 @@
             want this to run as required... -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
                     <descriptors>
                         <descriptor>dist.xml</descriptor>
