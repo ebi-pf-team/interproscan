@@ -13,7 +13,11 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public enum FileOutputFormat {
-    TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html"), SVG("svg"), RAW("raw");
+    TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html"), SVG("svg"), RAW("raw"),
+    // GFF3 partial format is an internal format used for the MG pipeline only
+    // It allows gff3 files to be concatenated together (impossible to do with normal gff3 format)
+    // This output format is NOT to be mentioned in the documentation!
+    GFF3_PARTIAL("gff3-partial");
 
     private static final Logger LOGGER = Logger.getLogger(FileOutputFormat.class.getName());
 
@@ -57,6 +61,8 @@ public enum FileOutputFormat {
             return XML;
         } else if (outputFormat.equalsIgnoreCase(GFF3.getFileExtension()) || outputFormat.equalsIgnoreCase("gff")) {
             return GFF3;
+        } else if (outputFormat.equalsIgnoreCase(GFF3_PARTIAL.getFileExtension())) {
+            return GFF3_PARTIAL;
         } else if (outputFormat.equalsIgnoreCase(HTML.getFileExtension())) {
             return HTML;
         } else if (outputFormat.equalsIgnoreCase(SVG.getFileExtension())) {
@@ -82,7 +88,9 @@ public enum FileOutputFormat {
                 fileOutputFormats.add(XML);
             } else if (format.equalsIgnoreCase(GFF3.getFileExtension()) || format.equalsIgnoreCase("gff")) {
                 fileOutputFormats.add(GFF3);
-            } else if (format.equalsIgnoreCase(HTML.getFileExtension())) {
+            }  else if (format.equalsIgnoreCase(GFF3_PARTIAL.getFileExtension())) {
+                fileOutputFormats.add(GFF3_PARTIAL);
+            }  else if (format.equalsIgnoreCase(HTML.getFileExtension())) {
                 fileOutputFormats.add(HTML);
             } else if (format.equalsIgnoreCase(SVG.getFileExtension())) {
                 fileOutputFormats.add(SVG);

@@ -212,6 +212,9 @@ public class WriteOutputStep extends Step {
                     case GFF3:
                         outputToGFF(outputFile, stepInstance, sequenceType, proteins);
                         break;
+                    case GFF3_PARTIAL:
+                        outputToGFFPartial(outputFile, stepInstance, sequenceType, proteins);
+                        break;
                     case HTML:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
@@ -301,6 +304,20 @@ public class WriteOutputStep extends Step {
         }
     }
 
+    private void outputToGFFPartial(File file, StepInstance stepInstance, String sequenceType, List<Protein> proteins) throws IOException {
+        ProteinMatchesGFFResultWriter writer = null;
+        try {
+            writer = new GFFResultWriterForProtSeqs(file, false);
+            writeProteinMatches(writer, stepInstance, proteins);
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+
+    }
+
+
     private void outputToHTML(File file, List<Protein> proteins) throws IOException {
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
@@ -366,6 +383,7 @@ public class WriteOutputStep extends Step {
     }
 
     private void writeFASTASequences(ProteinMatchesGFFResultWriter writer) throws IOException {
+        writer.writeFASTADirective();
         Map<String, String> identifierToSeqMap = writer.getIdentifierToSeqMap();
         for (String key : identifierToSeqMap.keySet()) {
             writer.writeFASTASequence(key, identifierToSeqMap.get(key));

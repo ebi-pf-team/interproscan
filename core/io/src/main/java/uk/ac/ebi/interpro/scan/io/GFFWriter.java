@@ -14,6 +14,13 @@ public class GFFWriter extends TSVWriter {
         super(writer);
     }
 
+
+    public void writeDirective(String directive) throws IOException{
+        writer.write("##");
+        writer.write(directive);
+        writer.write("\n");
+    }
+
     public void writeFASTASequence(String identifier, String sequence) throws IOException {
         FastaEntryWriter.writeFastaFileEntry(super.writer, identifier, sequence, 60);
     }
