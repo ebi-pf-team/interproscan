@@ -22,8 +22,15 @@ import java.util.Set;
  */
 public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
 
+    private boolean writeFullGFF = true;
+
     public GFFResultWriterForProtSeqs(File file) throws IOException {
         super(file);
+    }
+
+    public GFFResultWriterForProtSeqs(File file, boolean writeFullGFF) throws IOException {
+        super(file, writeFullGFF);
+        this.writeFullGFF = false;
     }
 
 
@@ -48,10 +55,11 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
                 proteinIdForGFF = ProteinMatchesGFFResultWriter.getValidGFF3SeqId(proteinIdForGFF);
                 //Write sequence-region
                 super.gffWriter.write("##sequence-region " + proteinIdForGFF + " 1 " + sequenceLength);
-                writeReferenceLine(proteinIdForGFF, sequenceLength, md5);
-                addFASTASeqToMap(proteinIdForGFF, protein.getSequence());
-
-                processMatches(matches, proteinIdForGFF, date, protein, proteinIdForGFF);
+                if (writeFullGFF) {
+                    writeReferenceLine(proteinIdForGFF, sequenceLength, md5);
+                    addFASTASeqToMap(proteinIdForGFF, protein.getSequence());
+                }
+                processMatches(matches, proteinIdForGFF, date, protein, proteinIdForGFF, writeFullGFF);
             }//end match size check
         }
         return 0;
