@@ -72,6 +72,7 @@ public class GFF3Feature {
         return referenceLine;
     }
 
+
     public void setScore(String score) {
         this.score = score;
     }

@@ -50,14 +50,22 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
     }
 
     public ProteinMatchesGFFResultWriter(File file) throws IOException {
+         this(file, true);
+    }
+
+    public ProteinMatchesGFFResultWriter(File file, boolean writeFullGFF) throws IOException {
         super(file);
         this.gffWriter = new GFFWriter(super.fileWriter);
-        //Write first line of file - always the same
-        this.gffWriter.write("##gff-version 3");
-        //##feature-ontology URI
-        //This directive indicates that the GFF3 file uses the ontology of feature types located at the indicated URI or URL.
-        this.gffWriter.write("##feature-ontology http://song.cvs.sourceforge.net/viewvc/song/ontology/sofa.obo?revision=1.269");
+        if (writeFullGFF) {
+            //Write first line of file - always the same
+            this.gffWriter.write("##gff-version 3");
+            //##feature-ontology URI
+            //This directive indicates that the GFF3 file uses the ontology of feature types located at the indicated URI or URL.
+            this.gffWriter.write("##feature-ontology http://song.cvs.sourceforge.net/viewvc/song/ontology/sofa.obo?revision=1.269");
+        }
     }
+
+
 
     protected int getMatchCounter() {
         matchCounter++;
@@ -248,12 +256,14 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
 
     protected GFF3Feature buildMatchFeature(String seqId, String analysis, int locStart, int locEnd, String score,
                                             String description, String status, String date, String matchId,
-                                            String targetId, String signatureAcc, Entry entry) {
+                                            String targetId, String signatureAcc, Entry entry, boolean writeAllAttributes) {
         GFF3Feature matchFeature = new GFF3Feature(seqId, analysis, "protein_match", locStart, locEnd, "+");
         matchFeature.setScore(score);
         //Build attributes for the last column in the GFF table
-        matchFeature.addAttribute("ID", matchId);
-        matchFeature.addAttribute("Target", targetId + " " + locStart + " " + locEnd);
+        if (writeAllAttributes) {
+            matchFeature.addAttribute("ID", matchId);
+            matchFeature.addAttribute("Target", targetId + " " + locStart + " " + locEnd);
+        }
         matchFeature.addAttribute("Name", signatureAcc);
         if (description != null) {
             matchFeature.addAttribute("signature_desc", description);
@@ -269,6 +279,17 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
 
     protected void processMatches(final Set<Match> matches, final String targetId,
                                   final String date, final Protein protein, final String seqId) throws IOException {
+
+        processMatches(matches, targetId, date, protein, seqId, true);
+
+    }
+
+    public void writeFASTADirective() throws IOException {
+        gffWriter.writeDirective("FASTA");
+    }
+
+    protected void processMatches(final Set<Match> matches, final String targetId,
+                                  final String date, final Protein protein, final String seqId, boolean writeAllAttributes) throws IOException {
         for (Match match : matches) {
             final Signature signature = match.getSignature();
             final String signatureAc = signature.getAccession();
@@ -295,7 +316,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                             .append('_')
                             .append(locEnd);
                     GFF3Feature matchFeature = buildMatchFeature(seqId, analysis, locStart, locEnd, score, description, status,
-                            date, matchIdLocation.toString(), targetId, signatureAc, signature.getEntry());
+                            date, matchIdLocation.toString(), targetId, signatureAc, signature.getEntry(), writeAllAttributes);
                     //Write match feature to file
                     gffWriter.write(matchFeature.getGFF3FeatureLine());
                     //Add match sequence to the map
