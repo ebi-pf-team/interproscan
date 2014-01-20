@@ -64,7 +64,7 @@
                     <property name="modelFiles" value="file:${hamap.profile.models.path.201311.27}"/>
                     <property name="prositeModelType" value="ALL"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobHAMAP-201310.09"/>
+                    <property name="analysisJobId" value="jobHAMAP-201311.27"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
