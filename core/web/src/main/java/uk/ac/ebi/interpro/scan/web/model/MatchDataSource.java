@@ -24,8 +24,8 @@ public enum MatchDataSource {
                     "or subfamilies. The aim of HAMAP is to propagate manually generated annotation to all " +
                     "members of a given protein family in an automated and controlled way using " +
                     "very strict criteria.",
-            "http://www.expasy.org/sprot/hamap/",
-            "http://www.expasy.org/unirule/$0"),
+            "http://hamap.expasy.org/",
+            "http://hamap.expasy.org/profile/$0"),
 
     PANTHER(0,
             "PANTHER HMMs define protein families, and subfamilies modelled on the divergence of function.",
