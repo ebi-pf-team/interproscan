@@ -15,9 +15,9 @@
         <constructor-arg ref="tempDirectoryManager"/>
         <property name="driverJar" value=""/>
         <property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
-        <property name="url" value="jdbc:oracle:thin:@//kava.ebi.ac.uk:1531/ISDEV"/>
-        <property name="username" value="ops$craigm"/>
-        <property name="password" value="ispro_craigm"/>
+        <property name="url" value="jdbc:oracle:thin:@//??????"/>
+        <property name="username" value="??????"/>
+        <property name="password" value="??????"/>
     </bean>
 
 </beans>
