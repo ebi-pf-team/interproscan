@@ -1,9 +1,9 @@
 <#import "location.ftl" as locationMacro>
 
-<#macro supermatchLocation smid protein supermatch colourClass>
+<#macro supermatchLocation smid proteinLength supermatch colourClass>
     <#assign title=supermatch.type>
 
-<@locationMacro.location smid="supermatch-location-"+smid protein=protein titlePrefix=title location=supermatch.location colourClass=colourClass/>
+<@locationMacro.location smid="supermatch-location-"+smid proteinLength=proteinLength titlePrefix=title location=supermatch.location colourClass=colourClass/>
 
 <div id="supermatch-popup-${smid}" style="display: none;">
 

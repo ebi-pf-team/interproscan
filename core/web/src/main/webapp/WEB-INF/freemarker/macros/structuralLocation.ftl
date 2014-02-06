@@ -1,7 +1,7 @@
 <#import "location.ftl" as locationMacro/>
 <#-- Display structural features and predictions -->
 <#-- structuralMatchData is a map-->
-<#macro structuralLocation smid protein location structuralMatchData databaseMetadata>
+<#macro structuralLocation smid proteinLength location structuralMatchData databaseMetadata>
 
     <#assign databaseName=databaseMetadata.sourceName?upper_case>
     <#assign title="">
@@ -32,7 +32,7 @@
             <#assign links="<a class='ext' href='"+linkHref+"' >"+dataEntry+"</a>">
         </#list>
     </#if>
-    <@locationMacro.location smid="match-location-"+smid protein=protein titlePrefix=title location=location colourClass=databaseName/>
+    <@locationMacro.location smid="match-location-"+smid proteinLength=proteinLength titlePrefix=title location=location colourClass=databaseName/>
 
 <div id="match-popup-${smid}" style="display: none;">
 

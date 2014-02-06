@@ -16,6 +16,7 @@ import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
 import uk.ac.ebi.interpro.scan.web.model.PageResources;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.annotation.Resource;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -140,8 +142,12 @@ public class ProteinViewController {
         Map<String, Object> m = new HashMap<String, Object>();
         m.put("standalone", standalone);
         if (p != null) {
+            final int proteinLength = p.getLength();
+            final List<SimpleEntry> entries = p.getAllEntries();
+            final CondensedView condensedView = new CondensedView(entries, proteinLength);
+
             m.put("protein", p);
-            m.put("condensedView", new CondensedView(p));
+            m.put("condensedView", condensedView);
             m.put("entryColours", entryHierarchy.getEntryColourMap());
             m.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
         } // Else no protein data was found therefore nothing to display

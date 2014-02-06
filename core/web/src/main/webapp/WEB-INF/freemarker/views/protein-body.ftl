@@ -2,6 +2,7 @@
 
 <#if protein??>
 
+    <#assign proteinLength = protein.length>
 
         <#if (protein.familyEntries?has_content)>
           <h3>Protein family membership</h3>
@@ -46,15 +47,15 @@
                     <#list scale?split(",") as scaleMarker>
                         <!-- to build an exception for 0 -->
                         <#if scaleMarker?number == 0>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
+                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
                                   title="1"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / protein.length) * 100+1}%;">1</span>
+                                      style="left:${(scaleMarker?number / proteinLength) * 100+1}%;">1</span>
                         <#else>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
+                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
                                   title="${scaleMarker}"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / protein.length) * 100}%;">${scaleMarker}</span>
+                                      style="left:${(scaleMarker?number / proteinLength) * 100}%;">${scaleMarker}</span>
                         </#if>
                     </#list>
                 </div>
@@ -121,7 +122,7 @@
                                 <#list entry.signatures as signature>
 
                                     <li id="${containerId}" class="signature entry-signatures">
-                                        <@signatureMacro.signature protein=protein signature=signature entryTypeTitle=title colourClass=colourClass />
+                                        <@signatureMacro.signature proteinLength=proteinLength signature=signature entryTypeTitle=title colourClass=colourClass />
                                     </li>
                                 </#list>
                             </ol>
@@ -147,7 +148,7 @@
                     <ol class="signatures">
                         <#list protein.unintegratedSignatures as signature>
                             <li class="signature">
-                                <@signatureMacro.signature protein=protein signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
+                                <@signatureMacro.signature proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
                             </li>
                         </#list>
                     </ol>

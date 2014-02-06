@@ -18,7 +18,8 @@ public class CondensedView implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(CondensedView.class.getName());
 
-    private final SimpleProtein protein;
+    private List<SimpleEntry> entries;
+    private int proteinLength = 0;
 
     private static final List<EntryType> INCLUDED_TYPES = Arrays.asList(EntryType.DOMAIN, EntryType.REPEAT);
 
@@ -28,8 +29,10 @@ public class CondensedView implements Serializable {
 
     private int numSuperMatchBlobs = 0;
 
-    public CondensedView(final SimpleProtein protein) {
-        this.protein = protein;
+    public CondensedView(final List<SimpleEntry> entries, int proteinLength) {
+        this.entries = entries;
+        this.proteinLength = proteinLength;
+
         // First of all, need to build SuperMatches.
         final List<SimpleSuperMatch> superMatches = buildSuperMatchList();
 
@@ -64,7 +67,7 @@ public class CondensedView implements Serializable {
     private List<SimpleSuperMatch> buildSuperMatchList() {
         final List<SimpleSuperMatch> superMatchList = new ArrayList<SimpleSuperMatch>();
         // Initially the SimpleSuperMatches are just matches - the merging occurs in the next method call.
-        for (final SimpleEntry entry : protein.getAllEntries()) {
+        for (final SimpleEntry entry : entries) {
             if (INCLUDED_TYPES.contains(entry.getType())) {
                 for (SimpleSignature simpleSignature : entry.getSignatures()) {
                     for (final SimpleLocation location : simpleSignature.getLocations()) {
@@ -140,7 +143,7 @@ public class CondensedView implements Serializable {
         return numSuperMatchBlobs;
     }
 
-    private StringBuilder build(final int proteinLength, final Map<String, Integer> entryColourMap, final String scale) {
+    private StringBuilder build(final Map<String, Integer> entryColourMap, final String scale) {
         final float rectangleWidth = 930;
         final float scaleFactor = rectangleWidth / (float) proteinLength;
         int lineHeight = 17;
@@ -236,7 +239,7 @@ public class CondensedView implements Serializable {
      * @return
      */
     public String getCondensedViewForSVG(final Map<String, Integer> entryColourMap, final String scale) {
-        return build(protein.getLength(), entryColourMap, scale).toString();
+        return build(entryColourMap, scale).toString();
     }
 
     /**

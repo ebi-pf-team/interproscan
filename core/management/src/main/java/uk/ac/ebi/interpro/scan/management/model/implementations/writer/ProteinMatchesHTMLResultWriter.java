@@ -14,6 +14,7 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import java.io.*;
@@ -225,8 +226,12 @@ public class ProteinMatchesHTMLResultWriter {
     private SimpleHash buildModelMap(final SimpleProtein p, final EntryHierarchy entryHierarchy, final boolean standalone) {
         final SimpleHash model = new SimpleHash();
         if (p != null) {
+
+            final int proteinLength = p.getLength();
+            final List<SimpleEntry> entries = p.getAllEntries();
+
             model.put("protein", p);
-            model.put("condensedView", new CondensedView(p));
+            model.put("condensedView", new CondensedView(entries, proteinLength));
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("standalone", standalone);
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
