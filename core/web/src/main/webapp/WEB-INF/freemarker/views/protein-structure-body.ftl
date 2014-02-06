@@ -4,6 +4,7 @@
 
 <#--Returns protein structure features for inclusion in DBML-->
     <#import "../macros/structuralLocation.ftl" as structuralLocationMacro/>
+    <#assign proteinLength = protein.length>
 
     <h3>Domains and repeats</h3>
 
@@ -35,15 +36,15 @@
                     <#list scale?split(",") as scaleMarker>
                         <!-- to build an exception for 0 -->
                         <#if scaleMarker?number == 0>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
+                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
                                   title="1"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / protein.length) * 100}%;">1</span>
+                                      style="left:${(scaleMarker?number / proteinLength) * 100}%;">1</span>
                         <#else>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / protein.length) * 100}%;"
+                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
                                   title="${scaleMarker}"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / protein.length) * 100}%;">${scaleMarker}</span>
+                                      style="left:${(scaleMarker?number / proteinLength) * 100}%;">${scaleMarker}</span>
                         </#if>
                     </#list>
                 </div>
@@ -102,7 +103,7 @@
                                 <#list structuralMatchesMap?keys as key>
                                                     <#assign location=key>
                                                     <#assign locationId=locationId?number?int + 1>
-                                                    <@structuralLocationMacro.structuralLocation smid=locationId protein=protein location=location structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource />
+                                                    <@structuralLocationMacro.structuralLocation smid=locationId proteinLength=proteinLength location=location structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource />
                                                 </#list>
 
                                                 </div>
@@ -153,7 +154,7 @@
                             <#list structuralMatchesMap?keys as key>
                                                     <#assign location=key>
                                                     <#assign locationId=locationId?number?int + 1>
-                                                    <@structuralLocationMacro.structuralLocation smid=locationId protein=protein location=key structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource/>
+                                                    <@structuralLocationMacro.structuralLocation smid=locationId proteinLength=proteinLength location=key structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource/>
                                                 </#list>
 
 
