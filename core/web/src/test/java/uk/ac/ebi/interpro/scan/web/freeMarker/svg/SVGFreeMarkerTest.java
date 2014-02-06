@@ -12,10 +12,12 @@ import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertFalse;
@@ -98,8 +100,11 @@ public class SVGFreeMarkerTest {
         final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
         SimpleHash model = new SimpleHash();
         if (p != null) {
+            final int proteinLength = p.getLength();
+            final List<SimpleEntry> entries = p.getAllEntries();
+            final CondensedView condensedView = new CondensedView(entries, proteinLength);
+
             model.put("protein", p);
-            final CondensedView condensedView = new CondensedView(p);
             model.put("condensedView", condensedView);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
