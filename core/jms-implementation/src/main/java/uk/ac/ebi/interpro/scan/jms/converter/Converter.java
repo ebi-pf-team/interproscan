@@ -165,7 +165,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         }
         setupTemporaryDirectory();
 
-        svgResultWriter.setOutputDirectory(temporaryDirectory);
+        svgResultWriter.setTempDirectory(temporaryDirectory);
         htmlResultWriter.setTempDirectory(temporaryDirectory);
 
         if (LOGGER.isInfoEnabled()) {
@@ -373,7 +373,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
      * Please note:
      * <p/>
      * When the SVG files aren't archived, they are written to the output file directory.
-     * Otherwise they will be written into the default outputDirectory of the {@link ProteinMatchesSVGResultWriter).
+     * Otherwise they will be written into the default tempDirectory of the {@link ProteinMatchesSVGResultWriter).
      *
      * @param outputDir Output directory (this file object contains the output path).
      * @param proteins  Set of result proteins.

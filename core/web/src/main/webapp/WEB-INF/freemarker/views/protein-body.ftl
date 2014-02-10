@@ -43,9 +43,9 @@
 
             <div class="bot-row-line">
                 <div style="position:relative;">
-                    <!-- Position marker lines -->
+                    <#-- Position marker lines -->
                     <#list scale?split(",") as scaleMarker>
-                        <!-- to build an exception for 0 -->
+                        <#-- to build an exception for 0 -->
                         <#if scaleMarker?number == 0>
                             <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
                                   title="1"></span>
@@ -69,7 +69,7 @@
         None predicted.
     </div>
     </#if>
-</div> <!-- Closing the prot_sum DIV -->
+</div> <#-- Closing the prot_sum DIV -->
 
     <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
     <h3>Detailed signature matches</h3>
@@ -79,7 +79,7 @@
         <div class="prot_entries">
             <ol class="entries">
                 <#list protein.entries as entry>
-                    <!-- Prepare required variables for this entry -->
+                    <#-- Prepare required variables for this entry -->
                 <#--Use unintegrated signature icon if unknown (probably needs own icon)-->
                     <#assign icon>
                         <#if entry.type?lower_case?starts_with("family") || entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("region") || entry.type?lower_case?starts_with("repeat")>
@@ -104,7 +104,7 @@
 
                     <#assign containerId=entry.ac+"-signatures">
 
-                    <!-- Now display the entry on the page using these variables -->
+                    <#-- Now display the entry on the page using these variables -->
                     <li class="entry ${entry.type}-row">
 
                         <div class="top-row">
@@ -158,7 +158,7 @@
         </#if>
 
     <#else>
-        <!-- No matches so the detailed matches section is omitted. -->
+        <#-- No matches so the detailed matches section is omitted. -->
     </#if>
 
 <h3>GO term prediction</h3>

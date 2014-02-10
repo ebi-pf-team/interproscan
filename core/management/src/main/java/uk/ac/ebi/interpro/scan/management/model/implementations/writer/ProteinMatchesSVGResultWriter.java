@@ -1,14 +1,9 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.writer;
 
-import freemarker.template.Configuration;
 import freemarker.template.SimpleHash;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
@@ -18,7 +13,6 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,56 +23,9 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ProteinMatchesSVGResultWriter {
+public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinMatchesSVGResultWriter.class.getName());
-
-    private Configuration freeMarkerConfig;
-
-    private String freeMarkerTemplate;
-
-    private AbstractApplicationContext appContext;
-
-    private EntryHierarchy entryHierarchy;
-
-    private static final Object EH_LOCK = new Object();
-
-    private String entryHierarchyBeanId;
-
-    private List<File> resultFiles = new ArrayList<File>();
-
-    private String outputDirectory;
-
-    @Required
-    public void setEntryHierarchyBeanId(String entryHierarchyBeanId) {
-        this.entryHierarchyBeanId = entryHierarchyBeanId;
-    }
-
-    @Required
-    public void setFreeMarkerConfig(Configuration freeMarkerConfig) {
-        this.freeMarkerConfig = freeMarkerConfig;
-    }
-
-    @Required
-    public void setApplicationContextConfigLocation(String applicationContextConfigLocation) {
-        if (applicationContextConfigLocation != null) {
-            this.appContext = new FileSystemXmlApplicationContext(applicationContextConfigLocation);
-        }
-    }
-
-    @Required
-    public void setFreeMarkerTemplate(String freeMarkerTemplate) {
-        this.freeMarkerTemplate = freeMarkerTemplate;
-    }
-
-    @Required
-    public void setOutputDirectory(String outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
-
-    public List<File> getResultFiles() {
-        return resultFiles;
-    }
 
     /**
      * Writes out protein view to an zipped and compressed HTML file.
@@ -88,20 +35,7 @@ public class ProteinMatchesSVGResultWriter {
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
     public int write(final Protein protein) throws IOException {
-        if (entryHierarchy == null) {
-            synchronized (EH_LOCK) {
-                if (entryHierarchy == null) {
-                    if (appContext != null && entryHierarchyBeanId != null) {
-                        this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
-                    } else {
-                        if (LOGGER.isEnabledFor(Level.WARN)) {
-                            LOGGER.warn("Application context or entry hierarchy bean aren't initialised successfully!");
-                        }
-                    }
-                }
-            }
-        }
-
+        checkEntryHierarchy();
 
         if (entryHierarchy != null) {
             for (ProteinXref xref : protein.getCrossReferences()) {
@@ -113,14 +47,14 @@ public class ProteinMatchesSVGResultWriter {
                     Writer writer = null;
                     try {
                         final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
-                        checkTempDirectory(outputDirectory);
-                        if (!outputDirectory.endsWith("/")) {
-                            outputDirectory = outputDirectory + "/";
+                        checkTempDirectory(tempDirectory);
+                        if (!tempDirectory.endsWith("/")) {
+                            tempDirectory = tempDirectory + "/";
                         }
 
                         UrlFriendlyIdGenerator gen = UrlFriendlyIdGenerator.getInstance();
                         String urlFriendlyId = gen.generate(xref.getIdentifier());
-                        final File newResultFile = new File(outputDirectory + urlFriendlyId + ".svg");
+                        final File newResultFile = new File(tempDirectory + urlFriendlyId + ".svg");
                         resultFiles.add(newResultFile);
                         writer = new PrintWriter(new FileWriter(newResultFile));
                         temp.process(model, writer);
@@ -138,19 +72,6 @@ public class ProteinMatchesSVGResultWriter {
             }
         }
         return 0;
-    }
-
-    private void checkTempDirectory(String tempDirectory) throws IOException {
-        File tempFileDirectory = new File(tempDirectory);
-        if (!tempFileDirectory.exists()) {
-            boolean isCreated = tempFileDirectory.mkdirs();
-            if (!isCreated) {
-                LOGGER.warn("Couldn't create temp directory " + tempDirectory);
-            }
-
-        } else {
-            LOGGER.debug("Temp directory already exists, no need to create one.");
-        }
     }
 
     private SimpleHash buildModelMap(SimpleProtein p, EntryHierarchy entryHierarchy) {

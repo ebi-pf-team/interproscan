@@ -2,8 +2,8 @@
 <#macro signature proteinLength signature entryTypeTitle colourClass>
     <#global locationId=0>
 
-<!-- the order of the divs is important , first right column fixed-->
-<div class="bot-row-signame"><!-- link to modify -->
+<#-- the order of the divs is important , first right column fixed-->
+<div class="bot-row-signame"><#-- link to modify -->
 <#--Setup variables ready for displaying signature information,-->
 <#--e.g. could condense "G3DSA:2.40.20.10 (Pept_Ser_Cys)" to "G3DSA:2.40.2... (Pept_S...)".-->
 <#--NOTE: PLEASE ENSURE THAT maxOverallLength >= maxAcLength + 4-->

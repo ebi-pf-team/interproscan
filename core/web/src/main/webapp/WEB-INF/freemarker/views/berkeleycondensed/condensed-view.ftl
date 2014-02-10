@@ -6,7 +6,7 @@
     <#list condensedView.lines as line>
         <#assign type=line.type>
     <li class="signature entry-signatures">
-        <!-- the order of the divs is important , first right column fixed-->
+        <#-- the order of the divs is important , first right column fixed-->
         <div class="bot-row-line" style="margin: 0;">
             <div class="matches">
                 <#list line.superMatchList as superMatch>
