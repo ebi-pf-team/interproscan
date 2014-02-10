@@ -4,25 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
-    <!--Bean definition for the HMTL writer-->
-    <!--<bean id="htmlWriter"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter">-->
-    <!--<property name="freeMarkerConfig" ref="freeMarkerConfig"/>-->
-    <!--<property name="applicationContextConfigLocation" value="file:data/freemarker/WEB-INF/spring/app-config.xml"/>-->
-    <!--&lt;!&ndash;<property name="file" value=""/>&ndash;&gt;-->
-    <!--<property name="freeMarkerTemplate" value="views/protein.ftl"/>-->
-    <!--<property name="entryHierarchyBeanId" value="entryHierarchy"/>-->
-    <!--<property name="htmlResourcesDir" value="data/freemarker/WEB-INF"/>-->
-    <!--<property name="outputDirectory" value="temp/"/>-->
-    <!--</bean>-->
-
     <bean id="dbCreator" class="uk.ac.ebi.interpro.scan.condensed.berkeley.BerkeleyDBCreator">
         <property name="htmlWriter">
             <bean class="uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter">
                 <property name="freeMarkerConfig" ref="freeMarkerConfigHtmlWriter"/>
                 <property name="applicationContextConfigLocation"
                           value="file:data/freemarker/WEB-INF/spring/app-config.xml"/>
-                <!--<property name="file" value=""/>-->
                 <property name="freeMarkerTemplate" value="views/berkeleycondensed/condensed-view.ftl"/>
                 <property name="entryHierarchyBeanId" value="entryHierarchy"/>
                 <property name="htmlResourcesDir" value="data/freemarker/resources"/>

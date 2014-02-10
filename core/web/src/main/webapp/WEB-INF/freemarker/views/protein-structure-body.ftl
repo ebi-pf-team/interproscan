@@ -32,9 +32,9 @@
 
             <div class="bot-row-line">
                 <div style="position:relative;">
-                    <!-- Position marker lines -->
+                    <#-- Position marker lines -->
                     <#list scale?split(",") as scaleMarker>
-                        <!-- to build an exception for 0 -->
+                        <#-- to build an exception for 0 -->
                         <#if scaleMarker?number == 0>
                             <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
                                   title="1"></span>
@@ -57,7 +57,7 @@
     <div class="bot-row">None predicted.</div>
     </#if>
 
-</div> <!-- Closing the prot_sum DIV -->
+</div> <#-- Closing the prot_sum DIV -->
 
     <#if (protein.structuralFeatures?has_content || protein.structuralPredictions?has_content)>
         <#global locationId=0>
@@ -80,7 +80,7 @@
                                     <#list protein.structuralFeatures as feature>
                                         <li>
 
-                                            <!--
+                                            <#--
                                                 Structural match data structure:
 
                                                 database (SimpleStructuralMatchDatabase)
@@ -130,7 +130,7 @@
 
                                     <#list protein.structuralPredictions as feature>
                                         <li>
-                                            <!--
+                                            <#--
                                                 Structural match data structure:
 
                                                 database (SimpleStructuralMatchDatabase)
@@ -186,7 +186,7 @@
         </script>
     <#else>
     <#--Nothing to display!-->
-        <!-- No structural matches so the detailed matches section is omitted. -->
+        <#-- No structural matches so the detailed matches section is omitted. -->
     </#if>
 <#else>
     <b>No structural match data found for this protein.</b>

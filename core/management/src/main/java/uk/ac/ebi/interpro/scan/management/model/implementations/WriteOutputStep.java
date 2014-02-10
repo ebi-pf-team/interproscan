@@ -225,7 +225,7 @@ public class WriteOutputStep extends Step {
                     case SVG:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
-                            svgResultWriter.setOutputDirectory(temporaryFileDirectory);
+                            svgResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
                         outputToSVG(outputFile, proteins);
                         break;
@@ -357,7 +357,7 @@ public class WriteOutputStep extends Step {
         if (proteins != null && proteins.size() > 0) {
             //If the archive mode is switched off single SVG files should be written to the global output directory
             if (!archiveSVGOutput) {
-                svgResultWriter.setOutputDirectory(outputDir.getAbsolutePath());
+                svgResultWriter.setTempDirectory(outputDir.getAbsolutePath());
             }
             for (Protein protein : proteins) {
                 svgResultWriter.write(protein);
