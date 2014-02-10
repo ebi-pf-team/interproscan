@@ -12,7 +12,7 @@
         <!--<property name="file" value=""/>-->
         <property name="freeMarkerTemplate" value="svg-protein-view.ftl"/>
         <property name="entryHierarchyBeanId" value="entryHierarchy"/>
-        <property name="outputDirectory" value="temp/"/>
+        <property name="tempDirectory" value="temp/"/>
     </bean>
 
     <bean id="defaultWrapperSvgWriter" class="freemarker.template.DefaultObjectWrapper"/>
