@@ -18,12 +18,10 @@ public enum MatchDataSource {
             "http://www.cathdb.info/superfamily/$0"),
 
     HAMAP(0,
-            "Members of HAMAP families are identified using PROSITE profile collections. " +
-                    "HAMAP profiles are manually created by expert curators and they identify proteins " +
-                    "that are part of well-conserved bacterial, archaeal and plastid-encoded proteins families " +
-                    "or subfamilies. The aim of HAMAP is to propagate manually generated annotation to all " +
-                    "members of a given protein family in an automated and controlled way using " +
-                    "very strict criteria.",
+            "HAMAP stands for High-quality Automated and Manual Annotation of Proteins. HAMAP profiles are manually " +
+                    "created by expert curators. They identify proteins that are part of well-conserved proteins " +
+                    "families or subfamilies. HAMAP is based at the SIB Swiss Institute of Bioinformatics, Geneva, " +
+                    "Switzerland.",
             "http://hamap.expasy.org/",
             "http://hamap.expasy.org/profile/$0"),
 
