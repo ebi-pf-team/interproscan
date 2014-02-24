@@ -1,5 +1,5 @@
 <#import "matchLocation.ftl" as matchLocationMacro>
-<#macro signature proteinLength signature entryTypeTitle colourClass>
+<#macro signature proteinLength signature entryTypeTitle scale colourClass>
     <#global locationId=0>
 
 <#-- the order of the divs is important , first right column fixed-->
@@ -60,8 +60,15 @@
         ${signature.dataSource?lower_case?replace(" ","-")?replace("_","-")}
         </#assign>
             <#assign dbClass=dbClass?trim>
-            <@matchLocationMacro.matchLocation smid=locationId proteinLength=proteinLength signature=signature location=location colourClass=dbClass+" "+colourClass/>
+            <@matchLocationMacro.matchLocation matchId=locationId proteinLength=proteinLength signature=signature location=location colourClass=dbClass+" "+colourClass/>
         </#list>
+
+
+        <#--Draw in scale markers for this line-->
+        <#list scale?split(",") as scaleMarker>
+            <span class="grade" style="left:${(scaleMarker?number?int / proteinLength) * 100}%;" title="${scaleMarker}"></span>
+        </#list>
+
     </div>
 
 </div>

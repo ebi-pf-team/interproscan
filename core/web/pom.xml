@@ -20,6 +20,10 @@
     <description>InterProScan Web</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
+    <properties>
+        <mvn.war.version>2.1.1</mvn.war.version>
+    </properties>
+
     <dependencies>
         <!-- i5 model -->
         <dependency>
@@ -167,6 +171,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>${mvn.war.version}</version>
                 <executions>
                     <execution>
                         <id>make-a-war</id>
@@ -223,6 +228,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
+                        <version>${mvn.war.version}</version>
                         <configuration>
                             <warName>interpro-protein-page</warName>
                             <webResources>
@@ -314,7 +320,7 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
-                        <version>2.1-alpha-1</version>
+                        <version>${mvn.war.version}</version>
                         <configuration>
                             <warName>interpro-protein-page-${timestamp}</warName>
                             <webResources>
@@ -384,7 +390,7 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
-                        <version>2.1-alpha-1</version>
+                        <version>${mvn.war.version}</version>
                         <configuration>
                             <warName>interpro-protein-page-${timestamp}</warName>
                             <webResources>
@@ -463,7 +469,7 @@ cd ~/Projects/i5/interproscan/core/web; mvn -Plocalhost-tomcat clean tomcat:rede
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
-                        <version>2.1-alpha-1</version>
+                        <version>${mvn.war.version}</version>
                         <configuration>
                             <warName>interpro-protein-page</warName>
                             <webResources>
