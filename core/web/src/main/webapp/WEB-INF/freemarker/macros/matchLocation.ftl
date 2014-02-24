@@ -1,18 +1,24 @@
 <#import "location.ftl" as locationMacro>
-<#macro matchLocation smid proteinLength signature location colourClass>
+<#import "matchLocationPopup.ftl" as matchLocationPopupMacro>
+
+<#macro matchLocation matchId proteinLength signature location colourClass>
     <#assign title=signature.ac>
 <#--Signatures like "G3DSA:3.20.20.80" cause issues, remove special characters -->
 <#--TODO? Try http://stackoverflow.com/questions/296264/using-regular-expressions-in-jsp-el-->
     <#assign prefix=signature.ac?replace(":","")?replace(".","")>
 
-<@locationMacro.location smid=prefix+"-location-"+smid proteinLength=proteinLength titlePrefix=title location=location colourClass=colourClass/>
+    <#if standalone>
+    <#--If InterProScan 5 HTML output-->
+        <@locationMacro.location locationSpanId=prefix+"-span-"+matchId proteinLength=proteinLength titlePrefix=title location=location colourClass=colourClass/>
+        <@matchLocationPopupMacro.matchLocationPopup matchPopupId=prefix+"-popup-"+matchId signature=signature location=location colourClass=colourClass/>
+    <#else>
+    <#--If using this HTML in the InterPro website, get the hierarchy popup through an AJAX call-->
+    <a id="${prefix}-location-${matchId}"
+       style="left:  ${((location.start - 1) / proteinLength) * 100}%;
+               width: ${((location.end - location.start + 1) / proteinLength) * 100}%;"
+       href="http://localhost:8181/interpro/popup">
+        <@locationMacro.location locationSpanId=prefix+"-span-"+matchId proteinLength=proteinLength titlePrefix=title location=location colourClass=colourClass/>
+    </a>
 
-<div id="${prefix}-popup-${smid}" style="display: none;">
-    <div class="popup_topl"><span class="${colourClass} caption_puce"></span>${location.start} - ${location.end}</div>
-    <div class="popup_botl" style="font-size:88%;">
-        <b>${signature.dataSource.sourceName}</b> <abbr class="icon icon-generic" data-icon="i" title="${signature.dataSource.description}"></abbr> <br/>
-        <a href='${signature.dataSource.getLinkUrl(signature.ac)}' class="ext">${signature.ac} </a>
-        <span>(<#if signature.name??>${signature.name}<#else>${signature.ac}</#if>)</span>
-    </div>
-</div>
+    </#if>
 </#macro>

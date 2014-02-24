@@ -1,22 +1,34 @@
 // Prepare protein match/structural match popups
-// E.g. Tie "match-span-1" span to "match-popup-1" hidden div content.
-function preparePopup(spanId, numSuperMatchPopups) {
-    var searchString = 'span-';
+// E.g. Tie "match-location-1" span to "match-popup-1" hidden div content.
+function preparePopup(spanId) {
+    var searchString = 'location-';
     var prefix = spanId.substring(0, spanId.indexOf(searchString));
     var postfix = spanId.substring(prefix.length + searchString.length, spanId.length);
     var popupId = prefix.concat('popup-', postfix);
-    //alert('spanId: '.concat(spanId, ', popupId: ', popupId));
-    var prerenderBoolean = true;
 
-    if (numSuperMatchPopups > 100) {
-        // Too many popups to prerender all on page load
-        prerenderBoolean = false;
-    }
+    //alert('spanId: '.concat(spanId, ', popupId: ', popupId));
+
+    $('#'.concat(spanId)).click(function(event) {
+        event.preventDefault();
+        return false;
+    });
 
     $('#'.concat(spanId)).qtip({
-        prerender: prerenderBoolean, // Render all popups at page load time?
         content: {
-            text: $('#'.concat(popupId)),
+            text: function(event, api) {
+                $.ajax({
+                    url: api.elements.target.attr('href') // Use href attribute as URL
+                })
+                .then(function(content) {
+                    // Set the tooltip content upon successful retrieval
+                    api.set('content.text', content);
+                }, function(xhr, status, error) {
+                    // Upon failure... set the tooltip content to error
+                    api.set('content.text', status + ': ' + error);
+                });
+
+                return 'Loading...'; // Set some initial text
+            },
             title: {
                 text: ' ', // Popup text in the title bar
                 button: true // Close button

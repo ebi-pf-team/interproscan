@@ -1,4 +1,5 @@
 <#--Returns main body of protein page for inclusion in the InterProScan 5 HTML output, or elsewhere -->
+<#import "../macros/condensedView.ftl" as condensedViewMacro/>
 
 <#if protein??>
 
@@ -19,56 +20,8 @@
     </#if>
 
     <h3>Domains and repeats</h3>
-    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-    <div class="prot_sum">
-    <#else>
-    <div class="prot_sum" style="background:none;">
-    </#if>
+    <@condensedViewMacro.condensedView condensedView=condensedView proteinLength=proteinLength scale=scale entryColours=entryColours/>
 
-
-
-    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-    <div class="bot-row">
-        <div class="bot-row-line-top"></div>
-        <ol class="signatures">
-
-            <#include "condensed-view.ftl"/>
-
-        </ol>
-        <div class="bot-row-line-bot"></div>
-    </div>
-
-    <div class="prot_scale">
-        <div class="bot-row">
-
-            <div class="bot-row-line">
-                <div style="position:relative;">
-                    <#-- Position marker lines -->
-                    <#list scale?split(",") as scaleMarker>
-                        <#-- to build an exception for 0 -->
-                        <#if scaleMarker?number == 0>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
-                                  title="1"></span>
-                                <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / proteinLength) * 100+1}%;">1</span>
-                        <#else>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
-                                  title="${scaleMarker}"></span>
-                                <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / proteinLength) * 100}%;">${scaleMarker}</span>
-                        </#if>
-                    </#list>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <#else>
-    <div class="bot-row">
-        None predicted.
-    </div>
-    </#if>
 </div> <#-- Closing the prot_sum DIV -->
 
     <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
@@ -122,7 +75,7 @@
                                 <#list entry.signatures as signature>
 
                                     <li id="${containerId}" class="signature entry-signatures">
-                                        <@signatureMacro.signature proteinLength=proteinLength signature=signature entryTypeTitle=title colourClass=colourClass />
+                                        <@signatureMacro.signature proteinLength=proteinLength signature=signature entryTypeTitle=title scale=scale colourClass=colourClass />
                                     </li>
                                 </#list>
                             </ol>
@@ -148,7 +101,7 @@
                     <ol class="signatures">
                         <#list protein.unintegratedSignatures as signature>
                             <li class="signature">
-                                <@signatureMacro.signature proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" colourClass="uni" />
+                                <@signatureMacro.signature proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" scale=scale colourClass="uni" />
                             </li>
                         </#list>
                     </ol>
@@ -215,11 +168,26 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('span[id*="location-"]').each(
-                function (i) {
-                    preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
-                }
-        );
+        <#if standalone>
+            // Use hidden DIVs to display popups
+            $('span[id*="span-"]').each(
+                    function(i) {
+                        <#if condensedView??>
+                            preparePopup(this.id, ${condensedView.numSuperMatchBlobs});
+                        <#else>
+                            // No supermatches for this protein, but there are structural matches (e.g. B7ZMM2 as of InterPro release 37.0)
+                            preparePopup(this.id, 0);
+                        </#if>
+                    }
+            );
+        <#else>
+            // Use AJAX call to display popups
+            $('a[id*="location-"]').each(
+                    function(i) {
+                        preparePopup(this.id);
+                    }
+            );
+        </#if>
     });
 </script>
 
