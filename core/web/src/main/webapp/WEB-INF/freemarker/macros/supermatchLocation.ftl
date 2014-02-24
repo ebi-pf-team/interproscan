@@ -1,14 +1,23 @@
 <#import "location.ftl" as locationMacro>
+<#import "supermatchLocationPopup.ftl" as supermatchLocationPopupMacro>
 
-<#macro supermatchLocation smid proteinLength supermatch colourClass>
+<#macro supermatchLocation supermatchId proteinLength supermatch colourClass>
     <#assign title=supermatch.type>
+    <#assign locationObj=supermatch.location>
 
-<@locationMacro.location smid="supermatch-location-"+smid proteinLength=proteinLength titlePrefix=title location=supermatch.location colourClass=colourClass/>
+    <#if standalone>
+    <#--If InterProScan 5 HTML output-->
+        <@locationMacro.location locationSpanId="supermatch-span-"+supermatchId proteinLength=proteinLength titlePrefix=title location=locationObj colourClass=colourClass/>
+        <@supermatchLocationPopupMacro.supermatchLocationPopup supermatchPopupId="supermatch-popup-"+supermatchId supermatch=supermatch colourClass=colourClass/>
+    <#else>
+    <#--If using this HTML in the InterPro website, get the hierarchy popup through an AJAX call-->
+    <a id="supermatch-location-${supermatchId}"
+       style="left:  ${((locationObj.start - 1) / proteinLength) * 100}%;
+               width: ${((locationObj.end - locationObj.start + 1) / proteinLength) * 100}%;"
+       href="http://localhost:8181/interpro/popup">
+        <@locationMacro.location locationSpanId="supermatch-span-"+supermatchId proteinLength=proteinLength titlePrefix=title location=locationObj colourClass=colourClass/>
+    </a>
 
-<div id="supermatch-popup-${smid}" style="display: none;">
+    </#if>
 
-    <div class="popup_topl"><span class="${colourClass} caption_puce"></span>${supermatch.location.start}
-        - ${supermatch.location.end}</div>
-<div class="rel_tree">${supermatch.entryHierarchyForPopup}</div>
-</div>
 </#macro>

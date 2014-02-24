@@ -62,8 +62,8 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
      * @throws TemplateException
      */
     public String write(final SimpleProtein simpleProtein, final boolean standalone) throws IOException, TemplateException {
-        checkEntryHierarchy();
         if (simpleProtein != null) {
+            checkEntryHierarchy();
             //Build model for FreeMarker
             final SimpleHash model = buildModelMap(simpleProtein, entryHierarchy, standalone);
             Writer writer = null;
