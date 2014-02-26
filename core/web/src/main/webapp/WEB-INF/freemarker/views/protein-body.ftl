@@ -20,7 +20,7 @@
     </#if>
 
     <h3>Domains and repeats</h3>
-    <@condensedViewMacro.condensedView condensedView=condensedView proteinLength=proteinLength scale=scale entryColours=entryColours/>
+    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
 
 </div> <#-- Closing the prot_sum DIV -->
 
