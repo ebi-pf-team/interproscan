@@ -75,7 +75,6 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
     }
 
     private SimpleHash buildModelMap(SimpleProtein p, EntryHierarchy entryHierarchy) {
-        final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
         SimpleHash model = new SimpleHash();
         if (p != null) {
             final int proteinLength = p.getLength();

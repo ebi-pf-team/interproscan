@@ -29,8 +29,6 @@ import java.util.List;
  */
 public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter {
 
-    private static final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
-
     private static final Logger LOGGER = Logger.getLogger(ProteinMatchesHTMLResultWriter.class.getName());
 
     @Required

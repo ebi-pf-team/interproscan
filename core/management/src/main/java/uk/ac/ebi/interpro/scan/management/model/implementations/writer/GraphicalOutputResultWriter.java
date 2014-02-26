@@ -24,6 +24,8 @@ public abstract class GraphicalOutputResultWriter {
 
     private static final Logger LOGGER = Logger.getLogger(GraphicalOutputResultWriter.class.getName());
 
+    protected static final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
+
     protected Configuration freeMarkerConfig;
 
     protected String freeMarkerTemplate;

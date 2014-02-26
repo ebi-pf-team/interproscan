@@ -20,7 +20,7 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
     private final String name;
     private final EntryType type;
     private Integer hierarchyLevel;
-    private final EntryHierarchyData hierarchyData;
+    private EntryHierarchyData hierarchyData = null;
     private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
     private Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
     private static EntryHierarchy entryHierarchy;
@@ -50,6 +50,14 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
 //            this.hierarchyLevel = 1;  // TODO - Is this desirable?  Current algorithm probably allows for this being null.
             this.hierarchyData = new EntryHierarchyData(ac, 1, ac);
         }
+    }
+
+    public SimpleEntry(String ac, String shortName, String name, EntryType type) {
+        // This constructor is fine if you are not interested in the entry hierarchy information!
+        this.ac = ac;
+        this.shortName = shortName;
+        this.name = name;
+        this.type = type;
     }
 
     public String getAc() {

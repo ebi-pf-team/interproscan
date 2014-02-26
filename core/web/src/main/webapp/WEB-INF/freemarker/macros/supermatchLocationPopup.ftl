@@ -1,9 +1,13 @@
-<#macro supermatchLocationPopup supermatchPopupId supermatch colourClass>
+<#macro supermatchLocationPopup superMatchPopupId supermatch colourClass>
     <#assign title=supermatch.type>
     <#assign locationObj=supermatch.location>
 
     <#--Show detailed hierarchy information in a popup using hidden DIV-->
-    <div id="${supermatchPopupId}" style="display: none;">
+    <#if standalone>
+        <div id="${superMatchPopupId}" style="display: none;">
+    <#else>
+        <div id="${superMatchPopupId}">
+    </#if>
         <div class="popup_topl">
             <span class="${colourClass} caption_puce"></span>${locationObj.start} - ${locationObj.end}
         </div>

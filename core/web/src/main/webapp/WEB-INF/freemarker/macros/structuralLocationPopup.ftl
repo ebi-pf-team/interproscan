@@ -25,11 +25,15 @@
             <#assign links="<a class='ext' href='"+linkHref+"' >"+dataEntry+"</a>">
         </#list>
     </#if>
-<div id="${structPopupId}" style="display: none;">
+    <#if standalone>
+    <div id="${structPopupId}" style="display: none;">
+    <#else>
+    <div id="${structPopupId}">
+    </#if>
 
     <div class="popup_topl"><span class="${databaseName} caption_puce"></span>${location.start} - ${location.end}</div>
     <div class="popup_botl" style="font-size:88%;"> <b>${databaseMetadata.sourceName}</b> <abbr class="icon icon-generic" data-icon="i" title="${databaseMetadata.description}"></abbr> <br/>
-        ${links}<br/>
+    ${links}<br/>
     </div>
 </div>
 </#macro>
