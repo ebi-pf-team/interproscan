@@ -1,6 +1,6 @@
 <#import "../macros/supermatchLocation.ftl" as supermatchLocationMacro>
 
-<#macro condensedView condensedView proteinLength scale entryColours>
+<#macro condensedView condensedView scale entryColours>
 
     <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
     <div class="prot_sum">
@@ -14,8 +14,8 @@
         <ol class="signatures">
 
 
-<#--<#assign superMatchId="0" scope="request">-->
     <#global superMatchId=0>
+    <#assign proteinLength=condensedView.proteinLength>
 
     <#list condensedView.lines as line>
         <#assign type=line.type>

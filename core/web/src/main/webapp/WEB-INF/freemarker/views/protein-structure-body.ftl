@@ -19,7 +19,7 @@
 
     <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
 
-        <@condensedViewMacro.condensedView condensedView=condensedView proteinLength=proteinLength scale=scale entryColours=entryColours/>
+        <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
 
     <#else>
         <div class="bot-row">None predicted.</div>

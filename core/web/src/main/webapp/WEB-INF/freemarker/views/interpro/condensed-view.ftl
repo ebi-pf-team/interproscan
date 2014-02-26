@@ -38,13 +38,11 @@
 <div class="container_24">
 <div class="grid_24 clearfix" id="content" >
 
-<#import "../macros/condensedView.ftl" as condensedViewMacro/>
+<#import "../../macros/condensedView.ftl" as condensedViewMacro/>
 
-    <!--condensed-->
 <#if condensedView?? && condensedView?has_content>
-    <!--yay-->
 
-    <@condensedViewMacro.condensedView condensedView=condensedView proteinLength=proteinLength scale=scale entryColours=entryColours />
+    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours />
 
     <#else>
     <#-- We have no information for the specified protein accession at all - not found -->

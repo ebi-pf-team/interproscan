@@ -40,6 +40,17 @@ public class CondensedView implements Serializable {
         // matches to entries in the same hierarchy.
         final List<SuperMatchBucket> buckets = buildBuckets(superMatches);
 
+        prepareBuckets(buckets);
+    }
+
+    public CondensedView(int proteinLength, List<SuperMatchBucket> superMatchBuckets) {
+        this.proteinLength = proteinLength;
+        if (superMatchBuckets != null && superMatchBuckets.size() > 0) {
+            prepareBuckets(superMatchBuckets);
+        }
+    }
+
+    private void prepareBuckets(List<SuperMatchBucket> buckets) {
         // Fix any SuperMatchBuckets that have overlaps within them.
         fixOverlaps(buckets);
 
@@ -255,5 +266,9 @@ public class CondensedView implements Serializable {
             result += lines.size() * heightPerSummaryLine;
         }
         return result;
+    }
+
+    public int getProteinLength() {
+        return proteinLength;
     }
 }
