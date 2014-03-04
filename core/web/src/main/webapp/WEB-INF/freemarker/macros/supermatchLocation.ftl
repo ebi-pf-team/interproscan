@@ -19,7 +19,7 @@
     <a id="supermatch-location-${supermatchId}"
        style="left:  ${((locationObj.start - 1) / proteinLength) * 100}%;
                width: ${((locationObj.end - locationObj.start + 1) / proteinLength) * 100}%;"
-       href="http://localhost:8181/interpro/popup/supermatch?id=supermatch-popup-${supermatchId}&ac=${entryAc}&start=${locationObj.start?c}&end=${locationObj.end?c}">
+       href="http://localhost:8181/interpro/popup/supermatch?id=supermatch-popup-${supermatchId}&entryAc=${entryAc}&start=${locationObj.start?c}&end=${locationObj.end?c}">
         <@locationMacro.location locationSpanId="supermatch-span-"+supermatchId proteinLength=proteinLength titlePrefix=title location=locationObj colourClass=colourClass/>
     </a>
 
