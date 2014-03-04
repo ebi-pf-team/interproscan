@@ -5,18 +5,17 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.web.model.SimpleSuperMatch;
 
 import java.io.*;
 
 /**
- * TODO
+ * Contains common code shared by all types of HTML information popups.
  *
  * @author Matthew Fraser, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PopupHTMLResultWriter extends GraphicalOutputResultWriter {
+public abstract class PopupHTMLResultWriter extends GraphicalOutputResultWriter {
 
     private static final Logger LOGGER = Logger.getLogger(PopupHTMLResultWriter.class.getName());
 
@@ -27,19 +26,8 @@ public class PopupHTMLResultWriter extends GraphicalOutputResultWriter {
         }
     }
 
-    public String write(final String superMatchPopupId, final SimpleSuperMatch superMatch, final String colourClass) throws IOException, TemplateException {
-        if (superMatchPopupId == null || !superMatchPopupId.contains("popup-")) {
-            throw new IllegalArgumentException("Invalid superMatchPopupId");
-        }
-        if (superMatch == null) {
-            throw new IllegalArgumentException("Super match cannot be NULL");
-        }
-        if (colourClass == null || colourClass.equals("")) {
-            throw new IllegalArgumentException("Colour class name must be supplied");
-        }
-        //checkEntryHierarchy();
-        //Build model for FreeMarker
-        final SimpleHash model = buildModelMap(superMatchPopupId, superMatch, colourClass);
+    protected String writePopupHTML(SimpleHash model) throws IOException, TemplateException {
+        // Now prepare the HTML
         Writer writer = null;
         try {
             StringWriter stringWriter = new StringWriter();
@@ -55,13 +43,10 @@ public class PopupHTMLResultWriter extends GraphicalOutputResultWriter {
         }
     }
 
-    private SimpleHash buildModelMap(final String superMatchPopupId,
-                                     final SimpleSuperMatch superMatch,
-                                     final String colourClass) {
+    protected SimpleHash buildModelMap() {
         final SimpleHash model = new SimpleHash();
-        model.put("superMatchPopupId", superMatchPopupId);
-        model.put("superMatch", superMatch);
-        model.put("colourClass", colourClass);
+        // No popups are  currently used in InterProScan 5 standalone mode, only used by the InterPro web application
+        // (through AJAX calls)
         model.put("standalone", false);
         return model;
     }
