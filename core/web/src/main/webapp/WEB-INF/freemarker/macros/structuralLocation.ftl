@@ -22,17 +22,18 @@
         </#list>
     </#if>
 
-<#if standalone>
+<#--TODO Allow AJAX popup from web 6, hiddens DIVs from standalone mode.-->
+<#--<#if standalone>-->
     <#--If InterProScan 5 HTML output-->
     <@locationMacro.location locationSpanId="match-span-"+structMatchId proteinLength=proteinLength titlePrefix=title location=location colourClass=databaseName/>
-    <@structuralLocationPopupMacro.structuralLocationPopup structPopupId="match-popup-"+structMatchId location=location structuralMatchData=structuralMatchData databaseMetadata=databaseMetadata/>
-<#else>
-<#--If using this HTML in the InterPro website, get the hierarchy popup through an AJAX call-->
-<a id="match-location-${structMatchId}"
-   style="left:  ${((location.start - 1) / proteinLength) * 100}%;
-           width: ${((location.end - location.start + 1) / proteinLength) * 100}%;"
-   href="http://localhost:8181/interpro/popup">
-    <@locationMacro.location locationSpanId="match-span-"+structMatchId proteinLength=proteinLength titlePrefix=title location=location colourClass=databaseName/>
-</a>
-</#if>
+    <@structuralLocationPopupMacro.structuralLocationPopup structPopupId="match-popup-"+structMatchId location=location locationDataMap=structuralMatchData.locationDataMap databaseMetadata=databaseMetadata/>
+<#--<#else>-->
+<#--&lt;#&ndash;If using this HTML in the InterPro website, get the hierarchy popup through an AJAX call&ndash;&gt;-->
+<#--<a id="match-location-${structMatchId}"-->
+   <#--style="left:  ${((location.start - 1) / proteinLength) * 100}%;-->
+           <#--width: ${((location.end - location.start + 1) / proteinLength) * 100}%;"-->
+   <#--href="TODO">-->
+    <#--<@locationMacro.location locationSpanId="match-span-"+structMatchId proteinLength=proteinLength titlePrefix=title location=location colourClass=databaseName/>-->
+<#--</a>-->
+<#--</#if>-->
 </#macro>

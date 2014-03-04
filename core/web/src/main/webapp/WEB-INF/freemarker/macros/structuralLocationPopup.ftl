@@ -1,9 +1,8 @@
-<#-- structuralMatchData is a map-->
-<#macro structuralLocationPopup structPopupId location structuralMatchData databaseMetadata>
+<#-- locationDataMap is a map-->
+<#macro structuralLocationPopup structPopupId location locationDataMap databaseMetadata>
 
     <#assign databaseName=databaseMetadata.sourceName?upper_case>
     <#assign links="">
-    <#assign locationDataMap=structuralMatchData.locationDataMap>
 <#--Link on classId-->
     <#if databaseName?starts_with("PDB")>
         <#list locationDataMap?keys as dataEntry>
@@ -25,11 +24,13 @@
             <#assign links="<a class='ext' href='"+linkHref+"' >"+dataEntry+"</a>">
         </#list>
     </#if>
-    <#if standalone>
+
+    <#--TODO Allow AJAX popup from web 6, hiddens DIVs from standalone mode.-->
+    <#--<#if standalone>-->
     <div id="${structPopupId}" style="display: none;">
-    <#else>
-    <div id="${structPopupId}">
-    </#if>
+    <#--<#else>-->
+    <#--<div id="${structPopupId}">-->
+    <#--</#if>-->
 
     <div class="popup_topl"><span class="${databaseName} caption_puce"></span>${location.start} - ${location.end}</div>
     <div class="popup_botl" style="font-size:88%;"> <b>${databaseMetadata.sourceName}</b> <abbr class="icon icon-generic" data-icon="i" title="${databaseMetadata.description}"></abbr> <br/>
