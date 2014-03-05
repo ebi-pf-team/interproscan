@@ -18,6 +18,7 @@ import java.util.SortedSet;
  * @since 1.0-SNAPSHOT
  */
 public class StructMatchPopupHTMLResultWriter extends PopupHTMLResultWriter {
+    // DO NOT DELETE - This class is not used in InterProScan 5, but is used as a dependency in InterPro web 6
 
     private static final Logger LOGGER = Logger.getLogger(StructMatchPopupHTMLResultWriter.class.getName());
 
