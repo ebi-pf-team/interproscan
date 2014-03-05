@@ -15,6 +15,7 @@ import java.io.IOException;
  * @since 1.0-SNAPSHOT
  */
 public class SuperMatchPopupHTMLResultWriter extends PopupHTMLResultWriter {
+    // DO NOT DELETE - This class is not used in InterProScan 5, but is used as a dependency in InterPro web 6
 
     private static final Logger LOGGER = Logger.getLogger(SuperMatchPopupHTMLResultWriter.class.getName());
 
