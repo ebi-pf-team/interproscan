@@ -6,7 +6,6 @@ import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
-import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
 
 import java.io.*;
@@ -32,14 +31,26 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
     }
 
     public String write(CondensedView condensedView) throws IOException, TemplateException {
-        return write(condensedView, true);
+        return write(condensedView, null);
     }
 
-    public String write(CondensedView condensedView, final boolean standalone) throws IOException, TemplateException {
+    /**
+     *
+     * @param condensedView The condensed view data
+     * @param viewId An additional identifier for the condensed view (a useful extra prefix for the HTML elements when
+     *               rendering multiple condensed views on the same page).
+     * @return
+     * @throws IOException
+     * @throws TemplateException
+     */
+    public String write(CondensedView condensedView, String viewId) throws IOException, TemplateException {
+        if (viewId == null) {
+            viewId = "";
+        }
         if (condensedView != null) {
             checkEntryHierarchy();
             //Build model for FreeMarker
-            final SimpleHash model = buildModelMap(condensedView, entryHierarchy);
+            final SimpleHash model = buildModelMap(condensedView, viewId);
             Writer writer = null;
             try {
                 StringWriter stringWriter = new StringWriter();
@@ -57,16 +68,16 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
         return null;
     }
 
-    protected SimpleHash buildModelMap(final CondensedView condensedView,
-                                       final EntryHierarchy entryHierarchy) {
+    private SimpleHash buildModelMap(final CondensedView condensedView, final String viewId) {
         final SimpleHash model = new SimpleHash();
         if (condensedView != null) {
             int proteinLength = condensedView.getProteinLength();
             model.put("condensedView", condensedView);
+            model.put("viewId", viewId);
             model.put("proteinLength", proteinLength);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(proteinLength, MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-            model.put("standalone", false);
+            model.put("standalone", false); // Never used in InterProScan 5 standalone mode
         }
         return model;
     }
