@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * TODO
+ * TODO DELETE THIS CLASS AND ftl FILE - NOT NEEDED IN i5! ONLY USED BY INTERPRO WEBSITE
  *
  * @author Matthew Fraser, EMBL-EBI, InterPro
  * @version $Id$
