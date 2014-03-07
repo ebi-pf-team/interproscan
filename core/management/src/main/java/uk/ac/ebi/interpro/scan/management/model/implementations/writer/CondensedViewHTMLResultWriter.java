@@ -48,24 +48,24 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
             viewId = "";
         }
         if (condensedView != null) {
+            // Don't need the hierarchy information to render an empty condensed view
             checkEntryHierarchy();
-            //Build model for FreeMarker
-            final SimpleHash model = buildModelMap(condensedView, viewId);
-            Writer writer = null;
-            try {
-                StringWriter stringWriter = new StringWriter();
-                writer = new BufferedWriter(stringWriter);
-                final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
-                temp.process(model, writer);
-                writer.flush();
-                return stringWriter.toString();
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
+        }
+        //Build model for FreeMarker
+        final SimpleHash model = buildModelMap(condensedView, viewId);
+        Writer writer = null;
+        try {
+            StringWriter stringWriter = new StringWriter();
+            writer = new BufferedWriter(stringWriter);
+            final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
+            temp.process(model, writer);
+            writer.flush();
+            return stringWriter.toString();
+        } finally {
+            if (writer != null) {
+                writer.close();
             }
         }
-        return null;
     }
 
     private SimpleHash buildModelMap(final CondensedView condensedView, final String viewId) {
@@ -77,8 +77,8 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
             model.put("proteinLength", proteinLength);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(proteinLength, MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-            model.put("standalone", false); // Never used in InterProScan 5 standalone mode
         }
+        model.put("standalone", false); // Never used in InterProScan 5 standalone mode
         return model;
     }
 
