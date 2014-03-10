@@ -20,9 +20,8 @@
     </#if>
 
     <h3>Domains and repeats</h3>
-    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
 
-</div> <#-- Closing the prot_sum DIV -->
+    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
 
     <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
     <h3>Detailed signature matches</h3>

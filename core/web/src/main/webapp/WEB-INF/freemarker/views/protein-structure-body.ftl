@@ -9,23 +9,7 @@
 
 <h3>Domains and repeats</h3>
 
-    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-    <div class="prot_sum">
-    <#else>
-    <div class="prot_sum" style="background:none;">
-    </#if>
-
-
-
-    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
-
-        <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
-
-    <#else>
-        <div class="bot-row">None predicted.</div>
-    </#if>
-
-</div> <#-- Closing the prot_sum DIV -->
+    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
 
     <#if (protein.structuralFeatures?has_content || protein.structuralPredictions?has_content)>
         <#global locationId=0>
