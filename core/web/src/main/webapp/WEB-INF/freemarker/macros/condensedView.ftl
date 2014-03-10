@@ -4,11 +4,6 @@
 
     <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
     <div class="prot_sum">
-    <#else>
-    <div class="prot_sum" style="background:none;">
-    </#if>
-
-    <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
     <div class="bot-row">
         <div class="bot-row-line-top"></div>
         <ol class="signatures">
@@ -74,10 +69,13 @@
 
         </div>
     </div>
+    </div>
 
     <#else>
+    <div class="prot_sum" style="background:none;">
     <div class="bot-row">
         None predicted.
+    </div>
     </div>
     </#if>
 
