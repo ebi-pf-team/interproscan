@@ -35,13 +35,6 @@
 
 </head>
 <body>
-<div class="container_24">
-<div class="grid_24 clearfix" id="content" >
-
     <#include "./condensed-view-body.ftl" />
-
-</div>
-</div>
-
 </body>
 </html>
