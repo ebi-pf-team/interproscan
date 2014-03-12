@@ -1,19 +1,19 @@
-// Prepare protein match/structural match popups
-// E.g. Tie "match-location-1" span to "match-popup-1" hidden div content.
-function preparePopup(spanId) {
+// Prepare protein supermatch/match/structural match popups
+// E.g. Tie "match-location-1" span to "match-popup-1" HTML content from an AJAX call.
+function preparePopup(elementId) {
     var searchString = 'location-';
-    var prefix = spanId.substring(0, spanId.indexOf(searchString));
-    var postfix = spanId.substring(prefix.length + searchString.length, spanId.length);
+
+    var prefix = elementId.substring(0, elementId.indexOf(searchString));
+    var postfix = elementId.substring(prefix.length + searchString.length, elementId.length);
     var popupId = prefix.concat('popup-', postfix);
+    //alert('elementId: '.concat(elementId, ', popupId: ', popupId));
 
-    //alert('spanId: '.concat(spanId, ', popupId: ', popupId));
-
-    $('#'.concat(spanId)).click(function(event) {
+    $('#'.concat(elementId)).click(function(event) {
         event.preventDefault();
         return false;
     });
 
-    $('#'.concat(spanId)).qtip({
+    $('#'.concat(elementId)).qtip({
         content: {
             text: function(event, api) {
                 $.ajax({

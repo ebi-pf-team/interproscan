@@ -21,11 +21,12 @@
         <#assign prefix=viewId+"-"+prefix>
     </#if>
     <a id="${prefix}-location-${supermatchId}"
-       style="left:  ${((locationObj.start - 1) / proteinLength) * 100}%;
-               width: ${((locationObj.end - locationObj.start + 1) / proteinLength) * 100}%;"
        href="/interpro/popup/supermatch?id=${prefix}-popup-${supermatchId}&entryAc=${entryAc}&start=${locationObj.start?c}&end=${locationObj.end?c}"
-       title="${title} ${locationObj.start} - ${locationObj.end}">
-        <@locationMacro.location locationSpanId="${prefix}-span-"+supermatchId proteinLength=proteinLength titlePrefix=title location=locationObj colourClass=colourClass/>
+       title="${title} ${locationObj.start} - ${locationObj.end}"
+       class="match ${colourClass}"
+       style="left:  ${((locationObj.start - 1) / proteinLength) * 100}%;
+       width: ${((locationObj.end - locationObj.start + 1) / proteinLength) * 100}%;">
+        <#--<@locationMacro.location locationSpanId="${prefix}-span-"+supermatchId proteinLength=proteinLength titlePrefix=title location=locationObj colourClass=colourClass/>-->
     </a>
 
     </#if>
