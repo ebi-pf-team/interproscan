@@ -43,6 +43,7 @@
                     <#assign icon=icon?trim>
                     <#assign title=entry.type?replace("_"," ")>
                     <#assign colourClass>
+                    <#--For cases where the entry colour file is out of sync, we need to check that entryColours[entry.ac] exists -->
                         <#if entryColours[entry.ac]?? && (entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("repeat"))>
                             c${entryColours[entry.ac]} ${entry.type}
                         <#else>
