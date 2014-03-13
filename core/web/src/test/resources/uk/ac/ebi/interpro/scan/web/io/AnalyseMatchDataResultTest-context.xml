@@ -15,8 +15,12 @@
         </constructor-arg>
     </bean>
 
-    <bean id="resource" class="org.springframework.core.io.ClassPathResource">
+    <bean id="resource1" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="data/proteins/P38398.tsv"/>
+    </bean>
+
+    <bean id="incorrectFormattedResource" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/proteins/test_input_1.tsv"/>
     </bean>
 
  </beans>
