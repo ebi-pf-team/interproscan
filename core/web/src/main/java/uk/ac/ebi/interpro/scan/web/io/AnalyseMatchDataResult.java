@@ -52,25 +52,30 @@ public class AnalyseMatchDataResult {
          * P38398	BRCA1_HUMAN	1863	89C6D83FF56312AF	G3DSA:3.40.50.10190	G3DSA:3.40.50.10190	GENE3D	1648	1754	5.1000000000000426766658650783671814604E-40					9606	Homo sapiens	Homo sapiens (Human)    N
          * ...
          */
-        Collection<MatchDataRecord> records;
+        //Read in match data from resource (InterProScan TSV output)
+        Collection<MatchDataRecord> records = readInMatchDataFromResource(resource);
+        //Create and return SimpleProtein object.
+        return createSimpleProtein(records);
+    }
 
-        try {
-            records = reader.read(resource);
-        } catch (Exception e) {
-            LOGGER.error("Could not read from query resource: " + resource.getDescription());
-//            e.printStackTrace();
-            return null;
+    protected Collection<MatchDataRecord> readInMatchDataFromResource(Resource resource) {
+        if (resource == null) {
+            throw new IllegalStateException("Resource is NULL!");
         }
-
         // Assumption: Query results are for one specific protein accession!
         // Therefore all output relates to the same protein.
+        try {
+            Collection<MatchDataRecord> records = reader.read(resource);
+            if (records == null || records.size() < 1) {
+                LOGGER.info("No matches found in resource: " + resource.getDescription());
+                return null;
+            }
+            return records;
 
-        if (records == null || records.size() < 1) {
-            LOGGER.info("No matches found in resource: " + resource.getDescription());
+        } catch (Exception e) {
+            LOGGER.error("Could not read from query resource: " + resource.getDescription());
             return null;
         }
-
-        return createSimpleProtein(records);
     }
 
     /**

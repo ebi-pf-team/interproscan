@@ -1,42 +1,47 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 import uk.ac.ebi.interpro.scan.web.model.SimpleSignature;
 
-import javax.annotation.Resource;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 /**
  * Tests for {@link AnalyseMatchDataResult}
  *
- * @author  Matthew Fraser
- * @author  Antony Quinn
+ * @author Matthew Fraser
+ * @author Antony Quinn
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class AnalyseMatchDataResultTest {
 
-    @Resource
-    private AnalyseMatchDataResult parser;
+    @Autowired
+    private AnalyseMatchDataResult instance;
 
-    @Resource
-    org.springframework.core.io.Resource resource;
+    @Autowired
+    org.springframework.core.io.Resource resource1;
+
+    @Autowired
+    org.springframework.core.io.Resource incorrectFormattedResource;
 
     @Test
     public void testParse() throws IOException {
-        SimpleProtein protein = parser.parseMatchDataOutput(resource);
+        SimpleProtein protein = instance.parseMatchDataOutput(resource1);
         assertNotNull(protein);
         assertEquals("P38398", protein.getAc());
         assertEquals("BRCA1_HUMAN", protein.getId());
@@ -44,9 +49,19 @@ public class AnalyseMatchDataResultTest {
         assertEquals(9, protein.getAllEntries().size());
     }
 
-    @Test(expected = NullPointerException.class)
+    public void testIncorrectFormattedResource() {
+        SimpleProtein protein = instance.parseMatchDataOutput(incorrectFormattedResource);
+        assertNull("Resulting protein should be NULL!", protein);
+    }
+
+    @Test(expected = IllegalStateException.class)
     public void testResourceNull() {
-        parser.parseMatchDataOutput(null);
+        instance.parseMatchDataOutput(null);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReadInMatchDataFromNullResource() {
+        instance.readInMatchDataFromResource(null);
     }
 
     @Test
@@ -91,7 +106,7 @@ public class AnalyseMatchDataResultTest {
                 "Mus musculus (Mouse)",
                 false));
 
-        SimpleProtein protein = parser.createSimpleProtein(records);
+        SimpleProtein protein = instance.createSimpleProtein(records);
         assertNotNull(protein);
         List<SimpleEntry> entries = protein.getEntries();
         assertNotNull(entries);

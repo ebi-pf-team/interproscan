@@ -43,13 +43,10 @@
                     <#assign icon=icon?trim>
                     <#assign title=entry.type?replace("_"," ")>
                     <#assign colourClass>
-                    <#--TODO: Check domain and repeat in the same if clause-->
-                        <#if entry.type?lower_case?starts_with("domain")>
-                            c${entryColours[entry.ac]} ${entry.type}
-                        <#elseif entry.type?lower_case?starts_with("repeat")>
+                        <#if entryColours[entry.ac]?? && (entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("repeat"))>
                             c${entryColours[entry.ac]} ${entry.type}
                         <#else>
-                        ${entry.type}
+                            ${entry.type}
                         </#if>
                     </#assign>
                     <#assign colourClass=colourClass?trim>
