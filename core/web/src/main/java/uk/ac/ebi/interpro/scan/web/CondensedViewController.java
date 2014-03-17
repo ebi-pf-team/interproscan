@@ -73,7 +73,7 @@ public class CondensedViewController {
 
 
     private CondensedView idaToCondensedView(String ida) {
-        Pattern proteinInfoPattern = Pattern.compile("^(\\d+)/(\\w{6})#");
+        Pattern proteinInfoPattern = Pattern.compile("^(\\d+)/(\\w+)#");
         Pattern supermatchPattern = Pattern.compile("(\\d{1,6}:\\d+-\\d+[~#])");
         Pattern supermatchInfoPattern = Pattern.compile("(\\d{1,6}):(\\d+)-(\\d+)[~#]");
 
