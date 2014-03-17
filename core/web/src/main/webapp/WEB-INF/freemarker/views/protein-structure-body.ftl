@@ -55,7 +55,7 @@
                                                     <#list structuralMatchesMap?keys as key>
                                                         <#assign location=key>
                                                         <#assign locationId=locationId?number?int + 1>
-                                                        <@structuralLocationMacro.structuralLocation structMatchId=locationId proteinLength=proteinLength location=location structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource />
+                                                        <@structuralLocationMacro.structuralLocation structMatchId=locationId proteinAc=protein.ac proteinLength=proteinLength location=location structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource />
                                                     </#list>
 
                                                 <#--Draw in scale markers for this line-->
@@ -110,7 +110,7 @@
                                                     <#list structuralMatchesMap?keys as key>
                                                         <#assign location=key>
                                                         <#assign locationId=locationId?number?int + 1>
-                                                        <@structuralLocationMacro.structuralLocation structMatchId=locationId proteinLength=proteinLength location=key structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource/>
+                                                        <@structuralLocationMacro.structuralLocation structMatchId=locationId proteinAc=protein.ac proteinLength=proteinLength location=key structuralMatchData=feature.getSimpleStructuralMatchData(key) databaseMetadata=feature.dataSource/>
                                                     </#list>
 
                                                 <#--Draw in scale markers for this line-->
