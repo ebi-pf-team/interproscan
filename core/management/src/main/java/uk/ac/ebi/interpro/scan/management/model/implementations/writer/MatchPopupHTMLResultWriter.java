@@ -34,7 +34,7 @@ public class MatchPopupHTMLResultWriter extends PopupHTMLResultWriter {
         if (location == null) {
             throw new IllegalArgumentException("Location cannot be NULL");
         }
-        if (colourClass == null || colourClass.equals("")) {
+        if (colourClass == null) {
             throw new IllegalArgumentException("Colour class name must be supplied");
         }
 
