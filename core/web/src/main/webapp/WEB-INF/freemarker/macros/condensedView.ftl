@@ -12,11 +12,19 @@
     <#global superMatchId=0>
     <#assign proteinLength=condensedView.proteinLength>
 
+    <#--Show all condensed view information or just the basics?-->
+    <#assign showAll=true>
+    <#if showFullInfo?has_content && !showFullInfo>
+        <#assign showAll=false>
+    </#if>
+
     <#list condensedView.lines as line>
         <#assign type=line.type>
     <li class="signature entry-signatures">
         <#-- the order of the divs is important , first right column fixed-->
+        <#if showAll>
         <div class="bot-row-signame">${type}</div>
+        </#if>
         <div class="bot-row-line">
             <div class="matches">
                 <#list line.superMatchList as superMatch>
@@ -44,6 +52,7 @@
         <div class="bot-row-line-bot"></div>
     </div>
 
+    <#if showAll>
     <div class="prot_scale">
         <div class="bot-row">
 
@@ -69,6 +78,8 @@
 
         </div>
     </div>
+    </#if>
+
     </div>
 
     <#else>
