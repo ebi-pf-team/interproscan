@@ -30,8 +30,17 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
         }
     }
 
-    public String write(CondensedView condensedView) throws IOException, TemplateException {
-        return write(condensedView, null);
+    /**
+     * Create HTML for a condensed view.
+     *
+     * @param condensedView The data to use
+     * @param showFullInfo If true show full condensed view include scale numbers etc, otherwise show basic cut-down view.
+     * @return The HTML string
+     * @throws IOException
+     * @throws TemplateException
+     */
+    public String write(CondensedView condensedView, boolean showFullInfo) throws IOException, TemplateException {
+        return write(condensedView, null, showFullInfo);
     }
 
     /**
@@ -39,11 +48,12 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
      * @param condensedView The condensed view data
      * @param viewId An additional identifier for the condensed view (a useful extra prefix for the HTML elements when
      *               rendering multiple condensed views on the same page).
-     * @return
+     * @param showFullInfo If true show full condensed view include scale numbers etc, otherwise show basic cut-down view.
+     * @return The HTML string
      * @throws IOException
      * @throws TemplateException
      */
-    public String write(CondensedView condensedView, String viewId) throws IOException, TemplateException {
+    public String write(CondensedView condensedView, String viewId, boolean showFullInfo) throws IOException, TemplateException {
         if (viewId == null) {
             viewId = "";
         }
@@ -52,7 +62,7 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
             checkEntryHierarchy();
         }
         //Build model for FreeMarker
-        final SimpleHash model = buildModelMap(condensedView, viewId);
+        final SimpleHash model = buildModelMap(condensedView, viewId, showFullInfo);
         Writer writer = null;
         try {
             StringWriter stringWriter = new StringWriter();
@@ -68,7 +78,7 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
         }
     }
 
-    private SimpleHash buildModelMap(final CondensedView condensedView, final String viewId) {
+    private SimpleHash buildModelMap(final CondensedView condensedView, final String viewId, final boolean showFullInfo) {
         final SimpleHash model = new SimpleHash();
         if (condensedView != null) {
             int proteinLength = condensedView.getProteinLength();
@@ -77,6 +87,7 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
             model.put("proteinLength", proteinLength);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(proteinLength, MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
+            model.put("showFullInfo", showFullInfo);
         }
         model.put("standalone", false); // Never used in InterProScan 5 standalone mode
         return model;
