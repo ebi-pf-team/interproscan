@@ -4,6 +4,10 @@
 <#--TODO? Try http://stackoverflow.com/questions/296264/using-regular-expressions-in-jsp-el-->
     <#assign prefix=signature.ac?replace(":","")?replace(".","")>
 
+    <script type="text/javascript">
+
+    </script>
+
     <#if standalone>
     <div id="${matchPopupId}" style="display: none;">
     <#else>
