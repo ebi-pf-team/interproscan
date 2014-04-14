@@ -36,21 +36,21 @@ public class CondensedView implements Serializable {
         // First of all, need to build SuperMatches.
         final List<SimpleSuperMatch> superMatches = buildSuperMatchList();
 
+        prepareBuckets(superMatches);
+    }
+
+    public CondensedView(int proteinLength, List<SimpleSuperMatch> superMatches) {
+        this.proteinLength = proteinLength;
+        if (superMatches != null && superMatches.size() > 0) {
+            prepareBuckets(superMatches);
+        }
+    }
+
+    private void prepareBuckets(List<SimpleSuperMatch> superMatches) {
         // Second, need to build "SuperMatchBucket" objects.  This process also merges
         // matches to entries in the same hierarchy.
         final List<SuperMatchBucket> buckets = buildBuckets(superMatches);
 
-        prepareBuckets(buckets);
-    }
-
-    public CondensedView(int proteinLength, List<SuperMatchBucket> superMatchBuckets) {
-        this.proteinLength = proteinLength;
-        if (superMatchBuckets != null && superMatchBuckets.size() > 0) {
-            prepareBuckets(superMatchBuckets);
-        }
-    }
-
-    private void prepareBuckets(List<SuperMatchBucket> buckets) {
         // Fix any SuperMatchBuckets that have overlaps within them.
         fixOverlaps(buckets);
 
