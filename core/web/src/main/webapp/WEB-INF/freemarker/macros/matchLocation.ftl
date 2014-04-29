@@ -28,7 +28,7 @@
        class="match ${colourClass}"
        style="left:  ${((location.start - 1) / proteinLength) * 100}%;
                width: ${((location.end - location.start + 1) / proteinLength) * 100}%;"
-       href="/interpro/popup/match?id=${prefix}-popup-${matchId}&methodAc=${signature.ac}&start=${location.start?c}&end=${location.end?c}">
+       href="/interpro/popup/match?id=${prefix}-popup-${matchId}&methodAc=${signature.ac}&db=${signature.dataSource.sourceName}&start=${location.start?c}&end=${location.end?c}">
     </#if>
         <#--<@locationMacro.location locationSpanId=prefix+"-span-"+matchId proteinLength=proteinLength titlePrefix=title location=location colourClass=colourClass/>-->
     </a>
