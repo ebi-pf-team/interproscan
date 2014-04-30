@@ -11,7 +11,8 @@ UniProt data or the data warehouse used by InterPro web 6!
             <div class="prot_gal_col"><b>Accession</b></div>
             <div class="prot_gal_desc">
                 <a href="http://www.uniprot.org/uniprot/${protein.ac}" class="ext"
-                   title="View this protein in UniProtKB">${protein.ac}</a> (${protein.id})
+                   title="View this protein in UniProtKB">${protein.ac}</a>
+                <#if protein.id?has_content> (${protein.id})</#if>
             </div>
         </div>
 
