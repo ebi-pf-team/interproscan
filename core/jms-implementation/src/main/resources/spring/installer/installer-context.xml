@@ -106,9 +106,9 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
-                    <property name="releaseVersionNumber" value="8.1"/>
+                    <property name="releaseVersionNumber" value="9.0"/>
                     <property name="analysisJobId" value="jobPanther"/>
-                    <property name="modelFiles" value="file:${panther.models.dir.8.1}"/>
+                    <property name="modelFiles" value="file:${panther.models.dir.9.0}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="namesTabFile" value="names.tab"/>
                 </bean>
