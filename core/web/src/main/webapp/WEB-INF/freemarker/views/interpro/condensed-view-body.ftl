@@ -32,6 +32,6 @@
 <#else>
 <#-- We have no information for the specified protein accession at all - not found -->
 <p>
-    No summary view data.
+    No InterPro domains.
 </p>
 </#if>
