@@ -1,3 +1,0 @@
-For InterProScan 5 installation instructions please see:
-
-http://code.google.com/p/interproscan/wiki/RunningStandaloneInterProScan5
