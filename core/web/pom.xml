@@ -245,9 +245,9 @@
                         <groupId>org.mortbay.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
                         <!--Set version explicitly if get errors on Windows:-->
-                        <version>7.5.1.v20110908</version>
+                        <version>8.1.14.v20131031</version>
                         <configuration>
-                            <webApp>${project.build.directory}/interpro-protein-page.war</webApp>
+                            <war>${project.build.directory}/interpro-protein-page.war</war>
                         </configuration>
                     </plugin>
                 </plugins>
