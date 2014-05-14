@@ -4,14 +4,14 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.3-46.0</version>
+        <version>5.4-47.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-cli</artifactId>
-    <version>5.3-46.0</version>
+    <version>5.4-47.0</version>
 
     <packaging>jar</packaging>
 
@@ -23,25 +23,25 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>5.3-46.0</version>
+            <version>5.4-47.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>5.3-46.0</version>
+            <version>5.4-47.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-business</artifactId>
-            <version>5.3-46.0</version>
+            <version>5.4-47.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-persistence</artifactId>
-            <version>5.3-46.0</version>
+            <version>5.4-47.0</version>
         </dependency>
 
         <dependency>

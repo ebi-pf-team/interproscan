@@ -7,7 +7,7 @@
     <groupId>uk.ac.ebi.interpro.scan.batch</groupId>
     <artifactId>interproscan-batch</artifactId>
     <packaging>jar</packaging>
-    <version>5.3-46.0</version>
+    <version>5.4-47.0</version>
     <name>InterProScan Batch</name>
     <description>InterProScan Batch</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
@@ -36,14 +36,14 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>5.3-46.0</version>
+            <version>5.4-47.0</version>
         </dependency>
 
         <!-- i5 ProActive Spring Batch -->
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan.batch.proactive</groupId>
             <artifactId>interproscan-batch-proactive</artifactId>
-            <version>5.3-46.0</version>
+            <version>5.4-47.0</version>
         </dependency>
 
         <!-- MySQL -->
