@@ -7,7 +7,7 @@
     <groupId>uk.ac.ebi.interpro.scan.batch.proactive</groupId>
     <artifactId>interproscan-batch-proactive</artifactId>
     <packaging>jar</packaging>
-    <version>5.3-46.0</version>
+    <version>5.4-47.0</version>
     <name>InterProScan Batch ProActive</name>
     <description>InterProScan Batch ProActive</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
