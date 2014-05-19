@@ -292,7 +292,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 if (System.currentTimeMillis() - timeLastDisplayedStatsAndUpdatedClusterState > 5 * 60 * 1000) {
                     displayStats = true;
                     timeLastDisplayedStatsAndUpdatedClusterState =  System.currentTimeMillis();
-                    if(! clusterStateUpdatedRecently()) {
+                    if(gridName.equals("lsf") && ! clusterStateUpdatedRecently()) {
                         //shutdown the previous executor task and start a new task
                         scheduledExecutorService.shutdownNow();
                         scheduledExecutorService = updateClusterState();
