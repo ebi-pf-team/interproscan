@@ -27,7 +27,7 @@ function preparePopup(elementId) {
                     api.set('content.text', status + ': ' + error);
                 });
 
-                return '<img src="http://wwwdev.ebi.ac.uk/interpro/resources/images/ajax-loader.gif"/>'; // Set some initial text
+                return '<img src="http://www.ebi.ac.uk/interpro/resources/images/ajax-loader.gif"/>'; // Set some initial text
             },
             title: {
                 text: ' ', // Popup text in the title bar
