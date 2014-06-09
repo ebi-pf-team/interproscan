@@ -17,7 +17,8 @@ use PIRSF;
 #------------------------------------------------------------------------------
 #Deal with all of the options handling.
 
-my($sf_hmm, $pirsf_dat, $input, $mode, $help, $verbose, $output, $hmmer_path);
+my($sf_hmm, $pirsf_dat, $input, $mode, $help, $verbose, $output, $hmmer_path, 
+$cpus);
 
 #Both the family and subfamily hmm library combined. 
 $sf_hmm="sf_hmm_all";
@@ -27,6 +28,7 @@ $mode = "hmmscan";
 $verbose = 0;
 $output  = 'pirsf';
 $hmmer_path = '';
+$cpus = '';
 
 GetOptions(
   "h"        => \$help,
@@ -37,6 +39,7 @@ GetOptions(
   "dat=s"    => \$pirsf_dat,
   "outfmt=s" => \$output,
   "path=s"   => \$hmmer_path,
+  "cpus=i"   => \$cpus,
 ) or die("Error in command line arguments, run $0 -h\n");
 
 help() if($help);
@@ -70,7 +73,7 @@ my $matches = {};
 PIRSF::read_fasta($input, $matches) if($verbose);
 
 #Now run the search.
-PIRSF::run_hmmscan($input, $sf_hmm, $pirsf_data, $matches, $hmmer_path);
+PIRSF::run_hmmscan($input, $sf_hmm, $pirsf_data, $matches, $hmmer_path, $cpus);
 
 #Now determine the best matches and subfamily matches.
 my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
@@ -97,6 +100,7 @@ Options -
   -verbose                    : Report No matches, default off.
   -outfmt <pirsf|i5>          : Print output in different formats. Default prisf.
   -path                       : Path to HMMER binaries.
+  -cpu    <#>                 : Number of cpus to using for hmmscan.
   -help                       : Prints this message.
 
 EOF
