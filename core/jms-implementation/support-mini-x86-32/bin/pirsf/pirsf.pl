@@ -1,0 +1,91 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Data::Printer;
+use Getopt::Long;
+use PIRSF;
+
+#------------------------------------------------------------------------------
+#Deal with all of the options handling.
+
+my($sf_hmm, $pirsf_dat, $input, $mode, $help, $verbose);
+
+#Both the family and subfamily hmm library combined. 
+$sf_hmm="sf_hmm_all";
+#PIRSF data file
+$pirsf_dat="pirsf.dat";
+$mode = "hmmscan";
+$verbose = 0;
+
+GetOptions(
+  "h"        => \$help,
+  "fasta=s"  => \$input,
+  "hmmlib=s" => \$sf_hmm,
+  "verbose"  => \$verbose,
+  "mode=s"   => \$mode,
+  "dat=s"    => \$pirsf_dat,
+) or die("Error in command line arguments, run $0 -h\n");
+
+help() if($help);
+
+if(!$input){
+  print "\n *** FATAL, no input fasta file defined ***\n\n";
+  $help = 1;
+}
+
+help() if($help);
+
+#sf.tb file
+my $sftb="sf.tb";
+#sf.seq file (should run formatdb first)
+my $sfseq="sf.seq";
+
+#------------------------------------------------------------------------------
+#Main body
+
+#Check that the hmm files have been properly pressed
+PIRSF::checkHmmFiles($sf_hmm);
+
+#Read the PIRSF data file.
+my $pirsf_data = PIRSF::read_pirsf_dat($pirsf_dat);
+
+#Store all of the results here.
+my $matches = {};
+
+#This gets a list of sequences to be searched. No need
+#to parse the length, as that is in the hmmer output.
+PIRSF::read_fasta($input, $matches) if($verbose);
+
+#Now run the search.
+PIRSF::run_hmmscan($input, $sf_hmm, $pirsf_data, $matches);
+
+#Now determine the best matches and subfamily matches.
+my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
+
+#ASCII output - but we will want to directly load ingto the database.
+PIRSF::print_output($bestMatches, $pirsf_data);
+
+exit;
+
+#------------------------------------------------------------------------------
+
+
+sub help {
+
+  print<<EOF;
+
+usage: $0 -fasta myseqs.fa
+
+Options - 
+  -fasta  <filename>          : Input fasta that you want to analyse, required.
+  -hmmlib <filename>          : The PIRSF HMM library, containing both family and subfamily profiles, default sf_hmm_all .
+  -dat    <filename>          : The PIRSF data file, listing family and subfamily metadata, default pirsf.dat.
+  -mode   <hmmscan|hmmsearch> : [Experimental] Switch from hmmscan mode to hmmsearch.
+  -verbose                    : Report No matches, default off.
+  -help                       : Prints this message.
+
+EOF
+exit;
+}
+
