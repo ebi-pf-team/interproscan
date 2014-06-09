@@ -2,11 +2,13 @@ package PIRSF;
 
 use strict;
 use warnings;
-use Data::Printer;
 use File::Temp qw/tempdir/;
 
 sub checkHmmFiles{
-  my ($sf_hmm) = @_;
+  my ($sf_hmm, $path) = @_;
+  if($path and $path =~ /\S+/){
+    $path.='/' if($path !~ /\/^/);
+  }
   foreach my $ext (qw(.h3p .h3m .h3f .h3i)){
     if(!-e $sf_hmm.$ext){
       #Looks like the hmm database is not pressed
@@ -84,14 +86,17 @@ sub read_fasta {
 }
 
 sub run_hmmscan {
-  my ($infile, $sf_hmm, $pirsf_data, $matches) = @_;
+  my ($infile, $sf_hmm, $pirsf_data, $matches, $path) = @_;
   #Change to using table output.
   #system("$hmmscan --domtblout table -E 0.01 --acc $sf_hmm $infile")
   my $dir  = tempdir( CLEANUP => 1 );  
 
-
+  if($path and $path =~ /\S+/){
+    $path.='/' if($path !~ /\/^/);
+  }
+  $path .= 'hmmscan';
   #Run HMM search for full-length models and get information
-  my @sf_out=` hmmscan --domtblout $dir/table -E 0.01 --acc $sf_hmm $infile`;
+  my @sf_out=` $path --domtblout $dir/table -E 0.01 --acc $sf_hmm $infile`;
 
   open(T, '<', "$dir/table") or die "Failed to open table\n";
   while(<T>){
@@ -222,14 +227,11 @@ sub _print_i5 {
   my ($data, $seq) = @_;  
   my ($hmmMatch, $seqMatch, $envMatch) = _matchBounds($data);
   
-  my $line = join("\t", $seq,        #ID
+  my $line = join("\t", 
                         $data->[20], #LOCATION_END
                         $data->[19], #LOCATION_START
                         $data->[1],  #MODEL_ID
-                        '',          #NUMERIC_SEQUENCE_ID
-                        '',          #SEQUENCE_ID
-                        '',          #SIGNATURE_LIBRARY
-                        '',          #SIG_LIB_RELEASE
+                        $seq,        #SEQUENCE_ID
                         $data->[6],  #EVALUE
                         $hmmMatch,   #HMM_BOUNDS
                         $data->[18], #HMM_END

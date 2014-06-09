@@ -2,14 +2,22 @@
 
 use strict;
 use warnings;
-use Data::Printer;
+use lib;
 use Getopt::Long;
+use FindBin qw($Bin);
+
+#Our PIRSF module sits in the same directory as the executable.
+#Add the path to the library path.
+BEGIN {
+  lib->import($Bin);
+}
+
 use PIRSF;
 
 #------------------------------------------------------------------------------
 #Deal with all of the options handling.
 
-my($sf_hmm, $pirsf_dat, $input, $mode, $help, $verbose, $output);
+my($sf_hmm, $pirsf_dat, $input, $mode, $help, $verbose, $output, $hmmer_path);
 
 #Both the family and subfamily hmm library combined. 
 $sf_hmm="sf_hmm_all";
@@ -18,6 +26,7 @@ $pirsf_dat="pirsf.dat";
 $mode = "hmmscan";
 $verbose = 0;
 $output  = 'pirsf';
+$hmmer_path = '';
 
 GetOptions(
   "h"        => \$help,
@@ -27,6 +36,7 @@ GetOptions(
   "mode=s"   => \$mode,
   "dat=s"    => \$pirsf_dat,
   "outfmt=s" => \$output,
+  "path=s"   => \$hmmer_path,
 ) or die("Error in command line arguments, run $0 -h\n");
 
 help() if($help);
@@ -47,7 +57,7 @@ my $sfseq="sf.seq";
 #Main body
 
 #Check that the hmm files have been properly pressed
-PIRSF::checkHmmFiles($sf_hmm);
+PIRSF::checkHmmFiles($sf_hmm, $hmmer_path);
 
 #Read the PIRSF data file.
 my $pirsf_data = PIRSF::read_pirsf_dat($pirsf_dat);
@@ -60,7 +70,7 @@ my $matches = {};
 PIRSF::read_fasta($input, $matches) if($verbose);
 
 #Now run the search.
-PIRSF::run_hmmscan($input, $sf_hmm, $pirsf_data, $matches);
+PIRSF::run_hmmscan($input, $sf_hmm, $pirsf_data, $matches, $hmmer_path);
 
 #Now determine the best matches and subfamily matches.
 my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
@@ -86,6 +96,7 @@ Options -
   -mode   <hmmscan|hmmsearch> : [Experimental] Switch from hmmscan mode to hmmsearch.
   -verbose                    : Report No matches, default off.
   -outfmt <pirsf|i5>          : Print output in different formats. Default prisf.
+  -path                       : Path to HMMER binaries.
   -help                       : Prints this message.
 
 EOF
