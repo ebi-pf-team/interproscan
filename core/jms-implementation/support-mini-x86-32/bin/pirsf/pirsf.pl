@@ -9,7 +9,7 @@ use PIRSF;
 #------------------------------------------------------------------------------
 #Deal with all of the options handling.
 
-my($sf_hmm, $pirsf_dat, $input, $mode, $help, $verbose);
+my($sf_hmm, $pirsf_dat, $input, $mode, $help, $verbose, $output);
 
 #Both the family and subfamily hmm library combined. 
 $sf_hmm="sf_hmm_all";
@@ -17,6 +17,7 @@ $sf_hmm="sf_hmm_all";
 $pirsf_dat="pirsf.dat";
 $mode = "hmmscan";
 $verbose = 0;
+$output  = 'pirsf';
 
 GetOptions(
   "h"        => \$help,
@@ -25,6 +26,7 @@ GetOptions(
   "verbose"  => \$verbose,
   "mode=s"   => \$mode,
   "dat=s"    => \$pirsf_dat,
+  "outfmt=s" => \$output,
 ) or die("Error in command line arguments, run $0 -h\n");
 
 help() if($help);
@@ -64,7 +66,7 @@ PIRSF::run_hmmscan($input, $sf_hmm, $pirsf_data, $matches);
 my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
 
 #ASCII output - but we will want to directly load ingto the database.
-PIRSF::print_output($bestMatches, $pirsf_data);
+PIRSF::print_output($bestMatches, $pirsf_data, $output);
 
 exit;
 
@@ -83,6 +85,7 @@ Options -
   -dat    <filename>          : The PIRSF data file, listing family and subfamily metadata, default pirsf.dat.
   -mode   <hmmscan|hmmsearch> : [Experimental] Switch from hmmscan mode to hmmsearch.
   -verbose                    : Report No matches, default off.
+  -outfmt <pirsf|i5>          : Print output in different formats. Default prisf.
   -help                       : Prints this message.
 
 EOF

@@ -152,11 +152,10 @@ sub post_process {
 }
 
 
-
 sub print_output {
-  my($bestMatch, $pirsf_data) = @_;
-
-
+  my($bestMatch, $pirsf_data, $outfmt) = @_;
+   
+#For PIRSF outfmt
 #Query sequence: A0B5N6  matches PIRSF006429: Predicted glutamate synthase, large subunit domain 2 (FMN-binding)
 #   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
 #   1 !  511.7   0.1  1.5e-156  4.4e-154      24     495 ..      16     494 ..       2     497 .] 0.88
@@ -164,23 +163,37 @@ sub print_output {
 #   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
 #   1 !  652.6   0.0  6.7e-200  1.6e-198       6     474 ..       5     496 ..       1     497 [] 0.95
 
+
 #Query sequence: A4YCN9 No Match
  
-   foreach my $seq (keys %$bestMatch){
-    print "Query Sequence: $seq ";
-    if(exists($bestMatch->{$seq}->{sf})){
-      my $sf_data = $bestMatch->{$seq}->{sf};
-      print "matches $sf_data->[1]: $pirsf_data->{$sf_data->[1]}->{name}\n";
-      _print_report($sf_data);
-      if($bestMatch->{$seq}->{sub}){
-        my $sub_data = $bestMatch->{$seq}->{sub};
-        print " and matches Sub-Family $sub_data->[1]: $pirsf_data->{$sub_data->[1]}->{name}\n";
-        _print_report($sub_data);
-      }    
-    }else{
-      print "No match\n";
+   if(lc($outfmt) eq 'pirsf'){ 
+    foreach my $seq (keys %$bestMatch){
+      print "Query Sequence: $seq ";
+      if(exists($bestMatch->{$seq}->{sf})){
+        my $sf_data = $bestMatch->{$seq}->{sf};
+        print "matches $sf_data->[1]: $pirsf_data->{$sf_data->[1]}->{name}\n";
+        _print_report($sf_data);
+        if($bestMatch->{$seq}->{sub}){
+          my $sub_data = $bestMatch->{$seq}->{sub};
+          print " and matches Sub-Family $sub_data->[1]: $pirsf_data->{$sub_data->[1]}->{name}\n";
+          _print_report($sub_data);
+        }    
+      }else{
+        print "No match\n";
+      }
+    } 
+  }elsif(lc($outfmt) eq 'i5'){
+    foreach my $seq (keys %$bestMatch){
+       if(exists($bestMatch->{$seq}->{sf})){
+        my $sf_data = $bestMatch->{$seq}->{sf};
+        _print_i5($sf_data, $seq);
+        if($bestMatch->{$seq}->{sub}){
+          my $sub_data = $bestMatch->{$seq}->{sub};
+          _print_i5($sub_data, $seq);
+        }
+      }
     }
-  } 
+  }
   
   #Output
   #if ($SF) 
@@ -193,13 +206,8 @@ sub print_output {
 
 sub _print_report {
   my($data) = @_;
-  my ($hmmMatch, $seqMatch, $envMatch);
-  $hmmMatch .= $data->[15] == 1 ? "[" : ".";
-  $hmmMatch .= $data->[16] == $data->[2] ? "]" : ".";
-  $seqMatch .= $data->[17] == 1 ? "[" : ".";
-  $seqMatch .= $data->[18] == $data->[5] ? "]" : ".";
-  $envMatch .= $data->[19] == 1 ? "[" : ".";
-  $envMatch .= $data->[20] == $data->[5] ? "]" : ".";
+  my ($hmmMatch, $seqMatch, $envMatch) = _matchBounds($data);
+  
   print sprintf("%4s  %7s%6s%10s%10s%8s%8s   %8s%8s   %8s%8s   %5s\n" , 
                 '#', 'score', 'bias', 'c-Evalue', 'i-Evalue', 'hmmfrom', 
                 'hmm to', 'alifrom', 'ali to', 'envfrom', 'env to', 'acc' );
@@ -210,6 +218,46 @@ sub _print_report {
                 $data->[17], $data->[18], $seqMatch, $data->[19], $data->[20], $envMatch, $data->[21]);   
 }
 
+sub _print_i5 {
+  my ($data, $seq) = @_;  
+  my ($hmmMatch, $seqMatch, $envMatch) = _matchBounds($data);
+  
+  my $line = join("\t", $seq,        #ID
+                        $data->[20], #LOCATION_END
+                        $data->[19], #LOCATION_START
+                        $data->[1],  #MODEL_ID
+                        '',          #NUMERIC_SEQUENCE_ID
+                        '',          #SEQUENCE_ID
+                        '',          #SIGNATURE_LIBRARY
+                        '',          #SIG_LIB_RELEASE
+                        $data->[6],  #EVALUE
+                        $hmmMatch,   #HMM_BOUNDS
+                        $data->[18], #HMM_END
+                        $data->[17], #HMM_START
+                        $data->[13], #LOCATION_SCORE
+                        $data->[7],  #SCORE
+                        $data->[12], #DOMAIN_BIAS
+                        $data->[15], #DOMAIN_CE_VALUE
+                        $data->[16], #DOMAIN_IE_VALUE
+                        $data->[20], #ENVELOPE_END
+                        $data->[19], #ENVELOPE_START
+                        $data->[21], #EXPECTED_ACCURACY
+                        $data->[8]); #FULL_SEQUENCE_BIAS
+   print "$line\n";
+}
+
+sub _matchBounds{
+  my ($data) = @_;
+  my ($hmmMatch, $seqMatch, $envMatch); 
+  $hmmMatch .= $data->[15] == 1 ? "[" : ".";
+  $hmmMatch .= $data->[16] == $data->[2] ? "]" : ".";
+  $seqMatch .= $data->[17] == 1 ? "[" : ".";
+  $seqMatch .= $data->[18] == $data->[5] ? "]" : ".";
+  $envMatch .= $data->[19] == 1 ? "[" : ".";
+  $envMatch .= $data->[20] == $data->[5] ? "]" : ".";
+
+  return($hmmMatch, $seqMatch, $envMatch);
+}
 =head
 
 #BLAST search
