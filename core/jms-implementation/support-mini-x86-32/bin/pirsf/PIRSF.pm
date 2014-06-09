@@ -86,17 +86,20 @@ sub read_fasta {
 }
 
 sub run_hmmscan {
-  my ($infile, $sf_hmm, $pirsf_data, $matches, $path) = @_;
+  my ($infile, $sf_hmm, $pirsf_data, $matches, $path, $cpu) = @_;
   #Change to using table output.
   #system("$hmmscan --domtblout table -E 0.01 --acc $sf_hmm $infile")
   my $dir  = tempdir( CLEANUP => 1 );  
-
   if($path and $path =~ /\S+/){
     $path.='/' if($path !~ /\/^/);
   }
+
+  if($cpu and $cpu =~ /\d+/){
+    $cpu = "--cpu $cpu";
+  }
   $path .= 'hmmscan';
   #Run HMM search for full-length models and get information
-  my @sf_out=` $path --domtblout $dir/table -E 0.01 --acc $sf_hmm $infile`;
+  my @sf_out=` $path $cpu --domtblout $dir/table -E 0.01 --acc $sf_hmm $infile`;
 
   open(T, '<', "$dir/table") or die "Failed to open table\n";
   while(<T>){
