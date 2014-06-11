@@ -9,11 +9,12 @@ sub checkHmmFiles{
   if($path and $path =~ /\S+/){
     $path.='/' if($path !~ /\/^/);
   }
+  $path .= 'hmmfetch';
   foreach my $ext (qw(.h3p .h3m .h3f .h3i)){
     if(!-e $sf_hmm.$ext){
       #Looks like the hmm database is not pressed
-      warn "Running hmm press on $sf_hmm\n";
-      system("hmmpress $sf_hmm") and die "Could not run hmmpress!\n";;
+      warn "Running hmmpress ($path) on $sf_hmm\n";
+      system("$path $sf_hmm") and die "Could not run hmmpress!\n";;
       last;
     }
   }
