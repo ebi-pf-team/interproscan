@@ -1,5 +1,0 @@
-# generator,sequenceIdentifier,model,score,evalue,start,end,locationScore,locationEvalue,hmmStart,hmmEnd,hmmBounds,alignment
-# TODO: We need to get dbversion (from JobParameters?)
-HMMER 2.3.2,9d380adca504b0b1a2654975c340af78,PF02310,0.035,3.7E-9,3,107,3.0,3.7E-9,1,104,[.,12M3D5I
-HMMER 2.3.2,1adb07a14aa81b3033f2d33059670f2d,PF00058,252.4,3.9E-75,328,373,46.2,4.9E-13,1,47,[],3M3D3I
-HMMER 2.3.2,1adb07a14aa81b3033f2d33059670f2d,PF00058,252.4,3.9E-75,375,416,58.1,1.3E-16,1,47,[],3M3D3I
