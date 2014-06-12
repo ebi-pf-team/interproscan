@@ -119,7 +119,7 @@ public class Installer implements Runnable {
     }
 
     private void loadEntries() {
-        String releaseVersion = jdbcEntryDAO.getLatestDatabaseReleaseVersion();
+        String releaseVersion = "48.0"; // jdbcEntryDAO.getLatestDatabaseReleaseVersion(); // TODO Rollback
         Release interProRelease = releaseDAO.getReleaseByVersion(releaseVersion);
         if (interProRelease == null) {
             interProRelease = releaseDAO.insert(new Release(releaseVersion));
