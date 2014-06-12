@@ -112,10 +112,8 @@
         <module>web</module>
         <module>management</module>
         <module>jms-implementation</module>
-        <module>cli</module>
         <module>precalcmatches</module>
         <module>condensed-view</module>
-        <!--<module>master-tools</module>-->
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
