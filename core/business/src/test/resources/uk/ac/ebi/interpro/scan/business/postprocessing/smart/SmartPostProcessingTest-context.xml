@@ -10,7 +10,7 @@
     2. Created binary file:
        hmmconvert -b smart.HMMs smart.HMMs.bin
     3. Ran HmmPfam:
-       bin/hmmer/hmmer2/hmmpfam - -cpu 1 - -acc -A 0 data/smart/6.1/smart.HMMs.bin business/src/test/resources/uk/ac/ebi/interpro/scan/business/postprocessing/smart/smart.fasta
+       bin/hmmer/hmmer2/2.3.2/hmmpfam - -cpu 1 - -acc -A 0 data/smart/6.1/smart.HMMs.bin business/src/test/resources/uk/ac/ebi/interpro/scan/business/postprocessing/smart/smart.fasta
     4. Removed SM00025 entries from UPI0000000030-hmmpfam.txt
 
     -->

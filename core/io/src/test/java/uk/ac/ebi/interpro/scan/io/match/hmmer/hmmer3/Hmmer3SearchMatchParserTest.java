@@ -115,7 +115,7 @@ public class Hmmer3SearchMatchParserTest {
     }
 
     @Test
-    @Ignore("Currently need to have an entire hmm library in the classpath, so this needs to be switched on manually.  Note that the location / name of the hmm linbrary and the hmm results file should be set in the test context.xml file src/test/resources/uk/ac/ebi/interpro/scan/io/match/data.hmmer23.hmmer3/Hmmer3SearchMatchParserTest-context.xml")
+    @Ignore("Currently need to have an entire hmm library in the classpath, so this needs to be switched on manually.  Note that the location / name of the hmm linbrary and the hmm results file should be set in the test context.xml file src/test/resources/uk/ac/ebi/interpro/scan/io/match/hmmer/hmmer3/Hmmer3SearchMatchParserTest-context.xml")
     public void testPfamParser() throws IOException {
         parse(pfamParser, pfamFile.getInputStream());
     }

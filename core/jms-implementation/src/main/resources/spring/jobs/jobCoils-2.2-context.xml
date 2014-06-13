@@ -14,7 +14,7 @@
         <property name="doRunLocally" value="true"/>
     </bean>
 
-    <bean id="abstractCoilsStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+    <bean id="abstractCoilsStep-2.2" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobCoils-2.2"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.COILS}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
@@ -23,9 +23,9 @@
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="stepCoilsWriteFastaFile"
+    <bean id="stepCoilsWriteFastaFile-2.2"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstractCoilsStep">
+          parent="abstractCoilsStep-2.2">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create fasta file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -34,11 +34,11 @@
     </bean>
 
     <!-- STEP 2 -->
-    <bean id="stepCoilsRunBinary"
+    <bean id="stepCoilsRunBinary-2.2"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.coils.RunCoilsBinaryStep"
-          parent="abstractCoilsStep">
+          parent="abstractCoilsStep-2.2">
         <!-- /ebi/sp/pro1/interpro/binaries/32_bit_Linux/ncoils -c -m /ebi/sp/pro1/interpro/data/members/coils/2.2/new_coil.mat <  -->
-        <property name="dependsUpon" ref="stepCoilsWriteFastaFile"/>
+        <property name="dependsUpon" ref="stepCoilsWriteFastaFile-2.2"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.coils.path}"/>
         <property name="binarySwitches" value="-c -m"/>
@@ -49,18 +49,18 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <bean id="stepCoilsDeleteFastaFile"
+    <bean id="stepCoilsDeleteFastaFile-2.2"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractCoilsStep">
-        <property name="dependsUpon" ref="stepCoilsRunBinary"/>
+          parent="abstractCoilsStep-2.2">
+        <property name="dependsUpon" ref="stepCoilsRunBinary-2.2"/>
         <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <bean id="stepCoilsStoreFilteredMatches"
+    <bean id="stepCoilsStoreFilteredMatches-2.2"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.coils.ParseCoilsOutputStep"
-          parent="abstractCoilsStep">
-        <property name="dependsUpon" ref="stepCoilsRunBinary"/>
+          parent="abstractCoilsStep-2.2">
+        <property name="dependsUpon" ref="stepCoilsRunBinary-2.2"/>
         <property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>
         <property name="coilsOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="parser">
@@ -74,10 +74,10 @@
         <property name="serialGroup" value="PARSE_COILS"/>
     </bean>
 
-    <bean id="stepCoilsDeleteRawOutput"
+    <bean id="stepCoilsDeleteRawOutput-2.2"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractCoilsStep">
-        <property name="dependsUpon" ref="stepCoilsStoreFilteredMatches"/>
+          parent="abstractCoilsStep-2.2">
+        <property name="dependsUpon" ref="stepCoilsStoreFilteredMatches-2.2"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>

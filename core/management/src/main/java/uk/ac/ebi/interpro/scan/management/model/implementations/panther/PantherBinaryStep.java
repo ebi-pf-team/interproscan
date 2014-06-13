@@ -105,7 +105,7 @@ public final class PantherBinaryStep extends RunBinaryStep {
      * -D I
      * -E 1e-3
      * -B bin/blast/2.2.6/blastall
-     * -H bin/hmmer/hmmer2/hmmsearch
+     * -H bin/hmmer/hmmer2/2.3.2/hmmsearch
      * -T temp/
      * -n
      * -i UPI000000004D.fasta

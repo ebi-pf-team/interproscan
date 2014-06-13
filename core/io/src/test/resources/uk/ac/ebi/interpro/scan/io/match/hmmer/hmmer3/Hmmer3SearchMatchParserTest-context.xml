@@ -15,10 +15,10 @@
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
                 <property name="gaValuesRetriever">
                     <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
-                        <constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm"/>
+                        <constructor-arg value="data/hmmer3/3.1b1/hmmsearch/Pfam-A.hmm"/>
                         <!--<constructor-arg>-->
                         <!--<bean class="org.springframework.core.io.ClassPathResource">-->
-                        <!--<constructor-arg value="data/hmmer3/hmmsearch/Pfam-A.hmm" />-->
+                        <!--<constructor-arg value="data/hmmer3/3.1b1/hmmsearch/Pfam-A.hmm" />-->
                         <!--</bean>-->
                         <!--</constructor-arg>-->
                     </bean>
