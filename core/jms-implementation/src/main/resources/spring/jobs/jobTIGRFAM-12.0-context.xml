@@ -42,7 +42,7 @@
           parent="abstractTIGRFAMStep-12.0">
         <!-- In example command line below, replace _ with -
         
-        /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.0/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/tigrfam/12.0/TIGRFAMs_12.0_HMM.LIB  -->
+        /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/tigrfam/12.0/TIGRFAMs_12.0_HMM.LIB  -->
         <property name="dependsUpon" ref="stepTIGRFAMWriteFastaFile-12.0"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
