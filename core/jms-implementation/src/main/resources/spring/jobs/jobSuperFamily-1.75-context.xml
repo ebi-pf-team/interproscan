@@ -41,7 +41,7 @@
        hmmscan -E 10 -Z 15438 -o HMMER3_OUTPUT_FILE data/superfamily/1.75/hmmlib_1.75 INPUT_SEQUENCE_FILE
         -->
         <property name="dependsUpon" ref="stepSuperFamilyWriteFastaFile-1.75"/>
-        <property name="stepDescription" value="Run HMMER 3.0"/>
+        <property name="stepDescription" value="Run HMMER3"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.superfamily} ${hmmer3.hmmsearch.cpu.switch.superfamily}"/>
         <property name="fullPathToHmmFile" value="${superfamily.hmm.path.3.0}"/>
