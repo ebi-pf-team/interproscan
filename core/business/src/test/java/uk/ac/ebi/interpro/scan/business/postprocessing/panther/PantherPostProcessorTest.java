@@ -1,17 +1,11 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.panther;
 
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor;
-import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;

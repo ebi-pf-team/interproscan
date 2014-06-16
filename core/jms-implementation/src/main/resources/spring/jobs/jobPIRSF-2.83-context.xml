@@ -53,7 +53,7 @@
 
     <!-- STEP 3: Reads the raw HMMR result output and persists it in the H2 memory database-->
     <bean id="stepPIRSFStoreSuperfamRawMatches-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.ParsePIRSFHmmpfamOutputStep"
           parent="abstractPIRSFStep-2.83">
         <!--General step properties-->
         <property name="dependsUpon" ref="stepPIRSFRunBinarySuperfam-2.83"/>
@@ -77,7 +77,7 @@
 
     <!-- STEP 4: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
     <bean id="stepPirsfOverlapPostProcessing-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.OverlapPostProcessingStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.OverlapPostProcessingStep"
           parent="abstractPIRSFStep-2.83">
         <!--General step properties-->
         <property name="stepDescription"
@@ -87,7 +87,7 @@
         <!--More specific properties-->
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.83"/>
         <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.OverlapPostProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer2.OverlapPostProcessor">
                 <property name="pirsfDatFileInfoHolder" ref="pirsfDatFileInfoHolder-2.83"/>
             </bean>
         </property>
@@ -100,7 +100,7 @@
     <!-- STEP 5: Runs HMMR from binary and writes the raw result to the specified output file-->
     <!-- The binary will only run if the content of the subfamilies into file isn't empty-->
     <bean id="stepPIRSFRunBinarySubfam-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfRunHmmerBinaryStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.PirsfRunHmmerBinaryStep"
           parent="abstractPIRSFStep-2.83">
         <!-- In example command line below, replace _ with -
         /ebi/production/interpro/binaries/64_bit_Linux/hmmpfam  -A 0 _-cpu 1 _-acc -E 0.01 /ebi/sp/pro1/interpro/data/members/pirsf/278/sf_hmm_subf.bin  -->
@@ -122,7 +122,7 @@
 
     <!-- STEP 6: Reads the raw HMMR result output and persists it in the H2 memory database-->
     <bean id="stepPIRSFStoreSubfamRawMatches-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.ParsePIRSFHmmpfamOutputStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.ParsePIRSFHmmpfamOutputStep"
           parent="abstractPIRSFStep-2.83">
         <!--General step properties-->
         <property name="dependsUpon" ref="stepPIRSFRunBinarySubfam-2.83"/>
@@ -146,7 +146,7 @@
 
     <!-- STEP 7: Checks overlap criterion for all HMMR 2 raw matches after running HMMR 2 from binary-->
     <bean id="stepPirsfSubfamPostProcessing-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.SubfamilyPostProcessingStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.SubfamilyPostProcessingStep"
           parent="abstractPIRSFStep-2.83">
         <!--General step properties-->
         <property name="stepDescription"
@@ -156,7 +156,7 @@
         <!--More specific properties-->
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.83"/>
         <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.SubfamilyPostProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer2.SubfamilyPostProcessor">
                 <property name="subfamilyFileParser" ref="pirsfSubfamFileParser-2.83"/>
                 <property name="pirsfDatFileInfoHolder" ref="pirsfDatFileInfoHolder-2.83"/>
 
@@ -169,7 +169,7 @@
 
     <!-- STEP 8: Write blast input file -->
     <bean id="stepPIRSFWriteFastaForBlast-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.WriteFastaFileForBlastStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.WriteFastaFileForBlastStep"
           parent="abstractPIRSFStep-2.83">
         <property name="stepDescription" value="Create FASTA file for proteins to BLAST."/>
         <property name="dependsUpon" ref="stepPirsfSubfamPostProcessing-2.83"/>
@@ -181,7 +181,7 @@
 
     <!-- STEP 9: Run BLAST from binary -->
     <bean id="stepPirsfBlast-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfBlastStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.PirsfBlastStep"
           parent="abstractPIRSFStep-2.83">
         <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
         <property name="dependsUpon" ref="stepPIRSFWriteFastaForBlast-2.83"/>
@@ -198,12 +198,12 @@
 
     <!-- STEP 10: BLAST post processing step-->
     <bean id="stepBlastPostProcessing-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.BlastPostProcessingStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.BlastPostProcessingStep"
           parent="abstractPIRSFStep-2.83">
         <property name="stepDescription" value="Run BLAST binary for PIRSF"/>
         <property name="dependsUpon" ref="stepPirsfBlast-2.83"/>
         <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.BlastPostProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer2.BlastPostProcessor">
                 <property name="sfTbFileParser" ref="pirsfSfTbFileParser-2.83"/>
                 <property name="sfTbFileResource" value="file:${pirsf.sf.tb.path.2.83}"/>
             </bean>
@@ -215,7 +215,7 @@
 
     <!-- STEP 11: Persist filtered matches step-->
     <bean id="stepPirsfPersist-2.83"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.PirsfSubfamPersistStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2.PirsfSubfamPersistStep"
           parent="abstractPIRSFStep-2.83">
         <property name="serialGroup" value="HMMER2_POST_PROCESSING"/>
         <property name="stepDescription" value="Persists filtered matches."/>
@@ -269,17 +269,17 @@
     </bean>
 
     <!--Parses subfam.out file-->
-    <bean id="pirsfSubfamFileParser-2.83" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfSubfamilyFileParser"/>
+    <bean id="pirsfSubfamFileParser-2.83" class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer2.PirsfSubfamilyFileParser"/>
     <!--Parses PIRSF file with .tb extension-->
-    <bean id="pirsfSfTbFileParser-2.83" class="uk.ac.ebi.interpro.scan.io.pirsf.SfTbFileParser"/>
+    <bean id="pirsfSfTbFileParser-2.83" class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer2.SfTbFileParser"/>
 
     <!--Keeps information from the PIRSF file with .dat extension-->
-    <bean id="pirsfDatFileInfoHolder-2.83" class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileInfoHolder">
+    <bean id="pirsfDatFileInfoHolder-2.83" class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer2.PirsfDatFileInfoHolder">
         <constructor-arg type="org.springframework.core.io.Resource" value="file:${pirsf.dat.path.2.83}"/>
     </bean>
 
     <bean id="pirsfSubfamPersistenceProcessor-2.83"
-          class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.SubfamilyPersistenceProcessor">
+          class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer2.SubfamilyPersistenceProcessor">
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.83"/>
     </bean>
 
