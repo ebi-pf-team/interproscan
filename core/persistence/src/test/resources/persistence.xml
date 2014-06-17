@@ -80,6 +80,7 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
 
         <properties>
