@@ -18,6 +18,8 @@ import java.util.Set;
  *         to the I5 match type, for PANTHER.
  */
 public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<PantherMatch> {
+
+    //TODO: Add the e-value to the match location
     @Override
     public PantherMatch convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
         if (berkeleyMatch == null || signature == null) {
