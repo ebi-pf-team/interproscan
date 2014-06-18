@@ -19,6 +19,7 @@ import java.util.Set;
  */
 public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamilyHmmer3Match> {
 
+    //TODO: Add the e-value to the match location
     @Override
     public SuperFamilyHmmer3Match convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
         if (berkeleyMatch == null || signature == null) {
