@@ -90,6 +90,21 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPIRSF-2.85"/>
                 </bean>
+
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="PIRSF"/>
+                    <property name="releaseVersionNumber" value="2.84"/>
+                    <property name="modelFiles">
+                        <list>
+                            <value>file:${pirsf.hmm.path.2.84}</value>
+                            <value>file:${pirsf.hmm.subf.path.2.84}</value>
+                        </list>
+                    </property>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPIRSF-2.84"/>
+                </bean>
+
+
                 <bean class="uk.ac.ebi.interpro.scan.io.prodom.model.ProDomModelParser">
                     <property name="signatureLibrary" value="PRODOM"/>
                     <property name="releaseVersionNumber" value="2006.1"/>
