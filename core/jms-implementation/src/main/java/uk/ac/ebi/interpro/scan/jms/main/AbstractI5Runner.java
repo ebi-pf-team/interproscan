@@ -36,18 +36,33 @@ public class AbstractI5Runner {
         HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, HEADER, commandLineOptionsForHelp, FOOTER);
     }
 
-    protected static void checkDirectoryExistenceAndWritePermission(final String filePath, final String option) {
+
+    protected static void checkFileExistence(final String filePath, final String option) {
+        checkDirectoryExistence(filePath, option);
+        File file = new File(filePath);
+        if (!file.exists()) {
+            System.out.println("For the (-" + option + ") option you specified a file which does not exist:");
+            System.out.println(file);
+            System.exit(2);
+        }
+    }
+
+    protected static void checkDirectoryExistence(final String filePath, final String option) {
         String parent = new File(filePath).getParent();
         if (option.equals(I5Option.TEMP_DIRECTORY.getShortOpt())) {
             parent = filePath;
         }
         File dir = new File(parent);
-        File file = new File(filePath);
         if (!dir.exists()) {
             System.out.println("For the (-" + option + ") option you specified a location which doesn't exist:");
             System.out.println(dir);
             System.exit(2);
         }
+    }
+
+    protected static void checkDirectoryExistenceAndFileWritePermission(final String filePath, final String option) {
+        checkDirectoryExistence(filePath, option);
+        File file = new File(filePath);
         if (file.exists()) {
             if (!file.canWrite()) {
                 System.out.println("Can write test.");
@@ -57,8 +72,8 @@ public class AbstractI5Runner {
             }
         } else {
             //Do a file creation and deletion file test
-            boolean fileCreated = false;
-            boolean fileDeleted = false;
+            boolean fileCreated;
+            boolean fileDeleted;
             try {
                 fileCreated = file.createNewFile();
                 fileDeleted = file.delete();

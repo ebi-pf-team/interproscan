@@ -331,7 +331,7 @@ public class Run extends AbstractI5Runner {
             //process tmp dir (-T) option
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
                 String temporaryDirectory = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()), parsedCommandLine);
-                checkDirectoryExistenceAndWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
+                checkDirectoryExistenceAndFileWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
                 master.setTemporaryDirectory(temporaryDirectory);
             }
             checkIfProductionMasterAndConfigure(master, parsedCommandLine, ctx);
@@ -448,7 +448,7 @@ public class Run extends AbstractI5Runner {
     }
 
     /**
-     * Used to setup standalone. ssoptimised and convert mode.
+     * Used to setup STANDALONE. SINGLESEQ and CONVERT mode.
      */
     private static void setupSimpleBlackBoxMaster(final SimpleBlackBoxMaster master,
                                                   final CommandLine parsedCommandLine,
@@ -460,49 +460,48 @@ public class Run extends AbstractI5Runner {
             String fastaFilePath = parsedCommandLine.getOptionValue(I5Option.INPUT.getLongOpt());
             if(!fastaFilePath.equals("-")){
                 fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.INPUT.getLongOpt()), parsedCommandLine);
-                checkDirectoryExistenceAndWritePermission(fastaFilePath, I5Option.INPUT.getShortOpt());
+                // Check input exists
+                checkFileExistence(fastaFilePath, I5Option.INPUT.getShortOpt());
             }
             master.setFastaFilePath(fastaFilePath);
             defaultOutputFileName = new File(fastaFilePath).getName();
         }
 
-        //Get the value for the (-b) option is specified
-        boolean haveSetBaseOutputFileName = false;
+        final boolean haveSetUserDirName = parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt());
+        final boolean haveSetBaseOutputFileName = parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt());
+        final boolean haveSetOutputFileName = parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt());
+        final boolean haveSetOutputDirName = parsedCommandLine.hasOption(I5Option.OUTPUT_DIRECTORY.getLongOpt());
 
-        if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt())) {
-            //As this option and the (-o) option are mutually exclusive with have to check that state
-            if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
-                System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
+        // Check the (-u) default output directory exists for now, but we are not necessarily going to write to this location
+        if (haveSetUserDirName) {
+            String outputBaseFileName = getAbsoluteFilePath(defaultOutputFileName, parsedCommandLine);
+            checkDirectoryExistence(outputBaseFileName, I5Option.USER_DIR.getShortOpt());
+        }
+
+        // Get the value for the (-b) option if specified
+        if (haveSetBaseOutputFileName) {
+            if (haveSetOutputFileName || haveSetOutputDirName) {
+                System.out.println("The options --output-file-base (-b), --outfile (-o) and --output-dir (-d) are mutually exclusive.");
                 System.exit(3);
             }
             String outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt());
-            //If outputBaseFileName is a directory (Simply check the ending) then set the defaultFileOutputName
+            // If outputBaseFileName is a directory (simply check the ending) then set the defaultFileOutputName
             if (outputBaseFileName.endsWith("/")) {
                 outputBaseFileName += defaultOutputFileName;
             }
             outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
-            master.setOutputBaseFilename(outputBaseFileName);
-            haveSetBaseOutputFileName = true;
-        }
-
-        //If (-b) option ISN't specified but (-u) options is set
-        //Default file output path will be (USER_DIR + defaultFileOutputName)
-        else if (parsedCommandLine.hasOption(I5Option.USER_DIR.getLongOpt())) {
-            String outputBaseFileName = getAbsoluteFilePath(defaultOutputFileName, parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
+            checkDirectoryExistenceAndFileWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
             master.setOutputBaseFilename(outputBaseFileName);
         }
-
-        //Get the value for the (-o) option is specified
-        if (parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+        //Get the value for the (-o) option if specified
+        else if (haveSetOutputFileName) {
             if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0]) || "svg".equalsIgnoreCase(parsedOutputFormats[0])) {
                 System.out.println("\n\nYou must indicate a single output format excluding HTML and SVG using the -f option if you wish to set an explicit output file name.");
                 System.exit(2);
             }
 
-            if (haveSetBaseOutputFileName) {
-                System.out.println("The --output-file-base (-b) and --outfile (-o) options are mutually exclusive.");
+            if (haveSetBaseOutputFileName || haveSetOutputDirName) {
+                System.out.println("The options --output-file-base (-b), --outfile (-o) and --output-dir (-d) are mutually exclusive.");
                 System.exit(3);
             }
 
@@ -510,13 +509,13 @@ public class Run extends AbstractI5Runner {
             String explicitOutputFilename = outputFilename;
             if(!outputFilename.trim().equals("-")){
                 explicitOutputFilename = getAbsoluteFilePath(outputFilename, parsedCommandLine);
-                checkDirectoryExistenceAndWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
+                checkDirectoryExistenceAndFileWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
             }
             master.setExplicitOutputFilename(explicitOutputFilename);
         }
-
-        if (parsedCommandLine.hasOption(I5Option.OUTPUT_DIRECTORY.getLongOpt())) {
-            if (parsedCommandLine.hasOption(I5Option.BASE_OUT_FILENAME.getLongOpt()) || parsedCommandLine.hasOption(I5Option.OUTPUT_FILE.getLongOpt())) {
+        // Get the value for the (-d) option if specified
+        else if (haveSetOutputDirName) {
+            if (haveSetBaseOutputFileName || haveSetOutputFileName) {
                 System.out.println("The options --output-file-base (-b), --outfile (-o) and --output-dir (-d) are mutually exclusive.");
                 System.exit(3);
             }
@@ -526,9 +525,18 @@ public class Run extends AbstractI5Runner {
             }
             outputDirValue += defaultOutputFileName;
             String outputBaseFileName = getAbsoluteFilePath(outputDirValue, parsedCommandLine);
-            checkDirectoryExistenceAndWritePermission(outputBaseFileName, I5Option.OUTPUT_DIRECTORY.getShortOpt());
+            checkDirectoryExistenceAndFileWritePermission(outputBaseFileName, I5Option.OUTPUT_DIRECTORY.getShortOpt());
             master.setOutputBaseFilename(outputBaseFileName);
         }
+        // If the (-b) or (-d) or (-o) options AREN'T specified, but the (-u) option is set (it should always be set)
+        // then the default file output path will be (USER_DIR + defaultFileOutputName)
+        else if (haveSetUserDirName) {
+            String outputBaseFileName = getAbsoluteFilePath(defaultOutputFileName, parsedCommandLine);
+            // Write to the default output location
+            checkDirectoryExistenceAndFileWritePermission(outputBaseFileName, I5Option.USER_DIR.getShortOpt());
+            master.setOutputBaseFilename(outputBaseFileName);
+        }
+
         //Get the values for the output formats
         if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
             master.setOutputFormats(parsedOutputFormats);
@@ -546,7 +554,7 @@ public class Run extends AbstractI5Runner {
         }
         final String temporaryDirectory = getAbsoluteFilePath(filePath, parsedCommandLine);
         if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
-            checkDirectoryExistenceAndWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
+            checkDirectoryExistenceAndFileWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
         }
         master.setTemporaryDirectory(temporaryDirectory);
     }
