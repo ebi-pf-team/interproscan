@@ -49,6 +49,22 @@ public class Jobs {
         return new Jobs(analysisJobs);
     }
 
+    /**
+     * Returns all of the jobs of type "analysis", but only the latest version.
+     *
+     * @return All the latest analysis jobs.
+     */
+    public Jobs getVisibleAnalysisJobs() {
+        List<Job> analysisJobs = new ArrayList<Job>();
+        for (Job job : jobMap.values()) {
+            if (job.isAnalysis() && job.isVisible()) {
+                analysisJobs.add(job);
+            }
+        }
+        return new Jobs(analysisJobs);
+    }
+
+
     public List<Job> getJobList() {
         return new ArrayList<Job>(jobMap.values());
     }

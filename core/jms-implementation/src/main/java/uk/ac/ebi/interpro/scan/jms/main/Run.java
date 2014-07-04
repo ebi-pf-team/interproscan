@@ -110,7 +110,7 @@ public class Run extends AbstractI5Runner {
                 System.exit(1);
             }
 
-            for (Option option : (Collection<Option>)COMMAND_LINE_OPTIONS.getOptions()) {
+            for (Option option : (Collection<Option>) COMMAND_LINE_OPTIONS.getOptions()) {
                 final String shortOpt = option.getOpt();
                 if (I5Option.showOptInHelpMessage(shortOpt, mode)) {
                     COMMAND_LINE_OPTIONS_FOR_HELP.addOption(option);
@@ -130,8 +130,10 @@ public class Run extends AbstractI5Runner {
             // The command-line distributed mode selects a random port number for communications.
             // This block selects the random port number and sets it on the broker.
 
-
+            // Def. parsedAnalyses: List of analyses jobs parsed from command line
             String[] parsedAnalyses = null;
+            // Def. analysesToRun: List of analyses jobs which will be performed/submitted by I5
+            String[] analysesToRun = null;
             if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
                 parsedAnalyses = parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt());
                 parsedAnalyses = tidyOptionsArray(parsedAnalyses);
@@ -146,7 +148,7 @@ public class Run extends AbstractI5Runner {
                 if (isInvalid(mode, parsedCommandLine)) {
                     printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
                     System.out.println("Available analyses:");    // LEAVE as System.out
-                    for (Job job : jobs.getAnalysisJobs().getJobList()) {
+                    for (Job job : jobs.getVisibleAnalysisJobs().getJobList()) {
                         // Print out available jobs
                         System.out.printf("    %25s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
                     }
@@ -168,16 +170,16 @@ public class Run extends AbstractI5Runner {
                 //1. b) Job status check (deactivation check) - Check if one of the specified analyses is deactivated or not -> print warning if so
                 //2. If analyses are specified via appl parameter or not
                 //2. a) Version check - Check if multiple versions of the same analysis occur
-                final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap = getRealAnalysesNames(parsedAnalyses, jobs.getAllJobs().getJobList());
+                final Map<String, Set<Job>> parsedAnalysesToRealAnalysesMap = getRealAnalysesNames(parsedAnalyses, jobs.getAllJobs().getJobList());
 
-                //Existence and job status checks
                 StringBuilder nonexistentAnalysis = new StringBuilder();
                 if (parsedAnalyses != null && parsedAnalyses.length > 0) {
+                    //Check job existence and job status (activated or deactivated/not configured properly)
                     boolean doExit = false;
                     for (String parsedAnalysisName : parsedAnalyses) {
-                        if (parsedAnalysesRealAnalysesMap.containsKey(parsedAnalysisName)) {
+                        if (parsedAnalysesToRealAnalysesMap.containsKey(parsedAnalysisName)) {
                             //Check if they are deactivated
-                            Set<Job> realAnalyses = parsedAnalysesRealAnalysesMap.get(parsedAnalysisName);
+                            Set<Job> realAnalyses = parsedAnalysesToRealAnalysesMap.get(parsedAnalysisName);
                             for (Job deactivatedJob : deactivatedJobs.keySet()) {
                                 for (Job realAnalysis : realAnalyses) {
                                     if (deactivatedJob.getId().equalsIgnoreCase(realAnalysis.getId())) {
@@ -201,23 +203,16 @@ public class Run extends AbstractI5Runner {
                     if (doExit) {
                         System.exit(1);
                     }
-                }
 
-                parsedAnalyses = getAnalysesToRun(parsedAnalysesRealAnalysesMap);
-                String analysesPrintOutStr = Utilities.getTimeNow() + " Running the following analyses:\n";
-                //Version check
-                if (parsedAnalyses.length > 0) {
+                    //Do multiple version check (e.g. if -appl pirsf-2.84,pirsf-2.85 I5 will exit)
                     Set<Job> jobsToCheckMultipleVersionsSet = new HashSet<Job>();
-                    for (Set<Job> jobsToCheck : parsedAnalysesRealAnalysesMap.values()) {
+                    for (Set<Job> jobsToCheck : parsedAnalysesToRealAnalysesMap.values()) {
                         jobsToCheckMultipleVersionsSet.addAll(jobsToCheck);
                     }
                     List<Job> jobsToCheckMultipleVersionsList = new ArrayList<Job>(jobsToCheckMultipleVersionsSet);
                     checkAnalysisJobsVersions(jobsToCheckMultipleVersionsList);
-                    System.out.println(analysesPrintOutStr + Arrays.asList(parsedAnalyses));
-                } else {
-                    checkAnalysisJobsVersions(jobs.getAnalysisJobs().getJobList());
-                    System.out.println(analysesPrintOutStr + jobs.getAnalysisJobs().getJobIdList());
                 }
+                analysesToRun = getAnalysesToRun(parsedAnalysesToRealAnalysesMap);
             }
             //Print help for the convert mode
             else if (mode.equals(Mode.CONVERT)) {
@@ -264,7 +259,7 @@ public class Run extends AbstractI5Runner {
                 } else if (runnable instanceof MasterControllerApplication) {
                     runMasterControllerApplicationMode(runnable, parsedCommandLine, ctx, mode);
                 } else {
-                    checkIfMasterAndConfigure(runnable, parsedAnalyses, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
+                    checkIfMasterAndConfigure(runnable, analysesToRun, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
 
                     checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
                 }
@@ -399,7 +394,7 @@ public class Run extends AbstractI5Runner {
                     ((DistributedBlackBoxMaster) bbMaster).setUserDir(userDir);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerRunnerUserDir(userDir);
                     //setup the logdir
-                    final File dir = new File(((DistributedBlackBoxMaster) bbMaster).getLogDir(), projectId.replaceAll("\\s+",""));
+                    final File dir = new File(((DistributedBlackBoxMaster) bbMaster).getLogDir(), projectId.replaceAll("\\s+", ""));
                     if (!dir.exists() && !dir.mkdirs()) {
                         try {
                             throw new IOException("Unable to create " + dir.getAbsolutePath());
@@ -407,7 +402,7 @@ public class Run extends AbstractI5Runner {
                             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                         }
                     }
-                    String logDir = ((DistributedBlackBoxMaster) bbMaster).getLogDir()+ "/"+ projectId.replaceAll("\\s+","");
+                    String logDir = ((DistributedBlackBoxMaster) bbMaster).getLogDir() + "/" + projectId.replaceAll("\\s+", "");
                     ((DistributedBlackBoxMaster) bbMaster).setLogDir(logDir);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerLogDir(logDir);
 
@@ -417,7 +412,7 @@ public class Run extends AbstractI5Runner {
                 }
             }
 
-            if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster){
+            if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster) {
                 if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
                     final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
                     ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
@@ -458,7 +453,7 @@ public class Run extends AbstractI5Runner {
         // Get the value for the (-i) option (could be FASTA file, or in CONVERT mode, an XML file)
         if (parsedCommandLine.hasOption(I5Option.INPUT.getLongOpt())) {
             String fastaFilePath = parsedCommandLine.getOptionValue(I5Option.INPUT.getLongOpt());
-            if(!fastaFilePath.equals("-")){
+            if (!fastaFilePath.equals("-")) {
                 fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.INPUT.getLongOpt()), parsedCommandLine);
                 // Check input exists
                 checkFileExistence(fastaFilePath, I5Option.INPUT.getShortOpt());
@@ -505,9 +500,9 @@ public class Run extends AbstractI5Runner {
                 System.exit(3);
             }
 
-            String outputFilename =  parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt());
+            String outputFilename = parsedCommandLine.getOptionValue(I5Option.OUTPUT_FILE.getLongOpt());
             String explicitOutputFilename = outputFilename;
-            if(!outputFilename.trim().equals("-")){
+            if (!outputFilename.trim().equals("-")) {
                 explicitOutputFilename = getAbsoluteFilePath(outputFilename, parsedCommandLine);
                 checkDirectoryExistenceAndFileWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
             }
@@ -669,7 +664,7 @@ public class Run extends AbstractI5Runner {
                 worker.setProjectId(projectId);
 
                 //setup the logdir
-                final File dir = new File(worker.getLogDir(), projectId.replaceAll("\\s+",""));
+                final File dir = new File(worker.getLogDir(), projectId.replaceAll("\\s+", ""));
                 if (!dir.exists() && !dir.mkdirs()) {
                     try {
                         throw new IOException("Unable to create " + dir.getAbsolutePath());
@@ -677,7 +672,7 @@ public class Run extends AbstractI5Runner {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                 }
-                String logDir = worker.getLogDir()+ "/"+ projectId.replaceAll("\\s+","");
+                String logDir = worker.getLogDir() + "/" + projectId.replaceAll("\\s+", "");
                 worker.setLogDir(logDir);
                 worker.setSubmissionWorkerLogDir(logDir);
 
@@ -685,12 +680,12 @@ public class Run extends AbstractI5Runner {
             if (parsedCommandLine.hasOption(I5Option.MASTER_MAXLIFE.getLongOpt())) {
                 LOGGER.debug("commandline has option MASTER_MAXLIFE ");
                 final String masterMaxlife = parsedCommandLine.getOptionValue(I5Option.MASTER_MAXLIFE.getLongOpt());
-                String [] masterTime =  masterMaxlife.split(":");
+                String[] masterTime = masterMaxlife.split(":");
                 String masterClockTimeStr = masterTime[0];
                 String masterLifeRemainingStr = masterTime[1];
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("master time passed: " + masterMaxlife);
-                    LOGGER.debug("master time passed: " + masterClockTimeStr+ " - " + masterLifeRemainingStr);
+                    LOGGER.debug("master time passed: " + masterClockTimeStr + " - " + masterLifeRemainingStr);
                 }
 
                 long masterClockTime = Long.valueOf(masterClockTimeStr.trim());
@@ -770,14 +765,16 @@ public class Run extends AbstractI5Runner {
      *
      * @param jobsToCheckMultipleVersion
      */
-    private static void checkAnalysisJobsVersions(List<Job> jobsToCheckMultipleVersion) {
+    protected static void checkAnalysisJobsVersions(List<Job> jobsToCheckMultipleVersion) {
         final Map<SignatureLibrary, Set<Job>> libraryToJobsMap = clusterJobsBySignatureLibrary(jobsToCheckMultipleVersion);
-        //
+        //Iterate over all signature libraries Pfam, Gene3D, PIRSF etc.
         for (SignatureLibrary library : libraryToJobsMap.keySet()) {
-            if (libraryToJobsMap.get(library).size() > 1) {
+            //Get all jobs for a certain signature library e.g. job to run PIRSF v2.84 and another job to run PIRSF v2.85
+            final Set<Job> libraryJobs = libraryToJobsMap.get(library);
+            if (libraryJobs.size() > 1) {
                 String previousVersion = null;
                 String currentAnalysisVersion = null;
-                for (Job jobToCheck : libraryToJobsMap.get(library)) {
+                for (Job jobToCheck : libraryJobs) {
                     currentAnalysisVersion = jobToCheck.getLibraryRelease().getVersion();
                     if (previousVersion == null) {
                         previousVersion = currentAnalysisVersion;
@@ -830,18 +827,37 @@ public class Run extends AbstractI5Runner {
     }
 
     /**
+     * Assembles all analyses jobs for that run.
+     *
+     * @param parsedAnalysesRealAnalysesMap
+     * @return
+     */
+    protected static String[] getVisibleAnalysesToRun(final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap) {
+        Set<String> result = new HashSet<String>();
+        for (String key : parsedAnalysesRealAnalysesMap.keySet()) {
+            Set<Job> realJobs = parsedAnalysesRealAnalysesMap.get(key);
+            for (Job realJob : realJobs) {
+                if (realJob.isVisible()) {
+                    result.add(realJob.getId());
+                }
+            }
+        }
+        return StringUtils.toStringArray(result);
+    }
+
+    /**
      * Determines real jobs for the parsed analyses names, e.g. Pfam -> Pfam-26.0
      *
      * @param parsedAnalyses
      * @param realJobs
      * @return Map of parsed analysis name to real analysis name.
      */
-    private static Map<String, Set<Job>> getRealAnalysesNames(String[] parsedAnalyses, List<Job> realJobs) {
+    protected static Map<String, Set<Job>> getRealAnalysesNames(String[] parsedAnalyses, List<Job> realJobs) {
         Map<String, Set<Job>> result = new HashMap<String, Set<Job>>();
         if (parsedAnalyses != null && parsedAnalyses.length > 0) {
-            for (String analysisName : parsedAnalyses) {
-                for (Job realJob : realJobs) {
-                    if (realJob.getId().toLowerCase().contains(analysisName.toLowerCase())) {
+            for (Job realJob : realJobs) {
+                for (String analysisName : parsedAnalyses) {
+                    if ((realJob.isVisible() && realJob.getId().toLowerCase().contains(analysisName.toLowerCase())) || realJob.getId().toLowerCase().endsWith(analysisName.toLowerCase())) {
                         Set<Job> mappedJobs = result.get(analysisName);
                         if (mappedJobs == null) {
                             mappedJobs = new HashSet<Job>();
