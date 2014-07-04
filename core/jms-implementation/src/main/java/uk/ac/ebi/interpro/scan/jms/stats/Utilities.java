@@ -3,11 +3,13 @@ package uk.ac.ebi.interpro.scan.jms.stats;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
-import uk.ac.ebi.interpro.scan.io.cli.FileIsNotADirectoryException;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * @author Gift Nuka

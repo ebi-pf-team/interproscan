@@ -12,6 +12,9 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -90,7 +93,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
         if (providedPath != null) {
             // Try resolving the fasta file as an absolute file path
             InputStream fastaFileInputStream = null;
-            String  fastaFileInputStatusMessage ="";
+            String fastaFileInputStatusMessage = "";
             try {
                 File file = new File(providedPath);
                 System.out.println("Loading file " + providedPath);
@@ -109,7 +112,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                                 System.out.println("Therefore there are no proteins for InterproScan to analyse");
                                 System.out.println("Finishing...");
                                 System.exit(0);
-                        }
+                            }
                             // TODO - Should this also behave elegantly and output empty files?
                             System.out.println("\nThe FASTA input file " + providedPath + " is empty.");
                             System.out.println("Therefore there are no sequences for InterproScan to analyse");
@@ -138,14 +141,14 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
                 //TODO unit test
                 boolean stdinOn = false;
-                if(providedPath.equals("-")){
+                if (providedPath.equals("-")) {
                     fastaFileInputStream = System.in;
                     stdinOn = true;
                 }
-                if ((! stdinOn) && fastaFileInputStream == null) {
+                if ((!stdinOn) && fastaFileInputStream == null) {
                     System.out.println("Cannot find the fasta file located at " + providedPath + fastaFileInputStatusMessage);
                     System.out.println("Exiting...");
-                    System.exit(2) ;
+                    System.exit(2);
                 }
 
                 if (LOGGER.isDebugEnabled()) {
@@ -153,7 +156,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
                 Jobs analysisJobs;
                 if (analysisJobNames == null) {
-                    analysisJobs = jobs.getAnalysisJobs();
+                    analysisJobs = jobs.getVisibleAnalysisJobs();
                     List<String> analysisJobIdList = analysisJobs.getJobIdList();
                     StringBuilder analysisJobNamesBuilder = new StringBuilder();
                     for (String jobName : analysisJobIdList) {
@@ -164,6 +167,8 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 } else {
                     analysisJobs = jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
                 }
+                String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
+                System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
                 Job completionJob = jobs.getJobById(completionJobName);
 
                 StepCreationSequenceLoadListener sequenceLoadListener =
@@ -184,5 +189,12 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
             }
         }
+    }
+
+    private String getTimeNow() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+        String currentDate = sdf.format(cal.getTime());
+        return currentDate;
     }
 }
