@@ -59,37 +59,49 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             md5ToProteinMap.put(protein.getMd5().toUpperCase(), protein);
         }
 
-        List<SignatureLibrary> librariesToAnalyse = null;
+        //Mapping between SignatureLibrary and the version number, e.g key=PIRSF,value=2.84
+        Map<SignatureLibrary, String> librariesToAnalyse = null;
 
+        //Populate map with data
         if (analysisJobNames != null) {
-            librariesToAnalyse = new ArrayList<SignatureLibrary>();
+            librariesToAnalyse = new HashMap<SignatureLibrary, String>();
             for (String analysisJob : analysisJobNames.split(",")) {
+                String versionNumber = null;
                 // Strip off "job" and version number
                 analysisJob = analysisJob.substring(3);
-                analysisJob = analysisJob.substring(0, analysisJob.lastIndexOf('-'));
+                String[] chunks = analysisJob.split("-");
+                if (chunks != null && chunks.length == 2) {
+                    analysisJob = chunks[0];
+                    versionNumber = chunks[1];
+                } else {
+                    throw new IllegalStateException("Analysis job name is in an unexpected format: " + analysisJob);
+                }
                 final SignatureLibrary matchingLibrary = SignatureLibraryLookup.lookupSignatureLibrary(analysisJob);
                 if (matchingLibrary != null) {
-                    librariesToAnalyse.add(matchingLibrary);
+                    librariesToAnalyse.put(matchingLibrary, versionNumber);
                 }
             }
         }
         // Collection of BerkeleyMatches of different kinds.
         for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
-
+            String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
             final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
             // Check to see if the signature library is required for the analysis.
-            if (librariesToAnalyse == null || librariesToAnalyse.contains(sigLib)) {
+            // First check: librariesToAnalyse == null -> -appl option hasn't been set
+            // Second check: Analysis library has been request with the right release version -> -appl PIRSF-2.84
+            if (librariesToAnalyse == null || (librariesToAnalyse.containsKey(sigLib) && librariesToAnalyse.get(sigLib).equals(signatureLibraryReleaseVersion))) {
                 // Retrieve Signature to match
-                Query sigQuery = entityManager.createQuery("select distinct s from Signature s where s.accession = :sig_ac and s.signatureLibraryRelease.library = :library");
+                Query sigQuery = entityManager.createQuery("select distinct s from Signature s where s.accession = :sig_ac and s.signatureLibraryRelease.library = :library and s.signatureLibraryRelease.version = :version");
                 sigQuery.setParameter("sig_ac", berkeleyMatch.getSignatureAccession());
                 sigQuery.setParameter("library", sigLib);
+                sigQuery.setParameter("version", signatureLibraryReleaseVersion);
 
                 @SuppressWarnings("unchecked") List<Signature> signatures = sigQuery.getResultList();
                 Signature signature = null;
                 if (signatures.size() == 0) {   // This Signature is not in I5, so cannot store this one.
                     continue;
                 } else if (signatures.size() > 1) {
-                    throw new IllegalStateException("This distribution appears to contain more than one version of member database " + berkeleyMatch.getSignatureLibraryName());
+                    throw new IllegalStateException("Data inconsistency issue. This distribution appears to contain the same signature multiple times: " + berkeleyMatch.getSignatureAccession());
                 } else {
                     signature = signatures.get(0);
                 }
