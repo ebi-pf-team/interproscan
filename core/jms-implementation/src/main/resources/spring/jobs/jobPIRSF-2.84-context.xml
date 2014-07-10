@@ -65,10 +65,10 @@
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
                 <property name="signatureLibrary" value="PIRSF"/>
-                <property name="signatureLibraryRelease" ref="versionNumber"/>
+                <property name="signatureLibraryRelease" ref="pirsfVersionNumber284"/>
                 <property name="hmmer2ParserSupport">
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.PirsfHmmer2ParserSupport">
-                        <property name="signatureLibraryRelease" ref="versionNumber"/>
+                        <property name="signatureLibraryRelease" ref="pirsfVersionNumber284"/>
                     </bean>
                 </property>
             </bean>
@@ -83,7 +83,7 @@
         <property name="stepDescription"
                   value="First step of the Pirsf post processing. Checks overlap criterion for HMMR 2 raw matches."/>
         <property name="dependsUpon" ref="stepPIRSFStoreSuperfamRawMatches-2.84"/>
-        <property name="signatureLibraryRelease" ref="versionNumber"/>
+        <property name="signatureLibraryRelease" ref="pirsfVersionNumber284"/>
         <!--More specific properties-->
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.84"/>
         <property name="postProcessor">
@@ -134,10 +134,10 @@
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
                 <property name="signatureLibrary" value="PIRSF"/>
-                <property name="signatureLibraryRelease" ref="versionNumber"/>
+                <property name="signatureLibraryRelease" ref="pirsfVersionNumber284"/>
                 <property name="hmmer2ParserSupport">
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.PirsfHmmer2ParserSupport">
-                        <property name="signatureLibraryRelease" ref="versionNumber"/>
+                        <property name="signatureLibraryRelease" ref="pirsfVersionNumber284"/>
                     </bean>
                 </property>
             </bean>
@@ -152,7 +152,7 @@
         <property name="stepDescription"
                   value="Post processes all sub families. Checks score and e-value criteria for HMMR 2 raw matches."/>
         <property name="dependsUpon" ref="stepPIRSFStoreSubfamRawMatches-2.84"/>
-        <property name="signatureLibraryRelease" ref="versionNumber"/>
+        <property name="signatureLibraryRelease" ref="pirsfVersionNumber284"/>
         <!--More specific properties-->
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.84"/>
         <property name="postProcessor">
@@ -260,7 +260,7 @@
 
     <!-- ######################## Dependencies ############################  -->
 
-    <bean id="versionNumber" class="java.lang.String">
+    <bean id="pirsfVersionNumber284" class="java.lang.String">
         <constructor-arg value="2.84"/>
     </bean>
 
@@ -319,7 +319,7 @@
 
     <bean id="signatureLibraryReleasePirsf-2.84" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSF"/>
-        <constructor-arg type="java.lang.String" ref="versionNumber"/>
+        <constructor-arg type="java.lang.String" ref="pirsfVersionNumber284"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

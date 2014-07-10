@@ -74,7 +74,7 @@
         <property name="pirsfBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer3.PirsfHmmer3RawMatchParser">
-                <constructor-arg ref="versionNumber"/>
+                <constructor-arg ref="pirsfVersionNumber285"/>
             </bean>
         </property>
         <property name="rawMatchDAO">
@@ -100,7 +100,7 @@
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer3.PirsfPostProcessor"/>
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
-        <property name="signatureLibraryRelease" ref="versionNumber"/>
+        <property name="signatureLibraryRelease" ref="pirsfVersionNumber285"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.85"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer3FilteredMatchDAOImpl"/>
@@ -111,7 +111,7 @@
 
     <!-- ######################## Dependencies ############################  -->
 
-    <bean id="versionNumber" class="java.lang.String">
+    <bean id="pirsfVersionNumber285" class="java.lang.String">
         <constructor-arg value="2.85"/>
     </bean>
 
@@ -121,7 +121,7 @@
 
     <bean id="signatureLibraryReleasePirsf-2.85" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSF"/>
-        <constructor-arg type="java.lang.String" ref="versionNumber"/>
+        <constructor-arg type="java.lang.String" ref="pirsfVersionNumber285"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
