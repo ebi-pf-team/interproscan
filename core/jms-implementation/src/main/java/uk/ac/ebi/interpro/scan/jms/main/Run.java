@@ -772,15 +772,11 @@ public class Run extends AbstractI5Runner {
             //Get all jobs for a certain signature library e.g. job to run PIRSF v2.84 and another job to run PIRSF v2.85
             final Set<Job> libraryJobs = libraryToJobsMap.get(library);
             if (libraryJobs.size() > 1) {
-                String previousVersion = null;
-                String currentAnalysisVersion = null;
+                String versions = "";
                 for (Job jobToCheck : libraryJobs) {
-                    currentAnalysisVersion = jobToCheck.getLibraryRelease().getVersion();
-                    if (previousVersion == null) {
-                        previousVersion = currentAnalysisVersion;
-                    }
+                    versions = versions + jobToCheck.getLibraryRelease().getVersion() + ",";
                 }
-                System.out.println("\n\n" + "Found different versions (e.g. " + previousVersion + " AND " + currentAnalysisVersion + ") of the same analysis - " + library +
+                System.out.println("\n\n" + "Found different versions (" + versions + ") of the same analysis - " + library +
                         " which is not allowed in this version of InterProScan 5." + "\n\n");
                 System.exit(1);
             }
