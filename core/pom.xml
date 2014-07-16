@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>5.4-47.0</version>
+    <version>5.5-48.0</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
@@ -98,7 +98,7 @@
         <jaxb-api.version>2.2.2</jaxb-api.version>
         <!--<h2.database.version>1.2.147</h2.database.version>-->
         <h2.database.version>1.3.168</h2.database.version>
-        <i5.svn.revision>5.4-47.0</i5.svn.revision>
+        <i5.svn.revision>5.5-48.0</i5.svn.revision>
         <i5.version>${project.version}</i5.version>
         <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
     </properties>
