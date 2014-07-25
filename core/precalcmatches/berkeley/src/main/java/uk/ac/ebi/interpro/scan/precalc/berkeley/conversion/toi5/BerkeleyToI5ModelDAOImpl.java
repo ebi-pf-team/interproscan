@@ -65,16 +65,22 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
         //Populate map with data
         if (analysisJobNames != null) {
             librariesToAnalyse = new HashMap<SignatureLibrary, String>();
-            for (String analysisJob : analysisJobNames.split(",")) {
-                String versionNumber = null;
+            for (String analysisJobName : analysisJobNames.split(",")) {
                 // Strip off "job" and version number
-                analysisJob = analysisJob.substring(3);
-                String[] chunks = analysisJob.split("-");
-                if (chunks != null && chunks.length == 2) {
-                    analysisJob = chunks[0];
-                    versionNumber = chunks[1];
+                analysisJobName = analysisJobName.substring(3);
+                String analysisJob = null;
+                String versionNumber = null;
+                if (analysisJobName != null && analysisJobName.contains("-")) {
+                    analysisJob = analysisJobName.substring(0, analysisJobName.lastIndexOf('-'));
+                    versionNumber = analysisJobName.substring(analysisJobName.lastIndexOf('-') + 1);
+                    //Check for Gene3D and modify the version number. Onion version number for Gene3D is 3.5 while InterProScan uses 3.5.0
+                    //Temp fix, it will not be necessary when Onion is retired
+                    if(analysisJob.toLowerCase().equals("gene3d") && versionNumber.equals("3.5.0")){
+                       versionNumber = "3.5";
+                    }
+                    LOGGER.debug("Job: " + analysisJobName + " :- analysisJob: " + analysisJob + " versionNumber: " + versionNumber);
                 } else {
-                    throw new IllegalStateException("Analysis job name is in an unexpected format: " + analysisJob);
+                    throw new IllegalStateException("Analysis job name is in an unexpected format: " + analysisJobName);
                 }
                 final SignatureLibrary matchingLibrary = SignatureLibraryLookup.lookupSignatureLibrary(analysisJob);
                 if (matchingLibrary != null) {
@@ -91,19 +97,27 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             // Second check: Analysis library has been request with the right release version -> -appl PIRSF-2.84
             if (librariesToAnalyse == null || (librariesToAnalyse.containsKey(sigLib) && librariesToAnalyse.get(sigLib).equals(signatureLibraryReleaseVersion))) {
                 // Retrieve Signature to match
+                LOGGER.debug("Check match for : " + sigLib + "-" + signatureLibraryReleaseVersion);
                 Query sigQuery = entityManager.createQuery("select distinct s from Signature s where s.accession = :sig_ac and s.signatureLibraryRelease.library = :library and s.signatureLibraryRelease.version = :version");
                 sigQuery.setParameter("sig_ac", berkeleyMatch.getSignatureAccession());
                 sigQuery.setParameter("library", sigLib);
+                //TEMP Solution - deal with Gene3d versioning
+                if(sigLib.getName().toLowerCase().equals("gene3d")){
+                    signatureLibraryReleaseVersion = "3.5.0";
+                }
                 sigQuery.setParameter("version", signatureLibraryReleaseVersion);
 
                 @SuppressWarnings("unchecked") List<Signature> signatures = sigQuery.getResultList();
                 Signature signature = null;
+                LOGGER.debug("signatures size: " +signatures.size());
+
                 if (signatures.size() == 0) {   // This Signature is not in I5, so cannot store this one.
                     continue;
                 } else if (signatures.size() > 1) {
                     throw new IllegalStateException("Data inconsistency issue. This distribution appears to contain the same signature multiple times: " + berkeleyMatch.getSignatureAccession());
                 } else {
                     signature = signatures.get(0);
+                    LOGGER.debug("signatures size: " +signatures.get(0));
                 }
 
                 // determine the type or the match currently being observed
