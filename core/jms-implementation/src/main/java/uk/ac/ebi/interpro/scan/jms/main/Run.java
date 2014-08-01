@@ -148,7 +148,7 @@ public class Run extends AbstractI5Runner {
                 if (isInvalid(mode, parsedCommandLine)) {
                     printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
                     System.out.println("Available analyses:");    // LEAVE as System.out
-                    for (Job job : jobs.getVisibleAnalysisJobs().getJobList()) {
+                    for (Job job : jobs.getActiveAnalysisJobs().getJobList()) {
                         // Print out available jobs
                         System.out.printf("    %25s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
                     }
@@ -828,12 +828,12 @@ public class Run extends AbstractI5Runner {
      * @param parsedAnalysesRealAnalysesMap
      * @return
      */
-    protected static String[] getVisibleAnalysesToRun(final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap) {
+    protected static String[] getActiveAnalysesToRun(final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap) {
         Set<String> result = new HashSet<String>();
         for (String key : parsedAnalysesRealAnalysesMap.keySet()) {
             Set<Job> realJobs = parsedAnalysesRealAnalysesMap.get(key);
             for (Job realJob : realJobs) {
-                if (realJob.isVisible()) {
+                if (realJob.isActive()) {
                     result.add(realJob.getId());
                 }
             }
@@ -853,7 +853,7 @@ public class Run extends AbstractI5Runner {
         if (parsedAnalyses != null && parsedAnalyses.length > 0) {
             for (Job realJob : realJobs) {
                 for (String analysisName : parsedAnalyses) {
-                    if ((realJob.isVisible() && realJob.getId().toLowerCase().contains(analysisName.toLowerCase())) || realJob.getId().toLowerCase().endsWith(analysisName.toLowerCase())) {
+                    if ((realJob.isActive() && realJob.getId().toLowerCase().contains(analysisName.toLowerCase())) || realJob.getId().toLowerCase().endsWith(analysisName.toLowerCase())) {
                         Set<Job> mappedJobs = result.get(analysisName);
                         if (mappedJobs == null) {
                             mappedJobs = new HashSet<Job>();
