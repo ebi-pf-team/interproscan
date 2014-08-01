@@ -56,12 +56,12 @@ public class Job implements Serializable, BeanNameAware {
     /**
      * This boolean flag is only important if a job is of type analysis.
      * <p/>
-     * If you configure I5 with multiple versions of a member database, then you should set one of those as visible equals TRUE and all other as FALSE.
+     * If you configure I5 with multiple versions of a member database, then you should set one of those as active equals TRUE and all other as FALSE.
      * <p/>
-     * So if a user doesn't set the 'appl' parameter, I5 will only perform all analysis jobs which are marked as isVisible=true.
+     * So if a user doesn't set the 'appl' parameter, I5 will only perform all analysis jobs which are marked as isActive=true.
      * <p/>
      */
-    private boolean isVisible = true;
+    private boolean active = true;
 
     /**
      * List of steps.  this is transient so they don't all get shoved
@@ -156,11 +156,11 @@ public class Job implements Serializable, BeanNameAware {
         this.doRunLocally = doRunLocally;
     }
 
-    public boolean isVisible() {
-        return isVisible;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setVisible(boolean visible) {
-        this.isVisible = visible;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

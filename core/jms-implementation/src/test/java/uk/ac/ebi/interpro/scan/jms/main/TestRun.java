@@ -29,7 +29,7 @@ public class TestRun {
         Set<Job> jobs = loadDummyJobs(false);
         parsedAnalysesRealAnalysesMap.put("pirsf", jobs);
         //Test the method
-        String[] actualArray = Run.getVisibleAnalysesToRun(parsedAnalysesRealAnalysesMap);
+        String[] actualArray = Run.getActiveAnalysesToRun(parsedAnalysesRealAnalysesMap);
         assertTrue(actualArray.length == 1);
         assertEquals("jobPIRSF-2.84", actualArray[0]);
 
@@ -69,7 +69,7 @@ public class TestRun {
         Job pirsf285Job = new Job();
         pirsf285Job.setBeanName("jobPIRSF-2.85");
         pirsf285Job.setAnalysis(false);
-        pirsf285Job.setVisible(false);
+        pirsf285Job.setActive(false);
         dummyJobs.add(pirsf285Job);
         //Pfam version 27.0 job
         if (includePfam) {
