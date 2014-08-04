@@ -12,7 +12,7 @@
                   value="The PIRSF concept is being used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePirsf-2.84"/>
-        <property name="active" value="false"/>
+        <property name="active" value="true"/>
     </bean>
 
     <bean id="abstractPIRSFStep-2.84" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
