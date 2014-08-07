@@ -149,7 +149,7 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
         if (comp != 0) {
             return comp;
         }
-        if (this.getEntries().containsAll(o.getEntries())) {
+        if (this.getEntries().equals(o.getEntries())) {
             return 0;
         }
         return  -1;
