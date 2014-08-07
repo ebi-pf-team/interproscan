@@ -145,7 +145,14 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
         if (this == o || this.equals(o)) {
             return 0;
         }
-        return this.getLocation().compareTo(o.getLocation());
+        int comp = this.getLocation().compareTo(o.getLocation());
+        if (comp != 0) {
+            return comp;
+        }
+        if (this.getEntries().containsAll(o.getEntries())) {
+            return 0;
+        }
+        return  -1;
     }
 
     @Override
