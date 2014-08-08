@@ -56,7 +56,8 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
         SignatureLibraryRelease original = getGene3dObject();
         // Copy
         SignatureLibraryRelease copy = (SignatureLibraryRelease) SerializationUtils.clone(original);
-        copy.getSignatures().iterator().next().setSignatureLibraryRelease(null);
+        //TODO: Why is the signature library set to NULL?
+        //copy.getSignatures().iterator().next().setSignatureLibraryRelease(null);
         // Should be equal
         assertEquals("Original and copy models should be equal", original.getSignatures().iterator().next().getModels(), copy.getSignatures().iterator().next().getModels());
         assertEquals("Original and copy signatures should be equal", original.getSignatures(), copy.getSignatures());
