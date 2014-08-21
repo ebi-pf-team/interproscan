@@ -61,7 +61,7 @@ public class ProductionMaster extends AbstractMaster {
      */
     public void run() {
         super.run();
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("Started Production Master run() method.");
+        LOGGER.debug("Started Production Master run() method.");
         try {
 
             startNewWorker();
@@ -106,9 +106,11 @@ public class ProductionMaster extends AbstractMaster {
                 }
                 progressReport();
                 Thread.sleep(1000);   // Don't want to hammer Oracle with requests for step instances that can be run.
-                LOGGER.debug("Step instance statistics");
-                LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Step instance statistics");
+                    LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                    LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                }
                 //update the statistics plugin
                 statsUtil.setTotalJobs(stepInstanceDAO.count());
                 statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
@@ -126,9 +128,11 @@ public class ProductionMaster extends AbstractMaster {
      * Called by quartz to load proteins from UniParc.
      */
     public void createProteinLoadJob() {
-        LOGGER.debug("StatsUtil class =" + statsUtil.getClass().toString());
-        LOGGER.debug("WorkerRunner class=" + workerRunner.getClass().toString());
-        LOGGER.debug("StepInstanceDAO class=" + stepInstanceDAO.getClass().toString());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("StatsUtil class =" + statsUtil.getClass().toString());
+            LOGGER.debug("WorkerRunner class=" + workerRunner.getClass().toString());
+            LOGGER.debug("StepInstanceDAO class=" + stepInstanceDAO.getClass().toString());
+        }
         createStepInstancesForJob("jobLoadFromUniParc", null);
         LOGGER.debug("Finished creating uniparc step instance");
     }
@@ -147,14 +151,20 @@ public class ProductionMaster extends AbstractMaster {
         LOGGER.debug("Poll Job Request Queue queue");
 
         final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
-        LOGGER.debug("Production Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Production Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+        }
 
 
         statsUtil.pollStatsBrokerJobQueue();
-        LOGGER.debug("Production Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Production Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
+        }
 
         statsUtil.pollStatsBrokerResponseQueue();
-        LOGGER.debug("Production Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Production Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+        }
     }
 
     /**
@@ -224,17 +234,23 @@ public class ProductionMaster extends AbstractMaster {
                     final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                     if (statsAvailable) {
                         workerCount = ((SubmissionWorkerRunner) workerRunner).getWorkerCount();
-                        LOGGER.debug("Worker count=" + workerCount );
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Worker count=" + workerCount);
+                        }
                         if(statsMessageListener.getConsumers() > 0){
                             quickSpawnMode =  ((statsMessageListener.getQueueSize()/ statsMessageListener.getConsumers()) > 4);
-                            LOGGER.debug("Quickspawn mode=" + quickSpawnMode);
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Quickspawn mode=" + quickSpawnMode);
+                            }
                         }
                         final boolean workerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
-                        LOGGER.debug("Worker required=" + workerRequired);
-                        LOGGER.debug("StatsUtil.getConsumers=" + statsUtil.getStatsMessageListener().getConsumers());
-                        LOGGER.debug("Max consumers=" + maxConsumers);
-                        LOGGER.debug("StatsUtil.getQueueSize=" + statsUtil.getStatsMessageListener().getQueueSize());
-                        LOGGER.debug("Max messages on queue per consumer=" + maxMessagesOnQueuePerConsumer);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Worker required=" + workerRequired);
+                            LOGGER.debug("StatsUtil.getConsumers=" + statsUtil.getStatsMessageListener().getConsumers());
+                            LOGGER.debug("Max consumers=" + maxConsumers);
+                            LOGGER.debug("StatsUtil.getQueueSize=" + statsUtil.getStatsMessageListener().getQueueSize());
+                            LOGGER.debug("Max messages on queue per consumer=" + maxMessagesOnQueuePerConsumer);
+                        }
 
                         if ((statsUtil.getStatsMessageListener().getConsumers() < maxConsumers && statsUtil.getStatsMessageListener().getQueueSize() > maxMessagesOnQueuePerConsumer &&
                                 quickSpawnMode) ||
@@ -261,10 +277,12 @@ public class ProductionMaster extends AbstractMaster {
 
                     LOGGER.debug("Poll the Job Response queue ");
                     final boolean responseQueueStatsAvailable = statsUtil.pollStatsBrokerResponseQueue();
-                    if (!responseQueueStatsAvailable) {
-                        LOGGER.debug("The Job Response queue is not initialised");
-                    } else {
-                        LOGGER.debug("JobResponseQueue:  " + statsMessageListener.getStats().toString());
+                    if (LOGGER.isDebugEnabled()) {
+                        if (!responseQueueStatsAvailable) {
+                            LOGGER.debug("The Job Response queue is not initialised");
+                        } else {
+                            LOGGER.debug("JobResponseQueue:  " + statsMessageListener.getStats().toString());
+                        }
                     }
 
                     try {
