@@ -205,11 +205,19 @@ public class CommandLineConversationMonitor {
         Process pr=pb.start();
         pr.waitFor();
         if (pr.exitValue() == 0) {
-            BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
+            BufferedReader outReader = null;
             String output = "";
-            String line = null;
-            while ((line = outReader.readLine()) != null) {
-                output += line + "\n";
+            try {
+                outReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+                String line;
+                while ((line = outReader.readLine()) != null) {
+                    output += line + "\n";
+                }
+            }
+            finally {
+                if (outReader != null) {
+                    outReader.close();
+                }
             }
             return output;
         } else {
@@ -232,8 +240,18 @@ public class CommandLineConversationMonitor {
         Process pr=pb.start();
         pr.waitFor();
         if (pr.exitValue() == 0) {
-            BufferedReader outReader=new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            return outReader.readLine().trim();
+            BufferedReader outReader = null;
+            String pid = null;
+            try {
+                outReader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+                pid = outReader.readLine().trim();
+            }
+            finally {
+                if (outReader != null) {
+                    outReader.close();
+                }
+            }
+            return pid;
         } else {
             System.out.println("Error while getting PID");
             return "";
