@@ -135,6 +135,7 @@ public class SuperMatchBucket implements Serializable {
                         toRemove.add(smOne);
                         // Found overlapping matches.
                         // Remove one.  See if it fits into an existing new bucket, or create a new bucket if not.
+                        // TODO 23/07/14 Does this methods code work properly? newBuckets always empty here?!
                         for (SuperMatchBucket otherBucket : newBuckets) {
                             if (otherBucket.addIfNoExactOverlap(smOne)) {
                                 continue handleSmOne;

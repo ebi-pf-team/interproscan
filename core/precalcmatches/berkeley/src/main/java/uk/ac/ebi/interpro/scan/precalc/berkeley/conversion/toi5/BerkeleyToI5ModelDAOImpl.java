@@ -73,11 +73,6 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
                 if (analysisJobName != null && analysisJobName.contains("-")) {
                     analysisJob = analysisJobName.substring(0, analysisJobName.lastIndexOf('-'));
                     versionNumber = analysisJobName.substring(analysisJobName.lastIndexOf('-') + 1);
-                    //Check for Gene3D and modify the version number. Onion version number for Gene3D is 3.5 while InterProScan uses 3.5.0
-                    //Temp fix, it will not be necessary when Onion is retired
-                    if(analysisJob.toLowerCase().equals("gene3d") && versionNumber.equals("3.5.0")){
-                       versionNumber = "3.5";
-                    }
                     LOGGER.debug("Job: " + analysisJobName + " :- analysisJob: " + analysisJob + " versionNumber: " + versionNumber);
                 } else {
                     throw new IllegalStateException("Analysis job name is in an unexpected format: " + analysisJobName);

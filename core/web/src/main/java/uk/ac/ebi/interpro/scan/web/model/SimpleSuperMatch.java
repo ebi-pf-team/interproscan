@@ -23,7 +23,7 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
 
     private SimpleLocation location;
 
-    private static final int ABSOLUTE_OVERLAP_REQUIRED = 3;
+    private static final int ABSOLUTE_OVERLAP_REQUIRED = -20;
 
     /**
      * Deliberately not using TreeSet - the ordering is not important
@@ -185,16 +185,48 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
      * @return true if the two domain matches overlap.
      */
     public boolean matchesOverlap(SimpleSuperMatch that, boolean exactOverlap) {
-        int minimumOverlap = 0;
+        int minimumOverlap = 1; // If one match ends at position 24 and one starts at position 24 then we have 1aa of overlap
         if (!exactOverlap) {
+            // Overlap must match the definition in the InterPro data warehouse IDA build script (ida_build.sql).
+            // Two supermatches are deemed to overlap if they overlap by 20% of the smallest match.
+            // AND CEIL((u2.pos_from-u1.pos_to)/LEAST(u1.pos_to - u1.pos_FROM , u2.pos_to  - u2.pos_FROM )*100) >= -20
+
             minimumOverlap = ABSOLUTE_OVERLAP_REQUIRED;
         }
 
-        int minEnd = (Math.min(this.getLocation().getEnd(), that.getLocation().getEnd()));
-        int maxStart = (Math.max(this.getLocation().getStart(), that.getLocation().getStart()));
-        int overlap = minEnd - maxStart + 1;
+        int thisStart = this.getLocation().getStart();
+        int thatStart = that.getLocation().getStart();
 
-        return overlap > minimumOverlap;
+        Integer start1;
+        Integer end1;
+        Integer start2;
+        Integer end2;
+
+        if (thisStart <= thatStart) {
+            // Treat "this" as the first match, "that" as the second match
+            start1 = thisStart;
+            end1 = this.getLocation().getEnd();
+            start2 = thatStart;
+            end2 = that.getLocation().getEnd();
+        }
+        else {
+            // Treat "that" as the first match, "this" as the second match
+            start1 = thatStart;
+            end1 = that.getLocation().getEnd();
+            start2 = thisStart;
+            end2 = this.getLocation().getEnd();
+        }
+
+        int overlap = start2 - end1;
+        int shortestLength = Math.min(end1 - start1, end2 - start2);
+
+        double calc = ((double)overlap / (double)shortestLength) * 100d;
+
+        if (Math.ceil(calc) >= (double)minimumOverlap) {
+            // Locations do not overlap by more than 20% of the shorter match
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -256,4 +288,5 @@ public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializa
     public String getEntryHierarchyForPopup() {
         return new SupermatchHierachyElementBuilder(this).buildPopup().toString();
     }
+
 }

@@ -51,19 +51,8 @@ public class CondensedView implements Serializable {
         // matches to entries in the same hierarchy.
         final List<SuperMatchBucket> buckets = buildBuckets(superMatches);
 
-        // Fix any SuperMatchBuckets that have overlaps within them.
-        fixOverlaps(buckets);
-
         // Finally, add the buckets to the lines, aiming for the least number of lines possible.
         buildLines(buckets);
-    }
-
-    private void fixOverlaps(List<SuperMatchBucket> buckets) {
-        List<SuperMatchBucket> newBuckets = new ArrayList<SuperMatchBucket>();
-        for (SuperMatchBucket bucket : buckets) {
-            newBuckets.addAll(bucket.ensureNoOverlaps());
-        }
-        buckets.addAll(newBuckets);
     }
 
     /**
@@ -98,7 +87,10 @@ public class CondensedView implements Serializable {
      * @param superMatches to be merged & bucketed.
      * @return a List of SuperMatchBuckets.
      */
-    private List<SuperMatchBucket> buildBuckets(final List<SimpleSuperMatch> superMatches) {
+    public List<SuperMatchBucket> buildBuckets(final List<SimpleSuperMatch> superMatches) {
+        if (superMatches == null) {
+            return null;
+        }
         List<SuperMatchBucket> superMatchBucketList = new ArrayList<SuperMatchBucket>();
         for (SimpleSuperMatch superMatch : superMatches) {
             boolean inList = false;
