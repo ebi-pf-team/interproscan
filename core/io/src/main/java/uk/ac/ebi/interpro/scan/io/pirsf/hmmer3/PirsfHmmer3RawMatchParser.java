@@ -77,46 +77,46 @@ public class PirsfHmmer3RawMatchParser
             double fullSequenceBias = 0.0d;
 
             if (locationEndString.length() > 0) {
-                locationEnd = new Integer(locationEndString);
+                locationEnd = Integer.parseInt(locationEndString);
             }
             if (locationStartString.length() > 0) {
-                locationStart = new Integer(locationStartString);
+                locationStart = Integer.parseInt(locationStartString);
             }
             if (evalueString.length() > 0) {
-                evalue = new Double(evalueString);
+                evalue = Double.parseDouble(evalueString);
             }
             if (hmmEndString.length() > 0) {
-                hmmEnd = new Integer(hmmEndString);
+                hmmEnd = Integer.parseInt(hmmEndString);
             }
             if (hmmStartString.length() > 0) {
-                hmmStart = new Integer(hmmStartString);
+                hmmStart =  Integer.parseInt(hmmStartString);
             }
             if (locationScoreString.length() > 0) {
-                locationScore = new Double(locationScoreString);
+                locationScore = Double.parseDouble(locationScoreString);
             }
             if (scoreString.length() > 0) {
-                score = new Double(scoreString);
+                score = Double.parseDouble(scoreString);
             }
             if (domainBiasString.length() > 0) {
-                domainBias = new Double(domainBiasString);
+                domainBias = Double.parseDouble(domainBiasString);
             }
             if (domainCeValueString.length() > 0) {
-                domainCeValue = new Double(domainCeValueString);
+                domainCeValue = Double.parseDouble(domainCeValueString);
             }
             if (domainIeValueString.length() > 0) {
-                domainIeValue = new Double(domainIeValueString);
+                domainIeValue = Double.parseDouble(domainIeValueString);
             }
             if (envelopeEndString.length() > 0) {
-                envelopeEnd = new Integer(envelopeEndString);
+                envelopeEnd =  Integer.parseInt(envelopeEndString);
             }
             if (envelopeStartString.length() > 0) {
-                envelopeStart = new Integer(envelopeStartString);
+                envelopeStart =  Integer.parseInt(envelopeStartString);
             }
             if (expectedAccuracyString.length() > 0) {
-                expectedAccuracy = new Double(expectedAccuracyString);
+                expectedAccuracy =  Double.parseDouble(expectedAccuracyString);
             }
             if (fullSequenceBiasString.length() > 0) {
-                fullSequenceBias = new Double(fullSequenceBiasString);
+                fullSequenceBias =  Double.parseDouble(fullSequenceBiasString);
             }
 
             return new PirsfHmmer3RawMatch(locationEnd, locationStart, model, sequenceIdentifier, evalue, hmmBounds,

@@ -31,15 +31,15 @@ public class EntryHierarchyTest {
     public void testGetEntryColoursMap() {
         Map<String, Integer> entryColoursMap = entryHierarchy.getEntryColourMap();
         assertNotNull(entryColoursMap);
-        assertEquals(2, entryColoursMap.size());
+        assertEquals(7833, entryColoursMap.size());
         assertFalse(entryColoursMap.containsKey("invalid"));
-        entryColoursMap.put("IPR000001", 1);
+        entryColoursMap.put("IPR999999", 1);
     }
 
     @Test
     public void testGetEntryColour() {
-        assertEquals(45, entryHierarchy.getEntryColour("IPR011987"));
-        assertEquals(44, entryHierarchy.getEntryColour("IPR011986"));
+        assertEquals(21, entryHierarchy.getEntryColour("IPR011987"));
+        assertEquals(20, entryHierarchy.getEntryColour("IPR011986"));
         assertEquals(-1, entryHierarchy.getEntryColour("invalid"));
         assertEquals(-1, entryHierarchy.getEntryColour("doesnotexist"));
     }
@@ -48,6 +48,6 @@ public class EntryHierarchyTest {
     public void testGetEntryHierarchyDataMap() {
         Map<String, EntryHierarchyData> data = entryHierarchy.getEntryHierarchyDataMap();
         assertNotNull(data);
-        assertEquals(235, data.size());
+        assertEquals(7489, data.size());
     }
 }

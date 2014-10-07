@@ -169,6 +169,11 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
     }
 
     @Override
+    public int hashCode() {
+        return ac.hashCode();
+    }
+
+    @Override
     public String toString() {
         return ac;
     }

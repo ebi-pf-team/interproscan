@@ -53,12 +53,14 @@ public class CondensedViewComponentTest {
 
     private SimpleSuperMatch IPR000276_24_67;
     private SimpleSuperMatch IPR001671_64_99;
+    private SimpleSuperMatch IPR001671_60_95;
+    private SimpleSuperMatch IPR001671_59_94;
+    private SimpleSuperMatch IPR001671_61_96;
     private SimpleSuperMatch IPR001908_212_276;
     private SimpleSuperMatch IPR002122_264_312;
     private SimpleSuperMatch IPR000020_12_24;
     private SimpleSuperMatch IPR018081_20_24;
     private SimpleSuperMatch IPR001840_36_48;
-    private List<SimpleSuperMatch> superMatchList;
 
     @Before
     public void setup() {
@@ -69,6 +71,19 @@ public class CondensedViewComponentTest {
         IPR001671_64_99 = new SimpleSuperMatch(
                 new SimpleEntry("IPR001671", "tstNm2", "testName2", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(64, 99)
         );
+
+        IPR001671_60_95 = new SimpleSuperMatch(
+                new SimpleEntry("IPR001671", "tstNm2", "testName2", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(60, 95)
+        );
+
+        IPR001671_59_94 = new SimpleSuperMatch(
+                new SimpleEntry("IPR001671", "tstNm2", "testName2", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(59, 94)
+        );
+
+        IPR001671_61_96 = new SimpleSuperMatch(
+                new SimpleEntry("IPR001671", "tstNm2", "testName2", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(61, 96)
+        );
+
 
         IPR001908_212_276 = new SimpleSuperMatch(
                 new SimpleEntry("IPR001908", "tstNm3", "testName3", EntryType.DOMAIN, entryHierarchy), new SimpleLocation(212, 276)
@@ -90,20 +105,16 @@ public class CondensedViewComponentTest {
                 new SimpleEntry("IPR001840", "tstNm7", "testName7", EntryType.REPEAT, entryHierarchy), new SimpleLocation(36, 48)
         );
 
-        superMatchList = new ArrayList<SimpleSuperMatch>();
-        superMatchList.add(IPR000276_24_67);
-        superMatchList.add(IPR001671_64_99);
-        superMatchList.add(IPR001908_212_276);
-        superMatchList.add(IPR002122_264_312);
-        superMatchList.add(IPR000020_12_24);
-        superMatchList.add(IPR018081_20_24);
-        superMatchList.add(IPR001840_36_48);
     }
 
 
     @Test
     public void matchesOverlapTest() {
-        Assert.assertTrue(IPR000276_24_67.matchesOverlap(IPR001671_64_99, true));
+        Assert.assertTrue(IPR000276_24_67.matchesOverlap(IPR001671_64_99, true)); // Only overlaps by 3aa
+        Assert.assertFalse(IPR000276_24_67.matchesOverlap(IPR001671_64_99, false)); // Only overlaps by 3aa
+        Assert.assertFalse(IPR000276_24_67.matchesOverlap(IPR001671_60_95, false)); // Overlaps by exactly 20% shortest match
+        Assert.assertTrue(IPR000276_24_67.matchesOverlap(IPR001671_59_94, false)); // Overlaps >20% shortest match
+        Assert.assertFalse(IPR000276_24_67.matchesOverlap(IPR001671_61_96, false)); // Overlaps <20% shortest match
         Assert.assertTrue(IPR000276_24_67.matchesOverlap(IPR001840_36_48, true));
         Assert.assertFalse(IPR000276_24_67.matchesOverlap(IPR001908_212_276, true));
         Assert.assertFalse(IPR000276_24_67.matchesOverlap(IPR002122_264_312, true));
