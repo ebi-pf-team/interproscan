@@ -12,6 +12,7 @@
                   value="PROSITE consists of documentation entries describing protein domains, families and functional sites as well as associated patterns and profiles to identify them"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePrositePatterns-20.97"/>
+        <property name="active" value="false" />
     </bean>
 
     <bean id="abstractPrositePatternStep-20.97" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">

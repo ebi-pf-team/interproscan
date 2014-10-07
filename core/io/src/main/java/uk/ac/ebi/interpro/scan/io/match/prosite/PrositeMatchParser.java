@@ -72,7 +72,7 @@ public abstract class PrositeMatchParser extends AbstractLineMatchParser<PfScanR
         Double score = null;
         final String scoreString = splitLine[5].trim();
         if (scoreString.length() > 0 && !".".equals(scoreString)) {
-            score = new Double(scoreString);
+            score = Double.parseDouble(scoreString);
         }
         final Map<String, String> gffAttributes = extractAttributes(splitLine[8]);
 

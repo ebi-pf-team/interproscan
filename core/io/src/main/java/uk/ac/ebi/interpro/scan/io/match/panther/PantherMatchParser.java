@@ -69,16 +69,16 @@ public final class PantherMatchParser
             int locationEnd = 0;
 
             if (scoreString.length() > 0 && !".".equals(scoreString)) {
-                score = new Double(scoreString);
+                score = Double.parseDouble(scoreString);
             }
             if (eValueString.length() > 0 && !".".equals(eValueString)) {
-                evalue = new Double(eValueString);
+                evalue = Double.parseDouble(eValueString);
             }
             if (locationStartEnd.length() > 0 && locationStartEnd.contains("-")) {
                 final String[] splitLocationStartEnd = locationStartEnd.split("-");
                 if (splitLocationStartEnd.length == 2) {
-                    locationStart = new Integer(splitLocationStartEnd[0].trim());
-                    locationEnd = new Integer(splitLocationStartEnd[1].trim());
+                    locationStart = Integer.parseInt(splitLocationStartEnd[0].trim());
+                    locationEnd = Integer.parseInt(splitLocationStartEnd[1].trim());
                 }
             }
 

@@ -20,7 +20,7 @@
         <dependency>
             <artifactId>berkeley</artifactId>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
-            <version>5.7-48.0</version>
+            <version>5.8-49.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
