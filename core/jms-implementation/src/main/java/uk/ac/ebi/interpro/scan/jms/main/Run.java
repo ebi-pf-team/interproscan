@@ -204,7 +204,7 @@ public class Run extends AbstractI5Runner {
                         System.exit(1);
                     }
 
-                    //Do multiple version check (e.g. if -appl pirsf-2.84,pirsf-2.85 I5 will exit)
+                    //Do multiple version check (e.g. if -appl pirsf-2.84,pirsf-3.01 I5 will exit)
                     Set<Job> jobsToCheckMultipleVersionsSet = new HashSet<Job>();
                     for (Set<Job> jobsToCheck : parsedAnalysesToRealAnalysesMap.values()) {
                         jobsToCheckMultipleVersionsSet.addAll(jobsToCheck);
@@ -769,7 +769,7 @@ public class Run extends AbstractI5Runner {
         final Map<SignatureLibrary, Set<Job>> libraryToJobsMap = clusterJobsBySignatureLibrary(jobsToCheckMultipleVersion);
         //Iterate over all signature libraries Pfam, Gene3D, PIRSF etc.
         for (SignatureLibrary library : libraryToJobsMap.keySet()) {
-            //Get all jobs for a certain signature library e.g. job to run PIRSF v2.84 and another job to run PIRSF v2.85
+            //Get all jobs for a certain signature library e.g. job to run PIRSF v2.84 and another job to run PIRSF v3.01
             final Set<Job> libraryJobs = libraryToJobsMap.get(library);
             if (libraryJobs.size() > 1) {
                 String versions = "";

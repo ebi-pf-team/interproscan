@@ -102,22 +102,6 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="3.01"/>
-                    <property name="modelFiles" value="file:${pirsf.sfhmm.path.3.01}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF-3.01"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="2.85"/>
-                    <property name="modelFiles" value="file:${pirsf.sfhmm.path.2.85}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF-2.85"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="PIRSF"/>
                     <property name="releaseVersionNumber" value="2.84"/>
                     <property name="modelFiles">
                         <list>

@@ -33,7 +33,7 @@ public class TestRun {
         assertTrue(actualArray.length == 1);
         assertEquals("jobPIRSF-2.84", actualArray[0]);
 
-        //Case 2: ./interproscan.sh -i test_proteins.fasta -appl pirsf-2.84, pirsf-2.85 -dp
+        //Case 2: ./interproscan.sh -i test_proteins.fasta -appl pirsf-2.84, pirsf-3.01 -dp
     }
 
     @Test
@@ -48,14 +48,13 @@ public class TestRun {
         assertEquals("We should get 1 job for Pfam.", 1, actualMap.get("pfam-27.0").size());
 
         //Define test method input
-        parsedAnalyses = new String[]{"pirsf-2.84", "pirsf-2.85", "pfam-27.0"};
+        parsedAnalyses = new String[]{"pirsf-2.84", "pfam-27.0"};
         //Test the method
         actualMap = Run.getRealAnalysesNames(parsedAnalyses, realJobs);
-        assertEquals("We should get 3 jobs for 3 keys.", 3, actualMap.size());
+        assertEquals("We should get 2 jobs for 2 keys.", 2, actualMap.size());
         assertNull("We should get 0 jobs for key pirsf.", actualMap.get("pirsf"));
         assertEquals("We should get 1 job for Pfam.", 1, actualMap.get("pfam-27.0").size());
         assertEquals("We should get 1 job for pirsf-2.84.", 1, actualMap.get("pirsf-2.84").size());
-        assertNotNull("We should get 1 job for pirsf-2.85.", actualMap.get("pirsf-2.85"));
     }
 
     private Set<Job> loadDummyJobs(boolean includePfam) {
@@ -65,12 +64,6 @@ public class TestRun {
         pirsf284Job.setBeanName("jobPIRSF-2.84");
         pirsf284Job.setAnalysis(true);
         dummyJobs.add(pirsf284Job);
-        //PIRSF version 2.85 job
-        Job pirsf285Job = new Job();
-        pirsf285Job.setBeanName("jobPIRSF-2.85");
-        pirsf285Job.setAnalysis(false);
-        pirsf285Job.setActive(false);
-        dummyJobs.add(pirsf285Job);
         //Pfam version 27.0 job
         if (includePfam) {
             Job pfamJob = new Job();
