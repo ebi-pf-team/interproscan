@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.io.OsUtils;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 
@@ -344,7 +345,7 @@ public class Utilities {
     static public  String getCurrentProcesses() throws IOException,InterruptedException {
         String PID = getPid();
         Vector<String> commands=new Vector<String>();
-        commands.add("ps -o pid,vsize,rss,cmd --ppid " + PID);
+        commands.add("ps -o pid,vsize,rss,command -p " + PID);
         String output = runBashCommand(commands);
         if (output != null) {
             LOGGER.debug(" current cmds: \n" + output);
