@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.io.cli;
 
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.io.OsUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -178,7 +179,7 @@ public class CommandLineConversationMonitor {
     static public  String getCurrentProcesses() throws IOException,InterruptedException {
         String PID = getPid();
         Vector<String> commands=new Vector<String>();
-        commands.add("ps -o pid,vsize,rss,cmd --ppid " + PID);
+        commands.add("ps -o pid,vsize,rss,command -p " + PID);
         String output = runBashCommand(commands);
         if (output != null) {
             LOGGER.debug(" current cmds: \n" + output);

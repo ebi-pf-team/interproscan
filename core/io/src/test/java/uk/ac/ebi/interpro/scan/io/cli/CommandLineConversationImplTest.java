@@ -33,8 +33,6 @@ public class CommandLineConversationImplTest {
      * set correctly and JAVA_HOME/bin to be on the PATH.
      */
     @Test
-//    TODO: Fix unit test for Mac OS
-    @Ignore("Test does not work on Mac OS")
     public void testCommandLineRunCommand() {
         //String[] testCommand = {"java", "-version"};
         List<String> testCommand = new ArrayList<String>();
@@ -60,8 +58,6 @@ public class CommandLineConversationImplTest {
     }
 
     @Test
-    //    TODO: Fix unit test for Mac OS
-    @Ignore("Test does not work on Mac OS")
     public void testCommandWithFileOutput() {
         //String[] testCommand = {"java", "-version"};
         List<String> testCommand = new ArrayList<String>();
@@ -94,8 +90,6 @@ public class CommandLineConversationImplTest {
      * set correctly and JAVA_HOME/bin to be on the PATH.
      */
     @Test
-    //    TODO: Fix unit test for Mac OS
-    @Ignore("Test does not work on Mac OS")
     public void testCommandLineErrorReporting() {
         final String[] testCommand = {"java", "-utter", "-nonsense"};
         CommandLineConversation clc = new CommandLineConversationImpl();
