@@ -33,6 +33,18 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
+    <properties>
+        <mvn.i5.database.driver>org.hsqldb.jdbcDriver</mvn.i5.database.driver>
+        <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
+        <!--<mvn.i5.database.connection.url>jdbc:hsqldb:hsql://localhost/i5</mvn.i5.database.connection.url>-->
+        <mvn.i5.database.username>sa</mvn.i5.database.username>
+        <mvn.i5.database.password></mvn.i5.database.password>
+        <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
+        <mvn.hibernate.show_sql>false</mvn.hibernate.show_sql>
+        <mvn.hibernate.format_sql>false</mvn.hibernate.format_sql>
+        <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
+    </properties>
+
 
     <dependencies>
 
@@ -171,7 +183,7 @@
                         <artifactId>tools</artifactId>
                         <version>1.5.0</version>
                         <scope>system</scope>
-                        <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                        <systemPath>${sun.tools.systemPath}</systemPath>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -190,24 +202,30 @@
 
     <profiles>
         <profile>
-            <!-- Copy this profile into your own [HOME]/.m2/settings.xml file, rename and
-             edit appropriately. Use with "mvn -P profile-id GOAL" -->
-            <id>default</id>
+            <id>macOS</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <os>
+                    <family>mac</family>
+                </os>
             </activation>
             <properties>
-                <mvn.i5.database.driver>org.hsqldb.jdbcDriver</mvn.i5.database.driver>
-                <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
-                <!--<mvn.i5.database.connection.url>jdbc:hsqldb:hsql://localhost/i5</mvn.i5.database.connection.url>-->
-                <mvn.i5.database.username>sa</mvn.i5.database.username>
-                <mvn.i5.database.password></mvn.i5.database.password>
-                <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
-                <mvn.hibernate.show_sql>false</mvn.hibernate.show_sql>
-                <mvn.hibernate.format_sql>false</mvn.hibernate.format_sql>
-                <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
+                <sun.tools.systemPath>${java.home}/../Classes/classes.jar</sun.tools.systemPath>
             </properties>
         </profile>
+
+        <profile>
+            <id>linuxOS</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <properties>
+                <sun.tools.systemPath>${java.home}/../lib/tools.jar</sun.tools.systemPath>
+            </properties>
+        </profile>
+
     </profiles>
 
 </project>
