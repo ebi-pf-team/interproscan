@@ -41,7 +41,7 @@ public class CreateMatchDBFromIprscan {
     private static final int COL_IDX_HMM_START = 10;
     private static final int COL_IDX_HMM_END = 11;
 //    Uncomment because I5 doesn't calculate them at the moment
-//    private static final int COL_IDX_HMM_BOUNDS = 11;
+    private static final int COL_IDX_HMM_BOUNDS = 12;
 
     private static final String CREATE_TEMP_TABLE =
             "create global temporary table  berkley_tmp_tab " +
@@ -57,9 +57,9 @@ public class CreateMatchDBFromIprscan {
                     "        m.seq_start, " +
                     "        m.seq_end, " +
                     "        m.hmm_start, " +
-                    "        m.hmm_end " +
+                    "        m.hmm_end, " +
                     //    Uncomment because I5 doesn't calculate them at the moment
-//                    "        m.hmm_bounds " +
+                    "        m.hmm_bounds " +
 //                    "        m.hmm_length " +
                     "   from (select upi,md5 from uniparc_protein where upi<='MAX_UPI') p," +
                     "        mv_iprscan m," +
@@ -71,7 +71,7 @@ public class CreateMatchDBFromIprscan {
 
     private static final String QUERY_TEMPORARY_TABLE =
             "select  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, SCORE, " +
-                    "       SEQUENCE_SCORE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END " +
+                    "       SEQUENCE_SCORE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS " +
                     "       from  berkley_tmp_tab " +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
                     "       SEQUENCE_SCORE";
@@ -201,7 +201,7 @@ public class CreateMatchDBFromIprscan {
                     Integer hmmEnd = rs.getInt(COL_IDX_HMM_END);
                     if (rs.wasNull()) hmmEnd = null;
 
-//                    String hmmBounds = rs.getString(COL_IDX_HMM_BOUNDS);
+                    String hmmBounds = rs.getString(COL_IDX_HMM_BOUNDS);
 
                     Double sequenceScore = rs.getDouble(COL_IDX_SEQ_SCORE);
                     if (rs.wasNull()) sequenceScore = null;
@@ -220,7 +220,7 @@ public class CreateMatchDBFromIprscan {
                     location.setEnd(sequenceEnd);
                     location.setHmmStart(hmmStart);
                     location.setHmmEnd(hmmEnd);
-//                    location.setHmmBounds(hmmBounds);
+                    location.setHmmBounds(hmmBounds);
                     location.seteValue(eValue);
                     location.setScore(locationScore);
                     locationCount++;
