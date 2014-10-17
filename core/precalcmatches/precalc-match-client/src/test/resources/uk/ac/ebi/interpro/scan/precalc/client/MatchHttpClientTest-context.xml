@@ -11,7 +11,7 @@
     </bean>
 
     <bean id="servedXml" class="org.springframework.core.io.FileSystemResource">
-        <constructor-arg type="java.io.File" value="uk/ac/ebi/interpro/scan/precalc/client/test-matches.xml"/>
+        <constructor-arg type="java.io.File" value="uk/ac/ebi/interpro/scan/precalc/client/test-matches-5.8-49.0.xml"/>
     </bean>
 
     <bean id="serverTSV" class="org.springframework.core.io.FileSystemResource">
