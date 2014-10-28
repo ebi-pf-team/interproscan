@@ -5,14 +5,14 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.7-48.0</version>
+        <version>5.8-49.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-model</artifactId>
-    <version>5.7-48.0</version>
+    <version>5.8-49.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>5.7-48.0</version>
+            <version>5.8-49.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
