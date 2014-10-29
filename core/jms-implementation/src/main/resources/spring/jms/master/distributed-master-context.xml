@@ -95,6 +95,7 @@
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="hasInVmWorker" value="true"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
+        <property name="temporaryDirectory" value="${temporary.file.directory}"/>
         <property name="statsUtil" ref="masterStatsUtil"/>
         <property name="maxConsumers" value="${master.maxconsumers}"/>
         <property name="maxMessagesOnQueuePerConsumer" value="${worker.maxunfinished.jobs}"/>
