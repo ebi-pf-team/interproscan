@@ -4,11 +4,11 @@
         <sequence md5="493932c1f43289805b4c4e651ceb9249">GRGLLPFVLLALGIXAPWAVEGAENALKGGACPPRKIVQCLRYEKPKCTSDWQCPDKKKCCRDTCAIKCLNPVAITNPVKVKPGKCPVVYGQCMMLNPPNHCKTDSQCLGDLKCCKSMCGKVCLTPVKA</sequence>
         <xref id="P22298"/>
         <matches>
-            <fingerprints-match graphscan="IIII" evalue="1.400000458E-7">
+            <fingerprints-match graphscan="IIII" evalue="1.44E-7">
                 <signature name="4DISULPHCORE" desc="4-disulphide core signature" ac="PR00003">
-                    <entry type="DOMAIN" name="WAP-type_4-diS_core" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
-                        <go-xref id="GO:0005576" db="GO"/>
-                        <go-xref id="GO:0030414" db="GO"/>
+                    <entry type="DOMAIN" name="WAP" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
+                        <go-xref category="MOLECULAR_FUNCTION" name="peptidase inhibitor activity" id="GO:0030414" db="GO"/>
+                        <go-xref category="CELLULAR_COMPONENT" name="extracellular region" id="GO:0005576" db="GO"/>
                     </entry>
                     <models>
                         <model name="4DISULPHCORE" desc="4-disulphide core signature" ac="PR00003"/>
@@ -16,156 +16,48 @@
                     <signature-library-release version="42.0" library="PRINTS"/>
                 </signature>
                 <locations>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="2" end="108" start="101"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="3" end="117" start="108"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="4" end="88" start="79"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="1" end="126" start="118"/>
+                    <fingerprints-location score="50.0" pvalue="4.37E-4" motifNumber="4" end="126" start="118"/>
+                    <fingerprints-location score="49.17" pvalue="2.32E-4" motifNumber="1" end="88" start="79"/>
+                    <fingerprints-location score="47.92" pvalue="0.00296" motifNumber="2" end="108" start="101"/>
+                    <fingerprints-location score="52.92" pvalue="2.09E-4" motifNumber="3" end="117" start="108"/>
                 </locations>
             </fingerprints-match>
-            <hmmer2-match score="122.5" evalue="0.0">
-                <signature name="WAP" desc="Four-disulfide core domains" ac="SM00217">
-                    <entry type="DOMAIN" name="WAP-type_4-diS_core" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
-                        <go-xref id="GO:0005576" db="GO"/>
-                        <go-xref id="GO:0030414" db="GO"/>
+            <panther-match score="229.4" familyName="ANTILEUKOPROTEINASE" evalue="8.5E-66">
+                <signature name="ANTILEUKOPROTEINASE" ac="PTHR19441:SF24">
+                    <entry type="FAMILY" name="ALP" desc="Antileukoproteinase" ac="IPR029712">
+                        <go-xref category="BIOLOGICAL_PROCESS" name="negative regulation of endopeptidase activity" id="GO:0010951" db="GO"/>
+                        <go-xref category="MOLECULAR_FUNCTION" name="endopeptidase inhibitor activity" id="GO:0004866" db="GO"/>
                     </entry>
                     <models>
-                        <model name="WAP" desc="Four-disulfide core domains" ac="SM00217"/>
+                        <model name="ANTILEUKOPROTEINASE" ac="PTHR19441:SF24"/>
                     </models>
-                    <signature-library-release version="6.2" library="SMART"/>
+                    <signature-library-release version="9.0" library="PANTHER"/>
                 </signature>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="51" hmm-start="1" evalue="2.49999812E-24" score="0.0" end="127" start="82"/>
-                    <hmmer2-location hmm-length="0" hmm-end="51" hmm-start="1" evalue="5.499999426E-8" score="0.0" end="73" start="28"/>
+                    <panther-location end="128" start="3"/>
                 </locations>
-            </hmmer2-match>
-            <hmmer3-match score="60.9" evalue="0.0">
-                <signature name="WAP" desc="WAP-type (Whey Acidic Protein) 'four-disulfide core'" ac="PF00095">
-                    <entry type="DOMAIN" name="WAP-type_4-diS_core" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
-                        <go-xref id="GO:0005576" db="GO"/>
-                        <go-xref id="GO:0030414" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="WAP" desc="WAP-type (Whey Acidic Protein) 'four-disulfide core'" ac="PF00095"/>
-                    </models>
-                    <signature-library-release version="26.0" library="PFAM"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="28" env-end="72" hmm-length="0" hmm-end="43" hmm-start="1" evalue="5.4E-8" score="0.0" end="72" start="28"/>
-                    <hmmer3-location env-start="82" env-end="126" hmm-length="0" hmm-end="43" hmm-start="1" evalue="1.1E-8" score="0.0" end="126" start="82"/>
-                </locations>
-            </hmmer3-match>
-            <hmmer3-match score="0.0" evalue="0.0">
-                <signature ac="G3DSA:4.10.75.10">
-                    <entry type="DOMAIN" name="WAP-type_4-diS_core" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
-                        <go-xref id="GO:0005576" db="GO"/>
-                        <go-xref id="GO:0030414" db="GO"/>
-                    </entry>
-                    <models>
-                        <model ac="2z7fI00"/>
-                        <model ac="1udkA00"/>
-                    </models>
-                    <signature-library-release version="3.5.0" library="GENE3D"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="28" env-end="73" hmm-length="0" hmm-end="0" hmm-start="0" evalue="6.0E-12" score="0.0" end="73" start="28"/>
-                    <hmmer3-location env-start="81" env-end="128" hmm-length="0" hmm-end="0" hmm-start="0" evalue="8.800000001E-16" score="0.0" end="128" start="81"/>
-                </locations>
-            </hmmer3-match>
-            <panther-match score="0.0" familyName="Not available" evalue="0.0">
+            </panther-match>
+            <panther-match score="229.4" familyName="WHEY ACDIC PROTEIN (WAP)" evalue="8.5E-66">
                 <signature name="WHEY ACDIC PROTEIN (WAP)" ac="PTHR19441">
                     <models>
                         <model name="WHEY ACDIC PROTEIN (WAP)" ac="PTHR19441"/>
                     </models>
-                    <signature-library-release version="7.2" library="PANTHER"/>
+                    <signature-library-release version="9.0" library="PANTHER"/>
                 </signature>
                 <locations>
-                    <panther-location end="129" start="3"/>
+                    <panther-location end="128" start="3"/>
                 </locations>
             </panther-match>
-            <profilescan-match>
-                <signature name="WAP" desc="WAP-type 'four-disulfide core' domain profile." ac="PS51390">
-                    <entry type="DOMAIN" name="WAP-type_4-diS_core" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
-                        <go-xref id="GO:0005576" db="GO"/>
-                        <go-xref id="GO:0030414" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="WAP" desc="WAP-type 'four-disulfide core' domain profile." ac="PS51390"/>
-                    </models>
-                    <signature-library-release version="20.89" library="PROSITE_PROFILES"/>
-                </signature>
-                <locations>
-                    <profilescan-location score="0.0" end="73" start="25">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                    <profilescan-location score="0.0" end="127" start="79">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                </locations>
-            </profilescan-match>
-            <superfamilyhmmer3-match evalue="0.0">
-                <signature name="Elafin-like" ac="SSF57256">
-                    <entry type="DOMAIN" name="WAP-type_4-diS_core" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
-                        <go-xref id="GO:0005576" db="GO"/>
-                        <go-xref id="GO:0030414" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="Elafin-like" ac="0049866"/>
-                        <model name="Elafin-like" ac="0053294"/>
-                    </models>
-                    <signature-library-release version="1.75" library="SUPERFAMILY"/>
-                </signature>
-                <locations>
-                    <superfamilyhmmer3-location end="127" start="75"/>
-                    <superfamilyhmmer3-location end="73" start="26"/>
-                </locations>
-            </superfamilyhmmer3-match>
         </matches>
     </protein>
     <protein>
         <sequence md5="bb3bde1de955af5b7f49a84ba2c4d4ae">MKYKRIVFKVGTSSLTNEDGSLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEKGLRTQKQWLAFYAQSQGSIWVDKGAAEALSQYGKSLLLSGIVEAEGVFSYGDIVTVFDKESGKSLGKGRVQFGASALEDMLRSQKAKGVLIYRDDWISITPEIQLLFTEF</sequence>
         <xref id="Q97R95"/>
         <matches>
-            <fingerprints-match graphscan="IIIII" evalue="8.300014038E-49">
-                <signature name="GLU5KINASE" desc="Glutamate 5-kinase family signature" ac="PR00474">
-                    <entry type="FAMILY" name="Glu/AcGlu_kinase" desc="Glutamate/acetylglutamate kinase" ac="IPR001057">
-                        <go-xref id="GO:0006561" db="GO"/>
-                        <go-xref id="GO:0004349" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="GLU5KINASE" desc="Glutamate 5-kinase family signature" ac="PR00474"/>
-                    </models>
-                    <signature-library-release version="42.0" library="PRINTS"/>
-                </signature>
-                <locations>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="3" end="55" start="41"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="4" end="174" start="147"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="5" end="136" start="115"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="1" end="228" start="208"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="2" end="103" start="75"/>
-                </locations>
-            </fingerprints-match>
-            <hmmer2-match score="614.2" evalue="0.0">
-                <signature name="GK" ac="PIRSF000729">
-                    <entry type="FAMILY" name="Glu_5kinase" desc="Glutamate 5-kinase" ac="IPR011529">
-                        <go-xref id="GO:0006561" db="GO"/>
-                        <go-xref id="GO:0004349" db="GO"/>
-                        <go-xref id="GO:0005737" db="GO"/>
-                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 1/2" id="UPA00098" db="UniPathway"/>
-                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
-                    </entry>
-                    <models>
-                        <model name="GK" ac="PIRSF000729"/>
-                    </models>
-                    <signature-library-release version="2.83" library="PIRSF"/>
-                </signature>
-                <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="389" hmm-start="1" evalue="3.60002015E-182" score="0.0" end="368" start="1"/>
-                </locations>
-            </hmmer2-match>
-            <hmmer2-match score="38.2" evalue="0.0">
+            <hmmer2-match score="38.2" evalue="1.1E-6">
                 <signature name="PUA" desc="Putative RNA-binding Domain in PseudoUridine synthase and Archaeosine transglycosylase" ac="SM00359">
-                    <entry type="DOMAIN" name="PUA" desc="Pseudouridine synthase/archaeosine transglycosylase" ac="IPR002478">
-                        <go-xref id="GO:0003723" db="GO"/>
+                    <entry type="DOMAIN" name="PUA" desc="PUA domain" ac="IPR002478">
+                        <go-xref category="MOLECULAR_FUNCTION" name="RNA binding" id="GO:0003723" db="GO"/>
                     </entry>
                     <models>
                         <model name="PUA" desc="Putative RNA-binding Domain in PseudoUridine synthase and Archaeosine transglycosylase" ac="SM00359"/>
@@ -173,885 +65,211 @@
                     <signature-library-release version="6.2" library="SMART"/>
                 </signature>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="86" hmm-start="1" evalue="3.19999899E-9" score="0.0" end="347" start="276"/>
+                    <hmmer2-location hmm-length="0" hmm-end="86" hmm-start="1" evalue="1.1E-6" score="38.2" end="347" start="276"/>
                 </locations>
             </hmmer2-match>
-            <hmmer3-match score="59.0" evalue="0.0">
-                <signature name="PUA" desc="PUA domain" ac="PF01472">
-                    <entry type="DOMAIN" name="PUA" desc="Pseudouridine synthase/archaeosine transglycosylase" ac="IPR002478">
-                        <go-xref id="GO:0003723" db="GO"/>
+            <hmmer2-match score="614.2" evalue="1.2E-184">
+                <signature name="GK" ac="PIRSF000729">
+                    <entry type="FAMILY" name="Glu_5kinase" desc="Glutamate 5-kinase" ac="IPR011529">
+                        <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                        <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                        <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
                     </entry>
                     <models>
-                        <model name="PUA" desc="PUA domain" ac="PF01472"/>
+                        <model name="GK" ac="PIRSF000729"/>
                     </models>
-                    <signature-library-release version="26.0" library="PFAM"/>
+                    <signature-library-release version="2.84" library="PIRSF"/>
                 </signature>
                 <locations>
-                    <hmmer3-location env-start="276" env-end="341" hmm-length="0" hmm-end="64" hmm-start="1" evalue="6.5E-16" score="0.0" end="341" start="276"/>
+                    <hmmer2-location hmm-length="0" hmm-end="389" hmm-start="1" evalue="1.2E-184" score="614.2" end="368" start="1"/>
                 </locations>
-            </hmmer3-match>
-            <hmmer3-match score="446.2" evalue="0.0">
+            </hmmer2-match>
+            <hmmer3-match score="446.2" evalue="1.9E-134">
                 <signature name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027">
                     <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
-                        <go-xref id="GO:0005737" db="GO"/>
-                        <go-xref id="GO:0004349" db="GO"/>
-                        <go-xref id="GO:0006561" db="GO"/>
+                        <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                        <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
                         <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
-                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 1/2" id="UPA00098" db="UniPathway"/>
+                        <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
                     </entry>
                     <models>
                         <model name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027"/>
                     </models>
-                    <signature-library-release version="12.0" library="TIGRFAM"/>
+                    <signature-library-release version="13.0" library="TIGRFAM"/>
                 </signature>
                 <locations>
-                    <hmmer3-location env-start="4" env-end="361" hmm-length="0" hmm-end="359" hmm-start="1" evalue="2.3E-134" score="0.0" end="361" start="4"/>
+                    <hmmer3-location env-start="4" env-end="365" hmm-length="0" hmm-end="359" hmm-start="1" evalue="2.2E-134" score="446.0" end="361" start="4"/>
                 </locations>
             </hmmer3-match>
-            <hmmer3-match score="0.0" evalue="0.0">
-                <signature ac="G3DSA:2.30.130.10">
-                    <models>
-                        <model ac="1r3eA02"/>
-                        <model ac="2as0A01"/>
-                        <model ac="1iq8A04"/>
-                        <model ac="1r3fA02"/>
-                        <model ac="1q7hA02"/>
-                        <model ac="2cx0A02"/>
-                        <model ac="1sqwA02"/>
-                    </models>
-                    <signature-library-release version="3.5.0" library="GENE3D"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="273" env-end="356" hmm-length="0" hmm-end="0" hmm-start="0" evalue="5.6E-21" score="0.0" end="356" start="273"/>
-                </locations>
-            </hmmer3-match>
-            <hmmer3-match score="0.0" evalue="0.0">
-                <signature ac="G3DSA:3.40.1160.10">
-                    <entry type="DOMAIN" name="Asp/Glu/Uridylate_kinase" desc="Aspartate/glutamate/uridylate kinase" ac="IPR001048">
-                        <go-xref id="GO:0008652" db="GO"/>
-                        <pathway-xref name="Metabolism of amino acids and derivatives" id="REACT_13" db="Reactome"/>
-                    </entry>
-                    <models>
-                        <model ac="2va1B00"/>
-                        <model ac="2we5A00"/>
-                        <model ac="1gs5A00"/>
-                        <model ac="2a1fC00"/>
-                    </models>
-                    <signature-library-release version="3.5.0" library="GENE3D"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="3" env-end="255" hmm-length="0" hmm-end="0" hmm-start="0" evalue="7.1E-62" score="0.0" end="255" start="3"/>
-                </locations>
-            </hmmer3-match>
-            <hmmer3-match score="156.9" evalue="0.0">
-                <signature name="AA_kinase" desc="Amino acid kinase family" ac="PF00696">
-                    <entry type="DOMAIN" name="Asp/Glu/Uridylate_kinase" desc="Aspartate/glutamate/uridylate kinase" ac="IPR001048">
-                        <go-xref id="GO:0008652" db="GO"/>
-                        <pathway-xref name="Metabolism of amino acids and derivatives" id="REACT_13" db="Reactome"/>
-                    </entry>
-                    <models>
-                        <model name="AA_kinase" desc="Amino acid kinase family" ac="PF00696"/>
-                    </models>
-                    <signature-library-release version="26.0" library="PFAM"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="4" env-end="234" hmm-length="0" hmm-end="241" hmm-start="1" evalue="7.2E-46" score="0.0" end="234" start="4"/>
-                </locations>
-            </hmmer3-match>
-            <panther-match score="0.0" familyName="Not available" evalue="0.0">
+            <panther-match score="444.6" familyName="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" evalue="1.4E-130">
                 <signature name="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" ac="PTHR11063">
                     <models>
                         <model name="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" ac="PTHR11063"/>
                     </models>
-                    <signature-library-release version="7.2" library="PANTHER"/>
+                    <signature-library-release version="9.0" library="PANTHER"/>
                 </signature>
                 <locations>
-                    <panther-location end="337" start="2"/>
+                    <panther-location end="363" start="2"/>
                 </locations>
             </panther-match>
-            <panther-match score="0.0" familyName="Not available" evalue="0.0">
-                <signature name="SUBFAMILY NOT NAMED" ac="PTHR11063:SF6">
+            <panther-match score="444.6" familyName="GLUTAMATE 5-KINASE" evalue="1.4E-130">
+                <signature name="GLUTAMATE 5-KINASE" ac="PTHR11063:SF6">
                     <models>
-                        <model name="SUBFAMILY NOT NAMED" ac="PTHR11063:SF6"/>
+                        <model name="GLUTAMATE 5-KINASE" ac="PTHR11063:SF6"/>
                     </models>
-                    <signature-library-release version="7.2" library="PANTHER"/>
+                    <signature-library-release version="9.0" library="PANTHER"/>
                 </signature>
                 <locations>
-                    <panther-location end="337" start="2"/>
+                    <panther-location end="363" start="2"/>
                 </locations>
             </panther-match>
             <patternscan-match>
                 <signature name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902">
                     <entry type="CONSERVED_SITE" name="Glutamate_5-kinase_CS" desc="Glutamate 5-kinase, conserved site" ac="IPR019797">
-                        <go-xref id="GO:0006561" db="GO"/>
-                        <go-xref id="GO:0004349" db="GO"/>
-                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 1/2" id="UPA00098" db="UniPathway"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                        <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
                         <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                        <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
                     </entry>
                     <models>
                         <model name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902"/>
                     </models>
-                    <signature-library-release version="20.89" library="PROSITE_PATTERNS"/>
+                    <signature-library-release version="20.105" library="PROSITE_PATTERNS"/>
                 </signature>
                 <locations>
-                    <patternscan-location level="NONE" end="223" start="206">
-                        <alignment>Not available</alignment>
+                    <patternscan-location level="STRONG" end="223" start="206">
+                        <alignment>SsnGtGGMlTKIkAAtiA</alignment>
                     </patternscan-location>
                 </locations>
             </patternscan-match>
             <profilescan-match>
-                <signature name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456">
-                    <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
-                        <go-xref id="GO:0005737" db="GO"/>
-                        <go-xref id="GO:0004349" db="GO"/>
-                        <go-xref id="GO:0006561" db="GO"/>
-                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
-                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 1/2" id="UPA00098" db="UniPathway"/>
-                    </entry>
-                    <models>
-                        <model name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456"/>
-                    </models>
-                    <signature-library-release version="201207.04" library="HAMAP"/>
-                </signature>
-                <locations>
-                    <profilescan-location score="0.0" end="259" start="3">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                </locations>
-            </profilescan-match>
-            <profilescan-match>
                 <signature name="PUA" desc="PUA domain profile." ac="PS50890">
-                    <entry type="DOMAIN" name="PUA" desc="Pseudouridine synthase/archaeosine transglycosylase" ac="IPR002478">
-                        <go-xref id="GO:0003723" db="GO"/>
+                    <entry type="DOMAIN" name="PUA" desc="PUA domain" ac="IPR002478">
+                        <go-xref category="MOLECULAR_FUNCTION" name="RNA binding" id="GO:0003723" db="GO"/>
                     </entry>
                     <models>
                         <model name="PUA" desc="PUA domain profile." ac="PS50890"/>
                     </models>
-                    <signature-library-release version="20.89" library="PROSITE_PROFILES"/>
+                    <signature-library-release version="20.105" library="PROSITE_PROFILES"/>
                 </signature>
                 <locations>
-                    <profilescan-location score="0.0" end="355" start="275">
-                        <alignment>Not available</alignment>
+                    <profilescan-location score="15.593" end="355" start="275">
+                        <alignment>QGSIWVDKGAAEALSqYGK-SLLLSGIVEAEGVFSYGDIVTVFDKeSGKSLGKGRVQFGASALEDMlRSQKAKGVLIYRDDW</alignment>
                     </profilescan-location>
                 </locations>
             </profilescan-match>
-            <superfamilyhmmer3-match evalue="0.0">
-                <signature name="Carbamate kinase-like" ac="SSF53633">
-                    <entry type="DOMAIN" name="Asp/Glu/Uridylate_kinase" desc="Aspartate/glutamate/uridylate kinase" ac="IPR001048">
-                        <go-xref id="GO:0008652" db="GO"/>
-                        <pathway-xref name="Metabolism of amino acids and derivatives" id="REACT_13" db="Reactome"/>
+            <profilescan-match>
+                <signature name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456">
+                    <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
+                        <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                        <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                        <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
                     </entry>
                     <models>
-                        <model name="Carbamate kinase-like" ac="0052050"/>
-                        <model name="Carbamate kinase-like" ac="0051682"/>
-                        <model name="Carbamate kinase-like" ac="0051807"/>
-                        <model name="Carbamate kinase-like" ac="0045891"/>
-                        <model name="Carbamate kinase-like" ac="0053148"/>
-                        <model name="Carbamate kinase-like" ac="0051530"/>
-                        <model name="Carbamate kinase-like" ac="0052046"/>
-                        <model name="Carbamate kinase-like" ac="0052151"/>
-                        <model name="Carbamate kinase-like" ac="0052030"/>
-                        <model name="Carbamate kinase-like" ac="0036708"/>
-                        <model name="Carbamate kinase-like" ac="0051265"/>
-                        <model name="Carbamate kinase-like" ac="0053112"/>
-                        <model name="Carbamate kinase-like" ac="0038241"/>
-                        <model name="Carbamate kinase-like" ac="0052013"/>
-                        <model name="Carbamate kinase-like" ac="0051788"/>
-                        <model name="Carbamate kinase-like" ac="0053023"/>
+                        <model name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456"/>
                     </models>
-                    <signature-library-release version="1.75" library="SUPERFAMILY"/>
+                    <signature-library-release version="201311.27" library="HAMAP"/>
                 </signature>
                 <locations>
-                    <superfamilyhmmer3-location end="255" start="4"/>
+                    <profilescan-location score="35.919" end="259" start="3">
+                        <alignment>YKRIVFKVGTSSLTNEDG-SLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEK</alignment>
+                    </profilescan-location>
                 </locations>
-            </superfamilyhmmer3-match>
-            <superfamilyhmmer3-match evalue="0.0">
-                <signature name="PUA domain-like" ac="SSF88697">
-                    <entry type="DOMAIN" name="PUA-like_domain" desc="PUA-like domain" ac="IPR015947"/>
-                    <models>
-                        <model name="PUA domain-like" ac="0050072"/>
-                        <model name="PUA domain-like" ac="0050865"/>
-                        <model name="PUA domain-like" ac="0038846"/>
-                        <model name="PUA domain-like" ac="0052524"/>
-                        <model name="PUA domain-like" ac="0050744"/>
-                        <model name="PUA domain-like" ac="0051929"/>
-                        <model name="PUA domain-like" ac="0049603"/>
-                        <model name="PUA domain-like" ac="0054564"/>
-                        <model name="PUA domain-like" ac="0044757"/>
-                        <model name="PUA domain-like" ac="0051540"/>
-                        <model name="PUA domain-like" ac="0037984"/>
-                        <model name="PUA domain-like" ac="0052338"/>
-                        <model name="PUA domain-like" ac="0041612"/>
-                        <model name="PUA domain-like" ac="0050660"/>
-                        <model name="PUA domain-like" ac="0051801"/>
-                        <model name="PUA domain-like" ac="0051817"/>
-                        <model name="PUA domain-like" ac="0049288"/>
-                        <model name="PUA domain-like" ac="0054301"/>
-                        <model name="PUA domain-like" ac="0039543"/>
-                        <model name="PUA domain-like" ac="0039128"/>
-                        <model name="PUA domain-like" ac="0052482"/>
-                        <model name="PUA domain-like" ac="0044608"/>
-                        <model name="PUA domain-like" ac="0043106"/>
-                        <model name="PUA domain-like" ac="0052824"/>
-                        <model name="PUA domain-like" ac="0043893"/>
-                        <model name="PUA domain-like" ac="0043605"/>
-                        <model name="PUA domain-like" ac="0042644"/>
-                        <model name="PUA domain-like" ac="0051555"/>
-                        <model name="PUA domain-like" ac="0051810"/>
-                        <model name="PUA domain-like" ac="0054831"/>
-                        <model name="PUA domain-like" ac="0051822"/>
-                        <model name="PUA domain-like" ac="0049549"/>
-                        <model name="PUA domain-like" ac="0054796"/>
-                        <model name="PUA domain-like" ac="0039975"/>
-                        <model name="PUA domain-like" ac="0053955"/>
-                        <model name="PUA domain-like" ac="0051036"/>
-                        <model name="PUA domain-like" ac="0052864"/>
-                        <model name="PUA domain-like" ac="0052541"/>
-                    </models>
-                    <signature-library-release version="1.75" library="SUPERFAMILY"/>
+            </profilescan-match>
+        </matches>
+    </protein>
+    <protein>
+        <sequence md5="b4005237b422c04aa8a462d33e929447">MNRTKLVLGAVILGSTLLAGCSSNAKIDQLSTDVQTLNAKVDQLSNDVTAIRSDVQAAKDDAARANQRLDNQAHSYRK</sequence>
+        <xref id="P02939"/>
+        <matches>
+            <coils-match>
+                <signature name="Coil" ac="Coil">
+                    <signature-library-release version="2.2" library="COILS"/>
                 </signature>
                 <locations>
-                    <superfamilyhmmer3-location end="356" start="276"/>
+                    <coils-location end="76" start="27"/>
                 </locations>
-            </superfamilyhmmer3-match>
+            </coils-match>
         </matches>
     </protein>
     <protein>
         <sequence md5="f927b0d241297dcc9a1c5990b58bf3c4">MAAEEGVVIACHNKDEFDAQMTKAKEAGKVVIIDFTASWCGPCRFIAPVFAEYAKKFPGAVFLKVDVDELKEVAEKYNVEAMPTFLFIKDGAEADKVVGARKDDLQNTIVKHVGATAASASA</sequence>
         <xref id="A2YIW7"/>
         <matches>
-            <fingerprints-match graphscan="III" evalue="2.500000864E-7">
-                <signature name="THIOREDOXIN" desc="Thioredoxin family signature" ac="PR00421">
-                    <entry type="FAMILY" name="Thioredoxin" desc="Thioredoxin" ac="IPR005746">
-                        <go-xref id="GO:0015035" db="GO"/>
-                        <go-xref id="GO:0045454" db="GO"/>
-                        <go-xref id="GO:0006662" db="GO"/>
-                        <go-xref id="GO:0009055" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="THIOREDOXIN" desc="Thioredoxin family signature" ac="PR00421"/>
-                    </models>
-                    <signature-library-release version="42.0" library="PRINTS"/>
-                </signature>
-                <locations>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="3" end="48" start="39"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="2" end="89" start="78"/>
-                    <fingerprints-location score="0.0" pvalue="0.0" motifNumber="1" end="39" start="31"/>
-                </locations>
-            </fingerprints-match>
-            <hmmer2-match score="100.5" evalue="0.0">
+            <hmmer2-match score="100.5" evalue="5.0E-30">
                 <signature name="Thioredoxin" ac="PIRSF000077">
                     <entry type="FAMILY" name="Thioredoxin" desc="Thioredoxin" ac="IPR005746">
-                        <go-xref id="GO:0015035" db="GO"/>
-                        <go-xref id="GO:0045454" db="GO"/>
-                        <go-xref id="GO:0006662" db="GO"/>
-                        <go-xref id="GO:0009055" db="GO"/>
+                        <go-xref category="MOLECULAR_FUNCTION" name="protein disulfide oxidoreductase activity" id="GO:0015035" db="GO"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" name="cell redox homeostasis" id="GO:0045454" db="GO"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" name="glycerol ether metabolic process" id="GO:0006662" db="GO"/>
                     </entry>
                     <models>
                         <model name="Thioredoxin" ac="PIRSF000077"/>
                     </models>
-                    <signature-library-release version="2.83" library="PIRSF"/>
+                    <signature-library-release version="2.84" library="PIRSF"/>
                 </signature>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="108" hmm-start="1" evalue="1.50000307E-27" score="0.0" end="113" start="4"/>
+                    <hmmer2-location hmm-length="0" hmm-end="108" hmm-start="1" evalue="5.0E-30" score="100.5" end="113" start="4"/>
                 </locations>
             </hmmer2-match>
-            <hmmer3-match score="0.0" evalue="0.0">
-                <signature ac="G3DSA:3.40.30.10">
-                    <entry type="DOMAIN" name="Thioredoxin-like_fold" desc="Thioredoxin-like fold" ac="IPR012336"/>
-                    <models>
-                        <model ac="1rk4A01"/>
-                        <model ac="3gx8A01"/>
-                        <model ac="3idvA01"/>
-                        <model ac="1h75A00"/>
-                        <model ac="2dizA00"/>
-                        <model ac="1b4pA01"/>
-                        <model ac="2j23A00"/>
-                        <model ac="2c0gA01"/>
-                        <model ac="1wouA00"/>
-                        <model ac="2fa8B00"/>
-                        <model ac="1k0mA01"/>
-                        <model ac="2e0qA00"/>
-                        <model ac="1gh2A00"/>
-                        <model ac="1faaA00"/>
-                        <model ac="3fk8A00"/>
-                        <model ac="2kucA00"/>
-                        <model ac="3ir4A01"/>
-                        <model ac="2zctA01"/>
-                        <model ac="2wb9A01"/>
-                        <model ac="1xvqA00"/>
-                        <model ac="3l9sA00"/>
-                        <model ac="2pvqA01"/>
-                        <model ac="2a2rA01"/>
-                        <model ac="1un2A00"/>
-                        <model ac="2f8aB00"/>
-                        <model ac="1x5dA01"/>
-                        <model ac="1r26A00"/>
-                        <model ac="2pn8H00"/>
-                        <model ac="2xhfB00"/>
-                        <model ac="2gsqA01"/>
-                        <model ac="2qsiA01"/>
-                        <model ac="2hyxA01"/>
-                        <model ac="1a8yA01"/>
-                        <model ac="1z6mA01"/>
-                        <model ac="1bjxA00"/>
-                        <model ac="1nm3A01"/>
-                        <model ac="3l9vC00"/>
-                        <model ac="1eemA01"/>
-                        <model ac="2in3A01"/>
-                        <model ac="2khpA00"/>
-                        <model ac="1a8yA02"/>
-                        <model ac="1fo5A00"/>
-                        <model ac="2b7kA00"/>
-                        <model ac="2c0dA00"/>
-                        <model ac="1wwjA00"/>
-                        <model ac="1tu7A01"/>
-                        <model ac="1v57A03"/>
-                        <model ac="1z6nA00"/>
-                        <model ac="3dexH00"/>
-                        <model ac="2okaA00"/>
-                        <model ac="3gn3A00"/>
-                        <model ac="2f51A00"/>
-                        <model ac="3gykB00"/>
-                        <model ac="2vimA00"/>
-                        <model ac="1hyuA04"/>
-                        <model ac="1m2dA00"/>
-                        <model ac="2qc7A01"/>
-                        <model ac="1aw9A01"/>
-                        <model ac="2vo4A01"/>
-                        <model ac="1v98A00"/>
-                        <model ac="1o8xA00"/>
-                        <model ac="1yexC00"/>
-                        <model ac="3mszB00"/>
-                        <model ac="1egoA00"/>
-                        <model ac="3ewlB00"/>
-                        <model ac="3gixA00"/>
-                        <model ac="1rw1A00"/>
-                        <model ac="1t4yA01"/>
-                        <model ac="1kngA00"/>
-                        <model ac="1lu4A00"/>
-                        <model ac="1on4A00"/>
-                        <model ac="1iloA00"/>
-                        <model ac="3gnjA00"/>
-                        <model ac="2trcP01"/>
-                        <model ac="2av4A00"/>
-                        <model ac="3fz5B00"/>
-                        <model ac="2c3nA01"/>
-                        <model ac="2hzeA00"/>
-                        <model ac="2p0gB00"/>
-                        <model ac="1hyuA02"/>
-                        <model ac="1jzoA02"/>
-                        <model ac="1senA00"/>
-                        <model ac="3f6fA01"/>
-                        <model ac="1abaA00"/>
-                        <model ac="3fz4A00"/>
-                        <model ac="3fw2A00"/>
-                        <model ac="2b5eA04"/>
-                        <model ac="1t1vA00"/>
-                        <model ac="1vf1A01"/>
-                        <model ac="1k0dB01"/>
-                        <model ac="3feuA00"/>
-                        <model ac="2cz2A01"/>
-                        <model ac="2v2gA01"/>
-                        <model ac="2bmxA00"/>
-                        <model ac="2c4jA01"/>
-                        <model ac="1ttzA00"/>
-                        <model ac="3lxzA01"/>
-                        <model ac="3f9uA00"/>
-                        <model ac="1a8lA02"/>
-                        <model ac="2f9sB00"/>
-                        <model ac="1zmaA00"/>
-                        <model ac="3kp9A02"/>
-                        <model ac="2fwhA00"/>
-                        <model ac="1nm3A02"/>
-                        <model ac="3rppA01"/>
-                        <model ac="1nhyA01"/>
-                        <model ac="1thxA00"/>
-                        <model ac="1s3aA00"/>
-                        <model ac="3eurA00"/>
-                        <model ac="1u6tA00"/>
-                        <model ac="1a8lA01"/>
-                        <model ac="2cvdA01"/>
-                        <model ac="1oktA01"/>
-                        <model ac="3ibhA01"/>
-                        <model ac="1j9bA00"/>
-                        <model ac="2i4aA00"/>
-                        <model ac="3h1nB01"/>
-                        <model ac="1jfuA00"/>
-                        <model ac="2ywmA02"/>
-                        <model ac="1qgvA00"/>
-                        <model ac="1sjiA03"/>
-                        <model ac="3eytB00"/>
-                        <model ac="1w4vA00"/>
-                    </models>
-                    <signature-library-release version="3.5.0" library="GENE3D"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="9" env-end="112" hmm-length="0" hmm-end="0" hmm-start="0" evalue="2.8E-35" score="0.0" end="112" start="9"/>
-                </locations>
-            </hmmer3-match>
-            <hmmer3-match score="107.9" evalue="0.0">
-                <signature name="Thioredoxin" desc="Thioredoxin" ac="PF00085">
-                    <entry type="DOMAIN" name="Thioredoxin_domain" desc="Thioredoxin domain" ac="IPR013766">
-                        <go-xref id="GO:0045454" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="Thioredoxin" desc="Thioredoxin" ac="PF00085"/>
-                    </models>
-                    <signature-library-release version="26.0" library="PFAM"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="9" env-end="112" hmm-length="0" hmm-end="104" hmm-start="2" evalue="1.9E-31" score="0.0" end="112" start="9"/>
-                </locations>
-            </hmmer3-match>
-            <panther-match score="0.0" familyName="Not available" evalue="0.0">
-                <signature name="THIOREDOXIN-RELATED" ac="PTHR10438">
+            <panther-match score="159.1" familyName="THIOREDOXIN" evalue="1.3E-44">
+                <signature name="THIOREDOXIN" ac="PTHR10438">
                     <entry type="FAMILY" name="Thioredoxin" desc="Thioredoxin" ac="IPR005746">
-                        <go-xref id="GO:0015035" db="GO"/>
-                        <go-xref id="GO:0045454" db="GO"/>
-                        <go-xref id="GO:0006662" db="GO"/>
-                        <go-xref id="GO:0009055" db="GO"/>
+                        <go-xref category="MOLECULAR_FUNCTION" name="protein disulfide oxidoreductase activity" id="GO:0015035" db="GO"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" name="cell redox homeostasis" id="GO:0045454" db="GO"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" name="glycerol ether metabolic process" id="GO:0006662" db="GO"/>
                     </entry>
                     <models>
-                        <model name="THIOREDOXIN-RELATED" ac="PTHR10438"/>
+                        <model name="THIOREDOXIN" ac="PTHR10438"/>
                     </models>
-                    <signature-library-release version="7.2" library="PANTHER"/>
+                    <signature-library-release version="9.0" library="PANTHER"/>
                 </signature>
                 <locations>
-                    <panther-location end="113" start="1"/>
+                    <panther-location end="114" start="4"/>
                 </locations>
             </panther-match>
-            <patternscan-match>
-                <signature name="THIOREDOXIN_1" desc="Thioredoxin family active site." ac="PS00194">
-                    <entry type="CONSERVED_SITE" name="Thioredoxin_CS" desc="Thioredoxin, conserved site" ac="IPR017937">
-                        <go-xref id="GO:0045454" db="GO"/>
-                    </entry>
+            <panther-match score="159.1" familyName="THIOREDOXIN" evalue="1.3E-44">
+                <signature name="THIOREDOXIN" ac="PTHR10438:SF126">
                     <models>
-                        <model name="THIOREDOXIN_1" desc="Thioredoxin family active site." ac="PS00194"/>
+                        <model name="THIOREDOXIN" ac="PTHR10438:SF126"/>
                     </models>
-                    <signature-library-release version="20.89" library="PROSITE_PATTERNS"/>
+                    <signature-library-release version="9.0" library="PANTHER"/>
                 </signature>
                 <locations>
-                    <patternscan-location level="NONE" end="50" start="32">
-                        <alignment>Not available</alignment>
-                    </patternscan-location>
+                    <panther-location end="114" start="4"/>
                 </locations>
-            </patternscan-match>
-            <profilescan-match>
-                <signature name="THIOREDOXIN_2" desc="Thioredoxin domain profile." ac="PS51352">
-                    <entry type="DOMAIN" name="Thioredoxin-like_fold" desc="Thioredoxin-like fold" ac="IPR012336"/>
-                    <models>
-                        <model name="THIOREDOXIN_2" desc="Thioredoxin domain profile." ac="PS51352"/>
-                    </models>
-                    <signature-library-release version="20.89" library="PROSITE_PROFILES"/>
-                </signature>
-                <locations>
-                    <profilescan-location score="0.0" end="118" start="1">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                </locations>
-            </profilescan-match>
-            <superfamilyhmmer3-match evalue="0.0">
-                <signature name="Thioredoxin-like" ac="SSF52833">
-                    <entry type="DOMAIN" name="Thioredoxin-like_fold" desc="Thioredoxin-like fold" ac="IPR012336"/>
-                    <models>
-                        <model name="Thioredoxin-like" ac="0041456"/>
-                        <model name="Thioredoxin-like" ac="0045690"/>
-                        <model name="Thioredoxin-like" ac="0045739"/>
-                        <model name="Thioredoxin-like" ac="0041935"/>
-                        <model name="Thioredoxin-like" ac="0049305"/>
-                        <model name="Thioredoxin-like" ac="0035590"/>
-                        <model name="Thioredoxin-like" ac="0051701"/>
-                        <model name="Thioredoxin-like" ac="0037807"/>
-                        <model name="Thioredoxin-like" ac="0047714"/>
-                        <model name="Thioredoxin-like" ac="0042387"/>
-                        <model name="Thioredoxin-like" ac="0051503"/>
-                        <model name="Thioredoxin-like" ac="0048804"/>
-                        <model name="Thioredoxin-like" ac="0039618"/>
-                        <model name="Thioredoxin-like" ac="0035238"/>
-                        <model name="Thioredoxin-like" ac="0037474"/>
-                        <model name="Thioredoxin-like" ac="0046982"/>
-                        <model name="Thioredoxin-like" ac="0037972"/>
-                        <model name="Thioredoxin-like" ac="0042825"/>
-                        <model name="Thioredoxin-like" ac="0052692"/>
-                        <model name="Thioredoxin-like" ac="0039073"/>
-                        <model name="Thioredoxin-like" ac="0048057"/>
-                        <model name="Thioredoxin-like" ac="0052945"/>
-                        <model name="Thioredoxin-like" ac="0038457"/>
-                        <model name="Thioredoxin-like" ac="0039616"/>
-                        <model name="Thioredoxin-like" ac="0049102"/>
-                        <model name="Thioredoxin-like" ac="0039300"/>
-                        <model name="Thioredoxin-like" ac="0049496"/>
-                        <model name="Thioredoxin-like" ac="0042775"/>
-                        <model name="Thioredoxin-like" ac="0052631"/>
-                        <model name="Thioredoxin-like" ac="0039826"/>
-                        <model name="Thioredoxin-like" ac="0052012"/>
-                        <model name="Thioredoxin-like" ac="0048033"/>
-                        <model name="Thioredoxin-like" ac="0046783"/>
-                        <model name="Thioredoxin-like" ac="0049249"/>
-                        <model name="Thioredoxin-like" ac="0052617"/>
-                        <model name="Thioredoxin-like" ac="0052802"/>
-                        <model name="Thioredoxin-like" ac="0052322"/>
-                        <model name="Thioredoxin-like" ac="0043130"/>
-                        <model name="Thioredoxin-like" ac="0049089"/>
-                        <model name="Thioredoxin-like" ac="0052340"/>
-                        <model name="Thioredoxin-like" ac="0051125"/>
-                        <model name="Thioredoxin-like" ac="0044455"/>
-                        <model name="Thioredoxin-like" ac="0046836"/>
-                        <model name="Thioredoxin-like" ac="0048990"/>
-                        <model name="Thioredoxin-like" ac="0047310"/>
-                        <model name="Thioredoxin-like" ac="0035251"/>
-                        <model name="Thioredoxin-like" ac="0049377"/>
-                        <model name="Thioredoxin-like" ac="0049048"/>
-                        <model name="Thioredoxin-like" ac="0051912"/>
-                        <model name="Thioredoxin-like" ac="0037363"/>
-                        <model name="Thioredoxin-like" ac="0042395"/>
-                        <model name="Thioredoxin-like" ac="0049857"/>
-                        <model name="Thioredoxin-like" ac="0052893"/>
-                        <model name="Thioredoxin-like" ac="0052770"/>
-                        <model name="Thioredoxin-like" ac="0050108"/>
-                        <model name="Thioredoxin-like" ac="0041805"/>
-                        <model name="Thioredoxin-like" ac="0051914"/>
-                        <model name="Thioredoxin-like" ac="0038178"/>
-                        <model name="Thioredoxin-like" ac="0050672"/>
-                        <model name="Thioredoxin-like" ac="0045740"/>
-                        <model name="Thioredoxin-like" ac="0050950"/>
-                        <model name="Thioredoxin-like" ac="0049720"/>
-                        <model name="Thioredoxin-like" ac="0051504"/>
-                        <model name="Thioredoxin-like" ac="0037970"/>
-                        <model name="Thioredoxin-like" ac="0051667"/>
-                        <model name="Thioredoxin-like" ac="0052504"/>
-                        <model name="Thioredoxin-like" ac="0047056"/>
-                        <model name="Thioredoxin-like" ac="0053320"/>
-                        <model name="Thioredoxin-like" ac="0038800"/>
-                        <model name="Thioredoxin-like" ac="0048298"/>
-                        <model name="Thioredoxin-like" ac="0051123"/>
-                        <model name="Thioredoxin-like" ac="0046445"/>
-                        <model name="Thioredoxin-like" ac="0045810"/>
-                        <model name="Thioredoxin-like" ac="0050680"/>
-                        <model name="Thioredoxin-like" ac="0051913"/>
-                        <model name="Thioredoxin-like" ac="0037799"/>
-                        <model name="Thioredoxin-like" ac="0046295"/>
-                        <model name="Thioredoxin-like" ac="0048388"/>
-                        <model name="Thioredoxin-like" ac="0053013"/>
-                        <model name="Thioredoxin-like" ac="0047011"/>
-                        <model name="Thioredoxin-like" ac="0052452"/>
-                        <model name="Thioredoxin-like" ac="0044619"/>
-                        <model name="Thioredoxin-like" ac="0035499"/>
-                        <model name="Thioredoxin-like" ac="0047050"/>
-                        <model name="Thioredoxin-like" ac="0050985"/>
-                        <model name="Thioredoxin-like" ac="0038306"/>
-                        <model name="Thioredoxin-like" ac="0046603"/>
-                        <model name="Thioredoxin-like" ac="0051595"/>
-                        <model name="Thioredoxin-like" ac="0050590"/>
-                        <model name="Thioredoxin-like" ac="0039301"/>
-                        <model name="Thioredoxin-like" ac="0049544"/>
-                        <model name="Thioredoxin-like" ac="0034808"/>
-                        <model name="Thioredoxin-like" ac="0035346"/>
-                        <model name="Thioredoxin-like" ac="0043030"/>
-                        <model name="Thioredoxin-like" ac="0049009"/>
-                        <model name="Thioredoxin-like" ac="0050002"/>
-                        <model name="Thioredoxin-like" ac="0053106"/>
-                        <model name="Thioredoxin-like" ac="0051497"/>
-                        <model name="Thioredoxin-like" ac="0040838"/>
-                        <model name="Thioredoxin-like" ac="0052112"/>
-                        <model name="Thioredoxin-like" ac="0051923"/>
-                        <model name="Thioredoxin-like" ac="0052730"/>
-                        <model name="Thioredoxin-like" ac="0040163"/>
-                        <model name="Thioredoxin-like" ac="0050957"/>
-                        <model name="Thioredoxin-like" ac="0050617"/>
-                        <model name="Thioredoxin-like" ac="0047062"/>
-                        <model name="Thioredoxin-like" ac="0045744"/>
-                        <model name="Thioredoxin-like" ac="0037704"/>
-                        <model name="Thioredoxin-like" ac="0052451"/>
-                        <model name="Thioredoxin-like" ac="0040257"/>
-                        <model name="Thioredoxin-like" ac="0045743"/>
-                        <model name="Thioredoxin-like" ac="0036606"/>
-                        <model name="Thioredoxin-like" ac="0037350"/>
-                        <model name="Thioredoxin-like" ac="0034961"/>
-                        <model name="Thioredoxin-like" ac="0037710"/>
-                        <model name="Thioredoxin-like" ac="0043137"/>
-                        <model name="Thioredoxin-like" ac="0047472"/>
-                        <model name="Thioredoxin-like" ac="0048366"/>
-                        <model name="Thioredoxin-like" ac="0045523"/>
-                        <model name="Thioredoxin-like" ac="0048363"/>
-                        <model name="Thioredoxin-like" ac="0051931"/>
-                        <model name="Thioredoxin-like" ac="0051850"/>
-                        <model name="Thioredoxin-like" ac="0039431"/>
-                        <model name="Thioredoxin-like" ac="0036937"/>
-                        <model name="Thioredoxin-like" ac="0050033"/>
-                        <model name="Thioredoxin-like" ac="0051911"/>
-                        <model name="Thioredoxin-like" ac="0043845"/>
-                        <model name="Thioredoxin-like" ac="0045754"/>
-                        <model name="Thioredoxin-like" ac="0047981"/>
-                        <model name="Thioredoxin-like" ac="0042047"/>
-                        <model name="Thioredoxin-like" ac="0045879"/>
-                        <model name="Thioredoxin-like" ac="0038799"/>
-                        <model name="Thioredoxin-like" ac="0039527"/>
-                        <model name="Thioredoxin-like" ac="0048664"/>
-                        <model name="Thioredoxin-like" ac="0050770"/>
-                        <model name="Thioredoxin-like" ac="0053311"/>
-                        <model name="Thioredoxin-like" ac="0048740"/>
-                        <model name="Thioredoxin-like" ac="0047046"/>
-                        <model name="Thioredoxin-like" ac="0039303"/>
-                        <model name="Thioredoxin-like" ac="0050456"/>
-                        <model name="Thioredoxin-like" ac="0049667"/>
-                        <model name="Thioredoxin-like" ac="0051532"/>
-                        <model name="Thioredoxin-like" ac="0052983"/>
-                        <model name="Thioredoxin-like" ac="0046694"/>
-                        <model name="Thioredoxin-like" ac="0045302"/>
-                        <model name="Thioredoxin-like" ac="0036940"/>
-                        <model name="Thioredoxin-like" ac="0049633"/>
-                        <model name="Thioredoxin-like" ac="0053833"/>
-                        <model name="Thioredoxin-like" ac="0051602"/>
-                        <model name="Thioredoxin-like" ac="0048812"/>
-                        <model name="Thioredoxin-like" ac="0048146"/>
-                        <model name="Thioredoxin-like" ac="0049125"/>
-                        <model name="Thioredoxin-like" ac="0047048"/>
-                        <model name="Thioredoxin-like" ac="0050915"/>
-                        <model name="Thioredoxin-like" ac="0051129"/>
-                        <model name="Thioredoxin-like" ac="0044115"/>
-                        <model name="Thioredoxin-like" ac="0047173"/>
-                        <model name="Thioredoxin-like" ac="0038196"/>
-                        <model name="Thioredoxin-like" ac="0048908"/>
-                        <model name="Thioredoxin-like" ac="0043753"/>
-                        <model name="Thioredoxin-like" ac="0051671"/>
-                        <model name="Thioredoxin-like" ac="0049632"/>
-                        <model name="Thioredoxin-like" ac="0049697"/>
-                        <model name="Thioredoxin-like" ac="0051694"/>
-                        <model name="Thioredoxin-like" ac="0041722"/>
-                        <model name="Thioredoxin-like" ac="0051483"/>
-                        <model name="Thioredoxin-like" ac="0051703"/>
-                        <model name="Thioredoxin-like" ac="0046733"/>
-                        <model name="Thioredoxin-like" ac="0036792"/>
-                        <model name="Thioredoxin-like" ac="0048529"/>
-                        <model name="Thioredoxin-like" ac="0048594"/>
-                    </models>
-                    <signature-library-release version="1.75" library="SUPERFAMILY"/>
-                </signature>
-                <locations>
-                    <superfamilyhmmer3-location end="114" start="6"/>
-                </locations>
-            </superfamilyhmmer3-match>
+            </panther-match>
         </matches>
+    </protein>
+    <protein>
+        <sequence md5="88d47cc807fe8e977130b0cc93e0bd61">MSKIGKSIRLERIIDRKTRKTVIVPMDHGLTVGPIPGLIDLAAAVDKVAEGGANAVLGHMGLPLYGHRGYGKDVGLIIHLSASTSLGPDANHKVLVTRVEDAIRVGADGVSIHVNVGAEDEAEMLRDLGMVARRCDLWGMPLLAMMYPRGAKVRSEHSVEYVKHAARVGAELGVDIVKTNYTGSPETFREVVRGCPAPVVIAGGPKMDTEADLLQMVYDAMQAGAAGISIGRNIFQAENPTLLTRKLSKIVHEGYTPEEAARLKL</sequence>
+        <xref id="A0B6J9"/>
+        <matches/>
     </protein>
     <protein>
         <sequence md5="1fb3569701c50e369fa112ac96b5e459">MEVKGKKKLTGKGTKMSQEKSKFHKNNDSGSSKTFPKKVVKEGGPKITSKNFEKTATKPGKKGVKQFKNKQQGDRIPKNKFQQANKFNQKRKFQPDSKSDESAAKKPKWDEFKKKKKELKQSRQLSDKTNYDIVIRAKQIWEILRRKDCDKEKRVKLMSDLQKLIQGKIKTIAFAHDSTRVIQCYIQFGNEEQRKQAFEELRGDLVELSKAKYSRNIVKKFLMYGSKAQIAEIIRSFKGHVRKLLRHAEASAIVEYAYNDKAILEQRNMLTEELYGNTFQLYKSADHPTLDKVLEVQPEKLELIMDEMKQILTPMAQKEAVIKHSLVHKVFLDFFTYAPPKLRSEMIEAIREAVVYLAHTHDGARVAMYCLWHGTPKDRKVIVKTMKTYIEKVANGQYSHLVLLAAFDCIDDTKLVKQIIISEIINSLPNIVNDKYGRKVLLYLLSPRDPAHTVREIIEVLQKGDGNAHSKKDTEIRRRELLESISPALLSYLQGHAQEVVLDKSACVLVADILGTATGDVQPAMDAVASLAAAELHPGGKDGELHIAEHPAGHLVLKWLIEQDKKMKERGREGCFAKTLIERVGVKNLKSWASVNRGAIILSSLLQSSDQEVANKVKAGLKSLIPALEKSKNTSKGIEMLLEKLTA</sequence>
         <xref id="A2VDN9"/>
         <matches>
-            <hmmer2-match score="130.7" evalue="0.0">
-                <signature name="Pumilio" desc="Pumilio-like repeats" ac="SM00025">
-                    <entry type="REPEAT" name="Pumilio_RNA-bd_rpt" desc="Pumilio RNA-binding repeat" ac="IPR001313">
-                        <go-xref id="GO:0003723" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="Pumilio" desc="Pumilio-like repeats" ac="SM00025"/>
-                    </models>
-                    <signature-library-release version="6.2" library="SMART"/>
-                </signature>
-                <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="39" hmm-start="1" evalue="1.300000672E-5" score="0.0" end="384" start="349"/>
-                    <hmmer2-location hmm-length="0" hmm-end="39" hmm-start="1" evalue="2.300000619E-4" score="0.0" end="459" start="423"/>
-                    <hmmer2-location hmm-length="0" hmm-end="39" hmm-start="1" evalue="0.02900000363" score="0.0" end="421" start="385"/>
-                    <hmmer2-location hmm-length="0" hmm-end="39" hmm-start="1" evalue="2.400000617E-5" score="0.0" end="199" start="164"/>
-                    <hmmer2-location hmm-length="0" hmm-end="39" hmm-start="1" evalue="3.00000068E-6" score="0.0" end="235" start="200"/>
-                    <hmmer2-location hmm-length="0" hmm-end="39" hmm-start="1" evalue="0.01099999997" score="0.0" end="272" start="236"/>
-                </locations>
-            </hmmer2-match>
-            <hmmer3-match score="0.0" evalue="0.0">
-                <signature ac="G3DSA:1.25.10.10">
-                    <entry type="DOMAIN" name="ARM-like" desc="Armadillo-like helical" ac="IPR011989"/>
-                    <models>
-                        <model ac="1ho8A01"/>
-                        <model ac="2qnaA00"/>
-                        <model ac="1upkA01"/>
-                        <model ac="1lrvA00"/>
-                        <model ac="3gvoA00"/>
-                        <model ac="1qbkB00"/>
-                        <model ac="1oyzA00"/>
-                        <model ac="1b3uA00"/>
-                        <model ac="1jdhA00"/>
-                        <model ac="2vglA00"/>
-                        <model ac="1wa5B00"/>
-                        <model ac="1ibrB00"/>
-                        <model ac="1u6gC00"/>
-                        <model ac="1w9cA00"/>
-                        <model ac="2vglB00"/>
-                    </models>
-                    <signature-library-release version="3.5.0" library="GENE3D"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="136" env-end="487" hmm-length="0" hmm-end="0" hmm-start="0" evalue="2.5E-65" score="0.0" end="487" start="136"/>
-                </locations>
-            </hmmer3-match>
-            <hmmer3-match score="231.0" evalue="0.0">
-                <signature name="CPL" desc="CPL (NUC119) domain" ac="PF08144">
-                    <entry type="DOMAIN" name="CPL" desc="CPL" ac="IPR012959">
-                        <go-xref id="GO:0003723" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="CPL" desc="CPL (NUC119) domain" ac="PF08144"/>
-                    </models>
-                    <signature-library-release version="26.0" library="PFAM"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="432" env-end="579" hmm-length="0" hmm-end="148" hmm-start="1" evalue="1.9E-68" score="0.0" end="579" start="432"/>
-                </locations>
-            </hmmer3-match>
-            <panther-match score="0.0" familyName="Not available" evalue="0.0">
+            <panther-match score="1049.9" familyName="UNCHARACTERIZED" evalue="0.0">
                 <signature name="UNCHARACTERIZED" ac="PTHR13389">
                     <models>
                         <model name="UNCHARACTERIZED" ac="PTHR13389"/>
                     </models>
-                    <signature-library-release version="7.2" library="PANTHER"/>
+                    <signature-library-release version="9.0" library="PANTHER"/>
                 </signature>
                 <locations>
-                    <panther-location end="647" start="1"/>
+                    <panther-location end="647" start="2"/>
                 </locations>
             </panther-match>
-            <profilescan-match>
-                <signature name="PUM" desc="Pumilio RNA-binding repeat profile." ac="PS50302">
-                    <entry type="REPEAT" name="Pumilio_RNA-bd_rpt" desc="Pumilio RNA-binding repeat" ac="IPR001313">
-                        <go-xref id="GO:0003723" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="PUM" desc="Pumilio RNA-binding repeat profile." ac="PS50302"/>
-                    </models>
-                    <signature-library-release version="20.89" library="PROSITE_PROFILES"/>
-                </signature>
-                <locations>
-                    <profilescan-location score="0.0" end="235" start="200">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                    <profilescan-location score="0.0" end="530" start="492">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                    <profilescan-location score="0.0" end="199" start="163">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                    <profilescan-location score="0.0" end="271" start="236">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                    <profilescan-location score="0.0" end="422" start="385">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                    <profilescan-location score="0.0" end="384" start="349">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                    <profilescan-location score="0.0" end="459" start="423">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                </locations>
-            </profilescan-match>
-            <profilescan-match>
-                <signature name="PUM_HD" desc="Pumilio homology domain (PUM-HD) profile." ac="PS50303">
-                    <entry type="REPEAT" name="Pumilio_RNA-bd_rpt" desc="Pumilio RNA-binding repeat" ac="IPR001313">
-                        <go-xref id="GO:0003723" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="PUM_HD" desc="Pumilio homology domain (PUM-HD) profile." ac="PS50303"/>
-                    </models>
-                    <signature-library-release version="20.89" library="PROSITE_PROFILES"/>
-                </signature>
-                <locations>
-                    <profilescan-location score="0.0" end="489" start="136">
-                        <alignment>Not available</alignment>
-                    </profilescan-location>
-                </locations>
-            </profilescan-match>
-            <superfamilyhmmer3-match evalue="0.0">
-                <signature name="ARM repeat" ac="SSF48371">
-                    <entry type="DOMAIN" name="ARM-type_fold" desc="Armadillo-type fold" ac="IPR016024">
-                        <go-xref id="GO:0005488" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="ARM repeat" ac="0048921"/>
-                        <model name="ARM repeat" ac="0051023"/>
-                        <model name="ARM repeat" ac="0047107"/>
-                        <model name="ARM repeat" ac="0049892"/>
-                        <model name="ARM repeat" ac="0044481"/>
-                        <model name="ARM repeat" ac="0051926"/>
-                        <model name="ARM repeat" ac="0042225"/>
-                        <model name="ARM repeat" ac="0054109"/>
-                        <model name="ARM repeat" ac="0050416"/>
-                        <model name="ARM repeat" ac="0053212"/>
-                        <model name="ARM repeat" ac="0038439"/>
-                        <model name="ARM repeat" ac="0047214"/>
-                        <model name="ARM repeat" ac="0049893"/>
-                        <model name="ARM repeat" ac="0052026"/>
-                        <model name="ARM repeat" ac="0049802"/>
-                        <model name="ARM repeat" ac="0048666"/>
-                        <model name="ARM repeat" ac="0047230"/>
-                        <model name="ARM repeat" ac="0045897"/>
-                        <model name="ARM repeat" ac="0051211"/>
-                        <model name="ARM repeat" ac="0047075"/>
-                        <model name="ARM repeat" ac="0053206"/>
-                        <model name="ARM repeat" ac="0043817"/>
-                        <model name="ARM repeat" ac="0048121"/>
-                        <model name="ARM repeat" ac="0050417"/>
-                        <model name="ARM repeat" ac="0051473"/>
-                        <model name="ARM repeat" ac="0038302"/>
-                        <model name="ARM repeat" ac="0042067"/>
-                        <model name="ARM repeat" ac="0047129"/>
-                        <model name="ARM repeat" ac="0044543"/>
-                        <model name="ARM repeat" ac="0050410"/>
-                        <model name="ARM repeat" ac="0047241"/>
-                        <model name="ARM repeat" ac="0043958"/>
-                        <model name="ARM repeat" ac="0046492"/>
-                        <model name="ARM repeat" ac="0038440"/>
-                        <model name="ARM repeat" ac="0047335"/>
-                        <model name="ARM repeat" ac="0052018"/>
-                        <model name="ARM repeat" ac="0048021"/>
-                        <model name="ARM repeat" ac="0046912"/>
-                        <model name="ARM repeat" ac="0045874"/>
-                        <model name="ARM repeat" ac="0049277"/>
-                        <model name="ARM repeat" ac="0051071"/>
-                        <model name="ARM repeat" ac="0045990"/>
-                        <model name="ARM repeat" ac="0042771"/>
-                        <model name="ARM repeat" ac="0051487"/>
-                    </models>
-                    <signature-library-release version="1.75" library="SUPERFAMILY"/>
-                </signature>
-                <locations>
-                    <superfamilyhmmer3-location end="645" start="488"/>
-                    <superfamilyhmmer3-location end="478" start="145"/>
-                </locations>
-            </superfamilyhmmer3-match>
-        </matches>
-    </protein>
-    <protein>
-        <sequence md5="ad242f806e1b49e5676525ed23ea854">MRLEELKRLQNPLEQVNDGKYSFENHQLAMDAENNIEKYPLNLQPLESKVKIIQRAWREYLQRQEPLGKRSPSPPSVSSEKLSSSVSMNTFSDSSTPFARAPVGKIHPYISWRLQSPGDKLPGGRKVILLYLDQLARPTGFIHTLKEPQIERLGFLTLQ</sequence>
-        <xref id="Q1A5X6"/>
-        <matches/>
-    </protein>
-    <protein>
-        <sequence md5="560aff37f38f446d5e24a6445c8b6df">MPFRNPYALLGLLSVLPLIILYLIKPKPRDVLFPSIRFLEAGKARRSAALSRMIKDPLFWLQLFILIILSIAAAGPYTLERGSPGSHLVIVLDVSASMESTFQNALSIASSELSGYDRVSVVLAESIPVVALREGSADEARSILGKIDVLDLPADISSAMNLAYTLTGAEGGDILVISDFISWAGDDPGVTRDSLVAAGASIVFADTGGGGDNVGIVGGWLTESYVGINYTCRIHNYGSARGLSIKVTSQGGSSEHRAFINADEDYYLTLSLPRGISTVTLDVRDAISADNIAYIYAPLQDDTRILYIGDSSPTLAALSAIGGVDTIGDPEGYDLVVIRNSSIDGDLNRYVDSGGKIVYIPQENSPSPEYLPVRITGVVNRTGIPWARNPVFGEGIHFEEIGIRSYVESVPRRGSTVVVEVNSVPLLAYWQLGRGTVVYNALEYGSDFHLRPEYPVFWYELIRWLTGAPSLDDLNRKTGEVVPLERATTINTPGGTVTTQLLLLDRVGLYTFDGKMLAANLYDPAESDLRNRRSYAPGSFRSTAHTEKLVERDLSGWIMVVALMLLMAELWIIRWRREL</sequence>
-        <xref id="A0B786"/>
-        <matches>
-            <tmhmm-match>
-                <signature desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TMhelix">
-                    <signature-library-release version="2.0" library="TMHMM"/>
-                </signature>
-                <locations>
-                    <tmhmm-location end="24" start="5"/>
-                </locations>
-            </tmhmm-match>
-            <tmhmm-match>
-                <signature desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TMhelix">
-                    <signature-library-release version="2.0" library="TMHMM"/>
-                </signature>
-                <locations>
-                    <tmhmm-location end="573" start="554"/>
-                </locations>
-            </tmhmm-match>
-            <tmhmm-match>
-                <signature desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TMhelix">
-                    <signature-library-release version="2.0" library="TMHMM"/>
-                </signature>
-                <locations>
-                    <tmhmm-location end="79" start="57"/>
-                </locations>
-            </tmhmm-match>
         </matches>
     </protein>
 </protein-matches>
