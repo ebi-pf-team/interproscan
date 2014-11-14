@@ -5,12 +5,12 @@
     <parent>
         <artifactId>precalcmatches</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.8-49.0-SNAPSHOT</version>
+        <version>5.8-49.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server</artifactId>
-    <version>5.8-49.0-SNAPSHOT</version>
+    <version>5.8-49.0</version>
     <name>interpro-match-lookup</name>
     <packaging>war</packaging>
 
@@ -37,7 +37,7 @@
         <dependency>
             <artifactId>berkeley</artifactId>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
-            <version>5.8-49.0-SNAPSHOT</version>
+            <version>5.8-49.0</version>
         </dependency>
 
         <dependency>

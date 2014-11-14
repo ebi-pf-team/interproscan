@@ -5,14 +5,14 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.8-49.0-SNAPSHOT</version>
+        <version>5.8-49.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-management</artifactId>
-    <version>5.8-49.0-SNAPSHOT</version>
+    <version>5.8-49.0</version>
 
     <packaging>jar</packaging>
 
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-web</artifactId>
-            <version>5.8-49.0-SNAPSHOT</version>
+            <version>5.8-49.0</version>
         </dependency>
         <!--
         === All dependencies below here are TEST scope only. ===
