@@ -161,8 +161,8 @@
                     This profile is for deployment of a test server in Tomcat on tomcat-17.ebi.ac.uk.
                 </description>
                 <deployment.folder>/ebi/www/jtest/deploy/tc-interpro-das</deployment.folder>
-                <berkeleydb.path.md5>/nfs/nobackup2/interpro/i5-precalc-lookup-berkeley/md5_db</berkeleydb.path.md5>
-                <berkeleydb.path.matches>/nfs/nobackup2/interpro/i5-precalc-lookup-berkeley/match_db
+                <berkeleydb.path.md5>/nfs/nobackup/interpro/i5-precalc-lookup-berkeley/md5_db</berkeleydb.path.md5>
+                <berkeleydb.path.matches>/nfs/nobackup/interpro/i5-precalc-lookup-berkeley/match_db
                 </berkeleydb.path.matches>
             </properties>
         </profile>
@@ -275,9 +275,6 @@
             <id>distributable</id>
             <properties>
                 <deployment.folder>not applicable - jetty does not use this.</deployment.folder>
-                <!--<berkeleydb.path.md5>/nfs/nobackup2/interpro/precalc_lookup_service_build/data/md5_db</berkeleydb.path.md5>-->
-                <!--<berkeleydb.path.matches>/nfs/nobackup2/interpro/precalc_lookup_service_build/data/match_db</berkeleydb.path.matches>-->
-
                 <berkeleydb.path.md5>data/md5_db</berkeleydb.path.md5>
                 <berkeleydb.path.matches>data/match_db</berkeleydb.path.matches>
             </properties>
