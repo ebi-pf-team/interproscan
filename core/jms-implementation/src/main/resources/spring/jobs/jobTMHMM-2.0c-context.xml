@@ -34,7 +34,7 @@
 
     <bean id="abstractTMHMMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobTMHMM-2.0c"/>
-        <property name="maxProteins" value="50"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.TMHMM}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
