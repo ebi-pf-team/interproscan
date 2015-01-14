@@ -241,13 +241,10 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     outputToRAW(outputFile, proteins);
                     LOGGER.info("Finished generation of RAW.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.XML.getFileExtension())) {
+                    // No point to convert from XML to XML!
                     System.out.println("XML output format was ignored in convert mode.");
-                    // TODO Review this! Is XML allowed in CONVERT mode?
-//                    LOGGER.info("Generating XML result output...");
-//                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.XML);
-//                    outputToXML(outputFile, proteins);
-//                    LOGGER.info("Finished generation of XML.");
                 } else {
+                    // Note that GFF3_PARTIAL, XML_SLIM etc are internal formats, not supported by convert mode
                     LOGGER.error("The specified output format - " + fileOutputFormat + " - is not supported!");
                     System.out.println("\n\n" + "The specified output file format " + fileOutputFormat + " was not recognised." + "\n\n");
                     System.exit(1);

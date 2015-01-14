@@ -180,11 +180,12 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             }
             for (FileOutputFormat outputFormat : FileOutputFormat.values()) {
                 String extension = outputFormat.getFileExtension();
-                //specify default output formats: TSV, XML and GFF3, but not SVG and HTML or GFF3 partial
+                //specify default output formats: TSV, XML and GFF3, but not SVG, HTML, GFF3 partial or XML slim
                 if (extension.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension()) ||
-                        extension.equalsIgnoreCase(FileOutputFormat.GFF3_PARTIAL.getFileExtension())) {
+                        extension.equalsIgnoreCase(FileOutputFormat.GFF3_PARTIAL.getFileExtension()) ||
+                        extension.equalsIgnoreCase(FileOutputFormat.XML_SLIM.getFileExtension())) {
                     // SVG, HTML and RAW formats are not part of the default formats
                     continue;
                 }
