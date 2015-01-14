@@ -64,9 +64,6 @@ public class WriteOutputStep extends Step {
     public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
     public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
 
-    private static final int MAX_OUTPUT_ATTEMPTS = 3;
-
-
     public void setArchiveSVGOutput(boolean archiveSVGOutput) {
         this.archiveSVGOutput = archiveSVGOutput;
     }
@@ -207,13 +204,16 @@ public class WriteOutputStep extends Step {
                         outputToTSV(outputFile, stepInstance, proteins);
                         break;
                     case XML:
-                        outputToXML(outputFile, sequenceType, proteins);
+                        outputToXML(outputFile, sequenceType, proteins, false);
+                        break;
+                    case XML_SLIM:
+                        outputToXML(outputFile, sequenceType, proteins, true);
                         break;
                     case GFF3:
                         outputToGFF(outputFile, stepInstance, sequenceType, proteins);
                         break;
                     case GFF3_PARTIAL:
-                        outputToGFFPartial(outputFile, stepInstance, sequenceType, proteins);
+                        outputToGFFPartial(outputFile, stepInstance, proteins);
                         break;
                     case HTML:
                         //Replace the default temp dir with the user specified one
@@ -258,14 +258,26 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToXML(File outputFile, String sequenceType, List<Protein> proteins) throws IOException {
+    private void outputToXML(File outputFile, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder();
         } else {
             matchesHolder = new ProteinMatchesHolder();
         }
-        matchesHolder.addProteins(proteins);
+        if (isSlimOutput) {
+            // Only include a protein in the output if it has at least one match
+            for (Protein protein : proteins) {
+                Set<Match> matches = protein.getMatches();
+                if (matches != null && matches.size() > 0) {
+                    matchesHolder.addProtein(protein);
+                }
+            }
+        }
+        else {
+            // Include all proteins in the output, whether they have any matches or not
+            matchesHolder.addProteins(proteins);
+        }
         xmlWriter.writeMatches(outputFile, matchesHolder);
     }
 
@@ -304,7 +316,7 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToGFFPartial(File file, StepInstance stepInstance, String sequenceType, List<Protein> proteins) throws IOException {
+    private void outputToGFFPartial(File file, StepInstance stepInstance, List<Protein> proteins) throws IOException {
         ProteinMatchesGFFResultWriter writer = null;
         try {
             writer = new GFFResultWriterForProtSeqs(file, false);
