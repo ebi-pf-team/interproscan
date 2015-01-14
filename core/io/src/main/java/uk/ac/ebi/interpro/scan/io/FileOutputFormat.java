@@ -17,7 +17,10 @@ public enum FileOutputFormat {
     // GFF3 partial format is an internal format used for the MG pipeline only
     // It allows gff3 files to be concatenated together (impossible to do with normal gff3 format)
     // This output format is NOT to be mentioned in the documentation!
-    GFF3_PARTIAL("gff3-partial");
+    GFF3_PARTIAL("gff3-partial"),
+    // XML_SLIM is an internal format, the same as XML output but proteins with no matches are not included at all in
+    // the file
+    XML_SLIM("xml-slim");
 
     private static final Logger LOGGER = Logger.getLogger(FileOutputFormat.class.getName());
 
@@ -59,6 +62,8 @@ public enum FileOutputFormat {
     public static FileOutputFormat stringToFileOutputFormat(String outputFormat) {
         if (outputFormat.equalsIgnoreCase(XML.getFileExtension())) {
             return XML;
+        } else if (outputFormat.equalsIgnoreCase(XML_SLIM.getFileExtension())) {
+            return XML_SLIM;
         } else if (outputFormat.equalsIgnoreCase(GFF3.getFileExtension()) || outputFormat.equalsIgnoreCase("gff")) {
             return GFF3;
         } else if (outputFormat.equalsIgnoreCase(GFF3_PARTIAL.getFileExtension())) {
@@ -86,6 +91,8 @@ public enum FileOutputFormat {
         for (String format : formats) {
             if (format.equalsIgnoreCase(XML.getFileExtension())) {
                 fileOutputFormats.add(XML);
+            }  else if (format.equalsIgnoreCase(XML_SLIM.getFileExtension())) {
+                fileOutputFormats.add(XML_SLIM);
             } else if (format.equalsIgnoreCase(GFF3.getFileExtension()) || format.equalsIgnoreCase("gff")) {
                 fileOutputFormats.add(GFF3);
             }  else if (format.equalsIgnoreCase(GFF3_PARTIAL.getFileExtension())) {
