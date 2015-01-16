@@ -6,11 +6,12 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: Coils ############################  -->
+    <!-- ######################## JOB: TIGRFAM ############################  -->
     <bean id="jobTIGRFAM-13.0" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="TIGRFAMs are protein families based on Hidden Markov Models or HMMs"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseTigrfam-13.0"/>
+        <property name="active" value="false" />
     </bean>
 
     <bean id="abstractTIGRFAMStep-13.0" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -46,7 +47,7 @@
         <property name="dependsUpon" ref="stepTIGRFAMWriteFastaFile-13.0"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
-        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.tigrfam} ${hmmer3.hmmsearch.cpu.switch.tigrfam}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.tigrfam.10.1} ${hmmer3.hmmsearch.cpu.switch.tigrfam}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -111,7 +112,7 @@
         </property>
     </bean>
 
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: TIGRFAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="tigrfamRawMatchDAO-13.0"
