@@ -6,7 +6,7 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: Coils ############################  -->
+    <!-- ######################## JOB: TIGRFAM ############################  -->
     <bean id="jobTIGRFAM-10.1" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="TIGRFAMs are protein families based on Hidden Markov Models or HMMs"/>
         <property name="analysis" value="true"/>
@@ -46,7 +46,7 @@
         <property name="dependsUpon" ref="stepTIGRFAMWriteFastaFile-10.1"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
-        <property name="binarySwitches" value="-Z 4023 --cut_tc"/>
+        <property name="binarySwitches" value="-Z ${hmmer3.hmmsearch.switches.tigrfam.10.1} --cut_tc"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
@@ -110,7 +110,7 @@
         </property>
     </bean>
 
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: TIGRFAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="tigrfamRawMatchDAO-10.1"

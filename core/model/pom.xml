@@ -45,7 +45,6 @@
         <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
     </properties>
 
-
     <dependencies>
 
         <!-- JAXB API -->
