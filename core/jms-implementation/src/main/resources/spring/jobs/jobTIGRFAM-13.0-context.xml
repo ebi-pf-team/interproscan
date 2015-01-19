@@ -11,7 +11,6 @@
         <property name="description" value="TIGRFAMs are protein families based on Hidden Markov Models or HMMs"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseTigrfam-13.0"/>
-        <property name="active" value="false" />
     </bean>
 
     <bean id="abstractTIGRFAMStep-13.0" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
