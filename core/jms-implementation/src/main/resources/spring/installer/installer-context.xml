@@ -67,22 +67,6 @@
                     <property name="analysisJobId" value="jobHAMAP-201311.27"/>
                 </bean>
 
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">-->
-                    <!--<property name="signatureLibrary" value="PROSITE_PATTERNS"/>-->
-                    <!--<property name="releaseVersionNumber" value="20.97"/>-->
-                    <!--<property name="modelFiles" value="file:${prosite.models.path.20.97}"/>-->
-                    <!--<property name="prositeModelType" value="PATTERNS"/>-->
-                    <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                    <!--<property name="analysisJobId" value="jobPrositePatterns-20.97"/>-->
-                <!--</bean>-->
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">-->
-                    <!--<property name="signatureLibrary" value="PROSITE_PROFILES"/>-->
-                    <!--<property name="releaseVersionNumber" value="20.97"/>-->
-                    <!--<property name="modelFiles" value="file:${prosite.models.path.20.97}"/>-->
-                    <!--<property name="prositeModelType" value="PROFILES"/>-->
-                    <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
-                    <!--<property name="analysisJobId" value="jobPrositeProfiles-20.97"/>-->
-                <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
                     <property name="releaseVersionNumber" value="20.105"/>
@@ -102,17 +86,11 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="2.84"/>
-                    <property name="modelFiles">
-                        <list>
-                            <value>file:${pirsf.hmm.path.2.84}</value>
-                            <value>file:${pirsf.hmm.subf.path.2.84}</value>
-                        </list>
-                    </property>
+                    <property name="releaseVersionNumber" value="3.01"/>
+                    <property name="modelFiles" value="file:${pirsf.sfhmm.path.3.01}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF-2.84"/>
+                    <property name="analysisJobId" value="jobPIRSF-3.01"/>
                 </bean>
-
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prodom.model.ProDomModelParser">
                     <property name="signatureLibrary" value="PRODOM"/>
@@ -138,13 +116,13 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobTIGRFAM-13.0"/>
                 </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="TIGRFAM"/>
-                    <property name="releaseVersionNumber" value="15.0"/>
-                    <property name="modelFiles" value="file:${tigrfam.hmm.path.15.0}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobTIGRFAM-15.0"/>
-                </bean>
+                <!--<bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">-->
+                    <!--<property name="signatureLibrary" value="TIGRFAM"/>-->
+                    <!--<property name="releaseVersionNumber" value="15.0"/>-->
+                    <!--<property name="modelFiles" value="file:${tigrfam.hmm.path.15.0}"/>-->
+                    <!--<property name="storeAbstract" value="${signature.store.abstracts}"/>-->
+                    <!--<property name="analysisJobId" value="jobTIGRFAM-15.0"/>-->
+                <!--</bean>-->
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="SMART"/>
                     <property name="releaseVersionNumber" value="6.2"/>
