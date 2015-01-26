@@ -255,7 +255,9 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                         newWorkersCount = gridJobsLimit - clusterState.getAllClusterProjectJobsCount();
                     }
                 }
-                LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + clusterState.getAllClusterProjectJobsCount());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("startupNewWorker(): GridJobs -   active Jobs on the cluster: " + clusterState.getAllClusterProjectJobsCount());
+                }
             }else{
                 LOGGER.warn("startupNewWorker(): clusterState IsNull " );
             }
@@ -269,8 +271,6 @@ public class SubmissionWorkerRunner implements WorkerRunner {
             }else{
                 workerCount++;
             }
-
-            StringBuilder interproscanCommandArguments = new StringBuilder();
 
             StringBuilder commandToSubmit = new StringBuilder();
 
@@ -287,7 +287,9 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                             .append(getClusterCommandArguments(workerIndex)
                                     .append(" " + i5Command)
                                     .append(getInterproscanCommandArguments(priority,tcpUri,temporaryDirectory)));
-                    LOGGER.debug("command to submit to cluster: " + commandToSubmit);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("command to submit to cluster: " + commandToSubmit);
+                    }
                     if(Utilities.verboseLogLevel > 1){
                         Utilities.verboseLog("command to submit to cluster:  "
                                 + commandToSubmit);
@@ -299,6 +301,11 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                                 + exitStatus + "\nError output: "
                                 + clc.getErrorMessage());
                         failedSubmissions++;
+                    }
+                    if(Utilities.verboseLogLevel > 1) {
+                        String clcOutput = clc.getOutput();
+                        Utilities.verboseLog("Output from attempting to run a worker: "
+                                + ((clcOutput == null) ? "NULL" : clcOutput));
                     }
                 }
                 if(failedSubmissions > 0 && maxWorkerIndex == 1) {
