@@ -16,7 +16,7 @@
 
     <bean id="abstractTIGRFAMStep-15.0" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobTIGRFAM-15.0"/>
-        <property name="maxProteins" value="${analysis.max.sequence.count.TIGRFAM_10}"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.TIGRFAM}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
