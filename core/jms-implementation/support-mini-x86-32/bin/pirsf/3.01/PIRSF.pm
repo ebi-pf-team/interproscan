@@ -280,7 +280,7 @@ sub _print_i5 {
                         $data->[7],  #SCORE
                         $data->[14], #DOMAIN_BIAS
                         $data->[15], #DOMAIN_CE_VALUE
-                        $data->[16], #DOMAIN_IE_VALUE
+                        $data->[12], #DOMAIN_IE_VALUE
                         $data->[20], #ENVELOPE_END
                         $data->[19], #ENVELOPE_START
                         $data->[21], #EXPECTED_ACCURACY
