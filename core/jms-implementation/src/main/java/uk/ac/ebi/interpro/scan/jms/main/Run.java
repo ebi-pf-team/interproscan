@@ -117,8 +117,8 @@ public class Run extends AbstractI5Runner {
                 }
             }
 
-
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.9-50.0");
+            //can we get this from the properties file
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.10-50.0");
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
