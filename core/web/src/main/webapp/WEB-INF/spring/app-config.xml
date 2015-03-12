@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <!-- ################## Cache configuration ################-->
+    <cache:annotation-driven/>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="ehcache"/>
+    </bean>
+
+    <!-- Ehcache library setup -->
+    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache.xml"/>
+        <property name="shared" value="true"/>
+    </bean>
+    <!-- ################## END OF Cache configuration ################-->
+
+
+    <!-- Scans the classpath of this application for @Components to deploy as beans -->
+    <context:component-scan base-package="uk.ac.ebi.interpro.scan.web"/>
+
+    <!-- Configures Spring MVC -->
+    <import resource="mvc-config.xml"/>
+
+    <!-- CreateSimpleProteinFromMatchData -->
+    <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchDataImpl">
+        <constructor-arg ref="matchAnalyser"/>
+        <constructor-arg ref="structuralMatchAnalyser"/>
+        <constructor-arg value="${match.data.webservice.url}"/>
+        <constructor-arg value="${structural.match.data.webservice.url}"/>
+    </bean>
+
+    <bean id="jaxb2" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>uk.ac.ebi.interpro.scan.model.Entry</value>
+                <value>uk.ac.ebi.interpro.scan.model.NucleotideSequence</value>
+                <value>uk.ac.ebi.interpro.scan.model.Protein</value>
+                <value>uk.ac.ebi.interpro.scan.model.Signature</value>
+                <value>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</value>
+                <value>uk.ac.ebi.interpro.scan.model.ProteinMatchesHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.IMatchesHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.Xref</value>
+            </list>
+        </property>
+        <property name="marshallerProperties">
+            <util:map value-type="java.lang.Boolean">
+                <entry value="true">
+                    <key>
+                        <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/>
+                    </key>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+</beans>

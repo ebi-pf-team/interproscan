@@ -1,0 +1,149 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:/spring/jms/activemq/activemq-connection-config-context.xml"/>
+    <import resource="classpath:/spring/jms/activemq/activemq-queue-config-context.xml"/>
+    <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
+    <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
+    <import resource="classpath:/spring/jms/activemq/activemq-broker-context.xml" />
+
+    <bean id="stepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
+        <property name="jobs" ref="jobs"/>
+        <property name="jmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="directoryManager" ref="tempDirectoryManager"/>
+    </bean>
+
+    <bean id="distributedWorkerController" class="uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl">
+        <constructor-arg ref="remoteQueueJmsContainer"/>
+        <constructor-arg ref="statsMessageListenerJmsContainer"/>
+        <property name="maximumIdleTimeSeconds" value="${jvm.maximum.idle.time.seconds}"/>
+        <property name="maximumLifeSeconds" value="${jvm.maximum.life.seconds}"/>
+        <property name="highMemory" value="false"/>
+        <property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>
+        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="remoteWorker" value="true"/>
+        <property name="statsQueue"  ref="statsQueue"/>
+        <property name="jobRequestQueue"  ref="jobRequestQueue" />
+        <property name="jobResponseQueue"  ref="jobResponseQueue" />
+        <property name="maxConsumerSize"    value="40" />
+        <property name="completionFactor"   value="20" />
+        <property name="queueConsumerRatio" value="20"  />
+        <property name="workerRunner">
+            <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+                <property name="submissionCommand" value="bsub -q production-rh6 -o worker.lsf.out -e worker.lsf.err -J i5EsJms ${worker.command}"/>
+                <property name="highMemory" value="false"/>
+                <property name="workerStartupStrategy">
+                    <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
+                </property>
+
+            </bean>
+        </property>
+        <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
+        <property name="workerRunnerHighMemory">
+            <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
+                <property name="submissionCommand" value="bsub -q production-rh6 -o highmem.worker.lsf.out -e highmem.worker.lsf.err -J i5EsJms ${worker.high.memory.command}"/>
+                <property name="highMemory" value="true"/>
+                <property name="workerStartupStrategy">
+                    <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
+                </property>
+            </bean>
+        </property>
+        <property name="statsMessageListener" ref="statsMessageListener"/>
+        <property name="statsUtil" ref="statsUtil"/>
+
+
+    </bean>
+
+
+    <!--Listeners configurations-->
+
+
+    <!--&lt;!&ndash;Configuration for the statistics listener&ndash;&gt;-->
+    <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="localJmsFactory"/>
+        <property name="destination" ref="statsQueue"/>
+        <property name="concurrentConsumers" value="1"/>
+        <property name="messageListener" ref="statsMessageListener"/>
+    </bean>
+
+    <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
+
+    <!--&lt;!&ndash;Configuration for the job response queue listener&ndash;&gt;-->
+    <!--<bean id="responseQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="localJmsFactory"/>-->
+        <!--<property name="destination" ref="jobResponseQueue"/>-->
+        <!--<property name="concurrentConsumers" value="1"/>-->
+        <!--<property name="messageListener" ref="responseQueueMessageListener"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash;Listens to the local response queue and propagates to the remote one&ndash;&gt;-->
+    <!--<bean id="responseQueueMessageListener" class="uk.ac.ebi.interpro.scan.jms.worker.ResponseQueueMessageListener">-->
+        <!--<property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>-->
+        <!--<property name="jobResponseQueue" ref="jobResponseQueue"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash;Configuration for the job request queue listener&ndash;&gt;-->
+    <bean id="remoteQueueJmsContainer" depends-on="remoteJmsFactory" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="remoteJmsFactory"   />
+        <property name="destination" ref="jobRequestQueue"/>
+        <property name="concurrentConsumers" value="1"/>
+        <property name="maxConcurrentConsumers" value="1"/>
+        <property name="sessionTransacted" value="false"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="-1"/>
+        <property name="messageListener" ref="remoteJobQueueListener"/>
+
+    </bean>
+
+    <!--Listens to the remote request queue and propagates to the local one-->
+    <bean id="remoteJobQueueListener" depends-on="localJmsTemplate" class="uk.ac.ebi.interpro.scan.jms.worker.RemoteJobQueueListener">
+        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="jobRequestQueue" ref="jobRequestQueue"/>
+        <property name="workerMessageSender" ref="wor"
+    </bean>
+
+    <!--&lt;!&ndash;Configuration for the local job queue listener&ndash;&gt;-->
+    <!--<bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="localJmsFactory"/>-->
+        <!--<property name="destination" ref="jobRequestQueue"/>-->
+        <!--<property name="concurrentConsumers" value="1"/>-->
+        <!--<property name="messageListener" ref="localJobQueueListener"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash;Listens to the local job queue and performs jobs&ndash;&gt;-->
+    <!--<bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.worker.LocalJobQueueListener">-->
+        <!--<property name="stepExecutor" ref="stepExecutor"/>-->
+        <!--<property name="jobResponseQueue" ref="jobResponseQueue"/>-->
+        <!--<property name="localJmsTemplate" ref="localJmsTemplate"/>-->
+        <!--<property name="controller" ref="distributedWorkerController"/>-->
+    <!--</bean>-->
+
+
+    <!--Configuration for the job request queue  listener copy-->
+    <!--<bean id="remoteQueueJmsContainerCopy" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="remoteJmsFactory"/>-->
+        <!--<property name="destination" ref="jobRequestQueue"/>-->
+        <!--<property name="concurrentConsumers" value="1"/>-->
+        <!--<property name="messageListener" ref="remoteQueueListenerCopy"/>-->
+    <!--</bean>-->
+
+    <!--Listens to the local response queue and propagates to the remote one-->
+    <!--<bean id="remoteJobQueueListenerCopy" class="uk.ac.ebi.interpro.scan.jms.worker.RemoteQueueListenerCopy">-->
+        <!--<property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>-->
+        <!--<property name="jobRequestQueue" ref="jobRequestQueue"/>-->
+    <!--</bean>-->
+
+
+    <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
+        <property name="jmsTemplate" ref="localJmsTemplate"/>
+        <property name="jobRequestQueue" ref="jobRequestQueue"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="statsQueue" ref="statsQueue"/>
+        <property name="statsMessageListener"  ref="statsMessageListener" />
+    </bean>
+
+</beans>

@@ -1,0 +1,39 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <!--<import resource="activemq-runtime-connection-config-context.xml"/>-->
+    <import resource="activemq-queue-config-context.xml"/>
+    <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
+
+    <bean id="distributedWorkerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="destination" ref="jobRequestQueue"/>
+        <property name="messageListener" ref="worker"/>
+        <property name="sessionTransacted" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="-1"/>
+        <property name="autoStartup" value="false"/>
+        <property name="connectionFactory">
+            <bean class="uk.ac.ebi.interpro.scan.jms.activemq.PlaceholderConnectionFactory"/>
+        </property>
+    </bean>
+
+    <bean id="worker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="jmsTemplate" ref="jmsTemplateWrapper"/>
+        <property name="controller" ref="distributedWorkerController"/>
+        <property name="stepExecutor" ref="stepExecutor"/>
+    </bean>
+
+    <bean id="stepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
+        <property name="jobs" ref="jobs"/>
+        <!--<property name="jmsTemplate" ref="jmsTemplateWrapper"/>-->
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="directoryManager" ref="tempDirectoryManager"/>
+    </bean>
+
+    <bean id="tempDirectoryManager" class="uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager"/>
+
+</beans>

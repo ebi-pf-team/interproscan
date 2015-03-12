@@ -1,0 +1,67 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd">
+
+    <import resource="activemq-queue-config-context.xml"/>
+
+    <!-- JMS ConnectionFactory to use, configuring the embedded broker using XML -->
+    <amq:connectionFactory
+            id="inVmJmsFactory"
+            useCompression="false"
+            optimizeAcknowledge="true"
+            brokerURL="vm://localhost?create=false"
+            alwaysSessionAsync="false"
+            exceptionListener="#masterExceptionListener"
+            transportListener="#masterTransportListener">
+        <amq:prefetchPolicy>
+            <amq:prefetchPolicy queuePrefetch="1"/>
+        </amq:prefetchPolicy>
+    </amq:connectionFactory>
+
+    <!-- JMS transport Listener-->
+    <bean id="masterTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
+
+    <!-- JMS Exception Listener-->
+    <bean id="masterExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener" />
+
+    <bean id="inVmJmsFactoryWithTransportListener" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="failover:(vm://localhost?create=false)" />
+        <property name="useCompression" value="false"/>
+        <property name="optimizeAcknowledge" value="true"/>
+        <property name="alwaysSessionAsync" value="false" />
+        <property name="prefetchPolicy">
+            <bean class="org.apache.activemq.ActiveMQPrefetchPolicy">
+                <property name="queuePrefetch" value="1"/>
+            </bean>
+        </property>
+        <property name="transportListener" ref="masterTransportListener"/>
+        <property name="exceptionListener" ref="masterExceptionListener"/>
+
+    </bean>
+
+
+    <!-- Spring JMS Template -->
+    <bean id="inVmJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <constructor-arg ref="inVmJmsFactory"/>
+                <property name="sessionCacheSize" value="100"/>
+            </bean>
+        </property>
+        <property name="explicitQosEnabled" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+    </bean>
+
+    <!-- Spring JMS Topic Template -->
+    <bean id="inVmJmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <constructor-arg ref="inVmJmsFactory"/>
+            </bean>
+        </property>
+        <property name="pubSubDomain" value="true"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/lang
+                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+
+    <import resource="jpa-context.xml"/>
+    <import resource="oxm-context.xml"/>
+
+    <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Protein" />
+    </bean>
+
+    <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+        <entry key="WhiteSpaceSequence">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="whiteSpaceSequenceObject"/>
+                <constructor-arg ref="whiteSpaceSequenceXml"/>
+            </bean>
+        </entry>
+    </util:map>
+
+    <!--Tests whitespace in <sequence> tag-->
+    <!--Whitespace is fine in sequence because we end up with the same MD5, but it does mess up the -->
+    <!--XMLUnit tests, despite using XMLUnit.setIgnoreWhitespace(true) and  XMLUnit.setNormalizeWhitespace(true), -->
+    <!--so for unit tests make sure the sequence has no whitespace in the XML-->
+    <lang:groovy id="whiteSpaceSequenceObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                Protein p = new Protein("MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGS" +
+                        "RNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARK" +
+                        "HVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGI" +
+                        "AARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEER" +
+                        "RRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAP" +
+                        "SAVHETEEIHRFVDALDGIWSELGAARRV");
+                return p;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="whiteSpaceSequenceXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+                <protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+                    <sequence md5="e8872c7a0261b9e88e6ff47eb34e4162">MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGSRNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGIAARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAPSAVHETEEIHRFVDALDGIWSELGAARRV</sequence>
+                    <matches/>
+                </protein>
+            ]]>
+            </value>
+        </constructor-arg>
+        <!--Following is fine for "normal" use, but XMLUnit complains even though MD5s are equal-->
+        <!--<constructor-arg>-->
+            <!--<value>-->
+            <!--<![CDATA[-->
+                <!--<protein md5="e8872c7a0261b9e88e6ff47eb34e4162" xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">-->
+                    <!--<sequence>MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGS-->
+        <!--RNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARK-->
+        <!--HVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGI-->
+        <!--AARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEER-->
+        <!--RRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAP-->
+        <!--SAVHETEEIHRFVDALDGIWSELGAARRV</sequence>-->
+                    <!--<matches/>-->
+                <!--</protein>-->
+            <!--]]>-->
+            <!--</value>-->
+        <!--</constructor-arg>-->
+    </bean>
+
+</beans>

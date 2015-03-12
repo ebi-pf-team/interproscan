@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="placeholderProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties" ref="defaultProperties"/>
+        <!---->
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="order" value="1"/>
+
+    </bean>
+
+    <util:properties id="defaultProperties" location="classpath:hibernate-annotation-test.properties"/>
+    <!-- Local DataSource that works in any environment -->
+    <!-- Note that DriverManagerDataSource does not pool; it is not intended for production -->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${h2.database.driverClassName}"/>
+        <property name="url" value="${h2.database.connection.url}"/>
+        <property name="username" value="${h2.database.username}"/>
+        <property name="password" value="${h2.database.password}"/>
+    </bean>
+
+    <!--<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>-->
+
+    <bean id="schemaCreatingEntityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence"/>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.show_sql" value="${hibernate.show_sql}"/>
+                <entry key="hibernate.format_sql" value="${hibernate.format_sql}"/>
+                <entry key="hibernate.dialect" value="${hibernate.dialect}"/>
+                <entry key="hibernate.default_schema" value="${hibernate.default_schema}"/>
+                <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
+                <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch_size}"/>
+                <entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl_auto}"/>
+
+                <entry key="hibernate.generate_statistics" value="${hibernate.generate_statistics}"/>
+                <entry key="hibernate.cache.provider_class" value="${hibernate.cache.provider_class}"/>
+                <entry key="hibernate.cache.use_query_cache" value="${hibernate.cache.use_query_cache}"/>
+                <entry key="hibernate.cache.use_second_level_cache" value="${hibernate.cache.use_second_level_cache}"/>
+
+                <entry key="hibernate.ejb.naming_strategy" value="de.schauderhaft.hibernate.OracleNamingStrategy"/>
+            </map>
+        </property>
+    </bean>
+
+    <tx:annotation-driven/>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="schemaCreatingEntityManagerFactory"/>
+    </bean>
+
+    <bean id="signatureDAO" class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl"/>
+    <bean id="entryDAO" class="uk.ac.ebi.interpro.scan.persistence.EntryDAOImpl"/>
+</beans>

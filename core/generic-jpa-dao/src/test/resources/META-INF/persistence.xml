@@ -1,0 +1,24 @@
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
+
+    <!-- JPA Persistence unit for local testing in HSQLDB - current in-memory database, but may change. -->
+    <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
+        <description>
+            Test persistence-unit that uses an in-memory HSQLDB database.
+        </description>
+
+        <class>uk.ac.ebi.interpro.scan.genericjpadao.ModelObject</class>
+
+        <properties>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
+
+            <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
+            <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:mem:testmodel"/>
+            <property name="hibernate.connection.username" value="sa"/>
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>

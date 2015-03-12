@@ -1,0 +1,29 @@
+;Chothia aa      ; 16 character descriptor
+;2               ; 1=Nucleic  2=Protein
+1                ; 1=Filter   2-64=No. Pos. in Matrix
+8                ; 3-256=Filter Window  0-100=Percent Cutoff Matrix Output
+  -0.27   A  Ala
+   0.55   BB Asx
+  -0.23   C  Cys   Note: Columns 1-8 must contain 1 numeric value only
+   0.50   D  Asp
+   0.33   E  Glu
+  -0.55   F  Phe
+  -0.22   G  Gly
+   0.37   H  His
+  -0.80   I  Ile
+   1.17   K  Lys
+  -0.44   L  Leu
+  -0.31   M  Met
+   0.61   N  Asn
+   0.36   P  Pro
+   1.00   Q  Gln
+   2.00   R  Arg
+   0.17   S  Ser
+   0.18   T  Thr
+  -0.65   V  Val
+   0.05   W  Trp
+   0.19   X- Unk
+   0.48   Y  Tyr
+   0.66   ZZ Glx
+   0.19   ** ***
+;Chothia -- dunno -- picked out of a FORTRAN file from Spouge

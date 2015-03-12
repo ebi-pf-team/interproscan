@@ -1,0 +1,523 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <artifactId>interproscan</artifactId>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <version>5.10-50.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>interproscan-web</artifactId>
+
+    <!--Default packaging is JAR, but the WAR file is build at the same time by simply running the MAVEN install goal-->
+    <packaging>jar</packaging>
+
+    <name>InterProScan Web</name>
+    <version>5.10-50.0</version>
+    <description>InterProScan Web</description>
+    <url>http://www.ebi.ac.uk/interpro/</url>
+
+    <properties>
+        <mvn.war.version>2.1.1</mvn.war.version>
+    </properties>
+
+    <dependencies>
+        <!-- i5 model -->
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-model</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-business</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <!--  Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Spring Security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Servlet -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <!-- HttpClient -->
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <!--Packages to use embedded Jetty server-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>8.1.1.v20120215</version>
+        </dependency>
+        <!---->
+        <dependency>
+            <groupId>net.sourceforge.htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <version>2.9</version>
+        </dependency>
+        <!--Spring mock test-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-mock</artifactId>
+            <version>2.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+            <!-- Override the default SLF4J version from the master pom for this web module -->
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>interpro-protein-page.xml</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/</targetPath>
+                <includes>
+                    <include>interpro-protein-page.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/webapp/</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>WEB-INF/tags/**</exclude>
+                    <exclude>WEB-INF/jsp/**</exclude>
+                    <exclude>WEB-INF/web.xml</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/webapp/</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/classes/</targetPath>
+                <excludes>
+                    <exclude>WEB-INF/tags/**</exclude>
+                    <exclude>WEB-INF/jsp/**</exclude>
+                    <exclude>WEB-INF/web.xml</exclude>
+                </excludes>
+            </resource>
+            <!--Copies SVG templates and dependencies into the target directory-->
+            <!--These files are then part of the I5 assembly process (see jms-implementation module: assembly.xml)-->
+            <resource>
+                <directory>src/test/resources/uk/ac/ebi/interpro/scan/web/freeMarker/svg</directory>
+                <filtering>false</filtering>
+                <targetPath>${project.build.directory}/classes/resources/freeMarker/svg</targetPath>
+                <excludes>
+                    <exclude>SVGFreeMarkerTest-context.xml</exclude>
+                    <exclude>data/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <!--Plugin allows to create the WAR file at the same time as the JAR file by running simply mvn clean install goal-->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${mvn.war.version}</version>
+                <executions>
+                    <execution>
+                        <id>make-a-war</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx256m</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <!--
+    NOTE:
+
+    All of the following profiles expect a file webapp/WEB-INF/spring/users.properties.
+
+    Copy the file example-users.properties and uncomment the final line to get this working (in test).
+    -->
+
+
+    <profiles>
+        <profile>
+            <id>jetty</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <!-- Use Maven goal "jetty:run-war" for filtering to take place -->
+            <properties>
+                <default.log.level>debug</default.log.level>
+                <third.party.log.level>info</third.party.log.level>
+                <!-- In the Jetty profile just use a relative path to the copies of the entry colours properties file
+                and entry hierarchy CSV file in version control. NOTE: This data may not have been generated recently,
+                or from the protein database you are currently using (IPPRO etc) therefore will introduce
+                inconsistencies! But that's OK, Jetty profile is used for development, not production! -->
+                <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
+                </match.data.webservice.url>
+                <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
+                </structural.match.data.webservice.url>
+                <!--Model creation files-->
+                <!--Entry hierarchy data-->
+                <entryHierarchyDataResourceId>entryHierarchyDataClassPathResourceId</entryHierarchyDataResourceId>
+                <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <!--Entry GO data-->
+                <entryToGoDataResourceId>entryToGoDataClassPathResourceId</entryToGoDataResourceId>
+                <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
+                <!--Entry colours-->
+                <entry.colours.file.loc>classpath:entry_colours.properties</entry.colours.file.loc>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${mvn.war.version}</version>
+                        <configuration>
+                            <warName>interpro-protein-page</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>WEB-INF/spring</targetPath>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                    <!-- http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
+                    <plugin>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <!--Set version explicitly if get errors on Windows:-->
+                        <version>8.1.14.v20131031</version>
+                        <configuration>
+                            <war>${project.build.directory}/interpro-protein-page.war</war>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>production</id>
+            <!-- Profile for deploying on production tomcats:
+
+1) Update the full InterProScan 5 project to pick up all commits and build:
+
+cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core; svn up; mvn clean install
+
+
+2) Now package the web application:
+
+cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Pproduction clean package
+
+3) Deploy with Tomcat manager application
+                 -->
+            <properties>
+                <default.log.level>warn</default.log.level>
+                <third.party.log.level>warn</third.party.log.level>
+                <deployment.folder>${project.basedir}</deployment.folder>
+                <!-- In this production profile use a full path to the copies of the entry colours properties file
+                and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
+                NOTE: These should have been generated at the time of the last release, therefore will be consistent
+                with the current public database -->
+                <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
+                </match.data.webservice.url>
+                <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
+                </structural.match.data.webservice.url>
+                <resourceWebPath>/interpro-protein-page/resources</resourceWebPath>
+                <!--Model creation files-->
+                <!--Entry hierarchy data-->
+                <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
+                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv
+                </entry.hierarchy.file.loc>
+                <!--Entry GO data-->
+                <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
+                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv
+                </entry.go.file.loc>
+                <!--Entry colours-->
+                <entry.colours.file.loc>
+                    file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
+                </entry.colours.file.loc>
+                <pathToImages>http://www.ebi.ac.uk/interpro</pathToImages>
+            </properties>
+
+            <build>
+                <finalName>interpro-protein-page</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>com.keyboardsamurais.maven</groupId>
+                        <artifactId>maven-timestamp-plugin</artifactId>
+                        <version>1.0</version>
+                        <configuration>
+                            <propertyName>timestamp</propertyName>
+                            <!-- timestampPattern using SimpleDateFormat format. -->
+                            <timestampPattern>yyyyMMdd-HHmm</timestampPattern>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${mvn.war.version}</version>
+                        <configuration>
+                            <warName>interpro-protein-page-${timestamp}</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>WEB-INF/spring</targetPath>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>tc-test</id>
+            <!-- Profile to deploy to tc-test-3.ebi.ac.uk -->
+            <properties>
+                <default.log.level>warn</default.log.level>
+                <third.party.log.level>warn</third.party.log.level>
+                <deployment.folder>${project.basedir}</deployment.folder>
+                <!-- In this production profile use a full path to the copies of the entry colours properties file
+                and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
+                NOTE: These should have been generated at the time of the last release, therefore will be consistent
+                with the current public database -->
+                <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
+                </match.data.webservice.url>
+                <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
+                </structural.match.data.webservice.url>
+                <resourceWebPath>/interpro-protein-page/resources</resourceWebPath>
+                <!--Model creation files-->
+                <!--Entry hierarchy data-->
+                <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
+                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv
+                </entry.hierarchy.file.loc>
+                <!--Entry GO data-->
+                <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
+                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv
+                </entry.go.file.loc>
+                <!--Entry colours-->
+                <entry.colours.file.loc>
+                    file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
+                </entry.colours.file.loc>
+                <pathToImages>http://tc-test-3.ebi.ac.uk:9750/interpro-protein-page/resources</pathToImages>
+            </properties>
+
+            <build>
+                <finalName>interpro-protein-page</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>com.keyboardsamurais.maven</groupId>
+                        <artifactId>maven-timestamp-plugin</artifactId>
+                        <version>1.0</version>
+                        <configuration>
+                            <propertyName>timestamp</propertyName>
+                            <!-- timestampPattern using SimpleDateFormat format. -->
+                            <timestampPattern>yyyyMMdd-HHmm</timestampPattern>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${mvn.war.version}</version>
+                        <configuration>
+                            <warName>interpro-protein-page-${timestamp}</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>WEB-INF/spring</targetPath>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>localhost-tomcat</id>
+            <!--
+
+1. Profile to deploy to Tomcat running on the current local desktop machine!
+
+(Once-only)
+
+Add the following XML to your ~/.m2/settings.xml file, to provide the server credentials:
+
+                        <settings>
+                            <servers>
+                                <server>
+                                    <id>localhost</id>
+                                    <username>tomcat</username>
+                                    <password>THE REAL PASSWORD</password>
+                                </server>
+                            </servers>
+                        </settings>
+
+2) Commit your (tested) changes to subversion, wherever you may be building them.
+
+2) OPTIONALLY, If you have changed any code that the web module is dependent upon (e.g. in model):
+
+cd ~/Projects/i5/interproscan/core; mvn clean install
+
+
+3) Build and deploy the web application:
+
+cd ~/Projects/i5/interproscan/core/web; mvn -Plocalhost-tomcat clean tomcat:redeploy
+
+                 -->
+            <properties>
+                <default.log.level>warn</default.log.level>
+                <third.party.log.level>warn</third.party.log.level>
+                <deployment.folder>${basedir}/target</deployment.folder>
+                <!-- In the localhost profile just use a relative path to the copies of the entry colours properties file
+                and entry hierarchy CSV file in version control. NOTE: This data may not have been generated recently,
+                or from the protein database you are currently using (IPPRO etc) therefore will introduce
+                inconsistencies! But that's OK, this profile is used for development/testing, not production! -->
+                <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
+                </match.data.webservice.url>
+                <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
+                </structural.match.data.webservice.url>
+                <resourceWebPath>/interpro-protein-page/resources</resourceWebPath>
+                <!--Model creation files-->
+                <!--Entry hierarchy data-->
+                <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
+                <entry.hierarchy.file.loc>${basedir}/src/main/resources/entry_hierarchy.csv</entry.hierarchy.file.loc>
+                <!--Entry GO data-->
+                <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
+                <entry.go.file.loc>${basedir}/src/main/resources/entry_to_go.psv</entry.go.file.loc>
+                <!--Entry colours-->
+                <entry.colours.file.loc>file:${basedir}/src/main/resources/entry_colours.properties
+                </entry.colours.file.loc>
+                <pathToImages>/interpro-protein-page/resources</pathToImages>
+            </properties>
+
+            <build>
+                <finalName>interpro-protein-page</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${mvn.war.version}</version>
+                        <configuration>
+                            <warName>interpro-protein-page</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>WEB-INF/spring</targetPath>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+
+                    <!-- Plugin to automatically deploy the war file to Tomcat running on localhost. -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>tomcat-maven-plugin</artifactId>
+                        <configuration>
+                            <url>http://localhost:8080/manager</url>
+                            <server>localhost</server>
+                            <!-- See note above for server credentials -->
+                            <mode>both</mode>
+                            <contextFile>${project.build.directory}/interpro-protein-page.xml
+                            </contextFile>
+                            <warFile>${project.build.directory}/interpro-protein-page.war
+                            </warFile>
+                            <path>/interpro-protein-page</path>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>i5-web</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <resourceWebPath>/resources</resourceWebPath>
+                <pathToImages>/interpro</pathToImages>
+            </properties>
+        </profile>
+    </profiles>
+</project>

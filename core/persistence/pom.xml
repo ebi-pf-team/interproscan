@@ -1,0 +1,157 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <artifactId>interproscan</artifactId>
+        <version>5.10-50.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>interproscan-persistence</artifactId>
+    <version>5.10-50.0</version>
+
+    <packaging>jar</packaging>
+
+    <name>InterProScan Persistence</name>
+    <description>InterProScan persistence layer</description>
+
+    <url>http://www.ebi.ac.uk/interpro/</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>EMBL - European Bioinformatics Institute</name>
+        <url>http://www.ebi.ac.uk/</url>
+    </organization>
+
+    <!--<repositories>-->
+    <!--&lt;!&ndash;Moved Google code repository from master POM to this location&ndash;&gt;-->
+    <!--&lt;!&ndash;The reason for that is, if somebody runs mvn clean install for the first time, after checking out the project, it tries to download the master POM.&ndash;&gt;-->
+    <!--<repository>-->
+    <!--<id>google-code-interproscan</id>-->
+    <!--<name>google-code-interproscan</name>-->
+    <!--<layout>default</layout>-->
+    <!--<url>http://interproscan.googlecode.com/svn/repository/</url>-->
+    <!--<snapshots>-->
+    <!--<enabled>false</enabled>-->
+    <!--</snapshots>-->
+    <!--</repository>-->
+    <!--</repositories>-->
+
+    <dependencies>
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-model</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-io</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>generic-jpa-dao</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>com.springsource.oracle.jdbc</artifactId>
+            <version>10.2.0.2</version>
+        </dependency>
+
+        <!--
+        === All dependcies below here are TEST scope only. ===
+        -->
+
+        <!-- Test database implementation (in memory for Junit tests) -->
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>${xmlunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JAXB Implementation (only required for testing) -->
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.8</version>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- Copy this profile into your own [HOME]/.m2/settings.xml file, rename and
+             edit appropriately. Use with "mvn -P profile-id GOAL" -->
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <mvn.i5.database.driver>org.hsqldb.jdbcDriver</mvn.i5.database.driver>
+                <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
+                <mvn.i5.database.username>sa</mvn.i5.database.username>
+                <mvn.i5.database.password></mvn.i5.database.password>
+                <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
+                <mvn.hibernate.show_sql>false</mvn.hibernate.show_sql>
+                <mvn.hibernate.format_sql>false</mvn.hibernate.format_sql>
+                <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
+            </properties>
+        </profile>
+    </profiles>
+</project>

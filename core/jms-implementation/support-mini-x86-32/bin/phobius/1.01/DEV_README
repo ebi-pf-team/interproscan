@@ -1,0 +1,12 @@
+Developer notes:
+================
+
+Q: Why are there no Phobius binaries in this directory?
+
+A: Phobius is licensed software, therefore the Phobius files have not been included with InterProScan 5.
+
+The "decodeanhmm" binary, the "phobius.pl" perl scirpt and other associated files can be downloaded from the Internet
+(Phobius website) and extracted into this directory if required (or another directory on the file system).
+
+Once you have the required files in place on your system then the interproscan.properties file can be updated
+accordingly.

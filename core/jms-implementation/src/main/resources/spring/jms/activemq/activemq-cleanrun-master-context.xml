@@ -1,0 +1,18 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <!--<import resource="classpath:/spring/spring-properties-context.xml"/>-->
+    <!--<import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>-->
+
+
+    <bean id="databaseCleaner" class="uk.ac.ebi.interpro.scan.jms.activemq.CleanRunDatabase">
+        <property name="databaseBackupFile" value="${i5.h2.database.original.location}"/>
+        <property name="inMemoryDatabaseURL" value="${i5.database.connection.url}"/>
+        <property name="inMemoryDatabasePassword" value="${i5.database.password}"/>
+        <property name="inMemoryDatabaseDriverClass" value="${i5.database.driverClassName}"/>
+        <property name="inMemoryDatabaseUsername" value="${i5.database.username}"/>
+    </bean>
+
+</beans>

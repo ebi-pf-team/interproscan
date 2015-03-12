@@ -1,0 +1,36 @@
+/**
+ * Style signature matches by member database name.
+ *
+ * @author  Antony Quinn
+ * @author  Matthew Fraser
+ * @version $Id: database.css,v 1.4 2012/03/20 15:14:07 pesseat Exp $
+ */
+
+.pfam, .pfamb {background-color: #0000ff;}
+
+.panther {background-color: #a66c32;}
+
+.prints {background-color: #33cc33;}
+
+.pirsf {background-color: #ffa8fd;}
+
+.smart {background-color: #ff0000;}
+
+.prosite-profiles {background-color: #ff9000;}
+
+.prosite-patterns {background-color: #ffff00;}
+
+.hamap {background-color: #0ff7fa;}
+
+.gene3d {background-color: #b852d4;}
+
+.superfamily {background-color: #000;}
+
+.tigrfams {background-color: #5d8ca2;}
+
+.prodom {background-color: #92acd1;}
+
+.signalp-euk, .signalp-gram+-prok, .signalp-gram--prok {background-color: rgb(255, 51, 153);}
+.tmhmm {background-color: #a5a5a5;}
+.phobius {background-color: rgb(153, 0, 0);}
+.coils {background-color: #c3b8f0;}

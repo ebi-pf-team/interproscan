@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- 'List' of beans that contain at least a LAN hostname - other configurable parameters are number of Java VMs to run (default = 1) and memory 
+          used by each VM (default is set to 1024MB [-dXmx1024m].  -->
+    <bean id="serverNames" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerListing">
+        <property name="listServerSettings">
+            <list>
+                <bean id="penguin" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerSettings">
+                    <property name="hostname" value="penguin.ebi.ac.uk"/>
+                    <property name="vmNumber" value="8"/>
+                    <property name="memory" value="-DXmx=2048m"/>
+                </bean>
+                <bean id="parrot" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerSettings">
+                    <property name="hostname" value="parrot.ebi.ac.uk"/>
+                    <property name="vmNumber" value="2"/>
+                    <property name="memory" value="-DXmx=2048m"/>
+                </bean>
+                <bean id="pigeon" class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.LANServerSettings">
+                    <property name="hostname" value="pigeon.ebi.ac.uk"/>
+                    <property name="vmNumber" value="2"/>
+                    <property name="memory" value="-DXmx=2048m"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>

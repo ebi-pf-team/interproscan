@@ -1,0 +1,18 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="cl-worker-base-context.xml"/>
+
+    <bean id="distributedWorkerController"
+          class="uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl">
+        <constructor-arg ref="distributedWorkerJmsContainer"/>
+        <property name="maximumIdleTimeSeconds" value="${jvm.maximum.idle.time.seconds}"/>
+        <property name="maximumLifeSeconds" value="${jvm.maximum.life.seconds}"/>
+        <property name="highMemory" value="true"/>
+        <property name="remoteWorker" value="true"/>
+        <property name="jmsTemplateWrapper" ref="jmsTemplateWrapper"/>
+    </bean>
+</beans>

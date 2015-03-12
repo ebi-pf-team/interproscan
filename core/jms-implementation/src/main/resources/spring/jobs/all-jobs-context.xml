@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--Import common beans-->
+    <!--Old versions are switched off because they aren't in the database anymore-->
+    <import resource="jobPfamA-27.0-context.xml"/>
+    <import resource="jobPhobius-1.01-context.xml"/>
+    <import resource="jobGene3d-3.5.0-context.xml"/>
+    <import resource="jobPanther-9.0-context.xml"/>
+    <import resource="jobPrints-42.0-context.xml"/>
+    <import resource="jobCoils-2.2-context.xml"/>
+    <import resource="jobHAMAP-201311.27-context.xml"/>
+    <import resource="jobPrositeProfiles-20.105-context.xml"/>
+    <import resource="jobPrositePatterns-20.105-context.xml"/>
+    <import resource="jobSignalP-EUK-4.0-context.xml"/>
+    <import resource="jobSignalP-GRAM_POSITIVE-4.0-context.xml"/>
+    <import resource="jobSignalP-GRAM_NEGATIVE-4.0-context.xml"/>
+    <import resource="jobSMART-6.2-context.xml"/>
+    <import resource="jobTIGRFAM-13.0-context.xml"/>
+    <import resource="jobTIGRFAM-15.0-context.xml"/>
+    <import resource="jobPIRSF-3.01-context.xml"/>
+    <import resource="jobProDom-2006.1-context.xml"/>
+    <import resource="jobSuperFamily-1.75-context.xml"/>
+    <import resource="jobTMHMM-2.0c-context.xml"/>
+
+    <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
+
+    <import resource="classpath:/spring/uapro-db-access-context.xml"/>
+    <import resource="classpath:/spring/match-converter-context.xml"/>
+    <import resource="classpath:/spring/berkeley-oxm-context.xml"/>
+    <import resource="classpath:/spring/berkeley-oxm-context.xml"/>
+    <import resource="classpath:/spring/jobs/outputWriter/jobWriteOutput-context.xml"/>
+
+    <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">
+        <property name="jobList">
+            <list>
+                <ref bean="jobLoadFromFasta"/>
+                <ref bean="jobLoadNucleicAcidSequence"/>
+                <ref bean="jobLoadFromUniParc"/>
+                <ref bean="jobWriteOutput"/>
+
+                <!-- Analyses -->
+                <!--Old versions are not present because they aren't in the H2 database anymore-->
+                <ref bean="jobPfamA-27.0"/>
+                <ref bean="jobPhobius-1.01"/>
+                <ref bean="jobGene3d-3.5.0"/>
+                <ref bean="jobPanther-9.0"/>
+                <ref bean="jobPRINTS-42.0"/>
+                <ref bean="jobCoils-2.2"/>
+                <ref bean="jobHAMAP-201311.27"/>
+                <ref bean="jobProDom-2006.1"/>
+                <ref bean="jobPrositeProfiles-20.105"/>
+                <ref bean="jobPrositePatterns-20.105"/>
+                <ref bean="jobSignalP-EUK-4.0"/>
+                <ref bean="jobSignalP-GRAM_POSITIVE-4.0"/>
+                <ref bean="jobSignalP-GRAM_NEGATIVE-4.0"/>
+                <ref bean="jobSMART-6.2"/>
+                <ref bean="jobTIGRFAM-13.0"/>
+                <ref bean="jobTIGRFAM-15.0"/>
+                <ref bean="jobPIRSF-3.01" />
+                <ref bean="jobSuperFamily-1.75"/>
+                <ref bean="jobTMHMM-2.0c"/>
+            </list>
+        </property>
+        <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
+    </bean>
+
+
+    <!-- String properties common to all jobs -->
+    <bean id="fastaFileNameTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].fasta"/>
+    </bean>
+
+    <bean id="rawAnalaysisOutputFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].raw.out"/>
+    </bean>
+
+    <bean id="clcMonitor" class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationMonitor">
+        <property name="binaryRunDelay" value="${binary.run.delay}"/>
+        <property name="checkForkInProgress" value="${check.fork.progress}"/>
+        <property name="verboseLog" value="${verbose.log}"/>
+        <property name="verboseLogLevel" value="${verbose.log.level}"/>
+    </bean>
+
+
+    <!--<import resource="all-jobs-context.xml"/>-->
+
+    <!-- ######################## JOB: job-load-from-fasta ############################  -->
+    <bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="analysis" value="false"/>
+    </bean>
+
+
+    <!-- STEP 1 -->
+    <bean id="stepLoadFromFasta"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <property name="job" ref="jobLoadFromFasta"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription"
+                  value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="2"/>
+        <property name="serialGroup" value="LOAD_PROTEINS"/>
+        <property name="fastaFileLoader" ref="proteinFastaFileLoader"/>
+        <property name="jobs" ref="jobs"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromFasta !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## JOB: jobLoadFromUniParc ############################  -->
+    <bean id="jobLoadFromUniParc" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="Load proteins from UniParc and create required JobInstance objects"/>
+        <property name="analysis" value="false"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepLoadFromUniParc"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.UniparcProteinLoadStep">
+        <property name="job" ref="jobLoadFromUniParc"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Load proteins from UniParc and create required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="2"/>
+        <property name="serialGroup" value="LOAD_PROTEINS"/>
+        <property name="uniparcLoader">
+            <bean class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.LoadUniParcFromDBImpl">
+                <property name="jdbcTemplate" ref="targetJdbcTemplate"/>
+                <property name="rowCallbackHandlerTemplate">
+                    <bean class="uk.ac.ebi.interpro.scan.business.sequence.uniparcdb.UniParcDBRowCallbackHandler">
+                        <property name="proteinLoader" ref="proteinLoader"/>
+                        <property name="sequenceLoadListener" ref="proteinLoadListener"/>
+                    </bean>
+                </property>
+                <property name="maximumProteins" value="${ebi.uniparc.protein.load.size}"/>
+                <property name="xrefDao" ref="xrefDAO"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- ######################## JOB: jobLoadNucleicAcidSequence ############################  -->
+    <bean id="jobLoadNucleicAcidSequence" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="Load nucleic acid sequence, run getOrf and load proteins to create required JobInstance objects"/>
+        <property name="analysis" value="false"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepLoadNucleicAcidFromFasta"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <property name="job" ref="jobLoadNucleicAcidSequence"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Load nucleic acids from a fasta file"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="2"/>
+        <property name="serialGroup" value="LOAD_NUCLEIC_ACID"/>
+        <property name="fastaFileLoader">
+            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadNucleotideFastaFile">
+                <property name="sequenceLoader">
+                    <bean class="uk.ac.ebi.interpro.scan.business.sequence.NucleotideSequenceLoader">
+                        <property name="sequenceInsertBatchSize" value="500"/>
+                        <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+                        <property name="nucleotideSequenceXrefDAO" ref="nucleotideSequenceXrefDAO"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <!-- Don't need the following two properties, that have been copied from load Protein fasta file above.-->
+        <property name="jobs" ref="jobs"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepRunGetOrf"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep">
+        <!--Abstract parameter-->
+        <property name="job" ref="jobLoadNucleicAcidSequence"/>
+        <property name="stepDescription" value="Run GetOrf to predict open reading frames from nucleic acid sequence"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="1"/>
+        <!-- Need to consider this parameter "outputFileNameTemplate"- this is normally the output from the binary
+        but in this case
+         the output is defined as a parameter (fastaFileNameTemplate).  This may contain error messages,
+         so needs to be handled in some way.-->
+        <property name="outputFileNameTemplate" value="getorf.err.txt"/>
+        <!--More specific parameter-->
+        <property name="fullPathToBinary" value="${binary.getorf.path}"/>
+        <property name="fastaFilePath" value="orfs.fasta"/>
+        <property name="minSize" value="${getorf.minsize}"/>
+    </bean>
+
+    <!-- STEP 3 (depends on both Step 1 and 2) -->
+    <bean id="stepLoadOrfFromFasta"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+        <!--Abstract parameter-->
+        <property name="job" ref="jobLoadNucleicAcidSequence"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription"
+                  value="Load proteins from a fasta file generated by GetOrf and create required JobInstance objects.  Also creates OpenReadingFrame records to connect the proteins to the NucleicAcid records."/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="2"/>
+        <property name="serialGroup" value="LOAD_PROTEINS"/>
+        <property name="dependsUpon">
+            <list>
+                <ref bean="stepLoadNucleicAcidFromFasta"/>
+                <ref bean="stepRunGetOrf"/>
+            </list>
+        </property>
+        <!--More specific parameter-->
+        <property name="fastaFileLoader">
+            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
+                <property name="sequenceLoader">
+                    <bean class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
+                        <property name="proteinPrecalcLookupBatchSize" value="50"/>
+                        <!-- MUST NOT EXCEED 1000 -->
+                        <property name="proteinInsertBatchSize" value="50"/>
+                        <property name="proteinDAO" ref="proteinDAO"/>
+                        <property name="proteinLookup" ref="precalculatedLookup"/>
+                        <property name="getOrfOutput" value="true"/>
+                        <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+                        <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
+                        <property name="descriptionLineParser" ref="getOrfDescriptionLineParser"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="overridingFastaFileName" ref="getOrfResultFile"/>
+        <property name="jobs" ref="jobs"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+    </bean>
+
+    <!-- STEP 4 - cleanup (depends on step 3) -->
+    <bean id="stepDeleteGetOrfOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep">
+        <!--Abstract parameter-->
+        <property name="job" ref="jobLoadNucleicAcidSequence"/>
+        <property name="stepDescription"
+                  value="Delete the GetOrf output fasta file following successful loading of the proteins."/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="1"/>
+        <property name="dependsUpon" ref="stepLoadOrfFromFasta"/>
+        <!--More specific parameter-->
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="getOrfResultFile"/>
+                <ref bean="getOrfErrorFile"/>
+            </list>
+        </property>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadNucleicAcidSequence !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+
+    <bean id="getOrfResultFile" class="java.lang.String">
+        <constructor-arg value="orfs.fasta"/>
+    </bean>
+
+    <bean id="getOrfErrorFile" class="java.lang.String">
+        <constructor-arg value="getorf.err.txt"/>
+    </bean>
+
+    <bean id="outputResultDevNullFile" class="java.lang.String">
+        <constructor-arg value="devnull.txt"/>
+    </bean>
+
+    <bean id="getOrfDescriptionLineParser"
+          class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
+
+    <bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
+        <property name="sequenceLoader" ref="proteinLoader"/>
+    </bean>
+
+    <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">
+        <property name="interproscanVersion" value="${i5.version}"/>
+        <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
+        <property name="berkeleyToI5DAO" ref="berkeleyToI5ModelDAO"/>
+    </bean>
+
+    <bean id="preCalcMatchClient" class="uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient">
+        <constructor-arg ref="berkeleyUnmarshaller"/>
+        <property name="url" value="${precalculated.match.lookup.service.url}"/>
+    </bean>
+
+    <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
+        <property name="proteinPrecalcLookupBatchSize" value="100"/>
+        <!-- MUST NOT EXCEED 1000 -->
+        <property name="proteinInsertBatchSize" value="500"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="proteinLookup" ref="precalculatedLookup"/>
+        <property name="getOrfOutput" value="false"/>
+    </bean>
+
+    <bean id="proteinLoadListener"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationSequenceLoadListener">
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="jobs" ref="jobs"/>
+    </bean>
+
+    <bean id="sequenceTypes" class="java.util.HashSet">
+        <constructor-arg>
+            <set>
+                <value>p</value>
+                <value>n</value>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+</beans>

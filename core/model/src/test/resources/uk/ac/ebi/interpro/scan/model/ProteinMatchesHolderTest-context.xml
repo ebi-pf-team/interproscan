@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/lang
+                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+
+    <import resource="jpa-context.xml"/>
+    <import resource="oxm-context.xml"/>
+
+    <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.ProteinMatchesHolder"/>
+    </bean>
+
+    <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+        <entry key="Gene3D">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="gene3dObject"/>
+                <constructor-arg ref="gene3dXml"/>
+            </bean>
+        </entry>
+        <entry key="Pfam">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="pfamObject"/>
+                <constructor-arg ref="pfamXml"/>
+            </bean>
+        </entry>
+        <entry key="SMART">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="smartObject"/>
+                <constructor-arg ref="smartXml"/>
+            </bean>
+        </entry>
+        <entry key="SUPERFAMILY">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="superfamilyObject"/>
+                <constructor-arg ref="superfamilyXml"/>
+            </bean>
+        </entry>
+        <entry key="PRINTS">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="printsObject"/>
+                <constructor-arg ref="printsXml"/>
+            </bean>
+        </entry>
+        <entry key="ProDom">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="proDomObject"/>
+                <constructor-arg ref="proDomXml"/>
+            </bean>
+        </entry>
+        <entry key="ProSitePatterns">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="proSitePatternsObject"/>
+                <constructor-arg ref="proSitePatternsXml"/>
+            </bean>
+        </entry>
+        <entry key="ProSiteProfiles">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="proSiteProfilesObject"/>
+                <constructor-arg ref="proSiteProfilesXml"/>
+            </bean>
+        </entry>
+        <entry key="SignalP">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="signalPObject"/>
+                <constructor-arg ref="signalPXml"/>
+            </bean>
+        </entry>
+    </util:map>
+
+    <!-- HMM databases -->
+
+    <lang:groovy id="gene3dObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG");
+                p.addCrossReference(new ProteinXref("UniProt", "A0A314", "RR12_COFAR"));
+                Signature signature = new Signature("G3DSA:2.40.50.140", "Nucleic acid-binding proteins");
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.1.0");
+                signature.setSignatureLibraryRelease(release);
+                Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
+                locations.add(new Hmmer3Match.Hmmer3Location(74, 93, -8.9, 0.28, 63, 82, 114, 73, 94));
+                p.addMatch(new Hmmer3Match(signature, -8.9, 0.28, locations));
+
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="gene3dXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                                                       http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                    <protein>
+                        <sequence md5="1de2cf633901ff1f00785735c8ce7e70">MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
+                        <xref db="UniProt" id="A0A314" name="RR12_COFAR"/>
+                        <matches>
+                            <hmmer3-match score="-8.9" evalue="0.28">
+                                <signature ac="G3DSA:2.40.50.140" name="Nucleic acid-binding proteins">
+                                    <signature-library-release library="GENE3D" version="3.1.0"/>
+                                </signature>
+                                <locations>
+                                    <hmmer3-location start="74" end="93"
+                                                     env-start="73" env-end="94"
+                                                     score="-8.9" evalue="0.28"
+                                                     hmm-start="63" hmm-end="82" hmm-length="114" />
+                                </locations>
+                            </hmmer3-match>
+                        </matches>
+                    </protein>
+                </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <lang:groovy id="pfamObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGS" +
+                        "RNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARK" +
+                        "HVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGI" +
+                        "AARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEER" +
+                        "RRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAP" +
+                        "SAVHETEEIHRFVDALDGIWSELGAARRV");
+                p.addCrossReference(new ProteinXref("UniProt", "A0A000", "A0A000_9ACTO"));
+                Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
+                locations.add(new Hmmer3Match.Hmmer3Location(37, 381, 206.7, 3.7E-67, 6, 363, 363, 41, 381));
+                Signature signature = new Signature("PF00155", "Aminotran_1_2");
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
+                signature.setSignatureLibraryRelease(release);
+                p.addMatch(new Hmmer3Match(signature, 206.7, 3.7E-67, locations));
+
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="pfamXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                    <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                                       xmlns:pfam="http://pfam.sanger.ac.uk"
+                                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                                                           http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd
+                                                                           http://pfam.sanger.ac.uk
+                                                                           http://pfam.sanger.ac.uk/static/documents/schemas/results.xsd">
+                        <protein>
+                            <sequence md5="e8872c7a0261b9e88e6ff47eb34e4162">MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGSRNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGIAARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAPSAVHETEEIHRFVDALDGIWSELGAARRV</sequence>
+                            <xref db="UniProt" id="A0A000" name="A0A000_9ACTO"/>
+                            <matches>
+                                <hmmer3-match score="206.7" evalue="3.7E-67">
+                                    <signature ac="PF00155" name="Aminotran_1_2">
+                                        <signature-library-release library="PFAM" version="23" />
+                                    </signature>
+                                    <locations>
+                                        <hmmer3-location start="37" end="381"
+                                                         env-start="41" env-end="381"
+                                                         score="206.7" evalue="3.7E-67"
+                                                         hmm-start="6" hmm-end="363" hmm-length="363"/>
+                                    </locations>
+                                </hmmer3-match>
+                            </matches>
+                        </protein>
+                    </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <lang:groovy id="smartObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK");
+                p.addCrossReference(new ProteinXref("UniProt", "Q8MLZ5", "GAP2_CAEEL"));
+                Signature signature = new Signature("SM00323", "RasGAP_2");
+                Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
+                locations.add(new Hmmer2Match.Hmmer2Location(512, 857, 543.4, 2.7e-164, 1, 390, 390));
+                p.addMatch(new Hmmer2Match(signature, 543.4, 2.7e-164, locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SMART, "5.1");
+                signature.setSignatureLibraryRelease(release);
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="smartXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                    <protein>
+                        <sequence md5="829339ede4627f6a6bf9166f3e9526d9">MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
+                        <xref db="UniProt" id="Q8MLZ5" name="GAP2_CAEEL"/>
+                        <matches>
+                            <hmmer2-match score="543.4" evalue="2.7E-164">
+                                <signature ac="SM00323" name="RasGAP_2">
+                                    <signature-library-release library="SMART" version="5.1" />
+                                </signature>
+                                <locations>
+                                    <hmmer2-location start="512" end="857"
+                                                     score="543.4" evalue="2.7E-164"
+                                                     hmm-start="1" hmm-end="390" hmm-length="390"/>
+                                </locations>
+                            </hmmer2-match>
+                        </matches>
+                    </protein>
+                </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <lang:groovy id="superfamilyObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
+                p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
+                Signature signature = new Signature("SSF53098", "Ribonuclease H-like");
+                Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
+                locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(1, 237));
+                p.addMatch(new SuperFamilyHmmer3Match(signature, 2.4e-32, locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.75");
+                signature.setSignatureLibraryRelease(release);
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="superfamilyXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                    <protein>
+                        <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
+                        <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
+                        <matches>
+                            <superfamilyhmmer3-match evalue="2.4E-32">
+                                <signature ac="SSF53098" name="Ribonuclease H-like">
+                                    <signature-library-release library="SUPERFAMILY" version="1.75" />
+                                </signature>
+                                <locations>
+                                    <superfamilyhmmer3-location start="1" end="237"/>
+                                </locations>
+                            </superfamilyhmmer3-match>
+                        </matches>
+                    </protein>
+                </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <lang:groovy id="printsObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN");
+                p.addCrossReference(new ProteinXref("UniProt", "P02700", "OPSD_SHEEP"));
+                Signature signature = new Signature("PR00579", "RHODOPSIN");
+                Set<FingerPrintsMatch.FingerPrintsLocation> locations = new HashSet<FingerPrintsMatch.FingerPrintsLocation>();
+                locations.add(new FingerPrintsMatch.FingerPrintsLocation(3, 21, 1.45e-14, 86.94, 1));
+                locations.add(new FingerPrintsMatch.FingerPrintsLocation(22, 38, 2.06e-10, 80.20, 2));
+                locations.add(new FingerPrintsMatch.FingerPrintsLocation(85, 101, 1.83e-13, 81.56, 3));
+                locations.add(new FingerPrintsMatch.FingerPrintsLocation(191, 207, 1.43e-10, 77.83, 4));
+                locations.add(new FingerPrintsMatch.FingerPrintsLocation(271, 289, 9.33e-15, 83.70, 5));
+                locations.add(new FingerPrintsMatch.FingerPrintsLocation(319, 332, 1.04e-09, 81.87, 6));
+                p.addMatch(new FingerPrintsMatch(signature, 2.2e-64, "IIIIII", locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
+                signature.setSignatureLibraryRelease(release);
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="printsXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                    <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                       xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                        <protein>
+                            <sequence md5="ae2f4d0c928c8017da2df2d5cf15f01">MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
+                            <xref db="UniProt" id="P02700" name="OPSD_SHEEP"/>
+                            <matches>
+                            <fingerprints-match graphscan="IIIIII" evalue="2.2E-64">
+                                <signature ac="PR00579" name="RHODOPSIN">
+                                    <signature-library-release library="PRINTS" version="38.1" />
+                                </signature>
+                                <locations>
+                                    <fingerprints-location motifNumber="1" start="3"   end="21"  score="86.94" pvalue="1.45E-14" />
+                                    <fingerprints-location motifNumber="2" start="22"  end="38"  score="80.2"  pvalue="2.06E-10" />
+                                    <fingerprints-location motifNumber="3" start="85"  end="101" score="81.56" pvalue="1.83E-13" />
+                                    <fingerprints-location motifNumber="4" start="191" end="207" score="77.83" pvalue="1.43E-10" />
+                                    <fingerprints-location motifNumber="5" start="271" end="289" score="83.7"  pvalue="9.33E-15" />
+                                    <fingerprints-location motifNumber="6" start="319" end="332" score="81.87" pvalue="1.04E-9" />
+                                </locations>
+                            </fingerprints-match>
+                            </matches>
+                        </protein>
+                    </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+        <!--
+            Sn; sp|P02700|OPSD_SHEEP Rhodopsin OS=Ovis aries GN=RHO PE=1 SV=2
+            Si; Fasta sequence
+            1TBS
+            1TBH RHODOPSIN       2.186312e-64
+            1TBF
+            2TBS
+            2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan
+            2TBH RHODOPSIN       6  of  6  4.9e+02  82       4791       7.6e-70     2.2e-64     IIIIII
+            2TBF
+            3TBS
+            3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high
+            3TBH RHODOPSIN       1  of  6  86.94   898     1.45e-14  GTEGPNFYVPFSNKTGVVR                                     19   3    3     6
+            3TBH RHODOPSIN       2  of  6  80.20   808     2.06e-10  SPFEAPQYYLAEPWQFS                                       17   22   22    25
+            3TBH RHODOPSIN       3  of  6  81.56   763     1.83e-13  FMVFGGFTTTLYTSLHG                                       17   85   85    88
+            3TBH RHODOPSIN       4  of  6  77.83   741     1.43e-10  YFTLKPEINNESFVIYM                                       17   191  191   194
+            3TBH RHODOPSIN       5  of  6  83.70   878     9.33e-15  VAFYIFTHQGSDFGPIFMT                                     19   271  271   274
+            3TBH RHODOPSIN       6  of  6  81.87   703     1.04e-09  TTLCCGKNPLGDDE                                          14   319  319   322
+        -->
+    </bean>
+
+    <lang:groovy id="proDomObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL");
+                p.addCrossReference(new ProteinXref("UniParc", "UPI000048E726", "UPI000048E726"));
+                Signature signature = new Signature("PD001061");
+                Set<BlastProDomMatch.BlastProDomLocation> locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
+                locations.add(new BlastProDomMatch.BlastProDomLocation(9, 150, 763, 1e-80));
+                p.addMatch(new BlastProDomMatch(signature, locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRODOM, "2006.1");
+                signature.setSignatureLibraryRelease(release);
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="proDomXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                    <protein>
+                        <sequence md5="daa9d1290a78528c68605d254f9ba358">MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
+                        <xref db="UniParc" id="UPI000048E726" name="UPI000048E726"/>
+                        <matches>
+                            <blastprodom-match>
+                                <signature ac="PD001061">
+                                    <signature-library-release library="PRODOM" version="2006.1" />
+                                </signature>
+                                <locations>
+                                    <blastprodom-location start="9" end="150" score="763.0" evalue="1e-80"/>
+                                </locations>
+                            </blastprodom-match>
+                            <!--<blastprodom-match>-->
+                                <!--<signature ac="PD596253"/>-->
+                                <!--<locations>-->
+                                    <!--<blastprodom-location start="151" end="245" score="496.0" evalue="1e-49"/>-->
+                                <!--</locations>-->
+                            <!--</blastprodom-match>-->
+                        </matches>
+                    </protein>
+                </protein-matches>
+            ]]>
+            </value>
+        </constructor-arg>
+        <!--
+            UPI000048E726      9    150 //  pd_PD001061;sp_Q5Q175_9INFA_Q5Q175;       0      0 // S=763    E=1e-80  //  (1503)  MATRIX VIRAL M1 MEMBRANE RNA-BINDING SPLICING ALTERNATIVE NUCLEAR STRUCTURAL M 	 Length = 142
+            UPI000048E726    151    245 //  pd_PD596253;sp_Q5DXV0_9INFA_Q5DXV0;       0      0 // S=496    E=1e-49  //  (1503)  MATRIX VIRAL M1 MEMBRANE ALTERNATIVE SPLICING RNA-BINDING STRUCTURAL NUCLEAR M 	 Length = 95
+            //
+        -->
+    </bean>
+
+    <lang:groovy id="proSitePatternsObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG");
+                p.addCrossReference(new ProteinXref("UniParc", "UPI0001AFC88D", "UPI0001AFC88D"));
+                Signature signature = new Signature("PS00675", "SIGMA54_INTERACT_1");
+                Set<PatternScanMatch.PatternScanLocation> locations = new HashSet<PatternScanMatch.PatternScanLocation>();
+                locations.add(new PatternScanMatch.PatternScanLocation(8, 43, PatternScanMatch.PatternScanLocation.Level.STRONG, "23M10D3I"));
+                p.addMatch(new PatternScanMatch(signature, locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PATTERNS, "20.35");
+                signature.setSignatureLibraryRelease(release);
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="proSitePatternsXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                    <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                       xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                        <protein>
+                            <sequence md5="386964a0a573631d643f2a7e7de03066">MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
+                            <xref db="UniParc" id="UPI0001AFC88D" name="UPI0001AFC88D"/>
+                            <matches>
+                            <patternscan-match>
+                                <signature ac="PS00675" name="SIGMA54_INTERACT_1">
+                                    <signature-library-release library="PROSITE_PATTERNS" version="20.35" />
+                                </signature>
+                                <locations>
+                                    <patternscan-location start="8" end="43" level="STRONG">
+                                        <alignment>DDEVQIRSLLARMLGLEGYEVCQ----------lei</alignment>
+                                    </patternscan-location>
+                                </locations>
+                            </patternscan-match>
+                            </matches>
+                        </protein>
+                    </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+        <!--
+            UPI0001AFC88D	ps_scan|v1.57	PS00675	166	179	.	.	.	Name "SIGMA54_INTERACT_1" ; LevelTag "(0)" ; Sequence "VLLtGETGTGKevF" ; SequenceDescription "UPI0001AFC88D" ; KnownFalsePos 209
+        -->
+    </bean>
+
+    <lang:groovy id="proSiteProfilesObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS");
+                p.addCrossReference(new ProteinXref("UniParc", "UPI0001AF8DCD", "UPI0001AF8DCD"));
+
+                Set<ProfileScanMatch.ProfileScanLocation> locations;
+
+                locations = new HashSet<ProfileScanMatch.ProfileScanLocation>();
+                locations.add(new ProfileScanMatch.ProfileScanLocation(1, 33, 24.202, "30M3D"));
+                p.addMatch(new ProfileScanMatch(new Signature("PS50042", "CNMP_BINDING_3"), locations));
+
+                locations = new HashSet<ProfileScanMatch.ProfileScanLocation>();
+                locations.add(new ProfileScanMatch.ProfileScanLocation(35, 53, 15.158, "6D10I3D"));
+                p.addMatch(new ProfileScanMatch(new Signature("PS50206", "RHODANESE_3"), locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PROFILES, "20.35");
+
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="proSiteProfilesXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                    <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                       xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                        <!--<signature-library-release library="PROSITE_PROFILES" version="20.35" />-->
+                        <protein>
+                            <sequence md5="de25966e66a6340eed9d837b05ffc58b">MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
+                            <xref db="UniParc" id="UPI0001AF8DCD" name="UPI0001AF8DCD"/>
+                            <matches>
+                            <profilescan-match>
+                                <signature name="CNMP_BINDING_3" ac="PS50042"/>
+                                <locations>
+                                    <profilescan-location start="1" end="33" score="24.202">
+                                        <alignment>MSHNPKLLDTSAQMTTAVLALLNTFEPLAK---</alignment>
+                                    </profilescan-location>
+                                </locations>
+                            </profilescan-match>
+                            <profilescan-match>
+                                <signature name="RHODANESE_3" ac="PS50206"/>
+                                <locations>
+                                    <profilescan-location start="35" end="53" score="15.158">
+                                        <alignment>------glcfvekvsk---</alignment>
+                                    </profilescan-location>
+                                </locations>
+                            </profilescan-match>
+                            </matches>
+                        </protein>
+                    </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+        <!-- Note: dash ("-") replaced by hyphen ("–") so HTML comments not messed up:
+            UPI0001AF8DCD	ps_scan|v1.57	PS50042	171	275	24.202	.	.	Name "CNMP_BINDING_3" ; Level 1 ; RawScore 1207 ; FeatureFrom 1 ; FeatureTo –18 ; Sequence "VFSKVPVANIEAMFQRMERINTVAGQVIIQQGAAGDYYYLIESGTVLVTRADGVnaHPLLVAELQSGDAFGEEALVSDNKRNATVAMKTDGQLLRLNKHDFVALL–––––––––––––––––" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 5
+            UPI0001AF8DCD	ps_scan|v1.57	PS50206	292	370	15.158	.	.	Name "RHODANESE_3" ; Level 0 ; RawScore 60203 ; FeatureFrom 1 ; FeatureTo –1 ; Sequence "IaDGAIWVDAR––––––––––––––––––LPSEYQYDHIDGAINLPLNEIR–––––––––––––QKLLeLDYRKSHVVYCQT–GRRSSAAAFILAQNGF–DVVVLK––––––––GGARAN" ; SequenceDescription "UPI0001AF8DCD" ; KnownFalsePos 0
+        -->
+    </bean>
+
+    <lang:groovy id="signalPObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MVSTMLSGLVLWLTFGWTPALAYSPRTPDRVSETDIQRLLHGVMEQLGIARPRVEYPAHQAMNLVGPQSIEGGAHEGLQHLGPFGNIPNIVAELTGDNTPKDFSEDQGYPDPPNPCPIGKTDDGCLENTPDTAEFSREFQLHQHLFDPEHDYPGLGKWNKKLLYEKMKGGQRRKRRSVNPYLQGQRLDNVVAKKSVPHFSDEDKDPE");
+                p.addCrossReference(new ProteinXref("UniProt", "P01165", "7B2_PIG"));
+                Signature signature = new Signature("SignalP-noTM", "SignalP-noTM");
+                SignalPOrganismType organismType = SignalPOrganismType.EUK;
+                Set<SignalPMatch.SignalPLocation> locations = new HashSet<SignalPMatch.SignalPLocation>();
+                locations.add(new SignalPMatch.SignalPLocation(1, 22, 0.903));
+                p.addMatch(new SignalPMatch(signature, organismType, locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.0");
+                signature.setSignatureLibraryRelease(release);
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="signalPXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                    <protein>
+                        <sequence md5="52e5277916375709c7865985a7e88f80">MVSTMLSGLVLWLTFGWTPALAYSPRTPDRVSETDIQRLLHGVMEQLGIARPRVEYPAHQAMNLVGPQSIEGGAHEGLQHLGPFGNIPNIVAELTGDNTPKDFSEDQGYPDPPNPCPIGKTDDGCLENTPDTAEFSREFQLHQHLFDPEHDYPGLGKWNKKLLYEKMKGGQRRKRRSVNPYLQGQRLDNVVAKKSVPHFSDEDKDPE</sequence>
+                        <xref id="P01165|7B2_PIG"/>
+                        <matches>
+                            <signalp-match>
+                                <signature name="SignalP-noTM" ac="SignalP-noTM">
+                                    <models>
+                                        <model name="SignalP-noTM" ac="SignalP-noTM"/>
+                                    </models>
+                                    <signature-library-release version="4.0" library="SIGNALP_EUK"/>
+                                </signature>
+                                <locations>
+                                    <signalp-location score="0.903" end="22" start="1"/>
+                                </locations>
+                            </signalp-match>
+                        </matches>
+                    </protein>
+                </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+</beans>

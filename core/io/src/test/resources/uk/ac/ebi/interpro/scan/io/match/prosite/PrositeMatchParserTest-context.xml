@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/lang
+                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+
+    <bean id="signatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="10.0"/>
+    </bean>
+
+    <bean id="hamapGffFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/hamap/hamap_hitters.gff"/>
+    </bean>
+
+    <bean id="hamapMatchParser" class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapMatchParser">
+        <constructor-arg ref="signatureLibraryRelease"/>
+        <property name="cigarEncoder" ref="cigarEncoder"/>
+    </bean>
+
+    <bean id="cigarEncoder" class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder">
+    </bean>
+
+
+</beans>

@@ -1,0 +1,1472 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nucleotide-sequence-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+    <nucleotide-sequence>
+        <sequence md5="29686f6963cfea16162d1676e6a17a76">atggaagtgaaaggcaaaaaaaaactgaccggcaaaggcaccaaaatgagccaggaaaaaagcaaatttcataaaaacaacgatagcggcagcagcaaaacctttccgaaaaaagtggtgaaagaaggcggcccgaaaattaccagcaaaaactttgaaaaaaccgcgaccaaaccgggcaaaaaaggcgtgaaacagtttaaaaacaaacagcagggcgatcgcattccgaaaaacaaatttcagcaggcgaacaaatttaaccagaaacgcaaatttcagccggatagcaaaagcgatgaaagcgcggcgaaaaaaccgaaatgggatgaatttaaaaaaaaaaaaaaagaactgaaacagagccgccagctgagcgataaaaccaactatgatattgtgattcgcgcgaaacagatttgggaaattctgcgccgcaaagattgcgataaagaaaaacgcgtgaaactgatgagcgatctgcagaaactgattcagggcaaaattaaaaccattgcgtttgcgcatgatagcacccgcgtgattcagtgctatattcagtttggcaacgaagaacagcgcaaacaggcgtttgaagaactgcgcggcgatctggtggaactgagcaaagcgaaatatagccgcaacattgtgaaaaaatttctgatgtatggcagcaaagcgcagattgcggaaattattcgcagctttaaaggccatgtgcgcaaactgctgcgccatgcggaagcgagcgcgattgtggaatatgcgtataacgataaagcgattctggaacagcgcaacatgctgaccgaagaactgtatggcaacacctttcagctgtataaaagcgcggatcatccgaccctggataaagtgctggaagtgcagccggaaaaactggaactgattatggatgaaatgaaacagattctgaccccgatggcgcagaaagaagcggtgattaaacatagcctggtgcataaagtgtttctggatttttttacctatgcgccgccgaaactgcgcagcgaaatgattgaagcgattcgcgaagcggtggtgtatctggcgcatacccatgatggcgcgcgcgtggcgatgtattgcctgtggcatggcaccccgaaagatcgcaaagtgattgtgaaaaccatgaaaacctatattgaaaaagtggcgaacggccagtatagccatctggtgctgctggcggcgtttgattgcattgatgataccaaactggtgaaacagattattattagcgaaattattaacagcctgccgaacattgtgaacgataaatatggccgcaaagtgctgctgtatctgctgagcccgcgcgatccggcgcataccgtgcgcgaaattattgaagtgctgcagaaaggcgatggcaacgcgcatagcaaaaaagataccgaaattcgccgccgcgaactgctggaaagcattagcccggcgctgctgagctatctgcagggccatgcgcaggaagtggtgctggataaaagcgcgtgcgtgctggtggcggatattctgggcaccgcgaccggcgatgtgcagccggcgatggatgcggtggcgagcctggcggcggcggaactgcatccgggcggcaaagatggcgaactgcatattgcggaacatccggcgggccatctggtgctgaaatggctgattgaacaggataaaaaaatgaaagaacgcggccgcgaaggctgctttgcgaaaaccctgattgaacgcgtgggcgtgaaaaacctgaaaagctgggcgagcgtgaaccgcggcgcgattattctgagcagcctgctgcagagcagcgatcaggaagtggcgaacaaagtgaaagcgggcctgaaaagcctgattccggcgctggaaaaaagcaaaaacaccagcaaaggcattgaaatgctgctggaaaaactgaccgcg</sequence>
+        <xref id="Henry"/>
+        <orf strand="SENSE" start="1" end="1941">
+            <protein>
+                <sequence md5="1fb3569701c50e369fa112ac96b5e459">MEVKGKKKLTGKGTKMSQEKSKFHKNNDSGSSKTFPKKVVKEGGPKITSKNFEKTATKPGKKGVKQFKNKQQGDRIPKNKFQQANKFNQKRKFQPDSKSDESAAKKPKWDEFKKKKKELKQSRQLSDKTNYDIVIRAKQIWEILRRKDCDKEKRVKLMSDLQKLIQGKIKTIAFAHDSTRVIQCYIQFGNEEQRKQAFEELRGDLVELSKAKYSRNIVKKFLMYGSKAQIAEIIRSFKGHVRKLLRHAEASAIVEYAYNDKAILEQRNMLTEELYGNTFQLYKSADHPTLDKVLEVQPEKLELIMDEMKQILTPMAQKEAVIKHSLVHKVFLDFFTYAPPKLRSEMIEAIREAVVYLAHTHDGARVAMYCLWHGTPKDRKVIVKTMKTYIEKVANGQYSHLVLLAAFDCIDDTKLVKQIIISEIINSLPNIVNDKYGRKVLLYLLSPRDPAHTVREIIEVLQKGDGNAHSKKDTEIRRRELLESISPALLSYLQGHAQEVVLDKSACVLVADILGTATGDVQPAMDAVASLAAAELHPGGKDGELHIAEHPAGHLVLKWLIEQDKKMKERGREGCFAKTLIERVGVKNLKSWASVNRGAIILSSLLQSSDQEVANKVKAGLKSLIPALEKSKNTSKGIEMLLEKLTA</sequence>
+                <xref desc="[1 - 1941]" id="Henry_31"/>
+                <matches>
+                    <panther-match score="1049.9" familyName="UNCHARACTERIZED" evalue="0.0">
+                        <signature name="UNCHARACTERIZED" ac="PTHR13389">
+                            <models>
+                                <model name="UNCHARACTERIZED" ac="PTHR13389"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="647" start="2"/>
+                        </locations>
+                    </panther-match>
+                </matches>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="203" end="259">
+            <protein>
+                <sequence md5="cdb2c1ee01bebcd126ffd7cfb0afbb88">ICSPAEICFSECDRPAVCF</sequence>
+                <xref desc="[259 - 203] (REVERSE SENSE)" id="Henry_51"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1" end="1941">
+            <protein>
+                <sequence md5="e42a91ce16fca7d833e3f97581f08f3c">RGQFFQQHFNAFAGVFAFFQRRNQAFQARFHFVRHFLIAALQQAAQNNRAAVHARPAFQVFHAHAFNQGFRKAAFAAAFFHFFILFNQPFQHQMARRMFRNMQFAIFAARMQFRRRQARHRIHRRLHIAGRGAQNIRHQHARAFIQHHFLRMALQIAQQRRANAFQQFAAANFGIFFAMRVAIAFLQHFNNFAHGMRRIARAQQIQQHFAAIFIVHNVRQAVNNFANNNLFHQFGIINAIKRRQQHQMAILAVRHFFNIGFHGFHNHFAIFRGAMPQAIHRHARAIMGMRQIHHRFANRFNHFAAQFRRRIGKKIQKHFMHQAMFNHRFFLRHRGQNLFHFIHNQFQFFRLHFQHFIQGRMIRAFIQLKGVAIQFFGQHVALFQNRFIVIRIFHNRARFRMAQQFAHMAFKAANNFRNLRFAAIHQKFFHNVAAIFRFAQFHQIAAQFFKRLFALFFVAKLNIALNHAGAIMRKRNGFNFALNQFLQIAHQFHAFFFIAIFAAQNFPNLFRANHNIIVGFIAQLAALFQFFFFFFKFIPFRFFRRAFIAFAIRLKFAFLVKFVRLLKFVFRNAIALLFVFKLFHAFFARFGRGFFKVFAGNFRAAFFHHFFRKGFAAAAIVVFMKFAFFLAHFGAFAGQFFFAFHFH</sequence>
+                <xref desc="[1941 - 1] (REVERSE SENSE)" id="Henry_56"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="204" end="260">
+            <protein>
+                <sequence md5="39f80c790b9f0b5b4d53e3062de419b2">KQTAGRSHSEKQISAGEQI</sequence>
+                <xref desc="[204 - 260]" id="Henry_5"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1802" end="1939">
+            <protein>
+                <sequence md5="36c2ffd26478614306ce061b4e2a0bc8">RSVFPAAFQCLCWCFCFFPAPESGFSGPLSLCSPLPDRCSAAGCSE</sequence>
+                <xref desc="[1939 - 1802] (REVERSE SENSE)" id="Henry_33"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="494" end="541">
+            <protein>
+                <sequence md5="6e21884e08fb8dc5d488524ddb5121e3">FRAKLKPLRLRMIAPA</sequence>
+                <xref desc="[494 - 541]" id="Henry_10"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="263" end="334">
+            <protein>
+                <sequence md5="06f2c8cf5b00040f964d8e33b7b53059">IHPISVFSPRFHRFCYPAEICVSG</sequence>
+                <xref desc="[334 - 263] (REVERSE SENSE)" id="Henry_50"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1472" end="1669">
+            <protein>
+                <sequence md5="15449a7476e6d2447814969114aea79d">AICRAMRRKWCWIKARACWWRIFWAPRPAMCSRRWMRWRAWRRRNCIRAAKMANCILRNIRRAIWC</sequence>
+                <xref desc="[1472 - 1669]" id="Henry_26"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="861" end="1007">
+            <protein>
+                <sequence md5="c19e763d72f1b8dfca857b6f36544bae">VKKSRNTLCTRLCLITASFCAIGVRICFISSIISSSFSGCTSSTLSRVG</sequence>
+                <xref desc="[1007 - 861] (REVERSE SENSE)" id="Henry_42"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="282" end="389">
+            <protein>
+                <sequence md5="06695f6fcec473e1cbfb4f1ef64d0f51">LVLSLSWRLCFSSFFFFLNSSHFGFFAALSSLLLSG</sequence>
+                <xref desc="[389 - 282] (REVERSE SENSE)" id="Henry_49"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1874" end="1933">
+            <protein>
+                <sequence md5="087e8cd156002d19d3a6ae06b632a9d7">FRRWKKAKTPAKALKCCWKN</sequence>
+                <xref desc="[1874 - 1933]" id="Henry_30"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1277" end="1369">
+            <protein>
+                <sequence md5="ceb60c8cb3931bbc66bd52c0ebb9e488">FRARYAPDRAGSADTAALCGHIYRSQCSAGC</sequence>
+                <xref desc="[169 - 77] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_34"/>
+                <xref desc="[1369 - 1277] (REVERSE SENSE)" id="Henry_37"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1833" end="1940">
+            <protein>
+                <sequence md5="20b1368d435418264d6a1fa01e4a0ccb">AVSFSSSISMPLLVFLLFSSAGIRLFRPAFTLFATS</sequence>
+                <xref desc="[1940 - 1833] (REVERSE SENSE)" id="Henry_32"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="545" end="622">
+            <protein>
+                <sequence md5="fd48d5c4daf4fae36e0414d5d97a5fd0">FSAIFSLATKNSANRRLKNCAAIWWN</sequence>
+                <xref desc="[545 - 622]" id="Henry_12"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="509" end="697">
+            <protein>
+                <sequence md5="b8a265c60a3275f8fc04c8d8bccee6c2">FPQSALCCHTSEIFSQCCGYISLCSVPPDRRAVLQTPVCAVLRCQTEYSTESRGCYHAQTQWF</sequence>
+                <xref desc="[697 - 509] (REVERSE SENSE)" id="Henry_45"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1167" end="1472">
+            <protein>
+                <sequence md5="2b17e3e958b46443671e9992f4452fab">LSSAGLMLSSSSRRRISVSFLLCALPSPFCSTSIISRTVCAGSRGLSRYSSTLRPYLSFTMFGRLLIISLIIICFTSLVSSMQSNAASSTRWLYWPFATFSI</sequence>
+                <xref desc="[1472 - 1167] (REVERSE SENSE)" id="Henry_38"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="534" end="593">
+            <protein>
+                <sequence md5="57914037152958a5b3c873a8bb01422f">HPRDSVLYSVWQRRTAQTGV</sequence>
+                <xref desc="[534 - 593]" id="Henry_11"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="812" end="907">
+            <protein>
+                <sequence md5="577ee7556cbf767225b0754026310c0a">PKNCMATPFSCIKARIIRPWIKCWKCSRKNWN</sequence>
+                <xref desc="[812 - 907]" id="Henry_17"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1337" end="1468">
+            <protein>
+                <sequence md5="9b310f51428f7b60de1dbb874dc65d80">ARAIRRIPCAKLLKCCRKAMATRIAKKIPKFAAANCWKALARRC</sequence>
+                <xref desc="[1337 - 1468]" id="Henry_24"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="396" end="449">
+            <protein>
+                <sequence md5="4584fd5a0e8fdcdc7a5422e91ffbcd97">YCDSRETDLGNSAPQRLR</sequence>
+                <xref desc="[396 - 449]" id="Henry_7"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1458" end="1508">
+            <protein>
+                <sequence md5="d66aa299c46ddb56b891bde60e86e7e9">PGAAELSAGPCAGSGAG</sequence>
+                <xref desc="[1458 - 1508]" id="Henry_25"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="713" end="910">
+            <protein>
+                <sequence md5="8418313b823a6f5542e9880fb0dab871">SVPVFPAALPALYPGSDDPRFYTAERCCHTVLRSACCAVPESLYRYTHIPQSRSLPHGAAVCAHGL</sequence>
+                <xref desc="[910 - 713] (REVERSE SENSE)" id="Henry_43"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1160" end="1246">
+            <protein>
+                <sequence md5="fdbb433e03d96b906f09eea203465c0e">KPILKKWRTASIAIWCCWRRLIALMIPNW</sequence>
+                <xref desc="[1160 - 1246]" id="Henry_22"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1305" end="1373">
+            <protein>
+                <sequence md5="30477e9d10958851ca2ddbc60c3cc3e5">IWPQSAAVSAEPARSGAYRARNY</sequence>
+                <xref desc="[105 - 173] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_1"/>
+                <xref desc="[1305 - 1373]" id="Henry_23"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="965" end="1036">
+            <protein>
+                <sequence md5="ddf782dfa43fe33f12c10f50870eb67a">LNIAWCIKCFWIFLPMRRRNCAAK</sequence>
+                <xref desc="[965 - 1036]" id="Henry_18"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="3" end="68">
+            <protein>
+                <sequence md5="70fb16c08f94bead281163879e72a166">NLLFSWLILVPLPVSFFLPFTS</sequence>
+                <xref desc="[68 - 3] (REVERSE SENSE)" id="Henry_54"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="143" end="199">
+            <protein>
+                <sequence md5="b2ded0ec670b1ebb710569cdb38ccca0">TVSRLFCPVWSRFFQSFCW</sequence>
+                <xref desc="[199 - 143] (REVERSE SENSE)" id="Henry_52"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="50" end="118">
+            <protein>
+                <sequence md5="75810e35235bab1ae6b2113da988d6c4">ARKKANFIKTTIAAAAKPFRKKW</sequence>
+                <xref desc="[50 - 118]" id="Henry_2"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="87" end="155">
+            <protein>
+                <sequence md5="18c174656ea2004c5a3e0b095ed9ba21">RQQQNLSEKSGERRRPENYQQKL</sequence>
+                <xref desc="[87 - 155]" id="Henry_3"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1040" end="1141">
+            <protein>
+                <sequence md5="8e00ac94a372ba0f5905f8ffb2bd958f">LKRFAKRWCIWRIPMMARAWRCIACGMAPRKIAK</sequence>
+                <xref desc="[1040 - 1141]" id="Henry_20"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="453" end="506">
+            <protein>
+                <sequence md5="266347ee9a5c4cb1e4903207e6fa83fc">RKTRETDERSAETDSGQN</sequence>
+                <xref desc="[453 - 506]" id="Henry_9"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="338" end="505">
+            <protein>
+                <sequence md5="d40ab27d00885a4721983be802befc56">FCPESVSADRSSVSRVFLYRNLCGAEFPKSVSRESQYHSWFYRSAGGSVSVLFFFF</sequence>
+                <xref desc="[505 - 338] (REVERSE SENSE)" id="Henry_48"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1695" end="1742">
+            <protein>
+                <sequence md5="7cb33566f7b9113256056e96362f332c">KNERTRPRRLLCENPD</sequence>
+                <xref desc="[1695 - 1742]" id="Henry_28"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="987" end="1040">
+            <protein>
+                <sequence md5="60b10c01e42c2ee0ac04d15306c9f5ed">SVSGFFYLCAAETAQRND</sequence>
+                <xref desc="[987 - 1040]" id="Henry_19"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1373" end="1453">
+            <protein>
+                <sequence md5="0e19870b9bdb66b325ebc9987cc2dcc4">CFPAVRGGEFRYLFCYARCHRLSAALQ</sequence>
+                <xref desc="[1453 - 1373] (REVERSE SENSE)" id="Henry_36"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="194" end="355">
+            <protein>
+                <sequence md5="edbf3a6ce53528f599062cba3bcba681">NSLKTNSRAIAFRKTNFSRRTNLTRNANFSRIAKAMKARRKNRNGMNLKKKKKN</sequence>
+                <xref desc="[194 - 355]" id="Henry_6"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1512" end="1682">
+            <protein>
+                <sequence md5="51a744c3527b11c76d63c44f6a3e98f6">KRVRAGGGYSGHRDRRCAAGDGCGGEPGGGGTASGRQRWRTAYCGTSGGPSGAEMAD</sequence>
+                <xref desc="[1512 - 1682]" id="Henry_27"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1086" end="1169">
+            <protein>
+                <sequence md5="7c508140d0dad9cf51d7292d2db91a81">WRARGDVLPVAWHPERSQSDCENHENLY</sequence>
+                <xref desc="[1086 - 1169]" id="Henry_21"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1457" end="1798">
+            <protein>
+                <sequence md5="76b6ef4eadb8d1e3632242031478e706">SRRGSRSPSFSGFSRPRVQSGFSQSSLRGRVLSFFYPVQSAISAPDGPPDVPQYAVRHLCRPDAVPPPPGSPPHPSPAAHRRSRCPEYPPPARTRFYPAPLPAHGPADSSAAPG</sequence>
+                <xref desc="[1798 - 1457] (REVERSE SENSE)" id="Henry_35"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="914" end="964">
+            <protein>
+                <sequence md5="09fd79993112cff9accdc5bbf02743ed">SPLLSAPSGSESVSFHP</sequence>
+                <xref desc="[964 - 914] (REVERSE SENSE)" id="Henry_41"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1011" end="1163">
+            <protein>
+                <sequence md5="911f8331aa131b1e530cabd04030fb03">VFMVFTITLRSFGVPCHRQYIATRAPSWVCARYTTASRIASIISLRSFGGA</sequence>
+                <xref desc="[1163 - 1011] (REVERSE SENSE)" id="Henry_39"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="393" end="494">
+            <protein>
+                <sequence md5="289755ee33787b6bc2bb78d418b97061">ISFCRSLISFTRFSLSQSLRRRISQICFARITIS</sequence>
+                <xref desc="[494 - 393] (REVERSE SENSE)" id="Henry_47"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="714" end="773">
+            <protein>
+                <sequence md5="f62e3410b04912362237153adc1e5c75">RPCAQTAAPCGSERDCGICV</sequence>
+                <xref desc="[714 - 773]" id="Henry_14"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="668" end="808">
+            <protein>
+                <sequence md5="356dddd82d89f0c8af35bdceedd7e1c4">CMAAKRRLRKLFAALKAMCANCCAMRKRARLWNMRITIKRFWNSATC</sequence>
+                <xref desc="[668 - 808]" id="Henry_15"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1746" end="1913">
+            <protein>
+                <sequence md5="1d5f9560fdf1822cbdd2b83f9ae3d7a3">TRGREKPEKLGEREPRRDYSEQPAAEQRSGSGEQSESGPEKPDSGAGKKQKHQQRH</sequence>
+                <xref desc="[1746 - 1913]" id="Henry_29"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="2" end="139">
+            <protein>
+                <sequence md5="c29842256935cb7de265a8858410aada">FSGRLLSPLFSERFCCCRYRCFYEICFFPGSFWCLCRSVFFCLSLP</sequence>
+                <xref desc="[139 - 2] (REVERSE SENSE)" id="Henry_55"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1476" end="1829">
+            <protein>
+                <sequence md5="fc2b3263a3a18ea168a1ee89cf1272bb">SLLCSRLLRIIAPRFTLAQLFRFFTPTRSIRVFAKQPSRPRSFIFLSCSISHFSTRWPAGCSAICSSPSLPPGCSSAAARLATASIAGCTSPVAVPRISATSTHALLSSTTSCAWPCR</sequence>
+                <xref desc="[1829 - 1476] (REVERSE SENSE)" id="Henry_34"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1007" end="1255">
+            <protein>
+                <sequence md5="90def147bbe9585b084c4ef9e3759c57">SVSPVWYHQCNQTPPAAPDGYTGRSPLFQYRFSWFSQSLCDLSGCHATGNTSPRARHHGYAPDTPPLRESLQSFRCAVSAAHR</sequence>
+                <xref desc="[1255 - 1007] (REVERSE SENSE)" id="Henry_40"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="72" end="242">
+            <protein>
+                <sequence md5="5b44354f03f8dfb44a81f086e4209a22">NLFFGMRSPCCLFLNCFTPFLPGLVAVFSKFLLVIFGPPSFTTFFGKVLLLPLSLFL</sequence>
+                <xref desc="[242 - 72] (REVERSE SENSE)" id="Henry_53"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="561" end="836">
+            <protein>
+                <sequence md5="c6a4f93efbee1f5ce9a89d1378b7b93f">KVLPYSSSVSMLRCSRIALSLYAYSTIALASAWRSSLRTWPLKLRIISAICALLPYIRNFFTMLRLYFALLSSTRSPRSSSNACLRCSSLPN</sequence>
+                <xref desc="[836 - 561] (REVERSE SENSE)" id="Henry_44"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="783" end="845">
+            <protein>
+                <sequence md5="edf8abbb7d8605730a1164faa9598967">SDSGTAQHADRRTVWQHLSAV</sequence>
+                <xref desc="[783 - 845]" id="Henry_16"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="3" end="71">
+            <protein>
+                <sequence md5="3d37ab1bf3c3120332ae23c233df2d84">GSERQKKTDRQRHQNEPGKKQIS</sequence>
+                <xref desc="[3 - 71]" id="Henry_1"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="498" end="545">
+            <protein>
+                <sequence md5="a59d1ab9c3680731600f326307d22a1c">ITRVLSCANAMVLILP</sequence>
+                <xref desc="[545 - 498] (REVERSE SENSE)" id="Henry_46"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="122" end="190">
+            <protein>
+                <sequence md5="9a983ab983bb4e36d248c02288316d2a">KKAARKLPAKTLKKPRPNRAKKA</sequence>
+                <xref desc="[122 - 190]" id="Henry_4"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="642" end="710">
+            <protein>
+                <sequence md5="3737c7d9d2535baca2c9ccbcf4d7bf71">PQHCEKISDVWQQSADCGNYSQL</sequence>
+                <xref desc="[642 - 710]" id="Henry_13"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="404" end="463">
+            <protein>
+                <sequence md5="52cfdbf0d92aaaf148f999c544738859">FARNRFGKFCAAKIAIKKNA</sequence>
+                <xref desc="[404 - 463]" id="Henry_8"/>
+                <matches/>
+            </protein>
+        </orf>
+    </nucleotide-sequence>
+    <nucleotide-sequence>
+        <sequence md5="b7a826e3596555c7b2cc957b748abec8">atgaaatataaacgcattgtgtttaaagtgggcaccagcagcctgaccaacgaagatggcagcctgagccgcagcaaagtgaaagatattacccagcagctggcgatgctgcatgaagcgggccatgaactgattctggtgagcagcggcgcgattgcggcgggctttggcgcgctgggctttaaaaaacgcccgaccaaaattgcggataaacaggcgagcgcggcggtgggccagggcctgctgctggaagaatataccaccaacctgctgctgcgccagattgtgagcgcgcagattctgctgacccaggatgattttgtggataaacgccgctataaaaacgcgcatcaggcgctgagcgtgctgctgaaccgcggcgcgattccgattattaacgaaaacgatagcgtggtgattgatgaactgaaagtgggcgataacgataccctgagcgcgcaggtggcggcgatggtgcaggcggatctgctggtgtttctgaccgatgtggatggcctgtataccggcaacccgaacagcgatccgcgcgcgaaacgcctggaacgcattgaaaccattaaccgcgaaattattgatatggcgggcggcgcgggcagcagcaacggcaccggcggcatgctgaccaaaattaaagcggcgaccattgcgaccgaaagcggcgtgccggtgtatatttgcagcagcctgaaaagcgatagcatgattgaagcggcggaagaaaccgaagatggcagctattttgtggcgcaggaaaaaggcctgcgcacccagaaacagtggctggcgttttatgcgcagagccagggcagcatttgggtggataaaggcgcggcggaagcgctgagccagtatggcaaaagcctgctgctgagcggcattgtggaagcggaaggcgtgtttagctatggcgatattgtgaccgtgtttgataaagaaagcggcaaaagcctgggcaaaggccgcgtgcagtttggcgcgagcgcgctggaagatatgctgcgcagccagaaagcgaaaggcgtgctgatttatcgcgatgattggattagcattaccccggaaattcagctgctgtttaccgaattt</sequence>
+        <xref id="Bob"/>
+        <orf strand="SENSE" start="725" end="862">
+            <protein>
+                <sequence md5="db6c3544d4c19cd406c7ddbe5e2bd763">LKRRKKPKMAAILWRRKKACAPRNSGWRFMRRARAAFGWIKARRKR</sequence>
+                <xref desc="[965 - 1102] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_16"/>
+                <xref desc="[725 - 862]" id="Bob_14"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="759" end="809">
+            <protein>
+                <sequence md5="3c22747128e28409a6a2e8090864bd70">NASHCFWVRRPFSCATK</sequence>
+                <xref desc="[1049 - 999] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_25"/>
+                <xref desc="[809 - 759] (REVERSE SENSE)" id="Bob_23"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="213" end="314">
+            <protein>
+                <sequence md5="bf15d7bee9428259702bf188edd993cf">TGERGGGPGPAAGRIYHQPAAAPDCERADSADPG</sequence>
+                <xref desc="[453 - 554] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_7"/>
+                <xref desc="[213 - 314]" id="Bob_5"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1049" end="1105">
+            <protein>
+                <sequence md5="21e13f8923635fde91ec7d92e6de6630">FIAMIGLALPRKFSCCLPN</sequence>
+                <xref desc="[1289 - 1345] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_20"/>
+                <xref desc="[1049 - 1105]" id="Bob_18"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="3" end="335">
+            <protein>
+                <sequence md5="559991de8dd2f02601d311f496f8d6f0">RRLSTKSSWVSRICALTIWRSSRLVVYSSSSRPWPTAALACLSAILVGRFLKPSAPKPAAIAPLLTRISSWPASCSIASCWVISFTLLRLRLPSSLVRLLVPTLNTMRLYF</sequence>
+                <xref desc="[335 - 3] (REVERSE SENSE)" id="Bob_31"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="644" end="706">
+            <protein>
+                <sequence md5="399e5453570d61b066deacbf13a9eee9">PKLKRRPLRPKAACRCIFAAA</sequence>
+                <xref desc="[644 - 706]" id="Bob_11"/>
+                <xref desc="[884 - 946] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_13"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="923" end="1066">
+            <protein>
+                <sequence md5="4ad9f9a33e6f315d884c4972ff7dba44">SNHRDKSARLSLSGCAAYLPARSRQTARGLCPGFCRFLYQTRSQYRHS</sequence>
+                <xref desc="[1066 - 923] (REVERSE SENSE)" id="Bob_21"/>
+                <xref desc="[1306 - 1163] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_23"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="846" end="920">
+            <protein>
+                <sequence md5="36d3d9060e27d4bf8e581ffe341cbec0">RRGGSAEPVWQKPAAERHCGSGRRV</sequence>
+                <xref desc="[846 - 920]" id="Bob_15"/>
+                <xref desc="[1086 - 1160] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_17"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="653" end="919">
+            <protein>
+                <sequence md5="195229409d45a86f04a5774d8353435b">TRLPLPQCRSAAGFCHTGSALPPRLYPPKCCPGSAHKTPATVSGCAGLFPAPQNSCHLRFLPPLQSCYRFSGCCKYTPARRFRSQWSPL</sequence>
+                <xref desc="[919 - 653] (REVERSE SENSE)" id="Bob_24"/>
+                <xref desc="[1159 - 893] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_26"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="398" end="577">
+            <protein>
+                <sequence md5="11cd3179c2a0a321041f86fb81892cad">WFQCVPGVSRADRCSGCRYTGHPHRSETPADPPAPSPPPARSGYRYRPLSVHQSPRYRFR</sequence>
+                <xref desc="[577 - 398] (REVERSE SENSE)" id="Bob_26"/>
+                <xref desc="[817 - 638] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_28"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="143" end="286">
+            <protein>
+                <sequence md5="f721ded069c8a767dac17d73641c938d">AAARLRRALARWALKNARPKLRINRRARRWARACCWKNIPPTCCCARL</sequence>
+                <xref desc="[383 - 526] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_6"/>
+                <xref desc="[143 - 286]" id="Bob_4"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1" end="1107">
+            <protein>
+                <sequence md5="f09e2a4df2ac62e73864c4908701ac94">KFGKQQLNFRGNANPIIAINQHAFRFLAAQHIFQRARAKLHAAFAQAFAAFFIKHGHNIAIAKHAFRFHNAAQQQAFAILAQRFRRAFIHPNAALALRIKRQPLFLGAQAFFLRHKIAAIFGFFRRFNHAIAFQAAANIHRHAAFGRNGRRFNFGQHAAGAVAAARAARHINNFAVNGFNAFQAFRARIAVRVAGIQAIHIGQKHQQIRLHHRRHLRAQGIVIAHFQFINHHAIVFVNNRNRAAVQQHAQRLMRVFIAAFIHKIILGQQNLRAHNLAQQQVGGIFFQQQALAHRRARLFIRNFGRAFFKAQRAKARRNRAAAHQNQFMARFMQHRQLLGNIFHFAAAQAAIFVGQAAGAHFKHNAFIFH</sequence>
+                <xref desc="[1107 - 1] (REVERSE SENSE)" id="Bob_32"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="308" end="358">
+            <protein>
+                <sequence md5="110475d73534374669dcfa0d8ab7cb62">PRMILWINAAIKTRIRR</sequence>
+                <xref desc="[548 - 598] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_8"/>
+                <xref desc="[308 - 358]" id="Bob_6"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="593" end="649">
+            <protein>
+                <sequence md5="208b01de3fa3fa3983d3d41a752cc3bb">FWSACRRCRCCCPRRPPYQ</sequence>
+                <xref desc="[889 - 833] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_27"/>
+                <xref desc="[649 - 593] (REVERSE SENSE)" id="Bob_25"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="954" end="1058">
+            <protein>
+                <sequence md5="a39d354fb5ecce5107f2fa9d6509065f">RKRQKPGQRPRAVWRERAGRYAAQPESERRADLSR</sequence>
+                <xref desc="[954 - 1058]" id="Bob_17"/>
+                <xref desc="[1194 - 1298] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_19"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="92" end="181">
+            <protein>
+                <sequence md5="b43054d39c6770570a6f3067b6851184">SPARQSPPQSRRCSPESVHGPLHAASPAAG</sequence>
+                <xref desc="[181 - 92] (REVERSE SENSE)" id="Bob_29"/>
+                <xref desc="[421 - 332] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_31"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="654" end="716">
+            <protein>
+                <sequence md5="ed3753f88b932e2962f783a0e7ee1812">SGDHCDRKRRAGVYLQQPEKR</sequence>
+                <xref desc="[894 - 956] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_14"/>
+                <xref desc="[654 - 716]" id="Bob_12"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="342" end="395">
+            <protein>
+                <sequence md5="249c74bc34b02cf8ce469f19d6c80464">KRASGAERAAEPRRDSDY</sequence>
+                <xref desc="[342 - 395]" id="Bob_7"/>
+                <xref desc="[582 - 635] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_9"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="813" end="923">
+            <protein>
+                <sequence md5="2ff03cecb8b5d97db3a11197255d5360">LNTPSASTMPLSSRLLPYWLSASAAPLSTQMLPWLCA</sequence>
+                <xref desc="[1163 - 1053] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_24"/>
+                <xref desc="[923 - 813] (REVERSE SENSE)" id="Bob_22"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1" end="1107">
+            <protein>
+                <sequence md5="bb3bde1de955af5b7f49a84ba2c4d4ae">MKYKRIVFKVGTSSLTNEDGSLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEKGLRTQKQWLAFYAQSQGSIWVDKGAAEALSQYGKSLLLSGIVEAEGVFSYGDIVTVFDKESGKSLGKGRVQFGASALEDMLRSQKAKGVLIYRDDWISITPEIQLLFTEF</sequence>
+                <xref desc="[1 - 1107]" id="Bob_19"/>
+                <matches>
+                    <hmmer2-match score="38.2" evalue="1.1E-6">
+                        <signature name="PUA" desc="Putative RNA-binding Domain in PseudoUridine synthase and Archaeosine transglycosylase" ac="SM00359">
+                            <entry type="DOMAIN" name="PUA" desc="PUA domain" ac="IPR002478">
+                                <go-xref category="MOLECULAR_FUNCTION" name="RNA binding" id="GO:0003723" db="GO"/>
+                            </entry>
+                            <models>
+                                <model name="PUA" desc="Putative RNA-binding Domain in PseudoUridine synthase and Archaeosine transglycosylase" ac="SM00359"/>
+                            </models>
+                            <signature-library-release version="6.2" library="SMART"/>
+                        </signature>
+                        <locations>
+                            <hmmer2-location hmm-length="0" hmm-end="86" hmm-start="1" evalue="1.1E-6" score="38.2" end="347" start="276"/>
+                        </locations>
+                    </hmmer2-match>
+                    <hmmer2-match score="614.2" evalue="1.2E-184">
+                        <signature name="GK" ac="PIRSF000729">
+                            <entry type="FAMILY" name="Glu_5kinase" desc="Glutamate 5-kinase" ac="IPR011529">
+                                <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                                <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                                <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                            </entry>
+                            <models>
+                                <model name="GK" ac="PIRSF000729"/>
+                            </models>
+                            <signature-library-release version="2.84" library="PIRSF"/>
+                        </signature>
+                        <locations>
+                            <hmmer2-location hmm-length="0" hmm-end="389" hmm-start="1" evalue="1.2E-184" score="614.2" end="368" start="1"/>
+                        </locations>
+                    </hmmer2-match>
+                    <hmmer3-match score="446.2" evalue="1.9E-134">
+                        <signature name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027">
+                            <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
+                                <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                                <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                                <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                            </entry>
+                            <models>
+                                <model name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027"/>
+                            </models>
+                            <signature-library-release version="13.0" library="TIGRFAM"/>
+                        </signature>
+                        <locations>
+                            <hmmer3-location env-start="4" env-end="365" hmm-length="0" hmm-end="359" hmm-start="1" evalue="2.2E-134" score="446.0" end="361" start="4"/>
+                        </locations>
+                    </hmmer3-match>
+                    <panther-match score="444.6" familyName="GLUTAMATE 5-KINASE" evalue="1.4E-130">
+                        <signature name="GLUTAMATE 5-KINASE" ac="PTHR11063:SF6">
+                            <models>
+                                <model name="GLUTAMATE 5-KINASE" ac="PTHR11063:SF6"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="363" start="2"/>
+                        </locations>
+                    </panther-match>
+                    <panther-match score="444.6" familyName="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" evalue="1.4E-130">
+                        <signature name="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" ac="PTHR11063">
+                            <models>
+                                <model name="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" ac="PTHR11063"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="363" start="2"/>
+                        </locations>
+                    </panther-match>
+                    <patternscan-match>
+                        <signature name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902">
+                            <entry type="CONSERVED_SITE" name="Glutamate_5-kinase_CS" desc="Glutamate 5-kinase, conserved site" ac="IPR019797">
+                                <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                                <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                                <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                                <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                            </entry>
+                            <models>
+                                <model name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902"/>
+                            </models>
+                            <signature-library-release version="20.105" library="PROSITE_PATTERNS"/>
+                        </signature>
+                        <locations>
+                            <patternscan-location level="STRONG" end="223" start="206">
+                                <alignment>SsnGtGGMlTKIkAAtiA</alignment>
+                            </patternscan-location>
+                        </locations>
+                    </patternscan-match>
+                    <profilescan-match>
+                        <signature name="PUA" desc="PUA domain profile." ac="PS50890">
+                            <entry type="DOMAIN" name="PUA" desc="PUA domain" ac="IPR002478">
+                                <go-xref category="MOLECULAR_FUNCTION" name="RNA binding" id="GO:0003723" db="GO"/>
+                            </entry>
+                            <models>
+                                <model name="PUA" desc="PUA domain profile." ac="PS50890"/>
+                            </models>
+                            <signature-library-release version="20.105" library="PROSITE_PROFILES"/>
+                        </signature>
+                        <locations>
+                            <profilescan-location score="15.593" end="355" start="275">
+                                <alignment>QGSIWVDKGAAEALSqYGK-SLLLSGIVEAEGVFSYGDIVTVFDKeSGKSLGKGRVQFGASALEDMlRSQKAKGVLIYRDDW</alignment>
+                            </profilescan-location>
+                        </locations>
+                    </profilescan-match>
+                    <profilescan-match>
+                        <signature name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456">
+                            <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
+                                <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                                <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                                <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                            </entry>
+                            <models>
+                                <model name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456"/>
+                            </models>
+                            <signature-library-release version="201311.27" library="HAMAP"/>
+                        </signature>
+                        <locations>
+                            <profilescan-location score="35.919" end="259" start="3">
+                                <alignment>YKRIVFKVGTSSLTNEDG-SLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEK</alignment>
+                            </profilescan-location>
+                        </locations>
+                    </profilescan-match>
+                </matches>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="927" end="1049">
+            <protein>
+                <sequence md5="58f34e28b4b439cb0cee85546e502a31">ISTPFAFWLRSISSSALAPNCTRPLPRLLPLSLSNTVTISP</sequence>
+                <xref desc="[1049 - 927] (REVERSE SENSE)" id="Bob_20"/>
+                <xref desc="[1289 - 1167] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_22"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="185" end="391">
+            <protein>
+                <sequence md5="7565b6084b425afa0336b4fe9ffa56f0">SESRRGSAARSAPDARFYSGVYPQNHPGSAESARSQSGAAAGWWYILPAAGPGPPPRSPVYPQFWSGVF</sequence>
+                <xref desc="[391 - 185] (REVERSE SENSE)" id="Bob_28"/>
+                <xref desc="[631 - 425] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_30"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="354" end="755">
+            <protein>
+                <sequence md5="89345cdafdd357ad8b2bef1ecdfd7be2">LPSSVSSAASIMLSLFRLLQIYTGTPLSVAMVAALILVSMPPVPLLLPAPPAISIISRLMVSMRSRRFARGSLFGLPVYRPSTSVRNTSRSACTIAATCALRVSLSPTFSSSITTLSFSLIIGIAPRFSSTLSA</sequence>
+                <xref desc="[995 - 594] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_29"/>
+                <xref desc="[755 - 354] (REVERSE SENSE)" id="Bob_27"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="729" end="842">
+            <protein>
+                <sequence md5="6235043bc1a93eba68ae19b8e5286567">SGGRNRRWQLFCGAGKRPAHPETVAGVLCAEPGQHLGG</sequence>
+                <xref desc="[969 - 1082] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_15"/>
+                <xref desc="[729 - 842]" id="Bob_13"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="83" end="130">
+            <protein>
+                <sequence md5="bb35fd8e3b129a9bbdabc5bc35cbfeee">KILPSSWRCCMKRAMN</sequence>
+                <xref desc="[83 - 130]" id="Bob_2"/>
+                <xref desc="[323 - 370] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_4"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="597" end="650">
+            <protein>
+                <sequence md5="35c8f04dd3e0a5e9594ced6fd6a70984">YGGRRGQQQRHRRHADQN</sequence>
+                <xref desc="[597 - 650]" id="Bob_10"/>
+                <xref desc="[837 - 890] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_12"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="26" end="88">
+            <protein>
+                <sequence md5="cd2eedd8896a79a024d078b59147d440">YLSLCCGSGCHLRWSGCWCPL</sequence>
+                <xref desc="[88 - 26] (REVERSE SENSE)" id="Bob_30"/>
+                <xref desc="[328 - 266] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_32"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="503" end="640">
+            <protein>
+                <sequence md5="d976f88c85e612d94ad1bc52d1c99f36">PMWMACIPATRTAIRARNAWNALKPLTAKLLIWRAARAAATAPAAC</sequence>
+                <xref desc="[743 - 880] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_11"/>
+                <xref desc="[503 - 640]" id="Bob_9"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="27" end="113">
+            <protein>
+                <sequence md5="e4aba6f85d58320f9a28927bf28efa8a">SGHQQPDQRRWQPEPQQSERYYPAAGDAA</sequence>
+                <xref desc="[267 - 353] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_3"/>
+                <xref desc="[27 - 113]" id="Bob_1"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="941" end="1045">
+            <protein>
+                <sequence md5="c6790fc0488ba3c361ecaa7a77143d4b">PCLIKKAAKAWAKAACSLARARWKICCAARKRKAC</sequence>
+                <xref desc="[1181 - 1285] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_18"/>
+                <xref desc="[941 - 1045]" id="Bob_16"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="444" end="569">
+            <protein>
+                <sequence md5="bfcb80dc6b493236a44d89fdfbae48dd">RYPERAGGGDGAGGSAGVSDRCGWPVYRQPEQRSARETPGTH</sequence>
+                <xref desc="[444 - 569]" id="Bob_8"/>
+                <xref desc="[684 - 809] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_10"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="129" end="182">
+            <protein>
+                <sequence md5="a0668c363b5edae80ed5b897163ce517">TDSGEQRRDCGGLWRAGL</sequence>
+                <xref desc="[129 - 182]" id="Bob_3"/>
+                <xref desc="[369 - 422] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_5"/>
+                <matches/>
+            </protein>
+        </orf>
+    </nucleotide-sequence>
+    <nucleotide-sequence>
+        <sequence md5="51884b55e9f025009d1b4682889bab2c">ggccgcggccugcugccguuugugcugcuggcgcugggcauugcgccgugggcgguggaaggcgcggaaaacgcgcugaaaggcggcgcgugcccgccgcgcaaaauugugcagugccugcgcuaugaaaaaccgaaaugcaccagcgauuggcagugcccggauaaaaaaaaaugcugccgcgauaccugcgcgauuaaaugccugaacccgguggcgauuaccaacccggugaaagugaaaccgggcaaaugcccggugguguauggccagugcaugaugcugaacccgccgaaccauugcaaaaccgauagccagugccugggcgaucugaaaugcugcaaaagcaugugcggcaaagugugccugaccccggugaaagcg</sequence>
+        <xref name="translation of P22298" id="reverse"/>
+        <orf strand="ANTISENSE" start="1" end="384">
+            <protein>
+                <sequence md5="0aed180405bafcb32e693c5433782622">RFHRGQAHFAAHAFAAFQIAQALAIGFAMVRRVQHHALAIHHRAFARFHFHRVGNRHRVQAFNRAGIAAAFFFIRALPIAGAFRFFIAQALHNFARRARAAFQRVFRAFHRPRRNAQRQQHKRQQAAA</sequence>
+                <xref desc="[384 - 1] (REVERSE SENSE) translation of P22298" id="reverse_11"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="3" end="125">
+            <protein>
+                <sequence md5="03012b80d5da2d4c467b9e4111736cb9">PRPAAVCAAGAGHCAVGGGRRGKRAERRRVPAAQNCAVPAL</sequence>
+                <xref desc="[3 - 125] translation of P22298" id="reverse_2"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="2" end="76">
+            <protein>
+                <sequence md5="535d77e98204a4af9cf98bdf3a83d9f0">AAACCRLCCWRWALRRGRWKARKTR</sequence>
+                <xref desc="[2 - 76] translation of P22298" id="reverse_1"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="3" end="122">
+            <protein>
+                <sequence md5="3b5965af329771e0bcc7c1d6fd4a2496">RRHCTILRGGHAPPFSAFSAPSTAHGAMPSASSTNGSRPR</sequence>
+                <xref desc="[122 - 3] (REVERSE SENSE) translation of P22298" id="reverse_9"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="2" end="196">
+            <protein>
+                <sequence md5="33c8904b1ce03a5caf7f07b643b7182e">SRRYRGSIFFYPGTANRWCISVFHSAGTAQFCAAGTRRLSARFPRLPPPTAQCPAPAAQTAAGRG</sequence>
+                <xref desc="[196 - 2] (REVERSE SENSE) translation of P22298" id="reverse_10"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="201" end="311">
+            <protein>
+                <sequence md5="9d1b85d90b88d7264fafc64ccb457882">MPEPGGDYQPGESETGQMPGGVWPVHDAEPAEPLQNR</sequence>
+                <xref desc="[201 - 311] translation of P22298" id="reverse_4"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="315" end="383">
+            <protein>
+                <sequence md5="6b9d35472bf4de348c544b7d4e63bbfc">PVPGRSEMLQKHVRQSVPDPGES</sequence>
+                <xref desc="[315 - 383] translation of P22298" id="reverse_5"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="80" end="205">
+            <protein>
+                <sequence md5="289cf7872c2605c6ae224731aa07fb50">KAARARRAKLCSACAMKNRNAPAIGSARIKKNAAAIPARLNA</sequence>
+                <xref desc="[80 - 205] translation of P22298" id="reverse_3"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1" end="384">
+            <protein>
+                <sequence md5="d1b6cbf29dde9e5220196f3f6114a1c3">GRGLLPFVLLALGIAPWAVEGAENALKGGACPPRKIVQCLRYEKPKCTSDWQCPDKKKCCRDTCAIKCLNPVAITNPVKVKPGKCPVVYGQCMMLNPPNHCKTDSQCLGDLKCCKSMCGKVCLTPVKA</sequence>
+                <xref desc="[1 - 384] translation of P22298" id="reverse_6"/>
+                <matches>
+                    <fingerprints-match graphscan="IIII" evalue="1.41E-7">
+                        <signature name="4DISULPHCORE" desc="4-disulphide core signature" ac="PR00003">
+                            <entry type="DOMAIN" name="WAP" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
+                                <go-xref category="MOLECULAR_FUNCTION" name="peptidase inhibitor activity" id="GO:0030414" db="GO"/>
+                                <go-xref category="CELLULAR_COMPONENT" name="extracellular region" id="GO:0005576" db="GO"/>
+                            </entry>
+                            <models>
+                                <model name="4DISULPHCORE" desc="4-disulphide core signature" ac="PR00003"/>
+                            </models>
+                            <signature-library-release version="42.0" library="PRINTS"/>
+                        </signature>
+                        <locations>
+                            <fingerprints-location score="49.17" pvalue="2.31E-4" motifNumber="1" end="87" start="78"/>
+                            <fingerprints-location score="52.92" pvalue="2.08E-4" motifNumber="3" end="116" start="107"/>
+                            <fingerprints-location score="47.92" pvalue="0.00295" motifNumber="2" end="107" start="100"/>
+                            <fingerprints-location score="50.0" pvalue="4.35E-4" motifNumber="4" end="125" start="117"/>
+                        </locations>
+                    </fingerprints-match>
+                    <panther-match score="222.9" familyName="ANTILEUKOPROTEINASE" evalue="7.7E-64">
+                        <signature name="ANTILEUKOPROTEINASE" ac="PTHR19441:SF24">
+                            <entry type="FAMILY" name="ALP" desc="Antileukoproteinase" ac="IPR029712">
+                                <go-xref category="BIOLOGICAL_PROCESS" name="negative regulation of endopeptidase activity" id="GO:0010951" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="endopeptidase inhibitor activity" id="GO:0004866" db="GO"/>
+                            </entry>
+                            <models>
+                                <model name="ANTILEUKOPROTEINASE" ac="PTHR19441:SF24"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="127" start="3"/>
+                        </locations>
+                    </panther-match>
+                    <panther-match score="222.9" familyName="WHEY ACDIC PROTEIN (WAP)" evalue="7.7E-64">
+                        <signature name="WHEY ACDIC PROTEIN (WAP)" ac="PTHR19441">
+                            <models>
+                                <model name="WHEY ACDIC PROTEIN (WAP)" ac="PTHR19441"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="127" start="3"/>
+                        </locations>
+                    </panther-match>
+                </matches>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="126" end="383">
+            <protein>
+                <sequence md5="3fc751b463e324b7910bbb34f23373b7">AFTGVRHTLPHMLLQHFRSPRHWLSVLQWFGGFSIMHWPYTTGHLPGFTFTGLVIATGFRHLIAQVSRQHFFLSGHCQSLVHFGFS</sequence>
+                <xref desc="[383 - 126] (REVERSE SENSE) translation of P22298" id="reverse_8"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="224" end="382">
+            <protein>
+                <sequence md5="757042512ef54f1d6adc88727764af28">LSPGSGTLCRTCFCSISDRPGTGYRFCNGSAGSASCTGHTPPGICPVSLSPGW</sequence>
+                <xref desc="[382 - 224] (REVERSE SENSE) translation of P22298" id="reverse_7"/>
+                <matches/>
+            </protein>
+        </orf>
+    </nucleotide-sequence>
+    <nucleotide-sequence>
+        <sequence md5="e9b174d63adc63bab79c90fdbc8d1670">atggcggcggaagaaggcgtggtgattgcgtgccataacaaagatgaatttgatgcgcagatgaccaaagcgaaagaagcgggcaaagtggtgattattgattttaccgcgagctggtgcggcccgtgccgctttattgcgccggtgtttgcggaatatgcgaaaaaatttccgggcgcggtgtttctgaaagtggatgtggatgaactgaaagaagtggcggaaaaatataacgtggaagcgatgccgacctttctgtttattaaagatggcgcggaagcggataaagtggtgggcgcgcgcaaagatgatctgcagaacaccattgtgaaacatgtgggcgcgaccgcggcgagcgcgagcgcg</sequence>
+        <xref id="Wilf"/>
+        <orf strand="ANTISENSE" start="3" end="365">
+            <protein>
+                <sequence md5="5d776c87c0347506ee7cd79883240766">ALALAAVAPTCFTMVFCRSSLRAPTTLSASAPSLINRKVGIASTLYFSATSFSSSTSTFRNTAPGNFFAYSANTGAIKRHGPHQLAVKSIITTLPASFALVICASNSSLLWHAITTPSSAA</sequence>
+                <xref desc="[365 - 3] (REVERSE SENSE)" id="Wilf_8"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1" end="366">
+            <protein>
+                <sequence md5="f927b0d241297dcc9a1c5990b58bf3c4">MAAEEGVVIACHNKDEFDAQMTKAKEAGKVVIIDFTASWCGPCRFIAPVFAEYAKKFPGAVFLKVDVDELKEVAEKYNVEAMPTFLFIKDGAEADKVVGARKDDLQNTIVKHVGATAASASA</sequence>
+                <xref desc="[1 - 366]" id="Wilf_5"/>
+                <matches>
+                    <hmmer2-match score="100.5" evalue="5.0E-30">
+                        <signature name="Thioredoxin" ac="PIRSF000077">
+                            <entry type="FAMILY" name="Thioredoxin" desc="Thioredoxin" ac="IPR005746">
+                                <go-xref category="BIOLOGICAL_PROCESS" name="glycerol ether metabolic process" id="GO:0006662" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="protein disulfide oxidoreductase activity" id="GO:0015035" db="GO"/>
+                                <go-xref category="BIOLOGICAL_PROCESS" name="cell redox homeostasis" id="GO:0045454" db="GO"/>
+                            </entry>
+                            <models>
+                                <model name="Thioredoxin" ac="PIRSF000077"/>
+                            </models>
+                            <signature-library-release version="2.84" library="PIRSF"/>
+                        </signature>
+                        <locations>
+                            <hmmer2-location hmm-length="0" hmm-end="108" hmm-start="1" evalue="5.0E-30" score="100.5" end="113" start="4"/>
+                        </locations>
+                    </hmmer2-match>
+                    <panther-match score="159.1" familyName="THIOREDOXIN" evalue="1.3E-44">
+                        <signature name="THIOREDOXIN" ac="PTHR10438">
+                            <entry type="FAMILY" name="Thioredoxin" desc="Thioredoxin" ac="IPR005746">
+                                <go-xref category="BIOLOGICAL_PROCESS" name="glycerol ether metabolic process" id="GO:0006662" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="protein disulfide oxidoreductase activity" id="GO:0015035" db="GO"/>
+                                <go-xref category="BIOLOGICAL_PROCESS" name="cell redox homeostasis" id="GO:0045454" db="GO"/>
+                            </entry>
+                            <models>
+                                <model name="THIOREDOXIN" ac="PTHR10438"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="114" start="4"/>
+                        </locations>
+                    </panther-match>
+                    <panther-match score="159.1" familyName="THIOREDOXIN" evalue="1.3E-44">
+                        <signature name="THIOREDOXIN" ac="PTHR10438:SF126">
+                            <models>
+                                <model name="THIOREDOXIN" ac="PTHR10438:SF126"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="114" start="4"/>
+                        </locations>
+                    </panther-match>
+                </matches>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="95" end="187">
+            <protein>
+                <sequence md5="760e9c23b012c2108d532c10ece55d57">LLILPRAGAARAALLRRCLRNMRKNFRARCF</sequence>
+                <xref desc="[95 - 187]" id="Wilf_1"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="212" end="328">
+            <protein>
+                <sequence md5="f7028b00c55c47f91f861f038b7b9626">KKWRKNITWKRCRPFCLLKMARKRIKWWARAKMICRTPL</sequence>
+                <xref desc="[212 - 328]" id="Wilf_3"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="102" end="203">
+            <protein>
+                <sequence md5="7a8129be5d5d592c79a4905d5afd897c">FYRELVRPVPLYCAGVCGICEKISGRGVSESGCG</sequence>
+                <xref desc="[102 - 203]" id="Wilf_2"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="2" end="94">
+            <protein>
+                <sequence md5="94eff4378f40a32d3a2438696f4bfc30">SPLCPLLSLWSSAHQIHLCYGTQSPRLLPPP</sequence>
+                <xref desc="[94 - 2] (REVERSE SENSE)" id="Wilf_9"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1" end="366">
+            <protein>
+                <sequence md5="b10c91dbf15c9a8ba8dc330a2d74bf46">RARARRGRAHMFHNGVLQIIFARAHHFIRFRAIFNKQKGRHRFHVIFFRHFFQFIHIHFQKHRARKFFRIFRKHRRNKAARAAPARGKINNHHFARFFRFGHLRIKFIFVMARNHHAFFRRH</sequence>
+                <xref desc="[366 - 1] (REVERSE SENSE)" id="Wilf_10"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="312" end="365">
+            <protein>
+                <sequence md5="dc9047809e5e8d30d635341211dc95b5">SAEHHCETCGRDRGERER</sequence>
+                <xref desc="[312 - 365]" id="Wilf_4"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="266" end="364">
+            <protein>
+                <sequence md5="b2242d49706cbcb174bff106b353725f">RSRSPRSRPHVSQWCSADHLCARPPLYPLPRHL</sequence>
+                <xref desc="[364 - 266] (REVERSE SENSE)" id="Wilf_6"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="137" end="259">
+            <protein>
+                <sequence md5="29c73650b0b84716b2963b152f59ca9c">TERSASLPRYIFPPLLSVHPHPLSETPRPEIFSHIPQTPAQ</sequence>
+                <xref desc="[259 - 137] (REVERSE SENSE)" id="Wilf_7"/>
+                <matches/>
+            </protein>
+        </orf>
+    </nucleotide-sequence>
+    <nucleotide-sequence>
+        <sequence md5="b2a7416cb92565c004becb7510f46840">ctggtgctgctggcggcgtttgattgcattgatgataccaaactggtgaaacagattattattagcgaaattattaacagcctgccgaacattgtgaacgataaatatggccgcaaagtgctgctgtatctgctgagcccgcgcgatccggcgcataccgtgcgcgaaattattgaagtgctgcagaaaggcgatggcaacgcgcatagcaaaaaagataccgaaattcgccgccgcgaaatgaaatataaacgcattgtgtttaaagtgggcaccagcagcctgaccaacgaagatggcagcctgagccgcagcaaagtgaaagatattacccagcagctggcgatgctgcatgaagcgggccatgaactgattctggtgagcagcggcgcgattgcggcgggctttggcgcgctgggctttaaaaaacgcccgaccaaaattgcggataaacaggcgagcgcggcggtgggccagggcctgctgctggaagaatataccaccaacctgctgctgcgccagattgtgagcgcgcagattctgctgacccaggatgattttgtggataaacgccgctataaaaacgcgcatcaggcgctgagcgtgctgctgaaccgcggcgcgattccgattattaacgaaaacgatagcgtggtgattgatgaactgaaagtgggcgataacgataccctgagcgcgcaggtggcggcgatggtgcaggcggatctgctggtgtttctgaccgatgtggatggcctgtataccggcaacccgaacagcgatccgcgcgcgaaacgcctggaacgcattgaaaccattaaccgcgaaattattgatatggcgggcggcgcgggcagcagcaacggcaccggcggcatgctgaccaaaattaaagcggcgaccattgcgaccgaaagcggcgtgccggtgtatatttgcagcagcctgaaaagcgatagcatgattgaagcggcggaagaaaccgaagatggcagctattttgtggcgcaggaaaaaggcctgcgcacccagaaacagtggctggcgttttatgcgcagagccagggcagcatttgggtggataaaggcgcggcggaagcgctgagccagtatggcaaaagcctgctgctgagcggcattgtggaagcggaaggcgtgtttagctatggcgatattgtgaccgtgtttgataaagaaagcggcaaaagcctgggcaaaggccgcgtgcagtttggcgcgagcgcgctggaagatatgctgcgcagccagaaagcgaaaggcgtgctgatttatcgcgatgattggattagcattaccccggaaattcagctgctgtttaccgaattt</sequence>
+        <xref name="Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2"/>
+        <orf strand="SENSE" start="267" end="353">
+            <protein>
+                <sequence md5="e4aba6f85d58320f9a28927bf28efa8a">SGHQQPDQRRWQPEPQQSERYYPAAGDAA</sequence>
+                <xref desc="[267 - 353] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_3"/>
+                <xref desc="[27 - 113]" id="Bob_1"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="2" end="55">
+            <protein>
+                <sequence md5="daf8ad2f7359548f68b58b08d61a9067">SVSPVWYHQCNQTPPAAP</sequence>
+                <xref desc="[55 - 2] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_36"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="3" end="575">
+            <protein>
+                <sequence md5="30ee8c8966dbb2002df5b565572e5e60">RRLSTKSSWVSRICALTIWRSSRLVVYSSSSRPWPTAALACLSAILVGRFLKPSAPKPAAIAPLLTRISSWPASCSIASCWVISFTLLRLRLPSSLVRLLVPTLNTMRLYFISRRRISVSFLLCALPSPFCSTSIISRTVCAGSRGLSRYSSTLRPYLSFTMFGRLLIISLIIICFTSLVSSMQSNAASST</sequence>
+                <xref desc="[575 - 3] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_35"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="323" end="370">
+            <protein>
+                <sequence md5="bb35fd8e3b129a9bbdabc5bc35cbfeee">KILPSSWRCCMKRAMN</sequence>
+                <xref desc="[83 - 130]" id="Bob_2"/>
+                <xref desc="[323 - 370] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_4"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="743" end="880">
+            <protein>
+                <sequence md5="d976f88c85e612d94ad1bc52d1c99f36">PMWMACIPATRTAIRARNAWNALKPLTAKLLIWRAARAAATAPAAC</sequence>
+                <xref desc="[743 - 880] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_11"/>
+                <xref desc="[503 - 640]" id="Bob_9"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="383" end="526">
+            <protein>
+                <sequence md5="f721ded069c8a767dac17d73641c938d">AAARLRRALARWALKNARPKLRINRRARRWARACCWKNIPPTCCCARL</sequence>
+                <xref desc="[383 - 526] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_6"/>
+                <xref desc="[143 - 286]" id="Bob_4"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="266" end="328">
+            <protein>
+                <sequence md5="cd2eedd8896a79a024d078b59147d440">YLSLCCGSGCHLRWSGCWCPL</sequence>
+                <xref desc="[88 - 26] (REVERSE SENSE)" id="Bob_30"/>
+                <xref desc="[328 - 266] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_32"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="77" end="169">
+            <protein>
+                <sequence md5="ceb60c8cb3931bbc66bd52c0ebb9e488">FRARYAPDRAGSADTAALCGHIYRSQCSAGC</sequence>
+                <xref desc="[169 - 77] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_34"/>
+                <xref desc="[1369 - 1277] (REVERSE SENSE)" id="Henry_37"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="833" end="889">
+            <protein>
+                <sequence md5="208b01de3fa3fa3983d3d41a752cc3bb">FWSACRRCRCCCPRRPPYQ</sequence>
+                <xref desc="[889 - 833] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_27"/>
+                <xref desc="[649 - 593] (REVERSE SENSE)" id="Bob_25"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1289" end="1345">
+            <protein>
+                <sequence md5="21e13f8923635fde91ec7d92e6de6630">FIAMIGLALPRKFSCCLPN</sequence>
+                <xref desc="[1289 - 1345] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_20"/>
+                <xref desc="[1049 - 1105]" id="Bob_18"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="137" end="241">
+            <protein>
+                <sequence md5="41503b15ac3310cad2c345b3bec0af13">ARAIRRIPCAKLLKCCRKAMATRIAKKIPKFAAAK</sequence>
+                <xref desc="[137 - 241] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_2"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="893" end="1159">
+            <protein>
+                <sequence md5="195229409d45a86f04a5774d8353435b">TRLPLPQCRSAAGFCHTGSALPPRLYPPKCCPGSAHKTPATVSGCAGLFPAPQNSCHLRFLPPLQSCYRFSGCCKYTPARRFRSQWSPL</sequence>
+                <xref desc="[919 - 653] (REVERSE SENSE)" id="Bob_24"/>
+                <xref desc="[1159 - 893] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_26"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="173" end="262">
+            <protein>
+                <sequence md5="25eb8c7b737fa3f76df3084d810fc050">TQCVYISFRGGEFRYLFCYARCHRLSAALQ</sequence>
+                <xref desc="[262 - 173] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_33"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1167" end="1289">
+            <protein>
+                <sequence md5="58f34e28b4b439cb0cee85546e502a31">ISTPFAFWLRSISSSALAPNCTRPLPRLLPLSLSNTVTISP</sequence>
+                <xref desc="[1049 - 927] (REVERSE SENSE)" id="Bob_20"/>
+                <xref desc="[1289 - 1167] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_22"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1" end="1347">
+            <protein>
+                <sequence md5="fd0743a673ac69fb6e5c67a48f264dd5">LVLLAAFDCIDDTKLVKQIIISEIINSLPNIVNDKYGRKVLLYLLSPRDPAHTVREIIEVLQKGDGNAHSKKDTEIRRREMKYKRIVFKVGTSSLTNEDGSLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEKGLRTQKQWLAFYAQSQGSIWVDKGAAEALSQYGKSLLLSGIVEAEGVFSYGDIVTVFDKESGKSLGKGRVQFGASALEDMLRSQKAKGVLIYRDDWISITPEIQLLFTEF</sequence>
+                <xref desc="[1 - 1347] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_21"/>
+                <matches>
+                    <hmmer2-match score="622.2" evalue="4.6E-187">
+                        <signature name="GK" ac="PIRSF000729">
+                            <entry type="FAMILY" name="Glu_5kinase" desc="Glutamate 5-kinase" ac="IPR011529">
+                                <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                                <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                                <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                            </entry>
+                            <models>
+                                <model name="GK" ac="PIRSF000729"/>
+                            </models>
+                            <signature-library-release version="2.84" library="PIRSF"/>
+                        </signature>
+                        <locations>
+                            <hmmer2-location hmm-length="0" hmm-end="389" hmm-start="1" evalue="4.6E-187" score="622.2" end="448" start="76"/>
+                        </locations>
+                    </hmmer2-match>
+                    <hmmer2-match score="38.2" evalue="1.1E-6">
+                        <signature name="PUA" desc="Putative RNA-binding Domain in PseudoUridine synthase and Archaeosine transglycosylase" ac="SM00359">
+                            <entry type="DOMAIN" name="PUA" desc="PUA domain" ac="IPR002478">
+                                <go-xref category="MOLECULAR_FUNCTION" name="RNA binding" id="GO:0003723" db="GO"/>
+                            </entry>
+                            <models>
+                                <model name="PUA" desc="Putative RNA-binding Domain in PseudoUridine synthase and Archaeosine transglycosylase" ac="SM00359"/>
+                            </models>
+                            <signature-library-release version="6.2" library="SMART"/>
+                        </signature>
+                        <locations>
+                            <hmmer2-location hmm-length="0" hmm-end="86" hmm-start="1" evalue="1.1E-6" score="38.2" end="427" start="356"/>
+                        </locations>
+                    </hmmer2-match>
+                    <hmmer3-match score="445.2" evalue="3.8E-134">
+                        <signature name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027">
+                            <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
+                                <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                                <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                                <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                            </entry>
+                            <models>
+                                <model name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027"/>
+                            </models>
+                            <signature-library-release version="13.0" library="TIGRFAM"/>
+                        </signature>
+                        <locations>
+                            <hmmer3-location env-start="84" env-end="445" hmm-length="0" hmm-end="359" hmm-start="1" evalue="4.6E-134" score="444.9" end="441" start="84"/>
+                        </locations>
+                    </hmmer3-match>
+                    <panther-match score="453.7" familyName="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" evalue="2.6E-133">
+                        <signature name="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" ac="PTHR11063">
+                            <models>
+                                <model name="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" ac="PTHR11063"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="443" start="72"/>
+                        </locations>
+                    </panther-match>
+                    <panther-match score="453.7" familyName="GLUTAMATE 5-KINASE" evalue="2.6E-133">
+                        <signature name="GLUTAMATE 5-KINASE" ac="PTHR11063:SF6">
+                            <models>
+                                <model name="GLUTAMATE 5-KINASE" ac="PTHR11063:SF6"/>
+                            </models>
+                            <signature-library-release version="9.0" library="PANTHER"/>
+                        </signature>
+                        <locations>
+                            <panther-location end="443" start="72"/>
+                        </locations>
+                    </panther-match>
+                    <patternscan-match>
+                        <signature name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902">
+                            <entry type="CONSERVED_SITE" name="Glutamate_5-kinase_CS" desc="Glutamate 5-kinase, conserved site" ac="IPR019797">
+                                <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                                <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                                <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                                <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                            </entry>
+                            <models>
+                                <model name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902"/>
+                            </models>
+                            <signature-library-release version="20.105" library="PROSITE_PATTERNS"/>
+                        </signature>
+                        <locations>
+                            <patternscan-location level="STRONG" end="303" start="286">
+                                <alignment>SsnGtGGMlTKIkAAtiA</alignment>
+                            </patternscan-location>
+                        </locations>
+                    </patternscan-match>
+                    <profilescan-match>
+                        <signature name="PUA" desc="PUA domain profile." ac="PS50890">
+                            <entry type="DOMAIN" name="PUA" desc="PUA domain" ac="IPR002478">
+                                <go-xref category="MOLECULAR_FUNCTION" name="RNA binding" id="GO:0003723" db="GO"/>
+                            </entry>
+                            <models>
+                                <model name="PUA" desc="PUA domain profile." ac="PS50890"/>
+                            </models>
+                            <signature-library-release version="20.105" library="PROSITE_PROFILES"/>
+                        </signature>
+                        <locations>
+                            <profilescan-location score="15.593" end="435" start="355">
+                                <alignment>QGSIWVDKGAAEALSqYGK-SLLLSGIVEAEGVFSYGDIVTVFDKeSGKSLGKGRVQFGASALEDMlRSQKAKGVLIYRDDW</alignment>
+                            </profilescan-location>
+                        </locations>
+                    </profilescan-match>
+                    <profilescan-match>
+                        <signature name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456">
+                            <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
+                                <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
+                                <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
+                                <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
+                                <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                                <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+                            </entry>
+                            <models>
+                                <model name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456"/>
+                            </models>
+                            <signature-library-release version="201311.27" library="HAMAP"/>
+                        </signature>
+                        <locations>
+                            <profilescan-location score="35.919" end="339" start="83">
+                                <alignment>YKRIVFKVGTSSLTNEDG-SLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEK</alignment>
+                            </profilescan-location>
+                        </locations>
+                    </profilescan-match>
+                </matches>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="884" end="946">
+            <protein>
+                <sequence md5="399e5453570d61b066deacbf13a9eee9">PKLKRRPLRPKAACRCIFAAA</sequence>
+                <xref desc="[644 - 706]" id="Bob_11"/>
+                <xref desc="[884 - 946] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_13"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="105" end="173">
+            <protein>
+                <sequence md5="30477e9d10958851ca2ddbc60c3cc3e5">IWPQSAAVSAEPARSGAYRARNY</sequence>
+                <xref desc="[105 - 173] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_1"/>
+                <xref desc="[1305 - 1373]" id="Henry_23"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="548" end="598">
+            <protein>
+                <sequence md5="110475d73534374669dcfa0d8ab7cb62">PRMILWINAAIKTRIRR</sequence>
+                <xref desc="[548 - 598] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_8"/>
+                <xref desc="[308 - 358]" id="Bob_6"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="837" end="890">
+            <protein>
+                <sequence md5="35c8f04dd3e0a5e9594ced6fd6a70984">YGGRRGQQQRHRRHADQN</sequence>
+                <xref desc="[597 - 650]" id="Bob_10"/>
+                <xref desc="[837 - 890] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_12"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1163" end="1306">
+            <protein>
+                <sequence md5="4ad9f9a33e6f315d884c4972ff7dba44">SNHRDKSARLSLSGCAAYLPARSRQTARGLCPGFCRFLYQTRSQYRHS</sequence>
+                <xref desc="[1066 - 923] (REVERSE SENSE)" id="Bob_21"/>
+                <xref desc="[1306 - 1163] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_23"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="594" end="995">
+            <protein>
+                <sequence md5="89345cdafdd357ad8b2bef1ecdfd7be2">LPSSVSSAASIMLSLFRLLQIYTGTPLSVAMVAALILVSMPPVPLLLPAPPAISIISRLMVSMRSRRFARGSLFGLPVYRPSTSVRNTSRSACTIAATCALRVSLSPTFSSSITTLSFSLIIGIAPRFSSTLSA</sequence>
+                <xref desc="[995 - 594] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_29"/>
+                <xref desc="[755 - 354] (REVERSE SENSE)" id="Bob_27"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1086" end="1160">
+            <protein>
+                <sequence md5="36d3d9060e27d4bf8e581ffe341cbec0">RRGGSAEPVWQKPAAERHCGSGRRV</sequence>
+                <xref desc="[846 - 920]" id="Bob_15"/>
+                <xref desc="[1086 - 1160] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_17"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="999" end="1049">
+            <protein>
+                <sequence md5="3c22747128e28409a6a2e8090864bd70">NASHCFWVRRPFSCATK</sequence>
+                <xref desc="[1049 - 999] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_25"/>
+                <xref desc="[809 - 759] (REVERSE SENSE)" id="Bob_23"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="894" end="956">
+            <protein>
+                <sequence md5="ed3753f88b932e2962f783a0e7ee1812">SGDHCDRKRRAGVYLQQPEKR</sequence>
+                <xref desc="[894 - 956] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_14"/>
+                <xref desc="[654 - 716]" id="Bob_12"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="969" end="1082">
+            <protein>
+                <sequence md5="6235043bc1a93eba68ae19b8e5286567">SGGRNRRWQLFCGAGKRPAHPETVAGVLCAEPGQHLGG</sequence>
+                <xref desc="[969 - 1082] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_15"/>
+                <xref desc="[729 - 842]" id="Bob_13"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="369" end="422">
+            <protein>
+                <sequence md5="a0668c363b5edae80ed5b897163ce517">TDSGEQRRDCGGLWRAGL</sequence>
+                <xref desc="[129 - 182]" id="Bob_3"/>
+                <xref desc="[369 - 422] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_5"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="332" end="421">
+            <protein>
+                <sequence md5="b43054d39c6770570a6f3067b6851184">SPARQSPPQSRRCSPESVHGPLHAASPAAG</sequence>
+                <xref desc="[181 - 92] (REVERSE SENSE)" id="Bob_29"/>
+                <xref desc="[421 - 332] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_31"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="965" end="1102">
+            <protein>
+                <sequence md5="db6c3544d4c19cd406c7ddbe5e2bd763">LKRRKKPKMAAILWRRKKACAPRNSGWRFMRRARAAFGWIKARRKR</sequence>
+                <xref desc="[965 - 1102] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_16"/>
+                <xref desc="[725 - 862]" id="Bob_14"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="425" end="631">
+            <protein>
+                <sequence md5="7565b6084b425afa0336b4fe9ffa56f0">SESRRGSAARSAPDARFYSGVYPQNHPGSAESARSQSGAAAGWWYILPAAGPGPPPRSPVYPQFWSGVF</sequence>
+                <xref desc="[391 - 185] (REVERSE SENSE)" id="Bob_28"/>
+                <xref desc="[631 - 425] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_30"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="638" end="817">
+            <protein>
+                <sequence md5="11cd3179c2a0a321041f86fb81892cad">WFQCVPGVSRADRCSGCRYTGHPHRSETPADPPAPSPPPARSGYRYRPLSVHQSPRYRFR</sequence>
+                <xref desc="[577 - 398] (REVERSE SENSE)" id="Bob_26"/>
+                <xref desc="[817 - 638] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_28"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1053" end="1163">
+            <protein>
+                <sequence md5="2ff03cecb8b5d97db3a11197255d5360">LNTPSASTMPLSSRLLPYWLSASAAPLSTQMLPWLCA</sequence>
+                <xref desc="[1163 - 1053] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_24"/>
+                <xref desc="[923 - 813] (REVERSE SENSE)" id="Bob_22"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="ANTISENSE" start="1" end="1347">
+            <protein>
+                <sequence md5="cba1a2865234ac5a5d93de7fd539db08">KFGKQQLNFRGNANPIIAINQHAFRFLAAQHIFQRARAKLHAAFAQAFAAFFIKHGHNIAIAKHAFRFHNAAQQQAFAILAQRFRRAFIHPNAALALRIKRQPLFLGAQAFFLRHKIAAIFGFFRRFNHAIAFQAAANIHRHAAFGRNGRRFNFGQHAAGAVAAARAARHINNFAVNGFNAFQAFRARIAVRVAGIQAIHIGQKHQQIRLHHRRHLRAQGIVIAHFQFINHHAIVFVNNRNRAAVQQHAQRLMRVFIAAFIHKIILGQQNLRAHNLAQQQVGGIFFQQQALAHRRARLFIRNFGRAFFKAQRAKARRNRAAAHQNQFMARFMQHRQLLGNIFHFAAAQAAIFVGQAAGAHFKHNAFIFHFAAANFGIFFAMRVAIAFLQHFNNFAHGMRRIARAQQIQQHFAAIFIVHNVRQAVNNFANNNLFHQFGIINAIKRRQQHQ</sequence>
+                <xref desc="[1347 - 1] (REVERSE SENSE) Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_37"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1181" end="1285">
+            <protein>
+                <sequence md5="c6790fc0488ba3c361ecaa7a77143d4b">PCLIKKAAKAWAKAACSLARARWKICCAARKRKAC</sequence>
+                <xref desc="[1181 - 1285] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_18"/>
+                <xref desc="[941 - 1045]" id="Bob_16"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="1194" end="1298">
+            <protein>
+                <sequence md5="a39d354fb5ecce5107f2fa9d6509065f">RKRQKPGQRPRAVWRERAGRYAAQPESERRADLSR</sequence>
+                <xref desc="[954 - 1058]" id="Bob_17"/>
+                <xref desc="[1194 - 1298] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_19"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="453" end="554">
+            <protein>
+                <sequence md5="bf15d7bee9428259702bf188edd993cf">TGERGGGPGPAAGRIYHQPAAAPDCERADSADPG</sequence>
+                <xref desc="[453 - 554] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_7"/>
+                <xref desc="[213 - 314]" id="Bob_5"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="684" end="809">
+            <protein>
+                <sequence md5="bfcb80dc6b493236a44d89fdfbae48dd">RYPERAGGGDGAGGSAGVSDRCGWPVYRQPEQRSARETPGTH</sequence>
+                <xref desc="[444 - 569]" id="Bob_8"/>
+                <xref desc="[684 - 809] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_10"/>
+                <matches/>
+            </protein>
+        </orf>
+        <orf strand="SENSE" start="582" end="635">
+            <protein>
+                <sequence md5="249c74bc34b02cf8ce469f19d6c80464">KRASGAERAAEPRRDSDY</sequence>
+                <xref desc="[342 - 395]" id="Bob_7"/>
+                <xref desc="[582 - 635] Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence." id="ENA|AACH01000027|AACH01000027.2_9"/>
+                <matches/>
+            </protein>
+        </orf>
+    </nucleotide-sequence>
+</nucleotide-sequence-matches>

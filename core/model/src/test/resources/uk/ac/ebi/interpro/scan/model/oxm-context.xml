@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+    <bean id="jaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>uk.ac.ebi.interpro.scan.model.Entry</value>
+                <value>uk.ac.ebi.interpro.scan.model.NucleotideSequence</value>
+                <value>uk.ac.ebi.interpro.scan.model.Protein</value>
+                <value>uk.ac.ebi.interpro.scan.model.Signature</value>
+                <value>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</value>
+                <value>uk.ac.ebi.interpro.scan.model.ProteinMatchesHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.IMatchesHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.Xref</value>
+            </list>
+        </property>
+        <property name="marshallerProperties">
+            <util:map value-type="java.lang.Boolean">
+                <entry value="true">
+                    <key>
+                        <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/>
+                    </key>
+                </entry>
+            </util:map>
+            <!--To include the schema location, comment out the above util:map and uncomment the following - unfortunately-->
+            <!--they can't be mixed because they're different types (Boolean vs String):-->
+            <!--<protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" -->
+            <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+            <!--xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5 -->
+            <!--http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd" >-->
+            <!--...-->
+            <!--</protein>-->
+            <!--<util:map value-type="java.lang.String">-->
+            <!--<entry value="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5 http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">-->
+            <!--<key>-->
+            <!--<util:constant static-field="javax.xml.bind.Marshaller.JAXB_SCHEMA_LOCATION"/>-->
+            <!--</key>-->
+            <!--</entry>-->
+            <!--</util:map>-->
+        </property>
+    </bean>
+
+    <bean id="marshaller" parent="jaxb2"/>
+    <bean id="unmarshaller" parent="jaxb2"/>
+
+    <!--TODO: Read this from Maven properties-->
+    <bean id="schema" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg value="target/schemas/interproscan-model-1.1.xsd"/>
+    </bean>
+
+    <!-- Alternative declaration if don't need to set any additional properties:
+    <oxm:jaxb2-marshaller id="marshaller">
+        <oxm:class-to-be-bound name="uk.ac.ebi.interpro.scan.model.Signature"/>
+    </oxm:jaxb2-marshaller>
+    -->
+
+</beans>

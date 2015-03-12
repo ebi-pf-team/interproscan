@@ -1,0 +1,43 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#   Version 3.1 - 1995
+#      Initial base data set from Andrzej Elzanowski (PIR/NCBI)
+#
+# Differences from the Standard Code: 
+# 
+#           Code 14      Standard
+# 
+#  AAA      Asn  N       Lys  K
+#  AGA      Ser  S       Arg  R
+#  AGG      Ser  S       Arg  R
+#  UAA      Tyr  Y       Ter  *
+#  UGA      Trp  W       Ter  *
+# 
+# 
+# Systematic Range: 
+# 
+# Platyhelminthes (flatworms) 
+# 
+# Comments:
+#
+# Code 14 differs from code 9 only by translating UAA to Tyr rather than
+# STOP.  A recent study [PMID:11027335] has found no evidence that the
+# codon UAA codes for Tyr in the flatworms but other opinions exist. 
+# There are very few GenBank records that are translated with code 14 but
+# a test translation shows that retranslating these records with code 9
+# can cause premature terminations.  Therefore, GenBank will maintain code
+# 14 until further information become available. 
+
+Genetic Code [14]
+
+Alternative Flatworm Mitochondrial
+  
+AAs  =   FFLLSSSSYYY*CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNNKSSSSVVVVAAAADDEEGGGG
+Starts = -----------------------------------M----------------------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+

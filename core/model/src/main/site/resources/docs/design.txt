@@ -1,0 +1,5 @@
+Text parsers
+------------
+Looked at options in http://java-source.net/open-source/parser-generators
+They're all too heavy-weight for parsing HMM, LSF ..etc files, so decided to
+use Scanner classes as prototyped in RhinoScript.

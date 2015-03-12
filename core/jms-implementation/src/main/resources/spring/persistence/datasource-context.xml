@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+
+    <!--todo: do we want to use this if the system is runnng in one JVM?-->
+    <bean id="interproDataSource" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+        <property name="targetDataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="dataSource" class="uk.ac.ebi.interpro.scan.jms.activemq.ExternalDriverDataSource">
+        <constructor-arg ref="tempDirectoryManager"/>
+        <property name="driverJar" value="${i5.database.driverJar}"/>
+        <property name="driverClassName" value="${i5.database.driverClassName}"/>
+        <property name="url" value="${i5.database.connection.url}"/>
+        <property name="username" value="${i5.database.username}"/>
+        <property name="password" value="${i5.database.password}"/>
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <!-- Common DAO Beans (where possible, make them more local to where they are required) -->
+    <bean id="proteinDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
+
+    <bean id="signatureDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">
+    </bean>
+
+    <bean id="modelDAO"
+          class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Model"/>
+    </bean>
+
+    <bean id="signatureLibraryReleaseDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAOImpl"/>
+
+    <bean id="stepInstanceDAO"
+          class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl">
+        <property name="lockObject" value="lockObject"/>
+    </bean>
+
+    <bean id="productionStepInstanceDAO"
+          class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl">
+          <property name="lockObject" value="lockObject"/>
+          <property name="maxSerialGroupExecutions" value="${production.max.serial.group.executions}"/>
+    </bean>
+
+
+    <bean id="stepExecutionDAO"
+          class="uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAOImpl">
+        <property name="lockObject" value="lockObject"/>
+    </bean>
+
+    <bean id="xrefDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAOImpl"/>
+
+    <bean id="openReadingFrameDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAOImpl"/>
+
+    <bean id="nucleotideSequenceDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAOImpl"/>
+
+    <bean id="nucleotideSequenceXrefDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAOImpl"/>
+
+    <bean id="entryDAO" class="uk.ac.ebi.interpro.scan.persistence.EntryDAOImpl"/>
+
+    <bean id="releaseDAO" class="uk.ac.ebi.interpro.scan.persistence.ReleaseDAOImpl"/>
+
+    <bean id="lockObject" class="java.lang.Object"/>
+
+</beans>

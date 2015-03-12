@@ -1,0 +1,45 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
+    <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
+
+    <!--Configuration for the local job queue listener-->
+    <bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="localJmsFactory"/>
+        <property name="destination" ref="jobRequestQueue"/>
+        <property name="concurrentConsumers" value="1"/>
+        <property name="messageListener" ref="localJobQueueListener"/>
+        <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
+        <property name="maxConcurrentConsumers" value="${number.of.embedded.workers}"/>
+        <property name="sessionTransacted" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+    </bean>
+
+    <bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.activemq.WorkerListener">
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="jmsTemplate" ref="localJmsFactory"/>
+        <property name="stepExecutor" ref="embeddedStepExecutor"/>
+    </bean>
+
+    <!--Listens to the local job queue and performs jobs-->
+    <bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.worker.LocalJobQueueListener">
+        <property name="stepExecutor" ref="stepExecutor"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="controller" ref="distributedWorkerController"/>
+    </bean>
+
+
+
+    <bean id="embeddedStepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
+        <property name="jobs" ref="jobs"/>
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="jobResponseQueue" ref="jobResponseQueue"/>
+        <property name="directoryManager" ref="tempDirectoryManager"/>
+    </bean>
+
+</beans>

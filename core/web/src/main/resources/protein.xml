@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+    <sequence md5="9d380adca504b0b1a2654975c340af78">MGAAASIQTTVNTLSERISSKLEQEANASAQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD</sequence>
+    <xref id="A0A000_9ACTO"/>
+    <matches>
+        <hmmer2-match score="0.035" evalue="3.7E-9">
+            <signature name="B12-binding" ac="PF02310"/>
+            <locations>
+                <hmmer2-location hmm-length="0" hmm-end="104" hmm-start="1" evalue="3.7E-9" score="3.0" end="107" start="3"/>
+            </locations>
+        </hmmer2-match>
+        <profilescan-match>
+            <signature ac="PS50206"/>
+            <locations>
+                <profilescan-location score="15.158" end="60" start="1">
+                    <alignment>MGAAASIQTT----------kleqeanasaQTKCDIEIGNFYIRQNHGCNLTVKNMCSAD</alignment>
+                </profilescan-location>
+            </locations>
+        </profilescan-match>
+    </matches>
+</protein>

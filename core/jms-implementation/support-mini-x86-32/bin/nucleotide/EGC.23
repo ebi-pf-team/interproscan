@@ -1,0 +1,25 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#  Version 3.7
+#     Added code 23 Thraustochytrium mitochondrial code
+#        formerly OGMP code 93
+#        submitted by Gertraude Berger, Ph.D.
+#
+# This code has been created for the mitochondrial genome of the labyrinthulid
+# Thraustochytrium aureum sequenced by the The Organelle Genome Megasequencing
+# Program (OGMP).
+#
+# It is the similar to the bacterial code (trans_table 11) but it contains an
+# additional stop codon (TTA) and also has a different set of start codons.
+
+Genetic Code [23]
+
+Thraustochytrium Mitochondrial
+
+AAs  =   FF*LSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+Starts = --------------------------------M--M---------------M------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG

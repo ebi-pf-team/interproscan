@@ -1,0 +1,5 @@
+    Acc       Domain         Family      DB size           mu      lamda        cutoff    cut_low    family    repeats   repeat_cut
+
+SM00327          VWA            VWA       201405   -68.880920   0.175194      9.10e+00   9.40e+00         -         -             -
+SM00487        DEXDc          DEXDc       308751   -89.794853   0.165466      1.90e-02   2.80e-02  1.90e-02         -             -
+SM00488       DEXDc2          DEXDc       308751  -227.882904   0.139083      4.80e-11   8.40e-04  4.80e-11         -             -

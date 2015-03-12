@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+    <protein>
+        <sequence md5="2facc832c111c64b5c7bae6268ea0b11">
+            GXGXXGXXXXXXXNHFXXXXXXXXXXXXXXYXVXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXAYDGXXXXXXXXXLXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXLDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXFXXXXXXXXXXXXXXXXXXXXXXXXGXXXSXRXXXXXXXTXXGLXLNXDXSXXXXXXXXXVXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXLXXXXXXXXXXXXXXXXXXXXGXXXXXXXXXXFXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXVXXYXXXXXXXXXXXXXXXPCXXXGXXXXXXXYXPXEXXXXXXXCXXXXXQXYXXXXLXXXQXXXXXXXXXXXXXXXXXXXXXXXPXXRXXXXXXXXXXXXXXXXXXXXXXXXXGXXXXXXXXXVXXRXLXXPXXXXXXXXXXXXXXXXXXXXXXXXXXGXWNXXXKXXXXXXXXXXXXXXXWXXXXFXXXXXXXXXXXXXXXXXXXXXXXXXGXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXYXXXKXXXXXXXGXXXQCXXXXXXXXXXXXXXXQYXXNXXLKXNXKXGGXNXXLXXXXXXXXXXXXXXXXXTXXXGXDVXHXXXXXXGXXXXXXPSXXAVVXSXXXPXXXXYXXXXXXQXXXXEXIXXLXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXEXLXXXXXXXXXXXXXXXXPXXIIXXRDGVSEXQFXXVLXXEXXXXXXAXXXXXXXXXXXXXXPXXTXXVXQKXHHTXXFXXXXXXXXXXXXXXNXXPGTVVDXXXXHPXXXDFYLCXHXGXXGTXRPXHYXVLXDEXXFXXXXXXXXXXXXDXXQXLXXXLXYXXXRXTXXXSXXXXXXXXXXXPXXYAHLXAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXMF
+        </sequence>
+        <xref id="UPI00018C6368"/>
+        <matches>
+
+            <profilescan-match>
+                <signature name="HECT" desc="HECT domain profile." ac="PS50237">
+                    <entry type="DOMAIN" name="HECT" desc="HECT" ac="IPR000569">
+                        <go-xref id="GO:0005622" db="GO"/>
+                        <go-xref id="GO:0016881" db="GO"/>
+                        <go-xref id="GO:0006464" db="GO"/>
+                        <pathway-xref name="Protein modification; protein ubiquitination" id="UPA00143"
+                                      db="UniPathway"/>
+                        <pathway-xref name="Tryptophan metabolism" id="00380+6.3.2.-" db="KEGG"/>
+                        <pathway-xref name="Bob" id="pathway3" db="KEGG"/>
+                    </entry>
+                    <models>
+                        <model name="HECT" desc="HECT domain profile." ac="PS50237"/>
+                    </models>
+                    <signature-library-release version="20.72" library="PROSITE_PROFILES"/>
+                </signature>
+                <locations>
+                    <profilescan-location score="8.95" end="507" start="1">
+                        <alignment>
+                            -------------GxGXXGXXXXXXXNHFXXXXXXXXXXXXXXYXVXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXXXXXXXXXXXXXXXXXXXXXXXAYDGXXXXXXXXXLXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXXXXXLDXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxXXXXXXXXFXXXXXXXXXXXXXxxxxxxxxxxxgxxxsxrxxxxxXXTXXGLXLNXDXSXXXXXXXXXVXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxXXXXXXXXXXXXXLXXXXXXXXXXXXXXXXXXXXGXXXXXXXXXXFXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxXXXXXVXXYXXXXXXXXXXXXXXXPCXXXGXXXXXXXYXPXEXXXXXXXCXxxxXQXYXXX
+                        </alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature name="TIR" desc="TIR domain profile." ac="PS50104">
+                    <entry type="DOMAIN" name="TIR_dom" desc="Toll/interleukin-1 receptor homology (TIR) domain"
+                           ac="IPR000157">
+                        <go-xref id="GO:0005515" db="GO"/>
+                        <go-xref id="GO:0005622" db="GO"/>
+                        <go-xref id="GO:0007165" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="TIR" desc="TIR domain profile." ac="PS50104"/>
+                    </models>
+                    <signature-library-release version="20.72" library="PROSITE_PROFILES"/>
+                </signature>
+                <locations>
+                    <profilescan-location score="9.602" end="644" start="100">
+                        <alignment>
+                            XAYDGXXXXXxxxxlxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXXXXXXXXXXXXXXXLDXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxfxxxxxxxxxxxxxxxxxxxxxxxxgxxxsxrxxxxxxxtXXGLXLNXDxsXXXXXXXXXVXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxLXXXXXXxxxxxxxxxxxxxxgxxxxxxxxxxfxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXXXXXXXVXXYXXXxxxxxxxxxxxxpcxxxgxxxxxxXYXPXEXXXXXXXCXXXXXQXYXXXXLXXXQXXXxxxxxxxxxxxxxxXXXXXXPXXRXXXxxxxxxxxxxxxxxxxxxxxxxgxxxxxxxxxvxxrxlxxpxxxxxxxxxxxxxxxxxxxxxxxxXXGXWNXXxkxxxxxxxxxxXXXXXWXXXXFXXXXX
+                        </alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+        </matches>
+    </protein>
+</protein-matches>

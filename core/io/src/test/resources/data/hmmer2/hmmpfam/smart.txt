@@ -1,0 +1,1984 @@
+hmmpfam - search one or more sequences against HMM database
+HMMER 2.3.2 (Oct 2003)
+Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
+Freely distributed under the GNU General Public License (GPL)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HMM file:                 /ebi/sp/pro1/interpro/data/members/smart/5.1/smart.HMMs.bin
+Sequence file:            data/5k.fasta
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query sequence: UPI000000001B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00388                                                  -9.7       0.16   1
+SM00283                                                -174.6        3.5   1
+SM00469                                                 -73.4        8.2   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00283     1/1       5   202 ..     1   275 []  -174.6      3.5
+SM00469     1/1     100   203 .]     1   146 []   -73.4      8.2
+SM00388     1/1     134   191 ..     1    89 []    -9.7     0.16
+//
+
+Query sequence: UPI000000001C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+SM00439                                                 -40.3        2.4   1
+SM00437                                                -169.3        3.7   1
+SM00435                                                -360.9        4.2   1
+SM00697                                                 -32.4          5   1
+SM00579                                                 -38.3        7.4   1
+SM00142                                                 -33.5        7.7   1
+SM00203                                                   2.3        7.9   1
+SM00404                                                 -42.4          9   1
+SM00125                                                 -56.5        9.1   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+SM00203       1/1      65    75 ..     1    11 []     2.3      7.9
+SM00697       1/1      66   146 ..     1    96 []   -32.4        5
+SM00435       1/1      93   298 ..     1   480 []  -360.9      4.2
+SM00125       1/1      95   218 ..     1   149 []   -56.5      9.1
+SM00439       1/1     127   248 ..     1   163 []   -40.3      2.4
+SM00437       1/1     135   306 ..     1   309 []  -169.3      3.7
+SM00579       1/1     144   216 ..     1    93 []   -38.3      7.4
+SM00142       1/1     190   300 ..     1   133 []   -33.5      7.7
+SM00404       1/1     227   309 ..     1    92 []   -42.4        9
+//
+
+Query sequence: UPI000000001D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000001E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00214                                                 -24.8        1.6   1
+SM00045                                                -116.3        2.6   1
+SM00215                                                 -30.2        2.9   1
+SM00021                                                 -39.2          3   1
+SM00512                                                 -60.4        3.6   1
+SM00018                                                 -30.1        5.4   1
+SM00471                                                 -18.0        9.2   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00021      1/1       1    71 [.     1    86 []   -39.2        3
+SM00045      1/1       5   104 ..     1   195 []  -116.3      2.6
+SM00471      1/1      30   117 ..     1    59 []   -18.0      9.2
+SM00512      1/1      39   106 ..     1   126 []   -60.4      3.6
+SM00214      1/1      72   123 ..     1    75 []   -24.8      1.6
+SM00215      1/1      72   123 ..     1   105 []   -30.2      2.9
+SM00018      1/1      88   130 ..     1    54 []   -30.1      5.4
+//
+
+Query sequence: UPI000000001F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+SM00739                                                   1.9       0.72   1
+SM00148                                                 -99.6        2.1   1
+SM00287                                                 -12.1        2.2   1
+SM00670                                                 -25.9          3   1
+SM00545                                                 -25.3        3.4   1
+SM00089                                                 -20.0        3.9   1
+SM00439                                                 -43.2        4.1   1
+SM00316                                                 -15.8        4.2   1
+SM00604                                                 -57.3        4.6   1
+SM00239                                                 -13.7        4.6   1
+SM00125                                                 -54.0        5.2   1
+SM00589                                                 -26.3        5.4   1
+SM00722                                                 -16.9        5.7   1
+SM00686                                                 -59.2        7.5   1
+SM00512                                                 -64.4        7.7   1
+SM00725                                                 -55.9        9.6   1
+SM00764                                                -186.0         10   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+SM00686           1/1      11   107 ..     1   117 []   -59.2      7.5
+SM00125           1/1      51   200 ..     1   149 []   -54.0      5.2
+SM00148           1/1      93   183 ..     1   182 []   -99.6      2.1
+SM00089           1/1     111   190 ..     1    91 []   -20.0      3.9
+SM00239           1/1     153   258 ..     1    92 []   -13.7      4.6
+SM00287           1/1     241   292 ..     1    69 []   -12.1      2.2
+SM00725           1/1     250   360 ..     1   133 []   -55.9      9.6
+SM00764           1/1     265   343 ..     1   188 []  -186.0       10
+SM00739           1/1     289   318 ..     1    28 []     1.9     0.72
+SM00545           1/1     301   337 ..     1    45 []   -25.3      3.4
+SM00316           1/1     308   387 ..     1    72 []   -15.8      4.2
+SM00722           1/1     316   483 ..     1   218 []   -16.9      5.7
+SM00604           1/1     325   437 ..     1   172 []   -57.3      4.6
+SM00670           1/1     339   461 ..     1   146 []   -25.9        3
+SM00512           1/1     355   445 ..     1   126 []   -64.4      7.7
+SM00439           1/1     443   544 ..     1   163 []   -43.2      4.1
+SM00589           1/1     482   534 ..     1    56 []   -26.3      5.4
+//
+
+Query sequence: UPI0000000020
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00569                                                   5.8       0.05   1
+SM00451                                                  -2.6       0.15   1
+SM00184                                                 -12.4        1.2   1
+SM00741                                                 -29.8        1.8   1
+SM00227                                                  -5.0        1.8   1
+SM00229                                                 -45.3        2.1   1
+SM00668                                                 -10.5        2.5   1
+SM00314                                                 -24.5        2.9   1
+SM00537                                                 -43.4          3   1
+SM00179                                                 -23.7          3   1
+SM00132                                                 -32.1        3.5   1
+SM00399                                                 -63.3        3.6   1
+SM00386                                                  -1.1        3.7   1
+SM00249                                                 -20.4        3.9   1
+SM00033                                                 -29.5        4.2   1
+SM00061                                                 -32.2        4.5   1
+SM00424                                                 -32.0        4.9   1
+SM00068                                                 -79.9          5   1
+SM00233                                                 -12.4        5.1   1
+SM00301                                                 -31.7        5.3   1
+SM00324                                                 -89.1        5.8   1
+SM00222                                                -110.6        6.3   1
+SM00453                                                 -34.9        6.4   1
+SM00259                                                 -11.6        8.5   1
+SM00355                                                 -10.2        9.3   1
+SM00547                                                 -17.0        9.3   1
+SM00740                                                 -21.5        9.3   1
+SM00666                                                 -30.6        9.5   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00179      1/1       2    27 ..     1    34 []   -23.7        3
+SM00301      1/1       2    55 ..     1    58 []   -31.7      5.3
+SM00547      1/1       2    29 ..     1    25 []   -17.0      9.3
+SM00399      1/1       3    39 ..     1    72 []   -63.3      3.6
+SM00259      1/1       3    28 ..     1    26 []   -11.6      8.5
+SM00068      1/1       5    64 ..     1   109 []   -79.9        5
+SM00249      1/1       5    64 ..     1    39 []   -20.4      3.9
+SM00132      1/1       5    46 ..     1    52 []   -32.1      3.5
+SM00184      1/1       6    63 ..     1    23 []   -12.4      1.2
+SM00033      1/1      18   140 ..     1   100 []   -29.5      4.2
+SM00451      1/1      18    57 ..     1    37 []    -2.6     0.15
+SM00741      1/1      21    97 ..     1    84 []   -29.8      1.8
+SM00355      1/1      21    50 ..     1    23 []   -10.2      9.3
+SM00233      1/1      24   144 ..     1    82 []   -12.4      5.1
+SM00061      1/1      31   139 ..     1   123 []   -32.2      4.5
+SM00222      1/1      37   203 ..     1   226 []  -110.6      6.3
+SM00666      1/1      43   127 ..     1    95 []   -30.6      9.5
+SM00569      1/1      44   111 ..     1    62 []     5.8     0.05
+SM00740      1/1      45   111 ..     1    67 []   -21.5      9.3
+SM00453      1/1      46   100 ..     1    72 []   -34.9      6.4
+SM00386      1/1      46    77 ..     1    34 []    -1.1      3.7
+SM00324      1/1      49   177 ..     1   193 []   -89.1      5.8
+SM00314      1/1      61   146 ..     1   102 []   -24.5      2.9
+SM00229      1/1      62   182 ..     1   172 []   -45.3      2.1
+SM00227      1/1      81   111 ..     1    31 []    -5.0      1.8
+SM00537      1/1      83   153 ..     1    96 []   -43.4        3
+SM00668      1/1      89   147 ..     1    60 []   -10.5      2.5
+SM00424      1/1     117   214 ..     1   111 []   -32.0      4.9
+//
+
+Query sequence: UPI0000000021
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00717                                                 -14.1        5.8   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00717     1/1      32    79 ..     1    53 []   -14.1      5.8
+//
+
+Query sequence: UPI0000000022
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00530                                                  -8.3        1.4   1
+SM00657                                                 -55.0        2.6   1
+SM00204                                                 -72.6        3.2   1
+SM00436                                                 -61.5        3.5   1
+SM00275                                                -300.4        3.6   1
+SM00555                                                  -4.9        3.8   1
+SM00150                                                 -27.2        5.1   1
+SM00784                                                 -66.3        5.3   1
+SM00516                                                 -58.5        7.4   1
+SM00459                                                 -23.1        7.6   1
+SM00393                                                 -29.6        8.2   1
+SM00429                                                 -23.8        8.3   1
+SM00283                                                -186.1        9.6   1
+SM00443                                                 -23.6        9.6   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00429      1/1      11   117 ..     1   111 []   -23.8      8.3
+SM00204      1/1      12    56 ..     1   102 []   -72.6      3.2
+SM00459      1/1      45    76 ..     1    55 []   -23.1      7.6
+SM00275      1/1      54   263 ..     1   400 []  -300.4      3.6
+SM00784      1/1      93   169 ..     1   131 []   -66.3      5.3
+SM00657      1/1      95   192 ..     1   136 []   -55.0      2.6
+SM00436      1/1      96   160 ..     1    92 []   -61.5      3.5
+SM00530      1/1     102   159 ..     1    56 []    -8.3      1.4
+SM00150      1/1     112   242 ..     1   104 []   -27.2      5.1
+SM00283      1/1     113   316 ..     1   275 []  -186.1      9.6
+SM00516      1/1     136   287 ..     1   184 []   -58.5      7.4
+SM00393      1/1     136   196 ..     1    83 []   -29.6      8.2
+SM00443      1/1     248   287 ..     1    48 []   -23.6      9.6
+SM00555      1/1     254   284 ..     1    31 []    -4.9      3.8
+//
+
+Query sequence: UPI0000000023
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000024
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00455                                                 -17.5       0.76   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00455    1/1      22    84 ..     1    76 []   -17.5     0.76
+//
+
+Query sequence: UPI0000000025
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00132                                                 -25.5        0.7   1
+SM00064                                                 -40.0        2.2   1
+SM00184                                                 -16.9        3.9   1
+SM00179                                                 -27.5        8.9   1
+SM00130                                                 -62.8        9.1   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00064    1/1      16    71 ..     1    81 []   -40.0      2.2
+SM00179    1/1      24    35 ..     1    34 []   -27.5      8.9
+SM00130    1/1      26    67 ..     1    90 []   -62.8      9.1
+SM00132    1/1      30    65 ..     1    52 []   -25.5      0.7
+SM00184    1/1      31    65 ..     1    23 []   -16.9      3.9
+//
+
+Query sequence: UPI0000000026
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00155                                                  -8.2        8.5   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00155    1/1      35    63 ..     1    30 []    -8.2      8.5
+//
+
+Query sequence: UPI0000000027
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00605                                                 -29.7        2.4   1
+SM00739                                                  -3.9        3.6   1
+SM00127                                                 -39.8        4.3   1
+SM00515                                                 -43.8        5.1   1
+SM00427                                                 -55.3        5.3   1
+SM00160                                                 -79.8          6   1
+SM00583                                                 -67.8        6.3   1
+SM00220                                                -179.3        6.9   1
+SM00648                                                 -24.7        7.7   1
+SM00313                                                 -93.1        8.8   1
+SM00437                                                -175.9        9.2   1
+SM00448                                                 -55.2        9.5   1
+SM00430                                                 -49.0        9.8   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00127     1/1      10   140 ..     1   146 []   -39.8      4.3
+SM00220     1/1      47   258 ..     1   231 []  -179.3      6.9
+SM00605     1/1      61   131 ..     1   159 []   -29.7      2.4
+SM00427     1/1      70   152 ..     1    97 []   -55.3      5.3
+SM00437     1/1      71   380 ..     1   309 []  -175.9      9.2
+SM00430     1/1     110   285 ..     1   158 []   -49.0      9.8
+SM00160     1/1     138   237 ..     1   143 []   -79.8        6
+SM00313     1/1     156   304 ..     1   226 []   -93.1      8.8
+SM00515     1/1     201   276 ..     1    92 []   -43.8      5.1
+SM00739     1/1     211   238 ..     1    28 []    -3.9      3.6
+SM00583     1/1     242   335 ..     1   118 []   -67.8      6.3
+SM00448     1/1     244   359 ..     1   150 []   -55.2      9.5
+SM00648     1/1     278   322 ..     1    54 []   -24.7      7.7
+//
+
+Query sequence: UPI0000000028
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00131                                                 -44.8        8.3   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00131    1/1      87   120 ..     1    56 []   -44.8      8.3
+//
+
+Query sequence: UPI0000000029
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00441                                                 -13.9        4.2   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00441    1/1       2    64 ..     1    64 []   -13.9      4.2
+//
+
+Query sequence: UPI000000002A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00032                                                 -17.0        3.4   1
+SM00675                                                -114.3        5.8   1
+SM00725                                                 -55.0        8.1   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00675    1/1       1   123 [.     1   165 []  -114.3      5.8
+SM00725    1/1       8   119 ..     1   133 []   -55.0      8.1
+SM00032    1/1     113   170 ..     1    79 []   -17.0      3.4
+//
+
+Query sequence: UPI000000002B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00382                                                  -5.1       0.15   1
+SM00544                                                 -31.0       0.37   1
+SM00072                                                 -75.2        0.4   1
+SM00276                                                 -67.1        4.4   1
+SM00801                                                 -22.6        8.5   1
+SM00587                                                 -78.0        9.4   1
+SM00465                                                 -21.0        9.4   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00072      1/1       3   191 ..     1   203 []   -75.2      0.4
+SM00382      1/1       3   149 ..     1    92 []    -5.1     0.15
+SM00544      1/1      16   109 ..     1   117 []   -31.0     0.37
+SM00276      1/1      73   195 ..     1   138 []   -67.1      4.4
+SM00587      1/1      78   194 ..     1   203 []   -78.0      9.4
+SM00465      1/1      84   191 ..     1   102 []   -21.0      9.4
+SM00801      1/1     139   195 ..     1    84 []   -22.6      8.5
+//
+
+Query sequence: UPI000000002C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00360                                                 -14.0       0.42   1
+SM00033                                                 -28.1        3.2   1
+SM00794                                                 -28.1        4.9   1
+SM00632                                                 -49.7        8.2   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00360    1/1      25    85 ..     1   121 []   -14.0     0.42
+SM00033    1/1      60   167 ..     1   100 []   -28.1      3.2
+SM00632    1/1      65   149 ..     1    96 []   -49.7      8.2
+SM00794    1/1     138   173 .]     1    45 []   -28.1      4.9
+//
+
+Query sequence: UPI000000002D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000002E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00340                                                  -1.3       0.38   1
+SM00397                                                 -14.4       0.87   1
+SM00338                                                 -28.0        3.2   1
+SM00742                                                 -26.5        4.3   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00338    1/1      23    67 ..     1    65 []   -28.0      3.2
+SM00397    1/1      36   100 ..     1    68 []   -14.4     0.87
+SM00742    1/1      49   103 ..     1    71 []   -26.5      4.3
+SM00340    1/1      57   102 ..     1    44 []    -1.3     0.38
+//
+
+Query sequence: UPI000000002F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00121                                                 133.2    5.7e-38   1
+SM00004                                                 -23.6        1.8   1
+SM00201                                                 -25.5        3.6   1
+SM00209                                                 -20.7        4.9   1
+SM00396                                                 -41.8        5.2   1
+SM00639                                                 -35.5        7.2   1
+SM00438                                                 -11.2        9.9   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00639      1/1      22    96 ..     1    93 []   -35.5      7.2
+SM00209      1/1      23    60 ..     1    66 []   -20.7      4.9
+SM00396      1/1      26    86 ..     1    79 []   -41.8      5.2
+SM00121      1/1      38   117 ..     1    95 []   133.2  5.7e-38
+SM00004      1/1      44    71 ..     1    42 []   -23.6      1.8
+SM00201      1/1      47    93 ..     1    53 []   -25.5      3.6
+SM00438      1/1      68    91 ..     1    21 []   -11.2      9.9
+//
+
+Query sequence: UPI0000000030
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+SM00327                                                 170.0    4.8e-49   2
+SM00295                                                 -73.7        1.5   1
+SM00322                                                 -10.5        2.2   1
+SM00330                                                -249.8          3   1
+SM00164                                                -101.5        3.4   1
+SM00464                                                 -87.2        3.6   1
+SM00332                                                 -97.0        3.8   1
+SM00813                                                 -94.3        4.1   1
+SM00724                                                -100.9        4.2   1
+SM00041                                                 -43.4        5.4   1
+SM00430                                                 -45.8        5.8   1
+SM00194                                                -165.1          6   1
+SM00745                                                 -27.6        6.9   1
+SM00652                                                 -50.7        7.1   1
+SM00050                                                 -77.4        7.2   1
+SM00434                                                -364.8        7.8   1
+SM00358                                                 -28.0        8.3   1
+SM00315                                                 -52.3        8.4   1
+SM00715                                                 -56.3        9.6   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+SM00164           1/1       1   666 [.     1   310 []  -101.5      3.4
+SM00327           1/2       1   155 [.     1   193 []    54.4    3e-14
+SM00813           1/1      18   609 ..     1   226 []   -94.3      4.1
+SM00434           1/1      24   668 ..     1   516 []  -364.8      7.8
+SM00358           1/1      43   112 ..     1    68 []   -28.0      8.3
+SM00315           1/1      43   562 ..     1   121 []   -52.3      8.4
+SM00332           1/1      57   700 ..     1   338 []   -97.0      3.8
+SM00194           1/1      62   643 ..     1   308 []  -165.1        6
+SM00295           1/1      74   650 ..     1   232 []   -73.7      1.5
+SM00724           1/1      76   663 ..     1   230 []  -100.9      4.2
+SM00464           1/1      96   653 ..     1   241 []   -87.2      3.6
+SM00330           1/1      98   640 ..     1   438 []  -249.8        3
+SM00430           1/1     149   619 ..     1   158 []   -45.8      5.8
+SM00041           1/1     158   557 ..     1    94 []   -43.4      5.4
+SM00050           1/1     498   542 ..     1    81 []   -77.4      7.2
+SM00715           1/1     537   618 ..     1    92 []   -56.3      9.6
+SM00327           2/2     537   718 ..     1   193 []   115.6  1.2e-32
+SM00322           1/1     549   610 ..     1    63 []   -10.5      2.2
+SM00745           1/1     587   661 ..     1    81 []   -27.6      6.9
+SM00652           1/1     643   714 ..     1    92 []   -50.7      7.1
+//
+
+Query sequence: UPI0000000031
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000032
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000033
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000034
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000035
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00343                                                  -7.0        1.9   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00343      1/1      11    24 ..     1    17 []    -7.0      1.9
+//
+
+Query sequence: UPI0000000036
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00530                                                  69.4    9.5e-19   1
+SM00561                                                 -51.2        1.7   1
+SM00352                                                 -34.3        2.4   1
+SM00135                                                  -8.1          3   1
+SM00353                                                 -16.8        4.1   1
+SM00419                                                 -19.7        4.5   1
+SM00008                                                 -36.4        5.2   1
+SM00298                                                 -16.4        5.7   1
+SM00211                                                 -26.0        6.5   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00352      1/1       1    68 [.     1    78 []   -34.3      2.4
+SM00298      1/1       4    59 ..     1    63 []   -16.4      5.7
+SM00353      1/1       5    75 ..     1    61 []   -16.8      4.1
+SM00530      1/1       9    64 ..     1    56 []    69.4  9.5e-19
+SM00419      1/1      11    53 ..     1    50 []   -19.7      4.5
+SM00008      1/1      55   117 ..     1    89 []   -36.4      5.2
+SM00561      1/1      58   136 ..     1   121 []   -51.2      1.7
+SM00211      1/1     116   157 ..     1    58 []   -26.0      6.5
+SM00135      1/1     126   170 ..     1    51 []    -8.1        3
+//
+
+Query sequence: UPI0000000037
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00530                                                   8.1      0.026   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00530      1/1       2    67 ..     1    56 []     8.1    0.026
+//
+
+Query sequence: UPI0000000038
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000039
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+SM00752                                                -139.3        1.5   1
+SM00464                                                 -82.5        1.6   1
+SM00793                                                -109.0        1.8   1
+SM00135                                                  -7.7        2.7   1
+SM00730                                                -155.6        4.7   1
+SM00665                                                 -85.4        5.2   1
+SM00724                                                -106.4        7.9   1
+SM00014                                                 -59.8        9.5   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+SM00665         1/1       4   112 ..     1   142 []   -85.4      5.2
+SM00014         1/1       5   110 ..     1   161 []   -59.8      9.5
+SM00464         1/1       5   192 ..     1   241 []   -82.5      1.6
+SM00730         1/1       7   199 ..     1   348 []  -155.6      4.7
+SM00135         1/1       8    45 ..     1    51 []    -7.7      2.7
+SM00752         1/1      20   209 ..     1   317 []  -139.3      1.5
+SM00724         1/1      46   212 ..     1   230 []  -106.4      7.9
+SM00793         1/1      77   201 ..     1   194 []  -109.0      1.8
+//
+
+Query sequence: UPI000000003A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00417                                                 113.2      6e-32   1
+SM00803                                                  17.0    1.8e-05   1
+SM00428                                                 -48.1        2.3   1
+SM00576                                                 -22.8        2.8   1
+SM00526                                                 -36.9        9.2   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00428    1/1      14    98 ..     1   105 []   -48.1      2.3
+SM00417    1/1      16    90 ..     1    62 []   113.2    6e-32
+SM00526    1/1      16    82 ..     1    70 []   -36.9      9.2
+SM00803    1/1      28    93 ..     1    68 []    17.0  1.8e-05
+SM00576    1/1      32   101 ..     1    83 []   -22.8      2.8
+//
+
+Query sequence: UPI000000003D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00285                                                  -8.4        1.9   1
+SM00209                                                 -22.9        8.8   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00209    1/1       1    35 [.     1    66 []   -22.9      8.8
+SM00285    1/1      17    52 ..     1    38 []    -8.4      1.9
+//
+
+Query sequence: UPI000000003E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000003F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000040
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+SM00793                                                -117.7        5.2   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+SM00793         1/1      13   121 ..     1   194 []  -117.7      5.2
+//
+
+Query sequence: UPI0000000041
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+SM00392                                                 131.7    1.7e-37   1
+SM00782                                                 -30.1        4.5   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+SM00392          1/1       1   110 []     1   171 []   131.7  1.7e-37
+SM00782          1/1       9    35 ..     1    47 []   -30.1      4.5
+//
+
+Query sequence: UPI0000000042
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00741                                                  65.2    1.8e-17   1
+SM00651                                                 -27.1        2.8   1
+SM00025                                                  -5.5        5.1   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00651    1/1       2    65 ..     1    66 []   -27.1      2.8
+SM00741    1/1      14    88 .]     1    84 []    65.2  1.8e-17
+SM00025    1/1      55    86 ..     1    39 []    -5.5      5.1
+//
+
+Query sequence: UPI0000000043
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000044
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000045
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000046
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000047
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000048
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00353                                                 -19.9        9.3   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00353    1/1       4    51 ..     1    61 []   -19.9      9.3
+//
+
+Query sequence: UPI0000000049
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI000000004A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model       Description                                 Score    E-value  N 
+--------    -----------                                 -----    ------- ---
+SM00406                                                 -26.7        2.8   1
+SM00642                                                -190.4        3.2   1
+SM00757                                                 -26.9        7.2   1
+SM00054                                                 -11.4        8.4   1
+
+Parsed for domains:
+Model       Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------    ------- ----- -----    ----- -----      -----  -------
+SM00642       1/1      26   283 ..     1   547 []  -190.4      3.2
+SM00406       1/1      33    92 ..     1    76 []   -26.7      2.8
+SM00757       1/1     100   194 ..     1   119 []   -26.9      7.2
+SM00054       1/1     281   309 ..     1    29 []   -11.4      8.4
+//
+
+Query sequence: UPI000000004B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00461                                                 -36.1          1   1
+SM00674                                                 -22.7        2.7   1
+SM00712                                                 -34.3        5.2   1
+SM00069                                                 -37.6        7.3   1
+SM00199                                                 -32.6        7.8   1
+SM00444                                                 -26.2        8.7   1
+SM00746                                                 -13.4        9.4   1
+SM00455                                                 -28.3        9.4   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00461    1/1      54   152 ..     1   124 []   -36.1        1
+SM00199    1/1      54   100 ..     1    65 []   -32.6      7.8
+SM00455    1/1      71   129 ..     1    76 []   -28.3      9.4
+SM00069    1/1      97   158 ..     1    66 []   -37.6      7.3
+SM00674    1/1      99   164 ..     1    72 []   -22.7      2.7
+SM00746    1/1     102   144 ..     1    41 []   -13.4      9.4
+SM00712    1/1     103   152 ..     1    69 []   -34.3      5.2
+SM00444    1/1     126   179 .]     1    59 []   -26.2      8.7
+//
+
+Query sequence: UPI000000004C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+SM00636                                                 463.2   2.6e-137   1
+SM00283                                                -100.0     0.0053   1
+SM00453                                                 -24.2       0.58   1
+SM00501                                                 -43.6        2.2   1
+SM00023                                                 -19.1        2.8   1
+SM00575                                                 -14.7        3.3   1
+SM00806                                                -345.7        3.5   1
+SM00229                                                 -49.2        4.2   1
+SM00640                                                -254.0        6.3   1
+SM00817                                                -233.5        6.9   1
+SM00742                                                 -28.8        7.1   1
+SM00103                                                -117.2          8   1
+SM00070                                                  -9.7        8.3   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+SM00636          1/1      22   360 ..     1   521 []   463.2 2.6e-137
+SM00229          1/1      36   144 ..     1   172 []   -49.2      4.2
+SM00575          1/1      45    64 ..     1    28 []   -14.7      3.3
+SM00070          1/1     104   125 ..     1    27 []    -9.7      8.3
+SM00501          1/1     115   202 ..     1    95 []   -43.6      2.2
+SM00640          1/1     148   721 .]     1   583 []  -254.0      6.3
+SM00742          1/1     158   211 ..     1    71 []   -28.8      7.1
+SM00817          1/1     170   488 ..     1   422 []  -233.5      6.9
+SM00806          1/1     439   721 .]     1   476 []  -345.7      3.5
+SM00103          1/1     461   663 ..     1   195 []  -117.2        8
+SM00023          1/1     464   557 ..     1    95 []   -19.1      2.8
+SM00283          1/1     464   667 ..     1   275 []  -100.0   0.0053
+SM00453          1/1     543   600 ..     1    72 []   -24.2     0.58
+//
+
+Query sequence: UPI000000004D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00212                                                 256.5    4.6e-75   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00212    1/1       4   147 .]     1   144 []   256.5  4.6e-75
+//
+
+Query sequence: UPI000000004E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00529                                                 -47.7       0.62   1
+SM00148                                                 -93.9       0.66   1
+SM00420                                                 -27.9        2.5   1
+SM00465                                                 -16.1        3.1   1
+SM00278                                                   1.7        3.3   1
+SM00709                                                -115.8        3.7   1
+SM00497                                                  -8.3        3.8   1
+SM00421                                                 -40.1        3.9   1
+SM00129                                                -266.4        7.6   1
+SM00651                                                 -31.3        7.7   1
+SM00322                                                 -15.3        8.1   1
+SM00542                                                 -43.0        9.4   1
+SM00712                                                 -36.9        9.9   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00497     1/1       1    51 [.     1    53 []    -8.3      3.8
+SM00709     1/1       1    95 [.     1   166 []  -115.8      3.7
+SM00421     1/1       4    51 ..     1    57 []   -40.1      3.9
+SM00420     1/1       7    57 ..     1    53 []   -27.9      2.5
+SM00542     1/1       8    98 ..     1    97 []   -43.0      9.4
+SM00529     1/1      17   113 ..     1   101 []   -47.7     0.62
+SM00712     1/1      37    86 ..     1    69 []   -36.9      9.9
+SM00129     1/1      76   287 ..     1   404 []  -266.4      7.6
+SM00148     1/1      83   185 ..     1   182 []   -93.9     0.66
+SM00465     1/1     103   179 ..     1   102 []   -16.1      3.1
+SM00278     1/1     117   136 ..     1    20 []     1.7      3.3
+SM00651     1/1     180   240 ..     1    66 []   -31.3      7.7
+SM00322     1/1     205   280 ..     1    63 []   -15.3      8.1
+//
+
+Query sequence: UPI000000004F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00088                                                 -15.6       0.45   1
+SM00292                                                  -0.5       0.48   1
+SM00634                                                 -33.9        1.4   1
+SM00557                                                 -41.5        2.6   1
+SM00592                                                 -12.3        2.9   1
+SM00382                                                 -19.6        4.3   1
+SM00487                                                 -59.1        4.5   1
+SM00518                                                -163.7        4.8   1
+SM00682                                                -131.1        4.9   1
+SM00189                                                -108.6        6.3   1
+SM00749                                                  -9.6        6.6   1
+SM00448                                                 -53.5        7.1   1
+SM00316                                                 -18.6        7.9   1
+SM00248                                                   0.2        9.1   1
+SM00573                                                 -32.6         10   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00292      1/1       4   111 ..     1    93 []    -0.5     0.48
+SM00248      1/1       8    37 ..     1    30 []     0.2      9.1
+SM00557      1/1       8    90 ..     1   119 []   -41.5      2.6
+SM00518      1/1      10   235 ..     1   299 []  -163.7      4.8
+SM00448      1/1      10   142 ..     1   150 []   -53.5      7.1
+SM00634      1/1      64   152 ..     1    97 []   -33.9      1.4
+SM00487      1/1      75   253 ..     1   219 []   -59.1      4.5
+SM00088      1/1      82   169 ..     1    92 []   -15.6     0.45
+SM00682      1/1      91   268 ..     1   258 []  -131.1      4.9
+SM00189      1/1      93   245 ..     1   169 []  -108.6      6.3
+SM00749      1/1      95   160 ..     1    64 []    -9.6      6.6
+SM00592      1/1     108   154 ..     1    50 []   -12.3      2.9
+SM00382      1/1     110   246 ..     1    92 []   -19.6      4.3
+SM00316      1/1     120   187 ..     1    72 []   -18.6      7.9
+SM00573      1/1     151   221 ..     1    73 []   -32.6       10
+//
+
+Query sequence: UPI0000000050
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00104                                                 -14.8        6.1   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00104    1/1      50    78 ..     1    37 []   -14.8      6.1
+//
+
+Query sequence: UPI0000000051
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00078                                                 -21.4        1.2   1
+SM00637                                                 -54.5        3.2   1
+SM00384                                                  -4.1        5.7   1
+SM00690                                                 -71.0        8.9   1
+SM00511                                                 -16.8        9.4   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00690     1/1      78   138 ..     1   106 []   -71.0      8.9
+SM00078     1/1     103   231 ..     1    71 []   -21.4      1.2
+SM00384     1/1     137   149 ..     1    13 []    -4.1      5.7
+SM00637     1/1     152   218 ..     1   103 []   -54.5      3.2
+SM00511     1/1     209   239 ..     1    47 []   -16.8      9.4
+//
+
+Query sequence: UPI0000000052
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00308                                                 -42.6       0.53   1
+SM00287                                                 -10.9        1.6   1
+SM00426                                                 -23.8        3.4   1
+SM00137                                                 -89.0          4   1
+SM00634                                                 -40.2        4.7   1
+SM00572                                                -157.4        6.7   1
+SM00666                                                 -30.0        8.5   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00426     1/1       5    62 ..     1    72 []   -23.8      3.4
+SM00137     1/1      11   137 ..     1   192 []   -89.0        4
+SM00634     1/1      43   141 ..     1    97 []   -40.2      4.7
+SM00572     1/1      66   282 ..     1   263 []  -157.4      6.7
+SM00308     1/1     109   215 ..     1   157 []   -42.6     0.53
+SM00287     1/1     118   192 ..     1    69 []   -10.9      1.6
+SM00666     1/1     138   223 ..     1    95 []   -30.0      8.5
+//
+
+Query sequence: UPI0000000053
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00668                                                  -9.5        1.9   1
+SM00546                                                 -13.5        6.1   1
+SM00652                                                 -50.6          7   1
+SM00572                                                -159.1        8.6   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00546    1/1      16    53 ..     1    43 []   -13.5      6.1
+SM00572    1/1      40   225 ..     1   263 []  -159.1      8.6
+SM00668    1/1      66   118 ..     1    60 []    -9.5      1.9
+SM00652    1/1      79   158 ..     1    92 []   -50.6        7
+//
+
+Query sequence: UPI0000000054
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model        Description                                Score    E-value  N 
+--------     -----------                                -----    ------- ---
+SM00806                                                -333.1       0.74   1
+SM00400                                                 -37.0        3.2   1
+SM00166                                                 -31.8        3.3   1
+SM00550                                                 -29.9        3.3   1
+SM00748                                                 -58.1        3.6   1
+SM00796                                                -151.5        3.7   1
+SM00464                                                 -88.5        4.5   1
+SM00607                                                 -82.1        4.7   1
+SM00427                                                 -54.6        4.7   1
+SM00717                                                 -13.5          5   1
+SM00033                                                 -30.8        5.6   1
+SM00314                                                 -27.8        6.2   1
+SM00479                                                 -73.3        6.5   1
+SM00560                                                 -58.1        6.7   1
+SM00595                                                 -37.3        7.3   1
+SM00098                                                -331.0        7.7   1
+SM00417                                                 -10.2        8.2   1
+SM00044                                                -119.9        8.6   1
+SM00046                                                 -56.8        9.1   1
+SM00745                                                 -29.1        9.8   1
+SM00532                                                -375.3        9.9   1
+
+Parsed for domains:
+Model        Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------     ------- ----- -----    ----- -----      -----  -------
+SM00550        1/1      73   148 ..     1    72 []   -29.9      3.3
+SM00417        1/1      93   155 ..     1    62 []   -10.2      8.2
+SM00166        1/1     116   193 ..     1    97 []   -31.8      3.3
+SM00044        1/1     141   336 ..     1   231 []  -119.9      8.6
+SM00098        1/1     152   455 ..     1   541 []  -331.0      7.7
+SM00560        1/1     169   295 ..     1   197 []   -58.1      6.7
+SM00796        1/1     200   382 ..     1   225 []  -151.5      3.7
+SM00427        1/1     224   307 ..     1    97 []   -54.6      4.7
+SM00748        1/1     273   359 ..     1   123 []   -58.1      3.6
+SM00400        1/1     331   357 ..     1    55 []   -37.0      3.2
+SM00314        1/1     376   467 ..     1   102 []   -27.8      6.2
+SM00464        1/1     450   589 ..     1   241 []   -88.5      4.5
+SM00046        1/1     539   679 ..     1   157 []   -56.8      9.1
+SM00806        1/1     583   890 ..     1   476 []  -333.1     0.74
+SM00479        1/1     591   758 ..     1   196 []   -73.3      6.5
+SM00033        1/1     634   751 ..     1   100 []   -30.8      5.6
+SM00607        1/1     635   759 ..     1   155 []   -82.1      4.7
+SM00717        1/1     666   804 ..     1    53 []   -13.5        5
+SM00532        1/1     670   891 .]     1   459 []  -375.3      9.9
+SM00595        1/1     744   831 ..     1    98 []   -37.3      7.3
+SM00745        1/1     755   813 ..     1    81 []   -29.1      9.8
+//
+
+Query sequence: UPI0000000055
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00382                                                   8.7     0.0064   1
+SM00487                                                 -50.3        1.1   1
+SM00384                                                  -4.1        5.7   1
+SM00707                                                 -10.5        7.3   1
+SM00190                                                 -82.4        8.8   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00384      1/1      25    37 ..     1    13 []    -4.1      5.7
+SM00487      1/1      25   308 ..     1   219 []   -50.3      1.1
+SM00190      1/1      46   138 ..     1   148 []   -82.4      8.8
+SM00382      1/1      48   295 ..     1    92 []     8.7   0.0064
+SM00707      1/1     216   240 ..     1    26 []   -10.5      7.3
+//
+
+Query sequence: UPI0000000070
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+SM00786                                                -123.3        1.7   1
+SM00464                                                 -84.8        2.4   1
+SM00084                                                   0.8        3.9   1
+SM00635                                                 -19.1        4.3   1
+SM00108                                                 -51.5        4.5   1
+SM00185                                                  -6.4          7   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+SM00786           1/1       1   130 [.     1   221 []  -123.3      1.7
+SM00464           1/1       5   167 ..     1   241 []   -84.8      2.4
+SM00185           1/1      90   129 ..     1    38 []    -6.4        7
+SM00084           1/1     121   145 ..     1    25 []     0.8      3.9
+SM00108           1/1     141   234 ..     1   126 []   -51.5      4.5
+SM00635           1/1     159   231 ..     1    86 []   -19.1      4.3
+//
+
+Query sequence: UPI0000000071
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00493                                                 -29.5          5   1
+SM00634                                                 -43.0        8.1   1
+SM00527                                                 -56.4         10   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00527     1/1      85   151 ..     1   102 []   -56.4       10
+SM00634     1/1     255   360 ..     1    97 []   -43.0      8.1
+SM00493     1/1     289   375 ..     1   139 []   -29.5        5
+//
+
+Query sequence: UPI0000000072
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N 
+--------        -----------                             -----    ------- ---
+SM00448                                                 109.5    7.8e-31   1
+SM00174                                                -137.6       0.62   1
+SM00529                                                 -48.8       0.78   1
+SM00292                                                  -6.1        1.8   1
+SM00535                                                 -53.2        2.9   1
+SM00764                                                -179.9        3.2   1
+SM00530                                                 -13.0        4.5   1
+SM00732                                                 -46.9        5.6   1
+SM00749                                                  -9.4        6.2   1
+SM00739                                                  -6.8        8.2   1
+SM00144                                                 -38.9        8.3   1
+SM00166                                                 -36.0        8.9   1
+SM00421                                                 -43.8          9   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+SM00535           1/1       7   127 ..     1   140 []   -53.2      2.9
+SM00292           1/1      10    82 ..     1    93 []    -6.1      1.8
+SM00749           1/1      10    72 ..     1    64 []    -9.4      6.2
+SM00732           1/1      14    97 ..     1   117 []   -46.9      5.6
+SM00448           1/1      14   125 ..     1   150 []   109.5  7.8e-31
+SM00174           1/1      40   131 ..     1   180 []  -137.6     0.62
+SM00764           1/1      40   122 ..     1   188 []  -179.9      3.2
+SM00144           1/1      45   158 ..     1   116 []   -38.9      8.3
+SM00166           1/1      92   179 ..     1    97 []   -36.0      8.9
+SM00530           1/1     121   187 ..     1    56 []   -13.0      4.5
+SM00529           1/1     137   225 ..     1   101 []   -48.8     0.78
+SM00739           1/1     159   186 ..     1    28 []    -6.8      8.2
+SM00421           1/1     184   232 ..     1    57 []   -43.8        9
+//
+
+Query sequence: UPI0000000073
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00804                                                 -21.4       0.77   1
+SM00604                                                 -55.2        3.1   1
+SM00527                                                 -55.2        7.6   1
+SM00705                                                  -2.6        8.6   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00527     1/1       4    56 ..     1   102 []   -55.2      7.6
+SM00705     1/1      13    32 ..     1    20 []    -2.6      8.6
+SM00604     1/1      62   185 ..     1   172 []   -55.2      3.1
+SM00804     1/1      88   148 ..     1    64 []   -21.4     0.77
+//
+
+Query sequence: UPI0000000074
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00382                                                  -7.9       0.29   1
+SM00540                                                 -19.8        5.2   1
+SM00224                                                 -28.7        7.5   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00382    1/1       3   137 ..     1    92 []    -7.9     0.29
+SM00224    1/1     136   185 ..     1    65 []   -28.7      7.5
+SM00540    1/1     180   218 ..     1    44 []   -19.8      5.2
+//
+
+Query sequence: UPI0000000075
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00354                                                 -36.7       0.14   1
+SM00500                                                 -20.3        3.3   1
+SM00099                                                 -63.9        5.8   1
+SM00501                                                 -48.9          7   1
+SM00503                                                 -44.3        7.1   1
+SM00293                                                 -31.2        8.4   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00293    1/1      14    50 ..     1    84 []   -31.2      8.4
+SM00501    1/1      28   111 ..     1    95 []   -48.9        7
+SM00503    1/1      32   134 ..     1   127 []   -44.3      7.1
+SM00354    1/1      44   100 ..     1    72 []   -36.7     0.14
+SM00500    1/1      50    96 ..     1    53 []   -20.3      3.3
+SM00099    1/1      53   139 ..     1   110 []   -63.9      5.8
+//
+
+Query sequence: UPI0000000076
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//
+
+Query sequence: UPI0000000077
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00454                                                  -0.8       0.19   1
+SM00382                                                 -11.4       0.66   1
+SM00355                                                  -2.1        1.1   1
+SM00032                                                 -17.4        3.7   1
+SM00297                                                 -52.9        4.9   1
+SM00162                                                 -23.5          6   1
+SM00339                                                 -59.4          6   1
+SM00546                                                 -14.0        7.1   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00382      1/1       2   204 ..     1    92 []   -11.4     0.66
+SM00546      1/1      15    57 ..     1    43 []   -14.0      7.1
+SM00032      1/1      61   116 ..     1    79 []   -17.4      3.7
+SM00339      1/1      95   156 ..     1    99 []   -59.4        6
+SM00162      1/1     101   119 ..     1    34 []   -23.5        6
+SM00355      1/1     103   123 ..     1    23 []    -2.1      1.1
+SM00297      1/1     120   223 ..     1   118 []   -52.9      4.9
+SM00454      1/1     156   221 ..     1    67 []    -0.8     0.19
+//
+
+Query sequence: UPI0000000078
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00553                                                 -43.6       0.52   1
+SM00055                                                 -26.6        1.9   1
+SM00736                                                 -46.9        2.4   1
+SM00594                                                 -53.2        2.5   1
+SM00390                                                  -7.9        4.1   1
+SM00592                                                 -14.0        4.5   1
+SM00304                                                 -14.2        7.6   1
+SM00529                                                 -60.9        8.2   1
+SM00322                                                 -15.8        9.2   1
+SM00349                                                 -31.5        9.7   1
+SM00436                                                 -65.9        9.9   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00322     1/1      18   107 ..     1    63 []   -15.8      9.2
+SM00592     1/1      23    71 ..     1    50 []   -14.0      4.5
+SM00055     1/1      72   158 ..     1   103 []   -26.6      1.9
+SM00436     1/1      79   139 ..     1    92 []   -65.9      9.9
+SM00594     1/1      79   205 ..     1   158 []   -53.2      2.5
+SM00349     1/1      81   133 ..     1    62 []   -31.5      9.7
+SM00736     1/1     120   215 ..     1   108 []   -46.9      2.4
+SM00553     1/1     167   241 ..     1    96 []   -43.6     0.52
+SM00304     1/1     219   278 ..     1    53 []   -14.2      7.6
+SM00390     1/1     225   243 ..     1    23 []    -7.9      4.1
+SM00529     1/1     231   299 ..     1   101 []   -60.9      8.2
+//
+
+Query sequence: UPI0000000079
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00530                                                  75.9    1.1e-20   1
+SM00055                                                 -20.9        0.5   1
+SM00264                                                 -11.2       0.53   1
+SM00748                                                 -52.7        1.3   1
+SM00389                                                 -24.8        1.3   1
+SM00685                                                 -32.6        1.7   1
+SM00503                                                 -35.9          2   1
+SM00150                                                 -23.2        2.2   1
+SM00304                                                 -10.7        3.3   1
+SM00397                                                 -21.5        3.6   1
+SM00073                                                 -39.3        4.8   1
+SM00344                                                 -72.7        5.2   1
+SM00527                                                 -54.6        6.7   1
+SM00502                                                 -50.2        8.2   1
+SM00529                                                 -61.2        8.7   1
+SM00398                                                 -27.7        8.9   1
+SM00542                                                 -42.8        9.1   1
+SM00521                                                 -21.8        9.6   1
+SM00678                                                 -39.9        9.9   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00502      1/1       1   132 [.     1   132 []   -50.2      8.2
+SM00530      1/1       6    61 ..     1    56 []    75.9  1.1e-20
+SM00344      1/1       7   114 ..     1   112 []   -72.7      5.2
+SM00389      1/1      10    96 ..     1    63 []   -24.8      1.3
+SM00073      1/1      10   101 ..     1   100 []   -39.3      4.8
+SM00150      1/1      19   124 ..     1   104 []   -23.2      2.2
+SM00398      1/1      22    95 ..     1    71 []   -27.7      8.9
+SM00503      1/1      23   139 ..     1   127 []   -35.9        2
+SM00748      1/1      24   122 ..     1   123 []   -52.7      1.3
+SM00529      1/1      46   133 ..     1   101 []   -61.2      8.7
+SM00055      1/1      54   133 ..     1   103 []   -20.9      0.5
+SM00527      1/1      57   117 ..     1   102 []   -54.6      6.7
+SM00264      1/1      57   127 ..     1    91 []   -11.2     0.53
+SM00542      1/1      58   139 ..     1    97 []   -42.8      9.1
+SM00685      1/1      66   116 ..     1    59 []   -32.6      1.7
+SM00521      1/1      69   132 ..     1    62 []   -21.8      9.6
+SM00678      1/1      70   132 ..     1    84 []   -39.9      9.9
+SM00397      1/1      72   133 ..     1    68 []   -21.5      3.6
+SM00304      1/1      74   131 ..     1    53 []   -10.7      3.3
+//
+
+Query sequence: UPI000000007A
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00340                                                  -2.0       0.47   1
+SM00278                                                   3.9        1.8   1
+SM00530                                                 -14.0        5.7   1
+SM00091                                                  -7.8          7   1
+SM00176                                                 -85.5        8.4   1
+SM00344                                                 -75.5        8.6   1
+SM00045                                                -123.5        9.3   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00340      1/1      14    58 ..     1    44 []    -2.0     0.47
+SM00045      1/1      21   161 ..     1   195 []  -123.5      9.3
+SM00091      1/1      42   110 ..     1    68 []    -7.8        7
+SM00344      1/1      62   144 ..     1   112 []   -75.5      8.6
+SM00530      1/1      64   115 ..     1    56 []   -14.0      5.7
+SM00278      1/1      76    95 ..     1    20 []     3.9      1.8
+SM00176      1/1     118   284 ..     1   202 []   -85.5      8.4
+//
+
+Query sequence: UPI000000007B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00156                                                 562.6   3.1e-167   1
+SM00031                                                 -25.8        3.5   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00156    1/1      29   299 ..     1   321 []   562.6 3.1e-167
+SM00031    1/1      69   144 ..     1    83 []   -25.8      3.5
+//
+
+Query sequence: UPI000000007C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00706                                                  -0.7        1.1   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00706    1/1      19    55 ..     1    43 []    -0.7      1.1
+//
+
+Query sequence: UPI000000007D
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+SM00724                                                 -85.8       0.75   1
+SM00138                                                -170.3        1.4   1
+SM00793                                                -107.4        1.5   1
+SM00665                                                 -82.8        3.6   1
+SM00756                                                 -83.2        3.6   1
+SM00460                                                 -27.5          4   1
+SM00100                                                 -32.9        6.9   1
+SM00752                                                -154.9        7.1   1
+SM00792                                                 -64.9        7.5   1
+SM00730                                                -161.8        8.3   1
+SM00385                                                 -26.2        8.5   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+SM00793          1/1      12   217 ..     1   194 []  -107.4      1.5
+SM00730          1/1      27   249 ..     1   348 []  -161.8      8.3
+SM00752          1/1      29   258 ..     1   317 []  -154.9      7.1
+SM00665          1/1      35   126 ..     1   142 []   -82.8      3.6
+SM00385          1/1      38   125 ..     1    90 []   -26.2      8.5
+SM00792          1/1      42   149 ..     1   144 []   -64.9      7.5
+SM00138          1/1      45   243 ..     1   276 []  -170.3      1.4
+SM00724          1/1      62   304 ..     1   230 []   -85.8     0.75
+SM00756          1/1      75   211 ..     1   170 []   -83.2      3.6
+SM00100          1/1     112   220 ..     1   123 []   -32.9      6.9
+SM00460          1/1     185   259 ..     1    90 []   -27.5        4
+//
+
+Query sequence: UPI000000007E
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00021                                                 -35.8        1.4   1
+SM00545                                                 -22.9        1.8   1
+SM00583                                                 -66.5        4.7   1
+SM00758                                                 -39.6        4.9   1
+SM00464                                                 -89.6        5.4   1
+SM00592                                                 -15.4        6.3   1
+SM00151                                                 -48.3        6.5   1
+SM00316                                                 -17.8        6.6   1
+SM00581                                                 -25.7        7.9   1
+SM00275                                                -307.3        8.5   1
+SM00796                                                -157.7          9   1
+SM00493                                                 -32.1        9.4   1
+SM00382                                                 -23.1        9.5   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00796      1/1     109   241 ..     1   225 []  -157.7        9
+SM00464      1/1     116   291 ..     1   241 []   -89.6      5.4
+SM00493      1/1     116   218 ..     1   139 []   -32.1      9.4
+SM00151      1/1     121   198 ..     1    83 []   -48.3      6.5
+SM00275      1/1     121   484 ..     1   400 []  -307.3      8.5
+SM00382      1/1     122   313 ..     1    92 []   -23.1      9.5
+SM00758      1/1     180   336 ..     1   170 []   -39.6      4.9
+SM00545      1/1     192   227 ..     1    45 []   -22.9      1.8
+SM00592      1/1     267   308 ..     1    50 []   -15.4      6.3
+SM00583      1/1     278   360 ..     1   118 []   -66.5      4.7
+SM00316      1/1     294   361 ..     1    72 []   -17.8      6.6
+SM00021      1/1     329   400 ..     1    86 []   -35.8      1.4
+SM00581      1/1     355   399 ..     1    62 []   -25.7      7.9
+//
+
+Query sequence: UPI000000007F
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N 
+--------      -----------                               -----    ------- ---
+SM00791                                                 -56.3       0.25   1
+SM00191                                                  -3.3        1.1   1
+SM00500                                                 -18.0        1.7   1
+SM00045                                                -115.1        2.1   1
+SM00212                                                 -68.6        2.3   1
+SM00156                                                -197.5        3.4   1
+SM00759                                                 -34.5        3.7   1
+SM00411                                                 -48.6        4.5   1
+SM00347                                                 -46.3        4.8   1
+SM00426                                                 -25.3        5.1   1
+SM00229                                                 -52.4        7.4   1
+SM00697                                                 -35.2        8.8   1
+SM00240                                                 -15.7        9.3   1
+SM00311                                                 -38.0        9.8   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+SM00411         1/1       3    92 ..     1    97 []   -48.6      4.5
+SM00045         1/1      16   140 ..     1   195 []  -115.1      2.1
+SM00697         1/1      30   118 ..     1    96 []   -35.2      8.8
+SM00156         1/1      35   236 ..     1   321 []  -197.5      3.4
+SM00212         1/1      37   175 ..     1   144 []   -68.6      2.3
+SM00426         1/1      48   119 ..     1    72 []   -25.3      5.1
+SM00791         1/1      63   198 ..     1   156 []   -56.3     0.25
+SM00759         1/1      63   145 ..     1    95 []   -34.5      3.7
+SM00347         1/1      71   165 ..     1   101 []   -46.3      4.8
+SM00311         1/1      81   128 ..     1    78 []   -38.0      9.8
+SM00500         1/1     157   201 ..     1    53 []   -18.0      1.7
+SM00229         1/1     176   305 ..     1   172 []   -52.4      7.4
+SM00191         1/1     310   374 ..     1    56 []    -3.3      1.1
+SM00240         1/1     317   356 ..     1    49 []   -15.7      9.3
+//
+
+Query sequence: UPI0000000080
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00339                                                 221.7    1.4e-64   1
+SM00157                                                 -96.1        4.2   1
+SM00685                                                 -38.2        6.3   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00157    1/1      24   221 ..     1   221 []   -96.1      4.2
+SM00339    1/1      94   184 ..     1    99 []   221.7  1.4e-64
+SM00685    1/1     186   238 ..     1    59 []   -38.2      6.3
+//
+
+Query sequence: UPI0000000081
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+SM00774                                                 -40.6          4   1
+SM00261                                                 -17.4        4.4   1
+SM00789                                                 -14.8        4.7   1
+SM00735                                                 -10.5        5.3   1
+SM00784                                                 -66.6        5.6   1
+SM00723                                                 -88.3        6.7   1
+SM00004                                                 -28.5        7.2   1
+SM00547                                                 -16.8        8.7   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+SM00723          1/1       7   158 ..     1   205 []   -88.3      6.7
+SM00004          1/1      16    35 ..     1    42 []   -28.5      7.2
+SM00261          1/1      22    57 ..     1    48 []   -17.4      4.4
+SM00547          1/1      27    53 ..     1    25 []   -16.8      8.7
+SM00774          1/1      78   115 ..     1    64 []   -40.6        4
+SM00784          1/1     151   217 ..     1   131 []   -66.6      5.6
+SM00789          1/1     229   268 ..     1    57 []   -14.8      4.7
+SM00735          1/1     236   252 ..     1    26 []   -10.5      5.3
+//
+
+Query sequence: UPI0000000082
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00680                                                 -20.9        1.8   1
+SM00540                                                 -17.8          3   1
+SM00685                                                 -37.7        5.6   1
+SM00347                                                 -47.2        5.7   1
+SM00046                                                 -56.5        8.5   1
+SM00140                                                 -99.8        9.3   1
+SM00462                                                 -47.3        9.7   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00046      1/1      19   131 ..     1   157 []   -56.5      8.5
+SM00540      1/1      35    70 ..     1    44 []   -17.8        3
+SM00462      1/1     107   253 ..     1   156 []   -47.3      9.7
+SM00680      1/1     123   187 ..     1    62 []   -20.9      1.8
+SM00685      1/1     128   162 ..     1    59 []   -37.7      5.6
+SM00347      1/1     136   222 ..     1   101 []   -47.2      5.7
+SM00140      1/1     257   325 ..     1   131 []   -99.8      9.3
+//
+
+Query sequence: UPI0000000083
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model      Description                                  Score    E-value  N 
+--------   -----------                                  -----    ------- ---
+SM00570                                                 -29.2        2.3   1
+SM00705                                                  -0.7        4.4   1
+SM00500                                                 -23.4        7.8   1
+
+Parsed for domains:
+Model      Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------   ------- ----- -----    ----- -----      -----  -------
+SM00500      1/1      11    54 ..     1    53 []   -23.4      7.8
+SM00570      1/1      12    48 ..     1    62 []   -29.2      2.3
+SM00705      1/1      57    76 ..     1    20 []    -0.7      4.4
+//
+
+Query sequence: UPI0000000084
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00417                                                 113.7    4.2e-32   1
+SM00803                                                  15.9    2.4e-05   1
+SM00576                                                 -19.6        1.4   1
+SM00428                                                 -51.3        4.5   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00428    1/1      14    98 ..     1   105 []   -51.3      4.5
+SM00417    1/1      16    90 ..     1    62 []   113.7  4.2e-32
+SM00803    1/1      28    93 ..     1    68 []    15.9  2.4e-05
+SM00576    1/1      32   101 ..     1    83 []   -19.6      1.4
+//
+
+Query sequence: UPI0000000085
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model     Description                                   Score    E-value  N 
+--------  -----------                                   -----    ------- ---
+SM00432                                                 -39.1        7.2   1
+SM00023                                                 -23.0        8.3   1
+
+Parsed for domains:
+Model     Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------  ------- ----- -----    ----- -----      -----  -------
+SM00432     1/1       1    53 [.     1    60 []   -39.1      7.2
+SM00023     1/1       6    91 ..     1    95 []   -23.0      8.3
+//
+
+Query sequence: UPI0000000086
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model          Description                              Score    E-value  N 
+--------       -----------                              -----    ------- ---
+SM00289                                                  -8.9        1.9   1
+SM00570                                                 -28.8        2.1   1
+SM00048                                                 -16.8        6.3   1
+SM00121                                                 -53.7        6.9   1
+SM00274                                                 -11.5        8.3   1
+
+Parsed for domains:
+Model          Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------       ------- ----- -----    ----- -----      -----  -------
+SM00289          1/1       2    48 ..     1    48 []    -8.9      1.9
+SM00570          1/1      23    59 ..     1    62 []   -28.8      2.1
+SM00048          1/1      30    47 ..     1    34 []   -16.8      6.3
+SM00121          1/1      31    64 ..     1    95 []   -53.7      6.9
+SM00274          1/1      32    47 ..     1    25 []   -11.5      8.3
+//
+
+Query sequence: UPI0000000087
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+	[no hits above thresholds]
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+	[no hits above thresholds]
+//

@@ -1,0 +1,192 @@
+/*  TYPE Family , site, unintegrated */
+
+.Family {background-color: #ffffff;}
+.Active_site, .Binding_site, .Conserved_site, .PTM, .SITE { background-color: #000000;}
+.uni {background-color: #a5a5a5;}
+
+/*  TYPE domain & repeat */
+.c1 {
+    background-color: #b852d4;
+}
+.c2 {
+    background-color: #00baf0;
+}
+.c3 {
+    background-color: #ff0000;
+}
+.c4 {
+    background-color: #33cc33;
+}
+.c5 {
+    background-color: #ffde00;
+}
+.c6 {
+    background-color: #ffa99e;
+}
+.c7 {
+    background-color: #c571ff;
+}
+.c8 {
+    background-color: #ff9000;
+}
+.c9 {background-color: #c69c6d}
+
+.c10 {
+    background-color: #ededed;
+}
+.c11 {
+    background-color: #1e82d4;
+}
+.c12 {
+    background-color: #a1e42d;
+}
+.c13 {
+    background-color: #ffff00;
+}
+.c14 {
+    background-color: #cf161d;
+}
+.c15 {
+    background-color: #ff6000;
+}
+.c16 {
+    background-color: #1cbbb4;
+}
+.c17 {
+    background-color: #e354e3;
+}
+.c18 {
+    background-color: #cbcbcb;
+}
+.c19 {
+    background-color: #92acd1
+}
+.c20 {
+    background-color: #a66c32;
+}
+.c21 {
+    background-color: #0000ff;
+}
+.c22 {
+    background-color: #0ff7fa;
+}
+.c23 {
+    background-color: #ecd66d;
+}
+.c24 {
+    background-color: #ffa8fd;
+}
+.c25 {
+    background-color: #9306ff;
+}
+.c26 {
+    background-color: #998675;
+}
+.c27 {
+    background-color: #c3b8f0;
+}
+.c28 {
+    background-color: #7db7ff;
+}
+.c29 {
+    background-color: #00984a
+}
+.c30 {
+    background-color: #bedbfe;
+}
+.c31 {
+    background-color: #ffdfdf;
+}
+.c32 {
+    background-color: #cde6a8;
+}
+.c33 {
+    background-color: #fffdcc;
+}
+.c34 {
+    background-color: #e6e4a8;
+}
+.c35 {
+    background-color: #d5a8e6;
+}
+.c36 {
+    background-color: #e6c4a8;
+}
+.c37 {
+    background-color: #82ca9c;
+}
+.c38 {
+    background-color: #dfffdc;
+}
+.c39 {
+    background-color: #c3b3a1;
+}
+.c40 {
+    background-color: #e7e1ff;
+}
+.c41 {
+    background-color: #950e0e;
+}
+.c42 {
+    background-color: #005e20;
+}
+.c43 {
+    background-color: #a2a420;
+}
+.c44 {
+    background-color: #e8ffa2;
+}
+.c45 {
+    background-color: #ff00ff;
+}
+.c46 {
+    background-color: #604036;
+}
+.c47 {
+    background-color: #717171;
+}
+.c48 {
+    background-color: #6af0a6;
+}
+.c49 {
+    background-color: #5d8ca2;
+}
+.c50 {
+    background-color: #6e2e9d;
+}
+.c51 {
+    background-color: #e56251;
+}
+.c52 {
+    background-color: #a6ff46;
+}
+.c53 {
+    background-color: #bf6b66;
+}
+.c54 {
+    background-color: #6d4afe;
+}
+.c55 {
+    background-color: #a186be;
+}
+.c56 {
+    background-color: #c5209c;
+}
+.c57 {
+    background-color: #d28428;
+}
+.c58 {
+    background-color: #86a185;
+}
+
+.c59 {
+    background-color: #ffc000;
+}
+
+.c60 {
+    background-color: #90deda;
+}
+
+.c61 {
+    background-color: #ffddb2;
+}
