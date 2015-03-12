@@ -1,0 +1,358 @@
+/*from boilerplate-style.css*/
+html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+body { margin: 0; font-size: 13px; line-height: 1.538; } /* gives a line-height of 20px */
+body, button, input, select, textarea { font-family: sans-serif; color: #222; }
+/*/from boilerplate-style.css*/
+/*from grid*/
+.container_24 {
+width: 100%;
+margin-left: auto;
+margin-right: auto;
+}
+
+.grid_1, .grid_2, .grid_3, .grid_4, .grid_5, .grid_6, .grid_7, .grid_8, .grid_9, .grid_10, .grid_11, .grid_12, .grid_13, .grid_14, .grid_15, .grid_16, .grid_17, .grid_18, .grid_19, .grid_20, .grid_21, .grid_22, .grid_23, .grid_24 {
+display: inline;
+float: left;
+position: relative;
+margin-left: 1%;
+margin-right: 1%;}
+
+.grid_24 {
+width: 100%;
+margin-left: 0;
+margin-right: 0;
+}
+
+.container_24 .grid_5.alpha {
+width: 19.8333%;
+}
+.container_24 .grid_19.omega {
+width: 78.1666%;
+}
+
+.container_24 .grid_19.alpha,
+.container_24 .grid_19.omega {
+  width:78.1666%;
+}
+.alpha, .oldie .alpha {
+margin-left: 0;
+}
+.omega, .oldie .omega {
+margin-right: 0;
+}
+/*/from grid*/
+/*from ebi-visual.css*/
+* {
+	  font-weight: normal;
+	  font-style: normal;
+	  text-decoration: none;
+	  text-align: left;
+	  text-indent: 0;
+	}
+body {font-family: Verdana, sans-serif;}
+
+@font-face {
+	font-family: 'HelveticaNeueLT Pro';
+	src: url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.eot');/*SP: was '../../../fonts/helveticaneueltprolt.eot' - changed to absolute link for the time being, as if it doesn't work then it goes to default font*/
+	src: local('☺'), url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.woff') format('woff'), url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.ttf') format('truetype'), url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 9px 0;
+    clear:both;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 370%;
+    margin: 20px 0;
+    /* line-height: 125%; */
+}
+
+h1.strapline { font-size: 277% }	/* ~40px */
+
+
+h2 {
+    font-size: 277%;
+	line-height: 1.11; /* ~40px */
+}
+
+h2.strapline { font-size: 182%;	/* 24px */ }
+
+td h2 { font-size: 257%; } /*  36 / 14 * 100  */
+
+h3 {
+    font-size: 182%;
+    /* border-bottom: 1px solid #ccc; */
+}
+
+h4 {
+    font-size: 161.6%;
+    color: #000;
+}
+h5 {
+    font-size: 138.5%;
+    color: #000;
+}
+
+p, ul, ol {
+	    /* font-size: 108%; */
+	    font-size: 100%;	/* 13px equivalent */
+	    margin:0 0 20px 0;	/* margins will collapse into one another */
+	}
+
+/* give some block level items 9px padding, to set them in from the edges of divs */
+	/* Required when we're applying the 984px layout CSS */
+	h1, h2, h3, h4, h5, h6, p,
+	form,
+	table { padding: 0 9px; }
+
+ /* --- Links --- */
+ 	a,
+ 	a:link,
+ 	a:visited {
+ 		border-bottom-width: 1px;
+ 		border-bottom-style: dotted;
+ 		border-bottom-color: inherit;
+ 	}
+
+ 	a:hover,
+ 	a:focus,
+ 	a:active { border-bottom-style: solid; }
+
+
+div#content { background-color: #ffffff; }
+
+h1, h2, h3, h4, h5, h6 {
+	    color: #222222;
+	}
+h4 { color: #666666; }
+
+i, em { font-style: italic; }
+b, strong { font-weight: bold;
+}
+abbr,acronym {
+		border-bottom: 1px dashed #ccc;
+		cursor: help;
+	}
+@font-face {
+		font-family: 'EBI-Generic';
+		src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.eot'); /*was linked to ../../../fonts/EBI-Generic/fonts/EBI-Generic.eot*/
+		src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.eot?#iefix') format('embedded-opentype'),
+			url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.woff') format('woff'),
+			url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.svg#EBI-Generic') format('svg'),
+			url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
+	}
+
+.icon { text-decoration: none; font-style: normal;}
+.icon-static:before, .icon-generic:before {font-family: 'EBI-Generic'; /* font-size: 123.1%; */ font-size: 100%;  color: #bbb; 	content: attr(data-icon);	margin: 0 0.3em 0 0;}
+
+/*/from ebi-visual.css*/
+/*from ebi-global.css*/
+div#content {
+	padding-top: 9px;
+	padding-bottom: 40px;
+}
+@media screen and (min-height: 600px) {
+	div#content { min-height: 250px; }
+}
+
+@media screen and (min-height: 1000px) {
+	div#content { min-height: 450px; }
+}
+/*/from ebi-global.css*/
+/*from interpro-purple-colours.css*/
+h2 {color: #8c4dc2;}
+h3 {color: #bfbb62;}
+a:link { color: #871868;}
+a:link, a:visited { border-bottom-color: #8c4dc2; }
+a:hover,a:focus,a:active {color: #8c4dc2; border-bottom: 1px solid #8c4dc2;}
+/*/from interpro-purple-colours.css*/
+
+a.neutral, a.neutral:link {text-decoration: none; border-bottom: 0px solid  #525252; color: #222;}  /*link that has a neutral visual impact on the page - same colour as text*/
+a.neutral:hover, a.neutral:active, a.neutral:focus { text-decoration: none;border-bottom: 1px solid  #525252;}
+
+a.ext, a.ext:link {padding-left: 13px; background: url(../images/ico_ext_link.png) no-repeat 0 2px;}
+a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_on.png) no-repeat 0 2px;}
+
+/* Structures colours */
+.PDB {
+    background-color: #82a4bf;
+}
+
+.CATH {
+    background-color: #b852d4;
+}
+
+.SCOP {
+    background-color: #000;
+}
+
+.SWISS-MODEL {
+    background-color: #cf161d;
+}
+
+.MODBASE {
+    background-color: #ffac0b;
+}
+
+.Family_tab, .Protein_tab, .Domain_tab, .Site_tab, .Conserved_site_tab, .Active_site_tab, .Binding_site_tab, .Repeat_tab, .PTM_tab, .Region_tab, .sign_uni_tab {font-size: 137%; padding-left: 22px; margin: 9px 0 0 9px;}
+
+.Protein_tab {color: #1897e9; background: url(../images/ico_type_protein.png) no-repeat 0 5px;}
+
+.main-box {border: 1px solid #e4e4e4; float: left; width: 98%; /* this is a mystery to correct*/ } /*to remove when possible*/
+
+/************************************* Interactive left filter protein page************************************/
+.menu-filter {/*min-width: 110px; clear: left;*/  margin-left:9px; margin-top:9px;  display: block;  border: 1px solid #d3d3d3;  padding: 9px;  background-color: #efefef; }
+.menu-filter H1 {color:#434343; font-size:120%;font-weight:bold; margin: 0 0 9px 0; padding:0;}
+.menu-filter fieldset { padding-top:12px;}
+.menu-filter fieldset label.view_all {padding-left:19px;padding-top:5px; background: url(../images/ico_type_all.png) no-repeat 0 2px; font-weight:bold;}
+.menu-filter div { margin-bottom:10px;}
+.menu-filter div H1 {color:#2e5882; font-size:110%;font-weight:bold; background-color:#f2f6f8; border:1px solid #9eb6ce; padding: 4px 10px; margin:0; }
+.menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {box-shadow:0px 2px 2px #adadad;-moz-box-shadow:0px 2px 2px #adadad ;-khtml-box-shadow:0px 2px 2px #adadad;-webkit-box-shadow:0px 2px 2px #adadad;}
+.menu-filter div fieldset {border: 1px solid #d1d1d1;  margin:0;}
+.menu-filter .disabled {border:0px solid red;-moz-opacity: .5; opacity: 0.50; filter: alpha(opacity=50);}
+.menu-filter .disabled label {cursor:default;}
+.menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-colour div {display: block;}
+.menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
+.menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label  {border:0px green solid;padding-left:19px;padding-top:5px; }
+.menu-filter .menu-filter-type label.family {background: url(../images/ico_type_family.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-type label.domains {background:url(../images/ico_type_domain.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-type label.repeats {background:url(../images/ico_type_repeat.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-type label.site {background:url(../images/ico_type_site.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-status label.uni {background:url(../images/ico_type_uni.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-colour { font-size:80%;}
+.menu-filter .menu-filter-colour legend { font-size:110%;font-weight:bold;}
+.menu-filter .menu-filter-colour .filter-colour-head {overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;}
+.menu-filter .menu-filter-colour .filter-colour-head .filter-colour-title-l {float:left;color: #2e5882; font-size: 110%;  font-weight: bold;margin-bottom: 0px;}
+.menu-filter .menu-filter-colour .filter-colour-head .filter-colour-title-r {float:right;margin-bottom: 0px;}
+.menu-filter .menu-filter-colour fieldset {border-top: 0px solid #d1d1d1;}
+
+ /*TREE RELATIONSHIPS*/
+.rel_tree {font-size: 88%; padding:5px 0 9px 0; }/*increase space top list - make it more balanced in the page - and add margin bottom too like h2*/
+.rel_tree ul {margin: 0 0 0px 9px; padding:0;}
+.rel_tree ul li.selected {font-weight: bold;}
+.rel_tree ul li { list-style: none;margin-left: 0px; padding-left: 26px; border:0px red solid; margin-bottom:4px;/*increase slightly space between list items*/}
+.rel_tree ul li ul {margin-left: 0px; margin-top:5px;}
+.Family ul li {background: url(../images/ico_tree_family.png) no-repeat 0 0;}
+.rel_tree a:link,.rel_tree a:visited {border: none;color: #871868;/*text-decoration: none;*/}
+.rel_tree a:hover { border-bottom: 1px solid #8C4DC2;}
+
+/*************************************BEGIN protein page************************************/
+.prot_gal, .prot_sum, .prot_entries, .prot_struct_tab {padding: 0 9px; border:0px solid red;}
+
+ol.entries, ol.signatures {margin: 0; padding: 0;}
+ol.entries li, ol.signatures li {list-style: none; margin:0; padding:0; }
+
+.prot_gal { margin:20px 0;}
+.prot_entries, .prot_sum, .prot_scale {}/*fix the width of your sequence view*/
+
+.prot_gal .prot_gal_bloc  {border: 0px solid green; overflow:auto;clear:both;/* added for IE6 that doesn't recognise overflow*/}
+.prot_gal .prot_gal_bloc .prot_gal_col  {width:100px; display:block; float:left; margin-bottom: 4px; /*border: 1px solid red;*/}
+.prot_gal .prot_gal_bloc .prot_gal_desc {/*font-size:120%; color:#838383;*/ float:left; /*border: 1px solid blue;*/ }
+.prot_gal .prot_gal_source {float:right;display:block;font-size:80%;}
+.prot_gal .prot_gal_source span {color:#838383;}
+.prot_gal hr {height:1px; background-color:#cdcdcd;border: 0;margin: 0;padding: 0;}
+
+.prot_entries {margin: 9px 0;}
+.prot_entries li.entry {margin-bottom:9px;}
+.prot_entries .top-row {border: 0px solid red; overflow:auto;}
+.prot_entries .top-row .top-row-id {font-size:90%; float: left; border: 1px solid rgba(0,0,0,0.1); width:110px; padding: 1px 0 1px 6px; margin-right:12px; margin-bottom:2px; height: 24px; line-height: 24px; background-color: transparent;
+background-image: linear-gradient(top,rgba(255,255,255,.85),rgba(247,247,247,.85));
+background-image: -moz-linear-gradient(top,rgba(255,255,255,.85),rgba(247,247,247,.85));
+background-image: -o-linear-gradient(top,rgba(255,255,255,.85),rgba(247,247,247,.85));
+background-image: -webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,.85)),to(rgba(247,247,247,.85)));
+background-image: -webkit-linear-gradient(top,rgba(255,255,255,.85),rgba(247,247,247,.85));}
+.prot_entries .top-row .top-row-id:hover {border: 1px solid #c6c6c6; background-image:none;box-shadow:1px 1px 1px rgba(0, 0, 0, 0.3);-moz-box-shadow:1px 1px 1px rgba(0, 0, 0, 0.3); -khtml-box-shadow:1px 1px 1px rgba(0, 0, 0, 0.3); -webkit-box-shadow:0px 0px 3px rgba(0, 0, 0, 0.3) ;}
+.prot_entries .top-row .top-row-id:hover a:hover {text-decoration:none;}
+.prot_entries .top-row .top-row-id img {float:left;margin-right: 9px; padding-top: 5px;}
+.prot_entries .top-row .top-row-id a, .prot_entries .top-row .top-row-id a:link {text-decoration: none; border-bottom: 0px solid  #525252;color: #871868;}
+.prot_entries .top-row .top-row-id a:hover, .prot_entries .top-row .top-row-id a:active, .prot_entries .top-row .top-row-id a:focus {text-decoration: none; border-bottom: 1px solid  #8C4DC2;}
+.prot_entries .top-row .top-row-name {font-size:90%; float: left; padding: 1px 0px;border:0px blue solid;}
+
+.prot_entries .bot-row {border: 0px solid green; overflow:auto; margin-top:1px;}
+.prot_entries .bot-row .bot-row-line-top {margin: 0 164px 0 128px; border-bottom: 1px solid #d8d8d8;}
+.prot_entries .bot-row .bot-row-line-bot {margin: 0 164px 0 128px; border-top: 1px solid #d8d8d8;}
+
+.prot_entries .bot-row ol.signatures li { border: 0px solid purple; overflow:auto; clear:both;/* added for IE6 that doesn't recognise overflow*/ }
+.prot_entries .bot-row ol.signatures li .bot-row-line {margin-left:128px; margin-right:164px; height:17px; background-color: #efefef; display:block; /*border-left: 1px solid #d8d8d8; border-right: 1px solid #d8d8d8;*/}
+.prot_entries .bot-row ol.signatures li .bot-row-signame {font-size:80%; float:right; width:150px; background:url(../images/arrow_01.png) no-repeat 0px 4px; padding-left:10px; border: 0px solid pink;}
+.prot_entries .bot-row ol.signatures li .bot-row-signame span {font-size:81%;}
+.prot_entries .bot-row ol.signatures li .bot-row-line .matches {position:relative;border:0px solid pink;}
+/* Individual match */
+.prot_entries .bot-row  ol.signatures li .bot-row-line .matches .match { _font-size:30%; /*IE6 bug - doesn't read height*/border: 1px solid rgba(0, 0, 0, 0.6);
+box-shadow:1px 1px 2px rgba(0, 0, 0, 0.3);-moz-box-shadow:1px 1px 2px rgba(0, 0, 0, 0.3); -khtml-box-shadow:1px 1px 2px rgba(0, 0, 0, 0.3); -webkit-box-shadow:1px 1px 2px rgba(0, 0, 0, 0.3);
+border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-border-radius:4px;
+height:5px; top:0.4em;position:absolute; z-index: 1;  /* Show above match line */}
+.prot_entries .bot-row  ol.signatures li .bot-row-line .matches .match:hover { cursor:pointer; border: 1px solid rgba(0, 0, 0, 1);/*height:0.7em;  Enlarge slightly:
+top:0.3em; */z-index:5; box-shadow: 0 0 0.5em rgba(0, 0, 255, 1); -webkit-box-shadow: 0 0 0.5em rgba(0, 0, 255, 1); -moz-box-shadow:    0 0 0.5em rgba(0, 0, 255, 1);}
+.prot_entries .bot-row ol.signatures li .bot-row-line .matches .grade {background:url(../images/bgd_dot.gif) repeat-y; width:1px;height:17px;position: absolute; z-index: 0;}/*used for the scale*/
+
+.prot_sum {margin: 9px 0;}
+.prot_sum .top-row {border: 0px solid red; overflow:auto;clear:both;/* added for IE6 that doesn't recognise overflow*/}
+.prot_sum .top-row .top-row-id {float: left; width:260px; }
+.prot_sum .top-row .top-row-opt { float:right; border:0px blue solid; margin-right:164px; padding-top:2px;}
+/*.prot_sum .top-row .top-row-opt .opt1 {height:12px; width:12px; background:url(../images/ico_newindow.png) no-repeat;}*/
+.prot_sum .bot-row {border: 0px solid green; /*overflow:auto;*/ /*margin-top:1px;*/}
+.prot_sum .bot-row .bot-row-line-top {margin: 0 164px 0 128px; border-bottom: 1px solid #d8d8d8;}
+.prot_sum .bot-row .bot-row-line-bot {margin: 0 164px 0 128px; border-top: 1px solid #d8d8d8;}
+.prot_sum .bot-row ol.signatures li { border: 0px solid purple; overflow:auto; }
+.prot_sum .bot-row ol.signatures li .bot-row-line {margin: 0 164px 0 128px; height:17px; background-color: #efefef; display:block; /*border-left: 1px solid #d8d8d8; border-right: 1px solid #d8d8d8;*/}
+.prot_sum .bot-row ol.signatures li .bot-row-signame {font-size:80%;float:right; width:148px; background:url(../images/arrow_01.png) no-repeat 4px 4px; padding-left:16px; border: 0px solid pink;}
+.prot_sum .bot-row ol.signatures li .bot-row-line .matches {position:relative;}
+.prot_sum .bot-row ol.signatures li .bot-row-line .matches .match { _font-size:30%; /*IE6 bug - doesn't read height*/border: 1px solid rgba(0, 0, 0, 0.6);
+box-shadow:1px 1px 2px rgba(0, 0, 0, 0.3);-moz-box-shadow:1px 1px 2px rgba(0, 0, 0, 0.3); -khtml-box-shadow:1px 1px 2px rgba(0, 0, 0, 0.3); -webkit-box-shadow:1px 1px 2px rgba(0, 0, 0, 0.3);
+border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-border-radius:4px; height:5px; top:0.4em; position:absolute; z-index: 1;  /* Show above match line */ }
+.prot_sum .bot-row ol.signatures li .bot-row-line .matches .match:hover { cursor:pointer; border: 1px solid rgba(0, 0, 0, 1); /* height:0.6em; Enlarge slightly: top:0.3em;  */z-index:5; box-shadow: 0 0 0.5em rgba(0, 0, 255, 1); -webkit-box-shadow: 0 0 0.5em rgba(0, 0, 255, 1); -moz-box-shadow:    0 0 0.5em rgba(0, 0, 255, 1);}
+.prot_sum .bot-row ol.signatures li .bot-row-line .matches .grade {background:url(../images/bgd_dot.gif) repeat-y;  width:1px; height:17px; position: absolute; z-index: 0;}
+
+.prot_scale .bot-row {border: 0px solid green; /*overflow:auto;*/}
+.prot_scale .bot-row .bot-row-line-top {margin: 0 164px 0 128px; border-bottom: 1px solid #d8d8d8;}
+.prot_scale .bot-row .bot-row-line {margin: 0 164px 0 128px; height: 18px;display: block; }
+.prot_scale .bot-row .bot-row-line .scale_bar  {position: absolute; z-index: 1; /*background-color:#cecece;  width:1px;*/ height:4px;border-left:1px solid #cecece;}
+.prot_scale .bot-row .bot-row-line .scale_numb {position: absolute; z-index: 2; margin-left:-10px; border:0px solid green; color:#b8b8b8; font-size:80%;margin-top:4px;}
+
+.prot_go {font-size:85%; /*margin: 12px 0; display:block; overflow:auto;*//*-moz-column-count:2; -webkit-column-count:2; column-count:2;*/}
+/*.prot_go .go_terms {overflow:auto; display: block;border:0px black solid;}*/
+/*.prot_go .go_terms .go_terms_box {float:left; width:30%; border:0px red solid; margin:0 9px;} floating box for Go terms*/
+/*.prot_go .go_terms .go_terms_box h2 {margin:0 0 9px 0; padding:0; border: none; font-size:100%;font-weight:bold; color:#525252;}*/
+/**********************************************END protein page*************************************************************/
+
+/* Tooltip overwrite jquery.qtip.css */
+.ui-tooltip, .qtip {font-size: 13px; font-family: Verdana, Helvetica, sans-serif;  line-height: 1.2; max-width: 400px; min-width: 200px; /* solve a  popup size bug for IE7 */}
+.ui-tooltip-content .rel_tree {border:0px red solid; padding: 4px 0 ;}
+.ui-tooltip-light .ui-tooltip-titlebar {background-color: #fff; border-radius: 6px 6px 0 0;-moz-border-radius: 6px 6px 0 0;-webkit-border-radius: 6px 6px 0 0;}
+.ui-tooltip-light .ui-tooltip-titlebar, .ui-tooltip-light .ui-tooltip-content {box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);-webkit-box-shadow: 4px 2px rgba(0, 0, 0, 0.1);-moz-box-shadow: 4px 4px rgba(0, 0, 0, 0.1); border-color: #c0c0c0; color: #393939;}
+.ui-tooltip-light .ui-tooltip-content {border-radius: 0 0 6px 6px;-moz-border-radius: 0 0 6px 6px;-webkit-border-radius: 0 0 6px 6px;}
+.ui-tooltip-content {padding: 9px;}
+.ui-tooltip-content a:link, .ui-tooltip-content a:visited { border: none; color: #871868;}
+.ui-tooltip-content a:hover { border-bottom: 1px solid #8C4DC2;}
+.ui-tooltip-shadow  {webkit-box-shadow: none;-moz-box-shadow: none;	box-shadow:none;}
+
+
+/*.ui-tooltip-content ul li a.neutral, .ui-tooltip-content ul li a.neutral:link{text-decoration: none; color:#393939; *//*font-weight:bold;*//*}*/
+/*.ui-tooltip-content  ul li a.neutral:hover,  .ui-tooltip-content ul li a.neutral:active, .ui-tooltip-content ul li a.neutral:focus {text-decoration: underline;}*/
+/*.ui-tooltip-content  ul li a.neutral span {color: #0072FE;font-weight:normal;}*/
+
+/*.ui-tooltip-content ul  ul li a.neutral, .ui-tooltip-content ul   ul li a.neutral:link{font-weight:normal;}*/
+/*.ui-tooltip-content  ul   ul li a.neutral span {font-weight:normal;}*/
+
+.ui-tooltip-content ul {margin:0; padding:0; list-style:none;}
+.ui-tooltip-content ul li {list-style-type: none; padding-left: 26px;/* padding-bottom: 2px;add space to make the shadow of the tree icon appear correctly*/}
+.ui-tooltip-content ul li {background: url(../images/ico_tree_d.png) no-repeat 0 0;} /*temp fix as Domain is added randomly to list element - code needs to be checked*/
+.ui-tooltip-content ul li.Repeat {background: url(../images/ico_tree_repeat.png) no-repeat 0 0;}
+
+.ui-tooltip .popup_topl {padding-bottom:4px; font-weight:bold;font-size:88%;}
+.ui-tooltip .popup_topl .caption_puce {width:6px; height:6px; border:1px solid #393939; float:left; margin: 4px 4px 0 0;zoom:1; /* for IE7 and IE6 to visualise the span and background without content*/}
+.ui-tooltip abbr {border-bottom: 1px solid transparent; cursor: help; vertical-align: middle;}
+
+.disabled {border:0px solid red; opacity:0.3; filter:alpha(opacity=30); /* For IE8 and earlier */}
+/*effect stick menu*/
+#content {position: relative;} /*Parent container that you want the sticky item to be contained in*/
+.stickit {margin-left: 0px; position: fixed;  top: 0; width:19.7%;/*this value is just for Interproscan*/}
+.stickit-end {bottom: 40px; position: absolute; right: 0;}/*Class added to the sticky item once it has reached the end of the container*/

@@ -1,0 +1,103 @@
+# hmmsearch :: search profile HMM(s) against a sequence database
+# HMMER 3.0b2 (June 2009); http://hmmer.org/
+# Copyright (C) 2009 Howard Hughes Medical Institute.
+# Freely distributed under the GNU General Public License (GPLv3).
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# query HMM file:                  /home/ucbccye/WORK/V3_3_0/HMMS/2hxsA00.hmm
+# target sequence database:        /home/ucbccye/NODE/node_resources/databases/40_NO_STARS.fa
+# output directed to file:         2hxsA00.out
+# domain E-value threshold:     <= 1
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query:       2hxsA00  [M=178]
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence              Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------              -----------
+    2.6e-21   79.0   0.1    8.6e-10   41.5   0.0    2.2  2  HP0834                
+    1.2e-19   73.6   2.2    7.3e-09   38.5   0.1    2.5  2  NT01CJ0385            
+    ------ inclusion threshold ------
+       0.01   18.5   0.0      0.023   17.3   0.0    1.6  1  MT_0712               
+       0.01   18.5   0.0      0.023   17.3   0.0    1.6  1  NT02MT0748            
+
+Domain and alignment annotation for each sequence:
+>> HP0834  
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   41.5   0.0   1.7e-11   8.6e-10       8     171 ..      10     167 ..       3     171 .. 0.83
+   2 !   35.4   0.0   1.3e-09   6.5e-08       5     169 ..     195     362 ..     192     366 .. 0.75
+
+  Alignments for each domain:
+  == domain 1    score: 41.5 bits;  conditional E-value: 1.7e-11
+              XXXXXXXXXXXXXXXXXXXXXXXX..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.......XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX RF
+  2hxsA00   8 kivllGdsgvGKTsllkrltnnef..peeykptigvdfytktvevkdgkkvklqiwDtaG.......qerfrslrrsyyrgadgillvyditsresfenlkk 100
+               i +lG+ +vGK+sl +rl+++++  +++   t   d+ ++++ + +g   +++++Dt+G       ++++++l     + +d il+v+d  s  s e+lk 
+   HP0834  10 TIAILGQPNVGKSSLFNRLARERIaiTSDFAGTTR-DINKRKIAL-NG--HEVELLDTGGmakdallSKEIKALNLKAAQMSDLILYVVDGKSIPSDEDLKL 107
+              689******************98854666667777.888888888.66..66799*****888888888888999999999***************999986 PP
+
+              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.XXXXXXXXXXXXXXXXXXXXXXXX RF
+  2hxsA00 101 wleelrenaeeelenipillvgnKaDleeerevseeegeelakelgl.kfletSaktgenveevfeelarki 171
+              + e ++        n  ++lv nK+D  +e     +e    + ++g+ k + +S+  +++++ +++++++++
+   HP0834 108 FREVFKI-------NPNCFLVINKIDNDKE-----KERAYAFSSFGMpKSFNISVSHNRGISALIDAVLSAL 167
+              6655544.......5679********9875.....4455557899*******************99998765 PP
+
+  == domain 2    score: 35.4 bits;  conditional E-value: 1.3e-09
+              XXXXXXXXXXXXXXXXXXXXXXXXXXXXX.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.........XXXXX.XXXXXXXXXXXXXXXXXXXXXXXXX RF
+  2hxsA00   5 kevkivllGdsgvGKTsllkrltnnefpe.eykptigvdfytktvevkdgkkvklqiwDtaG.........qerfr.slrrsyyrgadgillvyditsresf 95 
+              + +++ ++G  +vGK+sll+ lt++e +  + ++   +d    t+ + ++   k+ ++DtaG          e++  + ++  +++++++llv d++ +  f
+   HP0834 195 EIIQVGIIGRVNVGKSSLLNALTKKERSLvSSVAGTTIDPIDETILI-GD--QKICFVDTAGirhrgkilgIEKYAlERTQKALEKSHIALLVLDVSAP--F 291
+              567899******************87642033333333455555555.33..67789*****77777777766665688899*************9976..9 PP
+
+              XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.X....XXXXXXXXXXXXXXXXXXXXXXX RF
+  2hxsA00  96 enlkkwleelrenaeeelenipillvgnKaDleeerevseeegeelakel.g....lkfletSaktgenveevfeelar 169
+               +l + +++l +  +   + + i+lv nK D++ +   ++ee+ +  k+  +    ++++ tS+++ ++++e+ +++++
+   HP0834 292 VELDEKISSLAD--K---HSLGIILVLNKWDIRYA---PYEEIIATLKRKfRfleyAPVITTSCLKARHIDEIKHKIIE 362
+              9***99999999..4...78************764...555555554443133333599*************9988875 PP
+
+>> NT01CJ0385  
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   34.2   0.1   2.9e-09   1.5e-07       8     169 ..       3     158 ..       1     163 [. 0.77
+   2 !   38.5   0.1   1.4e-10   7.3e-09       4     169 ..     193     362 ..     191     370 .. 0.80
+
+  Alignments for each domain:
+  == domain 1    score: 34.2 bits;  conditional E-value: 2.9e-09
+                 XXXXXXXXXXXXXXXXXXXXXXXX..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.......XXXXXXXXXXXXXXXXXX RF
+     2hxsA00   8 kivllGdsgvGKTsllkrltnnef..peeykptigvdfytktvevkdgkkvklqiwDtaGqerfrslrrsyyrg.......adgillvyditsresfen 97 
+                  i+l+G+ +vGK+sl +r++++++  +++ + t   d+ + ++++   +  k  ++D +G ++ ++l +++ ++       +d+il+ +d       ++
+  NT01CJ0385   3 SIILIGKPNVGKSSLFNRMARQRIaiTSDISGTTR-DTNKTQIHI---HSKKAMLIDSGGLDESDELFKNVKKNtlkvakeSDIILYLVDGKLAP-DDE 96 
+                 599******************99854666666777.888888888...5567789*****777776666644444444444*********66544.466 PP
+
+                 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.XXXXXXXXXXXXXXXXXXXXXX RF
+     2hxsA00  98 lkkwleelrenaeeelenipillvgnKaDleeerevseeegeelakelgl.kfletSaktgenveevfeelar 169
+                  ++++ +l++         pi+lv nK+D ++++    e++ e+a ++g+ +++  S+  + +++e+ e+l +
+  NT01CJ0385  97 DRQFFYSLKKLG------KPIALVINKVDNKKDE----ERAWEFA-NFGVkEIFNLSVTHNVGLDELYEWLEK 158
+                 689999999955......6**********99974....4555555.578889******************965 PP
+
+  == domain 2    score: 38.5 bits;  conditional E-value: 1.4e-10
+                 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.........XXXXX.XXXXXXXXXXXXXXXXXXXXXX RF
+     2hxsA00   4 kkevkivllGdsgvGKTsllkrltnnefpeeykptigvdfytktvevkdgkkvklqiwDtaG.........qerfr.slrrsyyrgadgillvyditsr 92 
+                 ++++++ ++G  +vGK+sll+ l+++e +   ++  g+ +  ++ +v  +k+  ++++DtaG          erf  + ++ ++++++++llv d   +
+  NT01CJ0385 193 QNHIRVGIVGRVNVGKSSLLNALVKQERS-VVSSIAGTTIDPVNESV-VHKDKVIEFVDTAGirkrgkiqgLERFAlNRTEKILSHSQIALLVLD--AH 287
+                 578999*******************8865.45555555555666666.4556779*****9955555555455555677788*************..78 PP
+
+                 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX...XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX RF
+     2hxsA00  93 esfenlkkwleelrenaeeelenipillvgnKaDleee...revseeegeelakelglkfletSaktgenveevfeelar 169
+                 e f++l + +  l +  +   + + +++v nK D +e    + v+e +  ++     ++++ +Sa++g+ v+ +++++++
+  NT01CJ0385 288 EGFNELDERIAGLVA--K---HYLGVIIVLNKWDKSEMdfdKTVKELRLDRFKFLAYAPVISVSALSGKRVHVLLDKILQ 362
+                 9******99999987..5...789***********66556578888888887777778**************99999875 PP
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (178 nodes)
+Target sequences:                     147601  (42213986 residues)
+Passed MSV filter:                     10681  (0.072364); expected 2952.0 (0.02)
+Passed bias filter:                     9319  (0.0631364); expected 2952.0 (0.02)
+Passed Vit filter:                      4709  (0.0319036); expected 147.6 (0.001)
+Passed Fwd filter:                      3611  (0.0244646); expected 1.5 (1e-05)
+Initial search space (Z):             147601  [actual number of targets]
+Domain search space  (domZ):            2928  [number of targets reported over threshold]
+# CPU time: 21.31u 0.46s 00:00:21.77 Elapsed: 00:00:23
+# Mc/sec: 352.61
+//

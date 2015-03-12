@@ -1,0 +1,5 @@
+     name     |    domain    |  typ  | number
+--------------+--------------+-------+--------
+ DEXDc        | DEXDc2       | merge |      2
+ DEXDc        | DEXDc        | merge |      1
+ DEXDc        | DEXDc3       | merge |      3

@@ -1,0 +1,87 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- TODO - this import ensures that there is ONE embedded worker
+         TODO - and also imports other dependencies of the standalone master.
+         TODO - need to rethink this to allow multiple standalone workers.
+    -->
+
+    <import resource="activemq-standalone-worker-context.xml"/>
+    <import resource="classpath:/spring/spring-properties-context.xml"/>
+    <import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>
+    <import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>
+
+    <!--  Embedded ActiveMQ Broker - in vm connections only· -->
+    <amq:broker useJmx="false"
+                persistent="false"
+                useShutdownHook="false"
+                tmpDataDirectory="${jms.broker.temp.directory}">
+        <amq:systemUsage>
+            <amq:systemUsage>
+                <amq:memoryUsage>
+                    <amq:memoryUsage limit="1024 mb"/>
+                </amq:memoryUsage>
+                <amq:storeUsage>
+                <amq:storeUsage limit="1 gb"/>
+                </amq:storeUsage>
+                <amq:tempUsage>
+                <amq:tempUsage limit="100 mb"/>
+                </amq:tempUsage>
+            </amq:systemUsage>
+        </amq:systemUsage>
+        <amq:transportConnectors>
+            <amq:transportConnector uri="vm://localhost"/>
+        </amq:transportConnectors>
+    </amq:broker>
+
+    <bean id="standalone" class="uk.ac.ebi.interpro.scan.jms.master.StandaloneBlackBoxMaster">
+        <property name="jobs" ref="jobs"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="databaseCleaner" ref="databaseCleaner"/>
+        <property name="messageSender" ref="masterMessageSender"/>
+        <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
+        <property name="hasInVmWorker" value="true"/>
+        <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
+        <property name="statsUtil" ref="statsUtil"/>
+        <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
+        <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
+        <property name="temporaryDirectory" value="${temporary.file.directory}"/>
+    </bean>
+
+    <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.NonZeroExitOnUnrecoverableError"/>
+
+    <bean id="masterMessageSender" class="uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSenderImpl">
+        <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
+        <property name="stepExecutionDAO" ref="stepExecutionDAO"/>
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
+        <property name="workerManagerTopic" ref="workerManagerTopic"/>
+        <property name="normalWorkerJobRequestQueue" ref="jobRequestQueue"/>
+    </bean>
+
+    <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="jobResponseQueue"/>
+        <property name="messageListener" ref="responseMonitorListener"/>
+    </bean>
+
+    <bean id="responseMonitorListener" class="uk.ac.ebi.interpro.scan.jms.master.ResponseMonitorImpl">
+        <constructor-arg ref="stepExecutionDAO"/>
+        <property name="statsUtil" ref="statsUtil"/>
+    </bean>
+
+
+    <!--Configuration for the statistics listener-->
+    <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="destination" ref="statsQueue"/>
+        <property name="concurrentConsumers" value="1"/>
+        <property name="messageListener" ref="statsMessageListener"/>
+    </bean>
+
+    <bean id="statsMessageListener" class="uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener"/>
+
+</beans>

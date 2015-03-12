@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <artifactId>interproscan</artifactId>
+        <version>5.10-50.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>jms-implementation</artifactId>
+    <version>5.10-50.0</version>
+
+    <packaging>jar</packaging>
+
+    <name>InterProScan JMS Implementation Module</name>
+    <description>InterProScan JMS Implementation Module</description>
+    <url>http://www.ebi.ac.uk/interpro/</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>EMBL - European Bioinformatics Institute</name>
+        <url>http://www.ebi.ac.uk/</url>
+    </organization>
+
+    <properties>
+        <mvn.worker.job.request.queue>worker_job_request_queue</mvn.worker.job.request.queue>
+        <mvn.worker.highmem.job.request.queue>worker_highmem_job_request_queue</mvn.worker.highmem.job.request.queue>
+        <mvn.worker.job.response.queue>worker_job_response_queue</mvn.worker.job.response.queue>
+        <mvn.stats.queue>stats_queue</mvn.stats.queue>
+        <mvn.monitor.queue>monitor_queue</mvn.monitor.queue>
+        <mvn.worker.manager.topic>worker_manager_topic</mvn.worker.manager.topic>
+        <mvn.worker.manager.response.queue>worker_manager_response_queue</mvn.worker.manager.response.queue>
+        <mvn.ebi.interproscan5.support>support-mini-x86-32</mvn.ebi.interproscan5.support>
+
+        <!-- 5.3.1 is the version we have been using stably for development.
+        The latest version is 5.5.0 -->
+        <apache.activemq.version>5.6.0</apache.activemq.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-management</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <!-- Installer JDBC access to InterPro database -->
+
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>com.springsource.oracle.jdbc</artifactId>
+            <version>10.2.0.2</version>
+        </dependency>
+
+        <!-- JAXB tests -->
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>${groovy.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>forms_rt</artifactId>
+            <version>7.0.3</version>
+        </dependency>
+
+        <!-- JPA tests -->
+
+        <dependency>
+            <groupId>com.jgoodies</groupId>
+            <artifactId>looks</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.database.version}</version>
+        </dependency>
+        <!-- Required for Quartz scheduling support. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- PUBLICLY-AVAILABLE Maven repository downloads for Quartz:-->
+
+        <dependency>
+            <groupId>org.opensymphony.quartz</groupId>
+            <artifactId>quartz-all</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>${apache.activemq.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+            <version>${apache.activemq.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>3.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                    <exclude>interpro.h2.db</exclude>
+                    <exclude>interpro.zip</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>interpro.h2.db</include>
+                    <include>interpro.zip</include>
+                </includes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+
+                <configuration>
+                    <archive>
+                        <!--<index>true</index>-->
+                        <manifest>
+                            <mainClass>uk.ac.ebi.interpro.scan.jms.main.Run</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib</classpathPrefix>
+                        </manifest>
+                    </archive>
+                    <finalName>interproscan-5</finalName>
+                </configuration>
+
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                    <finalName>interproscan-5</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>installer</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>uk.ac.ebi.interpro.scan.jms.main.Run</mainClass>
+                            <commandlineArgs>-m installer</commandlineArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>amqstandalone</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>uk.ac.ebi.interpro.scan.jms.main.Run</mainClass>
+                            <commandlineArgs>-m amqstandalone -f src/test/resources/5k.fasta</commandlineArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>full_support-32bit</id>
+            <properties>
+                <mvn.ebi.interproscan5.support>/nfs/seqdb/production/interpro/production/interproscan-5/support
+                </mvn.ebi.interproscan5.support>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>full_support-64bit</id>
+            <properties>
+                <mvn.ebi.interproscan5.support>/nfs/seqdb/production/interpro/production/interproscan-5/support_64bit
+                </mvn.ebi.interproscan5.support>
+            </properties>
+        </profile>
+
+    </profiles>
+
+</project>

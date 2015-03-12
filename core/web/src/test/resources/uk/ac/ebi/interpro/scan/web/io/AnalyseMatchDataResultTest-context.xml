@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="EntryHierarchy-context.xml" />
+
+    <bean id="parser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult">
+        <constructor-arg>
+            <bean class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="entryHierarchy" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="resource1" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/proteins/P38398.tsv"/>
+    </bean>
+
+    <bean id="incorrectFormattedResource" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/proteins/test_input_1.tsv"/>
+    </bean>
+
+ </beans>

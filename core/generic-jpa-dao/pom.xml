@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <artifactId>interproscan</artifactId>
+        <version>5.10-50.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>generic-jpa-dao</artifactId>
+    <version>5.10-50.0</version>
+
+    <packaging>jar</packaging>
+
+    <name>generic-jpa-dao</name>
+    <description>Generic DAO implementation for use with JPA / Spring.</description>
+
+
+    <url>http://www.ebi.ac.uk/interpro/</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>EMBL - European Bioinformatics Institute</name>
+        <url>http://www.ebi.ac.uk/</url>
+    </organization>
+
+    <!--<repositories>-->
+        <!--&lt;!&ndash;Moved Google code repository from master POM to this location&ndash;&gt;-->
+        <!--&lt;!&ndash;The reason for that is, if somebody runs mvn clean install for the first time, after checking out the project, it tries to download the master POM.&ndash;&gt;-->
+        <!--<repository>-->
+            <!--<id>google-code-interproscan</id>-->
+            <!--<name>google-code-interproscan</name>-->
+            <!--<layout>default</layout>-->
+            <!--<url>http://interproscan.googlecode.com/svn/repository/</url>-->
+            <!--<snapshots>-->
+                <!--<enabled>false</enabled>-->
+            <!--</snapshots>-->
+        <!--</repository>-->
+    <!--</repositories>-->
+
+    <dependencies>
+
+        <!-- Everything below here is for testing only. -->
+
+        <!-- Hibernate - includes JPA annotations. -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.entity.manager.version}</version>
+        </dependency>
+
+        <!-- Test database implementation (in memory for Junit tests) -->
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+</project>

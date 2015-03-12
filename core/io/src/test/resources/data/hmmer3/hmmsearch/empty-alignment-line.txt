@@ -1,0 +1,38 @@
+Query:       1fchB00  [M=318]
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence      Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------      -----------
+      0.029   15.5   2.8       0.33   12.0   1.9    2.4  1  UPI0000005B9B
+
+Domain and alignment annotation for each sequence:
+>> UPI0000005B9B
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 ?   12.0   1.9   8.2e-05      0.33      15     307 ..     621     841 ..     235     856 .. 0.55
+
+  Alignments for each domain:
+  == domain 1    score: 12.0 bits;  conditional E-value: 8.2e-05
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX......XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................... RF
+        1fchB00  15 eallnlgnalleagdyeeAlelyekaleldpdn......aealnnlglaylelgkydeAleayekaleldP......................... 79
+                     al  ++ + +++gd+  A++++  al+  p           l+ l +a+   g++deA+ +++ ++  +
+  UPI0000005B9B 621 VALSMRAYIRCRRGDFTSAIDFAGTALNSIPPRgwgvaiGLPLSVLVAAHTAIGRLDEAERYLRYWVPKEMfdsvvgleylrargqyclatnrsya 716
+                    233344444444444444444444444444433333333334444444444444444444444444333222222222222222222222222222 PP
+
+                    ....................XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX RF
+        1fchB00  80 ....................ddaeallnlgnallalgryeeAlaalekaleldPnnaealnnlglayepnnaeayenlgnlllelgdyeeAieaye 155
+                                        d a      ++a+l+ ++++eA+++  + l+l+P+ +     ++l
+  UPI0000005B9B 717 alsdfmvsgmlmdqwpvdfgDLAPWRIDAAEAYLHVQEPAEAKRLALEELKLSPDRPLSTRGRAL------------------------------- 781
+                    22222222222222222222223333333444444444444444444445555544443333333............................... PP
+
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX RF
+        1fchB00 156 kaleldPdeedaealnnlgllylelgryeeAieafrkalelnPksaealnnlgllylelgryeeAleayekaleldPdnaealynlgnaylklgky 251
+
+  UPI0000005B9B   - ------------------------------------------------------------------------------------------------   -
+                    ................................................................................................ PP
+
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXX..............................XXXXXXXXXXXXXXXXXXXXXXXXXXXX RF
+        1fchB00 252 eeAlealekAleldpddaealynlglll..............................aealynlgkvylelgqleeAieayekal 307
+                                                                              a++l +l + +l  g++++A+  +++a+
+  UPI0000005B9B 782 --------------------------RVlamaedpdkrrlllyqsakclrehgdrfelARTLAELSQDFLSTGETQQARTTWHEAQ 841
+                    ..........................223333333333333333333333333333333333333333333333333333333333 PP

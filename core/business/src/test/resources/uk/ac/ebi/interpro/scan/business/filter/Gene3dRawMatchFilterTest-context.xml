@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--See http://www.ebi.ac.uk/panda/jira/browse/IBU-1133-->
+
+    <!-- TSV file of raw matches to load into Onion analysis table -->
+    <bean id="rawMatches" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/gene3d-matches.raw"/>
+    </bean>
+
+    <!--NOTE: Not same as cli FIL file - just the corresponding lines from .raw file-->
+    <bean id="filteredMatches" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/gene3d-matches.raw.fil"/>
+    </bean>
+
+    <!-- Output from DomainFinder -->
+    <!-- Note the split domain in this file: "UPI000002973F	... 44:255:295:649" -->
+    <bean id="filteredSsf" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/filter/gene3d-matches.output.ssf"/>
+    </bean>
+
+    <!--
+    Here is an example of a duplicated match (relevant files are attached)
+
+    In the DomainFinder output file (UPI00006A38D4.output.ssf) one particular match:
+
+    UPI00006A38D4   2gy5A03 0       0       0       0       0       0       0       0       2.5e-19 0.00    0.00    1       365:385  0
+
+    becomes two matches in the final filtered results file UPI00006A38D4.fil :
+
+    UPI00006A38D4   G3DSA:2.170.300.10      3       3       365     385     10      131     ..      68.6    482.5   -146.431798275933       T       2010-06-22 16:47:56.192
+    UPI00006A38D4   G3DSA:2.170.300.10      3       3       365     385     8       129     ..      68.6    482.5   -146.431798275933       T       2010-06-22 16:47:56.338
+
+    As far as I can tell this is because there is a choice of two raw matches that the filtered match can be mapped back to:
+
+    UPI00006A38D4   2gy5A03 0       0       0       0       354     464     8       129     2.5E-19 68.6    0.0     1       354:464
+    UPI00006A38D4   2gy5A03 0       0       0       0       318     428     10      131     2.5E-19 68.6    0.0     1       318:428
+
+    (the matches I've shown are from the DomainFinder input file UPI00006A38D4.input.ssf)
+
+    Unfortunately in this case both raw matches have the same evalue so maybe that is why the code took them both.
+    In cases like this I think it's best to just take the first one you can find - its really difficult to work
+    out the 'true' one, and as they are both equally good, then either is valid!    
+    -->
+
+</beans>

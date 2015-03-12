@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=" http://www.springframework.org/schema/util
+                            http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                            http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                            http://www.springframework.org/schema/aop
+                            http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                            http://www.springframework.org/schema/tx
+                            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- All the common Spring config, found in src/main/resources/ -->
+    <import resource="classpath:/spring-persistence-config.xml"/>
+    <!-- Test stuff - move to a different spring-config.xml file. -->
+    <bean id="fullRoundTripTest" class="uk.ac.ebi.interpro.scan.persistence.FullRoundTripTest"/>
+
+    <bean id="signature_jaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound" value="uk.ac.ebi.interpro.scan.model.Signature"/>
+        <property name="marshallerProperties">
+            <util:map value-type="java.lang.Boolean">
+                <entry value="true">
+                    <key>
+                        <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/>
+                    </key>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="signatureMarshaller"   parent="signature_jaxb2"/>
+    <bean id="signatureUnmarshaller" parent="signature_jaxb2"/>
+
+    <bean id="protein_jaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound" value="uk.ac.ebi.interpro.scan.model.Protein"/>
+        <property name="marshallerProperties">
+            <util:map value-type="java.lang.Boolean">
+                <entry value="true">
+                    <key>
+                        <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/>
+                    </key>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="proteinMarshaller"   parent="protein_jaxb2"/>
+    <bean id="proteinUnmarshaller" parent="protein_jaxb2"/>
+
+    <bean id="proteinXmls" class="uk.ac.ebi.interpro.scan.persistence.XmlsForTesting">
+        <constructor-arg>
+            <list>
+                <value>
+                    <![CDATA[
+
+                    <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<protein md5="ae2f4d0c928c8017da2df2d5cf15f01" xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>
+    <sequence>MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
+    <matches>
+        <fingerprints-match evalue="3.7E-9">
+            <signature name="NUCEPIMERASE" ac="PR01713"/>
+            <locations>
+                <fingerprint-location pvalue="3.7E-9" end="235" start="220"/>
+                <fingerprint-location pvalue="3.7E-9" end="258" start="243"/>
+            </locations>
+        </fingerprints-match>
+    </matches>
+</protein>
+
+                    ]]>
+                </value>
+                <value>
+                    <![CDATA[
+
+                    <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<protein md5="627885e9997cd1d488251238958641d9" xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>
+    <sequence>MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCS</sequence>
+    <matches/>
+</protein>
+
+                    ]]>
+                </value>
+                <value>
+                    <![CDATA[
+
+                    <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<protein md5="5ab17489095dd2836122eec0e91db82d" xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>
+    <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
+    <matches>
+        <hmm-match score="0.035" evalue="3.7E-9">
+            <signature name="B12-binding" ac="PF02310"/>
+            <locations>
+                <hmm-location score="3.0" hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" evalue="7.6E-8" end="107" start="3"/>
+            </locations>
+        </hmm-match>
+    </matches>
+</protein>
+
+                    ]]>
+                </value>
+                <value>
+                    <![CDATA[
+
+                    <protein md5="5ab17489095dd2836122eec0e91db82d"
+         xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+    <sequence>MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI</sequence>
+    <matches>
+        <hmm-match score="0.035" evalue="3.7E-9">
+            <signature ac="PF02310" name="B12-binding" />
+            <locations>
+                <hmm-location start="3" end="107" score="3.0" evalue="3.7E-9"
+                              hmm-start="1" hmm-end="104" hmm-bounds="N_TERMINAL_COMPLETE" />
+            </locations>
+        </hmm-match>
+    </matches>
+</protein>
+
+                    ]]>
+                </value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="signatureXmls" class="uk.ac.ebi.interpro.scan.persistence.XmlsForTesting">
+        <constructor-arg>
+            <list>
+                <value>
+                    <![CDATA[
+
+                    <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<signature type="Family" name="RHODOPSIN" ac="PR00579" xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>
+    <abstract>Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).</abstract>
+    <models>
+        <model ac="PR00579"/>
+    </models>
+</signature>
+
+                    ]]>
+                </value>
+                <value>
+                    <![CDATA[
+
+                    <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<signature type="Family" name="OPSIN" desc="Opsin signature" ac="PR00238" xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>
+    <models>
+        <model ac="PR00238"/>
+    </models>
+</signature>
+
+                    ]]>
+                </value>
+                <value>
+                    <![CDATA[
+
+                    <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<signature type="Family" name="Aminotran_1_2" desc="Aminotransferase class I and II" ac="PF00155" xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>
+    <models>
+        <model ac="PF00155"/>
+    </models>
+</signature>
+
+                    ]]>
+                </value>
+                <value>
+                    <![CDATA[
+
+                    <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<signature type="Family" name="7tm_2" desc="7 transmembrane receptor (rhodopsin family)" ac="PF00001" xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>
+    <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins[pubmed:15774036]</abstract>
+    <models>
+        <model ac="PF00001"/>
+    </models>
+</signature>
+
+                    ]]>
+                </value>
+            </list>
+        </constructor-arg>
+    </bean>
+</beans>

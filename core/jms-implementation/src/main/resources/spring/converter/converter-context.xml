@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--Imports-->
+    <import resource="classpath:/spring/spring-properties-context.xml"/>
+    <import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>
+    <import resource="classpath:/spring/jobs/outputWriter/xml/xmlWriter-context.xml"/>
+    <import resource="classpath:/spring/jobs/outputWriter/html/htmlWriter-context.xml"/>
+    <import resource="classpath:/spring/jobs/outputWriter/svg/svgWriter-context.xml"/>
+
+    <bean id="convert" class="uk.ac.ebi.interpro.scan.jms.converter.Converter">
+        <property name="marshaller" ref="interproMarshaller"/>
+        <property name="htmlResultWriter" ref="htmlWriter"/>
+        <property name="svgResultWriter" ref="svgWriter"/>
+        <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
+        <property name="temporaryDirectory" value="${temporary.file.directory}"/>
+        <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
+    </bean>
+
+</beans>

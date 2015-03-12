@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <artifactId>interproscan</artifactId>
+        <version>5.10-50.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>interproscan-business</artifactId>
+    <version>5.10-50.0</version>
+
+    <packaging>jar</packaging>
+    <name>InterProScan Business Logic</name>
+    <description>InterProScan Business Logic</description>
+
+    <url>http://www.ebi.ac.uk/interpro/</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <organization>
+        <name>European Bioinformatics Institute</name>
+        <url>http://www.ebi.ac.uk/</url>
+    </organization>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-persistence</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>precalc-match-client</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>com.springsource.oracle.jdbc</artifactId>
+            <version>10.2.0.2</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+    </build>
+    <profiles>
+        <profile>
+            <id>default-test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <logging.level.root>DEBUG</logging.level.root>
+                <logging.level.interpro.scan.business>DEBUG</logging.level.interpro.scan.business>
+                <logging.interpro.scan.business.file>target/parse.log</logging.interpro.scan.business.file>
+                <logging.interpro.scan.business.max.file.size>2097152</logging.interpro.scan.business.max.file.size>
+
+                <mvn.i5.database.driver>org.hsqldb.jdbcDriver</mvn.i5.database.driver>
+                <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
+                <mvn.i5.database.username>sa</mvn.i5.database.username>
+                <mvn.i5.database.password></mvn.i5.database.password>
+                <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
+                <mvn.hibernate.show_sql>false</mvn.hibernate.show_sql>
+                <mvn.hibernate.format_sql>false</mvn.hibernate.format_sql>
+                <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
+            </properties>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="classpath:/spring-persistence-config.xml"/>
+
+    <bean id="proteinDAO" class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
+    <bean id="signatureLibraryReleaseDAO" class="uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAOImpl"/>
+    <bean id="signatureDAO" class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl"/>
+    <bean id="rawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.SmartHmmer2RawMatchDAOImpl"/>
+    <bean id="filteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.SmartFilteredMatchDAOImpl"/>
+
+    <bean id="hmmerOutput" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg
+                value="uk/ac/ebi/interpro/scan/management/model/implementations/smart/UPI0000000030.hmmpfam.txt"/>
+    </bean>
+
+    <bean id="fastaFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/management/model/implementations/smart/UPI0000000030.fasta"/>
+    </bean>
+
+    <bean id="bottomProtein" class="java.lang.Long">
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean id="topProtein" class="java.lang.Long">
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean id="expectedProteins" class="java.lang.Long">
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean id="expectedRawMatches" class="java.lang.Long">
+        <constructor-arg value="2"/>
+    </bean>
+
+    <bean id="expectedFilteredMatches" class="java.lang.Long">
+        <constructor-arg value="2"/>
+    </bean>
+
+    <bean id="parser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+        <property name="signatureLibrary" value="SMART"/>
+        <property name="signatureLibraryRelease" value="6.1"/>
+        <property name="hmmer2ParserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.SmartHmmer2ParserSupport">
+                <property name="signatureLibraryRelease" value="6.1"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="postProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
+        <property name="overlappingFileParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"/>
+        </property>
+        <property name="thresholdFileParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser"/>
+        </property>
+        <property name="smartResourceManager" ref="smartResourceManager"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+        <!--TODO: See if can reference THRESHOLDS and overlapping in other modules-->
+
+    </bean>
+
+
+    <bean id="smartResourceManager" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartResourceManager">
+        <property name="overlappingFileResource"
+                  value="uk/ac/ebi/interpro/scan/management/model/implementations/smart/overlapping"/>
+        <property name="thresholdFileResource"
+                  value="uk/ac/ebi/interpro/scan/management/model/implementations/smart/THRESHOLDS"/>
+    </bean>
+
+</beans>

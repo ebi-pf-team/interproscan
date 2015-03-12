@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <import resource="io/EntryHierarchy-context.xml"/>
+
+    <bean id="matchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult">
+        <constructor-arg>
+            <bean class="uk.ac.ebi.interpro.scan.web.io.MatchDataResourceReader"/>
+        </constructor-arg>
+        <constructor-arg ref="entryHierarchy"/>
+    </bean>
+
+    <bean id="structuralMatchAnalyser" class="uk.ac.ebi.interpro.scan.web.io.AnalyseStructuralMatchDataResult">
+        <constructor-arg>
+            <bean class="uk.ac.ebi.interpro.scan.web.io.StructuralMatchDataResourceReader"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="matchData" class="uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchDataImpl">
+        <constructor-arg ref="matchAnalyser"/>
+        <constructor-arg ref="structuralMatchAnalyser"/>
+        <constructor-arg value="classpath:data/proteins/P38398.tsv"/> <!-- Default data -->
+        <constructor-arg value="classpath:data/proteinStructures/P38398.tsv"/> <!-- Default data -->
+    </bean>
+
+</beans>

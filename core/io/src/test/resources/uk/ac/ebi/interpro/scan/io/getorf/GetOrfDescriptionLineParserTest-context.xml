@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="getOrfParser" class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
+
+    <bean id="getOrfTestFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/io/getorf/getOrfTestFile.fasta"/>
+    </bean>
+
+</beans>

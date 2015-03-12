@@ -1,0 +1,94 @@
+Query:       SH3_3  [M=52]
+Accession:   PF08239.4
+Description: Bacterial SH3 domain
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+   1.2e-133  443.6  62.7      5e-13   57.4   2.7    9.4  9  A0AK98
+
+
+Domain and alignment annotation for each sequence:
+>> A0AK98
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   50.8   0.2   6.3e-18   5.9e-11       1      47 [.     164     213 ..     164     217 .. 0.89
+   2 !   57.4   2.7   5.3e-20     5e-13       1      51 [.     231     285 ..     231     286 .. 0.92
+   3 !   50.3   0.4   9.2e-18   8.7e-11       2      51 ..     300     353 ..     299     354 .. 0.93
+   4 !   54.7   2.0   3.7e-19   3.5e-12       1      51 [.     366     420 ..     366     421 .. 0.92
+   5 !   56.7   0.1   9.1e-20   8.5e-13       1      51 [.     434     488 ..     434     489 .. 0.95
+   6 !   52.3   1.7   2.1e-18   1.9e-11       1      51 [.     501     555 ..     501     556 .. 0.92
+   7 !   53.2   0.2   1.1e-18     1e-11       2      51 ..     570     623 ..     569     624 .. 0.92
+   8 !   54.5   1.5   4.5e-19   4.2e-12       1      51 [.     636     690 ..     636     691 .. 0.92
+   9 !   51.0   0.2   5.5e-18   5.1e-11       2      51 ..     705     758 ..     704     759 .. 0.95
+
+  Alignments for each domain:
+  == domain 1    score: 50.8 bits;  conditional E-value: 6.3e-18
+   SH3_3   1 tnLNVRsgpgtsskvigqlpkGekvtvlge..engWykieyngktGYv.s 47
+             ++LN+Rs ++++s+v g +p+G+kv +  +  +ngW+ i+yn+ +GY+ +
+  A0AK98 164 SDLNLRSSNNWDSSVAGEIPQGAKVSIDLDsdKNGWCMITYNNIKGYMlN 213
+             58*************************98754677************954 PP
+
+  == domain 2    score: 57.4 bits;  conditional E-value: 5.3e-20
+   SH3_3   1 tnLNVRsgpgtsskvigqlpkGekvtvlgeeng..WykieyngktGYv..ssdyv 51
+             +nLN+R++++++s+v ++++kGekvtv+ +++   Wy+++y+gktGY+  +++y+
+  A0AK98 231 DNLNLRTKATWDSEVAQKVQKGEKVTVNLKTSVngWYQVTYGGKTGYMilNNNYL 285
+             69**************************9955445*************9999998 PP
+
+  == domain 3    score: 50.3 bits;  conditional E-value: 9.2e-18
+   SH3_3   2 nLNVRsgpgtsskvigqlpkGekvtvlgeeng..WykieyngktGYv..ssdyv 51
+             +LN+Rs+++++s++  ++p+G+ v+v++++n   Wyk++y+++tGY+    +y+
+  A0AK98 300 TLNLRSEAKWDSSINLVVPEGQAVKVEMNTNSgsWYKVTYQNQTGYIplVDEYL 353
+             7****************************9999*************97777776 PP
+
+  == domain 4    score: 54.7 bits;  conditional E-value: 3.7e-19
+   SH3_3   1 tnLNVRsgpgtsskvigqlpkGekvtvlgeeng..WykieyngktGYv..ssdyv 51
+             +nLN+Rs+ +++s+vi++++kGekvtv+ +++   Wy+ +yngk+GY+  + +y+
+  A0AK98 366 DNLNLRSETKWDSDVIQKVQKGEKVTVNLKTSVngWYQLTYNGKKGYMilNDNYL 420
+             69**************************9955445*************9999998 PP
+
+  == domain 5    score: 56.7 bits;  conditional E-value: 9.1e-20
+   SH3_3   1 tnLNVRsgpgtsskvigqlpkGekvtvlgeeng..WykieyngktGYv..ssdyv 51
+             +nLN+Rsg++++s++ +++p+G+ v+v++++n+  W+k++y++ktGY+  s  y+
+  A0AK98 434 SNLNLRSGAKWDSDISQVVPEGKAVKVEMDTNEgsWFKVTYDNKTGYMplSDLYL 488
+             69**********************************************8777777 PP
+
+  == domain 6    score: 52.3 bits;  conditional E-value: 2.1e-18
+   SH3_3   1 tnLNVRsgpgtsskvigqlpkGekvtvlge..engWykieyngktGYv..ssdyv 51
+             +nLN+Rs+++++s++ + ++kGekvt++++   ngWy+++y+ k+GY+  + +y+
+  A0AK98 501 DNLNLRSEAKWDSEISQIVEKGEKVTINSKtsINGWYEVTYGSKKGYMvlNENYL 555
+             69****************************44456*************9999998 PP
+
+  == domain 7    score: 53.2 bits;  conditional E-value: 1.1e-18
+   SH3_3   2 nLNVRsgpgtsskvigqlpkGekvtvlgeeng..WykieyngktGYv..ssdyv 51
+             +LN+Rs+++++s+  +++p+G+kv+v++++n+  W+k++y++ktGY+  +  y+
+  A0AK98 570 TLNLRSEAKWDSSTSQVVPEGAKVKVEMDTNNgnWFKVTYDNKTGYMplNDLYL 623
+             7****************************9988*************97666665 PP
+
+  == domain 8    score: 54.5 bits;  conditional E-value: 4.5e-19
+   SH3_3   1 tnLNVRsgpgtsskvigqlpkGekvtvlgeeng..WykieyngktGYv..ssdyv 51
+             +nLN+Rs+++++sk+   ++kGekvtv+ +++   Wy+++y+gktGY+  + +y+
+  A0AK98 636 DNLNLRSEAKWDSKISLIVQKGEKVTVNLKTSVngWYQVTYGGKTGYMllNDNYL 690
+             69**************************9955445*************9999998 PP
+
+  == domain 9    score: 51.0 bits;  conditional E-value: 5.5e-18
+   SH3_3   2 nLNVRsgpgtsskvigqlpkGekvtvlgeeng..WykieyngktGYv..ssdyv 51
+              LN+R +++++s++ + +p+G+ v+v++++n+  Wyk++y++ktGY+    dy+
+  A0AK98 705 ALNLRNEAKWDSDINQIVPAGAAVKVEMDTNNgvWYKVTYQNKTGYMplTDDYL 758
+             7****************************9999**************9999998 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (52 nodes)
+Target sequences:                          1  (763 residues)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):            9421015  [as set by --Z on cmdline]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00
+# Mc/sec: inf
+//

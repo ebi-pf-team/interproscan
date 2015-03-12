@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="xmlWriter" class="uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderResourceWriter"/>
+
+    <bean id="file" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg value="target/DomainFinderResourceWriter.ssf"/>
+    </bean>
+
+    <!--Sorted by e-value and sequence.start-->
+    <bean id="expectedFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/gene3d/2hxsA00-sorted.ssf"/>
+    </bean>
+
+</beans>

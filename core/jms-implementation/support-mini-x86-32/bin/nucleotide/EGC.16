@@ -1,0 +1,23 @@
+# Genetic Code Table
+#
+# Obtained from: http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+#
+#  Version 3.5
+#     Added code 16, Chlorophycean Mitochondrial
+#       (TAG can translated to Leucine instaed to STOP in chlorophyceans
+#        and fungi)
+#
+# Systematic Range:
+#
+# Chlorophyceae: Hayashi-Ishiimaru, Y, T.  Ohama, Y.  Kawatsu, K. 
+# Nakamura, S.  Osawa, 1996.  Current Genetics 30: 29-33
+
+Genetic Code [16]
+
+Chlorophycean Mitochondrial
+
+AAs  =   FFLLSSSSYY*LCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+Starts = -----------------------------------M----------------------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG

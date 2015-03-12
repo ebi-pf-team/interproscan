@@ -1,0 +1,40 @@
+hmmpfam - search one or more sequences against HMM database
+HMMER 2.3.2 (Oct 2003)
+Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
+Freely distributed under the GNU General Public License (GPL)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HMM file:                 /ebi/sp/pro1/interpro/data/members/pfam/22/Pfam_fs.bin
+Sequence file:            data/5k.fasta
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query sequence: UPI000000001B
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N
+-------- -----------                                    -----    ------- ---
+PF03286.5 Pox virus Ag35 surface protein                 476.9   2.6e-140   1
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+PF03286.5   1/1       1   203 []     1   221 []   476.9 2.6e-140
+//
+
+Query sequence: UPI000000001C
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model           Description                             Score    E-value  N
+--------        -----------                             -----    ------- ---
+PF01028.11      Eukaryotic DNA topoisomerase I, catal   452.6   5.2e-133   1
+PF09266.1       Viral DNA topoisomerase I, N-terminal   137.4      4e-38   1
+
+Parsed for domains:
+Model           Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------        ------- ----- -----    ----- -----      -----  -------
+PF09266.1         1/1       4    61 ..     1    60 []   137.4    4e-38
+PF01028.11        1/1      63   305 ..     1   273 []   452.6 5.2e-133
+//

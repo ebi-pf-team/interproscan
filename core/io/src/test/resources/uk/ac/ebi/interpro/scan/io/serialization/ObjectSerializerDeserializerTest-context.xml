@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <bean id="serializerDeserializer" class="uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer">
+        <property name="fileName" value="target/serializedString"/>
+        <property name="overWrite" value="false"/>
+        <property name="compressedUsingGzip" value="false"/>
+    </bean>
+
+    <bean id="serializerDeserializerGzip" class="uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer">
+        <property name="fileName" value="target/serializedString.gz"/>
+        <property name="overWrite" value="false"/>
+        <property name="compressedUsingGzip" value="true"/>
+    </bean>
+
+</beans>

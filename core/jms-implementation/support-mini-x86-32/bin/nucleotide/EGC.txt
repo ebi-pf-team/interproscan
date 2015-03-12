@@ -1,0 +1,790 @@
+The Genetic Codes Compiled by Andrzej (Anjay) Elzanowski and Jim
+Ostell National Center for Biotechnology Information (NCBI), Bethesda,
+Maryland, U.S.A.
+
+Last update of the Genetic Codes: October 05, 2000
+
+NCBI takes great care to ensure that the translation for each coding
+sequence (CDS) present in GenBank records is correct. Central to this
+effort is careful checking on the taxonomy of each record and
+assignment of the correct genetic code (shown as a /transl_table
+qualifier on the CDS in the flat files) for each organism and
+record. This page summarizes and references this work.
+
+The synopsis presented below is based primarily on the reviews by
+Osawa et al. (1992) and Jukes and Osawa (1993). Listed in square
+brackets [ ] (under Systematic Range) are tentative assignments of a
+particular code based on sequence homology and/or phylogenetic
+relationships.
+
+The print-form ASN.1 version of this document, which includes all the
+genetic codes outlined below, is also available here. Detailed
+information on codon usage can be found at the Codon Usage Database.
+
+The following genetic codes are described here: 
+
+The Standard Code 
+The Vertebrate Mitochondrial Code 
+The Yeast Mitochondrial Code 
+The Mold, Protozoan, and Coelenterate Mitochondrial Code and the
+    Mycoplasma/Spiroplasma Code 
+The Invertebrate Mitochondrial Code 
+The Ciliate, Dasycladacean and Hexamita Nuclear Code 
+The Echinoderm and Flatworm Mitochondrial Code 
+The Euplotid Nuclear Code 
+The Bacterial and Plant Plastid Code 
+The Alternative Yeast Nuclear Code 
+The Ascidian Mitochondrial Code 
+The Alternative Flatworm Mitochondrial Code 
+Blepharisma Nuclear Code 
+Chlorophycean Mitochondrial Code 
+Trematode Mitochondrial Code 
+Scenedesmus Obliquus Mitochondrial Code 
+Thraustochytrium Mitochondrial Code 
+       
+
+-------------------------------------------------------------------------------
+
+1. The Standard Code (transl_table=1)
+By default all transl_table in GenBank flatfiles are equal to id 1,
+and this is not shown. When transl_table is not equal to id 1, it is
+shown as a qualifier on the CDS feature.
+
+    AAs  = FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = ---M---------------M---------------M----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Initiation Codon:
+AUG 
+
+Alternative Initiation Codons
+In rare cases, translation in eukaryotes can be initiated from codons
+other than AUG. A well documented case (including direct protein
+sequencing) is the GUG start of a ribosomal P protein of the fungus
+Candida albicans (Abramczyk et al.). Other examples can be found in
+the following references: Peabody 1989; Prats et al. 1989; Hann et
+al. 1992; Sugihara et al. 1990.
+
+GUG, CUG, UUG 
+
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+2. The Vertebrate Mitochondrial Code (transl_table=2)
+
+    AAs  = FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSS**VVVVAAAADDEEGGGG
+  Starts = --------------------------------MMMM---------------M------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+        Code 2          Standard
+
+ AGA    Ter  *          Arg  R
+ AGG    Ter  *          Arg  R
+ AUA    Met  M          Ile  I
+ UGA    Trp  W          Ter  *
+
+
+Alternative Initiation Codon:
+Bos: AUA 
+Homo: AUA, AUU
+Mus: AUA, AUU, AUC
+Coturnix, Gallus: also GUG (Desjardins and Morais, 1991)
+
+Systematic Range:
+Vertebrata
+
+Comment: 
+The transcripts of several vertebrate mitochondrial genes end in U or
+UA, which become termination codons (UAA) upon subsequent
+polyadenylation.
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+3. The Yeast Mitochondrial Code (transl_table=3)
+
+    AAs  = FFLLSSSSYY**CCWWTTTTPPPPHHQQRRRRIIMMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = ----------------------------------MM----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+        Code 3          Standard
+
+ AUA    Met  M          Ile  I
+ CUU    Thr  T          Leu  L
+ CUC    Thr  T          Leu  L
+ CUA    Thr  T          Leu  L
+ CUG    Thr  T          Leu  L
+ UGA    Trp  W          Ter  *
+
+ CGA    absent          Arg  R
+ CGC    absent          Arg  R
+
+
+Systematic Range: 
+Saccharomyces cerevisiae, Candida glabrata, Hansenula saturnus, and
+Kluyveromyces thermotolerans (Clark-Walker and Weiller, 1994)
+
+Comments:
+The remaining CGN codons are rare in Saccharomyces cerevisiae and
+absent in Candida glabrata (= Torulopsis glabrata).
+
+The AUA codon is common in the gene var1 coding for the single
+mitochonLIial ribosomal protein, but rare in genes encoding the
+enzymes.
+
+The coding assignments of the AUA (Met or Ile) and CUU (possibly Leu,
+not Thr) are uncertain in Hansenula saturnus.
+
+The coding assignment of Thr to CUN is uncertain in Kluyveromyces
+thermotolerans (Clark-Walker and Weiller, 1994).
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+4. The Mold, Protozoan, and Coelenterate Mitochondrial Code and the
+   Mycoplasma/Spiroplasma Code (transl_table=4) 
+
+    AAs  = FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = --MM---------------M------------MMMM---------------M------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+        Code 4         Standard
+
+ UGA    Trp  W          Ter  *
+
+
+Alternative Initiation Codons: 
+Trypanosoma: UUA, UUG, CUG
+Leishmania: AUU, AUA 
+Tertrahymena: AUU, AUA, AUG 
+Paramecium: AUU, AUA, AUG, AUC, GUG, GUA(?) 
+(Pritchard et al., 1990)
+
+Systematic Range: 
+Mycoplasmatales: Mycoplasma, Spiroplasma (Bove et al., 1989); Fungi:
+Emericella nidulans, Neurospora crassa, Podospora anserina, Acremonium
+(Fox, 1987), Candida parapsilosis (Guelin et al., 1991), Trichophyton
+rubrum (de Bievre and Dujon, 1992), Dekkera/Brettanomyces, Eeniella
+(Hoeben et al., 1993), and probably Ascobolus immersus, Aspergillus
+amstelodami, Claviceps purpurea, and Cochliobolus heterostrophus.
+
+Other Eukaryotes: Gigartinales among the red algae (Boyen et
+al. 1994), and the protozoa Trypanosoma brucei, Leishmania tarentolae,
+Paramecium tetraurelia, Tetrahymena pyriformis and probably Plasmodium
+gallinaceum (Aldritt et al., 1989).
+
+Metazoa: Coelenterata (Ctenophora and Cnidaria) 
+
+Comments: 
+
+This code is also used for the kinetoplast DNA (maxicircles,
+minicircles). Kinetoplasts are modified mitochondria (or their parts).
+
+This code is not used in the Acholeplasmataceae and plant-pathogenic
+mycoplasma-like organisms (MLO) (Lim and Sears, 1992) Back to top
+
+
+-------------------------------------------------------------------------------
+
+5. The Invertebrate Mitochondrial Code (transl_table=5) 
+
+    AAs  = FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSSSSVVVVAAAADDEEGGGG
+  Starts = ---M----------------------------MMMM---------------M------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Comment: 
+The codon AGG is absent in Drosophila. 
+Differences from the Standard Code: 
+
+        Code 5          Standard
+
+ AGA    Ser  S          Arg  R
+ AGG    Ser  S          Arg  R
+ AUA    Met  M          Ile  I
+ UGA    Trp  W          Ter  *
+
+
+Alternative Initiation Codons: 
+AUA, AUU
+AUC: Apis (Crozier and Crozier, 1993)
+GUG: Polyplacophora (Boore and Brown, 1994 GenBank Accession Number: U09810)
+UUG: Ascaris, Caenorhabditis
+
+Systematic Range:
+Nematoda: Ascaris, Caenorhabditis;
+Mollusca: Bivalvia (Hoffmann et al., 1992); Polyplacophora (Boore and
+Brown, 1994)
+Arthropoda/Crustacea: Artemia (Batuecas et al., 1988);
+Arthropoda/Insecta: Drosophila [Locusta migratoria (migratory locust),
+Apis mellifera (honeybee)]
+
+Comments: 
+GUG may possibly function as an initiator in Drosophila (Clary and
+Wolstenholme, 1985; Gadaleta et al., 1988). AUU is not used as an
+initiator in Mytilus (Hoffmann et al., 1992).
+
+"An exceptional mechanism must operate for initiation of translation
+of the cytochrome oxidase subunit I mRNA in both D. melanogaster (de
+Bruijn, 1983) and D. yakuba (Clary and Wolstenholme 1983), since its
+only plausible initiation codon, AUA, is out of frame with the rest of
+the gene. Initiation appears to require the "reading" of of an AUAA
+quadruplet, which would be equivalent to initiation at AUA followed
+immediately by a specific ribosomal frameshift. Another possible
+mechanism ... is that the mRNA is "edited" to bring the AUA initiation
+into frame." (Fox, 1987) Back to top
+
+
+-------------------------------------------------------------------------------
+
+6. The Ciliate, Dasycladacean and Hexamita Nuclear Code (transl_table=6) 
+
+    AAs  = FFLLSSSSYYQQCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = -----------------------------------M----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+          Code 6       Standard
+
+ UAA      Gln  Q        Ter  *
+ UAG      Gln  Q        Ter  *
+
+
+Systematic Range: 
+Ciliata: Oxytricha and Stylonychia (Hoffman et al. 1995), Paramecium,
+Tetrahymena, Oxytrichidae and probably Glaucoma chattoni.
+Dasycladaceae: Acetabularia (Schneider et al., 1989) and Batophora
+(Schneider and de Groot, 1991).
+
+
+Diplomonadida: 
+Scope: Hexamita inflata, Diplomonadida ATCC50330, and ATCC50380. 
+Ref.: Keeling, P.J. and Doolittle, W.F. 1996.. A non-canonical genetic
+code in an early diverging eukaryotic lineage. The EMBO Journal 15,
+2285-2290.
+
+Comment: 
+The ciliate macronuclear code has not been determined completely. The
+codon UAA is known to code for Gln only in the Oxytrichidae.
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+Tables 7 and 8 have been deleted 
+
+-------------------------------------------------------------------------------
+
+9. The Echinoderm and Flatworm Mitochondrial Code (transl_table=9) 
+
+    AAs  = FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNNKSSSSVVVVAAAADDEEGGGG
+  Starts = -----------------------------------M---------------M------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+
+          Code 9        Standard
+
+ AAA      Asn  N        Lys K
+ AGA      Ser  S        Arg R
+ AGG      Ser  S        Arg R
+ UGA      Trp  W        Ter *
+
+
+Systematic Range: 
+Asterozoa (starfishes) (Himeno et al., 1987) Echinozoa (sea urchins)
+(Jacobs et al., 1988; Cantatore et al., 1989) Rhabditophora among the
+Platyhelminthes (Telford et al. 2000)
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+10. The Euplotid Nuclear Code (transl_table=10) 
+
+    AAs  = FFLLSSSSYY**CCCWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = -----------------------------------M----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+          Code 10     Standard
+
+ UGA      Cys  C        Ter  *
+
+
+Systematic Range: 
+Ciliata: Euplotidae (Hoffman et al. 1995). 
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+11. The Bacterial and Plant Plastid Code (transl_table=11) 
+
+    AAs  = FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = ---M---------------M------------MMMM---------------M------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Systematic Range and Comments: 
+Table 11 is used for Bacteria, Archaea, prokaryotic viruses and
+chloroplast proteins. As in the standard code, initiation is most
+efficient at AUG. In addition, GUG and UUG starts are documented in
+Archaea and Bacteria (Kozak 1983, Fotheringham et al. 1986, Golderer
+et al. 1995, Nolling et al. 1995, Sazuka & Ohara 1996, Genser et
+al. 1998, Wang et al. 2003). In E. coli, UUG is estimated to serve as
+initiator for about 3% of the bacterium's proteins (Blattner et
+al. 1997). CUG is known to function as an initiator for one
+plasmid-encoded protein (RepA) in Escherichia coli (Spiers and
+Bergquist, 1992). In addition to the NUG initiations, in rare cases
+Bacteria can initiate translation from an AUU codon as e.g. in the
+case of poly(A) polymerase PcnB and the InfC gene that codes for
+translation initiation factor IF3 (Polard et al. 1991, Liveris et
+al. 1993, Sazuka & Ohara 1996, Binns & Masters 2002). The internal
+assignments are the same as in the standard code though UGA codes at
+low efficiency for Trp in Bacillus subtilis and, presumably, in
+Escherichia coli (Hatfiled and Diamond, 1993).
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+12. The Alternative Yeast Nuclear Code (transl_table=12) 
+
+    AAs  = FFLLSSSSYY**CC*WLLLSPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = -------------------M---------------M----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+           Code 12      Standard
+
+ CUG       Ser          Leu
+       
+
+Alternative Initiation Codons: 
+CAG may be used in Candida albicans (Santos et al., 1993). 
+Systematic Range: 
+Endomycetales (yeasts): Candida albicans, Candida cylindracea, Candida
+melibiosica, Candida parapsilosis, and Candida rugosa (Ohama et al.,
+1993).
+
+Comment: 
+However, other yeast, including Saccharomyces cerevisiae, Candida
+azyma, Candida diversa, Candida magnoliae, Candida rugopelliculosa,
+Yarrowia lipolytica, and Zygoascus hellenicus, definitely use the
+standard (nuclear) code (Ohama et al., 1993).
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+13. The Ascidian Mitochondrial Code (transl_table=13) 
+
+    AAs  = FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSSGGVVVVAAAADDEEGGGG
+  Starts = ---M------------------------------MM---------------M------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+          Code 13     Standard
+
+ AGA      Gly  G        Arg  R
+ AGG      Gly  G        Arg  R
+ AUA      Met  M        Ile  I
+ UGA      Trp  W        Ter  *
+
+
+Systematic range and Comments:
+There is evidence from a phylogenetically diverse sample of tunicates
+(Urochordata) that AGA and AGG code for glycine. In other organisms,
+AGA/AGG code for either arginine or serine and in vertebrate
+mitochondria they code a STOP. Evidence for glycine translation of
+AGA/AGG has been found in Pyura stolonifera (Durrheim et al. 1993),
+Halocynthia roretzi (Kondow et al. 1999, Yokobori et al., 1993,
+Yokobori et al. 1999) and Ciona savignyi (Yokobori et al. 2003). In
+addition, the Halocynthia roretzi mitochondrial genome encodes an
+additional tRNA gene with the anticodon U*CU that is thought to enable
+the use of AGA or AGG codons for glycine and the gene has been shown
+to be transcribed in vivo (Kondow et al. 1999, Yokobori et al. 1999).
+
+Alternative initiation codons: ATA, GTG and TTG (Yokobori et al. 1999).
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+14. The Alternative Flatworm Mitochondrial Code (transl_table=14) 
+
+    AAs  = FFLLSSSSYYY*CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNNKSSSSVVVVAAAADDEEGGGG
+  Starts = -----------------------------------M----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+          Code 14      Standard
+
+ AAA      Asn  N       Lys  K
+ AGA      Ser  S       Arg  R
+ AGG      Ser  S       Arg  R
+ UAA      Tyr  Y       Ter  *
+ UGA      Trp  W       Ter  *
+
+
+Systematic Range: 
+Platyhelminthes (flatworms) 
+
+Comments: 
+Code 14 differs from code 9 only by translating UAA to Tyr rather than
+STOP. A recent study [PMID:11027335] has found no evidence that the
+codon UAA codes for Tyr in the flatworms but other opinions
+exist. There are very few GenBank records that are translated with
+code 14 but a test translation shows that retranslating these records
+with code 9 can cause premature terminations. Therefore, GenBank will
+maintain code 14 until further information becomes available.  Back to
+top
+
+
+-------------------------------------------------------------------------------
+
+15. Blepharisma Nuclear Code (transl_table=15) 
+
+    AAs  = FFLLSSSSYY*QCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = -----------------------------------M----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Differences from the Standard Code: 
+          Code 10       GStandard
+
+UAG       Gln  Q        Ter  *
+
+
+Systematic Range: 
+Ciliata: Blepharisma (Liang and Heckman, 1993) 
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+16. Chlorophycean Mitochondrial Code (transl_table=16) 
+
+    AAs  = FFLLSSSSYY*LCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = -----------------------------------M----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+Systematic Range: 
+
+Chlorophyceae: Hayashi-Ishiimaru, Y, T. Ohama, Y. Kawatsu,
+K. Nakamura, S. Osawa, 1996. Current Genetics 30: 29-33
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+21. Trematode Mitochondrial Code (transl_table=21) 
+
+    AAs  = FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNNKSSSSVVVVAAAADDEEGGGG
+  Starts = -----------------------------------M---------------M------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Systematic Range: 
+Trematoda: Ohama, T, S. Osawa, K. Watanabe, T.H. Jukes, 1990. J. Molec Evol. 30
+Garey, J.R. and D.R. Wolstenholme, 1989. J. Molec. Evol. 28: 374-387 329-332. 
+
+Other Alternative Initiation Codons
+GUG, UUG (and possibly CUG) in the Archaea (Noelling et al., unpublished) 
+
+AUA, GUG, UUG, and AUC or AAG may be used (at least in experimental
+systems) by the yeasts Saccharomyces cerevisiae (Olsen, 1987, and
+references therein).
+
+ACG initiates translation of certain proteins in the adeno-associated
+virus type 2 (Becerra et al., 1985), the phage T7 mutant CR17
+(Anderson and Buzash-Pollert, 1985), Sendai virus (Gupta and
+Patwardhan, 1988), and rice chloroplast (Hiratsuka et al.,
+1989). Also, it is the most effective non-AUG initiation codon in
+mammalin cells (Koepke and Leggatt, 1991).
+
+CUG is the initiation codon for one of the two alternative products of
+the human c-myc gene (Hann et al., 1987).
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+22. Scenedesmus obliquus mitochondrial Code (transl_table=22) 
+
+    AAs  = FFLLSS*SYY*LCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = -----------------------------------M----------------------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+
+Systematic Range:
+Scenedesmus obliquus: Nedelcu A, Lee RW, Lemieux C, Gray MW and Burger
+G. "The complete mitochondrial DNA sequence of Scenedesmus obliquus
+reflects an intermediate stage in the evolution of the green algal
+mitochondrial genome." Genome Research (in press).
+
+Other Alternative Initiation Codons
+GUG, UUG (and possibly CUG) in the Archaea (Noelling et al., unpublished) 
+
+AUA, GUG, UUG, and AUC or AAG may be used (at least in experimental
+systems) by the yeasts Saccharomyces cerevisiae (Olsen, 1987, and
+references therein).
+
+ACG initiates translation of certain proteins in the adeno-associated
+virus type 2 (Becerra et al., 1985), the phage T7 mutant CR17
+(Anderson and Buzash-Pollert, 1985), Sendai virus (Gupta and
+Patwardhan, 1988), and rice chloroplast (Hiratsuka et al.,
+1989). Also, it is the most effective non-AUG initiation codon in
+mammalin cells (Koepke and Leggatt, 1991).
+
+CUG is the initiation codon for one of the two alternative products of
+the human c-myc gene (Hann et al., 1987).
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+23. Thraustochytrium Mitochondrial Code (transl_table=23) 
+
+    AAs  = FF*LSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+  Starts = --------------------------------M--M---------------M------------
+  Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+  Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+  Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+
+Click here to change format
+This code has been created for the mitochondrial genome of the
+labyrinthulid Thraustochytrium aureum sequenced by the The Organelle
+Genome Megasequencing Program (OGMP).
+
+It is the similar to the bacterial code (trans_table 11) but it
+contains an additional stop codon (TTA) and also has a different set
+of start codons.
+
+
+Back to top
+
+
+-------------------------------------------------------------------------------
+
+Cited References 
+
+-------------------------------------------------------------------------------
+
+Aldritt, S.M., Joseph, J.T., and Wirth, D.F. (1989)
+Mol. Cell. Biol. 9, 3614-3620. [PubMed]
+
+Anderson, C.W. and Buzash-Pollert, E. (1985) Mol. Cell. Biol. 5,
+3621-3624. [PubMed]
+
+Batuecas, B., Garesse, R., Calleja, M., Valverde, J.R., and Marco,
+R. (1988) Nucleic Acids Res. 16, 6515-6529. [PubMed]
+
+Becerra, S.P., Rose, J.A., Hardy, M., Baroudy, B.M., and Anderson,
+C.W. (1985) Proc. Natn. Acad. Sci. USA 82: 7919-7923. [PubMed]
+
+Boore, J. L. and Brown, W. M. (1994) (GenBank Accession Number:
+U09810).
+
+Bove, J.M. Carle, P., Garnier, M., Laigret, F., Renaudin, J., and
+Saillard, C. (1989) in The Mycoplasmas, R.F. Whitcomb and J.G. Tully,
+eds., 5: 244-364. Academic Press, New York.
+
+Brown, J. W., Daniels, C. J., and Reeve, J. N. (1989)
+Crit. Rev. Microbiol. 16: 287-337. [PubMed]
+
+de Bievre, C. and Dujon, B. (1992) Curr. Genet. 22: 229-234. [PubMed]
+
+de Bruijn, M.H.L. (1983) Nature 304, 234-241. [PubMed] 
+
+Cantatore, P., Roberti, M., Rainaldi, G., Gadaleta, M.N., and Saccone,
+C. (1989) J. Biol. Chem. 264: 10965-10974. [PubMed]
+
+Clark-Walker G.D., Weiller G.F. (1994) J. Mol. Evol. 38:
+593-601(1994). [PubMed]
+
+Clary, D.O. and Wolstenholme, D.R. (1983) Nucleic Acids Res. 11,
+6859-6872. [PubMed]
+
+Clary, D.O. and Wolstenholme, D.R. (1985) J. Mol. Evol. 22, 252-271. [PubMed] 
+
+Crozier, R. H. and Crozier, Y. C. (1993) Genetics 133: 97-117. [PubMed] 
+
+Desjardins, P. and Morais, R. (1991) J. Mol. Evol. 32: 153-161. [PubMed] 
+
+Durrheim, G. A., Corfield, V. A., Harley, E. H., and Ricketts,
+M. H. (1993) Nucleic Acids Res. 21: 3587-8. [PubMed]
+
+Fox, T.D. (1987) Ann. Rev. Genet. 21, 67-91. 
+
+Gadaleta, G., Pepe, G., De Candia, G., Quagliariello, C., Sbisa, E.,
+and Saccone, C. (1988) Nucleic Acids Res. 16, 6233. [PubMed]
+
+Guelin E., Guerin M., and Velours J. (1991) Eur. J. Biochem. 197:
+105-111. [PubMed]
+
+Gupta, K.C. and Patwardhan, S. (1988) J. Biol. Chem. 263, 8553-8556. [PubMed] 
+
+Hann, S. R., King, M. W., Bentley, D. L., Anderson, C. W., and
+Eisenman, R. N. (1988) Cell 52: 185-195. [PubMed]
+
+Hatfield, D. and Diamond, A. (1993) TIG 9: 69-70. [PubMed] 
+
+Hiesel, R. Wissinger, B., Schuster, W., and Brennicke, A. (1989)
+Science 246, 1632-1634. [PubMed]
+
+Himeno, H., Masaki, H., Kawai, T., Ohta, T., Kumagai, I., Miura,
+K. and Watanabe, K. (1987) Gene 56: 219-230. [PubMed]
+
+Hiratsuka, J., Shimada, H., Whittier, R., Ishibashi, T., Sakamoto, M.,
+Mori, M., Kondo, C., Honji, Y., Sun, C. R., Meng, B. Y., Li, Y. Q.,
+Kanno, A., Nishizawa, Y., Hirai, A., Shinozaki, K., and Sugiura,
+M. (1989) Mol. Gen. Genet. 217: 185-194. [PubMed]
+
+Hoeben, P., Weiller, G., and Clark-Walker, G. D. (1993)
+J. Mol. Evol. 36: 263-269. [PubMed]
+
+Hoffman, D. C., Anderson. R., C., DuBois, M. L., and Prescott,
+D. M. (1995) Nucleic Acids Res. 23: 1279-1283. [PubMed]
+
+Hoffmann, R. J, Boore, J. L, and Brown, W. M. (1992) Genetics
+131:397-412. [PubMed]
+
+Jacobs, H. T., Elliott, D. J., Math, V. B., and Farquharson, A. (1988)
+J. Mol. Biol. 202, 185-217. [PubMed]
+
+Jukes, T. H. and Osawa, S. (1993) Comp. Biochem. Physiol. 106B:
+489-494. [PubMed]
+
+Kopke, A. K. E. and Leggatt, P. A. (1991) Nucleic Acids Res. 19:
+5169-5172. [PubMed]
+
+Kozak, M. (1983) Microbiol. Rev. 47, 1-45. [PubMed]
+
+Leinfelder, W., Zehelein, E., Mandrand-Berthelot, M.-A., and Boeck,
+A. (1988) Nature 331, 723-725. [PubMed]
+
+Liang, A. and Heckmann, K. (1993) Naturwissenschaften 80,
+225-226. [PubMed]
+
+Lim, P. and Sears, B. B. (1992) J. Bacteriol. 174, 2606-2611. [PubMed]
+
+Noelling J., Pihl T., Vriesema A., Reeve J. (Unpublished) Organization
+and growth phase dependent transcription of methane genes in two
+regions of the Methanobacterium thermoautotrophicum genome.
+
+Ohama, T., Suzuki, T., Mori, M., Osawa, S., Ueda, T., Watanabe, K.,
+and Nakase, T. (1993) Nucl. Acids Res. 21: 4039-4045. [PubMed]
+
+Olsen, O. (1987) Carlsberg Res. Comm. 52: 83-90.
+
+Osawa, S., Jukes, T. H., Watanabe, K., and Muto, A. (1992)
+Microbiol. Rev. 56: 229-264. [PubMed]
+
+Prats H, Kaghad M, Prats AC, Klagsbrun M, Lelias JM, Liauzun P, Chalon
+P, Tauber JP, Amalric F, Smith JA, et al. (1989). High molecular mass
+forms of basic fibroblast growth factor are initiated by alternative
+CUG codons. Proc Natl Acad Sci U S A 86 (6): 1836-1840. [PubMed]
+
+Pritchard, A.E., Seilhamer, J.J., Mahalingam, R. Sable, C.L., Venuti,
+S.E., and Cummings, D.J. (1990) Nucleic Acids Research 18:
+173-180. [PubMed]
+
+Santos, M.A., Keith, G., and Tuite, M.F. (1993) EMBO J. 12:
+607-616. [PubMed]
+
+Schneider, S.U. and de Groot, E.J. (1991) Curr. Genet. 20:
+173-175. [PubMed]
+
+Schneider, S.U., Leible, M.B., and Yang, X.-P. (1989)
+Mol. Gen. Genet. 218: 445-452. [PubMed]
+
+Spiers, A. J. and Berquist, P. L. (1992) J. Bacter. 174:
+7533-7541. [PubMed]
+
+Yokobori, S., Ueda, T., and Watanabe, K. (1993) J. Mol. Evol. 36:
+1-8. [PubMed]
+
+
+-------------------------------------------------------------------------------
+Comments and questions to info@ncbi.nlm.nih.gov 
+Credits: Andrzej (Anjay) Elzanowski, Jim Ostell, Detlef Leipe,
+Vladimir Soussov. 

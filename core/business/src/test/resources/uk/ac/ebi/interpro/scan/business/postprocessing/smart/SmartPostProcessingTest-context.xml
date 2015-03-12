@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--
+    1. Extracted SMART HMM:
+       ~hunter/perl/scripts/to_extract/getSmartEntry.pl SM00327 /nfs/seqdb/production/interpro/data/members/smart/6.1/smart.HMMs
+    2. Created binary file:
+       hmmconvert -b smart.HMMs smart.HMMs.bin
+    3. Ran HmmPfam:
+       bin/hmmer/hmmer2/2.3.2/hmmpfam - -cpu 1 - -acc -A 0 data/smart/6.1/smart.HMMs.bin business/src/test/resources/uk/ac/ebi/interpro/scan/business/postprocessing/smart/smart.fasta
+    4. Removed SM00025 entries from UPI0000000030-hmmpfam.txt
+
+    -->
+
+    <bean id="hmmPfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+        <property name="signatureLibrary" value="SMART"/>
+        <property name="signatureLibraryRelease" value="6.1"/>
+        <property name="hmmer2ParserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.SmartHmmer2ParserSupport">
+                <property name="signatureLibraryRelease" value="6.1"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="hmmPfamOutput" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-hmmpfam.txt"/>
+    </bean>
+
+    <bean id="hmmPfamFilteredMatches" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-IPRSCAN.tsv"/>
+    </bean>
+
+    <bean id="rawMatches" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg
+                value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-SMART_ANALYSIS_C.tsv"/>
+    </bean>
+
+    <bean id="filteredMatches" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030-IPRSCAN.tsv"/>
+    </bean>
+
+    <bean id="postProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
+        <property name="overlappingFileParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"/>
+        </property>
+        <property name="thresholdFileParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser"/>
+        </property>
+        <property name="smartResourceManager" ref="smartResourceManager"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <bean id="proteinDAO"
+          class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.DummyProteinDAOImpl"/>
+
+    <bean id="smartResourceManager" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartResourceManager">
+        <property name="overlappingFileResource"
+                  value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/overlapping"/>
+        <property name="thresholdFileResource"
+                  value="uk/ac/ebi/interpro/scan/business/postprocessing/smart/THRESHOLDS"/>
+    </bean>
+
+</beans>

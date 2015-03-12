@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <artifactId>interproscan</artifactId>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <version>5.10-50.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>interproscan-io</artifactId>
+
+    <packaging>jar</packaging>
+
+    <name>InterProScan IO</name>
+    <version>5.10-50.0</version>
+    <description>InterProScan IO</description>
+    <url>http://www.ebi.ac.uk/interpro/</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-model</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit-addons</groupId>
+            <artifactId>junit-addons</artifactId>
+            <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>default-test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <logging.level.root>WARN</logging.level.root>
+                <logging.level.interpro.scan.io>WARN</logging.level.interpro.scan.io>
+                <logging.interpro.scan.io.file>target/io.log</logging.interpro.scan.io.file>
+                <logging.interpro.scan.io.max.file.size>2097152</logging.interpro.scan.io.max.file.size>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>entry-go</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-Xmx2048m</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

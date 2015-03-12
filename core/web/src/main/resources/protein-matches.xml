@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+    <protein>
+        <sequence md5="bb3bde1de955af5b7f49a84ba2c4d4ae">MKYKRIVFKVGTSSLTNEDGSLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEKGLRTQKQWLAFYAQSQGSIWVDKGAAEALSQYGKSLLLSGIVEAEGVFSYGDIVTVFDKESGKSLGKGRVQFGASALEDMLRSQKAKGVLIYRDDWISITPEIQLLFTEF</sequence>
+        <xref id="Q97R95"/>
+        <matches>
+            <hmmer3-match score="158.1" evalue="1.7E-43">
+                <signature name="AA_kinase" desc="Amino acid kinase family" ac="PF00696">
+                    <entry type="DOMAIN" name="Asp/Glu/Uridylate_kinase" desc="Aspartate/glutamate/uridylate kinase" ac="IPR001048">
+                        <go-xref id="GO:0008652" db="GO"/>
+                        <pathway-xref name="Metabolism of amino acids and derivatives" id="REACT_13" db="Reactome"/>
+                    </entry>
+                    <models>
+                        <model name="AA_kinase" desc="Amino acid kinase family" ac="PF00696"/>
+                    </models>
+                    <signature-library-release version="24.0" library="PFAM"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-start="4" env-end="234" hmm-length="0" hmm-end="243" hmm-start="1" evalue="2.2E-43" score="157.7" end="234" start="4"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match score="446.2" evalue="1.9E-134">
+                <signature name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027">
+                    <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
+                        <go-xref id="GO:0005737" db="GO"/>
+                        <go-xref id="GO:0004349" db="GO"/>
+                        <go-xref id="GO:0006561" db="GO"/>
+                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 1/2" id="UPA00098" db="UniPathway"/>
+                    </entry>
+                    <models>
+                        <model name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027"/>
+                    </models>
+                    <signature-library-release version="10.1" library="TIGRFAM"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-start="4" env-end="365" hmm-length="0" hmm-end="359" hmm-start="1" evalue="2.2E-134" score="446.0" end="361" start="4"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match score="55.1" evalue="3.5E-15">
+                <signature ac="G3DSA:2.30.130.10">
+                    <models>
+                        <model ac="1iq8A04"/>
+                        <model ac="1q7hA02"/>
+                    </models>
+                    <signature-library-release version="3.3.0" library="GENE3D"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-start="273" env-end="359" hmm-length="0" hmm-end="82" hmm-start="3" evalue="1.0E-14" score="53.6" end="356" start="275"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match score="184.0" evalue="1.3E-54">
+                <signature ac="G3DSA:3.40.1160.10">
+                    <entry type="DOMAIN" name="Asp/Glu/Uridylate_kinase" desc="Aspartate/glutamate/uridylate kinase" ac="IPR001048">
+                        <go-xref id="GO:0008652" db="GO"/>
+                        <pathway-xref name="Metabolism of amino acids and derivatives" id="REACT_13" db="Reactome"/>
+                    </entry>
+                    <models>
+                        <model ac="2va1B00"/>
+                        <model ac="1e19A00"/>
+                        <model ac="2bneB00"/>
+                        <model ac="1gs5A00"/>
+                    </models>
+                    <signature-library-release version="3.3.0" library="GENE3D"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-start="1" env-end="256" hmm-length="0" hmm-end="254" hmm-start="22" evalue="1.6E-54" score="183.7" end="254" start="1"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match score="59.0" evalue="1.8E-13">
+                <signature name="PUA" desc="PUA domain" ac="PF01472">
+                    <entry type="DOMAIN" name="PUA" desc="Pseudouridine synthase/archaeosine transglycosylase" ac="IPR002478">
+                        <go-xref id="GO:0003723" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="PUA" desc="PUA domain" ac="PF01472"/>
+                    </models>
+                    <signature-library-release version="24.0" library="PFAM"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-start="276" env-end="349" hmm-length="0" hmm-end="64" hmm-start="1" evalue="4.5E-13" score="57.7" end="341" start="276"/>
+                </locations>
+            </hmmer3-match>
+            <panther-match score="427.5" familyName="SUBFAMILY NOT NAMED" evalue="2.1E-125">
+                <signature name="SUBFAMILY NOT NAMED" ac="PTHR11063:SF6">
+                    <models>
+                        <model name="SUBFAMILY NOT NAMED" ac="PTHR11063:SF6"/>
+                    </models>
+                    <signature-library-release version="7.0" library="PANTHER"/>
+                </signature>
+                <locations>
+                    <panther-location end="337" start="1"/>
+                </locations>
+            </panther-match>
+            <panther-match score="427.5" familyName="FAMILY NOT NAMED" evalue="2.1E-125">
+                <signature name="FAMILY NOT NAMED" ac="PTHR11063">
+                    <models>
+                        <model name="FAMILY NOT NAMED" ac="PTHR11063"/>
+                    </models>
+                    <signature-library-release version="7.0" library="PANTHER"/>
+                </signature>
+                <locations>
+                    <panther-location end="337" start="1"/>
+                </locations>
+            </panther-match>
+            <patternscan-match>
+                <signature name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902">
+                    <entry type="CONSERVED_SITE" name="Glutamate_5-kinase_CS" desc="Glutamate 5-kinase, conserved site" ac="IPR019797">
+                        <go-xref id="GO:0004349" db="GO"/>
+                        <go-xref id="GO:0006561" db="GO"/>
+                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 1/2" id="UPA00098" db="UniPathway"/>
+                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
+                    </entry>
+                    <models>
+                        <model name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902"/>
+                    </models>
+                    <signature-library-release version="20.66" library="PROSITE_PATTERNS"/>
+                </signature>
+                <locations>
+                    <patternscan-location level="STRONG" end="223" start="206">
+                        <alignment>SsnGtGGMlTKIkAAtiA</alignment>
+                    </patternscan-location>
+                </locations>
+            </patternscan-match>
+            <phobius-match>
+                <signature name="Non cytoplasmic domain" desc="Region of a membrane-bound protein predicted to be outside the membrane, in the extracellular region." ac="NON_CYTOPLASMIC_DOMAIN">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="43" start="1"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Cytoplasmic domain" desc="Region of a membrane-bound protein predicted to be outside the membrane, in the cytoplasm." ac="CYTOPLASMIC_DOMAIN">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="369" start="62"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Transmembrane region" desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TRANSMEMBRANE">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="61" start="44"/>
+                </locations>
+            </phobius-match>
+            <profilescan-match>
+                <signature name="PUA" desc="PUA domain profile." ac="PS50890">
+                    <entry type="DOMAIN" name="PUA" desc="Pseudouridine synthase/archaeosine transglycosylase" ac="IPR002478">
+                        <go-xref id="GO:0003723" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="PUA" desc="PUA domain profile." ac="PS50890"/>
+                    </models>
+                    <signature-library-release version="20.66" library="PROSITE_PROFILES"/>
+                </signature>
+                <locations>
+                    <profilescan-location score="15.593" end="355" start="275">
+                        <alignment>QGSIWVDKGAAEALSqYGK-SLLLSGIVEAEGVFSYGDIVTVFDKeSGKSLGKGRVQFGASALEDMlRSQKAKGVLIYRDDW</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+        </matches>
+    </protein>
+    <protein>
+        <sequence md5="f927b0d241297dcc9a1c5990b58bf3c4">MAAEEGVVIACHNKDEFDAQMTKAKEAGKVVIIDFTASWCGPCRFIAPVFAEYAKKFPGAVFLKVDVDELKEVAEKYNVEAMPTFLFIKDGAEADKVVGARKDDLQNTIVKHVGATAASASA</sequence>
+        <xref id="A2YIW7"/>
+        <matches>
+            <hmmer2-match score="100.5" evalue="1.1E-30">
+                <signature name="Thioredoxin" ac="PIRSF000077">
+                    <entry type="FAMILY" name="Thioredoxin" desc="Thioredoxin" ac="IPR005746">
+                        <go-xref id="GO:0006662" db="GO"/>
+                        <go-xref id="GO:0015035" db="GO"/>
+                        <go-xref id="GO:0009055" db="GO"/>
+                        <go-xref id="GO:0045454" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="Thioredoxin" ac="PIRSF000077"/>
+                    </models>
+                    <signature-library-release version="2.74" library="PIRSF"/>
+                </signature>
+                <locations>
+                    <hmmer2-location hmm-length="0" hmm-end="108" hmm-start="1" evalue="1.1E-30" score="100.5" end="113" start="4"/>
+                </locations>
+            </hmmer2-match>
+        </matches>
+    </protein>
+    <protein>
+        <sequence md5="493932c1f43289805b4c4e651ceb9249">GRGLLPFVLLALGIXAPWAVEGAENALKGGACPPRKIVQCLRYEKPKCTSDWQCPDKKKCCRDTCAIKCLNPVAITNPVKVKPGKCPVVYGQCMMLNPPNHCKTDSQCLGDLKCCKSMCGKVCLTPVKA</sequence>
+        <xref id="P22298"/>
+        <matches>
+            <fingerprints-match graphscan="IIII" evalue="1.44E-7">
+                <signature name="4DISULPHCORE" desc="4-disulphide core signature" ac="PR00003">
+                    <entry type="DOMAIN" name="4-disulphide_core" desc="4-disulphide core" ac="IPR015874"/>
+                    <models>
+                        <model name="4DISULPHCORE" desc="4-disulphide core signature" ac="PR00003"/>
+                    </models>
+                    <signature-library-release version="41.1" library="PRINTS"/>
+                </signature>
+                <locations>
+                    <fingerprints-location score="50.0" pvalue="4.37E-4" motifNumber="4" end="126" start="118"/>
+                    <fingerprints-location score="47.92" pvalue="0.00296" motifNumber="2" end="108" start="101"/>
+                    <fingerprints-location score="49.17" pvalue="2.32E-4" motifNumber="1" end="88" start="79"/>
+                    <fingerprints-location score="52.92" pvalue="2.09E-4" motifNumber="3" end="117" start="108"/>
+                </locations>
+            </fingerprints-match>
+        </matches>
+    </protein>
+    <protein>
+        <sequence md5="1fb3569701c50e369fa112ac96b5e459">MEVKGKKKLTGKGTKMSQEKSKFHKNNDSGSSKTFPKKVVKEGGPKITSKNFEKTATKPGKKGVKQFKNKQQGDRIPKNKFQQANKFNQKRKFQPDSKSDESAAKKPKWDEFKKKKKELKQSRQLSDKTNYDIVIRAKQIWEILRRKDCDKEKRVKLMSDLQKLIQGKIKTIAFAHDSTRVIQCYIQFGNEEQRKQAFEELRGDLVELSKAKYSRNIVKKFLMYGSKAQIAEIIRSFKGHVRKLLRHAEASAIVEYAYNDKAILEQRNMLTEELYGNTFQLYKSADHPTLDKVLEVQPEKLELIMDEMKQILTPMAQKEAVIKHSLVHKVFLDFFTYAPPKLRSEMIEAIREAVVYLAHTHDGARVAMYCLWHGTPKDRKVIVKTMKTYIEKVANGQYSHLVLLAAFDCIDDTKLVKQIIISEIINSLPNIVNDKYGRKVLLYLLSPRDPAHTVREIIEVLQKGDGNAHSKKDTEIRRRELLESISPALLSYLQGHAQEVVLDKSACVLVADILGTATGDVQPAMDAVASLAAAELHPGGKDGELHIAEHPAGHLVLKWLIEQDKKMKERGREGCFAKTLIERVGVKNLKSWASVNRGAIILSSLLQSSDQEVANKVKAGLKSLIPALEKSKNTSKGIEMLLEKLTA</sequence>
+        <xref id="A2VDN9"/>
+        <matches>
+            <panther-match score="1320.6" familyName="FAMILY NOT NAMED" evalue="NaN">
+                <signature name="FAMILY NOT NAMED" ac="PTHR13389">
+                    <models>
+                        <model name="FAMILY NOT NAMED" ac="PTHR13389"/>
+                    </models>
+                    <signature-library-release version="7.0" library="PANTHER"/>
+                </signature>
+                <locations>
+                    <panther-location end="647" start="1"/>
+                </locations>
+            </panther-match>
+        </matches>
+    </protein>
+</protein-matches>

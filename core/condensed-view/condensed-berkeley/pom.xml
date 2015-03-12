@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>condensed-view</artifactId>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <version>5.10-50.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>condensed-berkeley</artifactId>
+
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-management</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <default.log.level>warn</default.log.level>
+        <third.party.log.level>warn</third.party.log.level>
+        <deployment.folder>${project.basedir}</deployment.folder>
+        <!-- In this production profile use a full path to the copies of the entry colours properties file
+   and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
+   NOTE: These should have been generated at the time of the last release, therefore will be consistent
+   with the current public database -->
+        <!--<resourceWebPath>/interpro-protein-page/resources</resourceWebPath>-->
+        <!--Model creation files-->
+        <!--Entry hierarchy data-->
+        <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
+        <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv
+        </entry.hierarchy.file.loc>
+        <!--Entry GO data-->
+        <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
+        <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv</entry.go.file.loc>
+        <!--Entry colours-->
+        <entry.colours.file.loc>
+            file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
+        </entry.colours.file.loc>
+        <!--<pathToImages>http://tc-test-3.ebi.ac.uk:9750/interpro-protein-page/resources</pathToImages>-->
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/spring</directory>
+                <filtering>true</filtering>
+                <targetPath>spring/</targetPath>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>uk.ac.ebi.interpro.scan.condensed.berkeley.Main</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib</classpathPrefix>
+                        </manifest>
+                    </archive>
+                    <finalName>condensed-berkeley-db-builder</finalName>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                    <finalName>condensed-berkeley-db-builder</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

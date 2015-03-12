@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="classpath:spring/berkeley-oxm-context.xml"/>
+
+    <bean id="matchClient" class="uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient">
+        <constructor-arg index="0" ref="berkeleyUnmarshaller"/>
+    </bean>
+
+    <bean id="servedXml" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg type="java.io.File" value="uk/ac/ebi/interpro/scan/precalc/client/test-matches-5.8-49.0.xml"/>
+    </bean>
+
+    <bean id="serverTSV" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg type="java.io.File"
+                         value="uk/ac/ebi/interpro/scan/precalc/client/test-proteins-to-analyse.tsv"/>
+    </bean>
+
+</beans>

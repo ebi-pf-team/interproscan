@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: ProDom ############################  -->
+    <bean id="jobProDom-2006.1" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="ProDom is a comprehensive set of protein domain families automatically generated from the UniProt Knowledge Database."/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseProdom-2006.1"/>
+    </bean>
+
+    <bean id="abstractProDomStep-2006.1" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobProDom-2006.1"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PRODOM}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP: Prepare FASTA file for ProDom binary -->
+    <bean id="stepProDomWriteFastaFile-2006.1"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractProDomStep-2006.1">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP: Run the ProDom perl script -->
+    <bean id="stepProDomRunBinary-2006.1"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prodom.RunProDomBlast3iStep"
+          parent="abstractProDomStep-2006.1">
+        <!--
+        Example:
+        perl -I bin/prodom/2006.1 bin/prodom/2006.1/ProDomBlast3i.pl -P bin/blast/2.2.19 -d data/prodom/temp/prodom.ipr -s temp/x/jobProDom-2006.1/000000000001_000000000006.fasta -p blastp -h 0 -f
+        -->
+        <property name="dependsUpon" ref="stepProDomWriteFastaFile-2006.1"/>
+        <property name="stepDescription" value="Run ProDomBlast3i.pl perl script for selected proteins"/>
+        <property name="binarySwitches" value="${prodomblast3i.binary.switches}"/>
+        <property name="retries" value="3"/>
+        <property name="perlCommand" value="${perl.command}"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <!--<property name="fullPathToTempDirectory" value="${prodom.binary.tmp.path.2006.1}"/>--> <!-- Optional -->
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="fullPathToProDomBlast3iPerlScript" value="${binary.prodom.2006.1.prodomblast3i.pl.path}"/>
+        <property name="fullPathToBlast" value="${binary.blast.2.2.19.path}"/>
+        <property name="fullPathToProDomIprFile" value="${prodom.ipr.path.2006.1}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP: Parse the ProDom binary output and persist the results in the database. No post processing required. -->
+    <bean id="stepProDomParseAndPersistOutput-2006.1"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prodom.ParseAndPersistProDomOutputStep"
+          parent="abstractProDomStep-2006.1">
+        <property name="dependsUpon" ref="stepProDomRunBinary-2006.1"/>
+        <property name="stepDescription"
+                  value="Parse the output from the ProDom binary and persist as filtered matches"/>
+        <property name="serialGroup" value="PARSE_PRODOM"/>
+        <property name="retries" value="3"/>
+        <property name="proDomBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="rawMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAOImpl">
+                <constructor-arg value="2006.1"/>
+            </bean>
+        </property>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.prodom.match.BlastProDomMatchParser">
+                <constructor-arg value="2006.1"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
+               writing to the directory at the same time) -->
+    <bean id="stepPromDomDeleteTempFiles-2006.1"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractProDomStep-2006.1">
+        <property name="dependsUpon" ref="stepProDomParseAndPersistOutput-2006.1"/>
+        <property name="stepDescription"
+                  value="Delete the remaining temporary files following successful parsing and persistence"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalaysisOutputFileTemplate"/>
+            </list>
+        </property>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: ProDom !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="signatureLibraryReleaseProdom-2006.1" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PRODOM"/>
+        <constructor-arg type="java.lang.String" value="2006.1"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

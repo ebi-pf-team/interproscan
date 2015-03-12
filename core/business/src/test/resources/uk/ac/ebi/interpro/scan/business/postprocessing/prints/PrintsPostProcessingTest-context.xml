@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="testData" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="testdata/prints_raw_to_pp.tsv"/>
+    </bean>
+
+    <bean id="postProcessor" class="uk.ac.ebi.interpro.scan.business.postprocessing.prints.PrintsPostProcessing">
+        <property name="hierarchyDBParser" ref="hierarchyDBParser"/>
+        <property name="fingerPRINTSHierarchyDB" value="testdata/FingerPRINTShierarchy.db"/>
+    </bean>
+
+    <bean id="hierarchyDBParser" class="uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser"/>
+</beans>

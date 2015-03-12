@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>precalcmatches</artifactId>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <version>5.10-50.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>server</artifactId>
+    <version>5.10-50.0</version>
+    <name>interpro-match-lookup</name>
+    <packaging>war</packaging>
+
+    <repositories>
+        <repository>
+            <id>spring-ext</id>
+            <name>Spring External Dependencies Repository</name>
+            <url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
+        </repository>
+        <repository>
+            <id>kos</id>
+            <url>http://opensource.kantega.no/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>kos</id>
+            <url>http://opensource.kantega.no/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+
+    <dependencies>
+        <dependency>
+            <artifactId>berkeley</artifactId>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ws.commons.schema</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <!-- Stable version at 15 April, 2011 -->
+            <version>1.4.7</version>
+        </dependency>
+
+        <!-- Servlet -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+    <properties>
+        <i5.version>${project.version}</i5.version>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources/</directory>
+            </resource>
+        </resources>
+    </build>
+
+    <!-- Run jetty for testing, using:
+
+
+         mvn -Pjetty clean jetty:run-war
+
+
+         -->
+    <profiles>
+        <profile>
+            <id>jetty</id>
+
+            <properties>
+                <deployment.folder>not applicable - jetty does not use this.</deployment.folder>
+                <berkeleydb.path.md5>${basedir}/src/test/resources/berk_md5</berkeleydb.path.md5>
+                <berkeleydb.path.matches>${basedir}/src/test/resources/berk_match</berkeleydb.path.matches>
+            </properties>
+
+            <build>
+                <plugins>
+                    <!-- For further info on how to config the jetty plugin please visit...-->
+                    <!-- http://docs.codehaus.org/display/JETTY/Maven+Jetty+Plugin-->
+                    <plugin>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>maven-jetty-plugin</artifactId>
+                        <version>6.1.26</version>
+                        <!-- Set up the context path and the default port to 8082 -->
+                        <configuration>
+                            <webAppConfig>
+                                <contextPath>/i5</contextPath>
+                            </webAppConfig>
+                            <connectors>
+                                <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                                    <port>8092</port>
+                                    <maxIdleTime>60000</maxIdleTime>
+                                </connector>
+                            </connectors>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.mortbay.jetty</groupId>
+                                <artifactId>jsp-2.1</artifactId>
+                                <version>6.1.14</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>commons-logging</groupId>
+                                <artifactId>commons-logging</artifactId>
+                                <version>1.1.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.1.1</version>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                    <includes>
+                                        <include>matches-service-context.xml</include>
+                                    </includes>
+                                    <targetPath>WEB-INF/</targetPath>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--Build test war for deployment on tomcat-17 using:
+
+        mvn -Pwar,test-war clean package
+
+        -->
+
+        <profile>
+            <id>test-war</id>
+            <properties>
+                <description>
+                    This isn't a property - just a convenient way of including a description...
+
+                    This profile is for deployment of a test server in Tomcat on tomcat-17.ebi.ac.uk.
+                </description>
+                <deployment.folder>/ebi/www/jtest/deploy/tc-interpro-das</deployment.folder>
+                <berkeleydb.path.md5>/nfs/nobackup/interpro/i5-precalc-lookup-berkeley/md5_db</berkeleydb.path.md5>
+                <berkeleydb.path.matches>/nfs/nobackup/interpro/i5-precalc-lookup-berkeley/match_db
+                </berkeleydb.path.matches>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>test</id>
+            <properties>
+                <description>
+                    This isn't a property - just a convenient way of including a description...
+
+                    This profile is for deployment of the real server in Tomcat on Hinxton test ves-hx-9b.
+                </description>
+                <deployment.folder>/nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc_test/deploy
+                </deployment.folder>
+                <berkeleydb.path.md5>/nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc_test/deploy/data/md5_db
+                </berkeleydb.path.md5>
+                <berkeleydb.path.matches>
+                    /nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc_test/deploy/data/match_db
+                </berkeleydb.path.matches>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>production</id>
+            <properties>
+                <description>
+                    This isn't a property - just a convenient way of including a description...
+
+                    This profile is for deployment of the real server in Tomcat on Hinxton staging ves-hx-9a and
+                    London ves-{oy,pg}-9{a,b}.
+                </description>
+                <deployment.folder>/nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc/deploy
+                </deployment.folder>
+                <berkeleydb.path.md5>/nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc/deploy/data/md5_db
+                </berkeleydb.path.md5>
+                <berkeleydb.path.matches>
+                    /nfs/public/rw/webadmin/tomcat/bases/interpro/tc-ipr-precalc/deploy/data/match_db
+                </berkeleydb.path.matches>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>war</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.keyboardsamurais.maven</groupId>
+                        <artifactId>maven-timestamp-plugin</artifactId>
+                        <version>1.0</version>
+                        <configuration>
+                            <propertyName>timestamp</propertyName>
+                            <!-- timestampPattern using SimpleDateFormat format. -->
+                            <timestampPattern>yyyyMMdd-HHmm</timestampPattern>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.1.1</version>
+                        <configuration>
+                            <!-- Currently need to comment out the warName element below
+                      for the jetty:run-war target to work. -->
+                            <warName>${project.name}-${timestamp}</warName>
+                            <!-- NOTE that the webResources filtering as exemplified
+                          below does NOT work recursively - only the contents of the explicit directory
+                          listed are filtered-->
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                    <includes>
+                                        <include>matches-service-context.xml</include>
+                                    </includes>
+                                    <targetPath>WEB-INF/</targetPath>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>true</filtering>
+                        <excludes>
+                            <exclude>interpro#match-lookup.xml</exclude>
+                        </excludes>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>true</filtering>
+                        <targetPath>${project.build.directory}/</targetPath>
+                        <includes>
+                            <include>interpro#match-lookup.xml</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+
+        <profile>
+            <id>distributable</id>
+            <properties>
+                <deployment.folder>not applicable - jetty does not use this.</deployment.folder>
+                <berkeleydb.path.md5>data/md5_db</berkeleydb.path.md5>
+                <berkeleydb.path.matches>data/match_db</berkeleydb.path.matches>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.simplericity.jettyconsole</groupId>
+                        <artifactId>jetty-console-maven-plugin</artifactId>
+                        <version>1.45</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>createconsole</goal>
+                                </goals>
+                                <configuration>
+                                    <backgroundImage>${basedir}/src/main/resources/i5_match_lookup_splash_screen.jpg
+                                    </backgroundImage>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                        <configuration>
+                            <additionalDependencies>
+                                <additionalDependency>
+                                    <artifactId>jetty-console-requestlog-plugin</artifactId>
+                                </additionalDependency>
+                                <additionalDependency>
+                                    <artifactId>jetty-console-gzip-plugin</artifactId>
+                                </additionalDependency>
+                                <additionalDependency>
+                                    <artifactId>jetty-console-ajp-plugin</artifactId>
+                                </additionalDependency>
+                                <additionalDependency>
+                                    <artifactId>jetty-console-startstop-plugin</artifactId>
+                                </additionalDependency>
+                            </additionalDependencies>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.1.1</version>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                    <includes>
+                                        <include>matches-service-context.xml</include>
+                                    </includes>
+                                    <targetPath>WEB-INF/</targetPath>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

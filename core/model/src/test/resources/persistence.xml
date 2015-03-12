@@ -1,0 +1,105 @@
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
+
+    <!-- JPA Persistence unit for local testing in HSQLDB - current in-memory database, but may change. -->
+    <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
+
+        <description>
+            Test persistence-unit that uses an in-memory HSQLDB database.
+        </description>
+
+        <!-- Interfaces -->
+        <class>uk.ac.ebi.interpro.scan.model.Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.Match</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.Entry</class>
+        <class>uk.ac.ebi.interpro.scan.model.EntryType</class>
+        <class>uk.ac.ebi.interpro.scan.model.GoCategory</class>
+        <class>uk.ac.ebi.interpro.scan.model.GoXref</class>
+        <class>uk.ac.ebi.interpro.scan.model.Release</class>
+        <class>uk.ac.ebi.interpro.scan.model.PathwayXref</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.Protein</class>
+        <class>uk.ac.ebi.interpro.scan.model.Model</class>
+        <class>uk.ac.ebi.interpro.scan.model.Xref</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProteinXref</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignatureXref</class>
+        <class>uk.ac.ebi.interpro.scan.model.Signature</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>
+
+        <!-- Concrete Matches -->
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.HmmerMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.CoilsMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.PantherMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.TMHMMMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignalPMatch</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.OpenReadingFrame</class>
+        <class>uk.ac.ebi.interpro.scan.model.NucleotideSequence</class>
+        <class>uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref</class>
+
+        <!-- Concrete Locations. -->
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch$PhobiusLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.CoilsMatch$CoilsLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.PantherMatch$PantherLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match$SuperFamilyHmmer3Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.TMHMMMatch$TMHMMLocation</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignalPMatch$SignalPLocation</class>
+
+        <!-- Raw Matches -->
+        <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.raw.HmmerRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch</class>
+
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
+
+        <properties>
+            <property name="hibernate.show_sql" value="${mvn.hibernate.show_sql}"/>
+            <property name="hibernate.format_sql" value="${mvn.hibernate.format_sql}"/>
+            <property name="hibernate.connection.driver_class" value="${mvn.i5.database.driver}"/>
+            <property name="hibernate.connection.url" value="${mvn.i5.database.connection.url}"/>
+            <property name="hibernate.connection.username" value="${mvn.i5.database.username}"/>
+            <property name="hibernate.connection.password" value="${mvn.i5.database.password}"/>
+            <property name="hibernate.dialect" value="${mvn.hibernate.dialect}"/>
+            <property name="hibernate.hbm2ddl.auto" value="${mvn.hibernate.hbm2ddl.auto}"/>
+            <!-- Note - the "oracleNamingStrategy" does the following:
+
+            * guarantees that table / column / index identifiers are no longer than 30 characters.
+            * turns camelHump wording into underscore_spaced
+            Otherwise, it is not Oracle specific in any way, so will work fine with any RDBMS. -->
+            <property name="hibernate.ejb.naming_strategy" value="de.schauderhaft.hibernate.OracleNamingStrategy"/>
+        </properties>
+
+    </persistence-unit>
+
+</persistence>
